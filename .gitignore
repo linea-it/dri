@@ -1,0 +1,12 @@
+*.pyc
+__pycache__
+
+# Virtual Env
+dri_env
+
+# Database de test sqlite
+db.sqlite3
+.DS_Store
+
+# Diretorio de projeto pycharm
+.idea/
