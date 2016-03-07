@@ -124,3 +124,36 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
+
+
+# TODO: estudar como usar diferentes settings para producao, development e test.
+# SERVER_INSTANCE = ['development', 'testing', 'production']
+# SERVER_INSTANCE = 'development'
+SERVER_INSTANCE = 'development'
+
+if SERVER_INSTANCE == 'development':
+
+    DEBUG = True
+
+    INSTALLED_APPS += (
+        'debug_toolbar',
+    )
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'dri',
+            'USER': 'driapi',
+            'PASSWORD': 'driapi',
+            'HOST': 'localhost',
+            'PORT': ''
+        }
+    }
+
+
+elif SERVER_INSTANCE == 'testing':
+    DEBUG = True
+
+elif SERVER_INSTANCE == 'production':
+    DEBUG = False
+
