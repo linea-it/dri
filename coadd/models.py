@@ -38,3 +38,19 @@ class Tile(models.Model):
 
     def __unicode__(self):
         return self.tli_tilename
+
+class Tag(models.Model):
+
+    tag_release = models.ForeignKey(Release, on_delete=models.CASCADE, verbose_name='Release')
+    tag_name = models.CharField(max_length=60, verbose_name='Internal Name')
+    tag_display_name = models.CharField(max_length=80, null=True, blank=True, verbose_name='Display Name')
+    tag_install_date = models.DateField(null=True, blank=True, verbose_name='Install Date')
+    tag_release_date = models.DateField(null=True, blank=True, verbose_name='Release Date')
+    tag_status = models.BooleanField(default=False, blank=True, verbose_name='Status')
+    tag_start_date = models.DateField(null=True, blank=True, verbose_name='Start Date')
+    tag_discovery_date = models.DateField(null=True, blank=True, verbose_name='Discovery Date')
+
+    tiles = models.ManyToManyField(Tile, related_name='tiles')
+
+    def __unicode__(self):
+        return self.tag_display_name
