@@ -13,6 +13,7 @@ class Release(models.Model):
     def __unicode__(self):
         return self.rls_display_name
 
+
 class Tile(models.Model):
 
     tli_tilename = models.CharField(max_length=20, unique=True , verbose_name='Tilename')
@@ -50,7 +51,16 @@ class Tag(models.Model):
     tag_start_date = models.DateField(null=True, blank=True, verbose_name='Start Date')
     tag_discovery_date = models.DateField(null=True, blank=True, verbose_name='Discovery Date')
 
-    tiles = models.ManyToManyField(Tile, related_name='tiles')
+    tiles = models.ManyToManyField(
+        Tile,
+        through='Tag_Tile',
+    )
 
     def __unicode__(self):
         return self.tag_display_name
+
+class Tag_Tile(models.Model):
+
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    tile = models.ForeignKey(Tile, on_delete=models.CASCADE)
+    run = models.CharField(null=True, blank=True, max_length=30, verbose_name='Run')
