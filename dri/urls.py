@@ -20,6 +20,7 @@ from coadd import views
 
 router = routers.DefaultRouter()
 router.register(r'releases', views.ReleaseViewSet)
+router.register(r'tags', views.TagViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
