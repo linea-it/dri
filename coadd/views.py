@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from coadd.models import Release, Tag
+from coadd.models import Release, Tag, Tile
 from rest_framework import viewsets
-from coadd.serializers import ReleaseSerializer, TagSerializer
+from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer
 
 
 # Create your views here.
@@ -23,3 +23,13 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
 
     serializer_class = TagSerializer
+
+
+class TileViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows tile to be viewed or edited
+    """
+
+    queryset = Tile.objects.all()
+
+    serializer_class = TileSerializer
