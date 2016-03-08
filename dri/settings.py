@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
     'coadd'
 ]
 
@@ -126,18 +127,26 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ]
+}
+
+
 # TODO: estudar como usar diferentes settings para producao, development e test.
 # SERVER_INSTANCE = ['development', 'testing', 'production']
-# SERVER_INSTANCE = 'development'
 SERVER_INSTANCE = 'development'
 
 if SERVER_INSTANCE == 'development':
 
     DEBUG = True
 
-    INSTALLED_APPS += (
+    INSTALLED_APPS.extend([
         'debug_toolbar',
-    )
+    ])
 
     DATABASES = {
         'default': {
@@ -152,8 +161,11 @@ if SERVER_INSTANCE == 'development':
 
 
 elif SERVER_INSTANCE == 'testing':
+
     DEBUG = True
 
 elif SERVER_INSTANCE == 'production':
+
     DEBUG = False
 
+    ALLOWED_HOSTS = []

@@ -3,14 +3,14 @@ from django.db import models
 # Create your models here.
 class Release(models.Model):
 
-    rls_name = models.CharField(max_length=60, verbose_name='Name' )
+    rls_name = models.CharField(max_length=60, verbose_name='Internal Name' )
+    rls_display_name = models.CharField(max_length=60, null=True, blank=True, verbose_name='Display Name')
     rls_version = models.CharField(max_length=60, null=True, blank=True, verbose_name='Version')
     rls_date = models.DateField(null=True, blank=True, verbose_name='Date')
     rls_description = models.TextField(null=True, blank=True, verbose_name='Description')
     rls_doc_url = models.URLField(null=True, blank=True, verbose_name='Doc Url')
-    rls_display_name = models.CharField(max_length=60, null=True, blank=True, verbose_name='Display Name')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.rls_display_name
 
 
@@ -37,7 +37,7 @@ class Tile(models.Model):
     tli_uraur = models.FloatField(null=True, blank=True, verbose_name='uraur')
     tli_udecur = models.FloatField(null=True, blank=True, verbose_name='udecur')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.tli_tilename
 
 class Tag(models.Model):
@@ -56,7 +56,7 @@ class Tag(models.Model):
         through='Tag_Tile',
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.tag_display_name
 
 class Tag_Tile(models.Model):
