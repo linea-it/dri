@@ -38,12 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'corsheaders',
     'coadd'
 ]
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -144,6 +146,8 @@ if SERVER_INSTANCE == 'development':
 
     DEBUG = True
 
+    CORS_ORIGIN_ALLOW_ALL = True
+
     INSTALLED_APPS.extend([
         'debug_toolbar',
     ])
@@ -164,8 +168,14 @@ elif SERVER_INSTANCE == 'testing':
 
     DEBUG = True
 
+    CORS_ORIGIN_ALLOW_ALL = True
+
 elif SERVER_INSTANCE == 'production':
 
     DEBUG = False
 
     ALLOWED_HOSTS = []
+
+    CORS_ORIGIN_WHITELIST = (
+        # 'hostname.example.com'
+    )
