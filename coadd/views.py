@@ -2,7 +2,8 @@ from django.shortcuts import render
 from coadd.models import Release, Tag, Tile
 from rest_framework import viewsets
 from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer
-
+import django_filters
+from rest_framework import filters
 
 # Create your views here.
 class ReleaseViewSet(viewsets.ModelViewSet):
@@ -13,6 +14,10 @@ class ReleaseViewSet(viewsets.ModelViewSet):
     queryset = Release.objects.all()
 
     serializer_class = ReleaseSerializer
+
+    filter_backends = (filters.OrderingFilter,)
+
+    ordering_fields = '__all__'
 
 
 class TagViewSet(viewsets.ModelViewSet):
