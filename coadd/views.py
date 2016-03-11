@@ -15,9 +15,12 @@ class ReleaseViewSet(viewsets.ModelViewSet):
 
     serializer_class = ReleaseSerializer
 
-    filter_backends = (filters.OrderingFilter,)
-
     ordering_fields = '__all__'
+
+    search_fields = ('rls_name', 'rls_display_name',)
+
+    filter_fields = ('rls_name', 'rls_display_name',)
+
 
 
 class TagViewSet(viewsets.ModelViewSet):
