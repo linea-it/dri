@@ -15,12 +15,11 @@ class ReleaseViewSet(viewsets.ModelViewSet):
 
     serializer_class = ReleaseSerializer
 
-    ordering_fields = '__all__'
-
     search_fields = ('rls_name', 'rls_display_name',)
 
-    filter_fields = ('rls_name', 'rls_display_name',)
+    filter_fields = ('id', 'rls_name', 'rls_display_name',)
 
+    ordering_fields = '__all__'
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -31,6 +30,10 @@ class TagViewSet(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
 
     serializer_class = TagSerializer
+
+    filter_fields = ('tag_release', 'tag_name', 'tag_display_name', 'tag_status',)
+
+    ordering_fields = '__all__'
 
 
 class TileViewSet(viewsets.ModelViewSet):

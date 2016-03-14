@@ -8,6 +8,7 @@ class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
         model = Release
 
         fields = (
+            'id',
             'rls_name',
             'rls_display_name',
             'rls_version',
@@ -25,6 +26,7 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
         model = Tag
 
         fields = (
+            'id',
             'tag_release',
             'tag_name',
             'tag_display_name',
@@ -42,6 +44,7 @@ class TileSerializer(serializers.HyperlinkedModelSerializer):
         model = Tile
 
         fields = (
+            'id',
             'tli_tilename',
             'tli_project',
             'tli_ra',

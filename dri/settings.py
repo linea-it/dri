@@ -40,6 +40,7 @@ BASE_APPS = [
     'rest_framework',
     'corsheaders',
     'django_filters',
+    'url_filter',
 ]
 
 PROJECT_APPS = [
@@ -136,7 +137,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 
     'DEFAULT_FILTER_BACKENDS': (
-        'rest_framework.filters.DjangoFilterBackend',
+        # 'rest_framework.filters.DjangoFilterBackend',
+        'url_filter.integrations.drf.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     )
