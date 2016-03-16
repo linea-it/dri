@@ -1,5 +1,8 @@
 from django.db import models
 
+import logging
+logger = logging.getLogger(__name__)
+
 # Create your models here.
 class Release(models.Model):
 
@@ -16,7 +19,7 @@ class Release(models.Model):
 
 class Tile(models.Model):
 
-    tli_tilename = models.CharField(max_length=20, unique=True , verbose_name='Tilename')
+    tli_tilename = models.CharField(max_length=20, unique=True, verbose_name='Tilename')
     tli_project = models.CharField(max_length=80, null=True, blank=True, verbose_name='Project')
     tli_ra = models.FloatField(null=True, blank=True, verbose_name='RA')
     tli_dec = models.FloatField(null=True, blank=True, verbose_name='Dec')
@@ -66,4 +69,4 @@ class Tag_Tile(models.Model):
     run = models.CharField(null=True, blank=True, max_length=30, verbose_name='Run')
 
     def __str__(self):
-        return self.pk
+        return str(self.pk)
