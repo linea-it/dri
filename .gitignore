@@ -10,3 +10,6 @@ db.sqlite3
 
 # Diretorio de projeto pycharm
 .idea/
+
+*.log
+*.swp
