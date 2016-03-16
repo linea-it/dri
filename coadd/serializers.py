@@ -1,4 +1,4 @@
-from .models import Release, Tag, Tile
+from .models import Release, Tag, Tile, Tag_Tile
 from rest_framework import serializers
 
 class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
@@ -14,7 +14,7 @@ class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
             'rls_version',
             'rls_date',
             'rls_doc_url',
-            'rls_description'
+            'rls_description',
         )
 
 class TagSerializer(serializers.HyperlinkedModelSerializer):
@@ -38,6 +38,7 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 class TileSerializer(serializers.HyperlinkedModelSerializer):
+
 
     class Meta:
 
@@ -64,5 +65,5 @@ class TileSerializer(serializers.HyperlinkedModelSerializer):
             'tli_urall',
             'tli_udecll',
             'tli_uraur',
-            'tli_udecur'
+            'tli_udecur',
         )
