@@ -32,10 +32,17 @@ Clone repository
 git clone https://github.com/linea-it/dri.git
 ```
 ### Installing the dependencies
-To install all dependencies Globally on your System, run
+To install all dependencies Globally on your System.
+
+if you are a developer run
+```
+pip install -r requirements_dev.txt
+```
+or 
 ```
 pip install -r requirements.txt
 ```
+
 ### Setting up Database
 ```
 python manage.py makemigrations
