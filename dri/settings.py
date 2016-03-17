@@ -195,6 +195,8 @@ if SERVER_INSTANCE == 'development':
         'debug_toolbar',
     ])
 
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.mysql',
@@ -211,7 +213,16 @@ elif SERVER_INSTANCE == 'testing':
 
     DEBUG = True
 
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
     CORS_ORIGIN_ALLOW_ALL = True
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': 'driapi',
+        }
+    }
 
 elif SERVER_INSTANCE == 'production':
 
@@ -222,3 +233,6 @@ elif SERVER_INSTANCE == 'production':
     CORS_ORIGIN_WHITELIST = (
         # 'hostname.example.com'
     )
+
+    # TODO em production Static root pode ser um diretorio no apache
+    # STATIC_ROOT = os.path.join(BASE_DIR, 'static')
