@@ -42,6 +42,33 @@ or
 ```
 pip install -r requirements.txt
 ```
+### Settings
+in directory dri/dri/settings there are configuration files for each environment.
+by default is set the development.py file it does not need environment variable. for all other environments it is 
+necessary to set the environment variable DJANGO_SETTINGS_MODULE pointing to the file that will be used, 
+it is necessary to pass the full path to the file without the extension. 
+example:
+```
+export DJANGO_SETTINGS_MODULE = dri.settings.production
+```
+dri/settings/
+├── defaults.py
+├── development.py
+├── __init__.py
+├── production.py
+
+- defaults.py: global settings file and included for all other files.
+- development.py: by default setted file in the absence of DJANGO_SETTINGS_MODULE variable, you can be to set apps and parameters used only by developers.
+- testing.py: used in testing servers need to be set a environment variable with the value 'dri.settings.testing'
+- production.py: used in production servers need to be set a environment variable with the 'dri.settings.production' value,
+ in this file the variable debug should always be False and it is necessary to add the host allowed in ALLOWED_HOSTS 
+ parameter and allowed hosts CORS in variable CORS_ORIGIN_WHITELIST.
+
+database settings must be made individually on each of these files, 
+if you are a developer change only the development case file do not want to use sqlite as the default database.
+
+### Setting Database Params
+...
 
 ### Setting up Database
 ```
