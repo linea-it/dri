@@ -43,19 +43,25 @@ or
 pip install -r requirements.txt
 ```
 ### Settings
+
 in directory dri/dri/settings there are configuration files for each environment.
 by default is set the development.py file it does not need environment variable. for all other environments it is 
 necessary to set the environment variable DJANGO_SETTINGS_MODULE pointing to the file that will be used, 
 it is necessary to pass the full path to the file without the extension. 
 example:
+
 ```
 export DJANGO_SETTINGS_MODULE = dri.settings.production
 ```
+
+<pre>
 dri/settings/
+├── __init__.py
 ├── defaults.py
 ├── development.py
-├── __init__.py
+├── testing.py
 ├── production.py
+</pre>
 
 - defaults.py: global settings file and included for all other files.
 - development.py: by default setted file in the absence of DJANGO_SETTINGS_MODULE variable, you can be to set apps and parameters used only by developers.
