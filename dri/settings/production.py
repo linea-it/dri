@@ -4,13 +4,29 @@
 # with activated virtualenv use the command
 # export DJANGO_SETTINGS_MODULE=dri.settings.production
 
+from dri.settings.defaults import *
+
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '10.0.10.30',
+    'devel3.linea.gov.br',
+    'devel3',
+    '200.156.254.10',
+    '127.0.0.1', 'localhost',
+]
 
-CORS_ORIGIN_WHITELIST = (
-    # 'hostname.example.com'
-)
+CORS_ORIGIN_ALLOW_ALL = True
 
-# TODO em production Static root pode ser um diretorio no apache
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# CORS_ORIGIN_WHITELIST = (
+#     # 'hostname.example.com'
+# )
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'driapi',
+    }
+}

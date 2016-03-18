@@ -15,6 +15,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+LOG_DIR = '/tmp'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -47,7 +48,7 @@ THIRD_PARTY_APPS = [
 ]
 
 PROJECT_APPS = [
-       'coadd',
+    'coadd',
 ]
 
 INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
@@ -163,7 +164,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'dri.log',
+            'filename': os.path.join(LOG_DIR, 'api.log'),
             'formatter': 'verbose'
         },
     },
