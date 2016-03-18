@@ -21,15 +21,19 @@ cd dri
 ```
 Create a virtualenv
 ```
-virtualenv --python=/usr/bin/python3.4 dri_env
+virtualenv --python=/usr/bin/python3.4 env
+```
+RedHat
+```
+virtualenv -p python3 env
 ```
 Activation virtualenv
 ```
-source dri_env/bin/activate
+source env/bin/activate
 ```
-Clone repository
+Clone repository 
 ```
-git clone https://github.com/linea-it/dri.git
+git clone https://github.com/linea-it/dri.git api
 ```
 ### Installing the dependencies
 To install all dependencies Globally on your System.

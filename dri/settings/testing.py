@@ -10,11 +10,19 @@ DEBUG = True
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
+ALLOWED_HOSTS = [
+    '10.0.10.30',
+    'devel3.linea.gov.br',
+    'devel3',
+    '200.156.254.10',
+    '127.0.0.1', 'localhost',
+]
+
 CORS_ORIGIN_ALLOW_ALL = True
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'driapi',
+        'NAME': 'driapi_testing.db',
     }
 }

@@ -14,7 +14,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'driapi',
+        'NAME': 'driapi_development.db',
     }
 }
 # Exemple using Mysql need mysqlclient in requiments.txt
