@@ -1,11 +1,9 @@
-from coadd.models import Release, Tag, Tile
-from rest_framework import viewsets
-from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer
-from rest_framework import filters
-from rest_framework.response import Response
-from rest_framework.decorators import detail_route, list_route
-
 import logging
+
+from coadd.models import Release, Tag, Tile, Tag_Tile
+from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer, Tag_TileSerializer
+from rest_framework import viewsets
+
 logger = logging.getLogger(__name__)
 
 # Create your views here.
@@ -48,11 +46,12 @@ class TileViewSet(viewsets.ModelViewSet):
 
     serializer_class = TileSerializer
 
-    filter_fields = ('tli_tilename', 'tag', 'tli_project', 'tli_ra', 'tli_dec',)
+    filter_fields = ('id', 'tli_tilename', 'tag', 'tli_project', 'tli_ra', 'tli_dec',)
 
     search_fields = ('tli_tilename',)
 
     ordering_fields = ('tli_tilename', 'tli_ra', 'tli_dec',)
+
 
     # @list_route()
     # def by_tag(self, request):
@@ -80,3 +79,17 @@ class TileViewSet(viewsets.ModelViewSet):
     #             'count': tiles.__len__()
     #         }
     #         return Response(content)
+
+
+class Tag_TileViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows tag_tile to be viewed or edited
+    """
+
+    queryset = Tag_Tile.objects.all()
+
+    serializer_class = Tag_TileSerializer
+
+    filter_fields = ('id', 'tag', 'tile', 'run',)
+
+    ordering_fields = '__all__'

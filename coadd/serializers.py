@@ -1,5 +1,6 @@
-from .models import Release, Tag, Tile, Tag_Tile
 from rest_framework import serializers
+from .models import Release, Tag, Tile, Tag_Tile
+
 
 class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -38,14 +39,14 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 class TileSerializer(serializers.HyperlinkedModelSerializer):
-
+    # tag_tile_id = serializers.SerializerMethodField()
 
     class Meta:
-
         model = Tile
 
         fields = (
             'id',
+            # 'tag_tile_id',
             'tli_tilename',
             'tli_project',
             'tli_ra',
@@ -67,3 +68,35 @@ class TileSerializer(serializers.HyperlinkedModelSerializer):
             'tli_uraur',
             'tli_udecur',
         )
+
+        # def get_tag_tile_id(self, obj):
+        #
+        #     tag_tiles = obj.tag_tile_set.all()
+        #
+        #     if tag_tiles.count() == 1:
+        #         tag_tile = tag_tiles.first()
+        #
+        #         return tag_tile.pk
+
+
+class Tag_TileSerializer(serializers.HyperlinkedModelSerializer):
+    tag = serializers.PrimaryKeyRelatedField(read_only=True)
+    # tag = TagSerializer(read_only=True)
+    tile = TileSerializer(read_only=True)
+
+    image_src = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Tag_Tile
+
+        fields = (
+            'id',
+            # 'tag_id',
+            'tag',
+            'tile',
+            'run',
+            'image_src',
+        )
+
+    def get_image_src(self, obj):
+        return str('http://10.0.10.30:8152/static/images/tiles/')
