@@ -22,7 +22,7 @@ router = routers.DefaultRouter()
 router.register(r'releases', views.ReleaseViewSet)
 router.register(r'tags', views.TagViewSet)
 router.register(r'tiles', views.TileViewSet)
-router.register(r'tag_tiles', views.Tag_TileViewSet)
+router.register(r'dataset', views.DatasetViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
