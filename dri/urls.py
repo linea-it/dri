@@ -23,7 +23,7 @@ router = routers.DefaultRouter()
 router.register(r'releases', coadd_views.ReleaseViewSet)
 router.register(r'tags', coadd_views.TagViewSet)
 router.register(r'tiles', coadd_views.TileViewSet)
-router.register(r'dataset', coadd_views.DatasetViewSet)
+router.register(r'dataset', coadd_views.DatasetViewSet, base_name='dataset')
 router.register(r'productclass', product_classifier_views.ProductClassViewSet)
 
 urlpatterns = [
