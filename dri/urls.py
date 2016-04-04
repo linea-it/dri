@@ -22,10 +22,11 @@ router = routers.DefaultRouter()
 router.register(r'releases', views.ReleaseViewSet)
 router.register(r'tags', views.TagViewSet)
 router.register(r'tiles', views.TileViewSet)
-router.register(r'dataset', views.DatasetViewSet)
+router.register(r'dataset', views.DatasetViewSet, base_name='dataset')
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include(router.urls)),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
+

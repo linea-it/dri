@@ -1,10 +1,11 @@
 import logging
 
+import django_filters
 from coadd.models import Release, Tag, Tile, Tag_Tile
-from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, Tag_TileSerializer
+from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer
+from rest_framework import filters
 from rest_framework import viewsets
-from rest_framework.decorators import list_route
-from rest_framework.response import Response
+
 logger = logging.getLogger(__name__)
 
 # Create your views here.
@@ -54,133 +55,78 @@ class TileViewSet(viewsets.ModelViewSet):
     ordering_fields = ('tli_tilename', 'tli_ra', 'tli_dec',)
 
 
-    # @list_route()
-    # def by_tag(self, request):
-    #
-    #     logger.info("------------------------------------------------")
-    #
-    #     logger.debug(request)
-    #
-    #     tags = list()
-    #
-    #     tag = request.query_params.get('tag', None)
-    #     logger.debug(tag)
-    #     if tag:
-    #         tags.append(tag)
-    #
-    #     tag_in = request.query_params.get('tag__in', None)
-    #
-    #     if tag_in:
-    #         tags = map(int, tag_in.split(','))
-    #
-    #     resultset = list()
-    #
-    #     for id in tags:
-    #         tags = Tag.objects.filter(pk=id)
-    #         tag = tags[0]
-    #
-    #         release = tag.tag_release
-    #
-    #         tag_tiles = Tag_Tile.objects.filter(tag=id).select_related("tile", "tag")
-    #
-    #         for tt in tag_tiles:
-    #             resultset.append(
-    #                 dict(
-    #                     id=tt.id,
-    #                     tilename=tt.tile.tli_tilename,
-    #                     tag=tt.tag,
-    #                     release=release.pk,
-    #                     run=tt.run,
-    #                     tile=tt.tile
-    #                 )
-    #             )
-    #
-    #     # serializer = DatasetTilesSerializer(resultset, many=True)
-    #
-    #     serializer = DatasetSerializer(resultset, many=True)
-    #
-    #     logger.info("------------------------------------------------")
-    #
-    #     return Response(serializer.data)
-    # ordering = request.query_params.get()
+class DatasetFilter(django_filters.FilterSet):
+    tag__in = django_filters.MethodFilter()
 
-    # tiles = Tile.objects.filter(tag=tag)
-    #
-    # page = self.paginate_queryset(tiles)
-    #
-    # logger.debug(page)
-    #
-    # if page is not None:
-    #     serializer = self.get_serializer(page, many=True)
-    #
-    #     return self.get_paginated_response(serializer.data)
-    #
-    # else:
-    #     serializer = self.get_serializer(tiles, many=True)
-    #     content = {
-    #         'results': serializer.data,
-    #         'count': tiles.__len__()
-    #     }
-    #     return Response(content)
+    class Meta:
+        model = Tag_Tile
+        fields = ['id', 'tag', 'tile', 'tag__in']
+
+    def filter_tag__in(self, queryset, value):
+        return queryset.filter(tag__in=value.split(','))
+
 
 
 class DatasetViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows datasets to be viewed
-    """
-    queryset = Tag_Tile.objects.all()
+    queryset = Tag_Tile.objects.select_related().all()
 
-    serializer_class = Tag_TileSerializer
+    serializer_class = DatasetSerializer
 
-    filter_fields = ('id', 'tag', 'tile', 'run', 'tag_id')
+    filter_backends = (filters.DjangoFilterBackend,)
 
-    ordering_fields = '__all__'
+    filter_class = DatasetFilter
 
-    @list_route()
-    def by_tag(self, request):
+    # ordering_fields = ('id', 'tag')
 
-        ids = list()
-
-        tag = request.query_params.get('tag', None)
-        if tag:
-            ids.append(tag)
-
-        tag_in = request.query_params.get('tag__in', None)
-        if tag_in:
-            ids = map(int, tag_in.split(','))
-
-        resultset = list()
-
-        for id in ids:
-            tag = Tag.objects.get(pk=id)
-            release = tag.tag_release
-
-            queryset = Tag_Tile.objects.filter(tag=id).select_related("tile", "tag")
-
-            for row in queryset:
-                resultset.append(
-                    dict(
-                        id=row.id,
-                        tilename=row.tile.tli_tilename,
-                        tag=row.tag,
-                        release=release,
-                        run=row.run,
-                        tile=row.tile
-                    )
-                )
-
-        page = self.paginate_queryset(resultset)
-
-        if page is not None:
-            serializer = DatasetSerializer(page, many=True)
-
-            return self.get_paginated_response(serializer.data)
-
-        else:
-            serializer = DatasetSerializer(resultset, many=True)
-            content = Response({
-                'results': serializer.data,
-                'count': len(resultset)
-            })
-
-            return content
+# class DatasetViewSet(viewsets.ViewSet,
+#                      generics.GenericAPIView):
+#
+#     # queryset = Tag_Tile.objects.select_related().all()
+#
+#     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+#
+#     serializer_class = DatasetSerializer
+#
+#
+#     def get_queryset(self):
+#         logger.info('-----------------get_queryset-----------')
+#         pass
+#
+#     def retrieve(self, request, pk=None):
+#
+#         obj = get_object_or_404(Tag_Tile, pk=pk)
+#
+#         serializer = DatasetSerializer(obj)
+#
+#         return Response(serializer.data)
+#
+#
+#     def list(self, request):
+#         logger.info('-----------------list---------------------')
+#
+#         tag = request.query_params.get('tag', None)
+#         if tag:
+#             queryset = get_list_or_404(Tag_Tile.objects.select_related(), tag=tag)
+#
+#         tag_in = request.query_params.get('tag__in', None)
+#         if tag_in:
+#             ids = map(int, tag_in.split(','))
+#
+#             queryset = get_list_or_404(Tag_Tile.objects.select_related(), tag__in=ids)
+#
+#         page = self.paginate_queryset(queryset)
+#
+#         logger.info('--------------------------------------')
+#
+#         if page is not None:
+#             serializer = self.get_serializer(page, many=True)
+#             return self.get_paginated_response(serializer.data)
+#
+#         else:
+#             serializer = DatasetSerializer(queryset, many=True)
+#             content = Response({
+#                 'count': len(queryset),
+#                 'results': serializer.data,
+#             })
+#
+#             return content
