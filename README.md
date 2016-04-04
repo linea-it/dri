@@ -34,6 +34,7 @@ source env/bin/activate
 Clone repository 
 ```
 git clone https://github.com/linea-it/dri.git api
+cd api
 ```
 ### Installing the dependencies
 To install all dependencies Globally on your System.
@@ -48,15 +49,16 @@ pip install -r requirements.txt
 ```
 ### Settings
 
-in directory dri/dri/settings there are configuration files for each environment.
-by default is set the development.py file it does not need environment variable. for all other environments it is 
-necessary to set the environment variable DJANGO_SETTINGS_MODULE pointing to the file that will be used, 
-it is necessary to pass the full path to the file without the extension. 
+In directory dri/dri/settings there are configuration files for each environment.
+The development environment is set by default (development.py file is set), so to develoment porpuses there is no needs to any configuration.
+For all other environments it is necessary to set the environment variable DJANGO_SETTINGS_MODULE pointing to the file that will be used, it is necessary to pass the full path to the file without the extension. 
 example:
 
 ```
 export DJANGO_SETTINGS_MODULE = dri.settings.production
 ```
+
+The structure of this part of the project is:
 
 <pre>
 dri/settings/
@@ -74,7 +76,7 @@ dri/settings/
  in this file the variable debug should always be False and it is necessary to add the host allowed in ALLOWED_HOSTS 
  parameter and allowed hosts CORS in variable CORS_ORIGIN_WHITELIST.
 
-database settings must be made individually on each of these files, 
+Database settings must be made individually on each of these files, 
 if you are a developer change only the development case file do not want to use sqlite as the default database.
 
 ### Setting Database Params
