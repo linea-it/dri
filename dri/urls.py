@@ -15,6 +15,7 @@ Including another URLconf
 """
 from coadd import views as coadd_views
 from product_classifier import views as product_classifier_views
+from product import views as product_views
 from django.conf.urls import url, include
 from django.contrib import admin
 from rest_framework import routers
@@ -25,6 +26,7 @@ router.register(r'tags', coadd_views.TagViewSet)
 router.register(r'tiles', coadd_views.TileViewSet)
 router.register(r'dataset', coadd_views.DatasetViewSet, base_name='dataset')
 router.register(r'productclass', product_classifier_views.ProductClassViewSet)
+router.register(r'product', product_views.ProductViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

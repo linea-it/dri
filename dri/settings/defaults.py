@@ -49,7 +49,8 @@ THIRD_PARTY_APPS = [
 
 PROJECT_APPS = [
     'coadd',
-    'product_classifier'
+    'product_classifier',
+    'product'
 ]
 
 INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
