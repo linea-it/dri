@@ -17,7 +17,7 @@ class Product(models.Model):
     prd_description = models.CharField(
         max_length=1024, verbose_name='Description')
     prd_class = models.ForeignKey(
-        ProductClass, on_delete=models.CASCADE)
+        ProductClass, on_delete=models.CASCADE, verbose_name='Product class')
     prd_flag_removed = models.BooleanField(
         default=False, verbose_name='Mark a product as removed')
 
