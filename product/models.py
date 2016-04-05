@@ -25,7 +25,7 @@ class Product(models.Model):
         return self.prd_display_name
 
 
-class File(models.Product):
+class File(Product):
 
     fli_base_path = models.CharField(
         max_length=256, verbose_name='Base path')
@@ -36,7 +36,7 @@ class File(models.Product):
         return self.fli_name
 
 
-class Table(models.Product):
+class Table(Product):
 
     tbl_schema = models.CharField(
         max_length=128, verbose_name='Schema name')
@@ -47,7 +47,7 @@ class Table(models.Product):
         return self.tbl_name
 
 
-class Catalog(models.Table):
+class Catalog(Table):
 
     ctl_num_columns = models.PositiveIntegerField(
         verbose_name='Num of columns')
@@ -57,7 +57,7 @@ class Catalog(models.Table):
         verbose_name='Num of objects')
 
 
-class Map(models.Table):
+class Map(Table):
 
     mpa_nside = models.PositiveSmallIntegerField(
         verbose_name='Nside')
@@ -72,7 +72,7 @@ class Map(models.Table):
     #                                       a file with same id of product...
 
 
-class Mask(models.Table):
+class Mask(Table):
 
     msk_filter = models.CharField(
         max_length=1, verbose_name='Filter')
