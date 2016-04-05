@@ -5,12 +5,22 @@
 ## Requirements
 Python 3.4
 Pip 
+Virtualenv
+
+* In Debian/Ubuntu OS:
+
 ```
 sudo apt-get install python3-pip
-```
-Virtualenv
-```
 sudo apt-get install python3.4-venv
+```
+
+* In RedHat/CentOS OS:
+
+```
+sudo pip install virtualenv
+sudo pip upgrade virtualenv
+sudo pip install --upgrade virtualenv
+virtualenv -p python3 env
 ```
 
 ## Installation
@@ -20,10 +30,15 @@ mkdir dri
 cd dri
 ```
 Create a virtualenv
+
+* In Debian/Ubuntu OS:
+
 ```
 virtualenv --python=/usr/bin/python3.4 env
 ```
-RedHat
+
+* In RedHat/CentOS OS:
+
 ```
 virtualenv -p python3 env
 ```
@@ -82,16 +97,16 @@ if you are a developer change only the development case file do not want to use 
 ### Setting Database Params
 ...
 
-### Setting up Database
+## Setting up Database
 ```
 python manage.py makemigrations
 python manage.py migrate
 ```
-### Create a Super User in django
+## Create a Super User in django
 ```
 python manage.py createsuperuser
 ```
-### Start the server
+## Start the server
 ```
 python manage.py runserver
 ```
