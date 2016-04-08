@@ -50,6 +50,7 @@ THIRD_PARTY_APPS = [
 PROJECT_APPS = [
     'coadd',
     'product_classifier',
+    'product_register',
     'product'
 ]
 
@@ -181,6 +182,12 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'product_classifier.log'),
             'formatter': 'verbose'
         },
+        'product_register': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'product_register.log'),
+            'formatter': 'verbose'
+        },
     },
     'loggers': {
         'django': {
@@ -194,6 +201,10 @@ LOGGING = {
         },
         'product_classifier': {
             'handlers': ['product_classifier'],
+            'level': 'DEBUG',
+        },
+        'product_register': {
+            'handlers': ['product_register'],
             'level': 'DEBUG',
         },
     }
