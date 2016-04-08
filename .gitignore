@@ -4,9 +4,9 @@ __pycache__
 # Virtual Env
 dri_env
 
-# Database de test sqlite
+# Database de test
 db.sqlite3
-
+driapi_development.db
 
 # Diretorio de projeto pycharm
 .idea/
