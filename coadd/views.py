@@ -8,6 +8,7 @@ from rest_framework import viewsets
 
 logger = logging.getLogger(__name__)
 
+
 # Create your views here.
 class ReleaseViewSet(viewsets.ModelViewSet):
     """
@@ -39,6 +40,17 @@ class TagViewSet(viewsets.ModelViewSet):
     ordering_fields = '__all__'
 
 
+#
+# class TileFilter(django_filters.FilterSet):
+#
+#
+#
+#     class Meta:
+#         model = Tile
+#         fields = ('id', 'tli_tilename', 'tag', 'tli_project', 'tli_ra', 'tli_dec',)
+#         order_by = True
+
+
 class TileViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows tile to be viewed or edited
@@ -48,7 +60,9 @@ class TileViewSet(viewsets.ModelViewSet):
 
     serializer_class = TileSerializer
 
+    # filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('id', 'tli_tilename', 'tag', 'tli_project', 'tli_ra', 'tli_dec',)
+    # filter_class = TileFilter
 
     search_fields = ('tli_tilename',)
 
@@ -57,14 +71,15 @@ class TileViewSet(viewsets.ModelViewSet):
 
 class DatasetFilter(django_filters.FilterSet):
     tag__in = django_filters.MethodFilter()
+    tli_tilename = django_filters.CharFilter(name='tile__tli_tilename', label='Tilename')
 
     class Meta:
         model = Tag_Tile
-        fields = ['id', 'tag', 'tile', 'tag__in']
+        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', ]
+        order_by = True
 
     def filter_tag__in(self, queryset, value):
         return queryset.filter(tag__in=value.split(','))
-
 
 
 class DatasetViewSet(viewsets.ModelViewSet):
@@ -76,7 +91,8 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
     filter_class = DatasetFilter
 
-    # ordering_fields = ('id', 'tag')
+    ordering_fields = ('id', 'tag')
+    # ordering_fields = '__all__'
 
 # class DatasetViewSet(viewsets.ViewSet,
 #                      generics.GenericAPIView):

@@ -5,10 +5,9 @@ from .models import Release, Tag, Tile, Tag_Tile
 
 logger = logging.getLogger(__name__)
 
+
 class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
-
         model = Release
 
         fields = (
@@ -20,6 +19,7 @@ class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
             'rls_doc_url',
             'rls_description',
         )
+
 
 class TileSerializer(serializers.HyperlinkedModelSerializer):
     tli_ra = serializers.DecimalField(max_digits=7, decimal_places=4, coerce_to_string=False)
@@ -78,6 +78,7 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
             'tag_start_date',
             'tag_discovery_date',
         )
+
 
 class Tag_TileSerializer(serializers.HyperlinkedModelSerializer):
     tag = serializers.PrimaryKeyRelatedField(read_only=True)

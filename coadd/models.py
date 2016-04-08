@@ -1,12 +1,13 @@
+import logging
+
 from django.db import models
 
-import logging
 logger = logging.getLogger(__name__)
+
 
 # Create your models here.
 class Release(models.Model):
-
-    rls_name = models.CharField(max_length=60, verbose_name='Internal Name' )
+    rls_name = models.CharField(max_length=60, verbose_name='Internal Name')
     rls_display_name = models.CharField(max_length=60, null=True, blank=True, verbose_name='Display Name')
     rls_version = models.CharField(max_length=60, null=True, blank=True, verbose_name='Version')
     rls_date = models.DateField(null=True, blank=True, verbose_name='Date')
@@ -18,7 +19,6 @@ class Release(models.Model):
 
 
 class Tile(models.Model):
-
     tli_tilename = models.CharField(max_length=20, unique=True, verbose_name='Tilename')
     tli_project = models.CharField(max_length=80, null=True, blank=True, verbose_name='Project')
     tli_ra = models.FloatField(null=True, blank=True, verbose_name='RA')
@@ -43,8 +43,8 @@ class Tile(models.Model):
     def __str__(self):
         return self.tli_tilename
 
-class Tag(models.Model):
 
+class Tag(models.Model):
     tag_release = models.ForeignKey(Release, related_name='tags', on_delete=models.CASCADE, verbose_name='Release')
     tag_name = models.CharField(max_length=60, verbose_name='Internal Name')
     tag_display_name = models.CharField(max_length=80, null=True, blank=True, verbose_name='Display Name')
@@ -62,8 +62,8 @@ class Tag(models.Model):
     def __str__(self):
         return self.tag_display_name
 
-class Tag_Tile(models.Model):
 
+class Tag_Tile(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     tile = models.ForeignKey(Tile, on_delete=models.CASCADE)
     run = models.CharField(null=True, blank=True, max_length=30, verbose_name='Run')
