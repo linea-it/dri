@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -22,7 +21,8 @@ class Migration(migrations.Migration):
                 ('rls_date', models.DateField(blank=True, null=True, verbose_name='Date')),
                 ('rls_description', models.TextField(blank=True, null=True, verbose_name='Description')),
                 ('rls_doc_url', models.URLField(blank=True, null=True, verbose_name='Doc Url')),
-                ('rls_display_name', models.CharField(blank=True, max_length=60, null=True, verbose_name='Display Name')),
+                ('rls_display_name',
+                 models.CharField(blank=True, max_length=60, null=True, verbose_name='Display Name')),
             ],
         ),
     ]
