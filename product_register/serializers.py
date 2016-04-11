@@ -4,6 +4,8 @@ from rest_framework import serializers
 from .models import Export 
 from .models import ExternalProcess 
 from .models import Site 
+from .models import Discover
+from .models import Upload
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +17,7 @@ class ExportSerializer(serializers.HyperlinkedModelSerializer):
         model = Export
 
         fields = (
-            'exp_id',
+            'id',
             'exp_username',
             'exp_date',
             'exp_product_id',
@@ -29,7 +31,7 @@ class ExternalProcessSerializer(serializers.HyperlinkedModelSerializer):
         model = ExternalProcess
 
         fields = (
-            'epr_id',
+            'id',
             'epr_name',
             'epr_username',
             'epr_start_date',
@@ -47,7 +49,27 @@ class SiteSerializer(serializers.HyperlinkedModelSerializer):
         model = Site
 
         fields = (
-            'ste_id',
+            'id',
             'ste_name',
             'ste_url'
+        )
+
+class DiscoverSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+
+        model = Discover
+
+        fields = (
+            'id'
+        )
+
+class UploadSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+
+        model = Upload
+
+        fields = (
+            'id'
         )
