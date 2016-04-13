@@ -29,8 +29,8 @@ class Site(models.Model):
     ste_url = models.CharField(max_length=128)
 
 class Discover(models.Model):
-    dsc_dummy = models.CharField(max_length=128)
+    dsc_dummy = models.CharField(max_length=128, default=None)
 
 class Upload(models.Model):
-    upl_dummy = models.CharField(max_length=128)
+    upl_dummy = models.CharField(max_length=128, default=None)
 
