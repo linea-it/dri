@@ -1,8 +1,8 @@
-*.pyc
-__pycache__
-
 # Virtual Env
 dri_env
+
+# Local configs
+dri/settings/local.py
 
 # Database de test
 db.sqlite3
@@ -11,6 +11,9 @@ driapi_development.db
 # Diretorio de projeto pycharm
 .idea/
 
+# Others
+*.pyc
+__pycache__
 *.log
 *.swp
 *.bak
