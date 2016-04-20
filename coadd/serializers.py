@@ -1,7 +1,8 @@
 import logging
 
 from rest_framework import serializers
-from .models import Release, Tag, Tile, Tag_Tile
+
+from .models import Release, Tag, Tile, Tag_Tile, Filter
 
 logger = logging.getLogger(__name__)
 
@@ -143,3 +144,17 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
         image_src = "%s/%s" % (release.rls_name, tag.tag_name)
 
         return base_src + image_src
+
+
+class FilterSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Filter
+
+        fields = (
+            'id',
+            'project',
+            'filter',
+            'lambda_min',
+            'lambda_max',
+            'lambda_mean'
+        )
