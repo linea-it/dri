@@ -97,8 +97,11 @@ class Tag_TileSerializer(serializers.HyperlinkedModelSerializer):
 
 class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     tag = serializers.PrimaryKeyRelatedField(read_only=True)
-    tile = TileSerializer(read_only=True)
     release = serializers.SerializerMethodField()
+    tile = serializers.SerializerMethodField()
+    tli_tilename = serializers.SerializerMethodField()
+    tli_ra = serializers.SerializerMethodField()
+    tli_dec = serializers.SerializerMethodField()
     image_src = serializers.SerializerMethodField()
 
     class Meta:
@@ -110,11 +113,26 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'release',
             'tile',
             'run',
+            'tli_tilename',
+            'tli_ra',
+            'tli_dec',
             'image_src',
         )
 
     def get_release(self, obj):
         return obj.tag.tag_release.pk
+
+    def get_tile(self, obj):
+        return obj.tile.pk
+
+    def get_tli_tilename(self, obj):
+        return obj.tile.tli_tilename
+
+    def get_tli_ra(self, obj):
+        return obj.tile.tli_ra
+
+    def get_tli_dec(self, obj):
+        return obj.tile.tli_dec
 
     def get_image_src(self, obj):
         tag = obj.tag
