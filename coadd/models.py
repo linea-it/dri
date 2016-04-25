@@ -72,6 +72,7 @@ class Tag_Tile(models.Model):
         return str(self.pk)
 
 
+# TODO mover para um app separado (common)
 class Filter(models.Model):
     project = models.CharField(max_length=20, null=True, blank=True, verbose_name='Project')
     filter = models.CharField(max_length=3, null=False, blank=False, verbose_name='Filter')
@@ -81,3 +82,20 @@ class Filter(models.Model):
 
     def __str__(self):
         return str(self.filter)
+
+
+class Survey(models.Model):
+    srv_release = models.ForeignKey(
+        Release, related_name='surveys', on_delete=models.CASCADE, verbose_name='Release')
+    srv_filter = models.ForeignKey(
+        Filter, verbose_name='Filter')
+    srv_project = models.CharField(
+        max_length=20, null=True, blank=True, verbose_name='Project')
+    srv_display_name = models.CharField(
+        max_length=80, verbose_name='Display Name')
+    srv_url = models.URLField(
+        verbose_name='URL')
+
+    def __str__(self):
+        s = "%s_%s" % (self.srv_release.rls_display_name, self.srv_display_name)
+        return str(s)

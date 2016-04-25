@@ -6,9 +6,11 @@ from .models import Tile
 from .models import Tag
 from .models import Tag_Tile
 from .models import Filter
+from .models import Survey
 
 admin.site.register(Release)
 admin.site.register(Tile)
 admin.site.register(Tag)
 admin.site.register(Tag_Tile)
 admin.site.register(Filter)
+admin.site.register(Survey)

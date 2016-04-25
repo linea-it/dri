@@ -4,8 +4,9 @@ import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
 
-from coadd.models import Release, Tag, Tile, Tag_Tile, Filter
-from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, FilterSerializer
+from coadd.models import Release, Tag, Tile, Tag_Tile, Filter, Survey
+from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, FilterSerializer, \
+    SurveySerializer
 
 logger = logging.getLogger(__name__)
 
@@ -108,6 +109,20 @@ class FilterViewSet(viewsets.ModelViewSet):
     filter_fields = '__all__'
 
     ordering_fields = '__all__'
+
+
+class SurveyViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows surveys to be viewed or edited
+    """
+
+    queryset = Survey.objects.select_related().all()
+
+    serializer_class = SurveySerializer
+
+    filter_fields = ('id', 'srv_release', 'srv_project',)
+
+    ordering_fields = ('srv_filter__lambda_min',)
 
 # class DatasetViewSet(viewsets.ViewSet,
 #                      generics.GenericAPIView):

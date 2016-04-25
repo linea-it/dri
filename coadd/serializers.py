@@ -2,7 +2,7 @@ import logging
 
 from rest_framework import serializers
 
-from .models import Release, Tag, Tile, Tag_Tile, Filter
+from .models import Release, Tag, Tile, Tag_Tile, Filter, Survey
 
 logger = logging.getLogger(__name__)
 
@@ -158,3 +158,25 @@ class FilterSerializer(serializers.HyperlinkedModelSerializer):
             'lambda_max',
             'lambda_mean'
         )
+
+
+class SurveySerializer(serializers.HyperlinkedModelSerializer):
+    srv_release = serializers.PrimaryKeyRelatedField(read_only=True)
+    srv_filter = serializers.PrimaryKeyRelatedField(read_only=True)
+    filter = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Survey
+
+        fields = (
+            'id',
+            'filter',
+            'srv_release',
+            'srv_filter',
+            'srv_project',
+            'srv_display_name',
+            'srv_url'
+        )
+
+    def get_filter(self, obj):
+        return obj.srv_filter.filter

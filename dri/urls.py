@@ -27,6 +27,7 @@ router.register(r'tags', coadd_views.TagViewSet)
 router.register(r'tiles', coadd_views.TileViewSet)
 router.register(r'dataset', coadd_views.DatasetViewSet, base_name='dataset')
 router.register(r'filters', coadd_views.FilterViewSet)
+router.register(r'surveys', coadd_views.SurveyViewSet)
 router.register(r'productclass', product_classifier_views.ProductClassViewSet)
 router.register(r'product', product_views.ProductViewSet)
 
