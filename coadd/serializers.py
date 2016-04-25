@@ -1,7 +1,8 @@
 import logging
 
 from rest_framework import serializers
-from .models import Release, Tag, Tile, Tag_Tile
+
+from .models import Release, Tag, Tile, Tag_Tile, Filter, Survey
 
 logger = logging.getLogger(__name__)
 
@@ -143,3 +144,39 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
         image_src = "%s/%s" % (release.rls_name, tag.tag_name)
 
         return base_src + image_src
+
+
+class FilterSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Filter
+
+        fields = (
+            'id',
+            'project',
+            'filter',
+            'lambda_min',
+            'lambda_max',
+            'lambda_mean'
+        )
+
+
+class SurveySerializer(serializers.HyperlinkedModelSerializer):
+    srv_release = serializers.PrimaryKeyRelatedField(read_only=True)
+    srv_filter = serializers.PrimaryKeyRelatedField(read_only=True)
+    filter = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Survey
+
+        fields = (
+            'id',
+            'filter',
+            'srv_release',
+            'srv_filter',
+            'srv_project',
+            'srv_display_name',
+            'srv_url'
+        )
+
+    def get_filter(self, obj):
+        return obj.srv_filter.filter
