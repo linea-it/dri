@@ -8,8 +8,8 @@ from pprint import pprint
 class OracleDB:
 
     def __init__(self):
-        connection=ea.connect()
-        self.cursor=connection.cursor() 
+        self.connection = ea.connect()
+        self.cursor= self.connection.cursor() 
 
     def fetch_all(self,query):
         self.cursor.execute(query) 
@@ -41,7 +41,7 @@ class OracleDB:
 
     def fetch_scalar(self,query,col=0):
         self.cursor.execute(query) 
-        row = self.fetch_one() 
+        row = self.fetch_one(query) 
         if row != None:
             return row[col]
         else:
@@ -79,13 +79,13 @@ class OracleDB:
         return sql
 
     def fetch_columns(self, table):
-        easyoracle = ea.easy_or(connect.config, connect.desconfig, connect.dbname)
+        easyoracle = ea.easy_or(self.connection.config, self.connection.desconfig, self.connection.dbname)
         columns = easyoracle.get_columnlist_table("\'"+table+"\'")
 
         return columns
 
 
-    def parseFilter(self, filter, dictionary = False, checkColumns = None)
+    def parseFilter(self, filter, dictionary = False, checkColumns = None):
         
         """
         Usado nos metodos que se comunicam com o Framework Extjs.
@@ -167,14 +167,14 @@ class OracleDB:
                         import datetime
                         split = col['value'].split("/")
                         col['value'] = datetime.date(int(split[2]),int(split[0]), int(split[1]))
-                    except Exception, error:
+                    except Exception as error:
                         pprint("Exception: Parse Sort:")
                         pprint(error)
                     try:
                         import datetime
                         split = col['value'].split("-")
                         col['value'] = datetime.date(int(split[2]),int(split[0]), int(split[1]))
-                    except Exception, error:
+                    except Exception as error:
                         pprint("Exception: Parse Sort:")
                         pprint(error)
                     clause = " %s %s '%s'" %(col['property'], comp, col['value'])
@@ -286,7 +286,7 @@ class OracleDB:
                 else:
                     return None
 
-        except Exception, error:
+        except Exception as error:
             pprint("Exception: Parse Sort:")
             pprint(error)
             return None
@@ -314,7 +314,7 @@ class OracleDB:
             else:
                 return None
 
-        except Exception, error:
+        except Exception as error:
             pprint("Exception: Parse Limit:")
             pprint(error)
             return None
