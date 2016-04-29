@@ -6,7 +6,7 @@ from rest_framework import viewsets
 
 from coadd.models import Release, Tag, Tile, Tag_Tile, Filter, Survey
 from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, FilterSerializer, \
-    SurveySerializer
+    SurveySerializer, DatasetFootprintSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -94,7 +94,19 @@ class DatasetViewSet(viewsets.ModelViewSet):
     filter_class = DatasetFilter
 
     ordering_fields = ('id', 'tag')
-    # ordering_fields = '__all__'
+
+
+class DatasetFootprintViewSet(viewsets.ModelViewSet):
+    queryset = Tag_Tile.objects.select_related().all()
+
+    serializer_class = DatasetFootprintSerializer
+
+    filter_backends = (filters.DjangoFilterBackend,)
+
+    filter_class = DatasetFilter
+
+    ordering_fields = ('id', 'tag')
+
 
 
 class FilterViewSet(viewsets.ModelViewSet):

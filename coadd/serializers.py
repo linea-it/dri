@@ -138,12 +138,35 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     def get_image_src(self, obj):
         tag = obj.tag
         release = obj.tag.tag_release
+        # http://desportal.cosmology.illinois.edu/data/releases/Y1_WIDE_SURVEY/images/thumb/g/DES2311-0124.png
+        base_src = "http://desportal.cosmology.illinois.edu/data/releases/"
 
-        base_src = "http://10.0.10.30:8152/static/images/tiles/"
-
-        image_src = "%s/%s" % (release.rls_name, tag.tag_name)
+        image_src = "%s/images/thumb" % (release.rls_name)
 
         return base_src + image_src
+
+
+class DatasetFootprintSerializer(serializers.BaseSerializer):
+    def to_representation(self, obj):
+        return [
+            obj.id,
+            obj.tag.id,
+            obj.tag.tag_release.id,
+            obj.tile.id,
+            obj.tile.tli_tilename,
+            obj.tile.tli_rall,
+            obj.tile.tli_decll,
+            obj.tile.tli_raul,
+            obj.tile.tli_decul,
+            obj.tile.tli_raur,
+            obj.tile.tli_decur,
+            obj.tile.tli_ralr,
+            obj.tile.tli_declr,
+            obj.tile.tli_urall,
+            obj.tile.tli_udecll,
+            obj.tile.tli_uraur,
+            obj.tile.tli_udecur,
+        ]
 
 
 class FilterSerializer(serializers.HyperlinkedModelSerializer):
