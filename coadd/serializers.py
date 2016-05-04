@@ -19,6 +19,7 @@ class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
             'rls_date',
             'rls_doc_url',
             'rls_description',
+            'rls_default',
         )
 
 
