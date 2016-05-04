@@ -1,0 +1,72 @@
+[
+  {
+    "model": "validation.features",
+    "pk": 1,
+    "fields": {
+      "ftr_name": "Scattered light"
+    }
+  },
+  {
+    "model": "validation.features",
+    "pk": 2,
+    "fields": {
+      "ftr_name": "Ghosts"
+    }
+  },
+  {
+    "model": "validation.features",
+    "pk": 3,
+    "fields": {
+      "ftr_name": "Bright horizontal stripes"
+    }
+  },
+  {
+    "model": "validation.features",
+    "pk": 4,
+    "fields": {
+      "ftr_name": "Airplane trails"
+    }
+  },
+  {
+    "model": "validation.features",
+    "pk": 5,
+    "fields": {
+      "ftr_name": "Satellite trails"
+    }
+  },
+  {
+    "model": "validation.features",
+    "pk": 6,
+    "fields": {
+      "ftr_name": "noisy background"
+    }
+  },
+  {
+    "model": "validation.features",
+    "pk": 7,
+    "fields": {
+      "ftr_name": "Incomplete tile"
+    }
+  },
+  {
+    "model": "validation.features",
+    "pk": 8,
+    "fields": {
+      "ftr_name": "Bright star"
+    }
+  },
+  {
+    "model": "validation.features",
+    "pk": 9,
+    "fields": {
+      "ftr_name": "Cosmic Ray"
+    }
+  },
+  {
+    "model": "validation.features",
+    "pk": 10,
+    "fields": {
+      "ftr_name": "Other"
+    }
+  }
+]
