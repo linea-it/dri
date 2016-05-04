@@ -198,7 +198,9 @@ class SurveySerializer(serializers.HyperlinkedModelSerializer):
             'srv_filter',
             'srv_project',
             'srv_display_name',
-            'srv_url'
+            'srv_url',
+            'srv_target',
+            'srv_fov'
         )
 
     def get_filter(self, obj):

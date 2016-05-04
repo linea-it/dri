@@ -131,6 +131,16 @@ class Survey(models.Model):
         max_length=80, verbose_name='Display Name')
     srv_url = models.URLField(
         verbose_name='URL')
+    srv_target = models.CharField(
+        max_length=25, null=True, blank=True, verbose_name='Target',
+        help_text=(
+            'Initial position for this survey must be hours or degrees. '
+            'Example: 02 21 36.957 -05 31 10.26 or 35.4832, -5.4800.')
+    )
+    srv_fov = models.FloatField(
+        max_length=10, null=True, blank=True, verbose_name='FoV',
+        help_text='Initial Zoom in degrees.'
+    )
 
     def __str__(self):
         return str(self.srv_display_name)
