@@ -189,6 +189,24 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'product_register.log'),
             'formatter': 'verbose'
         },
+        'product': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'product.log'),
+            'formatter': 'verbose'
+        },
+        'features': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'features.log'),
+            'formatter': 'verbose'
+        },
+        'flagged': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'flagged.log'),
+            'formatter': 'verbose'
+        },
     },
     'loggers': {
         'django': {
@@ -206,6 +224,18 @@ LOGGING = {
         },
         'product_register': {
             'handlers': ['product_register'],
+            'level': 'DEBUG',
+        },
+        'product': {
+            'handlers': ['product'],
+            'level': 'DEBUG',
+        },
+        'features': {
+            'handlers': ['features'],
+            'level': 'DEBUG',
+        },
+        'flagged': {
+            'handlers': ['flagged'],
             'level': 'DEBUG',
         },
     }

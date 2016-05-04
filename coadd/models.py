@@ -93,14 +93,14 @@ class Tag(models.Model):
 
     tiles = models.ManyToManyField(
         Tile,
-        through='Tag_Tile',
+        through='Dataset',
     )
 
     def __str__(self):
         return self.tag_display_name
 
 
-class Tag_Tile(models.Model):
+class Dataset(models.Model):
     tag = models.ForeignKey(
         Tag, on_delete=models.CASCADE)
     tile = models.ForeignKey(
