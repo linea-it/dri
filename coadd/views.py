@@ -4,7 +4,7 @@ import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
 
-from coadd.models import Release, Tag, Tile, Tag_Tile, Filter, Survey
+from coadd.models import Release, Tag, Tile, Dataset, Filter, Survey
 from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, FilterSerializer, \
     SurveySerializer, DatasetFootprintSerializer
 
@@ -76,7 +76,7 @@ class DatasetFilter(django_filters.FilterSet):
     tli_tilename = django_filters.CharFilter(name='tile__tli_tilename', label='Tilename')
 
     class Meta:
-        model = Tag_Tile
+        model = Dataset
         fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', ]
         order_by = True
 
@@ -85,7 +85,7 @@ class DatasetFilter(django_filters.FilterSet):
 
 
 class DatasetViewSet(viewsets.ModelViewSet):
-    queryset = Tag_Tile.objects.select_related().all()
+    queryset = Dataset.objects.select_related().all()
 
     serializer_class = DatasetSerializer
 
@@ -97,7 +97,7 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
 
 class DatasetFootprintViewSet(viewsets.ModelViewSet):
-    queryset = Tag_Tile.objects.select_related().all()
+    queryset = Dataset.objects.select_related().all()
 
     serializer_class = DatasetFootprintSerializer
 
@@ -139,7 +139,7 @@ class SurveyViewSet(viewsets.ModelViewSet):
 # class DatasetViewSet(viewsets.ViewSet,
 #                      generics.GenericAPIView):
 #
-#     # queryset = Tag_Tile.objects.select_related().all()
+#     # queryset = Dataset.objects.select_related().all()
 #
 #     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 #
@@ -152,7 +152,7 @@ class SurveyViewSet(viewsets.ModelViewSet):
 #
 #     def retrieve(self, request, pk=None):
 #
-#         obj = get_object_or_404(Tag_Tile, pk=pk)
+#         obj = get_object_or_404(Dataset, pk=pk)
 #
 #         serializer = DatasetSerializer(obj)
 #
@@ -164,13 +164,13 @@ class SurveyViewSet(viewsets.ModelViewSet):
 #
 #         tag = request.query_params.get('tag', None)
 #         if tag:
-#             queryset = get_list_or_404(Tag_Tile.objects.select_related(), tag=tag)
+#             queryset = get_list_or_404(Dataset.objects.select_related(), tag=tag)
 #
 #         tag_in = request.query_params.get('tag__in', None)
 #         if tag_in:
 #             ids = map(int, tag_in.split(','))
 #
-#             queryset = get_list_or_404(Tag_Tile.objects.select_related(), tag__in=ids)
+#             queryset = get_list_or_404(Dataset.objects.select_related(), tag__in=ids)
 #
 #         page = self.paginate_queryset(queryset)
 #

@@ -2,7 +2,7 @@ import logging
 
 from rest_framework import serializers
 
-from .models import Release, Tag, Tile, Tag_Tile, Filter, Survey
+from .models import Release, Tag, Tile, Dataset, Filter, Survey
 
 logger = logging.getLogger(__name__)
 
@@ -82,19 +82,19 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class Tag_TileSerializer(serializers.HyperlinkedModelSerializer):
-    tag = serializers.PrimaryKeyRelatedField(read_only=True)
-    tile = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = Tag_Tile
-
-        fields = (
-            'id',
-            'tag',
-            'tile',
-            'run',
-        )
+#class Tag_TileSerializer(serializers.HyperlinkedModelSerializer):
+#    tag = serializers.PrimaryKeyRelatedField(read_only=True)
+#    tile = serializers.PrimaryKeyRelatedField(read_only=True)
+#
+#    class Meta:
+#        model = Tag_Tile
+#
+#        fields = (
+#            'id',
+#            'tag',
+#            'tile',
+#            'run',
+#        )
 
 
 class DatasetSerializer(serializers.HyperlinkedModelSerializer):
@@ -107,7 +107,7 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     image_src = serializers.SerializerMethodField()
 
     class Meta:
-        model = Tag_Tile
+        model = Dataset
 
         fields = (
             'id',
