@@ -20,6 +20,7 @@ from rest_framework import routers
 from coadd import views as coadd_views
 from product import views as product_views
 from product_classifier import views as product_classifier_views
+from validation import views as validation_views
 
 router = routers.DefaultRouter()
 router.register(r'releases', coadd_views.ReleaseViewSet)
@@ -31,6 +32,7 @@ router.register(r'filters', coadd_views.FilterViewSet)
 router.register(r'surveys', coadd_views.SurveyViewSet)
 router.register(r'productclass', product_classifier_views.ProductClassViewSet)
 router.register(r'product', product_views.ProductViewSet)
+router.register(r'features', validation_views.FeaturesViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
