@@ -32,7 +32,7 @@ router.register(r'filters', coadd_views.FilterViewSet)
 router.register(r'surveys', coadd_views.SurveyViewSet)
 router.register(r'productclass', product_classifier_views.ProductClassViewSet)
 router.register(r'product', product_views.ProductViewSet)
-router.register(r'features', validation_views.FeaturesViewSet)
+router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
 
 urlpatterns = [
