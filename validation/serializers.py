@@ -2,13 +2,13 @@ import logging
 
 from rest_framework import serializers
 
-from .models import Features, Flagged
+from .models import Feature, Flagged
 
 logger = logging.getLogger(__name__)
 
-class FeaturesSerializer(serializers.HyperlinkedModelSerializer):
+class FeatureSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = Features
+        model = Feature
 
         fields = (
             'id',

@@ -195,10 +195,10 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'product.log'),
             'formatter': 'verbose'
         },
-        'features': {
+        'feature': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'features.log'),
+            'filename': os.path.join(LOG_DIR, 'feature.log'),
             'formatter': 'verbose'
         },
         'flagged': {
@@ -230,8 +230,8 @@ LOGGING = {
             'handlers': ['product'],
             'level': 'DEBUG',
         },
-        'features': {
-            'handlers': ['features'],
+        'feature': {
+            'handlers': ['feature'],
             'level': 'DEBUG',
         },
         'flagged': {

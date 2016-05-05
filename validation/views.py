@@ -4,14 +4,14 @@ import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
 
-from validation.models import Features, Flagged
-from validation.serializers import FeaturesSerializer, FlaggedSerializer
+from validation.models import Feature, Flagged
+from validation.serializers import FeatureSerializer, FlaggedSerializer
 
 logger = logging.getLogger(__name__)
 
-class FeaturesViewSet(viewsets.ModelViewSet):
-    queryset = Features.objects.all()
-    serializer_class = FeaturesSerializer
+class FeatureViewSet(viewsets.ModelViewSet):
+    queryset = Feature.objects.all()
+    serializer_class = FeatureSerializer
 
     search_fields = ('ftr_name',)
     filter_fields = ('id', 'ftr_name',)

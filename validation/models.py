@@ -5,7 +5,7 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
-class Features(models.Model):
+class Feature(models.Model):
     ftr_name = models.CharField(
        max_length=60, verbose_name='Internal Name')
 
