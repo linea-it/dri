@@ -48,6 +48,7 @@ THIRD_PARTY_APPS = [
 ]
 
 PROJECT_APPS = [
+    'common',
     'coadd',
     'product_classifier',
     'product_register',
