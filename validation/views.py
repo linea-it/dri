@@ -4,8 +4,8 @@ import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
 
-from validation.models import Feature, Flagged
-from validation.serializers import FeatureSerializer, FlaggedSerializer
+from validation.models import Feature, Flagged, Defect
+from validation.serializers import FeatureSerializer, FlaggedSerializer, DefectSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -22,5 +22,13 @@ class FlaggedViewSet(viewsets.ModelViewSet):
     serializer_class = FlaggedSerializer
 
     search_fields = ('flg_user','flg_dataset','flg_flagged')
-    filter_fields = ('id', 'flg_user','flg_dataset','flg_flagged',)
+    filter_fields = ('id', 'flg_flagged',)
+    ordering_fields = '__all__'
+
+class DefectViewSet(viewsets.ModelViewSet):
+    queryset = Defect.objects.all()
+    serializer_class = DefectSerializer
+
+    search_fields = ('dfc_ra','dfc_dec')
+    filter_fields = ('id','dfc_ra','dfc_dec',)
     ordering_fields = '__all__'

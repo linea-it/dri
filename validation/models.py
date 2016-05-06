@@ -25,3 +25,21 @@ class Flagged(models.Model):
     def __str__(self):
         return self.flg_flagged
 
+class Defect(models.Model):
+    dfc_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE)
+    dfc_dataset = models.ForeignKey(
+        'coadd.Dataset',
+        on_delete=models.CASCADE)
+    dfc_filter = models.ForeignKey(
+        'coadd.Filter',
+        on_delete=models.CASCADE)
+    dfc_feature = models.ForeignKey(
+        'validation.Feature',
+        on_delete=models.CASCADE)
+    dfc_ra = models.FloatField(
+        null=True, blank=True, default=0, verbose_name='RA')
+    dfc_dec = models.FloatField(
+        null=True, blank=True, default=0, verbose_name='Dec')
+
