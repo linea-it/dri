@@ -2,7 +2,7 @@ import logging
 
 from rest_framework import serializers
 
-from .models import Feature, Flagged
+from .models import Feature, Flagged, Defect
 
 logger = logging.getLogger(__name__)
 
@@ -21,7 +21,17 @@ class FlaggedSerializer(serializers.HyperlinkedModelSerializer):
 
         fields = (
             'id',
-            'flg_user',
-            'flg_dataset',
             'flg_flagged',
         )
+
+class DefectSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Defect
+
+        fields = (
+            'id',
+            'dfc_ra',
+            'dfc_dec',
+        )
+
+

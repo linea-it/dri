@@ -211,6 +211,12 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'flagged.log'),
             'formatter': 'verbose'
         },
+        'defect': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'defect.log'),
+            'formatter': 'verbose'
+        },
     },
     'loggers': {
         'django': {
@@ -242,5 +248,10 @@ LOGGING = {
             'handlers': ['flagged'],
             'level': 'DEBUG',
         },
+        'defect': {
+            'handlers': ['defect'],
+            'level': 'DEBUG',
+        },
     }
 }
+

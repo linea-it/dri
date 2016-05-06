@@ -34,6 +34,7 @@ router.register(r'productclass', product_classifier_views.ProductClassViewSet)
 router.register(r'product', product_views.ProductViewSet)
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
+router.register(r'defect', validation_views.DefectViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
