@@ -23,7 +23,7 @@ class Flagged(models.Model):
         default=False, blank=True, verbose_name='Flagged')
 
     def __str__(self):
-        return self.flg_flagged
+        return str(self.flg_flagged)
 
 class Defect(models.Model):
     dfc_user = models.ForeignKey(
