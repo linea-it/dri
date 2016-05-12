@@ -29,7 +29,7 @@ class Flagged(models.Model):
 class Defect(models.Model):
     dfc_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE, default=get_current_user)
     dfc_dataset = models.ForeignKey(
         'coadd.Dataset',
         on_delete=models.CASCADE)
