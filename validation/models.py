@@ -2,6 +2,7 @@ import logging
 
 from django.db import models
 from django.conf import settings
+from current_user import get_current_user
 
 logger = logging.getLogger(__name__)
 
@@ -15,7 +16,7 @@ class Feature(models.Model):
 class Flagged(models.Model):
     flg_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE) 
+        on_delete=models.CASCADE, default=get_current_user) 
     flg_dataset = models.ForeignKey(
         'coadd.Dataset',
         on_delete=models.CASCADE)
