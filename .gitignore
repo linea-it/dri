@@ -1,9 +1,6 @@
 # Virtual Env
 env
 
-# Local configs
-api/dri/settings/local.py
-
 # Diretorio de projeto pycharm
 .idea/
 

@@ -1,0 +1,6 @@
+# Django Static files
+dri/static
+
+# Local configs
+api/dri/settings/local.py
+
