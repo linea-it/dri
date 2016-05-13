@@ -4,7 +4,8 @@
      */
     "apps": [
         "tile",
-        "tiles"
+        "tiles",
+        "sky"
     ],
 
     /**
