@@ -1,12 +1,8 @@
 # Virtual Env
-dri_env
+env
 
 # Local configs
-dri/settings/local.py
-
-# Database de test
-db.sqlite3
-driapi_development.db
+api/dri/settings/local.py
 
 # Diretorio de projeto pycharm
 .idea/
