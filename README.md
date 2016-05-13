@@ -11,11 +11,12 @@ Virtualenv
 
 ```
 sudo apt-get install python3-pip
+sudo apt-get install python-virtualenv
 sudo apt-get install python3.4-venv
 ```
 
 * In RedHat/CentOS OS:
-
+cd lo
 ```
 sudo pip install virtualenv
 sudo pip upgrade virtualenv
@@ -56,11 +57,11 @@ To install all dependencies Globally on your System.
 
 if you are a developer run
 ```
-pip install -r requirements_dev.txt
+pip install -r api/requirements_dev.txt
 ```
 or 
 ```
-pip install -r requirements.txt
+pip install -r api/requirements.txt
 ```
 ### Settings
 
@@ -105,6 +106,10 @@ python manage.py migrate
 ## Create a Super User in django
 ```
 python manage.py createsuperuser
+```
+## Create Django Static Files
+```
+python manage.py collectstatic
 ```
 ## Start the server
 ```
