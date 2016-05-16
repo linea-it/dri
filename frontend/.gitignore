@@ -1,2 +1,4 @@
 bootstrap.json
-build/
+build/development
+build/testing
+build/tmp
