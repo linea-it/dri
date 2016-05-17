@@ -1,35 +1,17 @@
-# Load defaults in order to then add/override with development-only settings
+# Load defaults and local_vars in order to then add/override with development-only settings
 from dri.settings.defaults import *
+from dri.settings.local_vars import *
+
+import os
 
 DEBUG = True
 
 CORS_ORIGIN_ALLOW_ALL = True
 
-INSTALLED_APPS.extend([
-    'debug_toolbar',
-])
+# INSTALLED_APPS.extend([
+#     'debug_toolbar',
+# ])
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'driapi_development.db'),
-    }
-}
-# Exemple using Mysql need mysqlclient in requiments.txt
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'dri',
-#         'USER': 'driapi',
-#         'PASSWORD': 'driapi',
-#         'HOST': 'localhost',
-#         'PORT': ''
-#     }
-# }
-
-LOG_DIR = ''
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,

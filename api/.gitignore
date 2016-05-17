@@ -3,4 +3,4 @@ dri/static
 
 # Local configs
 api/dri/settings/local.py
-
+api/dri/settings/local_vars.py
