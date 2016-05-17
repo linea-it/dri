@@ -1,0 +1,28 @@
+import os
+
+# Just the 3 vars that the specific environment will use:
+# BASE_PROJECT, LOG_DIR, DATABASES
+
+# Substituir #BASEPROJECT# pelo diretorio de intalacao do projeto.
+BASE_PROJECT = #BASEPROJECT#
+
+LOG_DIR = os.path.join(BASE_PROJECT, 'log')
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_PROJECT, 'db/dri.db'),
+    }
+}
+
+# Exemple using Mysql need mysqlclient in requiments.txt
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'dri',
+#         'USER': 'driapi',
+#         'PASSWORD': 'driapi',
+#         'HOST': 'localhost',
+#         'PORT': ''
+#     }
+# }
