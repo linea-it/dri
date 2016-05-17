@@ -664,11 +664,14 @@ Ext.define('aladin.Aladin', {
                 vm.set('tile', tile);
                 vm.set('tag', tag);
 
+                me.fireEvent('changetile', tile, tag, me);
             }
 
         } else {
             vm.set('tile', null);
             vm.set('tag', null);
+
+            me.fireEvent('changetile', tile, tag, me);
         }
     },
 

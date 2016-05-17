@@ -15,6 +15,9 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
                 loadpanel: 'onLoadPanel',
                 updatepanel: 'onUpdatePanel',
                 changerelease: 'onChangeRelease'
+            },
+            'eyeballing-aladin': {
+                changetile: 'onChangeTile'
             }
         },
         store: {
@@ -172,6 +175,14 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
                 value: ids
             }
         ]);
+    },
+
+    /**
+     * @method onChangeTile [description]
+     */
+    onChangeTile: function (tile, tag, panel) {
+        console.log('onChangeTile(%o, %o, %o)', tile,  tag, panel);
+
     }
 
 });
