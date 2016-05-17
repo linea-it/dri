@@ -15,8 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-LOG_DIR = '/tmp'
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
 
@@ -24,7 +22,7 @@ LOG_DIR = '/tmp'
 SECRET_KEY = 'n25!pd%vs_s_@9^8=cudeuvc1&tfw0er+u#rhn(ex9t4@ml728'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -157,103 +155,3 @@ REST_FRAMEWORK = {
     #     'rest_framework.authentication.SessionAuthentication',
     # }
 }
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format' : "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt' : "%d/%m/%y %H:%M:%S"
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
-        },
-    },
-    'handlers': {
-        'django': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'django.log'),
-            'formatter': 'verbose'
-        },
-        'coadd': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'coadd.log'),
-            'formatter': 'verbose'
-        },
-        'product_classifier': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'product_classifier.log'),
-            'formatter': 'verbose'
-        },
-        'product_register': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'product_register.log'),
-            'formatter': 'verbose'
-        },
-        'product': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'product.log'),
-            'formatter': 'verbose'
-        },
-        'feature': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'feature.log'),
-            'formatter': 'verbose'
-        },
-        'flagged': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'flagged.log'),
-            'formatter': 'verbose'
-        },
-        'defect': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'defect.log'),
-            'formatter': 'verbose'
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['django'],
-            'propagate': True,
-            'level': 'DEBUG',
-        },
-        'coadd': {
-            'handlers': ['coadd'],
-            'level': 'DEBUG',
-        },
-        'product_classifier': {
-            'handlers': ['product_classifier'],
-            'level': 'DEBUG',
-        },
-        'product_register': {
-            'handlers': ['product_register'],
-            'level': 'DEBUG',
-        },
-        'product': {
-            'handlers': ['product'],
-            'level': 'DEBUG',
-        },
-        'feature': {
-            'handlers': ['feature'],
-            'level': 'DEBUG',
-        },
-        'flagged': {
-            'handlers': ['flagged'],
-            'level': 'DEBUG',
-        },
-        'defect': {
-            'handlers': ['defect'],
-            'level': 'DEBUG',
-        },
-    }
-}
-
