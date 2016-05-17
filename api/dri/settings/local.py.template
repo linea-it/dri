@@ -1,1 +1,1 @@
-from import dri.settings.testing *
+from dri.settings.testing import *
