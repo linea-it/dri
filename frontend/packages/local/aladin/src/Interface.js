@@ -15,39 +15,6 @@ Ext.define('aladin.Interfaces', {
 
     },
 
-    // createWindowInfo: function () {
-    //     console.log('createWindowInfo()');
-    //     var me = this,
-    //         w;
-
-    //     w = Ext.create('Ext.window.Window', {
-    //         width: 200,
-    //         height: 100,
-    //         x: 50,
-    //         y: 50,
-    //         renderTo: me.body,
-    //         closeAction: 'hide',
-    //         header: false,
-    //         resizable: false,
-    //         constrain: true,
-    //         closable: false,
-    //         border: false,
-    //         items: [{
-    //             xtype: 'panel',
-    //             tpl: [
-    //                 '<div class=aladin-location-info>',
-    //                 '<spam>{tag}</spam>',
-    //                 '</br><spam>{tilename}</spam>',
-    //                 '</div>'
-    //             ]
-    //         }]
-    //     });
-
-    //     me.windowInfo = w;
-
-    //     return w;
-    // },
-
     createWindowInfo: function () {
         console.log('createWindowInfo()');
         var me = this,
@@ -100,7 +67,6 @@ Ext.define('aladin.Interfaces', {
             data = me.getInfoData();
 
         if (me.windowInfo) {
-            //w.down('panel').setData(data);
             w.setData(data);
         }
 

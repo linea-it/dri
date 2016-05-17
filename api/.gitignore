@@ -2,5 +2,5 @@
 dri/static
 
 # Local configs
-api/dri/settings/local.py
-api/dri/settings/local_vars.py
+dri/settings/local.py
+dri/settings/local_vars.py
