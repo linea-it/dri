@@ -27,9 +27,6 @@ Ext.define('Tile.view.mosaic.Panel', {
                 {
                     xtype: 'tile-mosaic-view',
                     reference: 'mosaicview',
-                    listeners: {
-                        scope: this
-                    },
                     bind: {
                         selection: '{currentDataset}'
                     }
