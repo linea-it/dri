@@ -30,8 +30,12 @@ router.register(r'dataset', coadd_views.DatasetViewSet, base_name='dataset')
 router.register(r'footprints', coadd_views.DatasetFootprintViewSet, base_name='footprints')
 router.register(r'filters', coadd_views.FilterViewSet)
 router.register(r'surveys', coadd_views.SurveyViewSet)
+
 router.register(r'productclass', product_classifier_views.ProductClassViewSet)
+router.register(r'productgroup', product_classifier_views.ProductGroupViewSet)
+
 router.register(r'product', product_views.ProductViewSet)
+
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
 router.register(r'defect', validation_views.DefectViewSet)
