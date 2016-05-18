@@ -132,7 +132,10 @@ Ext.define('aladin.Aladin', {
         infoEnabled: true,
 
         // String ra, dec da posicao atual do reticle.
-        location: ''
+        location: '',
+
+        // FoV inicial tem preferencia sobre o FoV do survey.
+        initialFov: null
     },
 
     /**
@@ -439,9 +442,16 @@ Ext.define('aladin.Aladin', {
 
                 }
 
-                if (imageSurvey.fov) {
-                    me.setFov(imageSurvey.fov);
+                // Verificar se tem start FoV esse paramtro tem preferencia
+                // sobre o FoV do survey.
+                if (me.getInitialFov()) {
+                    me.setFov(me.getInitialFov());
 
+                } else {
+                    if (imageSurvey.fov) {
+                        me.setFov(imageSurvey.fov);
+
+                    }
                 }
 
                 me.isFirstSurvey = false;
@@ -452,6 +462,9 @@ Ext.define('aladin.Aladin', {
 
             // Custon events
             me.addCustonEvents();
+
+            // Disparar evento changeimage
+            me.fireEvent('changeimage', imageSurvey, me);
 
         } else {
             // TODO NAO MOSTRAR SURVEY NENHUM
@@ -693,6 +706,13 @@ Ext.define('aladin.Aladin', {
             return bandFilter.getFilter();
 
         }
+    },
+
+    setFilter: function (filter) {
+        var me = this,
+            bandFilter = me.getBandFilter();
+
+        bandFilter.setFilter(filter);
     },
 
     exportAsPng: function () {
