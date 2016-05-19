@@ -26,3 +26,6 @@ class ProductGroup(models.Model):
         max_length=128, unique=True, verbose_name='Internal name, unique')
     pgr_display_name = models.CharField(
         max_length=128, verbose_name='User-friendly display name')
+
+    def __str__(self):
+        return self.pgr_display_name
