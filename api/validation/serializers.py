@@ -1,7 +1,8 @@
 import logging
 
-from rest_framework import serializers
+from coadd.models import Dataset
 
+from rest_framework import serializers
 from .models import Feature, Flagged, Defect
 
 logger = logging.getLogger(__name__)
@@ -16,11 +17,14 @@ class FeatureSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 class FlaggedSerializer(serializers.HyperlinkedModelSerializer):
+    flg_dataset = serializers.PrimaryKeyRelatedField(queryset=Dataset.objects.all())
+
     class Meta:
         model = Flagged
 
         fields = (
             'id',
+            'flg_dataset',
             'flg_flagged',
         )
 
