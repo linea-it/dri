@@ -18,12 +18,13 @@ class FeatureSerializer(serializers.HyperlinkedModelSerializer):
 
 class FlaggedSerializer(serializers.HyperlinkedModelSerializer):
     flg_dataset = serializers.PrimaryKeyRelatedField(queryset=Dataset.objects.all())
-
+    # owner = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Flagged
 
         fields = (
             'id',
+            # 'owner',
             'flg_dataset',
             'flg_flagged',
         )
