@@ -1,7 +1,9 @@
 import logging
 
-from validation.models import Feature, Flagged, Defect
-from validation.serializers import FeatureSerializer, FlaggedSerializer, DefectSerializer
+# from validation.models import Feature, Flagged, Defect
+from validation.models import *
+# from validation.serializers import FeatureSerializer, FlaggedSerializer, DefectSerializer
+from validation.serializers import *
 
 import django_filters
 from common.filters import *
@@ -23,25 +25,29 @@ class FlaggedFilter(django_filters.FilterSet):
 
     class Meta:
         model = Flagged
-        fields = ['dataset', 'flagged', 'release', ]
+        fields = ['flg_dataset', 'flg_flagged', 'release', ]
 
     def filter_release(self, queryset, value):
         # f.dataset.tag.tag_release.rls_name
-        return queryset.filter(dataset__tag__tag_release__id=int(value))
+        return queryset.filter(flg_dataset__tag__tag_release__id=int(value))
 
 class FlaggedViewSet(viewsets.ModelViewSet):
     queryset = Flagged.objects.all()
 
     serializer_class = FlaggedSerializer
 
-    filter_backends = (IsOwnerFilterBackend,)
+    filter_backends = (IsOwnerFilterBackend, filters.DjangoFilterBackend)
 
     filter_class = FlaggedFilter
 
+
 class DefectViewSet(viewsets.ModelViewSet):
     queryset = Defect.objects.all()
+
     serializer_class = DefectSerializer
 
-    search_fields = ('dfc_ra','dfc_dec')
-    filter_fields = ('id','dfc_ra','dfc_dec',)
+    search_fields = ('dfc_dataset', 'dfc_ra', 'dfc_dec')
+
+    filter_fields = ('id', 'dfc_dataset', 'dfc_ra', 'dfc_dec',)
+
     ordering_fields = '__all__'
