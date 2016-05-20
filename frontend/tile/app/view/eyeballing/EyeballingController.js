@@ -213,15 +213,17 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
             vm = me.getViewModel(),
             oldDataset = vm.get('currentDataset');
 
-        if (tile.get('id') != oldDataset.get('id')) {
+        if (tile) {
+            if (tile.get('id') != oldDataset.get('id')) {
 
-            vm.set('currentTag', tag);
+                vm.set('currentTag', tag);
 
-            // Provisoriamente setar a tile atual para evitar requisicoes
-            // repetitivas
-            vm.set('currentDataset', tile);
+                // Provisoriamente setar a tile atual para evitar requisicoes
+                // repetitivas
+                vm.set('currentDataset', tile);
 
-            me.getDataset(tile.get('id'));
+                me.getDataset(tile.get('id'));
+            }
         }
     },
 

@@ -575,10 +575,11 @@ Ext.define('aladin.Aladin', {
     setStoreTags: function (store) {
         var me = this;
 
-        me.storeTags = store;
+        if (store) {
+            me.storeTags = store;
 
-        store.on('load', 'onLoadStoreTags', this);
-
+            store.on('load', 'onLoadStoreTags', this);
+        }
     },
 
     onLoadStoreTags: function (store) {
