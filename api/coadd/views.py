@@ -4,8 +4,8 @@ import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
 
-from coadd.models import Release, Tag, Tile, Dataset, Filter, Survey
-from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, \
+from .models import Release, Tag, Tile, Dataset, Survey
+from .serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, \
     SurveySerializer, DatasetFootprintSerializer
 
 logger = logging.getLogger(__name__)

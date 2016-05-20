@@ -1,7 +1,6 @@
 import logging
 
 from django.db import models
-from common.models import Filter
 
 logger = logging.getLogger(__name__)
 
