@@ -17,15 +17,15 @@ class FeatureSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 class FlaggedSerializer(serializers.HyperlinkedModelSerializer):
-    flg_dataset = serializers.PrimaryKeyRelatedField(queryset=Dataset.objects.all())
+    dataset = serializers.PrimaryKeyRelatedField(queryset=Dataset.objects.all())
 
     class Meta:
         model = Flagged
 
         fields = (
             'id',
-            'flg_dataset',
-            'flg_flagged',
+            'dataset',
+            'flagged',
         )
 
 class DefectSerializer(serializers.HyperlinkedModelSerializer):

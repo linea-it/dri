@@ -4,6 +4,7 @@ from validation.models import Feature, Flagged, Defect
 from validation.serializers import FeatureSerializer, FlaggedSerializer, DefectSerializer
 
 import django_filters
+from common.filters import *
 from rest_framework import filters
 from rest_framework import viewsets
 
@@ -17,26 +18,16 @@ class FeatureViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'ftr_name',)
     ordering_fields = '__all__'
 
-
-class IsOwnerFilterBackend(filters.BaseFilterBackend):
-    """
-    Filter that only allows users to see their own objects.
-    """
-
-    def filter_queryset(self, request, queryset, view):
-        return queryset.filter(flg_user=request.user)
-
-
 class FlaggedFilter(django_filters.FilterSet):
     release = django_filters.MethodFilter()
 
     class Meta:
         model = Flagged
-        fields = ['flg_dataset', 'flg_flagged', 'release', ]
+        fields = ['dataset', 'flagged', 'release', ]
 
     def filter_release(self, queryset, value):
-        # f.flg_dataset.tag.tag_release.rls_name
-        return queryset.filter(flg_dataset__tag__tag_release__id=int(value))
+        # f.dataset.tag.tag_release.rls_name
+        return queryset.filter(dataset__tag__tag_release__id=int(value))
 
 class FlaggedViewSet(viewsets.ModelViewSet):
     queryset = Flagged.objects.all()

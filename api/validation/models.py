@@ -14,20 +14,20 @@ class Feature(models.Model):
         return self.ftr_name
 
 class Flagged(models.Model):
-    flg_user = models.ForeignKey(
+    owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user) 
-    flg_dataset = models.ForeignKey(
+        on_delete=models.CASCADE, default=get_current_user)
+    dataset = models.ForeignKey(
         'coadd.Dataset',
         on_delete=models.CASCADE)
-    flg_flagged = models.BooleanField(
+    flagged = models.BooleanField(
         default=False, blank=True, verbose_name='Flagged')
 
     def __str__(self):
         return str(self.flg_flagged)
 
 class Defect(models.Model):
-    dfc_user = models.ForeignKey(
+    owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE, default=get_current_user)
     dfc_dataset = models.ForeignKey(
