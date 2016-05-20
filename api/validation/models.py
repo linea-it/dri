@@ -15,9 +15,12 @@ class Feature(models.Model):
         return self.ftr_name
 
 class Flagged(models.Model):
+    # owner = models.ForeignKey(
+    #     settings.AUTH_USER_MODEL,
+    #     on_delete=models.CASCADE, default=get_current_user)
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user)
+        on_delete=models.CASCADE)
     flg_dataset = models.ForeignKey(
         'coadd.Dataset',
         on_delete=models.CASCADE)
@@ -28,9 +31,13 @@ class Flagged(models.Model):
         return str(self.flg_flagged)
 
 class Defect(models.Model):
+    # owner = models.ForeignKey(
+    #     settings.AUTH_USER_MODEL,
+    #     on_delete=models.CASCADE, default=get_current_user,
+    #     verbose_name='Owner')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user,
+        on_delete=models.CASCADE,
         verbose_name='Owner')
     dfc_dataset = models.ForeignKey(
         'coadd.Dataset',
