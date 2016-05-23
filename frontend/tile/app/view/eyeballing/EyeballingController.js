@@ -373,10 +373,30 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
     onLoadFlaggeds: function (store) {
         var me = this,
             vm = me.getViewModel(),
-            dataset = vm.get('currentDataset');
+            dataset = vm.get('currentDataset'),
+            footprint = vm.getStore('tiles'),
+            aladin = me.lookupReference('aladin'),
+            sources = Ext.create('Ext.util.MixedCollection');
 
         // Seta o current flagged
         me.loadValidationData(dataset);
+
+        // adiciona as flaggeds ao aladin
+        store.each(function (record) {
+
+            var tile = footprint.findRecord('id', record.get('flg_dataset'));
+            console.log('tile: %o', tile);
+
+            if (tile) {
+                sources.add(tile);
+            }
+            // sources.add(footprint.findRecord('id', record.get('flg_dataset')));
+
+        },this);
+
+        aladin.showFlaggeds(sources);
+
+        aladin.createDefectPanel();
 
     }
 

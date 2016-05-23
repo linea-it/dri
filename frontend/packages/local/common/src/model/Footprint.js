@@ -10,7 +10,8 @@ Ext.define('common.model.Footprint', {
         {name:'release', type:'int'},
         {name:'tite', type:'int'},
         {name:'tli_tilename', type:'string'},
-        
+        {name:'tli_ra', type:'float'},
+        {name:'tli_dec', type:'float'},
         {name:'tli_rall', type:'float'},
         {name:'tli_decll', type:'float'},
         {name:'tli_raul', type:'float'},

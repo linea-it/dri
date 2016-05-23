@@ -47,7 +47,7 @@ Ext.define('aladin.Aladin', {
             showLayersControl: false,
             showGotoControl: false,
             showShareControl: false,
-            showCatalog: false,
+            showCatalog: true,
             showFrame: false,
             showCooGrid: false,
             fullScreen: false,

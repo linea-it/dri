@@ -1,7 +1,6 @@
 import logging
 
 from rest_framework import serializers
-
 from .models import Release, Tag, Tile, Dataset, Survey
 
 logger = logging.getLogger(__name__)
@@ -134,6 +133,8 @@ class DatasetFootprintSerializer(serializers.BaseSerializer):
             obj.tag.tag_release.id,
             obj.tile.id,
             obj.tile.tli_tilename,
+            obj.tile.tli_ra,
+            obj.tile.tli_dec,
             obj.tile.tli_rall,
             obj.tile.tli_decll,
             obj.tile.tli_raul,
