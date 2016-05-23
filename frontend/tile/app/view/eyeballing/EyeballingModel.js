@@ -12,9 +12,11 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
         'Tile.store.Footprints',
         'Tile.store.Surveys',
         'Tile.store.Tags',
+        'Tile.store.Flaggeds',
         'Tile.model.Release',
         'Tile.model.Tag',
-        'Tile.model.Dataset'
+        'Tile.model.Dataset',
+        'Tile.model.Flagged'
     ],
 
     data: {
@@ -32,6 +34,10 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
         },
         currentDataset: {
             type: 'Tile.model.Dataset',
+            create: true
+        },
+        flagged: {
+            type: 'Tile.model.Flagged',
             create: true
         }
     },
@@ -64,6 +70,10 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
         tiles: {
             type: 'footprints',
             pageSize: 0
+        },
+
+        flaggeds: {
+            type: 'flaggeds'
         }
 
     }

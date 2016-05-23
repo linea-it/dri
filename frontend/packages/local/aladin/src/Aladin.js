@@ -47,7 +47,7 @@ Ext.define('aladin.Aladin', {
             showLayersControl: false,
             showGotoControl: false,
             showShareControl: false,
-            showCatalog: false,
+            showCatalog: true,
             showFrame: false,
             showCooGrid: false,
             fullScreen: false,
@@ -575,10 +575,11 @@ Ext.define('aladin.Aladin', {
     setStoreTags: function (store) {
         var me = this;
 
-        me.storeTags = store;
+        if (store) {
+            me.storeTags = store;
 
-        store.on('load', 'onLoadStoreTags', this);
-
+            store.on('load', 'onLoadStoreTags', this);
+        }
     },
 
     onLoadStoreTags: function (store) {

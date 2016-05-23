@@ -29,6 +29,9 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
             },
             'datasets': {
                 load: 'onLoadDatasets'
+            },
+            'flaggeds': {
+                load: 'onLoadFlaggeds'
             }
         }
     },
@@ -105,7 +108,7 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
 
         me.loadSurveys(currentRelease);
         me.loadTags(currentRelease);
-
+        me.loadFlaggeds(currentRelease);
     },
 
     /**
@@ -181,6 +184,25 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
     },
 
     /**
+     * Carrega todas as tiles marcadas como flagged para o usuario
+     * logado. usando como filtro o release.
+     * @param {object} [record] Model Instancia do model Release
+     */
+    loadFlaggeds: function (record) {
+        var me = this,
+            vm = me.getViewModel(),
+            storeFlaggeds = vm.getStore('flaggeds');
+
+        storeFlaggeds.filter([
+            {
+                property: 'release',
+                value: record.get('id')
+            }
+        ]);
+
+    },
+
+    /**
      * Toda vez que a tile exibida no componente de imagem for alterada
      * deve se carregar os dados referentes a esta imagem.
      * @param {Object} tile - instancia do model Dataset mais so contem os dados de coordendas.
@@ -191,11 +213,17 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
             vm = me.getViewModel(),
             oldDataset = vm.get('currentDataset');
 
-        if (tile.get('id') != oldDataset.get('id')) {
+        if (tile) {
+            if (tile.get('id') != oldDataset.get('id')) {
 
-            vm.set('currentTag', tag);
+                vm.set('currentTag', tag);
 
-            me.getDataset(tile.get('id'));
+                // Provisoriamente setar a tile atual para evitar requisicoes
+                // repetitivas
+                vm.set('currentDataset', tile);
+
+                me.getDataset(tile.get('id'));
+            }
         }
     },
 
@@ -208,6 +236,11 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('datasets');
+
+        if (store.isLoading()) {
+            // Caso a Store esteja carregando ainda aborta a execucao.
+            store.getProxy().abort();
+        }
 
         store.filter([{
             property: 'id',
@@ -224,11 +257,32 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
      */
     onLoadDatasets: function (store) {
         var me = this,
-            vm = me.getViewModel();
+            vm = me.getViewModel(),
+            dataset;
 
         if (store.count() === 1) {
-            vm.set('currentDataset', store.first());
+            dataset = store.first();
+
+            vm.set('currentDataset', dataset);
+
+            me.loadValidationData(dataset);
         }
+    },
+
+    loadValidationData: function (dataset) {
+        var me = this,
+            vm = me.getViewModel(),
+            storeFlaggeds = vm.getStore('flaggeds'),
+            flagged;
+
+        // Descobrir se a tile esta marcada como flagged
+        flagged = storeFlaggeds.findRecord('flg_dataset', dataset.get('id'));
+
+        if (!flagged) {
+            flagged = Ext.create('Tile.model.Flagged',{});
+        }
+
+        vm.set('flagged', flagged);
     },
 
     /**
@@ -245,15 +299,104 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
     },
 
     onFlagDataset: function (btn) {
-        console.log('onFlagDataset(%o)', btn);
+        var me = this,
+            flag = btn.pressed;
 
-        if (btn.pressed) {
+        // Alterar o stylo do botao
+        if (flag) {
             btn.setText('Flagged');
             btn.setIconCls('x-fa fa-exclamation-triangle icon-color-orange');
+
         } else {
+            // Alterar o stylo do botao
             btn.setText('Flag');
             btn.setIconCls('x-fa fa-exclamation-triangle');
         }
+
+        me.flagUnflagDataset(flag);
+    },
+
+    flagUnflagDataset: function (flag) {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('flaggeds'),
+            flagged = vm.get('flagged'),
+            dataset = vm.get('currentDataset');
+
+        // Verificar se ja esta na lista
+        if (store.find('flg_dataset', dataset.get('id')) != -1) {
+            // Se estiver na lista verificar se o valor da flag e diferente
+            // do que tinha antes.
+            if (flagged.get('flg_flagged') != flag) {
+
+                if (flag) {
+                    // se a flag for true adiciona um novo registro
+                    flagged.set('flg_dataset',dataset.get('id'));
+                    flagged.set('flg_flagged', flag);
+
+                    store.add(flagged);
+                } else {
+                    // se nao remove o registro.
+                    store.remove(flagged);
+                }
+            }
+
+        } else {
+            // Nao esta na lista
+            if (flag) {
+                // se flag for true adiciona um novo flagged.
+
+                flagged.set('flg_dataset',dataset.get('id'));
+                flagged.set('flg_flagged', flag);
+
+                store.add(flagged);
+            }
+        }
+
+        store.sync({
+            success: function () {
+                Ext.toast({
+                    html: 'Data saved',
+                    align: 't'
+                });
+            },
+            failure: function () {
+                console.log('Failure');
+
+            },
+            callback: function () {
+                store.load();
+            }
+        });
+    },
+
+    onLoadFlaggeds: function (store) {
+        var me = this,
+            vm = me.getViewModel(),
+            dataset = vm.get('currentDataset'),
+            footprint = vm.getStore('tiles'),
+            aladin = me.lookupReference('aladin'),
+            sources = Ext.create('Ext.util.MixedCollection');
+
+        // Seta o current flagged
+        me.loadValidationData(dataset);
+
+        // adiciona as flaggeds ao aladin
+        store.each(function (record) {
+
+            var tile = footprint.findRecord('id', record.get('flg_dataset'));
+            console.log('tile: %o', tile);
+
+            if (tile) {
+                sources.add(tile);
+            }
+            // sources.add(footprint.findRecord('id', record.get('flg_dataset')));
+
+        },this);
+
+        aladin.showFlaggeds(sources);
+
+        aladin.createDefectPanel();
 
     }
 

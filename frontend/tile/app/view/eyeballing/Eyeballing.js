@@ -55,6 +55,7 @@ Ext.define('Tile.view.eyeballing.Eyeballing', {
                             listeners: {
                                 changefilter: 'onClickThumb'
                             }
+
                         }
                     ]
                 }
