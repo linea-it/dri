@@ -697,6 +697,7 @@ Ext.define('aladin.Aladin', {
 
         me.setImageSurvey(survey);
 
+        me.fireEvent('changefilter', filter, me);
     },
 
     getFilter: function () {

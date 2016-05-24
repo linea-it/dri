@@ -15,7 +15,7 @@
       "version": "6.0.0.640"
     },
     "cmd": {
-      "current": "6.0.2.14",
+      "current": "6.1.2.15",
       "version": "6.1.2.15"
     },
     "common": {
@@ -123,14 +123,14 @@
       "exclude": [
         "fashion"
       ],
-      "path": "resources/Tile-all_1.css"
+      "path": "resources/Tile-all_2.css"
     },
     {
       "remote": false,
       "exclude": [
         "fashion"
       ],
-      "path": "resources/Tile-all_2.css"
+      "path": "resources/Tile-all_1.css"
     }
   ],
   "cache": {
@@ -148,11 +148,11 @@
   "toolkit": "classic",
   "theme": "theme-triton",
   "loader": {
-    "cache": "20160523143157",
+    "cache": "20160524155641",
     "cacheParam": "_dc"
   },
   "id": "23e8d35d-093f-4581-a508-3922dc20fcbf",
-  "hash": "2e16619a189902e8804ea8feaf66b2ce2d674099",
+  "hash": "ef9431d14a87ba008f9b97117ffc7d30c3a2516d",
   "profile": "",
   "resources": {
     "path": "resources"

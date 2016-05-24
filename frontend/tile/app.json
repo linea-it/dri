@@ -222,7 +222,7 @@
      *
      */
     "js": [
-        // Biblioteca Jquery/ JQuery UI
+        // // Biblioteca Jquery/ JQuery UI
         {
             "path": "https://code.jquery.com/jquery-1.11.1.min.js",
             "remote": true
