@@ -6,7 +6,8 @@ Ext.define('Tile.view.eyeballing.Eyeballing', {
     requires: [
         'Tile.view.eyeballing.EyeballingController',
         'Tile.view.eyeballing.EyeballingModel',
-        'Tile.view.eyeballing.Aladin'
+        'Tile.view.eyeballing.Aladin',
+        'Tile.view.eyeballing.Thumb'
     ],
 
     controller: 'eyeballing',
@@ -32,19 +33,30 @@ Ext.define('Tile.view.eyeballing.Eyeballing', {
                     items: [
                         {
                             xtype: 'eyeballing-aladin',
+                            reference: 'aladin',
                             region: 'center',
                             bind: {
                                 storeSurveys: '{surveys}',
                                 storeTags: '{tags}',
                                 storeTiles: '{tiles}'
                             }
+                        },
+                        {
+                            xtype: 'eyeballing-thumb',
+                            reference: 'thumb',
+                            region: 'east',
+                            width: 180,
+                            resizable: true,
+                            // region: 'south',
+                            // height: 200,
+                            bind: {
+                                dataset: '{currentDataset}'
+                            },
+                            listeners: {
+                                changefilter: 'onClickThumb'
+                            }
+
                         }
-                        // {
-                        //     xtype: 'panel',
-                        //     title: 'Thumbs',
-                        //     region: 'south',
-                        //     height: 200
-                        // }
                     ]
                 }
             ],

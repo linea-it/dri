@@ -1,8 +1,7 @@
 import logging
 
 from rest_framework import serializers
-
-from .models import Release, Tag, Tile, Dataset, Filter, Survey
+from .models import Release, Tag, Tile, Dataset, Survey
 
 logger = logging.getLogger(__name__)
 
@@ -41,13 +40,8 @@ class TileSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'tli_tilename',
-            # 'tli_project',
             'tli_ra',
             'tli_dec',
-            # 'tli_equinox',
-            # 'tli_pixelsize',
-            # 'tli_npix_ra',
-            # 'tli_npix_dec',
             'tli_rall',
             'tli_decll',
             'tli_raul',
@@ -80,22 +74,6 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
             'tag_start_date',
             'tag_discovery_date',
         )
-
-
-#class Tag_TileSerializer(serializers.HyperlinkedModelSerializer):
-#    tag = serializers.PrimaryKeyRelatedField(read_only=True)
-#    tile = serializers.PrimaryKeyRelatedField(read_only=True)
-#
-#    class Meta:
-#        model = Tag_Tile
-#
-#        fields = (
-#            'id',
-#            'tag',
-#            'tile',
-#            'run',
-#        )
-
 
 class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     tag = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -155,6 +133,8 @@ class DatasetFootprintSerializer(serializers.BaseSerializer):
             obj.tag.tag_release.id,
             obj.tile.id,
             obj.tile.tli_tilename,
+            obj.tile.tli_ra,
+            obj.tile.tli_dec,
             obj.tile.tli_rall,
             obj.tile.tli_decll,
             obj.tile.tli_raul,
@@ -168,20 +148,6 @@ class DatasetFootprintSerializer(serializers.BaseSerializer):
             obj.tile.tli_uraur,
             obj.tile.tli_udecur,
         ]
-
-
-class FilterSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Filter
-
-        fields = (
-            'id',
-            'project',
-            'filter',
-            'lambda_min',
-            'lambda_max',
-            'lambda_mean'
-        )
 
 
 class SurveySerializer(serializers.HyperlinkedModelSerializer):

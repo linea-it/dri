@@ -232,6 +232,12 @@
             "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js",
             "remote": true
         },
+        // {
+        //     "path": "resources/jquery-1.11.1.min.js"
+        // },
+        // {
+        //     "path": "resources/aladin.min.js"
+        // },
         {
             "path": "app.js",
             "bundle": true

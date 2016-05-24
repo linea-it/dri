@@ -4,8 +4,8 @@ import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
 
-from coadd.models import Release, Tag, Tile, Dataset, Filter, Survey
-from coadd.serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, FilterSerializer, \
+from .models import Release, Tag, Tile, Dataset, Survey
+from .serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, \
     SurveySerializer, DatasetFootprintSerializer
 
 logger = logging.getLogger(__name__)
@@ -109,18 +109,18 @@ class DatasetFootprintViewSet(viewsets.ModelViewSet):
 
 
 
-class FilterViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows filters to be viewed or edited
-    """
-
-    queryset = Filter.objects.all()
-
-    serializer_class = FilterSerializer
-
-    filter_fields = '__all__'
-
-    ordering_fields = '__all__'
+# class FilterViewSet(viewsets.ModelViewSet):
+#     """
+#     API endpoint that allows filters to be viewed or edited
+#     """
+#
+#     queryset = Filter.objects.all()
+#
+#     serializer_class = FilterSerializer
+#
+#     filter_fields = '__all__'
+#
+#     ordering_fields = '__all__'
 
 
 class SurveyViewSet(viewsets.ModelViewSet):

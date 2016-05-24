@@ -47,7 +47,7 @@ Ext.define('aladin.Aladin', {
             showLayersControl: false,
             showGotoControl: false,
             showShareControl: false,
-            showCatalog: false,
+            showCatalog: true,
             showFrame: false,
             showCooGrid: false,
             fullScreen: false,
@@ -132,7 +132,10 @@ Ext.define('aladin.Aladin', {
         infoEnabled: true,
 
         // String ra, dec da posicao atual do reticle.
-        location: ''
+        location: '',
+
+        // FoV inicial tem preferencia sobre o FoV do survey.
+        initialFov: null
     },
 
     /**
@@ -439,9 +442,16 @@ Ext.define('aladin.Aladin', {
 
                 }
 
-                if (imageSurvey.fov) {
-                    me.setFov(imageSurvey.fov);
+                // Verificar se tem start FoV esse paramtro tem preferencia
+                // sobre o FoV do survey.
+                if (me.getInitialFov()) {
+                    me.setFov(me.getInitialFov());
 
+                } else {
+                    if (imageSurvey.fov) {
+                        me.setFov(imageSurvey.fov);
+
+                    }
                 }
 
                 me.isFirstSurvey = false;
@@ -452,6 +462,9 @@ Ext.define('aladin.Aladin', {
 
             // Custon events
             me.addCustonEvents();
+
+            // Disparar evento changeimage
+            me.fireEvent('changeimage', imageSurvey, me);
 
         } else {
             // TODO NAO MOSTRAR SURVEY NENHUM
@@ -562,10 +575,11 @@ Ext.define('aladin.Aladin', {
     setStoreTags: function (store) {
         var me = this;
 
-        me.storeTags = store;
+        if (store) {
+            me.storeTags = store;
 
-        store.on('load', 'onLoadStoreTags', this);
-
+            store.on('load', 'onLoadStoreTags', this);
+        }
     },
 
     onLoadStoreTags: function (store) {
@@ -664,11 +678,14 @@ Ext.define('aladin.Aladin', {
                 vm.set('tile', tile);
                 vm.set('tag', tag);
 
+                me.fireEvent('changetile', tile, tag, me);
             }
 
         } else {
             vm.set('tile', null);
             vm.set('tag', null);
+
+            me.fireEvent('changetile', tile, tag, me);
         }
     },
 
@@ -690,6 +707,13 @@ Ext.define('aladin.Aladin', {
             return bandFilter.getFilter();
 
         }
+    },
+
+    setFilter: function (filter) {
+        var me = this,
+            bandFilter = me.getBandFilter();
+
+        bandFilter.setFilter(filter);
     },
 
     exportAsPng: function () {
