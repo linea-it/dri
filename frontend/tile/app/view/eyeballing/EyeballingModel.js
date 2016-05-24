@@ -11,9 +11,12 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
         'Tile.store.Datasets',
         'Tile.store.Footprints',
         'Tile.store.Surveys',
-        'Tile.model.Release',
         'Tile.store.Tags',
-        'Tile.model.Dataset'
+        'Tile.store.Flaggeds',
+        'Tile.model.Release',
+        'Tile.model.Tag',
+        'Tile.model.Dataset',
+        'Tile.model.Flagged'
     ],
 
     data: {
@@ -25,8 +28,16 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
             type: 'Tile.model.Release',
             create: true
         },
+        currentTag: {
+            type: 'Tile.model.Tag',
+            create: true
+        },
         currentDataset: {
             type: 'Tile.model.Dataset',
+            create: true
+        },
+        flagged: {
+            type: 'Tile.model.Flagged',
             create: true
         }
     },
@@ -49,9 +60,20 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
             storeId: 'Tags'
         },
 
+        // Datasets = Tiles que estao nos tags de um release
+        datasets: {
+            type: 'datasets'
+        },
+
+        // Tile = Uma instancia reduzida de um dataset somente informacoes das coordenadas
+        // de cada tile.
         tiles: {
             type: 'footprints',
             pageSize: 0
+        },
+
+        flaggeds: {
+            type: 'flaggeds'
         }
 
     }

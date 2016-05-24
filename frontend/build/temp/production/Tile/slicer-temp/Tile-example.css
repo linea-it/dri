@@ -23697,3 +23697,7 @@ tr.x-grid-subtable-row {
     z-index: 10;
     border: none;
 }
+/* http://localhost:1841/tile/sass/src/view/main/Main.scss:27 */
+.icon-color-orange {
+    color: #ffaf0a;
+}

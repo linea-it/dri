@@ -1,0 +1,202 @@
+[
+    {
+        "model":"product_classifier.productgroup",
+        "pk":1,
+        "fields":{
+            "pgr_name":"targets",
+            "pgr_display_name":"Targets"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":2,
+        "fields":{
+            "pgr_name":"value_added_catalogs",
+            "pgr_display_name":"Value-Added Catalogs"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":3,
+        "fields":{
+            "pgr_name":"simulations",
+            "pgr_display_name":"Simulations"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":4,
+        "fields":{
+            "pgr_name":"objects_catalog",
+            "pgr_display_name":"Objects Catalog"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":5,
+        "fields":{
+            "pgr_name":"galaxy_properties",
+            "pgr_display_name":"Galaxy Properties"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":6,
+        "fields":{
+            "pgr_name":"mangle_mask",
+            "pgr_display_name":"Mangle Mask"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":7,
+        "fields":{
+            "pgr_name":"photoz",
+            "pgr_display_name":"Photo-z"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":8,
+        "fields":{
+            "pgr_name":"training_set",
+            "pgr_display_name":"Training Set"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":9,
+        "fields":{
+            "pgr_name":"validation_set",
+            "pgr_display_name":"Validation Set"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":10,
+        "fields":{
+            "pgr_name":"sg_classification",
+            "pgr_display_name":"S/G Classification"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":11,
+        "fields":{
+            "pgr_name":"zeropoints",
+            "pgr_display_name":"Zeropoints"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":12,
+        "fields":{
+            "pgr_name":"external_catalogs",
+            "pgr_display_name":"External Catalogs"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":13,
+        "fields":{
+            "pgr_name":"systematic_maps",
+            "pgr_display_name":"Systematic Maps"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":14,
+        "fields":{
+            "pgr_name":"depth_maps",
+            "pgr_display_name":"Depth Maps"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":15,
+        "fields":{
+            "pgr_name":"mangle_maps",
+            "pgr_display_name":"Mangle Healpix Maps"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":16,
+        "fields":{
+            "pgr_name":"effective_map",
+            "pgr_display_name":"Effective Map"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":17,
+        "fields":{
+            "pgr_name":"photoz_maps",
+            "pgr_display_name":"Photo-z Maps"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":18,
+        "fields":{
+            "pgr_name":"images",
+            "pgr_display_name":"Images"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":19,
+        "fields":{
+            "pgr_name":"training_subset",
+            "pgr_display_name":"Training Subset"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":20,
+        "fields":{
+            "pgr_name":"training_file",
+            "pgr_display_name":"Training File"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":21,
+        "fields":{
+            "pgr_name":"training_statistic",
+            "pgr_display_name":"Training Statistic"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":22,
+        "fields":{
+            "pgr_name":"region_selection",
+            "pgr_display_name":"Region Selection"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":23,
+        "fields":{
+            "pgr_name":"aux",
+            "pgr_display_name":"Auxiliary"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":24,
+        "fields":{
+            "pgr_name":"bright_mask",
+            "pgr_display_name":"Bright Mask"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":25,
+        "fields":{
+            "pgr_name":"other",
+            "pgr_display_name":"Other"
+        }
+    }
+]

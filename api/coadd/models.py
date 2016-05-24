@@ -112,28 +112,11 @@ class Dataset(models.Model):
         return str(self.pk)
 
 
-# TODO mover para um app separado (common)
-class Filter(models.Model):
-    project = models.CharField(
-        max_length=20, null=True, blank=True, verbose_name='Project')
-    filter = models.CharField(
-        max_length=3, null=False, blank=False, verbose_name='Filter')
-    lambda_min = models.FloatField(
-        null=True, blank=True, verbose_name='lambda_min')
-    lambda_max = models.FloatField(
-        null=True, blank=True, verbose_name='lambda_max')
-    lambda_mean = models.FloatField(
-        null=True, blank=True, verbose_name='lambda_mean')
-
-    def __str__(self):
-        return str(self.filter)
-
-
 class Survey(models.Model):
     srv_release = models.ForeignKey(
         Release, related_name='surveys', on_delete=models.CASCADE, verbose_name='Release')
     srv_filter = models.ForeignKey(
-        Filter, verbose_name='Filter')
+        'common.Filter', verbose_name='Filter')
     srv_project = models.CharField(
         max_length=20, null=True, blank=True, verbose_name='Project')
     srv_display_name = models.CharField(

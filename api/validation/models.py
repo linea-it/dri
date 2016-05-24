@@ -3,6 +3,7 @@ import logging
 from django.db import models
 from django.conf import settings
 from current_user import get_current_user
+from common.models import Filter
 
 logger = logging.getLogger(__name__)
 
@@ -14,9 +15,9 @@ class Feature(models.Model):
         return self.ftr_name
 
 class Flagged(models.Model):
-    flg_user = models.ForeignKey(
+    owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user) 
+        on_delete=models.CASCADE, default=get_current_user)
     flg_dataset = models.ForeignKey(
         'coadd.Dataset',
         on_delete=models.CASCADE)
@@ -27,18 +28,22 @@ class Flagged(models.Model):
         return str(self.flg_flagged)
 
 class Defect(models.Model):
-    dfc_user = models.ForeignKey(
+    owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user)
+        on_delete=models.CASCADE, default=get_current_user,
+        verbose_name='Owner')
     dfc_dataset = models.ForeignKey(
         'coadd.Dataset',
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        verbose_name='Dataset')
     dfc_filter = models.ForeignKey(
-        'coadd.Filter',
-        on_delete=models.CASCADE)
+        'common.Filter',
+        on_delete=models.CASCADE,
+        verbose_name='Filter')
     dfc_feature = models.ForeignKey(
         'validation.Feature',
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        verbose_name='Feature')
     dfc_ra = models.FloatField(
         null=True, blank=True, default=0, verbose_name='RA')
     dfc_dec = models.FloatField(
