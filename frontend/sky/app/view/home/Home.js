@@ -83,14 +83,14 @@ Ext.define('Sky.view.home.Home', {
                                 select: 'onSelectRelease'
                             }
                         },
-                        {
-                            xtype: 'button',
-                            text: 'Eyeballing',
-                            handler: 'onEyeballing',
-                            bind: {
-                                disabled: '{!currentRelease}'
-                            }
-                        }
+                        // {
+                        //     xtype: 'button',
+                        //     text: 'Eyeballing',
+                        //     handler: 'onEyeballing',
+                        //     bind: {
+                        //         disabled: '{!currentRelease}'
+                        //     }
+                        // }
                     ]
                 }
             ]

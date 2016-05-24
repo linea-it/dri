@@ -175,18 +175,18 @@ Ext.define('Sky.view.home.HomeController', {
     /**
      * @method onEyeballing [description]
      */
-    onEyeballing: function () {
-        console.log('onEyeballing()');
-        var me = this,
-            vm = me.getViewModel(),
-            current = vm.get('currentRelease'),
-            release = current.get('id'),
-            hash;
+    // onEyeballing: function () {
+    //     console.log('onEyeballing()');
+    //     var me = this,
+    //         vm = me.getViewModel(),
+    //         current = vm.get('currentRelease'),
+    //         release = current.get('id'),
+    //         hash;
 
-        hash = 'ebl/' + release;
+    //     hash = 'ebl/' + release;
 
-        me.redirectTo(hash);
+    //     me.redirectTo(hash);
 
-    }
+    // }
 
 });

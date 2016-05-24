@@ -11,7 +11,7 @@ Ext.define('Sky.view.main.MainController', {
 
     requires: [
         'Sky.view.home.Home',
-        'Sky.view.eyeballing.Eyeballing'
+        // 'Sky.view.eyeballing.Eyeballing'
     ],
 
     routes : {
