@@ -21,7 +21,8 @@
      * application resides (the same folder in which this file is located).
      */
     "classpath": [
-        "app"
+        "app",
+        "${toolkit.name}/src"
     ],
 
     /**
@@ -32,20 +33,20 @@
      * in the "override" property is also included.
      */
     "overrides": [
-        "overrides"
+        "overrides",
+        "${toolkit.name}/overrides"
     ],
 
     /**
      * The Sencha Framework for this application: "ext" or "touch".
      */
-    "framework": "ext",
-    
+    "framework": "ext",    
     
     /**
      * The toolkit to use. Select either "classic" or "modern".
      */
-    "toolkit": "classic",
-    
+
+    "toolkit": "classic",    
     
     
     /**
@@ -65,7 +66,9 @@
      *      ]
      */
     "requires": [
-        "font-awesome"
+        "font-awesome",
+        "common",
+        "aladin"
     ],
 
     /**
@@ -149,7 +152,8 @@
          */
         "var": [
             "sass/var/all.scss",
-            "sass/var"
+            "sass/var",
+            "${toolkit.name}/sass/var"
         ],
 
         /**
@@ -169,7 +173,8 @@
          *      +-----------------+
          */
         "src": [
-            "sass/src"
+            "sass/src",
+            "${toolkit.name}/sass/src"
         ]
     },
 
@@ -215,8 +220,15 @@
      *
      */
     "js": [
+        // Biblioteca Jquery/ JQuery UI
         {
-            "path": "${framework.dir}/build/ext-all-rtl-debug.js"
+            "path": "https://code.jquery.com/jquery-1.11.1.min.js",
+            "remote": true
+        },
+        // biblioteca Aladin (Necessita do JQuery)
+        {
+            "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js",
+            "remote": true
         },
         {
             "path": "app.js",
@@ -224,7 +236,29 @@
         }
     ],
 
-    
+    /**
+     * Settings specific to classic toolkit builds.
+     */
+    "classic": {
+        "js": [
+            // Remove this entry to individually load sources from the framework.
+            {
+                "path": "${framework.dir}/build/ext-all-rtl-debug.js"
+            }
+        ]
+    },
+
+    /**
+     * Settings specific to modern toolkit builds.
+     */
+    "modern": {
+        "js": [
+            // Remove this entry to individually load sources from the framework.
+            {
+                "path": "${framework.dir}/build/ext-modern-all-debug.js"
+            }
+        ]
+    },
 
     /**
      * List of all CSS assets in the right inclusion order.
@@ -252,6 +286,11 @@
      *      }
      */
     "css": [
+        // Biblioteca Aladin
+        {
+            "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css",
+            "remote": true
+        },
         {
             // this entry uses an ant variable that is the calculated
             // value of the generated output css file for the app,
@@ -303,13 +342,13 @@
             "type": "yui"
         }
     },
-    
+
     /**
      * Settings specific to testing builds.
      */
     "testing": {
     },
-    
+
     /**
      * Settings specific to development builds.
      */
@@ -352,7 +391,7 @@
      */
     "bootstrap": {
         "base": "${app.dir}",
-        
+
         "microloader": "bootstrap.js",
         "css": "bootstrap.css"
     },
@@ -397,15 +436,15 @@
      *      }
      *
      */
-    
+
     "output": {
         "base": "${workspace.build.dir}/${build.environment}/${app.name}",
         "appCache": {
             "enable": false
         }
     },
-    
-    
+
+
     /**
     * Controls for localStorage caching
     *   "cache": {
@@ -421,12 +460,12 @@
     *       "deltas": "deltas"
     *   }
     */
-    
+
     "cache": {
         "enable": false,
         "deltas": true
     },
-    
+
 
     /**
      * Used to automatically generate cache.manifest (HTML 5 application cache manifest)
@@ -459,6 +498,12 @@
         {
             "path": "resources",
             "output": "shared"
+        },
+        {
+            "path": "${toolkit.name}/resources"
+        },
+        {
+            "path": "${build.id}/resources"
         }
     ],
 
@@ -509,8 +554,20 @@
      * selecting the desired build profile by setting "Ext.manifest" to one of these
      * names.
      *
+     *     "builds": {
+     *         "classic": {
+     *             "toolkit": "classic",
+     *             "theme": "theme-neptune"
+     *         },
+     *
+     *         "modern": {
+     *             "toolkit": "modern",
+     *             "theme": "theme-neptune"
+     *         }
+     *     }
+     *
      */
-    
+
 
     /**
      * Uniquely generated id for this application, used as prefix for localStorage keys.
