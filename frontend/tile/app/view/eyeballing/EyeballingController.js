@@ -17,7 +17,8 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
                 changerelease: 'onChangeRelease'
             },
             'eyeballing-aladin': {
-                changetile: 'onChangeTile'
+                changetile: 'onChangeTile',
+                changefilter: 'onChangeFilter'
             }
         },
         store: {
@@ -32,9 +33,14 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
             },
             'flaggeds': {
                 load: 'onLoadFlaggeds'
+            },
+            'defects': {
+                load: 'onLoadDefects'
             }
         }
     },
+
+    wDefects: null,
 
     /**
      * @method onLoadPanel [description]
@@ -105,6 +111,9 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
 
     loadReleaseData: function (currentRelease) {
         var me = this;
+
+        // TODO isso precisa estar em um lugar mais apropriado
+        me.createDefectPanel();
 
         me.loadSurveys(currentRelease);
         me.loadTags(currentRelease);
@@ -227,6 +236,14 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
         }
     },
 
+    onChangeFilter: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            dataset = vm.get('currentDataset');
+
+        me.loadValidationData(dataset);
+    },
+
     /**
      * Filtra a store Datasets para recuperar os dados completos da tile carregada
      * no componente de imagem.
@@ -283,6 +300,9 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
         }
 
         vm.set('flagged', flagged);
+
+        // Carregar os Defeitos da Tile
+        me.loadDefects(dataset);
     },
 
     /**
@@ -395,8 +415,97 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
         },this);
 
         aladin.showFlaggeds(sources);
+    },
 
-        aladin.createDefectPanel();
+    createDefectPanel: function () {
+        console.log('createDefectPanel()');
+        var me = this,
+            aladin = me.lookupReference('aladin'),
+            wDefects;
+
+        if (wDefects) {
+            wDefects.close();
+        }
+
+        wDefects = Ext.create('Ext.grid.Panel', {
+            width: 200,
+            height: 300,
+            x: 100,
+            y: 100,
+            renderTo: aladin.body,
+            header: false,
+            resizable: false,
+            constrain: true,
+            style: {
+                position: 'absolute',
+                zIndex: 999
+            },
+            layout: 'fit',
+            columns: [
+                {xtype: 'checkcolumn', text: '', dataIndex: 'checked', width: 50},
+                {text: 'Features', dataIndex: 'ftr_name', flex: 1}
+            ],
+            store: Ext.create('Tile.store.Features')
+        });
+
+        wDefects.show();
+
+        me.wDefects = wDefects;
+
+    },
+
+    loadDefects: function (dataset) {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('defects'),
+            aladin = me.lookupReference('aladin'),
+            filter = aladin.getFilter();
+
+        store.filter([
+            {
+                property: 'dfc_dataset',
+                value: dataset.get('id')
+            },
+            {
+                property: 'dfc_filter',
+                value: filter
+            }
+        ]);
+
+    },
+
+    onLoadDefects: function (defects) {
+        var me = this,
+            vm = me.getViewModel(),
+            wDefects = me.wDefects,
+            store = wDefects.getStore(),
+            features = vm.getStore('features'),
+            defect;
+
+        // Limpar a Store usada na grid;
+        store.removeAll();
+        store.commitChanges();
+
+        features.each(function (feature) {
+
+            defect = defects.findRecord('dfc_feature', feature.get('id'));
+
+            if (defect) {
+                // Mudar o status para checked e guardar o id referente ao defeito.
+                feature.set('checked', true);
+                feature.set('ftr_defect', defect.get('id'));
+            } else {
+                feature.set('checked', false);
+                feature.set('ftr_defect', null);
+            }
+
+            // Adiciona a juncao feature + defect a grid.
+            store.add(feature);
+        },this);
+
+        //store.suspendEvents();
+        store.commitChanges();
+        //store.resumeEvents();
 
     }
 
