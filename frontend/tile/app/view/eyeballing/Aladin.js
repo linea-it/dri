@@ -20,7 +20,6 @@ Ext.define('Tile.view.eyeballing.Aladin', {
         {
             xtype: 'button',
             iconCls: 'x-fa fa-exclamation-triangle',
-            text: 'Flag',
             tooltip: 'Flag/Unflag',
             enableToggle: true,
             toggleHandler: 'onFlagDataset',

@@ -324,12 +324,12 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
 
         // Alterar o stylo do botao
         if (flag) {
-            btn.setText('Flagged');
+            //btn.setText('Flagged');
             btn.setIconCls('x-fa fa-exclamation-triangle icon-color-orange');
 
         } else {
             // Alterar o stylo do botao
-            btn.setText('Flag');
+            //btn.setText('Flag');
             btn.setIconCls('x-fa fa-exclamation-triangle');
         }
 
@@ -441,11 +441,27 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
                 zIndex: 999
             },
             layout: 'fit',
+            hideHeaders: true,
             columns: [
-                {xtype: 'checkcolumn', text: '', dataIndex: 'checked', width: 50},
-                {text: 'Features', dataIndex: 'ftr_name', flex: 1}
+                {
+                    xtype: 'checkcolumn',
+                    text: '',
+                    dataIndex: 'checked',
+                    width: 50
+                },
+                {
+                    text: 'Features',
+                    dataIndex: 'ftr_name',
+                    flex: 1
+                }
             ],
-            store: Ext.create('Tile.store.Features')
+            store: Ext.create('Tile.store.Features', {
+                listeners: {
+                    scope: me,
+                    update: 'onUpdateDefectGrid'
+                }
+            })
+
         });
 
         wDefects.show();
@@ -499,18 +515,40 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
                 // Mudar o status para checked e guardar o id referente ao defeito.
                 feature.set('checked', true);
                 feature.set('ftr_defect', defect.get('id'));
+
+                console.log(feature);
             } else {
                 feature.set('checked', false);
-                feature.set('ftr_defect', null);
             }
 
             // Adiciona a juncao feature + defect a grid.
             store.add(feature);
         },this);
 
-        //store.suspendEvents();
+        store.suspendEvents();
         store.commitChanges();
-        //store.resumeEvents();
+        store.resumeEvents();
+
+    },
+
+    onUpdateDefectGrid: function (store, record) {
+        console.log('onUpdateDefectGrid(%o)', record);
+        var me = this,
+            vm = me.getViewModel(),
+            defects = vm.getStore('defects'),
+            current;
+
+        // Verificar se o defeito selecionado esta na lista de defeitos
+        current = defects.findRecord('id', record.get('ftr_defect'));
+
+        console.log('current: %o', current);
+
+        if (current) {
+            // Verificar se e para adicionar ou remover
+
+        } else {
+            // adicionar
+        }
 
     }
 
