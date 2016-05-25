@@ -63,40 +63,5 @@ Ext.define('Tile.view.eyeballing.Aladin', {
             aladin.addCatalog(catalog);
         }
 
-    },
-
-    createDefectPanel: function () {
-        console.log('createDefectPanel()');
-        // var me = this,
-        //     w;
-
-        // w = Ext.create('Ext.panel.Panel', {
-        //     width: 200,
-        //     height: 200,
-        //     x: 100,
-        //     y: 100,
-        //     renderTo: me.body,
-        //     header: false,
-        //     resizable: false,
-        //     constrain: true,
-        //     style: {
-        //         position: 'absolute',
-        //         zIndex: 999
-        //     },
-        //     layout: 'fit',
-        //     html: 'text',
-        //     items: [
-        //         {
-        //             xtype: 'gridpanel',
-        //             title: 'Teste',
-        //             columns: [
-        //                 {text: 'Feature', dataIndex: 'feature'}
-        //             ]
-        //         }
-        //     ]
-        // });
-
-        // w.show();
     }
-
 });

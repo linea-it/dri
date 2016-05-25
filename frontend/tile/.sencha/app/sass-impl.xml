@@ -211,11 +211,11 @@
 
                             <x-sencha-command>
                                 fashion
-                                    -compress=${build.css.compress}
-                                    -split=${build.css.selector.limit}
-                                    -saveFile=${app.dir}/${app.sass.save}
-                                    ${app.out.scss}
-                                    ${app.out.css}
+                                -compress=${build.css.compress}
+                                -split=${build.css.selector.limit}
+                                -saveFile=${app.dir}/${app.sass.save}
+                                ${app.out.scss}
+                                ${app.out.css}
                             </x-sencha-command>
 
                             <x-update-css-array input="${app.out.css}"
