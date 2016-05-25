@@ -41,8 +41,8 @@ Ext.define('Admin.view.dashboard.Dashboard', {
             margin: '0 10 10 60',
             width: '100%',
             height: '100%',
-            // src: '/dri/apps/home/resources/sky.html',
-            src: '/dri-frontend/home/resources/sky.html',
+            src : '/dri/apps/home/resources/sky.html',
+            // src: '/dri-frontend/home/resources/sky.html',
             headerPosition: 'bottom'        
         },
 
