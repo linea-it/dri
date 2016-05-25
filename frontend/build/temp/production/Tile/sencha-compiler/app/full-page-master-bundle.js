@@ -1,2 +1,2 @@
 // @tag full-page
-// @require /home/rafael/projects/dri/frontend/tile/app.js
+// @require /home/glauber/dri/frontend/tile/app.js

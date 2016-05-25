@@ -12,6 +12,6 @@ class FilterViewSet(viewsets.ModelViewSet):
 
     serializer_class = FilterSerializer
 
-    filter_fields = '__all__'
+    filter_fields = ('project', 'filter',)
 
-    ordering_fields = '__all__'
+    ordering_fields = ('lambda_min', 'lambda_max', 'lambda_mean',)
