@@ -37,6 +37,8 @@ Ext.define('common.BandFilter',{
      */
     buttonWidth: 30,
 
+    vertical: false,
+
     config: {
         availableFilters: []
     },
@@ -57,10 +59,17 @@ Ext.define('common.BandFilter',{
             toggleGroup = 'bands_' + me.itemId;
         }
 
-        me.layout = {
-            type:'hbox',
-            align:'stretch'
-        };
+        if (me.vertical) {
+            me.layout = {
+                type:'vbox',
+                align:'stretch'
+            };
+        } else {
+            me.layout = {
+                type:'hbox',
+                align:'stretch'
+            };
+        }
 
         me.defaults = {
 
@@ -103,6 +112,10 @@ Ext.define('common.BandFilter',{
                 width:me.buttonWidth
             };
 
+            // if (me.vertical) {
+            //     btn.rowspan = 1;
+            // }
+
             // Ajustar o tamanho dos botoes
             if (String(value).length > 1) {
                 btn.width = 50;
@@ -111,7 +124,7 @@ Ext.define('common.BandFilter',{
 
             if (me.defaultFilter == value) {
                 btn.pressed = true;
-                
+
             }
 
             items.push(btn);
@@ -231,7 +244,7 @@ Ext.define('common.BandFilter',{
     },
 
     setAvailableFilters: function (availables) {
-        var me = this, 
+        var me = this,
             items = me.items,
             filters = [],
             prevPressed, pressed, filter;
@@ -246,29 +259,27 @@ Ext.define('common.BandFilter',{
 
             filters.push(filter);
 
-        }        
+        }
 
         // Desabilita os botoes que ao estao na lista
         items.each(function (btn) {
             if (filters.indexOf(btn.value) != -1) {
-                btn.enable(); 
+                btn.enable();
 
-            }
-            else {
+            } else {
                 btn.disable();
 
             }
         });
 
-        // Seleciona um dos filtros 
+        // Seleciona um dos filtros
         prevPressed = me.getFilter();
 
-        if (filters.indexOf(prevPressed) != -1){
-            // Se o filtro que estava pressionado antes estiver na lista 
+        if (filters.indexOf(prevPressed) != -1) {
+            // Se o filtro que estava pressionado antes estiver na lista
             pressed = prevPressed;
 
-        }
-        else {
+        } else {
             // Se nao tiver na lista pressiona o primeiro da lista
             pressed = filters[0];
 
@@ -281,7 +292,7 @@ Ext.define('common.BandFilter',{
 
                 }
             }
-        });        
+        });
 
         // Seta os filtros que estao habilitados
         me.availableFilters = filters;

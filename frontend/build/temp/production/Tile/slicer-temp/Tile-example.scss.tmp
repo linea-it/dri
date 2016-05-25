@@ -966,6 +966,7 @@ $include-tile-model-tag: dynamic(true);;
 $include-tile-store-datasets: dynamic(true);;
 $include-tile-store-defects: dynamic(true);;
 $include-tile-store-features: dynamic(true);;
+$include-tile-store-filters: dynamic(true);;
 $include-tile-store-flaggeds: dynamic(true);;
 $include-tile-store-footprints: dynamic(true);;
 $include-tile-store-releases: dynamic(true);;
