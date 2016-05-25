@@ -32,7 +32,7 @@ Ext.define('Admin.view.profile.Social', {
                 width: 150,
                 alt: 'profile-picture',
                 // src: '/dri-frontend/home/resources/view.png'
-                src: '/dri/apps/home/resources/view.png'
+                src: 'resources/view.png'
             },{
                 xtype: 'component',
                 // cls: 'userProfileName',
@@ -40,7 +40,7 @@ Ext.define('Admin.view.profile.Social', {
                 html: '<br><br>All-sky visualization of DES releases in grizY and RGB with overlay of tile grid and objects'
             }]
         },
-        
+
         // {
         //     xtype: 'component',
         //     cls: 'userProfileDesc',
@@ -78,8 +78,8 @@ Ext.define('Admin.view.profile.Social', {
             scale: 'large',
             width: 280,
             text: 'Sky Viewer',
-            handler : function() {
-                window.open('#skyv', "_self");
+            handler : function () {
+                window.open('#skyv', '_self');
             }
         }
     ]

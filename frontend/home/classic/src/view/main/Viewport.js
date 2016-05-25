@@ -34,7 +34,7 @@ Ext.define('Admin.view.main.Viewport', {
                     xtype: 'component',
                     reference: 'senchaLogo',
                     cls: 'sencha-logo',
-                    html: '<div class="main-logo"><img src="/dri/apps/home/resources/images/des.png"><b>Science Server</b></div>',
+                    html: '<div class="main-logo"><img src="resources/images/des.png"><b>Science Server</b></div>',
                     width: 250
                 },
                 {
@@ -47,7 +47,7 @@ Ext.define('Admin.view.main.Viewport', {
                 {
                     xtype: 'tbspacer',
                     flex: 1
-                },
+                }
                 // {
                 //     cls: 'delete-focus-bg',
                 //     iconCls:'x-fa fa-search',

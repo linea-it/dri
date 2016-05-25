@@ -16,7 +16,7 @@ Ext.define('Admin.view.dashboard.Dashboard', {
     },
 
     layout: 'hbox',
-    
+
     listeners: {
         hide: 'onHideView'
     },
@@ -26,14 +26,13 @@ Ext.define('Admin.view.dashboard.Dashboard', {
     //         Ext.Ajax.request({
     //             url: "/dri-frontend/home/resources/sky.html",
     //             success: function(response) {
-    //                 var obj = (response.responseText);        
+    //                 var obj = (response.responseText);
     //                 console.log(obj)
 
     //             }
     //         });
     //     }
     // },
-    
 
     items: [
         {
@@ -41,10 +40,10 @@ Ext.define('Admin.view.dashboard.Dashboard', {
             margin: '0 10 10 60',
             width: '100%',
             height: '100%',
-            src : '/dri/apps/home/resources/sky.html',
+            src : 'resources/sky.html',
             // src: '/dri-frontend/home/resources/sky.html',
-            headerPosition: 'bottom'        
-        },
+            headerPosition: 'bottom'
+        }
 
 
 
