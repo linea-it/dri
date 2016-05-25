@@ -300,6 +300,9 @@
         //     "remote": true
         // },
         {
+            "path": "resources/aladin.min.css"
+        },
+        {
             // this entry uses an ant variable that is the calculated
             // value of the generated output css file for the app,
             // defined in .sencha/app/defaults.properties
