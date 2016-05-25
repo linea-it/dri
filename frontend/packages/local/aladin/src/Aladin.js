@@ -206,9 +206,7 @@ Ext.define('aladin.Aladin', {
             aladinId = '#' + me.getAladinId(),
             libA = me.libA,
             aladinOptions = me.getAladinOptions(),
-            aladin,
-            el,
-            divlocation;
+            aladin;
 
         aladin = libA.aladin(
             // Id da div que recebera o aladin
@@ -228,14 +226,6 @@ Ext.define('aladin.Aladin', {
         if (me.getInfoEnabled()) {
             me.enableDisableInfo(null, me.getInfoEnabled());
         }
-
-        // Esconder Div location original do Aladin
-        el = me.getEl();
-        console.log('el: ', el);
-        //divlocation = el.select('aladin-location');
-        divlocation = el.query('.aladin-location');
-        console.log('divlocation: %o', divlocation);
-        divlocation.style = 'visibility: hidden;';
 
     },
 
