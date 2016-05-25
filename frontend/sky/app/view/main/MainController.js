@@ -9,13 +9,73 @@ Ext.define('Sky.view.main.MainController', {
 
     alias: 'controller.main',
 
-    onItemSelected: function (sender, record) {
-        Ext.Msg.confirm('Confirm', 'Are you sure?', 'onConfirm', this);
+    requires: [
+        'Sky.view.home.Home',
+        // 'Sky.view.eyeballing.Eyeballing'
+    ],
+
+    routes : {
+        'home': {
+            action: 'onHome'
+        },
+        'ebl/:release': {
+            action: 'onEyeballing'
+        }
     },
 
-    onConfirm: function (choice) {
-        if (choice === 'yes') {
-            //
+    setActivePanel: function (panel) {
+
+        var me = this,
+            refs = me.getReferences(),
+            mainCard = refs.mainCardPanel,
+            mainLayout = mainCard.getLayout(),
+            routeId = panel.routeId,
+            existingItem = mainCard.child('component[routeId=' + routeId + ']'),
+            view = null;
+
+        // Saber se ja existe uma interface  criada.
+        if (!existingItem) {
+
+            view = mainCard.add(panel);
+
+            view.loadPanel(arguments);
+
+            mainLayout.setActiveItem(view);
+
+        } else {
+
+            view = existingItem;
+
+            view.updatePanel(arguments);
+
+            mainLayout.setActiveItem(view);
+
         }
+    },
+
+    onHome: function () {
+
+        var newView = Ext.create('Sky.view.home.Home', {
+            hideMode: 'offsets',
+            routeId: 'home',
+            layout: 'fit'
+        });
+
+        this.setActivePanel(newView);
+    },
+
+    onEyeballing: function (release) {
+
+        console.log('onEyeballing(%o)', release);
+
+        var newView = Ext.create('Sky.view.eyeballing.Eyeballing', {
+            hideMode: 'offsets',
+            routeId: 'eyeballing',
+            layout: 'fit',
+            release: release
+        });
+
+        this.setActivePanel(newView);
     }
+
 });
