@@ -47,7 +47,7 @@ Ext.define('Admin.view.main.Viewport', {
                 {
                     xtype: 'tbspacer',
                     flex: 1
-                },
+                }
                 // {
                 //     cls: 'delete-focus-bg',
                 //     iconCls:'x-fa fa-search',
