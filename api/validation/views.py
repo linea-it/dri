@@ -48,6 +48,6 @@ class DefectViewSet(viewsets.ModelViewSet):
 
     search_fields = ('dfc_dataset', 'dfc_ra', 'dfc_dec')
 
-    filter_fields = ('id', 'dfc_dataset', 'dfc_ra', 'dfc_dec',)
+    filter_fields = ('id', 'dfc_dataset', 'dfc_filter', 'dfc_feature', 'dfc_ra', 'dfc_dec',)
 
     ordering_fields = '__all__'

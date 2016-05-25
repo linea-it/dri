@@ -459,7 +459,12 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
             vm = me.getViewModel(),
             store = vm.getStore('defects'),
             aladin = me.lookupReference('aladin'),
-            filter = aladin.getFilter();
+            filters = vm.getStore('filters'),
+            filter = aladin.getFilter(),
+            f;
+
+        // descobrir o id do filtro usando a store Filters
+        f = filters.findRecord('filter', filter.toLowerCase());
 
         store.filter([
             {
@@ -468,7 +473,7 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
             },
             {
                 property: 'dfc_filter',
-                value: filter
+                value: f.get('id')
             }
         ]);
 

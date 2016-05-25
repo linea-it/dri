@@ -223,21 +223,21 @@
      */
     "js": [
         // // Biblioteca Jquery/ JQuery UI
-        {
-            "path": "https://code.jquery.com/jquery-1.11.1.min.js",
-            "remote": true
-        },
-        // biblioteca Aladin (Necessita do JQuery)
-        {
-            "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js",
-            "remote": true
-        },
         // {
-        //     "path": "resources/jquery-1.11.1.min.js"
+        //     "path": "https://code.jquery.com/jquery-1.11.1.min.js",
+        //     "remote": true
         // },
+        // // biblioteca Aladin (Necessita do JQuery)
         // {
-        //     "path": "resources/aladin.min.js"
+        //     "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js",
+        //     "remote": true
         // },
+        {
+            "path": "resources/jquery-1.11.1.min.js"
+        },
+        {
+            "path": "resources/aladin.min.js"
+        },
         {
             "path": "app.js",
             "bundle": true
@@ -295,10 +295,10 @@
      */
     "css": [
         // Biblioteca Aladin
-        {
-            "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css",
-            "remote": true
-        },
+        // {
+        //     "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css",
+        //     "remote": true
+        // },
         {
             // this entry uses an ant variable that is the calculated
             // value of the generated output css file for the app,
