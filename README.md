@@ -120,5 +120,39 @@ in the browser to access the URL
 ```
 http://localhost:8000/
 ```
+## Configuration Frontend + Backend
+
+back to the root of the project
+```
+cd ..
+```
+copy dri.conf to directory sites-available
+```
+sudo cp dri.conf /etc/apache2/sites-available/
+```
+Edit the file to put the path where the clone and the User was made that will run wsgi (use the same home User)
+```
+sudo vim /etc/apache2/sites-available/dri.conf
+```
+Edit the variable
+```
+BASEDIR /home/<user>/dri
+EXECUTE <user>
+```
+Enable
+```
+sudo a2ensite dri.conf
+sudo service apache2 reload
+```
+This site alias is configured to dri.com
+then you should add the following line to /etc/hosts
+```
+sudo vim /etc/hosts 
+```
+```
+127.0.0.1       dri.com
+```
+or edit dri.conf and configure the virtual host to a different port
+
 
 ## Documentation & Support
