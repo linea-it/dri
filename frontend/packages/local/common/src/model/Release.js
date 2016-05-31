@@ -3,8 +3,6 @@ Ext.define('common.model.Release', {
     extend: 'Ext.data.Model',
 
     fields: [
-
-        {name:'rls_name', type:'string'},
         {name:'rls_name', type:'string'},
         {name:'rls_version', type:'string'},
         {name:'rls_date', type:'date'},

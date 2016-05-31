@@ -6,26 +6,29 @@ Ext.define('Eyeballing.view.home.Home', {
     xtype: 'home',
 
     requires: [
-        'Eyeballing.store.Personnel'
+        'Eyeballing.view.home.HomeController',
+        'Eyeballing.store.Releases'
     ],
 
     title: 'Releases',
 
     store: {
-        type: 'personnel'
+        type: 'releases'
     },
 
+    controller: 'home',
+
     columns: [
-        {text: 'Name',  dataIndex: 'name'},
-        {text: 'Date', dataIndex: 'email'},
-        {text: 'Tiles', dataIndex: 'email'},
-        {text: 'Inspected', dataIndex: 'email'},
-        {text: 'Flagged', dataIndex: 'phone'},
-        {text: 'Defects', dataIndex: 'phone', flex: 1}
+        {text: 'Name',  dataIndex: 'rls_display_name', flex: 1},
+        {xtype: 'datecolumn', text: 'Date', dataIndex: 'rls_date', format:'Y-m-d', flex: 1},
+        {text: 'Tiles', dataIndex: '', flex: 1},
+        {text: 'Inspected', dataIndex: '', flex: 1},
+        {text: 'Flagged', dataIndex: '', flex: 1},
+        {text: 'Defects', dataIndex: '', flex: 1}
     ],
 
     listeners: {
-        select: 'onItemSelected'
+        rowdblclick: 'onRowDblClick'
     },
 
     loadPanel: function () {
