@@ -3,7 +3,7 @@
      * The application's namespace.
      */
     "name": "Eyeballing",
-    
+
     /**
      * The version of the application.
      */
@@ -39,22 +39,22 @@
      * The Sencha Framework for this application: "ext" or "touch".
      */
     "framework": "ext",
-    
-    
+
+
     /**
      * The toolkit to use. Select either "classic" or "modern".
      */
     "toolkit": "classic",
-    
-    
-    
+
+
+
     /**
      * The name of the theme for this application.
      */
-    
+
     "theme": "theme-triton",
-    
-    
+
+
     /**
      * The list of required packages (with optional versions; default is "latest").
      *
@@ -65,7 +65,9 @@
      *      ]
      */
     "requires": [
-        "font-awesome"
+        "font-awesome",
+        "common",
+        "aladin"
     ],
 
     /**
@@ -101,9 +103,9 @@
          *      "save": "sass/save.scss"
          *
          */
-         
+
         // "save": "sass/save.scss",
-        
+
         /**
          * Comma-separated list of files or folders containing extra Sass. These
          * files are automatically included in the Sass compilation. By default this
@@ -215,6 +217,22 @@
      *
      */
     "js": [
+        // // Biblioteca Jquery/ JQuery UI
+        {
+            "path": "https://code.jquery.com/jquery-1.11.1.min.js",
+            "remote": true
+        },
+        // biblioteca Aladin (Necessita do JQuery)
+        {
+            "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js",
+            "remote": true
+        },
+        // {
+        //     "path": "resources/jquery-1.11.1.min.js"
+        // },
+        // {
+        //     "path": "resources/aladin.min.js"
+        // },
         {
             "path": "${framework.dir}/build/ext-all-rtl-debug.js"
         },
@@ -224,7 +242,7 @@
         }
     ],
 
-    
+
 
     /**
      * List of all CSS assets in the right inclusion order.
@@ -252,6 +270,14 @@
      *      }
      */
     "css": [
+        // Biblioteca Aladin
+        {
+            "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css",
+            "remote": true
+        },
+        // {
+        //     "path": "resources/aladin.min.css"
+        // },
         {
             // this entry uses an ant variable that is the calculated
             // value of the generated output css file for the app,
@@ -303,13 +329,13 @@
             "type": "yui"
         }
     },
-    
+
     /**
      * Settings specific to testing builds.
      */
     "testing": {
     },
-    
+
     /**
      * Settings specific to development builds.
      */
@@ -352,7 +378,7 @@
      */
     "bootstrap": {
         "base": "${app.dir}",
-        
+
         "microloader": "bootstrap.js",
         "css": "bootstrap.css"
     },
@@ -397,15 +423,15 @@
      *      }
      *
      */
-    
+
     "output": {
         "base": "${workspace.build.dir}/${build.environment}/${app.name}",
         "appCache": {
             "enable": false
         }
     },
-    
-    
+
+
     /**
     * Controls for localStorage caching
     *   "cache": {
@@ -421,12 +447,12 @@
     *       "deltas": "deltas"
     *   }
     */
-    
+
     "cache": {
         "enable": false,
         "deltas": true
     },
-    
+
 
     /**
      * Used to automatically generate cache.manifest (HTML 5 application cache manifest)
@@ -475,9 +501,9 @@
      * generated inside this directory must be kept intact for proper generation of
      * deltas between updates.
      */
-    
+
     "archivePath": "archive",
-    
+
 
 
     /**
@@ -510,7 +536,7 @@
      * names.
      *
      */
-    
+
 
     /**
      * Uniquely generated id for this application, used as prefix for localStorage keys.

@@ -5,24 +5,42 @@
  */
 Ext.define('Eyeballing.Application', {
     extend: 'Ext.app.Application',
-    
+
     name: 'Eyeballing',
 
     stores: [
         // TODO: add global / shared stores here
     ],
-    
+
+    defaultToken : 'home',
+
+    init:function () {
+        // Desabilitar os erros de Aria
+        Ext.enableAriaButtons = false;
+
+        // Checar se o usuario esta logado
+
+        Ext.Ajax.request({
+            url: '/dri/api?format=json',
+            failure: function () {
+                var pathname = window.location.pathname,
+                    hostname = window.location.hostname,
+                    location;
+
+                location = Ext.String.format('http://{0}/dri/api/api-auth/login/?next={1}', hostname, pathname);
+
+                window.location.assign(location);
+
+            }
+
+        });
+    },
+
     launch: function () {
         // TODO - Launch the application
     },
 
     onAppUpdate: function () {
-        Ext.Msg.confirm('Application Update', 'This application has an update, reload?',
-            function (choice) {
-                if (choice === 'yes') {
-                    window.location.reload();
-                }
-            }
-        );
+        window.location.reload();
     }
 });
