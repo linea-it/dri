@@ -6,7 +6,8 @@
         "tile",
         "tiles",
         "sky",
-        "eyeballing"
+        "eyeballing",
+        "catalogserver"
     ],
 
     /**
