@@ -24,6 +24,15 @@ Ext.define('Admin.store.NavigationTree', {
                 routeId: 'skyv'
 
             },
+            {              
+                text:   'Eyeballing',
+                view:   'Eyeballing',
+                iconCls: 'x-fa fa-eye',
+                // iconCls: 'right-icon hot-icon x-fa fa-send ',
+                // disabled: "true",
+                leaf:   true,
+                routeId: 'eyeballing'
+            },
             {
                 text:   'Tile Viewer',
                 view:   'tile',
