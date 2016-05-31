@@ -5,7 +5,8 @@
     "apps": [
         "tile",
         "tiles",
-        "sky"
+        "sky",
+        "catalogserver"
     ],
 
     /**
