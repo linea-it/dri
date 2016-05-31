@@ -3,7 +3,6 @@ import logging
 import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
-
 from .models import Release, Tag, Tile, Dataset, Survey
 from .serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, \
     SurveySerializer, DatasetFootprintSerializer
@@ -42,17 +41,6 @@ class TagViewSet(viewsets.ModelViewSet):
     ordering_fields = '__all__'
 
 
-#
-# class TileFilter(django_filters.FilterSet):
-#
-#
-#
-#     class Meta:
-#         model = Tile
-#         fields = ('id', 'tli_tilename', 'tag', 'tli_project', 'tli_ra', 'tli_dec',)
-#         order_by = True
-
-
 class TileViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows tile to be viewed or edited
@@ -62,9 +50,7 @@ class TileViewSet(viewsets.ModelViewSet):
 
     serializer_class = TileSerializer
 
-    # filter_backends = (filters.DjangoFilterBackend,)
     filter_fields = ('id', 'tli_tilename', 'tag', 'tli_project', 'tli_ra', 'tli_dec',)
-    # filter_class = TileFilter
 
     search_fields = ('tli_tilename',)
 
@@ -106,21 +92,6 @@ class DatasetFootprintViewSet(viewsets.ModelViewSet):
     filter_class = DatasetFilter
 
     ordering_fields = ('id', 'tag')
-
-
-
-# class FilterViewSet(viewsets.ModelViewSet):
-#     """
-#     API endpoint that allows filters to be viewed or edited
-#     """
-#
-#     queryset = Filter.objects.all()
-#
-#     serializer_class = FilterSerializer
-#
-#     filter_fields = '__all__'
-#
-#     ordering_fields = '__all__'
 
 
 class SurveyViewSet(viewsets.ModelViewSet):

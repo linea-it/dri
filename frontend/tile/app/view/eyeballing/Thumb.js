@@ -28,7 +28,7 @@ Ext.define('Tile.view.eyeballing.Thumb', {
         xtpl = new Ext.XTemplate(
              '<tpl for=".">',
                  '<div style="margin-bottom: 2px;" class="thumb-wrap">',
-                   '<img src="{src}" style="width:150px; height:150px;"/>',
+                   '<img src="{src}" style="width:150px; height:150px; onError="this.onerror=null;this.src=\'resources/no_image_150x150.png\';"/>',
                    '<br/><span style="font-weight: bold;">{caption}</span>',
                  '</div>',
              '</tpl>'
