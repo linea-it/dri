@@ -16,23 +16,7 @@ Ext.define('Tile.view.eyeballing.Aladin', {
     // Inicar com nivel de zoom mais longe da tile.
     initialFov: 4,
 
-    auxTools: [
-        {
-            xtype: 'button',
-            iconCls: 'x-fa fa-exclamation-triangle',
-            text: 'Flag',
-            tooltip: 'Flag/Unflag',
-            enableToggle: true,
-            toggleHandler: 'onFlagDataset',
-            bind: {
-                pressed: '{flagged.flg_flagged}'
-            }
-        }
-    ],
-
     showFlaggeds: function (flaggeds) {
-        console.log('showFlaggeds(%o)', flaggeds);
-
         var me = this,
             aladin = me.getAladin(),
             libA = me.libA,
@@ -41,7 +25,7 @@ Ext.define('Tile.view.eyeballing.Aladin', {
 
         if (aladin) {
 
-            catalog = libA.catalog({name: 'Flaggeds', sourceSize: 18});
+            catalog = libA.catalog({name: 'Flaggeds', sourceSize: 18, color: '#FF0000'});
 
             flaggeds.each(function (record) {
 
@@ -62,6 +46,38 @@ Ext.define('Tile.view.eyeballing.Aladin', {
             catalog.addSources(sources);
             aladin.addCatalog(catalog);
         }
+    },
 
+    showDefects: function (defects) {
+        var me = this,
+            aladin = me.getAladin(),
+            libA = me.libA,
+            catalog, marker,
+            sources = [];
+
+        if (aladin) {
+
+            catalog = libA.catalog({name: 'Defects', sourceSize: 18, color: '#FFAF0A'});
+
+            defects.each(function (record) {
+
+                marker = libA.marker(
+                    record.get('dfc_ra'),
+                    record.get('dfc_dec'),
+                    {
+                        popupTitle: 'NOME DO DEFEITO',
+                        popupDesc: 'TESTE'
+                    }
+                );
+
+                sources.push(marker);
+
+            },this);
+
+            // console.log(sources);
+            catalog.addSources(sources);
+            aladin.addCatalog(catalog);
+        }
     }
+
 });
