@@ -12,6 +12,7 @@ Ext.define('Eyeballing.view.main.Main', {
     requires: [
         'Ext.plugin.Viewport',
         'Ext.window.MessageBox',
+        'Ext.window.Toast',
         'Ext.layout.container.Card',
         'Ext.layout.container.Border',
         'Eyeballing.view.main.MainController',
