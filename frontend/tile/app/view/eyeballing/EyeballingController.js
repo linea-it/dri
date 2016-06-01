@@ -17,7 +17,8 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
                 changerelease: 'onChangeRelease'
             },
             'eyeballing-aladin': {
-                changetile: 'onChangeTile'
+                changetile: 'onChangeTile',
+                changefilter: 'onChangeFilter'
             }
         },
         store: {
@@ -32,6 +33,9 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
             },
             'flaggeds': {
                 load: 'onLoadFlaggeds'
+            },
+            'defects': {
+                load: 'onLoadDefects'
             }
         }
     },
@@ -40,7 +44,6 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
      * @method onLoadPanel [description]
      */
     onLoadPanel: function () {
-        console.log('onLoadPanel()');
         var me = this,
             view = me.getView(),
             release = view.getRelease();
@@ -50,7 +53,6 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
     },
 
     onUpdatePanel: function () {
-        console.log('onUpdatePanel()');
 
     },
 
@@ -58,17 +60,7 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
      * @method onChangeRelease [description]
      */
     onChangeRelease: function (release) {
-        console.log('onChangeRelease(%o)', release);
-        // var me = this,
-        //     vm = me.getViewModel(),
-        //     store = vm.getStore('releases');
 
-        // store.filter([
-        //     {
-        //         property: 'id',
-        //         value: parseInt(release)
-        //     }
-        // ]);
     },
 
     loadReleaseById: function (release) {
@@ -87,7 +79,6 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
     },
 
     onLoadReleases: function (store) {
-        console.log('onLoadReleases(%o)', store);
         var me = this,
             vm = me.getViewModel(),
             currentRelease;
@@ -227,6 +218,14 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
         }
     },
 
+    onChangeFilter: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            dataset = vm.get('currentDataset');
+
+        me.loadValidationData(dataset);
+    },
+
     /**
      * Filtra a store Datasets para recuperar os dados completos da tile carregada
      * no componente de imagem.
@@ -283,6 +282,9 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
         }
 
         vm.set('flagged', flagged);
+
+        // Carregar os Defeitos da Tile
+        me.loadDefects(dataset);
     },
 
     /**
@@ -385,18 +387,201 @@ Ext.define('Tile.view.eyeballing.EyeballingController', {
         store.each(function (record) {
 
             var tile = footprint.findRecord('id', record.get('flg_dataset'));
-            console.log('tile: %o', tile);
 
             if (tile) {
                 sources.add(tile);
             }
-            // sources.add(footprint.findRecord('id', record.get('flg_dataset')));
 
         },this);
 
         aladin.showFlaggeds(sources);
+    },
 
-        aladin.createDefectPanel();
+    loadDefects: function (dataset) {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('defects'),
+            aladin = me.lookupReference('aladin'),
+            filters = vm.getStore('filters'),
+            filter = aladin.getFilter(),
+            f;
+
+        // descobrir o id do filtro usando a store Filters
+        f = filters.findRecord('filter', filter.toLowerCase());
+
+        store.filter([
+            {
+                property: 'dfc_dataset',
+                value: dataset.get('id')
+            },
+            {
+                property: 'dfc_filter',
+                value: f.get('id')
+            }
+        ]);
+
+    },
+
+    onLoadDefects: function (defects) {
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.lookupReference('defects'),
+            aladin = me.lookupReference('aladin'),
+            store = view.getStore(),
+            features = vm.getStore('features'),
+            sources = Ext.create('Ext.util.MixedCollection'),
+            defect;
+
+        // Limpar a Store usada na grid;
+        store.removeAll();
+        store.commitChanges();
+
+        features.each(function (feature) {
+
+            defect = defects.findRecord('dfc_feature', feature.get('id'));
+
+            if (defect) {
+                // Mudar o status para checked e guardar o id referente ao defeito.
+                feature.set('checked', true);
+                feature.set('ftr_defect', defect.get('id'));
+
+                console.log(feature);
+            } else {
+                feature.set('checked', false);
+            }
+
+            // Adiciona a juncao feature + defect a grid.
+            store.add(feature);
+
+        },this);
+
+
+        // TODO REVER ISSO PODE NAO SER MAIS NECESSARIO
+        store.suspendEvents();
+        store.commitChanges();
+        store.resumeEvents();
+
+
+        // adiciona os Defects no componente Aladin
+        defects.each(function (record) {
+            // TODO recuperar o NOME DO Defeito
+
+            // var tile = footprint.findRecord('id', record.get('flg_dataset'));
+
+            // if (tile) {
+            //     sources.add(tile);
+            // }
+            if (record.get('dfc_ra') && record.get('dfc_dec')) {
+                sources.add(record);
+            }
+
+        },this);
+
+        aladin.showDefects(sources);
+    },
+
+    onUpdateDefectGrid: function (store, record) {
+        var me = this,
+            vm = me.getViewModel(),
+            defects = vm.getStore('defects'),
+            dataset = vm.get('currentDataset'),
+            aladin = me.lookupReference('aladin'),
+            filters = vm.getStore('filters'),
+            filter = aladin.getFilter(),
+            current,
+            defect,
+            f;
+
+        // descobrir o id do filtro usando a store Filters
+        f = filters.findRecord('filter', filter.toLowerCase());
+
+        // Verificar se o defeito selecionado esta na lista de defeitos
+        current = defects.findRecord('id', record.get('ftr_defect'));
+
+        if (current) {
+            // Verificar se e para remover
+            if (!current.get('checked')) {
+                // Remover
+                defects.remove(current);
+            }
+
+        } else {
+            // adicionar
+            defect = Ext.create('Tile.model.Defect',{
+                dfc_dataset: dataset.get('id'),
+                dfc_filter: f.get('id'),
+                dfc_feature: record.get('id'),
+                dfc_ra: null,
+                dfc_dec: null
+            });
+
+            defects.add(defect);
+        }
+
+        defects.sync({
+            success: function () {
+                Ext.toast({
+                    html: 'Data saved',
+                    align: 't'
+                });
+            },
+            failure: function () {
+                console.log('Failure');
+
+            },
+            callback: function () {
+                defects.load();
+            }
+        });
+    },
+
+    onClickAddDefect: function (btn) {
+        console.log('onClickAddDefect');
+        var me = this,
+            record = btn.getWidgetRecord(),
+            vm = me.getViewModel(),
+            defects = vm.getStore('defects'),
+            dataset = vm.get('currentDataset'),
+            aladin = me.lookupReference('aladin'),
+            filters = vm.getStore('filters'),
+            filter = aladin.getFilter(),
+            radec = aladin.getRaDec(),
+            defect,
+            f;
+
+        console.log('record: %o', record);
+
+        // descobrir o id do filtro usando a store Filters
+        f = filters.findRecord('filter', filter.toLowerCase());
+
+        // adicionar
+        defect = Ext.create('Tile.model.Defect',{
+            dfc_dataset: dataset.get('id'),
+            dfc_filter: f.get('id'),
+            dfc_feature: record.get('id'),
+            dfc_ra: radec[0],
+            dfc_dec: radec[1]
+        });
+
+        console.log('defect: %o', defect);
+
+        defects.add(defect);
+
+        defects.sync({
+            success: function () {
+                Ext.toast({
+                    html: 'Data saved',
+                    align: 't'
+                });
+            },
+            failure: function () {
+                console.log('Failure');
+
+            },
+            callback: function () {
+                defects.load();
+            }
+        });
 
     }
 

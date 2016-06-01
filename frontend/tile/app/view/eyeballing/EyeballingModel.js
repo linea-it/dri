@@ -13,10 +13,14 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
         'Tile.store.Surveys',
         'Tile.store.Tags',
         'Tile.store.Flaggeds',
+        'Tile.store.Features',
+        'Tile.store.Defects',
+        'Tile.store.Filters',
         'Tile.model.Release',
         'Tile.model.Tag',
         'Tile.model.Dataset',
-        'Tile.model.Flagged'
+        'Tile.model.Flagged',
+        'Tile.model.Defect'
     ],
 
     data: {
@@ -43,6 +47,10 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
     },
 
     stores: {
+        filters: {
+            type: 'filters'
+        },
+
         // Releases  = Todos os releases disponiveis.
         releases: {
             type: 'releases',
@@ -74,6 +82,15 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
 
         flaggeds: {
             type: 'flaggeds'
+        },
+
+        features: {
+            type: 'features',
+            storeId: 'Features'
+        },
+
+        defects: {
+            type: 'defects'
         }
 
     }

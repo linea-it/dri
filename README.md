@@ -25,9 +25,9 @@ virtualenv -p python3 env
 ```
 
 ## Installation
-Create a directory where is the virtualenv and clone the repository.
+Clone the repository to your home directory.
 ```
-mkdir dri
+git clone https://github.com/linea-it/dri.git dri
 cd dri
 ```
 Create a virtualenv
@@ -47,11 +47,7 @@ Activation virtualenv
 ```
 source env/bin/activate
 ```
-Clone repository 
-```
-git clone https://github.com/linea-it/dri.git api
-cd api
-```
+
 ### Installing the dependencies
 To install all dependencies Globally on your System.
 
@@ -66,14 +62,16 @@ pip install -r api/requirements.txt
 ### Settings
 
 In directory dri/dri/settings there are configuration files for each environment.
-The development environment is set by default (development.py file is set), so to develoment porpuses there is no needs to any configuration.
-For all other environments it is necessary to set the environment variable DJANGO_SETTINGS_MODULE pointing to the file that will be used, it is necessary to pass the full path to the file without the extension. 
-example:
+The development environment is set by default (development.py file is set)
 
 ```
-export DJANGO_SETTINGS_MODULE = dri.settings.production
+cp api/dri/settings/local_vars.py.template api/dri/settings/local_vars.py
+vim api/dri/settings/local_vars.py
 ```
-
+Edit the contents of the variable BASEPROJECT pointing to the home directory where the repository was cloned example:
+```
+BASE_PROJECT = '/home/<user>/dri'
+```
 The structure of this part of the project is:
 
 <pre>
@@ -83,6 +81,8 @@ dri/settings/
 ├── development.py
 ├── testing.py
 ├── production.py
+├── local_vars.py.template
+├── local_vars.py
 </pre>
 
 - defaults.py: global settings file and included for all other files.
@@ -100,7 +100,6 @@ if you are a developer change only the development case file do not want to use 
 
 ## Setting up Database
 ```
-python manage.py makemigrations
 python manage.py migrate
 ```
 ## Create a Super User in django
@@ -121,5 +120,39 @@ in the browser to access the URL
 ```
 http://localhost:8000/
 ```
+## Configuration Frontend + Backend
+
+back to the root of the project
+```
+cd ..
+```
+copy dri.conf to directory sites-available
+```
+sudo cp dri.conf /etc/apache2/sites-available/
+```
+Edit the file to put the path where the clone and the User was made that will run wsgi (use the same home User)
+```
+sudo vim /etc/apache2/sites-available/dri.conf
+```
+Edit the variable
+```
+BASEDIR /home/<user>/dri
+EXECUTE <user>
+```
+Enable
+```
+sudo a2ensite dri.conf
+sudo service apache2 reload
+```
+This site alias is configured to dri.com
+then you should add the following line to /etc/hosts
+```
+sudo vim /etc/hosts 
+```
+```
+127.0.0.1       dri.com
+```
+or edit dri.conf and configure the virtual host to a different port
+
 
 ## Documentation & Support
