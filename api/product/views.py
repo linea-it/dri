@@ -12,9 +12,12 @@ class ProductViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows product to be viewed or edited
     """
+    queryset = Product.objects.select_related().all()
 
-    queryset = Product.objects.all()
     serializer_class = ProductSerializer
+
     search_fields = ('prd_name', 'prd_display_name', 'prd_class')
+
     filter_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')
+
     ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')
