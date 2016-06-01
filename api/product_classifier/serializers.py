@@ -19,10 +19,9 @@ class ProductClassSerializer(serializers.HyperlinkedModelSerializer):
             'pcl_is_system'
         )
 
+
 class ProductGroupSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
-
         model = ProductGroup
 
         fields = (
@@ -30,4 +29,3 @@ class ProductGroupSerializer(serializers.HyperlinkedModelSerializer):
             'pgr_name',
             'pgr_display_name'
         )
-
