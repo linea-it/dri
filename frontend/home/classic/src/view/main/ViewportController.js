@@ -83,10 +83,13 @@ Ext.define('Admin.view.main.ViewportController', {
 
     onNavigationTreeSelectionChange: function (tree, node) {
         if (node && node.get('view')) {
+            console.log(node.get("routeId"))
             if (node.get("routeId") == 'email'){
                 this.redirectTo( 'profile');
             }else if(node.get("routeId") == 'dashboard'){
                 //window.open('/dri/apps/tiles/')
+            }else if(node.get("routeId") == 'eyeballing'){
+                window.open('/dri/apps/eyeballing/')
             }else{
                 this.redirectTo( node.get("routeId"));
             }            

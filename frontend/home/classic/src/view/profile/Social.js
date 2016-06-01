@@ -31,8 +31,8 @@ Ext.define('Admin.view.profile.Social', {
                 height: 120,
                 width: 150,
                 alt: 'profile-picture',
-                src: '/dri-frontend/home/resources/view.png'
-                // src: '/dri/apps/home/resources/view.png'
+                // src: '/dri-frontend/home/resources/view.png'
+                src: '/dri/apps/home/resources/view.png'
             },{
                 xtype: 'component',
                 // cls: 'userProfileName',

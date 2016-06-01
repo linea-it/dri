@@ -1,0 +1,26 @@
+.des-portal-logo {
+    background-color: $des-portal-headerbar-background-color !important;
+    height: 52px;
+    font-size: 18px;
+    color: #fff;
+    font-weight: bold;
+    padding: 5px 0 5px;
+    .main-logo {
+        img{
+            margin-left: 22px;
+            margin-right: 22px;
+            top: 8px;
+            position: relative;
+        }
+    }
+}
+
+.des-portal-headerbar {
+    background-color: $des-portal-headerbar-background-color !important;
+    padding:0 30px 0 0 !important;
+    border:none !important;
+}
+
+.icon-color-orange {
+    color: $color-soft-orange !important;
+}
