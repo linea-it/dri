@@ -3,7 +3,6 @@ import logging
 from product_classifier.models import ProductClass
 
 from rest_framework import serializers
-from .models import Catalog
 from .models import File
 from .models import Map
 from .models import Mask
@@ -88,18 +87,56 @@ class TableSerializer(serializers.HyperlinkedModelSerializer):
             'tbl_name'
         )
 
+
 class CatalogSerializer(serializers.HyperlinkedModelSerializer):
+    prd_class = serializers.PrimaryKeyRelatedField(
+        queryset=ProductClass.objects.all(), many=False)
+
+    # Atributos da product_classifier.ProductClass
+    # pcl_name = serializers.SerializerMethodField()
+    pcl_display_name = serializers.SerializerMethodField()
+    pcl_is_system = serializers.SerializerMethodField()
+
+    # Atributos da product_classifier.ProductGroup
+    pgr_group = serializers.SerializerMethodField()
+    # pgr_name = serializers.SerializerMethodField()
+    pgr_display_name = serializers.SerializerMethodField()
 
     class Meta:
-
-        model = Catalog
+        model = Product
 
         fields = (
             'id',
-            'ctl_num_columns',
-            'ctl_num_tiles',
-            'ctl_num_objects'
+            'prd_name',
+            'prd_display_name',
+            'prd_flag_removed',
+            'prd_class',
+            # 'pcl_name',
+            'pcl_display_name',
+            'pcl_is_system',
+            'pgr_group',
+            # 'pgr_name',
+            'pgr_display_name',
         )
+
+    def get_pcl_name(self, obj):
+        return obj.prd_class.pcl_name
+
+    def get_pcl_display_name(self, obj):
+        return obj.prd_class.pcl_display_name
+
+    def get_pcl_is_system(self, obj):
+        return obj.prd_class.pcl_is_system
+
+    def get_pgr_group(self, obj):
+        return obj.prd_class.pcl_group.id
+
+    def get_pgr_name(self, obj):
+        return obj.prd_class.pcl_group.pgr_name
+
+    def get_pgr_display_name(self, obj):
+        return obj.prd_class.pcl_group.pgr_display_name
+
 
 class MapSerializer(serializers.HyperlinkedModelSerializer):
 
