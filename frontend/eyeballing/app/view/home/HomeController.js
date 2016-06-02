@@ -14,7 +14,6 @@ Ext.define('Eyeballing.view.home.HomeController', {
      * @method onEyeballing [description]
      */
     onEyeballing: function (release) {
-        console.log('onEyeballing()');
         var me = this,
             hash;
 

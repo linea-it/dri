@@ -52,12 +52,21 @@ Ext.define('aladin.Interfaces', {
             vm = me.getViewModel(),
             tile = vm.get('tile'),
             tag = vm.get('tag'),
-            data;
+            data,
+            tl = '',
+            tg = '';
+
+        if (tag) {
+            tg = tag.get('tag_display_name');
+        }
+        if (tile) {
+            tl = tile.get('tli_tilename');
+        }
 
         data = {
             location: vm.get('location'),
-            tag: tag.get('tag_display_name'),
-            tilename: tile.get('tli_tilename')
+            tag: tg,
+            tilename: tl
         };
 
         return data;

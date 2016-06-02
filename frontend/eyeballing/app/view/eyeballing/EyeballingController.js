@@ -44,6 +44,7 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
      * @method onLoadPanel [description]
      */
     onLoadPanel: function () {
+        console.log('controller onLoadPanel()');
         var me = this,
             view = me.getView(),
             release = view.getRelease();
@@ -53,7 +54,12 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
     },
 
     onUpdatePanel: function () {
+        console.log('controller onUpdatePanel()');
+        var me = this,
+            view = me.getView(),
+            release = view.getRelease();
 
+        me.loadReleaseById(release);
     },
 
     /**
@@ -406,20 +412,24 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             filter = aladin.getFilter(),
             f;
 
+        console.log('filter: %o', filter);
         // descobrir o id do filtro usando a store Filters
         f = filters.findRecord('filter', filter.toLowerCase());
 
-        store.filter([
-            {
-                property: 'dfc_dataset',
-                value: dataset.get('id')
-            },
-            {
-                property: 'dfc_filter',
-                value: f.get('id')
-            }
-        ]);
-
+        if (f) {
+            store.filter([
+                {
+                    property: 'dfc_dataset',
+                    value: dataset.get('id')
+                },
+                {
+                    property: 'dfc_filter',
+                    value: f.get('id')
+                }
+            ]);
+        } else {
+            console.log('Tratar esse erro de sincronismo');
+        }
     },
 
     onLoadDefects: function (defects) {
@@ -445,7 +455,6 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
                 feature.set('checked', true);
                 feature.set('ftr_defect', defect.get('id'));
 
-                console.log(feature);
             } else {
                 feature.set('checked', false);
             }

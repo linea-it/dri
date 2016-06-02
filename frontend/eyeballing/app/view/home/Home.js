@@ -34,5 +34,10 @@ Ext.define('Eyeballing.view.home.Home', {
     loadPanel: function () {
         this.fireEvent('loadpanel', this);
 
+    },
+
+    updatePanel: function () {
+        this.fireEvent('updatepanel', this);
+
     }
 });
