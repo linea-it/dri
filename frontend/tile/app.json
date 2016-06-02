@@ -222,7 +222,7 @@
      *
      */
     "js": [
-        // Biblioteca Jquery/ JQuery UI
+        // // Biblioteca Jquery/ JQuery UI
         {
             "path": "https://code.jquery.com/jquery-1.11.1.min.js",
             "remote": true
@@ -232,6 +232,12 @@
             "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js",
             "remote": true
         },
+        // {
+        //     "path": "resources/jquery-1.11.1.min.js"
+        // },
+        // {
+        //     "path": "resources/aladin.min.js"
+        // },
         {
             "path": "app.js",
             "bundle": true
@@ -293,6 +299,9 @@
             "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css",
             "remote": true
         },
+        // {
+        //     "path": "resources/aladin.min.css"
+        // },
         {
             // this entry uses an ant variable that is the calculated
             // value of the generated output css file for the app,

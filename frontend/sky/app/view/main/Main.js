@@ -6,99 +6,72 @@
  * TODO - Replace this content of this view to suite the needs of your application.
  */
 Ext.define('Sky.view.main.Main', {
-    extend: 'Ext.tab.Panel',
+    extend: 'Ext.container.Container',
     xtype: 'app-main',
 
     requires: [
         'Ext.plugin.Viewport',
         'Ext.window.MessageBox',
-
+        'Ext.layout.container.Card',
+        'Ext.layout.container.Border',
         'Sky.view.main.MainController',
         'Sky.view.main.MainModel',
-        'Sky.view.main.List'
+        'Sky.view.search.SearchField'
     ],
 
     controller: 'main',
+
     viewModel: 'main',
 
-    ui: 'navigation',
+    plugins: 'viewport',
 
-    tabBarHeaderPosition: 1,
-    titleRotation: 0,
-    tabRotation: 0,
-
-    header: {
-        layout: {
-            align: 'stretchmax'
-        },
-        title: {
-            bind: {
-                text: '{name}'
-            },
-            flex: 0
-        },
-        iconCls: 'fa-th-list'
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
     },
 
-    tabBar: {
-        flex: 1,
-        layout: {
-            align: 'stretch',
-            overflowHandler: 'none'
-        }
-    },
-
-    responsiveConfig: {
-        tall: {
-            headerPosition: 'top'
-        },
-        wide: {
-            headerPosition: 'left'
-        }
-    },
-
-    defaults: {
-        bodyPadding: 20,
-        tabConfig: {
-            plugins: 'responsive',
-            responsiveConfig: {
-                wide: {
-                    iconAlign: 'left',
-                    textAlign: 'left'
+    items: [
+        {
+            xtype: 'toolbar',
+            cls: 'des-portal-headerbar toolbar-btn-shadow',
+            height: 52,
+            itemId: 'headerBar',
+            items: [
+                {
+                    xtype: 'component',
+                    cls: 'des-portal-logo',
+                    bind: {
+                        html: '<div class="main-logo"><img src="{desPortalLogo}">{name}</div>'
+                    }
                 },
-                tall: {
-                    iconAlign: 'top',
-                    textAlign: 'center',
-                    width: 120
+                '->',
+                {
+                    xtype: 'tile-search-field'
                 }
+                // {
+                //     iconCls: 'x-fa fa-question',
+                //     // text: 'Help',
+                //     tooltip: 'Help',
+                //     handler: function () {
+                //         Ext.create('help.Twiki', {
+                //             // TODO: Usar Bind
+                //             page: 'TargetsHelp',
+                //             // subsection: 'Selected_Catalog'
+                //             autoShow: true
+                //         });
+                //     }
+                // }
+            ]
+        },
+        {
+            xtype: 'container',
+            flex: 1,
+            reference: 'mainCardPanel',
+            margin: '1 0 0 0',
+            layout: {
+                type: 'card',
+                anchor: '100%'
             }
         }
-    },
-
-    items: [{
-        title: 'Home',
-        iconCls: 'fa-home',
-        // The following grid shares a store with the classic version's grid as well!
-        items: [{
-            xtype: 'mainlist'
-        }]
-    }, {
-        title: 'Users',
-        iconCls: 'fa-user',
-        bind: {
-            html: '{loremIpsum}'
-        }
-    }, {
-        title: 'Groups',
-        iconCls: 'fa-users',
-        bind: {
-            html: '{loremIpsum}'
-        }
-    }, {
-        title: 'Settings',
-        iconCls: 'fa-cog',
-        bind: {
-            html: '{loremIpsum}'
-        }
-    }]
+    ]
 });

@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/1.9/howto/deployment/wsgi/
 
 import os
 from django.core.wsgi import get_wsgi_application
+from django.contrib.auth.handlers.modwsgi import check_password
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "dri.settings")
 

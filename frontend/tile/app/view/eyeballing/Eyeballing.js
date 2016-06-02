@@ -6,7 +6,9 @@ Ext.define('Tile.view.eyeballing.Eyeballing', {
     requires: [
         'Tile.view.eyeballing.EyeballingController',
         'Tile.view.eyeballing.EyeballingModel',
-        'Tile.view.eyeballing.Aladin'
+        'Tile.view.eyeballing.Aladin',
+        'Tile.view.eyeballing.Thumb',
+        'Tile.view.eyeballing.Defects'
     ],
 
     controller: 'eyeballing',
@@ -32,19 +34,55 @@ Ext.define('Tile.view.eyeballing.Eyeballing', {
                     items: [
                         {
                             xtype: 'eyeballing-aladin',
+                            reference: 'aladin',
                             region: 'center',
                             bind: {
                                 storeSurveys: '{surveys}',
                                 storeTags: '{tags}',
                                 storeTiles: '{tiles}'
                             }
+                        },
+                        {
+                            xtype: 'eyeballing-defects',
+                            reference: 'defects',
+                            region: 'east',
+                            width: 220,
+                            store: Ext.create('Tile.store.Features', {
+                                listeners: {
+                                    scope: me.getController(),
+                                    update: 'onUpdateDefectGrid'
+                                }
+                            }),
+                            tbar: [
+                                {
+                                    xtype: 'button',
+                                    iconCls: 'x-fa fa-exclamation-triangle',
+                                    text: 'Flag',
+                                    tooltip: 'Flag/Unflag',
+                                    enableToggle: true,
+                                    toggleHandler: 'onFlagDataset',
+                                    bind: {
+                                        pressed: '{flagged.flg_flagged}'
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'eyeballing-thumb',
+                            reference: 'thumb',
+                            // region: 'east',
+                            // width: 180,
+                            resizable: true,
+                            region: 'south',
+                            height: 190,
+                            bind: {
+                                dataset: '{currentDataset}'
+                            },
+                            listeners: {
+                                changefilter: 'onClickThumb'
+                            }
+
                         }
-                        // {
-                        //     xtype: 'panel',
-                        //     title: 'Thumbs',
-                        //     region: 'south',
-                        //     height: 200
-                        // }
                     ]
                 }
             ],

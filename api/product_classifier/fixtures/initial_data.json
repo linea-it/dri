@@ -1,0 +1,1242 @@
+[
+    {
+        "model":"product_classifier.productgroup",
+        "pk":1,
+        "fields":{
+            "pgr_name":"targets",
+            "pgr_display_name":"Targets"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":2,
+        "fields":{
+            "pgr_name":"value_added_catalogs",
+            "pgr_display_name":"Value-Added Catalogs"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":3,
+        "fields":{
+            "pgr_name":"simulations",
+            "pgr_display_name":"Simulations"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":4,
+        "fields":{
+            "pgr_name":"objects_catalog",
+            "pgr_display_name":"Objects Catalog"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":5,
+        "fields":{
+            "pgr_name":"galaxy_properties",
+            "pgr_display_name":"Galaxy Properties"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":6,
+        "fields":{
+            "pgr_name":"mangle_mask",
+            "pgr_display_name":"Mangle Mask"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":7,
+        "fields":{
+            "pgr_name":"photoz",
+            "pgr_display_name":"Photo-z"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":8,
+        "fields":{
+            "pgr_name":"training_set",
+            "pgr_display_name":"Training Set"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":9,
+        "fields":{
+            "pgr_name":"validation_set",
+            "pgr_display_name":"Validation Set"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":10,
+        "fields":{
+            "pgr_name":"sg_classification",
+            "pgr_display_name":"S/G Classification"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":11,
+        "fields":{
+            "pgr_name":"zeropoints",
+            "pgr_display_name":"Zeropoints"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":12,
+        "fields":{
+            "pgr_name":"external_catalogs",
+            "pgr_display_name":"External Catalogs"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":13,
+        "fields":{
+            "pgr_name":"systematic_maps",
+            "pgr_display_name":"Systematic Maps"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":14,
+        "fields":{
+            "pgr_name":"depth_maps",
+            "pgr_display_name":"Depth Maps"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":15,
+        "fields":{
+            "pgr_name":"mangle_maps",
+            "pgr_display_name":"Mangle Healpix Maps"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":16,
+        "fields":{
+            "pgr_name":"effective_map",
+            "pgr_display_name":"Effective Map"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":17,
+        "fields":{
+            "pgr_name":"photoz_maps",
+            "pgr_display_name":"Photo-z Maps"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":18,
+        "fields":{
+            "pgr_name":"images",
+            "pgr_display_name":"Images"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":19,
+        "fields":{
+            "pgr_name":"training_subset",
+            "pgr_display_name":"Training Subset"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":20,
+        "fields":{
+            "pgr_name":"training_file",
+            "pgr_display_name":"Training File"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":21,
+        "fields":{
+            "pgr_name":"training_statistic",
+            "pgr_display_name":"Training Statistic"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":22,
+        "fields":{
+            "pgr_name":"region_selection",
+            "pgr_display_name":"Region Selection"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":23,
+        "fields":{
+            "pgr_name":"aux",
+            "pgr_display_name":"Auxiliary"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":24,
+        "fields":{
+            "pgr_name":"bright_mask",
+            "pgr_display_name":"Bright Mask"
+        }
+    },
+    {
+        "model":"product_classifier.productgroup",
+        "pk":25,
+        "fields":{
+            "pgr_name":"other",
+            "pgr_display_name":"Other"
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 28,
+        "fields": {
+            "pcl_group_id": 7,
+            "pcl_name": "lephare_photoz",
+            "pcl_display_name": "Lephare Photo-z",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 53,
+        "fields": {
+            "pcl_group_id": 10,
+            "pcl_name": "y1_modest_v1",
+            "pcl_display_name": "Y1 Modest v1",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 54,
+        "fields": {
+            "pcl_group_id": 10,
+            "pcl_name": "y1_modest_v2",
+            "pcl_display_name": "Y1 Modest v2",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 63,
+        "fields": {
+            "pcl_group_id": 14,
+            "pcl_name": "mag_auto",
+            "pcl_display_name": "Mag Auto",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 64,
+        "fields": {
+            "pcl_group_id": 14,
+            "pcl_name": "mag_aper_4",
+            "pcl_display_name": "Mag Aper 4",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 66,
+        "fields": {
+            "pcl_group_id": 14,
+            "pcl_name": "mag_psf",
+            "pcl_display_name": "Mag PSF",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 72,
+        "fields": {
+            "pcl_group_id": 16,
+            "pcl_name": "effective_map_healpix_coadds",
+            "pcl_display_name": "Effective Map Healpix Coadds",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 73,
+        "fields": {
+            "pcl_group_id": 16,
+            "pcl_name": "region_selection",
+            "pcl_display_name": "Region Selection",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 74,
+        "fields": {
+            "pcl_group_id": 17,
+            "pcl_name": "annz_median",
+            "pcl_display_name": "Annz Median",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 75,
+        "fields": {
+            "pcl_group_id": 17,
+            "pcl_name": "annz_error",
+            "pcl_display_name": "Annz Error",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 76,
+        "fields": {
+            "pcl_group_id": 17,
+            "pcl_name": "annz2_median",
+            "pcl_display_name": "Annz2 Median",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 77,
+        "fields": {
+            "pcl_group_id": 17,
+            "pcl_name": "annz2_error",
+            "pcl_display_name": "Annz2 Error",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 78,
+        "fields": {
+            "pcl_group_id": 17,
+            "pcl_name": "arborz_median",
+            "pcl_display_name": "Arborz Median",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 79,
+        "fields": {
+            "pcl_group_id": 17,
+            "pcl_name": "arborz_error",
+            "pcl_display_name": "Arborz Error",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 80,
+        "fields": {
+            "pcl_group_id": 17,
+            "pcl_name": "mlz_median",
+            "pcl_display_name": "MLZ Median",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 81,
+        "fields": {
+            "pcl_group_id": 17,
+            "pcl_name": "mlz_error",
+            "pcl_display_name": "MLZ Error",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 82,
+        "fields": {
+            "pcl_group_id": 17,
+            "pcl_name": "lephare_median",
+            "pcl_display_name": "Lephare Median",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 84,
+        "fields": {
+            "pcl_group_id": 17,
+            "pcl_name": "lephare_error",
+            "pcl_display_name": "Lephare Error",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 88,
+        "fields": {
+            "pcl_group_id": 18,
+            "pcl_name": "raw_images",
+            "pcl_display_name": "Raw Images",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 89,
+        "fields": {
+            "pcl_group_id": 18,
+            "pcl_name": "calibration_images",
+            "pcl_display_name": "Calibration Images",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 90,
+        "fields": {
+            "pcl_group_id": 18,
+            "pcl_name": "reduced_images",
+            "pcl_display_name": "Reduced Images",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 91,
+        "fields": {
+            "pcl_group_id": 18,
+            "pcl_name": "coadd_images",
+            "pcl_display_name": "Coadd Images",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 85,
+        "fields": {
+            "pcl_group_id": 6,
+            "pcl_name": "molygon",
+            "pcl_display_name": "Molygon",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 86,
+        "fields": {
+            "pcl_group_id": 6,
+            "pcl_name": "starbitmask",
+            "pcl_display_name": "Starbitmask",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 87,
+        "fields": {
+            "pcl_group_id": 6,
+            "pcl_name": "molygon_coadds",
+            "pcl_display_name": "Molygon Coadds",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 71,
+        "fields": {
+            "pcl_group_id": 15,
+            "pcl_name": "mangle_maps_area_fraction",
+            "pcl_display_name": "Area Fraction",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 92,
+        "fields": {
+            "pcl_group_id": 23,
+            "pcl_name": "coadd_molygon",
+            "pcl_display_name": "Coadd Molygon",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 93,
+        "fields": {
+            "pcl_group_id": 23,
+            "pcl_name": "coadd_healpix",
+            "pcl_display_name": "Coadd Healpix",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 94,
+        "fields": {
+            "pcl_group_id": 3,
+            "pcl_name": "bcc_simulation",
+            "pcl_display_name": "BCC",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 95,
+        "fields": {
+            "pcl_group_id": 3,
+            "pcl_name": "mice_simulation",
+            "pcl_display_name": "Mice",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 96,
+        "fields": {
+            "pcl_group_id": 3,
+            "pcl_name": "addstar_simulation",
+            "pcl_display_name": "Addstar",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 8,
+        "fields": {
+            "pcl_group_id": 12,
+            "pcl_name": "external_astrometry",
+            "pcl_display_name": "Astrometry",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 97,
+        "fields": {
+            "pcl_group_id": 12,
+            "pcl_name": "external_photometry",
+            "pcl_display_name": "Photometry",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 99,
+        "fields": {
+            "pcl_group_id": 12,
+            "pcl_name": "external_image_quality",
+            "pcl_display_name": "Image Quality",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 101,
+        "fields": {
+            "pcl_group_id": 1,
+            "pcl_name": "astrometry_outliers",
+            "pcl_display_name": "Astrometry Outliers",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 58,
+        "fields": {
+            "pcl_group_id": 13,
+            "pcl_name": "systematic_maps_airmass",
+            "pcl_display_name": "Airmass",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 56,
+        "fields": {
+            "pcl_group_id": 13,
+            "pcl_name": "systematic_maps_count_total",
+            "pcl_display_name": "Count Total",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 59,
+        "fields": {
+            "pcl_group_id": 13,
+            "pcl_name": "systematic_maps_fwhm",
+            "pcl_display_name": "FWHM",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 60,
+        "fields": {
+            "pcl_group_id": 13,
+            "pcl_name": "systematic_maps_sky_brightness",
+            "pcl_display_name": "Sky Brightness",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 55,
+        "fields": {
+            "pcl_group_id": 13,
+            "pcl_name": "systematic_maps_sky_sigma",
+            "pcl_display_name": "Sky Sigma",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 62,
+        "fields": {
+            "pcl_group_id": 13,
+            "pcl_name": "systematic_maps_exposure_time",
+            "pcl_display_name": "Exposure Time",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 61,
+        "fields": {
+            "pcl_group_id": 13,
+            "pcl_name": "systematic_maps_mag_limit",
+            "pcl_display_name": "Mag Limit",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 67,
+        "fields": {
+            "pcl_group_id": 15,
+            "pcl_name": "mangle_maps_exposure_time",
+            "pcl_display_name": "Exposure Time",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 68,
+        "fields": {
+            "pcl_group_id": 15,
+            "pcl_name": "mangle_maps_mag_limit",
+            "pcl_display_name": "Mag Limit",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 70,
+        "fields": {
+            "pcl_group_id": 15,
+            "pcl_name": "mangle_maps_weight",
+            "pcl_display_name": "Weight",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 69,
+        "fields": {
+            "pcl_group_id": 15,
+            "pcl_name": "mangle_maps_coadds",
+            "pcl_display_name": "Mangle Healpix Coadds",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 49,
+        "fields": {
+            "pcl_group_id": 7,
+            "pcl_name": "pofz",
+            "pcl_display_name": "P(z)",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 4,
+        "fields": {
+            "pcl_group_id": 1,
+            "pcl_name": "training_set_spectroscopy",
+            "pcl_display_name": "Training Set Spectroscopy",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 98,
+        "fields": {
+            "pcl_group_id": 1,
+            "pcl_name": "external_spectroscopy",
+            "pcl_display_name": "External Spectroscopy",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 17,
+        "fields": {
+            "pcl_group_id": 8,
+            "pcl_name": "weighted_training_set",
+            "pcl_display_name": "Training Set",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 2,
+        "fields": {
+            "pcl_group_id": 1,
+            "pcl_name": "galaxy_clusters",
+            "pcl_display_name": "Galaxy Clusters",
+            "pcl_is_system": true
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 5,
+        "fields": {
+            "pcl_group_id": 1,
+            "pcl_name": "stellar_systems",
+            "pcl_display_name": "Stellar Systems",
+            "pcl_is_system": true
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 100,
+        "fields": {
+            "pcl_group_id": 1,
+            "pcl_name": "cluster_members",
+            "pcl_display_name": "Cluster Members",
+            "pcl_is_system": true
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 103,
+        "fields": {
+            "pcl_group_id": 2,
+            "pcl_name": "vac_generic",
+            "pcl_display_name": "Generic",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 102,
+        "fields": {
+            "pcl_group_id": 22,
+            "pcl_name": "footprint_map",
+            "pcl_display_name": "Footprint map",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 1,
+        "fields": {
+            "pcl_group_id": 1,
+            "pcl_name": "objects",
+            "pcl_display_name": "Objects",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 3,
+        "fields": {
+            "pcl_group_id": 1,
+            "pcl_name": "qsos",
+            "pcl_display_name": "QSOs",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 6,
+        "fields": {
+            "pcl_group_id": 1,
+            "pcl_name": "strong_lensing",
+            "pcl_display_name": "Strong Lensing",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 7,
+        "fields": {
+            "pcl_group_id": 1,
+            "pcl_name": "color_outliers",
+            "pcl_display_name": "Color Outliers",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 11,
+        "fields": {
+            "pcl_group_id": 4,
+            "pcl_name": "coadd_objects",
+            "pcl_display_name": "Coadd Objects",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 14,
+        "fields": {
+            "pcl_group_id": 5,
+            "pcl_name": "lephare",
+            "pcl_display_name": "Lephare",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 15,
+        "fields": {
+            "pcl_group_id": 5,
+            "pcl_name": "mass_color",
+            "pcl_display_name": "Mass Color",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 16,
+        "fields": {
+            "pcl_group_id": 3,
+            "pcl_name": "simulations",
+            "pcl_display_name": "Simulations",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 18,
+        "fields": {
+            "pcl_group_id": 9,
+            "pcl_name": "validation_set",
+            "pcl_display_name": "Validation Set",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 26,
+        "fields": {
+            "pcl_group_id": 7,
+            "pcl_name": "annz",
+            "pcl_display_name": "ANNz",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 29,
+        "fields": {
+            "pcl_group_id": 11,
+            "pcl_name": "slr",
+            "pcl_display_name": "SLR",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 31,
+        "fields": {
+            "pcl_group_id": 10,
+            "pcl_name": "class_star",
+            "pcl_display_name": "Class Star",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 32,
+        "fields": {
+            "pcl_group_id": 10,
+            "pcl_name": "modest",
+            "pcl_display_name": "Modest",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 33,
+        "fields": {
+            "pcl_group_id": 10,
+            "pcl_name": "spread_model",
+            "pcl_display_name": "Spread Model",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 46,
+        "fields": {
+            "pcl_group_id": 7,
+            "pcl_name": "annz2",
+            "pcl_display_name": "ANNZ2",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 47,
+        "fields": {
+            "pcl_group_id": 7,
+            "pcl_name": "arborz",
+            "pcl_display_name": "Arborz",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 48,
+        "fields": {
+            "pcl_group_id": 7,
+            "pcl_name": "mlz",
+            "pcl_display_name": "MLZ",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 50,
+        "fields": {
+            "pcl_group_id": 7,
+            "pcl_name": "skynet",
+            "pcl_display_name": "Skynet",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 51,
+        "fields": {
+            "pcl_group_id": 7,
+            "pcl_name": "zebra",
+            "pcl_display_name": "Zebra",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 52,
+        "fields": {
+            "pcl_group_id": 7,
+            "pcl_name": "dnf",
+            "pcl_display_name": "DNF",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 122,
+        "fields": {
+            "pcl_group_id": 19,
+            "pcl_name": "training_subset",
+            "pcl_display_name": "Training Subset",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 123,
+        "fields": {
+            "pcl_group_id": 19,
+            "pcl_name": "validation_subset",
+            "pcl_display_name": "Validation Subset",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 124,
+        "fields": {
+            "pcl_group_id": 20,
+            "pcl_name": "annz_training",
+            "pcl_display_name": "ANNz Training",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 125,
+        "fields": {
+            "pcl_group_id": 20,
+            "pcl_name": "annz2_training",
+            "pcl_display_name": "ANNZ2 Training",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 126,
+        "fields": {
+            "pcl_group_id": 20,
+            "pcl_name": "arborz_training",
+            "pcl_display_name": "Arborz Training",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 127,
+        "fields": {
+            "pcl_group_id": 20,
+            "pcl_name": "dnf_training",
+            "pcl_display_name": "DNF Training",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 128,
+        "fields": {
+            "pcl_group_id": 20,
+            "pcl_name": "mlz_training",
+            "pcl_display_name": "MLZ Training",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 129,
+        "fields": {
+            "pcl_group_id": 20,
+            "pcl_name": "pofz_training",
+            "pcl_display_name": "P(z) Training",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 130,
+        "fields": {
+            "pcl_group_id": 20,
+            "pcl_name": "skynet_training",
+            "pcl_display_name": "Skynet Training",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 131,
+        "fields": {
+            "pcl_group_id": 20,
+            "pcl_name": "zebra_training",
+            "pcl_display_name": "Zebra Training",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 132,
+        "fields": {
+            "pcl_group_id": 20,
+            "pcl_name": "lephare_training",
+            "pcl_display_name": "Lephare Training",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 133,
+        "fields": {
+            "pcl_group_id": 21,
+            "pcl_name": "annz_stats",
+            "pcl_display_name": "ANNz  Statistics",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 134,
+        "fields": {
+            "pcl_group_id": 21,
+            "pcl_name": "annz2_stats",
+            "pcl_display_name": "ANNZ2 Statistics",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 135,
+        "fields": {
+            "pcl_group_id": 21,
+            "pcl_name": "arborz_stats",
+            "pcl_display_name": "Arborz Statistics",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 136,
+        "fields": {
+            "pcl_group_id": 21,
+            "pcl_name": "dnf_stats",
+            "pcl_display_name": "DNF Statistics",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 137,
+        "fields": {
+            "pcl_group_id": 21,
+            "pcl_name": "mlz_stats",
+            "pcl_display_name": "MLZ Statistics",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 138,
+        "fields": {
+            "pcl_group_id": 21,
+            "pcl_name": "pofz_stats",
+            "pcl_display_name": "P(z) Statistics",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 139,
+        "fields": {
+            "pcl_group_id": 21,
+            "pcl_name": "skynet_stats",
+            "pcl_display_name": "Skynet Statistics",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 140,
+        "fields": {
+            "pcl_group_id": 21,
+            "pcl_name": "zebra_stats",
+            "pcl_display_name": "Zebra Statistics",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 141,
+        "fields": {
+            "pcl_group_id": 21,
+            "pcl_name": "lephare_stats",
+            "pcl_display_name": "Lephare Statistics",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 143,
+        "fields": {
+            "pcl_group_id": 18,
+            "pcl_name": "map_images",
+            "pcl_display_name": "Map Images",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 144,
+        "fields": {
+            "pcl_group_id": 24,
+            "pcl_name": "bright_mask",
+            "pcl_display_name": "Bright Mask",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 145,
+        "fields": {
+            "pcl_group_id": 2,
+            "pcl_name": "vac_cluster",
+            "pcl_display_name": "Cluster Catalog",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 147,
+        "fields": {
+            "pcl_group_id": 2,
+            "pcl_name": "vac_ga",
+            "pcl_display_name": "GA",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 148,
+        "fields": {
+            "pcl_group_id": 2,
+            "pcl_name": "vac_ge",
+            "pcl_display_name": "GE",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 149,
+        "fields": {
+            "pcl_group_id": 2,
+            "pcl_name": "vac_lss",
+            "pcl_display_name": "LSS",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 150,
+        "fields": {
+            "pcl_group_id": 2,
+            "pcl_name": "external_vac_lss",
+            "pcl_display_name": "External VAC LSS",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 151,
+        "fields": {
+            "pcl_group_id": 22,
+            "pcl_name": "external_footprint_map",
+            "pcl_display_name": "External Footprint Map",
+            "pcl_is_system": false
+        }
+    },
+    {
+        "model": "product_classifier.productclass",
+        "pk": 152,
+        "fields": {
+            "pcl_group_id": 10,
+            "pcl_name": "y1_modest_v3",
+            "pcl_display_name": "Y1 Modest v3",
+            "pcl_is_system": false
+        }
+    }
+]

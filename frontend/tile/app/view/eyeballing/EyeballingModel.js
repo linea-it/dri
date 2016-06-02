@@ -11,9 +11,16 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
         'Tile.store.Datasets',
         'Tile.store.Footprints',
         'Tile.store.Surveys',
-        'Tile.model.Release',
         'Tile.store.Tags',
-        'Tile.model.Dataset'
+        'Tile.store.Flaggeds',
+        'Tile.store.Features',
+        'Tile.store.Defects',
+        'Tile.store.Filters',
+        'Tile.model.Release',
+        'Tile.model.Tag',
+        'Tile.model.Dataset',
+        'Tile.model.Flagged',
+        'Tile.model.Defect'
     ],
 
     data: {
@@ -25,13 +32,25 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
             type: 'Tile.model.Release',
             create: true
         },
+        currentTag: {
+            type: 'Tile.model.Tag',
+            create: true
+        },
         currentDataset: {
             type: 'Tile.model.Dataset',
+            create: true
+        },
+        flagged: {
+            type: 'Tile.model.Flagged',
             create: true
         }
     },
 
     stores: {
+        filters: {
+            type: 'filters'
+        },
+
         // Releases  = Todos os releases disponiveis.
         releases: {
             type: 'releases',
@@ -49,9 +68,29 @@ Ext.define('Tile.view.eyeballing.EyeballingModel', {
             storeId: 'Tags'
         },
 
+        // Datasets = Tiles que estao nos tags de um release
+        datasets: {
+            type: 'datasets'
+        },
+
+        // Tile = Uma instancia reduzida de um dataset somente informacoes das coordenadas
+        // de cada tile.
         tiles: {
             type: 'footprints',
             pageSize: 0
+        },
+
+        flaggeds: {
+            type: 'flaggeds'
+        },
+
+        features: {
+            type: 'features',
+            storeId: 'Features'
+        },
+
+        defects: {
+            type: 'defects'
         }
 
     }
