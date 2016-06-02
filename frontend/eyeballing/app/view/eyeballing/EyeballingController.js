@@ -19,6 +19,7 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             'eyeballing-aladin': {
                 changetile: 'onChangeTile',
                 changefilter: 'onChangeFilter'
+
             }
         },
         store: {
@@ -44,22 +45,25 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
      * @method onLoadPanel [description]
      */
     onLoadPanel: function () {
-        console.log('controller onLoadPanel()');
         var me = this,
             view = me.getView(),
             release = view.getRelease();
 
         me.loadReleaseById(release);
-
     },
 
     onUpdatePanel: function () {
-        console.log('controller onUpdatePanel()');
         var me = this,
             view = me.getView(),
-            release = view.getRelease();
+            release = view.getRelease(),
+            aladin = me.lookupReference('aladin');
+
+        if (aladin.aladinIsReady()) {
+            aladin.removeLayers();
+        }
 
         me.loadReleaseById(release);
+
     },
 
     /**
@@ -312,12 +316,12 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
 
         // Alterar o stylo do botao
         if (flag) {
-            btn.setText('Flagged');
+            // btn.setText('Flagged');
             btn.setIconCls('x-fa fa-exclamation-triangle icon-color-orange');
 
         } else {
             // Alterar o stylo do botao
-            btn.setText('Flag');
+            // btn.setText('Flag');
             btn.setIconCls('x-fa fa-exclamation-triangle');
         }
 
@@ -412,7 +416,6 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             filter = aladin.getFilter(),
             f;
 
-        console.log('filter: %o', filter);
         // descobrir o id do filtro usando a store Filters
         f = filters.findRecord('filter', filter.toLowerCase());
 
@@ -427,8 +430,6 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
                     value: f.get('id')
                 }
             ]);
-        } else {
-            console.log('Tratar esse erro de sincronismo');
         }
     },
 
@@ -440,6 +441,7 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             store = view.getStore(),
             features = vm.getStore('features'),
             sources = Ext.create('Ext.util.MixedCollection'),
+            footprint = vm.getStore('tiles'),
             defect;
 
         // Limpar a Store usada na grid;
@@ -470,18 +472,20 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
         store.commitChanges();
         store.resumeEvents();
 
-
         // adiciona os Defects no componente Aladin
         defects.each(function (record) {
-            // TODO recuperar o NOME DO Defeito
-
-            // var tile = footprint.findRecord('id', record.get('flg_dataset'));
-
-            // if (tile) {
-            //     sources.add(tile);
-            // }
             if (record.get('dfc_ra') && record.get('dfc_dec')) {
-                sources.add(record);
+                var f = features.findRecord('id', record.get('dfc_feature')),
+                    tile;
+
+                record.set('ftr_name', f.get('ftr_name'));
+
+                // So adiciona o defeito caso ele esteja dentro de uma das tiles do release.
+                tile = footprint.findRecord('id', record.get('dfc_dataset'));
+
+                if (tile) {
+                    sources.add(record);
+                }
             }
 
         },this);
@@ -545,7 +549,6 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
     },
 
     onClickAddDefect: function (btn) {
-        console.log('onClickAddDefect');
         var me = this,
             record = btn.getWidgetRecord(),
             vm = me.getViewModel(),
@@ -558,8 +561,6 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             defect,
             f;
 
-        console.log('record: %o', record);
-
         // descobrir o id do filtro usando a store Filters
         f = filters.findRecord('filter', filter.toLowerCase());
 
@@ -571,8 +572,6 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             dfc_ra: radec[0],
             dfc_dec: radec[1]
         });
-
-        console.log('defect: %o', defect);
 
         defects.add(defect);
 

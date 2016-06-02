@@ -38,7 +38,6 @@ Ext.define('aladin.Interfaces', {
                 '<spam>{tag}</spam>',
                 '</br><spam>{tilename}</spam>',
                 '</br><spam>J2000 {location}</spam>'
-                // '</div>'
             ]
         });
 
@@ -89,8 +88,8 @@ Ext.define('aladin.Interfaces', {
 
     makeToolbar: function () {
         return Ext.create('Ext.toolbar.Toolbar', {
-            vertical: true,
-            enableOverflow: true
+            vertical: true
+            //enableOverflow: true
         });
 
     },
