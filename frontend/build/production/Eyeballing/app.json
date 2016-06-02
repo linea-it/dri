@@ -148,11 +148,11 @@
   "toolkit": "classic",
   "theme": "theme-triton",
   "loader": {
-    "cache": "20160602125753",
+    "cache": "20160602135436",
     "cacheParam": "_dc"
   },
   "id": "f819e9bd-9643-45a0-b315-b6e66c9f2ec6",
-  "hash": "d4a9f70338efbd9151ede19c647f420a527eeb5c",
+  "hash": "20e96154d7de8de546329f86cb6387e902a653cc",
   "profile": "",
   "resources": {
     "path": "resources"

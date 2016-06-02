@@ -88,8 +88,8 @@ Ext.define('aladin.Interfaces', {
 
     makeToolbar: function () {
         return Ext.create('Ext.toolbar.Toolbar', {
-            vertical: true,
-            enableOverflow: true
+            vertical: true
+            //enableOverflow: true
         });
 
     },
