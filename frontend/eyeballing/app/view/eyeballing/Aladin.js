@@ -34,7 +34,7 @@ Ext.define('Eyeballing.view.eyeballing.Aladin', {
                     record.get('tli_dec'),
                     {
                         popupTitle: record.get('tli_tilename'),
-                        popupDesc: 'TESTE'
+                        popupDesc: ''
                     }
                 );
 
@@ -65,8 +65,8 @@ Ext.define('Eyeballing.view.eyeballing.Aladin', {
                     record.get('dfc_ra'),
                     record.get('dfc_dec'),
                     {
-                        popupTitle: 'NOME DO DEFEITO',
-                        popupDesc: 'TESTE'
+                        popupTitle: record.get('ftr_name'),
+                        popupDesc: ''
                     }
                 );
 
