@@ -38,7 +38,6 @@ Ext.define('aladin.Interfaces', {
                 '<spam>{tag}</spam>',
                 '</br><spam>{tilename}</spam>',
                 '</br><spam>J2000 {location}</spam>'
-                // '</div>'
             ]
         });
 

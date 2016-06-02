@@ -19,6 +19,7 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             'eyeballing-aladin': {
                 changetile: 'onChangeTile',
                 changefilter: 'onChangeFilter'
+
             }
         },
         store: {
@@ -50,16 +51,21 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             release = view.getRelease();
 
         me.loadReleaseById(release);
-
     },
 
     onUpdatePanel: function () {
         console.log('controller onUpdatePanel()');
         var me = this,
             view = me.getView(),
-            release = view.getRelease();
+            release = view.getRelease(),
+            aladin = me.lookupReference('aladin');
+
+        if (aladin.aladinIsReady()) {
+            aladin.removeLayers();
+        }
 
         me.loadReleaseById(release);
+
     },
 
     /**
@@ -312,12 +318,12 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
 
         // Alterar o stylo do botao
         if (flag) {
-            btn.setText('Flagged');
+            // btn.setText('Flagged');
             btn.setIconCls('x-fa fa-exclamation-triangle icon-color-orange');
 
         } else {
             // Alterar o stylo do botao
-            btn.setText('Flag');
+            // btn.setText('Flag');
             btn.setIconCls('x-fa fa-exclamation-triangle');
         }
 
@@ -412,7 +418,6 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             filter = aladin.getFilter(),
             f;
 
-        console.log('filter: %o', filter);
         // descobrir o id do filtro usando a store Filters
         f = filters.findRecord('filter', filter.toLowerCase());
 
@@ -427,8 +432,6 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
                     value: f.get('id')
                 }
             ]);
-        } else {
-            console.log('Tratar esse erro de sincronismo');
         }
     },
 

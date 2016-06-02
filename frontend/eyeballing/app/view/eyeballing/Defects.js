@@ -39,11 +39,8 @@ Ext.define('Eyeballing.view.eyeballing.Defects', {
                         textAlign: 'left',
                         xtype: 'button',
                         iconCls: 'x-fa fa-crosshairs',
-                        handler: 'onClickAddDefect'
-                        // handler: function (btn) {
-                        //     var rec = btn.getWidgetRecord();
-                        //     Ext.Msg.alert('Button clicked', 'Hey! ' + rec.get('name'));
-                        // }
+                        handler: 'onClickAddDefect',
+                        tooltip: 'Mark the current position with this defect.'
                     }
                 },
                 {

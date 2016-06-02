@@ -32,6 +32,9 @@ Ext.define('aladin.Aladin', {
         // Instancia do aladin
         aladin: null,
 
+        // flag que indica que o componete aladin ja foi renderizado.
+        aladinReady: false,
+
         // Diretorio das imagens HIPS ex: '/static/stripeHiPS'
         hipsDir: '/static/stripeHiPS',
 
@@ -227,6 +230,15 @@ Ext.define('aladin.Aladin', {
             me.enableDisableInfo(null, me.getInfoEnabled());
         }
 
+        me.setAladinReady(true);
+        me.fireEvent('aladinready', me);
+
+    },
+
+    aladinIsReady: function () {
+        var me = this;
+
+        return me.getAladinReady();
     },
 
     getRaDec: function () {
