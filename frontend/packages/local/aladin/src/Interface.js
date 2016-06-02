@@ -24,7 +24,7 @@ Ext.define('aladin.Interfaces', {
             width: 200,
             height: 100,
             x: 5,
-            y: 25,
+            y: 10,
             renderTo: me.body,
             header: false,
             resizable: false,
@@ -35,10 +35,10 @@ Ext.define('aladin.Interfaces', {
                 zIndex: 999
             },
             tpl: [
-                '<spam>{location}</spam>',
-                '</br><spam>{tag}</spam>',
+                '<spam>{tag}</spam>',
                 '</br><spam>{tilename}</spam>',
-                '</div>'
+                '</br><spam>J2000 {location}</spam>'
+                // '</div>'
             ]
         });
 
