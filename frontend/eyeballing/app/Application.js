@@ -24,7 +24,7 @@ Ext.define('Eyeballing.Application', {
             url: '/dri/api?format=json',
             failure: function () {
                 var pathname = window.location.pathname,
-                    hostname = window.location.hostname,
+                    hostname = window.location.host,
                     location;
 
                 location = Ext.String.format('http://{0}/dri/api/api-auth/login/?next={1}', hostname, pathname);
