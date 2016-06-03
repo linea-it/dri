@@ -14,9 +14,7 @@ Ext.define('Target.view.main.Main', {
         'Ext.window.MessageBox',
 
         'Target.view.main.MainController',
-        'Target.view.main.MainModel',
-        'Target.view.home.Home'
-
+        'Target.view.main.MainModel'
     ],
 
     controller: 'main',
@@ -44,7 +42,6 @@ Ext.define('Target.view.main.Main', {
             xtype: 'container',
             flex: 1,
             reference: 'mainCardPanel',
-            margin: '1 0 0 0',
             layout: {
                 type: 'card',
                 anchor: '100%'

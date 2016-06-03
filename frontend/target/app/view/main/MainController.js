@@ -10,6 +10,7 @@ Ext.define('Target.view.main.MainController', {
     alias: 'controller.main',
 
     requires: [
+        'Target.view.home.Home'
         //'Target.view.objects.Panel'
     ],
 
@@ -66,7 +67,7 @@ Ext.define('Target.view.main.MainController', {
     onCatalogViewByCatalogId: function (catalog) {
         // console.log('onCatalogViewByRelease(%o)', catalog);
 
-        var newView = Ext.create('Targets.view.objects.Panel', {
+        var newView = Ext.create('Target.view.objects.Panel', {
             hideMode: 'offsets',
             routeId: 'cv'
         });

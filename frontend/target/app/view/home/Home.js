@@ -15,25 +15,27 @@ Ext.define('Target.view.home.Home', {
 
     viewModel: 'home',
 
+    layout: 'fit',
+
     // config: {
     //     release: null,
     //     field: null
     // },
 
-    // initComponent: function () {
-    //     var me = this;
+    initComponent: function () {
+        var me = this;
 
-    //     Ext.apply(this, {
-    //         items: [
-    //             {
-    //                 xtype: 'targets-catalog-tree',
-    //                 reference: 'CatalogTree'
-    //             }
-    //         ]
-    //     });
+        Ext.apply(this, {
+            items: [
+                {
+                    xtype: 'targets-catalog-tree',
+                    reference: 'CatalogTree'
+                }
+            ]
+        });
 
-    //     me.callParent(arguments);
-    // },
+        me.callParent(arguments);
+    },
 
     loadPanel: function (arguments) {
         // console.log('loadPanel(%o)', arguments);

@@ -127,6 +127,15 @@ class CatalogViewSet(viewsets.ModelViewSet):
 
             print(catalog)
 
+        # result = dict({
+        #     'success': True,
+        #     'root': dict({
+        #         'expanded': True,
+        #         'text': 'RootTT',
+        #         'children': list()
+        #     })
+        # })
+
         result = dict({
             'success': True,
             'expanded': True,
@@ -134,6 +143,7 @@ class CatalogViewSet(viewsets.ModelViewSet):
         })
 
         for class_name in classes:
-            result.get("children").append(classes.get(class_name))
+            # result.get("root").get('children').append(classes.get(class_name))
+            result.get('children').append(classes.get(class_name))
 
         return Response(result)

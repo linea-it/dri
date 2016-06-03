@@ -87,7 +87,7 @@ Ext.define('Target.view.catalog.Tree', {
                 },
                 {
                     text: 'Rows',
-                    dataIndex: 'num_objects',
+                    dataIndex: 'ctl_num_objects',
                     sortable: true,
                     renderer: function (value, metadata, record) {
                         if (record.data.leaf) {
@@ -124,7 +124,7 @@ Ext.define('Target.view.catalog.Tree', {
                     scope: this,
                     handler: me.onClickView,
                     bind: {
-                        disabled: '{!selectedCatalog.process_id}'
+                        disabled: '{!selectedCatalog}'
                     }
                 },
                 // {
@@ -210,8 +210,8 @@ Ext.define('Target.view.catalog.Tree', {
         }
     },
 
-    loadCatalogs: function (type, field) {
-        // console.log('loadCatalogs(%o, %o)', type, field);
+    loadCatalogs: function (type) {
+        console.log('loadCatalogs()');
 
         var me = this,
             vm = me.getViewModel(),
@@ -219,29 +219,28 @@ Ext.define('Target.view.catalog.Tree', {
             filters = [],
             baseFilters = [];
 
-        me.getView().setLoading({
-            store: store
-        });
+        // me.getView().setLoading({
+        //     store: store
+        // });
 
-        // Catalog not removed
-        filters.push({
-            property:'product_flag_removed',
-            value: false
-        });
+        // // Catalog not removed
+        // filters.push({
+        //     property:'product_flag_removed',
+        //     value: false
+        // });
 
-        // Catalog status = 1
-        filters.push({
-            property:'status_id',
-            value: 1
-        });
+        // // Catalog status = 1
+        // filters.push({
+        //     property:'status_id',
+        //     value: 1
+        // });
 
         // Product Type = 'targets'
-        if (type) {
-            filters.push({
-                property:'type_name',
-                value: type.toLowerCase()
-            });
-        }
+        filters.push({
+            property:'group',
+            value: type.toLowerCase()
+        });
+
 
         // Guardar os filtros usados no load dos catologos
         baseFilters = Ext.clone(filters);
