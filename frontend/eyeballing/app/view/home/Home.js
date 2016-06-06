@@ -22,7 +22,6 @@ Ext.define('Eyeballing.view.home.Home', {
         {text: 'Name',  dataIndex: 'rls_display_name', flex: 1},
         {xtype: 'datecolumn', text: 'Date', dataIndex: 'rls_date', format:'Y-m-d', flex: 1},
         {text: 'Tiles', dataIndex: '', flex: 1},
-        {text: 'Inspected', dataIndex: '', flex: 1},
         {text: 'Flagged', dataIndex: '', flex: 1},
         {text: 'Defects', dataIndex: '', flex: 1}
     ],
@@ -33,6 +32,11 @@ Ext.define('Eyeballing.view.home.Home', {
 
     loadPanel: function () {
         this.fireEvent('loadpanel', this);
+
+    },
+
+    updatePanel: function () {
+        this.fireEvent('updatepanel', this);
 
     }
 });

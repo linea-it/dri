@@ -24,7 +24,7 @@ Ext.define('aladin.Interfaces', {
             width: 200,
             height: 100,
             x: 5,
-            y: 25,
+            y: 10,
             renderTo: me.body,
             header: false,
             resizable: false,
@@ -35,10 +35,9 @@ Ext.define('aladin.Interfaces', {
                 zIndex: 999
             },
             tpl: [
-                '<spam>{location}</spam>',
-                '</br><spam>{tag}</spam>',
+                '<spam>{tag}</spam>',
                 '</br><spam>{tilename}</spam>',
-                '</div>'
+                '</br><spam>J2000 {location}</spam>'
             ]
         });
 
@@ -52,12 +51,21 @@ Ext.define('aladin.Interfaces', {
             vm = me.getViewModel(),
             tile = vm.get('tile'),
             tag = vm.get('tag'),
-            data;
+            data,
+            tl = '',
+            tg = '';
+
+        if (tag) {
+            tg = tag.get('tag_display_name');
+        }
+        if (tile) {
+            tl = tile.get('tli_tilename');
+        }
 
         data = {
             location: vm.get('location'),
-            tag: tag.get('tag_display_name'),
-            tilename: tile.get('tli_tilename')
+            tag: tg,
+            tilename: tl
         };
 
         return data;
@@ -80,8 +88,8 @@ Ext.define('aladin.Interfaces', {
 
     makeToolbar: function () {
         return Ext.create('Ext.toolbar.Toolbar', {
-            vertical: true,
-            enableOverflow: true
+            vertical: true
+            //enableOverflow: true
         });
 
     },
