@@ -125,17 +125,6 @@ class CatalogViewSet(viewsets.ModelViewSet):
             dclass = classes.get(class_name)
             dclass.get('children').append(catalog)
 
-            print(catalog)
-
-        # result = dict({
-        #     'success': True,
-        #     'root': dict({
-        #         'expanded': True,
-        #         'text': 'RootTT',
-        #         'children': list()
-        #     })
-        # })
-
         result = dict({
             'success': True,
             'expanded': True,

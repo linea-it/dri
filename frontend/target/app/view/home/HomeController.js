@@ -43,7 +43,7 @@ Ext.define('Target.view.home.HomeController', {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
-            catalog = record.get('catalog_id');
+            catalog = record.get('id');
 
         hash = 'cv/' + catalog;
         me.redirectTo(hash);

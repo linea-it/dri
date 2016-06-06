@@ -10,8 +10,8 @@ Ext.define('Target.view.main.MainController', {
     alias: 'controller.main',
 
     requires: [
-        'Target.view.home.Home'
-        //'Target.view.objects.Panel'
+        'Target.view.home.Home',
+        'Target.view.objects.Panel'
     ],
 
     routes : {

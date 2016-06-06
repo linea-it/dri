@@ -117,16 +117,16 @@ Ext.define('Target.view.catalog.Tree', {
                 }
             },
             tbar: [
-                {
-                    tooltip: 'Open this catalog',
-                    iconCls: 'x-fa fa-folder-open-o',
-                    width: 60,
-                    scope: this,
-                    handler: me.onClickView,
-                    bind: {
-                        disabled: '{!selectedCatalog}'
-                    }
-                },
+//                {
+//                    tooltip: 'Open this catalog',
+//                    iconCls: 'x-fa fa-folder-open-o',
+//                    width: 60,
+//                    scope: this,
+//                    handler: me.onClickView,
+//                    bind: {
+//                        disabled: '{!selectedCatalog}'
+//                    }
+//                },
                 // {
                 //     xtype: 'viewprocess-button',
                 //     tooltip:'More Information',
