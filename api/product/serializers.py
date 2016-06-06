@@ -3,7 +3,7 @@ import logging
 from product_classifier.models import ProductClass
 
 from rest_framework import serializers
-from .models import File
+from .models import File, Catalog
 from .models import Map
 from .models import Mask
 from .models import Product
@@ -103,7 +103,7 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
     pgr_display_name = serializers.SerializerMethodField()
 
     class Meta:
-        model = Product
+        model = Catalog
 
         fields = (
             'id',
@@ -117,6 +117,9 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'pgr_group',
             # 'pgr_name',
             'pgr_display_name',
+            'ctl_num_columns',
+            'ctl_num_tiles',
+            'ctl_num_objects'
         )
 
     def get_pcl_name(self, obj):
