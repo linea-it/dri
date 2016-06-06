@@ -43,7 +43,7 @@ Ext.define('common.data.proxy.Django', {
     },
 
     getParams: function (operation) {
-        // console.log('DjangoProxy - getParams(%o)', operation)
+        // console.log('DjangoProxy - getParams(%o)', operation);
 
         var params = this.callParent(arguments);
 
