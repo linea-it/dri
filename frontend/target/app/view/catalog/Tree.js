@@ -55,15 +55,16 @@ Ext.define('Target.view.catalog.Tree', {
                 {
                     text: 'Owner',
                     flex: 1,
-                    dataIndex: 'owner',
+                    dataIndex: 'epr_username',
                     sortable: true,
                     filter: {
                         type: 'string'
                     }
                 },
                 {
+                    xtype: 'datecolumn',
                     text: 'Date',
-                    dataIndex: 'ingestion_date',
+                    dataIndex: 'epr_end_date',
                     sortable: true,
                     filter: {
                         type: 'date'
@@ -71,7 +72,7 @@ Ext.define('Target.view.catalog.Tree', {
                 },
                 {
                     text: 'Pipeline',
-                    dataIndex: 'pipeline_display_name',
+                    dataIndex: 'epr_name',
                     sortable: true,
                     filter: {
                         type: 'string'
@@ -79,7 +80,7 @@ Ext.define('Target.view.catalog.Tree', {
                 },
                 {
                     text: 'Process',
-                    dataIndex: 'process_id',
+                    dataIndex: 'epr_original_id',
                     sortable: true,
                     filter: {
                         type: 'number'

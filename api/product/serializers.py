@@ -102,6 +102,18 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
     # pgr_name = serializers.SerializerMethodField()
     pgr_display_name = serializers.SerializerMethodField()
 
+    # Atributos da product_register.ExternalProcess
+    epr_original_id = serializers.SerializerMethodField()
+    epr_name = serializers.SerializerMethodField()
+    epr_username = serializers.SerializerMethodField()
+    epr_start_date = serializers.SerializerMethodField()
+    epr_end_date = serializers.SerializerMethodField()
+    epr_readme = serializers.SerializerMethodField()
+    epr_comment = serializers.SerializerMethodField()
+
+    # epr_site = models.CharField(max_length=128)
+
+
     class Meta:
         model = Catalog
 
@@ -119,7 +131,14 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'pgr_display_name',
             'ctl_num_columns',
             'ctl_num_tiles',
-            'ctl_num_objects'
+            'ctl_num_objects',
+            'epr_original_id',
+            'epr_name',
+            'epr_username',
+            'epr_start_date',
+            'epr_end_date',
+            'epr_readme',
+            'epr_comment',
         )
 
     def get_pcl_name(self, obj):
@@ -139,6 +158,27 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_pgr_display_name(self, obj):
         return obj.prd_class.pcl_group.pgr_display_name
+
+    def get_epr_original_id(self, obj):
+        return obj.prd_process_id.epr_original_id
+
+    def get_epr_name(self, obj):
+        return obj.prd_process_id.epr_name
+
+    def get_epr_username(self, obj):
+        return obj.prd_process_id.epr_username
+
+    def get_epr_start_date(self, obj):
+        return obj.prd_process_id.epr_start_date
+
+    def get_epr_end_date(self, obj):
+        return obj.prd_process_id.epr_end_date
+
+    def get_epr_readme(self, obj):
+        return obj.prd_process_id.epr_readme
+
+    def get_epr_comment(self, obj):
+        return obj.prd_process_id.epr_comment
 
 
 class MapSerializer(serializers.HyperlinkedModelSerializer):
