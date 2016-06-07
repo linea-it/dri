@@ -1,13 +1,13 @@
-from django.db import models
-import logging
 from product_classifier.models import ProductClass
+from product_register.models import ExternalProcess
 
-logger = logging.getLogger(__name__)
+from django.db import models
 
 
 # Create your models here.
 class Product(models.Model):
-
+    prd_process_id = models.ForeignKey(
+        ExternalProcess, on_delete=models.CASCADE, verbose_name='External Process')
     prd_name = models.CharField(
         max_length=128, verbose_name='Internal Name')
     prd_display_name = models.CharField(

@@ -11,6 +11,13 @@ Ext.define('Target.model.Catalog', {
         {name:'pcl_is_system', type:'boolean'},
         {name:'pgr_group', type:'int'},
         {name:'pgr_display_name', type:'string'},
+        {name:'epr_original_id', type:'string'},
+        {name:'epr_name', type:'string'},
+        {name:'epr_username', type:'string'},
+        {name:'epr_start_date', type:'date'},
+        {name:'epr_end_date', type:'date'},
+        {name:'epr_readme', type:'string'},
+        {name:'epr_comment', type:'string'},
 
         {name:'ctl_num_columns', type:'int'},
         {name:'ctl_num_tiles', type:'int'},
