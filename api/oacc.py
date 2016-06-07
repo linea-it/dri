@@ -47,6 +47,13 @@ class OracleDB:
         else:
             return None
 
+    def fetch_columns(self, table):
+        self.cursor.prepare("""select COLUMN_NAME from dba_tab_columns where table_name = :tablea""")
+        self.cursor.execute(None, {'tablea':table})
+        result = self.cursor.fetchall()
+
+        return [i[0] for i in result]
+
     def get_table_columns(self, table):
         self.cursor.prepare("""select COLUMN_NAME, DATA_TYPE from dba_tab_columns where table_name = :tablea""")
         self.cursor.execute(None, {'tablea':table})
