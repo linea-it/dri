@@ -1,6 +1,6 @@
-from django.db import models
-
 import logging
+
+from django.db import models
 logger = logging.getLogger(__name__)
 
 
@@ -23,14 +23,5 @@ class ExternalProcess(models.Model):
     epr_original_id = models.PositiveIntegerField()
     epr_site = models.CharField(max_length=128)
 
-class Site(models.Model):
-    
-    ste_name = models.CharField(max_length=128)
-    ste_url = models.CharField(max_length=128)
-
-class Discover(models.Model):
-    dsc_dummy = models.CharField(max_length=128, default=None)
-
-class Upload(models.Model):
-    upl_dummy = models.CharField(max_length=128, default=None)
-
+    def __str__(self):
+        return str(self.epr_original_id)
