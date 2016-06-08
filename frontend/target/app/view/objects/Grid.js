@@ -11,7 +11,6 @@ Ext.define('Target.view.objects.Grid', {
         'Ext.grid.column.Number',
         'Ext.grid.column.Widget',
         'Ext.ux.rating.Picker'
-        // 'Ext.grid.filters.Filters'
     ],
 
     /**
@@ -21,8 +20,6 @@ Ext.define('Target.view.objects.Grid', {
     */
 
     scrollable: true,
-
-    // plugins: 'gridfilters',
 
     config: {
         ready: false,
@@ -68,7 +65,7 @@ Ext.define('Target.view.objects.Grid', {
     },
 
     reconfigureGrid: function (storeColumns) {
-        // console.log('Targets Objects - reconfigureGrid(%o)', storeColumns)
+        console.log('Targets Objects - reconfigureGrid(%o)', storeColumns);
 
         var me = this,
             columns = [];
@@ -85,19 +82,21 @@ Ext.define('Target.view.objects.Grid', {
 
             // Criar as colunas de acordo com as propriedades na store
             storeColumns.each(function (record) {
+
                 type = me.getTypeColumn(record.get('data_type'));
 
                 var column = {
                     text: me.createColumnText(record),
-                    dataIndex: record.get('catalog_column_name').toLowerCase(),
+                    dataIndex: record.get('property_name').toLowerCase(),
                     tooltip: me.createColumnTooltip(record)
                 };
+
                 if (type != undefined) {
                     column.filter = {type: type, itemDefaults: {emptyText: 'Search for...'}};
                 }
 
                 //  Tratamento Tilename default hidden
-                if (record.get('catalog_column_name') == 'tilename') {
+                if (record.get('property_name') == 'tilename') {
                     // column.hidden = true;
                     column.width = 120;
 
@@ -208,7 +207,7 @@ Ext.define('Target.view.objects.Grid', {
     createColumnText: function (record) {
 
         var unit = record.get('unit'),
-            name = record.get('property_name');
+            name = record.get('property_display_name');
 
         var text = unit != '' ? Ext.String.format('{0} ( {1} )', name, unit) : name;
 
@@ -221,8 +220,8 @@ Ext.define('Target.view.objects.Grid', {
         var tpl = new Ext.XTemplate(
             '<div>',
             '<p><spam>{property_name}</spam></p>',
-            '<tpl if=\'catalog_column_name != ""\'>',
-                '<p><spam>Name:</spam> {catalog_column_name}</p>',
+            '<tpl if=\'clm_column_name != ""\'>',
+                '<p><spam>Name:</spam> {clm_column_name}</p>',
             '</tpl>',
             '<tpl if=\'unit != ""\'>',
                 '<p><spam>Unit:</spam> {unit}</p>',

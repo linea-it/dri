@@ -21,94 +21,92 @@ Ext.define('Target.view.objects.Panel', {
     viewModel: 'objects',
 
     config: {
-        // release: null,
-        // field: null,
         catalog: null
     },
 
-    // layout: 'border',
+    layout: 'border',
 
-    // items: [
-    //     {
-    //         region: 'center',
-    //         layout: 'border',
-    //         reference: 'targetsGrid',
-    //         bind: {
-    //             title: '{currentCatalog.catalog_name}'
-    //         },
-    //         items: [
-    //             {
-    //                 xtype: 'targets-objects-tiles',
-    //                 title: 'Grouped by Tile',
-    //                 region: 'west',
-    //                 width: 250,
-    //                 split: true,
-    //                 collapsible: true,
-    //                 bind: {
-    //                     store: '{tiles}',
-    //                     hidden: '{!isGrouped.pressed}'
-    //                 }
-    //             },
-    //             {
-    //                 xtype: 'targets-objects-tabpanel',
-    //                 region: 'center',
-    //                 reference: 'targetsObjectsTabpanel',
-    //                 listeners: {
-    //                     ready: 'onObjectPanelReady',
-    //                     rowdblclick: 'onDbClickTarget'
-    //                 }
-    //             }
-    //         ],
-    //         tbar: [
-    //             {
-    //                 tooltip:'Group by tile / Ungroup.',
-    //                 enableToggle: true,
-    //                 iconCls:'x-fa fa-indent',
-    //                 reference: 'isGrouped',
-    //                 toggleHandler: 'onGroupUngroupByTile'
-    //                 //hidden: true
-    //             },
-    //             {
-    //                 iconCls: 'icon-columns-association',
-    //                 tooltip: 'Columns Association',
-    //                 handler: 'onClickColumnAssociation',
-    //                 disabled: true
-    //             },
-    //             {
-    //                 text: 'Export',
-    //                 tooltip: 'Export',
-    //                 iconCls: 'x-fa fa-share-square-o',
-    //                 handler: 'onClickExportCatalog',
-    //                 disabled: true
-    //             },
-    //             {
-    //                 iconCls: 'x-fa fa-image',
-    //                 text: 'Cutouts',
-    //                 tooltip: 'Create Cutout',
-    //                 handler: 'onClickCreateCutout',
-    //                 disabled: true,
-    //                 reference: 'btnCutout'
-    //             }
-    //         ]
-    //     },
-    //     {
-    //         xtype: 'targets-preview-panel',
-    //         region: 'east',
-    //         // title: 'Selected Target',
-    //         reference: 'targetsPreviewPanel',
-    //         width: 400,
-    //         split: true,
-    //         // collapsible: true,
-    //         resizable: true,
-    //         bind: {
-    //             release: '{tag_id}',
-    //             field: '{field_id}'
-    //         },
-    //         listeners: {
-    //             changeinobject: 'onChangeInObjects'
-    //         }
-    //     }
-    // ],
+    items: [
+        {
+            region: 'center',
+            layout: 'border',
+            reference: 'targetsGrid',
+            bind: {
+                title: '{currentCatalog.catalog_name}'
+            },
+            items: [
+                {
+                    xtype: 'targets-objects-tiles',
+                    title: 'Grouped by Tile',
+                    region: 'west',
+                    width: 250,
+                    split: true,
+                    collapsible: true,
+                    bind: {
+                        store: '{tiles}',
+                        hidden: '{!isGrouped.pressed}'
+                    }
+                },
+                {
+                    xtype: 'targets-objects-tabpanel',
+                    region: 'center',
+                    reference: 'targetsObjectsTabpanel',
+                    listeners: {
+                        ready: 'onObjectPanelReady',
+                        rowdblclick: 'onDbClickTarget'
+                    }
+                }
+            ],
+            tbar: [
+                {
+                    tooltip:'Group by tile / Ungroup.',
+                    enableToggle: true,
+                    iconCls:'x-fa fa-indent',
+                    reference: 'isGrouped',
+                    toggleHandler: 'onGroupUngroupByTile'
+                    //hidden: true
+                },
+                {
+                    iconCls: 'icon-columns-association',
+                    tooltip: 'Columns Association',
+                    handler: 'onClickColumnAssociation',
+                    disabled: true
+                },
+                {
+                    text: 'Export',
+                    tooltip: 'Export',
+                    iconCls: 'x-fa fa-share-square-o',
+                    handler: 'onClickExportCatalog',
+                    disabled: true
+                },
+                {
+                    iconCls: 'x-fa fa-image',
+                    text: 'Cutouts',
+                    tooltip: 'Create Cutout',
+                    handler: 'onClickCreateCutout',
+                    disabled: true,
+                    reference: 'btnCutout'
+                }
+            ]
+        }
+        // {
+        //     xtype: 'targets-preview-panel',
+        //     region: 'east',
+        //     // title: 'Selected Target',
+        //     reference: 'targetsPreviewPanel',
+        //     width: 400,
+        //     split: true,
+        //     // collapsible: true,
+        //     resizable: true,
+        //     bind: {
+        //         release: '{tag_id}',
+        //         field: '{field_id}'
+        //     },
+        //     listeners: {
+        //         changeinobject: 'onChangeInObjects'
+        //     }
+        // }
+    ],
 
     loadPanel: function (arguments) {
         // console.log('loadPanel(%o)', arguments);

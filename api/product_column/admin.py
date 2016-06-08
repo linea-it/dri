@@ -1,6 +1,6 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Column
+from .models import ProductColumn
 
-admin.site.register(Column)
+admin.site.register(ProductColumn)

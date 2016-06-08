@@ -1,17 +1,17 @@
 from product_column.serializers import ColumnSerializer
 
 from rest_framework import viewsets
-from .models import Column
+from .models import ProductColumn
 
 
 class ProductColumnViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows product columns to be viewed or edited
     """
-    queryset = Column.objects.select_related().all()
+    queryset = ProductColumn.objects.select_related().all()
 
     serializer_class = ColumnSerializer
 
-    filter_fields = ('id', 'clm_product_id', 'clm_column_name',)
+    filter_fields = ('id', 'pcl_product_id', 'pcl_column_name',)
 
-    ordering_fields = ('id', 'clm_column_name',)
+    ordering_fields = ('id', 'pcl_column_name',)

@@ -1,5 +1,5 @@
 Ext.define('Target.store.CatalogColumns', {
-    extend: 'Ext.data.Store',
+    extend: 'common.store.MyStore',
 
     alias: 'store.catalog-columns',
 
@@ -15,17 +15,11 @@ Ext.define('Target.store.CatalogColumns', {
     remoteFilter: true,
 
     proxy: {
-        type: 'ajax',
-        url: '/PRJSUB/TargetViewer/getCatalogColumns',
-        reader: {
-            type: 'json',
-            rootProperty: 'data',
-            totalProperty: 'totalCount'
-        }
-    },
+        url: '/dri/api/productcolumns'
+    }
 
-    sorters: [{
-        property: 'ordinal_position',
-        direction: 'ASC'
-    }]
+    // sorters: [{
+    //     property: 'ordinal_position',
+    //     direction: 'ASC'
+    // }]
 });

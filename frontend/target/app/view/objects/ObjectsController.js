@@ -43,15 +43,12 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
-        console.log('onBeforeLoadPanel(%o, %o)', catalogId, objectsPanel);
-
         var me = this,
             vm = objectsPanel.getViewModel(),
             currentCatalog = vm.get('currentCatalog');
 
         objectsPanel.setLoading(true);
 
-        console.log(catalogId);
         currentCatalog.set('id', catalogId);
 
         currentCatalog.load({
@@ -62,41 +59,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             }
         });
 
-        // Ext.Ajax.request({
-        //     url: '//TargetViewer/get_target_catalog_by_id',
-        //     scope: this,
-        //     params: {
-        //         'catalog_id' : catalog
-        //     },
-        //     success: function (response) {
-        //         // Recuperar a resposta e fazer o decode no json.
-        //         var obj = Ext.decode(response.responseText);
-
-        //         if (obj.success !== true) {
-
-        //             // Se Model.py retornar alguma falha exibe a mensagem
-        //             Ext.Msg.alert('Status', obj.msg);
-        //         } else {
-        //             // Cria uma instancia do model catalog e seta no painel
-        //             currentCatalog = Ext.create('Target.model.Catalog', obj.data);
-
-        //             objectsPanel.setLoading(false);
-
-        //             objectsPanel.loadCatalog(currentCatalog);
-        //         }
-        //     },
-        //     failure: function (response) {
-        //         //console.log('server-side failure ' + response.status);
-        //         Ext.MessageBox.show({
-        //             title: 'Server Side Failure',
-        //             msg: response.status + ' ' + response.statusText,
-        //             buttons: Ext.MessageBox.OK,
-        //             icon: Ext.MessageBox.WARNING
-        //         });
-
-        //         objectsPanel.setLoading(false);
-        //     }
-        // });
     },
 
     onBeforeLoadCatalog: function (record) {
@@ -110,8 +72,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         // filtrar as stores de colunas
         storeCatalogCollumns.filter([
             {
-                property: 'catalog_id',
-                value: record.get('catalog_id')
+                property: 'pcl_product_id',
+                value: record.get('id')
             }
         ]);
 
