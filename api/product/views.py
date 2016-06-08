@@ -24,7 +24,6 @@ class ProductFilter(django_filters.FilterSet):
         # product -> product_class -> product_group
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
 
-# Create your views here.
 class ProductViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows product to be viewed or edited
