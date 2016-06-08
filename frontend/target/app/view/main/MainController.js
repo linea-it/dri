@@ -69,7 +69,8 @@ Ext.define('Target.view.main.MainController', {
 
         var newView = Ext.create('Target.view.objects.Panel', {
             hideMode: 'offsets',
-            routeId: 'cv'
+            routeId: 'cv',
+            catalog: catalog
         });
 
         this.setActivePanel(newView, catalog);

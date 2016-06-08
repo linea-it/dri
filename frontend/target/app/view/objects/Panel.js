@@ -16,15 +16,15 @@ Ext.define('Target.view.objects.Panel', {
         'Target.view.preview.Panel'
     ],
 
-    // controller: 'objects',
+    controller: 'objects',
 
-    // viewModel: 'objects',
+    viewModel: 'objects',
 
-    // config: {
-    //     release: null,
-    //     field: null,
-    //     catalog: null
-    // },
+    config: {
+        // release: null,
+        // field: null,
+        catalog: null
+    },
 
     // layout: 'border',
 
@@ -111,72 +111,67 @@ Ext.define('Target.view.objects.Panel', {
     // ],
 
     loadPanel: function (arguments) {
-        console.log('loadPanel(%o)', arguments);
+        // console.log('loadPanel(%o)', arguments);
 
-        // var me = this,
-        //     vm = this.getViewModel(),
+        var me = this,
+            vm = this.getViewModel(),
         //     release = me.getRelease(),
         //     field = me.getField(),
-        //     catalog = arguments;
+            catalog = me.getCatalog();
 
-        // if (!catalog) {
-        //     console.log('Necessario um catalog id.');
-        //     return false;
-        // }
+        if (!catalog) {
+            console.log('Necessario um catalog id.');
+            return false;
+        }
 
-        // if (catalog != me.getCatalog()) {
+        // Limpar o painel e as stores antes de carregar um catalogo novo
+        me.clearPanel();
 
-        //     // Limpar o painel e as stores antes de carregar um catalogo novo
-        //     me.clearPanel();
+        // me.setCatalog(catalog);
 
-        //     me.setCatalog(catalog);
+        vm.set('catalog', catalog);
 
-        //     vm.set('catalog', catalog);
+        me.fireEvent('beforeLoadPanel', catalog, me);
 
-        //     me.fireEvent('beforeLoadPanel', catalog, me);
+    },
 
-        // } else {
-        //     console.log('mesmo catalogo');
-        // }
+    updatePanel: function (arguments) {
+
+        this.loadPanel(arguments);
+
+    },
+
+    clearPanel: function () {
+        // console.log('clearPanel');
+        //     var me = this,
+        //         vm = me.getViewModel(),
+        //         refs = me.getReferences(),
+        //         grids = refs.targetsGrid,
+        //         preview = refs.targetsPreviewPanel,
+        //         tbars = grids.getDockedItems('toolbar[dock="top"]'),
+        //         btns = tbars[0].items;
+
+        //     // TODO Limpar as Stores
+        //     vm.getStore('objects').removeAll();
+        //     // vm.getStore('objects').clearFilter(true);
+
+        //     vm.getStore('tiles').removeAll();
+        //     // vm.getStore('tiles').clearFilter(true);
+
+        //     vm.getStore('catalogColumns').removeAll();
+        //     // vm.getStore('catalogColumns').clearFilter(true);
+
+        //     vm.getStore('catalogClassColumns').removeAll();
+        //     // vm.getStore('catalogClassColumns').clearFilter(true);
+
+        //     // Desabilitar os botoes
+        //     btns.each(function (button) {
+        //         button.disable();
+        //     }, this);
+
+        //     // Limpar o painel de preview
+        //     preview.clearPanel();
     }
-
-    // updatePanel: function (arguments) {
-
-    //     this.loadPanel(arguments);
-
-    // },
-
-    // clearPanel: function () {
-    //     // console.log('clearPanel');
-    //     var me = this,
-    //         vm = me.getViewModel(),
-    //         refs = me.getReferences(),
-    //         grids = refs.targetsGrid,
-    //         preview = refs.targetsPreviewPanel,
-    //         tbars = grids.getDockedItems('toolbar[dock="top"]'),
-    //         btns = tbars[0].items;
-
-    //     // TODO Limpar as Stores
-    //     vm.getStore('objects').removeAll();
-    //     // vm.getStore('objects').clearFilter(true);
-
-    //     vm.getStore('tiles').removeAll();
-    //     // vm.getStore('tiles').clearFilter(true);
-
-    //     vm.getStore('catalogColumns').removeAll();
-    //     // vm.getStore('catalogColumns').clearFilter(true);
-
-    //     vm.getStore('catalogClassColumns').removeAll();
-    //     // vm.getStore('catalogClassColumns').clearFilter(true);
-
-    //     // Desabilitar os botoes
-    //     btns.each(function (button) {
-    //         button.disable();
-    //     }, this);
-
-    //     // Limpar o painel de preview
-    //     preview.clearPanel();
-    // },
 
     // loadCatalog: function (record) {
     //     var me = this,

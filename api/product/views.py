@@ -136,3 +136,4 @@ class CatalogViewSet(viewsets.ModelViewSet):
             result.get('children').append(classes.get(class_name))
 
         return Response(result)
+

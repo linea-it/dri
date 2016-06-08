@@ -42,53 +42,67 @@ Ext.define('Target.view.objects.ObjectsController', {
         }
     },
 
-    onBeforeLoadPanel: function (catalog, objectsPanel) {
-        console.log('onBeforeLoadPanel(%o, %o)', catalog, objectsPanel);
+    onBeforeLoadPanel: function (catalogId, objectsPanel) {
+        console.log('onBeforeLoadPanel(%o, %o)', catalogId, objectsPanel);
 
-        var vm = objectsPanel.getViewModel();
+        var me = this,
+            vm = objectsPanel.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
 
         objectsPanel.setLoading(true);
 
-        Ext.Ajax.request({
-            url: '/PRJSUB/TargetViewer/get_target_catalog_by_id',
-            scope: this,
-            params: {
-                'catalog_id' : catalog
-            },
-            success: function (response) {
-                // Recuperar a resposta e fazer o decode no json.
-                var obj = Ext.decode(response.responseText);
+        console.log(catalogId);
+        currentCatalog.set('id', catalogId);
 
-                if (obj.success !== true) {
-
-                    // Se Model.py retornar alguma falha exibe a mensagem
-                    Ext.Msg.alert('Status', obj.msg);
-                } else {
-                    // Cria uma instancia do model catalog e seta no painel
-                    currentCatalog = Ext.create('Target.model.Catalog', obj.data);
-
-                    objectsPanel.setLoading(false);
-
-                    objectsPanel.loadCatalog(currentCatalog);
-                }
-            },
-            failure: function (response) {
-                //console.log('server-side failure ' + response.status);
-                Ext.MessageBox.show({
-                    title: 'Server Side Failure',
-                    msg: response.status + ' ' + response.statusText,
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
-                });
-
+        currentCatalog.load({
+            callback: function (model) {
                 objectsPanel.setLoading(false);
+
+                me.onBeforeLoadCatalog(model);
             }
         });
+
+        // Ext.Ajax.request({
+        //     url: '//TargetViewer/get_target_catalog_by_id',
+        //     scope: this,
+        //     params: {
+        //         'catalog_id' : catalog
+        //     },
+        //     success: function (response) {
+        //         // Recuperar a resposta e fazer o decode no json.
+        //         var obj = Ext.decode(response.responseText);
+
+        //         if (obj.success !== true) {
+
+        //             // Se Model.py retornar alguma falha exibe a mensagem
+        //             Ext.Msg.alert('Status', obj.msg);
+        //         } else {
+        //             // Cria uma instancia do model catalog e seta no painel
+        //             currentCatalog = Ext.create('Target.model.Catalog', obj.data);
+
+        //             objectsPanel.setLoading(false);
+
+        //             objectsPanel.loadCatalog(currentCatalog);
+        //         }
+        //     },
+        //     failure: function (response) {
+        //         //console.log('server-side failure ' + response.status);
+        //         Ext.MessageBox.show({
+        //             title: 'Server Side Failure',
+        //             msg: response.status + ' ' + response.statusText,
+        //             buttons: Ext.MessageBox.OK,
+        //             icon: Ext.MessageBox.WARNING
+        //         });
+
+        //         objectsPanel.setLoading(false);
+        //     }
+        // });
     },
 
-    onBeforeLoadCatalog: function (objectsPanel, record) {
-
-        var vm = objectsPanel.getViewModel(),
+    onBeforeLoadCatalog: function (record) {
+        console.log('onBeforeLoadCatalog(%o)', record);
+        var me = this,
+            vm = me.getViewModel(),
             storeCatalogCollumns = vm.getStore('catalogColumns'),
             storeCatalogClassCollumns = vm.getStore('catalogClassColumns'),
             storeCatalogTiles = vm.getStore('tiles');
@@ -101,21 +115,51 @@ Ext.define('Target.view.objects.ObjectsController', {
             }
         ]);
 
-        storeCatalogClassCollumns.filter([
-            {
-                property: 'catalog_id',
-                value: record.get('catalog_id')
-            }
-        ]);
+        // storeCatalogClassCollumns.filter([
+        //     {
+        //         property: 'catalog_id',
+        //         value: record.get('catalog_id')
+        //     }
+        // ]);
 
         // Filtrar a lista de Tiles disponiveis no catalogo
-        storeCatalogTiles.filter([
-            {
-                property: 'catalog_id',
-                value: record.get('catalog_id')
-            }
-        ]);
+        // storeCatalogTiles.filter([
+        //     {
+        //         property: 'catalog_id',
+        //         value: record.get('catalog_id')
+        //     }
+        // ]);
     },
+
+    // loadCatalog: function (record) {
+    //     var me = this,
+    //         vm = me.getViewModel(),
+    //         refs = me.getReferences(),
+    //         grids = refs.targetsGrid,
+    //         tbars = grids.getDockedItems('toolbar[dock="top"]'),
+    //         btns = tbars[0].items,
+    //         catalog;
+
+    //     if (record) {
+    //         catalog = record;
+    //         vm.set('currentCatalog', catalog);
+    //     } else {
+    //         catalog = vm.get('currentCatalog');
+    //     }
+
+    //     if (catalog.get('catalog_id')) {
+    //         // Setar o currentCatalog no viewModel
+    //         this.fireEvent('beforeloadcatalog', me, catalog);
+
+    //         // Habilitar os botoes
+    //         btns.each(function (button) {
+    //             button.enable();
+    //         }, this);
+
+    //         // Desabilitar o botao de cutout TEMPORARIO
+    //         // this.lookupReference('btnCutout').disable();
+    //     }
+    // }
 
     /**
      * Toda Vez que a store catalogColumns e carregada e passado a lista
