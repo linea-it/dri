@@ -71,4 +71,3 @@ class ProductClassContent(models.Model):
     def __str__(self):
         return self.pcc_name
 
-

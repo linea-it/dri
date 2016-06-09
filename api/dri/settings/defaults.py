@@ -51,7 +51,7 @@ PROJECT_APPS = [
     'product_classifier',
     'product_register',
     'product',
-    'product_column',
+    # 'product_column',
     'validation'
 ]
 

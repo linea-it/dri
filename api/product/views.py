@@ -7,8 +7,8 @@ from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
-from .models import Product, Catalog
-from .serializers import ProductSerializer, CatalogSerializer
+from .models import Product, Catalog, ProductContent
+from .serializers import ProductSerializer, CatalogSerializer, ProductContentSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -135,3 +135,16 @@ class CatalogViewSet(viewsets.ModelViewSet):
             result.get('children').append(classes.get(class_name))
 
         return Response(result)
+
+
+class ProductContentViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows product content to be viewed or edited
+    """
+    queryset = ProductContent.objects.select_related().all()
+
+    serializer_class = ProductContentSerializer
+
+    filter_fields = ('id', 'pcn_product_id', 'pcn_column_name',)
+
+    ordering_fields = ('id', 'pcc_column_name',)

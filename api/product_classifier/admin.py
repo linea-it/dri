@@ -15,3 +15,5 @@ admin.site.register(ProductGroup)
 admin.site.register(ProductClass)
 admin.site.register(ProductClassContent, ProductClassContentAdmin)
 admin.site.register(ContentCategory)
+
+

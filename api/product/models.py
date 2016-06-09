@@ -78,3 +78,13 @@ class Mask(Table):
         max_length=1, verbose_name='Filter')
     # tag_id integer NOT NULL,      # [CMP] already exist for product
     # field_id integer,             # [CMP] already exist for product
+
+
+class ProductContent(models.Model):
+    pcn_product_id = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product')
+    pcn_column_name = models.CharField(
+        max_length=256, verbose_name='Column Name')
+
+    def __str__(self):
+        return self.pcn_column_name

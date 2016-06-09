@@ -3,7 +3,7 @@ import logging
 from product_classifier.models import ProductClass
 
 from rest_framework import serializers
-from .models import File, Catalog
+from .models import File, Catalog, ProductContent
 from .models import Map
 from .models import Mask
 from .models import Product
@@ -203,4 +203,17 @@ class MaskSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'msk_filter'
+        )
+
+class ProductContentSerializer(serializers.HyperlinkedModelSerializer):
+    pcn_product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=False)
+
+    class Meta:
+        model = ProductContent
+
+        fields = (
+            'id',
+            'pcn_product_id',
+            'pcn_column_name',
         )
