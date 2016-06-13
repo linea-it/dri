@@ -17,7 +17,6 @@ from coadd import views as coadd_views
 from common import views as common_views
 from product import views as product_views
 from product_classifier import views as product_classifier_views
-# from product_column import views as product_column_views
 from validation import views as validation_views
 
 from django.conf.urls import url, include
@@ -40,6 +39,7 @@ router.register(r'productgroup', product_classifier_views.ProductGroupViewSet,
 router.register(r'product', product_views.ProductViewSet)
 router.register(r'catalog', product_views.CatalogViewSet)
 router.register(r'productcontent', product_views.ProductContentViewSet)
+router.register(r'productassociation', product_views.ProductContentAssociationViewSet)
 
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)

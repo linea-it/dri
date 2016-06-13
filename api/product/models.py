@@ -1,4 +1,5 @@
 from product_classifier.models import ProductClass
+from product_classifier.models import ProductClassContent
 from product_register.models import ExternalProcess
 
 from django.db import models
@@ -88,3 +89,17 @@ class ProductContent(models.Model):
 
     def __str__(self):
         return self.pcn_column_name
+
+
+class ProductContentAssociation(models.Model):
+    pca_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product', null=True, blank=True, default=None
+    )
+    pca_class_content = models.ForeignKey(
+        ProductClassContent, on_delete=models.CASCADE, verbose_name='Class Content', null=True, blank=True,
+        default=None
+    )
+    pca_product_content = models.ForeignKey(
+        ProductContent, on_delete=models.CASCADE, verbose_name='Product Content', null=True, blank=True,
+        default=None
+    )
