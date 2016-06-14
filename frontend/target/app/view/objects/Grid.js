@@ -206,7 +206,7 @@ Ext.define('Target.view.objects.Grid', {
 
     createColumnText: function (record) {
 
-        var unit = record.get('unit'),
+        var unit = record.get('pcc_unit'),
             name = record.get('property_display_name');
 
         var text = unit != '' ? Ext.String.format('{0} ( {1} )', name, unit) : name;
@@ -220,19 +220,19 @@ Ext.define('Target.view.objects.Grid', {
         var tpl = new Ext.XTemplate(
             '<div>',
             '<p><spam>{property_name}</spam></p>',
-            '<tpl if=\'clm_column_name != ""\'>',
-                '<p><spam>Name:</spam> {clm_column_name}</p>',
+            '<tpl if=\'pcn_column_name != ""\'>',
+                '<p><spam>Name:</spam> {pcn_column_name}</p>',
             '</tpl>',
-            '<tpl if=\'unit != ""\'>',
-                '<p><spam>Unit:</spam> {unit}</p>',
-            '</tpl>',
-
-            '<tpl if=\'ucd != ""\'>',
-                '<p><spam>ucd:</spam> {ucd}</p>',
+            '<tpl if=\'pcc_unit != ""\'>',
+                '<p><spam>Unit:</spam> {pcc_unit}</p>',
             '</tpl>',
 
-            '<tpl if=\'reference != ""\'>',
-                '<p><spam>Reference:</spam> {reference}</p>',
+            '<tpl if=\'pcc_ucd != ""\'>',
+                '<p><spam>ucd:</spam> {pcc_ucd}</p>',
+            '</tpl>',
+
+            '<tpl if=\'pcc_reference != ""\'>',
+                '<p><spam>Reference:</spam> {pcc_reference}</p>',
             '</tpl>',
 
             '</div>'

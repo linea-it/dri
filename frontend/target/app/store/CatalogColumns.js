@@ -15,7 +15,7 @@ Ext.define('Target.store.CatalogColumns', {
     remoteFilter: true,
 
     proxy: {
-        url: '/dri/api/productcolumns'
+        url: '/dri/api/productcontent'
     }
 
     // sorters: [{

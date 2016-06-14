@@ -77,12 +77,12 @@ Ext.define('Target.view.objects.ObjectsController', {
             }
         ]);
 
-        // storeCatalogClassCollumns.filter([
-        //     {
-        //         property: 'catalog_id',
-        //         value: record.get('catalog_id')
-        //     }
-        // ]);
+        storeCatalogClassCollumns.filter([
+            {
+                property: 'pca_product',
+                value: record.get('id')
+            }
+        ]);
 
         // Filtrar a lista de Tiles disponiveis no catalogo
         // storeCatalogTiles.filter([

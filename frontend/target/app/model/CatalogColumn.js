@@ -3,8 +3,18 @@ Ext.define('Target.model.CatalogColumn', {
 
     fields: [
         {name:'id', type:'int'},
-        {name:'pcl_product_id', type:'int'},
-        {name:'pcl_column_name', type:'string'},
+        {name:'pcn_product_id', type:'int'},
+        {name:'pcn_column_name', type:'string'},
+
+        {name:'pca_product_id', type:'int'},
+        {name:'pca_class_content', type:'int'},
+        {name:'pca_product_content', type:'int'},
+        {name:'pcc_category', type:'string'},
+        {name:'pcc_display_name', type:'string'},
+        {name:'pcc_ucd', type:'string'},
+        {name:'pcc_unit', type:'string'},
+        {name:'pcc_reference', type:'string'},
+        {name:'pcc_mandatory', type:'string'},
 
         // {name:'association_id', type:'int'},
         // {name:'property_id', type:'int'},
@@ -24,15 +34,19 @@ Ext.define('Target.model.CatalogColumn', {
             type:'string',
             convert: function (value, record) {
                 // Valor default temporario para o display name da coluna
-                return record.get('pcl_column_name');
+                return record.get('pcn_column_name');
             }
         },
         {
             name:'property_display_name',
             type:'string',
             convert: function (value, record) {
-                // Valor default temporario para o display name da coluna
-                return record.get('pcl_column_name');
+                if (record.get('pcc_display_name') != '') {
+                    return record.get('pcc_display_name');
+                } else {
+                    return record.get('pcn_column_name');
+                }
+
             }
         }
     ]
