@@ -11,7 +11,8 @@ Ext.define('Target.view.objects.ObjectsController', {
      */
     requires: [
         'Target.view.catalog.Export',
-        'Target.view.catalog.SubmitCutout'
+        'Target.view.catalog.SubmitCutout',
+        'Target.view.association.Panel'
     ],
 
     listen: {
@@ -22,9 +23,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             },
             'targets-objects-tabpanel': {
                 select: 'onSelectObject'
-            },
-            'targets-objects-tiles': {
-                select: 'onSelectGroupedTile'
             }
         },
         store: {
@@ -66,8 +64,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             storeCatalogCollumns = vm.getStore('catalogColumns'),
-            storeCatalogClassCollumns = vm.getStore('catalogClassColumns'),
-            storeCatalogTiles = vm.getStore('tiles');
+            storeCatalogClassCollumns = vm.getStore('catalogClassColumns');
 
         // filtrar as stores de colunas
         storeCatalogCollumns.filter([
@@ -83,45 +80,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 value: record.get('id')
             }
         ]);
-
-        // Filtrar a lista de Tiles disponiveis no catalogo
-        // storeCatalogTiles.filter([
-        //     {
-        //         property: 'catalog_id',
-        //         value: record.get('catalog_id')
-        //     }
-        // ]);
     },
-
-    // loadCatalog: function (record) {
-    //     var me = this,
-    //         vm = me.getViewModel(),
-    //         refs = me.getReferences(),
-    //         grids = refs.targetsGrid,
-    //         tbars = grids.getDockedItems('toolbar[dock="top"]'),
-    //         btns = tbars[0].items,
-    //         catalog;
-
-    //     if (record) {
-    //         catalog = record;
-    //         vm.set('currentCatalog', catalog);
-    //     } else {
-    //         catalog = vm.get('currentCatalog');
-    //     }
-
-    //     if (catalog.get('catalog_id')) {
-    //         // Setar o currentCatalog no viewModel
-    //         this.fireEvent('beforeloadcatalog', me, catalog);
-
-    //         // Habilitar os botoes
-    //         btns.each(function (button) {
-    //             button.enable();
-    //         }, this);
-
-    //         // Desabilitar o botao de cutout TEMPORARIO
-    //         // this.lookupReference('btnCutout').disable();
-    //     }
-    // }
 
     /**
      * Toda Vez que a store catalogColumns e carregada e passado a lista
@@ -153,7 +112,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onObjectPanelReady: function () {
-        // console.log('onObjectPanelReady')
+        console.log('onObjectPanelReady');
         var me = this,
             vm = this.getViewModel(),
             catalog = vm.get('currentCatalog'),
@@ -224,51 +183,6 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.clearObjects();
 
         me.loadObjects(catalog, release, field);
-    },
-
-    onGroupUngroupByTile: function (btn) {
-
-        var me = this,
-            refs = me.getReferences(),
-            tabpanel = refs.targetsObjectsTabpanel,
-            visible;
-
-        visible = !btn.pressed;
-
-        if (visible) {
-
-            // Alterar o icone do botao
-            btn.setIconCls('x-fa fa-indent');
-
-            // reload da store de objetos
-            me.reloadObjects();
-
-        } else {
-            // Exibicao por Tile
-
-            btn.setIconCls('x-fa fa-dedent');
-
-            // limpar a store de objetos
-            me.clearObjects();
-
-        }
-
-        // Mostrar ocultar a coluna tilename na grid
-        tabpanel.showHideTilename(visible);
-    },
-
-    onSelectGroupedTile: function (rowModel, record) {
-
-        // Filtrar a lista de objetos pelo tilename
-        var me = this,
-            vm = this.getViewModel(),
-            catalog = vm.get('catalog'),
-            release = vm.get('tag_id'),
-            field = vm.get('field_id'),
-            tilename = record.get('tilename');
-
-        me.loadObjects(catalog, release, field, tilename);
-
     },
 
     onSelectObject: function (record) {
@@ -385,20 +299,33 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onClickColumnAssociation: function () {
-        // console.log('onClickColumnAssociation(%o)', arguments);
+        console.log('onClickColumnAssociation(%o)', arguments);
 
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
-            catalog = vm.get('currentCatalog'),
-            host = window.location.host;
+            catalog = vm.get('currentCatalog');
 
-        // poderia ser feito de maneira mais elegante.
-        if (catalog) {
-            var url = window.location.protocol + '//' + host + '/PRJSUB/UPTOOL/column_association?id=' + catalog.get('catalog_id') + '&c=' + catalog.get('class_id');
+        this.winAssociation = Ext.create('Ext.window.Window', {
+            title: 'Association',
+            layout: 'fit',
+            closeAction: 'destroy',
+            width: 800,
+            height: 600,
+            items: [{
+                xtype: 'targets-association',
+                listeners: {
+                    scope: me
+                    // todo evento que vai indicar que associacao foi finalizada
+                    // submitexport: me.exportCatalog
+                }
+            }]
+        });
 
-            window.open(url);
-        }
+        this.winAssociation.show();
+
+        this.winAssociation.down('targets-association').setProduct(catalog.get('id'));
+
     },
 
     onClickExportCatalog: function () {

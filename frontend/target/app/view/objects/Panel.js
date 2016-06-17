@@ -36,18 +36,6 @@ Ext.define('Target.view.objects.Panel', {
             },
             items: [
                 {
-                    xtype: 'targets-objects-tiles',
-                    title: 'Grouped by Tile',
-                    region: 'west',
-                    width: 250,
-                    split: true,
-                    collapsible: true,
-                    bind: {
-                        store: '{tiles}',
-                        hidden: '{!isGrouped.pressed}'
-                    }
-                },
-                {
                     xtype: 'targets-objects-tabpanel',
                     region: 'center',
                     reference: 'targetsObjectsTabpanel',
@@ -59,34 +47,26 @@ Ext.define('Target.view.objects.Panel', {
             ],
             tbar: [
                 {
-                    tooltip:'Group by tile / Ungroup.',
-                    enableToggle: true,
-                    iconCls:'x-fa fa-indent',
-                    reference: 'isGrouped',
-                    toggleHandler: 'onGroupUngroupByTile'
-                    //hidden: true
-                },
-                {
                     iconCls: 'icon-columns-association',
                     tooltip: 'Columns Association',
-                    handler: 'onClickColumnAssociation',
-                    disabled: true
-                },
-                {
-                    text: 'Export',
-                    tooltip: 'Export',
-                    iconCls: 'x-fa fa-share-square-o',
-                    handler: 'onClickExportCatalog',
-                    disabled: true
-                },
-                {
-                    iconCls: 'x-fa fa-image',
-                    text: 'Cutouts',
-                    tooltip: 'Create Cutout',
-                    handler: 'onClickCreateCutout',
-                    disabled: true,
-                    reference: 'btnCutout'
+                    handler: 'onClickColumnAssociation'
+                    //disabled: true
                 }
+                // {
+                //     text: 'Export',
+                //     tooltip: 'Export',
+                //     iconCls: 'x-fa fa-share-square-o',
+                //     handler: 'onClickExportCatalog',
+                //     disabled: true
+                // },
+                // {
+                //     iconCls: 'x-fa fa-image',
+                //     text: 'Cutouts',
+                //     tooltip: 'Create Cutout',
+                //     handler: 'onClickCreateCutout',
+                //     disabled: true,
+                //     reference: 'btnCutout'
+                // }
             ]
         }
         // {
@@ -98,10 +78,10 @@ Ext.define('Target.view.objects.Panel', {
         //     split: true,
         //     // collapsible: true,
         //     resizable: true,
-        //     bind: {
-        //         release: '{tag_id}',
-        //         field: '{field_id}'
-        //     },
+        //     // bind: {
+        //     //     release: '{tag_id}',
+        //     //     field: '{field_id}'
+        //     // },
         //     listeners: {
         //         changeinobject: 'onChangeInObjects'
         //     }
@@ -170,35 +150,5 @@ Ext.define('Target.view.objects.Panel', {
         //     // Limpar o painel de preview
         //     preview.clearPanel();
     }
-
-    // loadCatalog: function (record) {
-    //     var me = this,
-    //         vm = me.getViewModel(),
-    //         refs = me.getReferences(),
-    //         grids = refs.targetsGrid,
-    //         tbars = grids.getDockedItems('toolbar[dock="top"]'),
-    //         btns = tbars[0].items,
-    //         catalog;
-
-    //     if (record) {
-    //         catalog = record;
-    //         vm.set('currentCatalog', catalog);
-    //     } else {
-    //         catalog = vm.get('currentCatalog');
-    //     }
-
-    //     if (catalog.get('catalog_id')) {
-    //         // Setar o currentCatalog no viewModel
-    //         this.fireEvent('beforeloadcatalog', me, catalog);
-
-    //         // Habilitar os botoes
-    //         btns.each(function (button) {
-    //             button.enable();
-    //         }, this);
-
-    //         // Desabilitar o botao de cutout TEMPORARIO
-    //         // this.lookupReference('btnCutout').disable();
-    //     }
-    // }
 });
 
