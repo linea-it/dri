@@ -1,3 +1,7 @@
+import sys
+sys.path.append("..")
+from lib import oacc
+
 from product.models import Catalog, ProductContent
 
 from rest_framework.response import Response
