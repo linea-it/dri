@@ -115,50 +115,58 @@ Ext.define('Target.view.objects.ObjectsController', {
         console.log('onObjectPanelReady');
         var me = this,
             vm = this.getViewModel(),
-            catalog = vm.get('currentCatalog'),
-            release = vm.get('tag_id'),
-            field = vm.get('field_id');
+            catalog = vm.get('currentCatalog');
 
         // Filtrar a Store de Objetos
-        me.loadObjects(catalog.get('catalog_id'), release,  field);
+        me.loadObjects(catalog.get('id'));
 
     },
 
-    loadObjects: function (catalog, release, field, tilename) {
-        // console.log('loadObjects(%o, %o, %o, %o)', catalog, release, field, tilename)
+    loadObjects: function (catalog) {
+        console.log('loadObjects(%o)', catalog);
 
-        var vm = this.getViewModel(),
-            objects = vm.getStore('objects'),
-            filters;
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('objects');
 
         if (catalog) {
-            filters = [
-                {
-                    property: 'catalog_id',
-                    value: catalog
-                }
-            ];
+            store.load({
+                params: {
+                    product: catalog
+                },
+                callback: function(records, operation, success) {
+                    
+                },
+                scope: this
+            });
 
-            if ((release > 0) && (field > 0)) {
-                filters.push({
-                    property: 'tag_id',
-                    value: release
-                });
+        //     filters = [
+        //         {
+        //             property: 'catalog_id',
+        //             value: catalog
+        //         }
+        //     ];
 
-                filters.push({
-                    property: 'field_id',
-                    value: field
-                });
-            }
+        //     if ((release > 0) && (field > 0)) {
+        //         filters.push({
+        //             property: 'tag_id',
+        //             value: release
+        //         });
 
-            if (tilename) {
-                filters.push({
-                    property: 'tilename',
-                    value: tilename
-                });
-            }
+        //         filters.push({
+        //             property: 'field_id',
+        //             value: field
+        //         });
+        //     }
 
-            objects.filter(filters);
+        //     if (tilename) {
+        //         filters.push({
+        //             property: 'tilename',
+        //             value: tilename
+        //         });
+        //     }
+
+        //     objects.filter(filters);
         }
     },
 
@@ -176,13 +184,11 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             objects = vm.getStore('objects'),
-            catalog = vm.get('catalog'),
-            release = vm.get('tag_id'),
-        field = vm.get('field_id');            ;
+            catalog = vm.get('catalog');
 
         me.clearObjects();
 
-        me.loadObjects(catalog, release, field);
+        me.loadObjects(catalog);
     },
 
     onSelectObject: function (record) {
@@ -311,7 +317,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             layout: 'fit',
             closeAction: 'destroy',
             width: 800,
-            height: 600,
+            height: 500,
             items: [{
                 xtype: 'targets-association',
                 listeners: {

@@ -40,7 +40,7 @@ class File(Product):
 class Table(Product):
 
     tbl_schema = models.CharField(
-        max_length=128, verbose_name='Schema name')
+        max_length=128, verbose_name='Schema name', null=True, blank=True)
     tbl_name = models.CharField(
         max_length=128, verbose_name='Tablename without schema')
 
