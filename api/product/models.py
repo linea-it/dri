@@ -20,7 +20,7 @@ class Product(models.Model):
     prd_class = models.ForeignKey(
         ProductClass, on_delete=models.CASCADE, verbose_name='Product class')
     prd_flag_removed = models.BooleanField(
-        default=False, verbose_name='Mark a product as removed')
+        default=False, verbose_name='Is Removed', help_text='True to mark a product as removed.')
 
     def __str__(self):
         return self.prd_display_name
@@ -51,11 +51,11 @@ class Table(Product):
 class Catalog(Table):
 
     ctl_num_columns = models.PositiveIntegerField(
-        verbose_name='Num of columns')
+        verbose_name='Num of columns', null=True, blank=True)
     ctl_num_tiles = models.PositiveIntegerField(
-        verbose_name='Num of tiles')
+        verbose_name='Num of tiles', null=True, blank=True)
     ctl_num_objects = models.PositiveIntegerField(
-        verbose_name='Num of objects')
+        verbose_name='Num of objects', null=True, blank=True)
 
 
 class Map(Table):
