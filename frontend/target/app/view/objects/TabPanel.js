@@ -42,8 +42,7 @@ Ext.define('Target.view.objects.TabPanel', {
                         ready: this.onItemReady,
                         select: this.onSelectItem,
                         rowdblclick: this.onDbClickItem
-                    },
-                    hidden: true
+                    }
                 },
                 {
                     xtype: 'targets-objects-grid',

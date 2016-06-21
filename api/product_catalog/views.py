@@ -61,7 +61,24 @@ class CatalogObjectsViewSet(ViewSet):
         # retornar uma lista com os objetos da tabela
         rows = list()
 
+        # Placeholder objeto de exemplo
+        obj = dict({
+            "_meta_id": 4397,
+            "_meta_catalog_id": 1944,
+            "_meta_ra": 0.53667891025543202,
+            "_meta_dec": -0.33503088355064398,
+            "_meta_radius": 70.585837680639102,
+            "_meta_is_system": True,
+            "id_auto": 4397,
+            "id": 1983,
+            "ra": 0.53667891025543202,
+            "dec": -0.33503088355064398,
+            "radius_arcsec_zm ": 70.585837680639102
+        })
+
+        rows.append(obj)
+
         return Response(dict({
-            'count': 0,
+            'count': len(rows),
             'results': rows
         }))
