@@ -1,11 +1,8 @@
-Ext.define('Target.store.CatalogClassColumns', {
+Ext.define('Target.store.ProductAssociation', {
     extend: 'common.store.MyStore',
 
-    alias: 'store.catalog-class-columns',
+    alias: 'store.product-association',
 
-    /**
-     * @requires Target.model.CatalogColumn
-     */
     requires: [
         'Target.model.CatalogColumn'
     ],

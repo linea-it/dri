@@ -16,7 +16,9 @@ Including another URLconf
 from coadd import views as coadd_views
 from common import views as common_views
 from product import views as product_views
+from product_catalog import views as product_catalog_views
 from product_classifier import views as product_classifier_views
+from product_register import views as product_register_views
 from validation import views as validation_views
 
 from django.conf.urls import url, include
@@ -31,10 +33,11 @@ router.register(r'dataset', coadd_views.DatasetViewSet, base_name='dataset')
 router.register(r'footprints', coadd_views.DatasetFootprintViewSet, base_name='footprints')
 router.register(r'surveys', coadd_views.SurveyViewSet)
 
-router.register(r'productclass', product_classifier_views.ProductClassViewSet,
-                base_name='productclass')
-router.register(r'productgroup', product_classifier_views.ProductGroupViewSet,
-               base_name='productgroup')
+router.register(r'productclass', product_classifier_views.ProductClassViewSet, base_name='productclass')
+router.register(r'productgroup', product_classifier_views.ProductGroupViewSet, base_name='productgroup')
+router.register(r'productclasscontent', product_classifier_views.ProductClassContentViewSet)
+router.register(r'catalogobjects', product_catalog_views.CatalogObjectsViewSet, base_name='catalogobjects')
+
 
 router.register(r'product', product_views.ProductViewSet)
 router.register(r'catalog', product_views.CatalogViewSet)
@@ -46,6 +49,10 @@ router.register(r'flagged', validation_views.FlaggedViewSet)
 router.register(r'defect', validation_views.DefectViewSet)
 
 router.register(r'filters', common_views.FilterViewSet)
+
+router.register(r'externalprocess', product_register_views.ExternalProcessViewSet)
+
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

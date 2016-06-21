@@ -22,6 +22,11 @@ Ext.define('Target.view.main.Main', {
 
     plugins: 'viewport',
 
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
+
     items: [
         {
             xtype: 'toolbar',

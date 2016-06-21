@@ -1,19 +1,5 @@
-Ext.define('Target.model.Catalog', {
+Ext.define('Target.model.CatalogTree', {
     extend: 'Ext.data.Model',
-
-    requires: [
-        'common.data.proxy.Django'
-    ],
-
-    proxy: {
-        type: 'django',
-        url: '/dri/api/catalog/',
-        appendId: false,
-        reader: {
-            type: 'json',
-            rootProperty: 'children'
-        }
-    },
 
     fields: [
         {name:'id'},

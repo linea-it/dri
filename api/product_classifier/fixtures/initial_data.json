@@ -1263,5 +1263,66 @@
       "pcl_display_name": "Y1 Modest v3",
       "pcl_is_system": false
     }
-  }
+  },
+  {
+    "model": "product_classifier.contentcategory",
+    "pk": 1,
+    "fields": {
+      "cct_name": "Astrometry"
+    }
+  }, 
+  {
+    "model": "product_classifier.contentcategory",
+    "pk": 2,
+    "fields": {
+      "cct_name": "Base"
+    }
+  },
+  {
+    "model": "product_classifier.contentcategory",
+    "pk": 3,
+    "fields": {
+      "cct_name": "Common"
+    }
+  }, 
+  {
+    "model": "product_classifier.contentcategory",
+    "pk": 4,
+    "fields": {
+      "cct_name": "Flux"
+    }
+  }, 
+  {
+    "model": "product_classifier.contentcategory",
+    "pk": 5,
+    "fields": {
+      "cct_name": "Magnitude"
+    }
+  }, {
+    "model": "product_classifier.contentcategory",
+    "pk": 6,
+    "fields": {
+      "cct_name": "Mask"
+    }
+  }, {
+    "model": "product_classifier.contentcategory",
+    "pk": 7,
+    "fields": {
+      "cct_name": "Model Fit"
+    }
+  }, 
+  {
+    "model": "product_classifier.contentcategory",
+    "pk": 8,
+    "fields": {
+      "cct_name": "Quality"
+    }
+  }, 
+  {
+    "model": "product_classifier.contentcategory",
+    "pk": 9,
+    "fields": {
+      "cct_name": "Shape"
+    }
+  }  
 ]
