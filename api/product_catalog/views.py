@@ -1,4 +1,4 @@
-from lib import oacc
+# from lib import oacc
 
 from product.models import Catalog, ProductContent
 
@@ -15,8 +15,7 @@ class CatalogObjectsViewSet(ViewSet):
         """
         Return a list of all users.
         """
-        # Recuperar o pa
-        # rametro product id que e obrigatorio
+        # Recuperar o parametro product id que e obrigatorio
 
         product_id = request.query_params.get('product', None)
         if not product_id:
