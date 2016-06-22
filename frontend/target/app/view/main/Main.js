@@ -14,7 +14,10 @@ Ext.define('Target.view.main.Main', {
         'Ext.window.MessageBox',
 
         'Target.view.main.MainController',
-        'Target.view.main.MainModel'
+        'Target.view.main.MainModel',
+
+        'common.header.Toolbar'
+
     ],
 
     controller: 'main',
@@ -22,21 +25,14 @@ Ext.define('Target.view.main.Main', {
 
     plugins: 'viewport',
 
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
+
     items: [
         {
-            xtype: 'toolbar',
-            cls: 'des-portal-headerbar toolbar-btn-shadow',
-            height: 52,
-            itemId: 'headerBar',
-            items: [
-                {
-                    xtype: 'component',
-                    cls: 'des-portal-logo',
-                    bind: {
-                        html: '<div class="main-logo"><img src="{desPortalLogo}">{name}</div>'
-                    }
-                }
-            ]
+            xtype: 'dri-header'
         },
         {
             xtype: 'container',

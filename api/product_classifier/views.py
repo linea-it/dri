@@ -3,6 +3,9 @@ from .models import ProductClass, ProductGroup
 from .serializers import ProductClassSerializer, ProductGroupSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
+from .models import ProductClass, ProductGroup, ProductClassContent
+from .serializers import ProductClassSerializer, ProductGroupSerializer, ProductClassContentSerializer
+
 
 class ProductClassViewSet(viewsets.ModelViewSet):
 
@@ -119,3 +122,8 @@ class ProductGroupViewSet(viewsets.ModelViewSet):
 #             })
 #
 #             return content
+
+class ProductClassContentViewSet(viewsets.ModelViewSet):
+    queryset = ProductClassContent.objects.all()
+
+    serializer_class = ProductClassContentSerializer

@@ -1,9 +1,9 @@
 import logging
 
-from product_classifier.models import ProductClass
+from product_classifier.models import ProductClass, ProductClassContent
 
 from rest_framework import serializers
-from .models import File, Catalog
+from .models import File, Catalog, ProductContent, ProductContentAssociation
 from .models import Map
 from .models import Mask
 from .models import Product
@@ -204,3 +204,76 @@ class MaskSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'msk_filter'
         )
+
+class ProductContentSerializer(serializers.HyperlinkedModelSerializer):
+    pcn_product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=False)
+
+    class Meta:
+        model = ProductContent
+
+        fields = (
+            'id',
+            'pcn_product_id',
+            'pcn_column_name',
+        )
+
+
+class ProductContentAssociationSerializer(serializers.HyperlinkedModelSerializer):
+    pca_product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=False)
+
+    pca_class_content = serializers.PrimaryKeyRelatedField(
+        queryset=ProductClassContent.objects.all(), many=False)
+
+    pca_product_content = serializers.PrimaryKeyRelatedField(
+        queryset=ProductContent.objects.all(), many=False)
+
+    # Atributos da  product_classifier.ProductClassContent
+    pcc_category = serializers.SerializerMethodField()
+    pcc_display_name = serializers.SerializerMethodField()
+    pcc_ucd = serializers.SerializerMethodField()
+    pcc_unit = serializers.SerializerMethodField()
+    pcc_reference = serializers.SerializerMethodField()
+    pcc_mandatory = serializers.SerializerMethodField()
+
+    # Atributos da  product.ProductContent
+    pcn_column_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductContentAssociation
+
+        fields = (
+            'id',
+            'pca_product_id',
+            'pca_class_content',
+            'pca_product_content',
+            'pcc_category',
+            'pcc_display_name',
+            'pcc_ucd',
+            'pcc_unit',
+            'pcc_reference',
+            'pcc_mandatory',
+            'pcn_column_name'
+        )
+
+    def get_pcc_category(self, obj):
+        return obj.pca_class_content.pcc_category.cct_name
+
+    def get_pcc_display_name(self, obj):
+        return obj.pca_class_content.pcc_display_name
+
+    def get_pcc_ucd(self, obj):
+        return obj.pca_class_content.pcc_ucd
+
+    def get_pcc_unit(self, obj):
+        return obj.pca_class_content.pcc_unit
+
+    def get_pcc_reference(self, obj):
+        return obj.pca_class_content.pcc_reference
+
+    def get_pcc_mandatory(self, obj):
+        return obj.pca_class_content.pcc_mandatory
+
+    def get_pcn_column_name(self, obj):
+        return obj.pca_product_content.pcn_column_name

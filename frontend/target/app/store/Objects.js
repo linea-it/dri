@@ -1,5 +1,5 @@
 Ext.define('Target.store.Objects', {
-    extend: 'Ext.data.Store',
+    extend: 'common.store.MyStore',
 
     alias: 'store.targets-objects',
 
@@ -14,26 +14,25 @@ Ext.define('Target.store.Objects', {
     }],
 
     proxy: {
-        type: 'ajax',
-        // url: '/PRJSUB/TargetViewer/getTargets',
+        type: 'django',
         api: {
             // create  : '/PRJSUB/TileViewer/setCatalogObject',
-            read    : '/PRJSUB/TargetViewer/getTargets',
-            update  : '/PRJSUB/TargetViewer/updateTargetObject'
+            read    : '/dri/api/catalogobjects/',
+            // update  : '/PRJSUB/TargetViewer/updateTargetObject'
             // destroy : '/PRJSUB/TileViewer/deleteCatalogObject'
         },
-        reader: {
-            type: 'json',
-            rootProperty: 'data',
-            totalProperty: 'totalCount'
-        },
-        writer: {
-            type: 'json',
-            rootProperty: 'data',
-            writeAllFields: false,
-            encode: true,
-            allowSingle: true
-        }
+        // reader: {
+        //     type: 'json',
+        //     rootProperty: 'data',
+        //     totalProperty: 'totalCount'
+        // },
+        // writer: {
+        //     type: 'json',
+        //     rootProperty: 'data',
+        //     writeAllFields: false,
+        //     encode: true,
+        //     allowSingle: true
+        // }
     },
 
     sorters: [{

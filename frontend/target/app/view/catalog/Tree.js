@@ -110,8 +110,8 @@ Ext.define('Target.view.catalog.Tree', {
             ],
             listeners: {
                 load: function (treeStore) {
-                    var root = treeStore.getRootNode();
-                    root.expand();
+                    // var root = treeStore.getRootNode();
+                    // root.expand();
                 },
                 rowdblclick: function (grid, record) {
                     me.viewRecord(record);

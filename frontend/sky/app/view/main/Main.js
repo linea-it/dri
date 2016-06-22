@@ -16,7 +16,8 @@ Ext.define('Sky.view.main.Main', {
         'Ext.layout.container.Border',
         'Sky.view.main.MainController',
         'Sky.view.main.MainModel',
-        'Sky.view.search.SearchField'
+        'Sky.view.search.SearchField',
+        'common.header.Toolbar'
     ],
 
     controller: 'main',
@@ -32,42 +33,18 @@ Ext.define('Sky.view.main.Main', {
 
     items: [
         {
-            xtype: 'toolbar',
-            cls: 'des-portal-headerbar toolbar-btn-shadow',
-            height: 52,
-            itemId: 'headerBar',
-            items: [
-                {
-                    xtype: 'component',
-                    cls: 'des-portal-logo',
-                    bind: {
-                        html: '<div class="main-logo"><img src="{desPortalLogo}">{name}</div>'
-                    }
-                },
-                '->',
-                {
-                    xtype: 'tile-search-field'
-                }
-                // {
-                //     iconCls: 'x-fa fa-question',
-                //     // text: 'Help',
-                //     tooltip: 'Help',
-                //     handler: function () {
-                //         Ext.create('help.Twiki', {
-                //             // TODO: Usar Bind
-                //             page: 'TargetsHelp',
-                //             // subsection: 'Selected_Catalog'
-                //             autoShow: true
-                //         });
-                //     }
-                // }
-            ]
+            xtype: 'dri-header'
+            // items: [
+            // '->',
+            // {
+            //     xtype: 'tile-search-field'
+            // }
+            // ]
         },
         {
             xtype: 'container',
             flex: 1,
             reference: 'mainCardPanel',
-            margin: '1 0 0 0',
             layout: {
                 type: 'card',
                 anchor: '100%'

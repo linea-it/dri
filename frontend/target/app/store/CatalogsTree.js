@@ -5,10 +5,10 @@ Ext.define('Target.store.CatalogsTree', {
 
     requires: [
         'common.data.proxy.Django',
-        'Target.model.Catalog'
+        'Target.model.CatalogTree'
     ],
 
-    model: 'Target.model.Catalog',
+    model: 'Target.model.CatalogTree',
 
     autoLoad: false,
 

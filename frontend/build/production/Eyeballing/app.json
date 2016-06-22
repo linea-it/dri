@@ -11,8 +11,9 @@
         "dir": "${package.output}"
       },
       "creator": "Sencha",
+      "namespace": "Ext",
       "type": "toolkit",
-      "version": "6.0.0.640"
+      "version": "6.0.1.250"
     },
     "cmd": {
       "current": "6.1.2.15",
@@ -29,7 +30,7 @@
       ],
       "creator": "Sencha",
       "type": "code",
-      "version": "6.0.0.640"
+      "version": "6.0.1.250"
     },
     "ext": {
       "build": {
@@ -37,29 +38,43 @@
       },
       "creator": "Sencha",
       "license": "gpl",
+      "namespace": "Ext",
+      "resource": {
+        "paths": [
+          "resources"
+        ]
+      },
       "type": "framework",
-      "version": "6.0.0.640"
+      "version": "6.0.1.250"
     },
     "font-awesome": {
       "creator": "Sencha",
+      "namespace": "Ext",
+      "resource": {
+        "paths": ""
+      },
       "theme": "theme-neptune",
       "toolkit": "classic",
       "type": "code",
-      "version": "6.0.0.640"
+      "version": "6.0.1.250"
     },
     "font-ext": {
-      "creator": "anonymous",
+      "creator": "Sencha",
+      "namespace": "Ext",
+      "theme": "theme-neptune",
+      "toolkit": "classic",
       "type": "code",
-      "version": "6.0.0.640"
+      "version": "6.0.1.250"
     },
     "theme-base": {
       "alternateName": [
         "ext-theme-base"
       ],
       "creator": "Sencha",
+      "namespace": "Ext",
       "toolkit": "classic",
       "type": "theme",
-      "version": "6.0.0.640"
+      "version": "6.0.1.250"
     },
     "theme-neptune": {
       "alternateName": [
@@ -67,9 +82,10 @@
       ],
       "creator": "Sencha",
       "extend": "theme-neutral",
+      "namespace": "Ext",
       "toolkit": "classic",
       "type": "theme",
-      "version": "6.0.0.640"
+      "version": "6.0.1.250"
     },
     "theme-neutral": {
       "alternateName": [
@@ -77,27 +93,49 @@
       ],
       "creator": "Sencha",
       "extend": "theme-base",
+      "namespace": "Ext",
       "toolkit": "classic",
       "type": "theme",
-      "version": "6.0.0.640"
+      "version": "6.0.1.250"
     },
     "theme-triton": {
       "creator": "Sencha",
       "extend": "theme-neptune",
+      "fashion": {
+        "inliner": {
+          "enable": false,
+          "maxItemSize": 20000,
+          "excludes": [
+            ".*\\.woff",
+            ".*\\.woff2",
+            ".*\\.ttf",
+            ".*\\.eot",
+            ".*\\.svg"
+          ]
+        }
+      },
+      "namespace": "Ext",
+      "resource": {
+        "paths": ""
+      },
       "toolkit": "classic",
       "type": "theme",
-      "version": "6.0.0.640"
+      "version": "6.0.1.250"
     },
     "ux": {
       "alternateName": [
         "ext-ux"
       ],
       "creator": "Sencha",
+      "namespace": "Ext",
       "resource": {
-        "paths": "${package.dir}/resources,${package.dir}/classic/resources"
+        "paths": [
+          "${package.dir}/resources",
+          "${package.dir}/classic/resources"
+        ]
       },
       "type": "code",
-      "version": "6.0.0.640"
+      "version": "6.0.1.250"
     }
   },
   "js": [
@@ -148,11 +186,11 @@
   "toolkit": "classic",
   "theme": "theme-triton",
   "loader": {
-    "cache": "20160602135436",
+    "cache": "20160622150102",
     "cacheParam": "_dc"
   },
   "id": "f819e9bd-9643-45a0-b315-b6e66c9f2ec6",
-  "hash": "20e96154d7de8de546329f86cb6387e902a653cc",
+  "hash": "4e8f229976e776d26f79e8d75b4cf3287403823d",
   "profile": "",
   "resources": {
     "path": "resources"

@@ -11,7 +11,8 @@ Ext.define('Target.view.objects.ObjectsController', {
      */
     requires: [
         'Target.view.catalog.Export',
-        'Target.view.catalog.SubmitCutout'
+        'Target.view.catalog.SubmitCutout',
+        'Target.view.association.Panel'
     ],
 
     listen: {
@@ -22,9 +23,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             },
             'targets-objects-tabpanel': {
                 select: 'onSelectObject'
-            },
-            'targets-objects-tiles': {
-                select: 'onSelectGroupedTile'
             }
         },
         store: {
@@ -42,77 +40,44 @@ Ext.define('Target.view.objects.ObjectsController', {
         }
     },
 
-    onBeforeLoadPanel: function (catalog, objectsPanel) {
-        console.log('onBeforeLoadPanel(%o, %o)', catalog, objectsPanel);
-
-        var vm = objectsPanel.getViewModel();
+    onBeforeLoadPanel: function (catalogId, objectsPanel) {
+        var me = this,
+            vm = objectsPanel.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
 
         objectsPanel.setLoading(true);
 
-        Ext.Ajax.request({
-            url: '/PRJSUB/TargetViewer/get_target_catalog_by_id',
-            scope: this,
-            params: {
-                'catalog_id' : catalog
-            },
-            success: function (response) {
-                // Recuperar a resposta e fazer o decode no json.
-                var obj = Ext.decode(response.responseText);
+        currentCatalog.set('id', catalogId);
 
-                if (obj.success !== true) {
-
-                    // Se Model.py retornar alguma falha exibe a mensagem
-                    Ext.Msg.alert('Status', obj.msg);
-                } else {
-                    // Cria uma instancia do model catalog e seta no painel
-                    currentCatalog = Ext.create('Target.model.Catalog', obj.data);
-
-                    objectsPanel.setLoading(false);
-
-                    objectsPanel.loadCatalog(currentCatalog);
-                }
-            },
-            failure: function (response) {
-                //console.log('server-side failure ' + response.status);
-                Ext.MessageBox.show({
-                    title: 'Server Side Failure',
-                    msg: response.status + ' ' + response.statusText,
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
-                });
-
+        currentCatalog.load({
+            callback: function (model) {
                 objectsPanel.setLoading(false);
+
+                me.onBeforeLoadCatalog(model);
             }
         });
+
     },
 
-    onBeforeLoadCatalog: function (objectsPanel, record) {
-
-        var vm = objectsPanel.getViewModel(),
+    onBeforeLoadCatalog: function (record) {
+        console.log('onBeforeLoadCatalog(%o)', record);
+        var me = this,
+            vm = me.getViewModel(),
             storeCatalogCollumns = vm.getStore('catalogColumns'),
-            storeCatalogClassCollumns = vm.getStore('catalogClassColumns'),
-            storeCatalogTiles = vm.getStore('tiles');
+            storeCatalogClassCollumns = vm.getStore('catalogClassColumns');
 
         // filtrar as stores de colunas
         storeCatalogCollumns.filter([
             {
-                property: 'catalog_id',
-                value: record.get('catalog_id')
+                property: 'pcl_product_id',
+                value: record.get('id')
             }
         ]);
 
         storeCatalogClassCollumns.filter([
             {
-                property: 'catalog_id',
-                value: record.get('catalog_id')
-            }
-        ]);
-
-        // Filtrar a lista de Tiles disponiveis no catalogo
-        storeCatalogTiles.filter([
-            {
-                property: 'catalog_id',
-                value: record.get('catalog_id')
+                property: 'pca_product',
+                value: record.get('id')
             }
         ]);
     },
@@ -147,53 +112,61 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onObjectPanelReady: function () {
-        // console.log('onObjectPanelReady')
+        console.log('onObjectPanelReady');
         var me = this,
             vm = this.getViewModel(),
-            catalog = vm.get('currentCatalog'),
-            release = vm.get('tag_id'),
-            field = vm.get('field_id');
+            catalog = vm.get('currentCatalog');
 
         // Filtrar a Store de Objetos
-        me.loadObjects(catalog.get('catalog_id'), release,  field);
+        me.loadObjects(catalog.get('id'));
 
     },
 
-    loadObjects: function (catalog, release, field, tilename) {
-        // console.log('loadObjects(%o, %o, %o, %o)', catalog, release, field, tilename)
+    loadObjects: function (catalog) {
+        console.log('loadObjects(%o)', catalog);
 
-        var vm = this.getViewModel(),
-            objects = vm.getStore('objects'),
-            filters;
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('objects');
 
         if (catalog) {
-            filters = [
-                {
-                    property: 'catalog_id',
-                    value: catalog
-                }
-            ];
+            store.load({
+                params: {
+                    product: catalog
+                },
+                callback: function(records, operation, success) {
+                    
+                },
+                scope: this
+            });
 
-            if ((release > 0) && (field > 0)) {
-                filters.push({
-                    property: 'tag_id',
-                    value: release
-                });
+        //     filters = [
+        //         {
+        //             property: 'catalog_id',
+        //             value: catalog
+        //         }
+        //     ];
 
-                filters.push({
-                    property: 'field_id',
-                    value: field
-                });
-            }
+        //     if ((release > 0) && (field > 0)) {
+        //         filters.push({
+        //             property: 'tag_id',
+        //             value: release
+        //         });
 
-            if (tilename) {
-                filters.push({
-                    property: 'tilename',
-                    value: tilename
-                });
-            }
+        //         filters.push({
+        //             property: 'field_id',
+        //             value: field
+        //         });
+        //     }
 
-            objects.filter(filters);
+        //     if (tilename) {
+        //         filters.push({
+        //             property: 'tilename',
+        //             value: tilename
+        //         });
+        //     }
+
+        //     objects.filter(filters);
         }
     },
 
@@ -211,58 +184,11 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             objects = vm.getStore('objects'),
-            catalog = vm.get('catalog'),
-            release = vm.get('tag_id'),
-        field = vm.get('field_id');            ;
+            catalog = vm.get('catalog');
 
         me.clearObjects();
 
-        me.loadObjects(catalog, release, field);
-    },
-
-    onGroupUngroupByTile: function (btn) {
-
-        var me = this,
-            refs = me.getReferences(),
-            tabpanel = refs.targetsObjectsTabpanel,
-            visible;
-
-        visible = !btn.pressed;
-
-        if (visible) {
-
-            // Alterar o icone do botao
-            btn.setIconCls('x-fa fa-indent');
-
-            // reload da store de objetos
-            me.reloadObjects();
-
-        } else {
-            // Exibicao por Tile
-
-            btn.setIconCls('x-fa fa-dedent');
-
-            // limpar a store de objetos
-            me.clearObjects();
-
-        }
-
-        // Mostrar ocultar a coluna tilename na grid
-        tabpanel.showHideTilename(visible);
-    },
-
-    onSelectGroupedTile: function (rowModel, record) {
-
-        // Filtrar a lista de objetos pelo tilename
-        var me = this,
-            vm = this.getViewModel(),
-            catalog = vm.get('catalog'),
-            release = vm.get('tag_id'),
-            field = vm.get('field_id'),
-            tilename = record.get('tilename');
-
-        me.loadObjects(catalog, release, field, tilename);
-
+        me.loadObjects(catalog);
     },
 
     onSelectObject: function (record) {
@@ -379,20 +305,33 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onClickColumnAssociation: function () {
-        // console.log('onClickColumnAssociation(%o)', arguments);
+        console.log('onClickColumnAssociation(%o)', arguments);
 
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
-            catalog = vm.get('currentCatalog'),
-            host = window.location.host;
+            catalog = vm.get('currentCatalog');
 
-        // poderia ser feito de maneira mais elegante.
-        if (catalog) {
-            var url = window.location.protocol + '//' + host + '/PRJSUB/UPTOOL/column_association?id=' + catalog.get('catalog_id') + '&c=' + catalog.get('class_id');
+        this.winAssociation = Ext.create('Ext.window.Window', {
+            title: 'Association',
+            layout: 'fit',
+            closeAction: 'destroy',
+            width: 800,
+            height: 500,
+            items: [{
+                xtype: 'targets-association',
+                listeners: {
+                    scope: me
+                    // todo evento que vai indicar que associacao foi finalizada
+                    // submitexport: me.exportCatalog
+                }
+            }]
+        });
 
-            window.open(url);
-        }
+        this.winAssociation.show();
+
+        this.winAssociation.down('targets-association').setProduct(catalog.get('id'));
+
     },
 
     onClickExportCatalog: function () {

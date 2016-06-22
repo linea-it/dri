@@ -1,5 +1,3 @@
-import logging
-
 from django.db import models
 
 
@@ -31,6 +29,7 @@ class ProductClass(models.Model):
 
     def __str__(self):
         return self.pcl_display_name
+
 
 class ContentCategory(models.Model):
     cct_name = models.CharField(
@@ -70,5 +69,3 @@ class ProductClassContent(models.Model):
 
     def __str__(self):
         return self.pcc_name
-
-

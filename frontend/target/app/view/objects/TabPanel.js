@@ -19,7 +19,7 @@ Ext.define('Target.view.objects.TabPanel', {
     * @param {Target.view.objects.TabPanel} [this] this panel
     */
 
-    activeTab: 2,
+    //activeTab: 2,
 
     config: {
         ready: false
@@ -46,7 +46,7 @@ Ext.define('Target.view.objects.TabPanel', {
                 },
                 {
                     xtype: 'targets-objects-grid',
-                    title: 'List',
+                    title: 'Class Properties',
                     itemId: 'CatalogClassGrid',
                     bind: {
                         store: '{objects}'
@@ -56,13 +56,12 @@ Ext.define('Target.view.objects.TabPanel', {
                         ready: this.onItemReady,
                         select: this.onSelectItem,
                         rowdblclick: this.onDbClickItem
-                    },
-                    hidden: true
+                    }
+                    //hidden: true
                 },
                 {
                     xtype: 'targets-objects-grid',
-                    // title: 'Original Properties',
-                    title: 'List',
+                    title: 'Catalog Properties',
                     itemId: 'CatalogPropertiesGrid',
                     bind: {
                         store: '{objects}'

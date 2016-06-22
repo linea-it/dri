@@ -12,8 +12,8 @@ Ext.define('Target.view.preview.Panel', {
         'Ext.ux.rating.Picker',
         'Target.view.preview.PreviewController',
         'Target.view.preview.PreviewModel',
-        'Target.view.preview.CoaddProperties',
-        'Target.view.preview.Image'
+        'Target.view.preview.CoaddProperties'
+        //'Target.view.preview.Image'
     ],
 
     controller: 'preview',
@@ -43,9 +43,13 @@ Ext.define('Target.view.preview.Panel', {
                     layout: 'fit',
                     items: [
                         {
-                            xtype: 'targets-preview-image',
+                            xtype: 'panel',
                             reference:'ImageView'
                         }
+                        // {
+                        //     xtype: 'targets-preview-image',
+                        //     reference:'ImageView'
+                        // }
                     ],
                     tbar: [
                         {

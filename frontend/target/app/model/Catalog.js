@@ -1,6 +1,20 @@
 Ext.define('Target.model.Catalog', {
     extend: 'Ext.data.Model',
 
+    requires: [
+        'common.data.proxy.Django'
+    ],
+
+    proxy: {
+        type: 'django',
+        url: '/dri/api/catalog/',
+        appendId: false,
+        reader: {
+            type: 'json',
+            rootProperty: 'children'
+        }
+    },
+
     fields: [
         {name:'id'},
         {name:'prd_name', type:'string'},
@@ -27,5 +41,6 @@ Ext.define('Target.model.Catalog', {
         {name:'markable', type:'boolean', defaultValue: false}
 
     ]
+
 });
 
