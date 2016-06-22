@@ -39,10 +39,10 @@ Ext.define('Sky.view.home.HomeModel', {
             storeId: 'AllTags',
             autoLoad: true,
             remoteFilter: false
-        }, 
+        },
 
-        // Datasets = Skys que estao nos tags de um release 
-        // esta store e paginada       
+        // Datasets = tiles que estao nos tags de um release
+        // esta store e paginada
         datasets: {
             type: 'datasets'
         },
@@ -53,7 +53,7 @@ Ext.define('Sky.view.home.HomeModel', {
 
         tagsbyrelease: {
             type: 'tags'
-        }, 
+        },
 
         tiles: {
             type: 'footprints',
