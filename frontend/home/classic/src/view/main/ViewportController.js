@@ -14,7 +14,7 @@ Ext.define('Admin.view.main.ViewportController', {
         ':node': 'onRouteChange'
     },
 
-    setCurrentView: function(hashTag) {
+    setCurrentView: function (hashTag) {
         hashTag = (hashTag || '').toLowerCase();
 
         var me = this,
@@ -39,12 +39,12 @@ Ext.define('Admin.view.main.ViewportController', {
         lastView = mainLayout.getActiveItem();
 
         if (!existingItem) {
-            if (hashTag == 'authentication.login'){
+            if (hashTag == 'authentication.login') {
                 newView = Ext.create('Admin.view.' + (view || 'authentication.Login'), {
                     hideMode: 'offsets',
                     routeId: hashTag
                 });
-            }else{
+            }else {
                 newView = Ext.create('Admin.view.' + (view || 'pages.Error404Window'), {
                     hideMode: 'offsets',
                     routeId: hashTag
@@ -61,8 +61,7 @@ Ext.define('Admin.view.main.ViewportController', {
                     mainLayout.setActiveItem(existingItem);
                 }
                 newView = existingItem;
-            }
-            else {
+            } else {
                 // newView is set (did not exist already), so add it and make it the
                 // activeItem.
                 Ext.suspendLayouts();
@@ -73,7 +72,6 @@ Ext.define('Admin.view.main.ViewportController', {
 
         navigationList.setSelection(node);
 
-
         if (newView.isFocusable(true)) {
             newView.focus();
         }
@@ -83,16 +81,16 @@ Ext.define('Admin.view.main.ViewportController', {
 
     onNavigationTreeSelectionChange: function (tree, node) {
         if (node && node.get('view')) {
-            console.log(node.get("routeId"))
-            if (node.get("routeId") == 'email'){
-                this.redirectTo( 'profile');
-            }else if(node.get("routeId") == 'dashboard'){
+            if (node.get('routeId') == 'email') {
+
+                this.redirectTo('profile');
+            }else if (node.get('routeId') == 'dashboard') {
                 //window.open('/dri/apps/tiles/')
-            }else if(node.get("routeId") == 'eyeballing'){
-                window.open('/dri/apps/eyeballing/')
-            }else{
-                this.redirectTo( node.get("routeId"));
-            }            
+            }else if (node.get('routeId') == 'eyeballing') {
+                window.open('/dri/apps/eyeballing/#home', '_self');
+            }else {
+                this.redirectTo(node.get('routeId'));
+            }
         }
     },
 
@@ -117,8 +115,7 @@ Ext.define('Admin.view.main.ViewportController', {
             // No animation for IE9 or lower...
             wrapContainer.layout.animatePolicy = wrapContainer.layout.animate = null;
             wrapContainer.updateLayout();  // ... since this will flush them
-        }
-        else {
+        } else {
             if (!collapsing) {
                 // If we are leaving micro mode (expanding), we do that first so that the
                 // text of the items in the navlist will be revealed by the animation.
@@ -148,17 +145,17 @@ Ext.define('Admin.view.main.ViewportController', {
         }
     },
 
-    onMainViewRender:function() {
+    onMainViewRender:function () {
         if (!window.location.hash) {
-            this.redirectTo("profile");
+            this.redirectTo('profile');
         }
     },
 
-    onRouteChange:function(id){
+    onRouteChange:function (id) {
         this.setCurrentView(id);
     },
-    onLogin:function(){
-        this.redirectTo("authentication.login");
+    onLogin:function () {
+        this.redirectTo('authentication.login');
     },
     onSearchRouteChange: function () {
         this.setCurrentView('search');
