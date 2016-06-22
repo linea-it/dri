@@ -16,7 +16,8 @@ Ext.define('Eyeballing.view.main.Main', {
         'Ext.layout.container.Card',
         'Ext.layout.container.Border',
         'Eyeballing.view.main.MainController',
-        'Eyeballing.view.main.MainModel'
+        'Eyeballing.view.main.MainModel',
+        'common.header.Toolbar'
     ],
 
     controller: 'main',
@@ -31,25 +32,12 @@ Ext.define('Eyeballing.view.main.Main', {
 
     items: [
         {
-            xtype: 'toolbar',
-            cls: 'des-portal-headerbar toolbar-btn-shadow',
-            height: 52,
-            itemId: 'headerBar',
-            items: [
-                {
-                    xtype: 'component',
-                    cls: 'des-portal-logo',
-                    bind: {
-                        html: '<div class="main-logo"><img src="{desPortalLogo}">{name}</div>'
-                    }
-                }
-            ]
+            xtype: 'dri-header'
         },
         {
             xtype: 'container',
             flex: 1,
             reference: 'mainCardPanel',
-            margin: '1 0 0 0',
             layout: {
                 type: 'card',
                 anchor: '100%'

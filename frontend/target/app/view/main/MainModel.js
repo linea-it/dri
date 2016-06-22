@@ -7,8 +7,7 @@ Ext.define('Target.view.main.MainModel', {
     alias: 'viewmodel.main',
 
     data: {
-        name: 'Target',
-        desPortalLogo: 'resources/des-portal-logo.png'
+        name: 'Target'
     }
 
 });
