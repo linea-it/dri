@@ -14,7 +14,7 @@ Ext.define('Admin.store.NavigationTree', {
                 routeId: 'profile'
 
             },
-            {              
+            {
                 text:   'Sky Viewer',
                 view:   'dashboard.Dashboard',
                 iconCls: 'x-fa fa-eye',
@@ -24,38 +24,38 @@ Ext.define('Admin.store.NavigationTree', {
                 routeId: 'skyv'
 
             },
-            {              
-                text:   'Eyeballing',
-                view:   'Eyeballing',
+            {
+                text:   'Release Validation',
+                view:   'dashboard.ReleaseValidation',
                 iconCls: 'x-fa fa-eye',
                 // iconCls: 'right-icon hot-icon x-fa fa-send ',
                 // disabled: "true",
                 leaf:   true,
-                routeId: 'eyeballing'
+                routeId: 'releasevalidation'
             },
             {
                 text:   'Tile Viewer',
                 view:   'tile',
                 leaf:   true,
-                disabled: "true",
+                disabled: 'true',
                 iconCls: 'x-fa fa-th',
                 // iconCls: 'right-icon new-icon x-fa fa-desktop',
                 routeId: 'dashboard'
             },
             {
                 text:   'Target Viewer',
-                view:   'tile',
+                view:   'dashboard.Target',
                 leaf:   true,
-                disabled: "true",
+                disabled: 'true',
                 iconCls: 'x-fa fa-dot-circle-o ',
                 // iconCls: 'right-icon new-icon x-fa fa-desktop',
-                routeId: 'dashboard'
+                routeId: 'target'
             },
             {
                 text:   'Sky Query',
                 view:   'tile',
                 leaf:   true,
-                disabled: "true",
+                disabled: 'true',
                 iconCls: 'x-fa fa-database',
                 // iconCls: 'right-icon new-icon x-fa fa-desktop',
                 routeId: 'dashboard'
@@ -64,7 +64,7 @@ Ext.define('Admin.store.NavigationTree', {
                 text:   'Upload',
                 view:   'tile',
                 leaf:   true,
-                disabled: "true",
+                disabled: 'true',
                 iconCls: 'x-fa fa-upload',
                 // iconCls: 'right-icon new-icon x-fa fa-desktop',
                 routeId: 'dashboard'
@@ -74,7 +74,7 @@ Ext.define('Admin.store.NavigationTree', {
                 text:   'Cutout Server',
                 view:   'tile',
                 leaf:   true,
-                disabled: "true",
+                disabled: 'true',
                 iconCls: 'x-fa fa-scissors',
                 // iconCls: 'right-icon new-icon x-fa fa-desktop',
                 routeId: 'dashboard'
@@ -91,7 +91,7 @@ Ext.define('Admin.store.NavigationTree', {
                         text: 'Targets',
                         view: 'tile',
                         leaf: true,
-                        disabled: "true",
+                        disabled: 'true',
                         iconCls: 'x-fa fa-bullseye',
                         routeId:'pages.blank'
                     },
@@ -99,14 +99,14 @@ Ext.define('Admin.store.NavigationTree', {
                         text: 'Catalogs',
                         view: 'tile',
                         leaf: true,
-                        disabled: "true",
+                        disabled: 'true',
                         iconCls: 'x-fa fa-leanpub',
                         routeId:'pages.blank'
                     }
                 ]
             }
-           
-            
+
+
             // {
             //     text:   'Profile',
             //     view:   'profile.UserProfile',
