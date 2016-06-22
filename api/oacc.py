@@ -9,25 +9,25 @@ class OracleDB:
 
     def __init__(self):
         self.connection = ea.connect()
-        self.cursor= self.connection.cursor() 
+        self.cursor= self.connection.cursor()
 
     def fetch_all(self,query):
-        self.cursor.execute(query) 
+        self.cursor.execute(query)
         header = [item[0] for item in self.cursor.description]
-        rows = self.cursor.fetchall() 
+        rows = self.cursor.fetchall()
         return rows
 
     def fetch_one(self,query):
-        self.cursor.execute(query) 
+        self.cursor.execute(query)
         header = [item[0] for item in self.cursor.description]
-        row = self.cursor.fetchone() 
-        return row 
+        row = self.cursor.fetchone()
+        return row
 
     def fetchall_dict(self,query):
-        self.cursor.execute(query) 
+        self.cursor.execute(query)
         header = [item[0] for item in self.cursor.description]
         rows = self.cursor.fetchall()
-        
+
         l = list()
         d = dict()
         result_dict = dict()
@@ -37,15 +37,34 @@ class OracleDB:
             l.append(item)
             result_dict = l
 
-        return result_dict 
+        return result_dict
 
     def fetch_scalar(self,query,col=0):
-        self.cursor.execute(query) 
-        row = self.fetch_one(query) 
+        self.cursor.execute(query)
+        row = self.fetch_one(query)
         if row != None:
             return row[col]
         else:
             return None
+
+    def fetch_columns(self, table):
+        self.cursor.prepare("""select COLUMN_NAME from dba_tab_columns where table_name = :tablea""")
+        self.cursor.execute(None, {'tablea':table})
+        result = self.cursor.fetchall()
+
+        return [i[0] for i in result]
+
+    def get_table_columns(self, table):
+        self.cursor.prepare("""select COLUMN_NAME, DATA_TYPE from dba_tab_columns where table_name = :tablea""")
+        self.cursor.execute(None, {'tablea':table})
+        result = self.cursor.fetchall()
+
+        self.cursor.prepare("""select comments from all_tab_comments where table_name = :tablea""")
+        self.cursor.execute(None, {'tablea':table})
+        result_comm = self.cursor.fetchall()
+
+        return result, result_comm
+
 
     def generate_query(self, table, schema=None, columns=None, filters=None, sort=None, limit=None, offset=None):
 
@@ -59,9 +78,9 @@ class OracleDB:
             sql_from = '%s.%s' %(schema, table)
         else:
             sql_from = table
-        
+
         tbl_columns = self.fetch_columns(table)
- 
+
         if columns:
             sql_columns = columns.join(', ')
 
@@ -78,15 +97,9 @@ class OracleDB:
 
         return sql
 
-    def fetch_columns(self, table):
-        easyoracle = ea.easy_or(self.connection.config, self.connection.desconfig, self.connection.dbname)
-        columns = easyoracle.get_columnlist_table("\'"+table+"\'")
-
-        return columns
-
 
     def parseFilter(self, filter, dictionary = False, checkColumns = None):
-        
+
         """
         Usado nos metodos que se comunicam com o Framework Extjs.
         Recebe um String no formato:

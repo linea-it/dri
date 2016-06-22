@@ -57,7 +57,8 @@ Ext.define('Eyeballing.view.eyeballing.Eyeballing', {
                                 {
                                     xtype: 'button',
                                     iconCls: 'x-fa fa-exclamation-triangle',
-                                    text: 'Flag',
+                                    width: 80,
+                                    // text: 'Flag',
                                     tooltip: 'Flag/Unflag',
                                     enableToggle: true,
                                     toggleHandler: 'onFlagDataset',
@@ -68,20 +69,25 @@ Ext.define('Eyeballing.view.eyeballing.Eyeballing', {
                             ]
                         },
                         {
-                            xtype: 'eyeballing-thumb',
-                            reference: 'thumb',
-                            // region: 'east',
-                            // width: 180,
+                            xtype: 'panel',
+                            layout: 'center',
                             resizable: true,
                             region: 'south',
                             height: 190,
-                            bind: {
-                                dataset: '{currentDataset}'
-                            },
-                            listeners: {
-                                changefilter: 'onClickThumb'
-                            }
+                            items: [
+                                {
+                                    xtype: 'eyeballing-thumb',
+                                    reference: 'thumb',
+                                    width: '75%',
+                                    bind: {
+                                        dataset: '{currentDataset}'
+                                    },
+                                    listeners: {
+                                        changefilter: 'onClickThumb'
+                                    }
 
+                                }
+                            ]
                         }
                     ]
                 }

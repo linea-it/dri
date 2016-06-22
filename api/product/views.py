@@ -24,7 +24,6 @@ class ProductFilter(django_filters.FilterSet):
         # product -> product_class -> product_group
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
 
-# Create your views here.
 class ProductViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows product to be viewed or edited
@@ -125,8 +124,6 @@ class CatalogViewSet(viewsets.ModelViewSet):
             dclass = classes.get(class_name)
             dclass.get('children').append(catalog)
 
-            print(catalog)
-
         result = dict({
             'success': True,
             'expanded': True,
@@ -134,6 +131,7 @@ class CatalogViewSet(viewsets.ModelViewSet):
         })
 
         for class_name in classes:
-            result.get("children").append(classes.get(class_name))
+            # result.get("root").get('children').append(classes.get(class_name))
+            result.get('children').append(classes.get(class_name))
 
         return Response(result)
