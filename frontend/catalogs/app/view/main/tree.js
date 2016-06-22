@@ -6,18 +6,19 @@ Ext.define('Catalogs.view.main.tree', {
     xtype: 'maintree',
 
     requires: [
-        'Catalogs.store.treestore'
+        'Catalogs.view.main.MainController',
+        'Catalogs.view.main.MainModel',
     ],
-    store: {
-        type: 'treestore'
+    scrollable : true,
+    // controller: 'main',
+    viewModel: 'main',
+    bind: {
+        store: '{catalogs}',
+        // selection: '{selectedCatalog}'
     },
-    // region: 'west',
-    //title: 'Tree',
-    // width: 250,
-    // height: 150,      
-    rootVisible: false,      
-    // collapsed : true,
-    // collapsible : true,
+
+    rootVisible: true,      
+    
 
     listeners: {
         select: 'onItemSelected'

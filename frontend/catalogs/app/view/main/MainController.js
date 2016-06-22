@@ -8,34 +8,50 @@ Ext.define('Catalogs.view.main.MainController', {
     extend: 'Ext.app.ViewController',
 
     alias: 'controller.main',
+    teste: function(){
+        // console.log('teste')
+        var refs = this.getReferences()
+            gridtreelista = refs.treelista,
+            storetreelista = gridtreelista.getStore();
+            // console.log(storetreelista)
+            filters = [
+                {
+                    property: 'group',
+                    value: 'targets'
+                }
+            ]
+            // storetreelista.filter(filters)
+            //storetreelista.load()
 
+            // console.log(refs.treelista.getStore())
+    },
     onItemSelected: function (sender, record) {
 
         var refs = this.getReferences()
             gridCatalogs = refs.catalogs,
             storeCatalogs = gridCatalogs.getStore();
-
+        // console.log(sender)
+        group = record.get('text')
         storeCatalogs.clearFilter(true);
-
-        filters = [
-          {'property':'catalog.flag_removed', 'value':'false'}
-        ]
-        if (record.get('type_id') == 1) {
+        // filters = [
+        //   {'property':'catalog.flag_removed', 'value':'false'}
+        // ]
+        if (group == 1) {
         filters.push({'property':'product_type.type_name', 'value':'value_added_catalogs'})//,{'property':'processes.flag_published', 'value':'true'})
         }
-        if (record.get('type_id') == 2) {
+        if (group == 2) {
         filters.push({'property':'product_type.type_name', 'value':'value_added_catalogs'}, {'property':'product_class.class_name','value':'Survey'})//,{'property':'processes.flag_published', 'value':'true'})
         }
-        if (record.get('type_id') == 3) {
+        if (group == 3) {
         filters.push({'property':'product_type.type_name', 'value':'targets'}, {'property':'upload_catalog.catalog_id','value':'null', 'operator':'is'})//,{'property':'processes.flag_published', 'value':'true'})
         }
-        if (record.get('type_id') == 4) {
-        filters.push({'property':'product_type.type_name', 'value':'targets'}, {'property':'upload_catalog.catalog_id','value':'null', 'operator':'is not'})//,{'property':'processes.flag_published', 'value':'true'})
+        if (group == 'targets') {
+            filters.push({'property':'group', 'value':'targets'})//,{'property':'processes.flag_published', 'value':'true'})
         }
-        if (record.get('type_id') == 5) {
+        if (group == 5) {
         filters.push({'property':'product_type.type_name', 'value':'external_catalogs'})//,{'property':'processes.flag_published', 'value':'true'})
         }
-        if (record.get('type_id') == 6) {
+        if (group == 6) {
         filters.push({'property':'product_type.type_name', 'value':'simulations'})//,{'property':'processes.flag_published', 'value':'true'})        
         }
       

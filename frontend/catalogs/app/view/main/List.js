@@ -9,34 +9,35 @@ Ext.define('Catalogs.view.main.List', {
     initComponent: function(){
         this.width = 760;
         var pluginExpanded = true;
-        var store = Ext.create('Catalogs.store.Personnel');
+        var store = Ext.create('Catalogs.store.Catalogs');
         Ext.apply(this, {
             store: store,            
             columns: [
+                // { 
+                //   text: 'Status', 
+                //   dataIndex: 'status_id',
+                //   align: 'center',
+                //   // filter: 'list',
+                //   renderer: function(value, metaData, record, rowIndex, colIndex, store, view){            
+                //       catalog = 'catalog'
+                //       if (value == 1){
+                //         metaData.tdAttr = 'data-qtip=' + "OK";               
+                //         return '<img src="/static/images/status-valid.png" />';
+                //       }else if(value == 2){
+                //         metaData.tdAttr = 'data-qtip=' + "Pending";
+                //         return '<img src="/static/images/status-pending.png" />';
+                //       }else if(value == 3){
+                //         metaData.tdAttr = 'data-qtip=' + "Warning";
+                //         return '<img src="/static/images/status-warning.png" />';
+                //       }else{
+                //         metaData.tdAttr = 'data-qtip=' + "Do&nbsp;not&nbsp;use";
+                //         return '<img src="/static/images/status-invalid.png" />';
+                //       }              
+                //   }          
+                // },
                 { 
-                  text: 'Status', 
-                  dataIndex: 'status_id',
-                  align: 'center',
-                  // filter: 'list',
-                  renderer: function(value, metaData, record, rowIndex, colIndex, store, view){            
-                      catalog = 'catalog'
-                      if (value == 1){
-                        metaData.tdAttr = 'data-qtip=' + "OK";               
-                        return '<img src="/static/images/status-valid.png" />';
-                      }else if(value == 2){
-                        metaData.tdAttr = 'data-qtip=' + "Pending";
-                        return '<img src="/static/images/status-pending.png" />';
-                      }else if(value == 3){
-                        metaData.tdAttr = 'data-qtip=' + "Warning";
-                        return '<img src="/static/images/status-warning.png" />';
-                      }else{
-                        metaData.tdAttr = 'data-qtip=' + "Do&nbsp;not&nbsp;use";
-                        return '<img src="/static/images/status-invalid.png" />';
-                      }              
-                  }          
-                },{ 
                   text: 'Name', 
-                  dataIndex: 'catalog_name',
+                  dataIndex: 'prd_display_name',
                   flex: 1,
                   filter: {
                     type: 'string',
@@ -58,7 +59,7 @@ Ext.define('Catalogs.view.main.List', {
                 // },        
                 { 
                   text: 'Type', 
-                  dataIndex: 'productclass_name',
+                  dataIndex: 'pcl_display_name',
                   flex: 1,
                   filter: {
                     type: 'string',
@@ -67,16 +68,16 @@ Ext.define('Catalogs.view.main.List', {
                     }
                   }
                 },
-                { 
-                  text: 'Version', 
-                  dataIndex: 'version',
-                  filter: {
-                    type: 'string',
-                    itemDefaults: {
-                        emptyText: 'Search for...'
-                    }
-                  }
-                },
+                // { 
+                //   text: 'Version', 
+                //   dataIndex: 'version',
+                //   filter: {
+                //     type: 'string',
+                //     itemDefaults: {
+                //         emptyText: 'Search for...'
+                //     }
+                //   }
+                // },
                 { text: 'Process ID', dataIndex: 'process_id', filter: 'number' },
                 { 
                   text: 'Owner', 
@@ -148,7 +149,7 @@ Ext.define('Catalogs.view.main.List', {
                   displayInfo: true,
                   emptyMsg: "No topics to display"
                   
-              }),
+              })
             
             // tbar: Ext.create('Ext.toolbar.Toolbar', {
             //     // renderTo: document.body,

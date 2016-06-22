@@ -27,5 +27,6 @@ class ProductGroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'pgr_name',
-            'pgr_display_name'
+            'pgr_display_name',
+            'is_catalog'
         )

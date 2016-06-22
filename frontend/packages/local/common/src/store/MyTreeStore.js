@@ -19,6 +19,7 @@ Ext.define('common.store.MyTreeStore', {
     // Exemplo e erro de sessao.
     listeners: {
         load: function (store, records, successful, eOpts) {
+            
             if (successful === false) {
                 var proxy = store.proxy;
                 var reader = proxy.reader;
@@ -30,10 +31,10 @@ Ext.define('common.store.MyTreeStore', {
                         console.log('Load Failure: %o', jsonData);
                         Ext.Msg.alert('Status', jsonData.msg);
                     }
-                } else {
+                } else {                    
                     var error = eOpts.getError(),
                         response = JSON.parse(error.response.responseText);
-
+                    
                     switch (error.status) {
                         case 403:
                             // 403 - Forbidden
