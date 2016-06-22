@@ -27,6 +27,9 @@ Ext.define('Sky.view.home.Home', {
                         storeSurveys: '{surveys}',
                         storeTags: '{tagsbyrelease}',
                         storeTiles: '{tiles}'
+                    },
+                    listeners: {
+                        ondblclick: 'onDblClickFootprint'
                     }
                 },
                 {
@@ -82,7 +85,7 @@ Ext.define('Sky.view.home.Home', {
                             listeners: {
                                 select: 'onSelectRelease'
                             }
-                        },
+                        }
                         // {
                         //     xtype: 'button',
                         //     text: 'Eyeballing',
