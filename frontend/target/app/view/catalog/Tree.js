@@ -162,7 +162,7 @@ Ext.define('Target.view.catalog.Tree', {
                     handler: 'onRemoveCatalog',
                     width: 60,
                     bind: {
-                        disabled: '{!selectedCatalog.editable}'
+                        // disabled: '{!selectedCatalog.editable}'
                     }
                 },
                 {
