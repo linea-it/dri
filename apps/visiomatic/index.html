@@ -84,26 +84,14 @@
 
             L.control.iip.channel().addTo(sidebar);
             L.control.iip.image().addTo(sidebar);
-
-            L.control.iip.region(
-                [
-                    {
-                        url: 'observation_footprint.json',
-                        name: 'observation footprint',
-                        description: 'Footprint of the optical observations',
-                        color: 'blue',
-                        load: false
-                    },
-                    {
-                        url: 'poi.json',
-                        name: 'Molinari+ 2011 POIs',
-                        description: 'Points of Interest discussed in Einstein et al. 2016',
-                        color: 'orange',
-                        load: false
-                    }
-                ],
-                { nativeCelsys: true }
-            ).addTo(sidebar);
+            L.control.iip.catalog([
+                L.Catalog['GALEX_AIS'],
+                L.Catalog['SDSS'],
+                L.Catalog['2MASS'],
+                L.Catalog['AllWISE'],
+                L.Catalog['NVSS'],
+                L.Catalog['FIRST']
+            ]).addTo(sidebar);
 
             L.control.iip.profile().addTo(sidebar);
 
