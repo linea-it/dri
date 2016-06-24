@@ -8,7 +8,6 @@ Ext.define('Target.model.Catalog', {
     proxy: {
         type: 'django',
         url: '/dri/api/catalog/',
-        appendId: false,
         reader: {
             type: 'json',
             rootProperty: 'children'

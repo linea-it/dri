@@ -15,7 +15,9 @@ Ext.define('Target.store.CatalogsTree', {
     remoteFilter: true,
 
     proxy: {
-        url: '/dri/api/catalog/get_class_tree_by_group/'
+        api: {
+            read    : '/dri/api/catalog/get_class_tree_by_group/'
+        }
     }
 
 });
