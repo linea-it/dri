@@ -20,6 +20,8 @@ from product_catalog import views as product_catalog_views
 from product_classifier import views as product_classifier_views
 from product_register import views as product_register_views
 from validation import views as validation_views
+from catalog import views as catalog_views
+
 
 from django.conf.urls import url, include
 from django.contrib import admin
@@ -37,6 +39,7 @@ router.register(r'productclass', product_classifier_views.ProductClassViewSet, b
 router.register(r'productgroup', product_classifier_views.ProductGroupViewSet, base_name='productgroup')
 router.register(r'productclasscontent', product_classifier_views.ProductClassContentViewSet)
 router.register(r'catalogobjects', product_catalog_views.CatalogObjectsViewSet, base_name='catalogobjects')
+router.register(r'catalogobjectsrating', catalog_views.RatingViewSet)
 
 
 router.register(r'product', product_views.ProductViewSet)

@@ -52,7 +52,8 @@ PROJECT_APPS = [
     'product_register',
     'product',
     'product_catalog',
-    'validation'
+    'validation',
+    'catalog'
 ]
 
 INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
@@ -96,7 +97,7 @@ WSGI_APPLICATION = 'dri.wsgi.application'
 
 DATABASES = {}
 
-
+DATABASE_ROUTERS = ['catalog.router.CatalogRouter']
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
 
