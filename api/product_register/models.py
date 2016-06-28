@@ -3,8 +3,6 @@ import logging
 from django.db import models
 logger = logging.getLogger(__name__)
 
-
-# Create your models here.
 class Export(models.Model):
  
     exp_username = models.CharField(max_length=128)
