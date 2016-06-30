@@ -88,7 +88,10 @@ class CatalogViewSet(viewsets.ModelViewSet):
                 'msg': 'Necessário passar o parametro group.'
             })
 
-        queryset = self.queryset.filter(prd_class__pcl_group__pgr_name=str(group))
+        queryset = self.queryset.filter(
+            prd_class__pcl_group__pgr_name=str(group),
+            prd_flag_removed=False
+        )
 
         # Esse dicionario vai receber os nos principais que sao as classes.
         classes = dict()

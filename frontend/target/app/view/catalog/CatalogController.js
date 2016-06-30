@@ -16,41 +16,28 @@ Ext.define('Target.view.catalog.CatalogController', {
         var me = this,
             vm = this.getViewModel(),
             store = vm.getStore('catalogs'),
-            selected = vm.get('selectedCatalog');
+            selected = vm.get('selectedCatalog'),
+            catalog;
 
-        if (selected.get('catalog_id')) {
+        if (selected.get('id')) {
 
-            Ext.Ajax.request({
-                url: '/PRJSUB/TargetViewer/removeCatalogByUser',
-                scope: this,
-                params: {
-                    'catalog_id': selected.get('catalog_id')
-                },
-                success: function (response) {
-                    // Recuperar a resposta e fazer o decode no json.
-                    var obj = Ext.decode(response.responseText);
+            // Criar uma copia do model selecionado
+            catalog = Ext.create('Target.model.Catalog', selected.data);
+            catalog.set('prd_flag_removed', true);
 
-                    if (obj.success) {
-                        store.remove(selected);
-                    } else {
-                        Ext.Msg.show({
-                            title: 'Sorry',
-                            msg: obj.msg,
-                            icon: Ext.Msg.WARNING,
-                            buttons: Ext.Msg.OK
+            catalog.save(
+                {
+                    callback: function (record, operation, success) {
+                        Ext.toast({
+                            html: 'Data saved',
+                            align: 't'
                         });
+
+                        // reload da Store
+                        store.load();
                     }
-                },
-                failure: function (response, opts) {
-                    var msg = response.status + ' ' + response.statusText;
-                    Ext.Msg.show({
-                        title: 'Sorry',
-                        msg: msg,
-                        icon: Ext.Msg.ERROR,
-                        buttons: Ext.Msg.OK
-                    });
                 }
-            });
+            );
         }
 
     },

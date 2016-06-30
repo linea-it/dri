@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset='utf-8' name='viewport' content='width=device-width,
+            initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+        <link rel='stylesheet' href='visiomatic/dist/jqplot.css' />
+        <link rel='stylesheet' href='visiomatic/dist/spectrum.css' />
+        <link rel='stylesheet' href='Leaflet/dist/leaflet.css' />
+        <link rel='stylesheet' href='visiomatic/dist/visiomatic.css' />
+
+        <style type='text/css'>
+            body {padding: 0; margin: 0; }
+            html,body,#map { width: 100%; height: 100%; }
+        </style>
+
+        <script src='visiomatic/dist/jquery-min.js'></script>
+        <script src='visiomatic/dist/jqplot-min.js'></script>
+        <script src='visiomatic/dist/spectrum-min.js'></script>
+        <script src='Leaflet/dist/leaflet.js'></script>
+        <script src='visiomatic/dist/visiomatic.js'></script>
+        <script>
+            function $_GET(param) {
+                var vars = {};
+                window.location.href.replace( location.hash, '' ).replace(
+                    /[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
+                    function( m, key, value ) { // callback
+                        vars[key] = value !== undefined ? value : '';
+                    }
+                );
+
+                if ( param ) {
+                    return vars[param] ? vars[param] : null;
+                }
+                return vars;
+            }
+        </script>
+    </head>
+    <body>
+        <div id='map' style='background:black'></div>
+
+        <script>
+            var release = $_GET('release') ? $_GET('release') : "y1_supplemental_d04"
+            var tilename = $_GET('tilename') ? $_GET('tilename') : "DES0959%2B0126"
+            var zoom = $_GET('zoom') ? $_GET('zoom') : 1
+
+            var args = L.IIPUtils.parseURL(window.location.search.substring(1));
+
+            var map = L.map('map', {fullscreenControl: true, zoom: zoom});
+            map.attributionControl.setPrefix('Dark Energy Survey @ 2016 NCSA/LIneA');
+
+            var iip = '/visiomatic?FIF=data/releases/' + release + '/images/visiomatic/' + tilename + '.ptif',
+                layer = L.tileLayer.iip(iip, {
+                    center: args['center'] ? args['center'] : false,
+                    fov: args['fov'] ? parseFloat(args['fov']) : false,
+                    mixingMode: args['mode'] ? args['mode'] : 'color',
+                    defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 2,
+                    contrast: 0.7,
+                    gamma: 2.8,
+                    colorSat: 2.0,
+                    channelColors: [[0,0,1],[0,1,1],[0,1,0],[1,1,0],[1,0,0]],
+                }).addTo(map);
+
+            L.control.scale.wcs({pixels: false}).addTo(map);
+            L.control.reticle().addTo(map);
+
+            var wcsControl = L.control.wcs({
+                coordinates: [{label: 'RA,Dec', units: 'HMS'}],
+                position: 'topright'
+            }).addTo(map)
+
+            var navlayer = L.tileLayer.iip(iip, {
+                channelColors: [,[0,0,1],[0,1,0],[1,0,0],],
+            });
+
+            var navmap = L.control.extraMap(navlayer, {
+                position: 'topright',
+                width: 128,
+                height: 128,
+                zoomLevelOffset: -6,
+                nativeCelsys: true,
+            }).addTo(map);
+
+            var sidebar = L.control.sidebar().addTo(map);
+
+            L.control.iip.channel().addTo(sidebar);
+            L.control.iip.image().addTo(sidebar);
+            L.control.iip.catalog([
+                L.Catalog['GALEX_AIS'],
+                L.Catalog['SDSS'],
+                L.Catalog['2MASS'],
+                L.Catalog['AllWISE'],
+                L.Catalog['NVSS'],
+                L.Catalog['FIRST']
+            ]).addTo(sidebar);
+
+            L.control.iip.profile().addTo(sidebar);
+
+            sidebar.addTabList();
+            /*
+            L.control.iip.doc('doc/index.html', {
+                pdflink: 'doc/doc.pdf'
+            }).addTo(sidebar);
+            */
+        </script>
+    </body>
+</html>
