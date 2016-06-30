@@ -3,7 +3,7 @@ from collections import namedtuple
 
 
 class CatalogDB:
-    available_engines = list(['sqlite3'])
+    available_engines = list(['sqlite3', 'oracle'])
     db = None
     engine = None
     cursor = None

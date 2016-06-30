@@ -80,16 +80,16 @@ class ObjectsViewSet(ViewSet):
 
         db = CatalogDB()
 
-        # rows = db.fetchall_dict('SELECT * FROM target_teste;')
-        rows, count = db.query(
-            'readmapper_y1a1',
-            # columns=['RA', 'DEC'],
-            limit=limit,
-            offset=offset
-        )
+        rows = db.fetchall_dict('SELECT * FROM E_10021813_294763 WHERE ROWNUM < 5')
+        # rows, count = db.query(
+        #     'readmapper_y1a1',
+        #     # columns=['RA', 'DEC'],
+        #     limit=limit,
+        #     offset=offset
+        # )
 
         print(rows)
-        print(count)
+        # print(count)
 
         print('--------------------------')
 
@@ -115,6 +115,6 @@ class ObjectsViewSet(ViewSet):
         # rows.append(obj)
 
         return Response(dict({
-            'count': count,
+            # 'count': count,
             'results': rows
         }))
