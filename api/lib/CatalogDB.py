@@ -4,26 +4,33 @@ from collections import namedtuple
 
 class CatalogDB:
     available_engines = list(['sqlite3'])
+    db = None
+    engine = None
+    cursor = None
 
     def __init__(self, db='catalog'):
-        self.db = db
+        print("-------------- Init -------------- ")
+        # self.db = db
+        self.setDb(db)
+        print("-------------- Depois do set -------------- ")
 
-    @property
-    def db(self):
-        return self.__db
-
-    @db.setter
-    def db(self, db):
-
+    def setDb(self, db):
+        print("-------------- Setter -------------- ")
         if db != 'default':
-            # Tenta conectar ao banco de dados se conseguir retorna o cursor.
-            self.cursor = connections[db].cursor()
+            try:
+                print("-------------- criar o cursor -------------- ")
+                # Tenta conectar ao banco de dados se conseguir retorna o cursor.
+                self.cursor = connections[db].cursor()
+            except Exception as error:
+                print(error)
 
             # Recupera a engine a ser usada no banco de dados
-            self.__engine = self.__getDbEngine()
+            self.engine = self.__getDbEngine()
+            print("-------------- Engine -------------- ")
+            print(self.engine)
 
             #  So seta o banco se tiver conseguido criar o cursor e recuperado a engine.
-            self.__db = db
+            self.db = db
 
         else:
             raise Exception('The database default can not be used as a catalog database.')
@@ -91,6 +98,7 @@ class CatalogDB:
         sql_where = ''
         sql_sort = ''
         sql_limit = ''
+        sql_count = None
 
         if schema:
             sql_from = '%s.%s' %(schema, table)
@@ -114,13 +122,25 @@ class CatalogDB:
 
         sql = ("SELECT %s FROM %s %s %s %s") % (sql_columns, sql_from, sql_where, sql_sort, sql_limit)
 
+        if limit:
+            sql_count = ("SELECT COUNT(*) as count FROM %s %s %s") % (sql_from, sql_where, sql_sort)
+
         print("SQL: %s" % sql)
+        print("SQL Count: %s" % sql_count)
 
         if dict:
-            return self.fetchall_dict(sql)
+            rows = self.fetchall_dict(sql)
         else:
-            return self.fetchall(sql)
+            rows = self.fetchall(sql)
 
+        if sql_count:
+            count = self.fetchall(sql_count)[0][0]
+            print(count)
+            print("Count: %s" % count)
+        else:
+            count = len(rows)
+
+        return rows, count
 
     def __check_columns(self, a, b):
         """
@@ -149,7 +169,9 @@ class CatalogDB:
             return ''
         try:
             limit = int(limit)
-            offset = int(offset)
+            if offset:
+                offset = int(offset)
+
             if (isinstance(limit, int)) and (limit > 0):
                 slimit = "LIMIT %s" % limit
 
@@ -163,3 +185,4 @@ class CatalogDB:
         except Exception as error:
             raise Exception('Limit needs to be integer greater than zero. Offset must be integer.')
 
+# class SqliteWrapper:

@@ -81,14 +81,15 @@ class ObjectsViewSet(ViewSet):
         db = CatalogDB()
 
         # rows = db.fetchall_dict('SELECT * FROM target_teste;')
-        rows = db.query(
-            'target_teste',
-            # columns=['ra', 'dec'],
+        rows, count = db.query(
+            'readmapper_y1a1',
+            # columns=['RA', 'DEC'],
             limit=limit,
             offset=offset
         )
 
         print(rows)
+        print(count)
 
         print('--------------------------')
 
@@ -97,23 +98,23 @@ class ObjectsViewSet(ViewSet):
 
 
         # Placeholder objeto de exemplo
-        obj = dict({
-            "_meta_id": 4397,
-            "_meta_catalog_id": 1944,
-            "_meta_ra": 0.53667891025543202,
-            "_meta_dec": -0.33503088355064398,
-            "_meta_radius": 70.585837680639102,
-            "_meta_is_system": True,
-            "id_auto": 4397,
-            "id": 1983,
-            "ra": 0.53667891025543202,
-            "dec": -0.33503088355064398,
-            "radius_arcsec_zm ": 70.585837680639102
-        })
-
-        rows.append(obj)
+        # obj = dict({
+        #     "_meta_id": 4397,
+        #     "_meta_catalog_id": 1944,
+        #     "_meta_ra": 0.53667891025543202,
+        #     "_meta_dec": -0.33503088355064398,
+        #     "_meta_radius": 70.585837680639102,
+        #     "_meta_is_system": True,
+        #     "id_auto": 4397,
+        #     "id": 1983,
+        #     "ra": 0.53667891025543202,
+        #     "dec": -0.33503088355064398,
+        #     "radius_arcsec_zm ": 70.585837680639102
+        # })
+        #
+        # rows.append(obj)
 
         return Response(dict({
-            'count': len(rows),
+            'count': count,
             'results': rows
         }))
