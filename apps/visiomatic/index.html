@@ -57,7 +57,6 @@
                     contrast: 0.7,
                     gamma: 2.8,
                     colorSat: 2.0,
-                    channelColors: [[0,0,1],[0,1,1],[0,1,0],[1,1,0],[1,0,0]],
                 }).addTo(map);
 
             L.control.scale.wcs({pixels: false}).addTo(map);
@@ -69,7 +68,6 @@
             }).addTo(map)
 
             var navlayer = L.tileLayer.iip(iip, {
-                channelColors: [,[0,0,1],[0,1,0],[1,0,0],],
             });
 
             var navmap = L.control.extraMap(navlayer, {
