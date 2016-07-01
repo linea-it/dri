@@ -1,6 +1,6 @@
 from django.db import models
 
-class Applications(models.Model):
+class Application(models.Model):
     app_name = models.CharField(
         max_length=128, verbose_name='Internal Name')
     app_url = models.URLField(
