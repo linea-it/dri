@@ -12,7 +12,7 @@ Ext.define('Target.store.ClassContent', {
     remoteFilter: true,
 
     proxy: {
-        url: '/dri/api/productclasscontent'
+        url: '/dri/api/productclasscontent/'
     }
 
 });

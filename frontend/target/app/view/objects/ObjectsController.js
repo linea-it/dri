@@ -26,13 +26,13 @@ Ext.define('Target.view.objects.ObjectsController', {
             }
         },
         store: {
-            '#catalogColumns': {
-                load: 'onLoadCatalogColumns',
-                clear: 'onLoadCatalogColumns'
+            '#ProductContent': {
+                load: 'onLoadProductContent',
+                clear: 'onLoadProductContent'
             },
-            '#catalogClassColumns': {
-                load: 'onLoadCatalogClassColumns',
-                clear: 'onLoadCatalogClassColumns'
+            '#ProductAssociation': {
+                load: 'onLoadProductAssociation',
+                clear: 'onLoadProductAssociation'
             },
             '#objects': {
                 update: 'onUpdateObject'
@@ -60,21 +60,20 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onBeforeLoadCatalog: function (record) {
-        console.log('onBeforeLoadCatalog(%o)', record);
         var me = this,
             vm = me.getViewModel(),
-            storeCatalogCollumns = vm.getStore('catalogColumns'),
-            storeCatalogClassCollumns = vm.getStore('catalogClassColumns');
+            storeProductContent = vm.getStore('productcontent'),
+            storeProductAssociation = vm.getStore('productassociation');
 
         // filtrar as stores de colunas
-        storeCatalogCollumns.filter([
+        storeProductContent.filter([
             {
                 property: 'pcn_product_id',
                 value: record.get('id')
             }
         ]);
 
-        storeCatalogClassCollumns.filter([
+        storeProductAssociation.filter([
             {
                 property: 'pca_product',
                 value: record.get('id')
@@ -83,36 +82,35 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     /**
-     * Toda Vez que a store catalogColumns e carregada e passado a lista
+     * Toda Vez que a store productContent e carregada e passado a lista
      * com todas as colunas do catalogo para a grid que contem todas as colunas
      * do catalogo.
-     * @param  {Target.store.CatalogColumns} catalogColumns store com todas
+     * @param  {Target.store.ProductContent} productContent store com todas
      * as colunas do catalog.
      */
-    onLoadCatalogColumns: function (catalogColumns) {
+    onLoadProductContent: function (productContent) {
         var me = this,
             refs = me.getReferences(),
             objectsTabPanel = refs.targetsObjectsTabpanel;
 
-        objectsTabPanel.setCatalogColumns(catalogColumns);
+        objectsTabPanel.setCatalogColumns(productContent);
 
     },
 
-    onLoadCatalogClassColumns: function (catalogClassColumns) {
+    onLoadProductAssociation: function (productAssociation) {
         var me = this,
             refs = me.getReferences(),
             objectsTabPanel = refs.targetsObjectsTabpanel,
             preview = refs.targetsPreviewPanel;
 
-        objectsTabPanel.setCatalogClassColumns(catalogClassColumns);
+        objectsTabPanel.setCatalogClassColumns(productAssociation);
 
         // Adiciona a store ao painel de preview que sera usada na propertygrid
         // class properties
-        preview.setClassColumns(catalogClassColumns);
+        // preview.setClassColumns(productAssociation);
     },
 
     onObjectPanelReady: function () {
-        console.log('onObjectPanelReady');
         var me = this,
             vm = this.getViewModel(),
             catalog = vm.get('currentCatalog');
@@ -130,10 +128,10 @@ Ext.define('Target.view.objects.ObjectsController', {
             store = vm.getStore('objects');
 
         if (catalog) {
+
+            store.getProxy().setExtraParam('product', catalog);
+
             store.load({
-                params: {
-                    product: catalog
-                },
                 callback: function (records, operation, success) {
 
                 },
@@ -171,8 +169,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     clearObjects: function () {
-        console.log('clearObjects()');
-
         var vm = this.getViewModel(),
             objects = vm.getStore('objects');
 
@@ -222,91 +218,89 @@ Ext.define('Target.view.objects.ObjectsController', {
     onRejectTarget: function (record, store) {
         // console.log('onRejectTarget(%o, %o)', record, store)
 
-        Ext.Ajax.request({
-            url: '/PRJSUB/TargetViewer/setTargetAcceptReject',
-            scope: this,
-            params: {
-                'catalog_id' : record.get('_meta_catalog_id'),
-                'reject': record.get('reject'),
-                'id_auto': record.get('_meta_id')
-            },
-            success: function (response) {
-                // Recuperar a resposta e fazer o decode no json.
-                var obj = Ext.decode(response.responseText);
+        // Ext.Ajax.request({
+        //     url: '/PRJSUB/TargetViewer/setTargetAcceptReject',
+        //     scope: this,
+        //     params: {
+        //         'catalog_id' : record.get('_meta_catalog_id'),
+        //         'reject': record.get('reject'),
+        //         'id_auto': record.get('_meta_id')
+        //     },
+        //     success: function (response) {
+        //         // Recuperar a resposta e fazer o decode no json.
+        //         var obj = Ext.decode(response.responseText);
 
-                if (obj.success !== true) {
+        //         if (obj.success !== true) {
 
-                    store.rejectChanges();
-                    // Se Model.py retornar alguma falha exibe a mensagem
-                    Ext.Msg.alert('Status', obj.msg);
-                } else {
-                    store.commitChanges();
+        //             store.rejectChanges();
+        //             // Se Model.py retornar alguma falha exibe a mensagem
+        //             Ext.Msg.alert('Status', obj.msg);
+        //         } else {
+        //             store.commitChanges();
 
-                    // Mensagem de sucesso
-                    Ext.toast({
-                        html: 'Changes saved.',
-                        align: 't'
-                    });
-                }
-            },
-            failure: function (response) {
-                //console.log('server-side failure ' + response.status);
-                Ext.MessageBox.show({
-                    title: 'Server Side Failure',
-                    msg: response.status + ' ' + response.statusText,
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
-                });
-            }
-        });
+        //             // Mensagem de sucesso
+        //             Ext.toast({
+        //                 html: 'Changes saved.',
+        //                 align: 't'
+        //             });
+        //         }
+        //     },
+        //     failure: function (response) {
+        //         //console.log('server-side failure ' + response.status);
+        //         Ext.MessageBox.show({
+        //             title: 'Server Side Failure',
+        //             msg: response.status + ' ' + response.statusText,
+        //             buttons: Ext.MessageBox.OK,
+        //             icon: Ext.MessageBox.WARNING
+        //         });
+        //     }
+        // });
     },
 
     onRatingTarget: function (record, store) {
-        // console.log('onRatingTarget(%o, %o)', record, store)
+        console.log('onRatingTarget(%o, %o)', record, store);
 
-        Ext.Ajax.request({
-            url: '/PRJSUB/TargetViewer/setTargetRating',
-            scope: this,
-            params: {
-                'catalog_id' : record.get('_meta_catalog_id'),
-                'rating': record.get('rating'),
-                'id_auto': record.get('_meta_id')
-            },
-            success: function (response) {
-                // Recuperar a resposta e fazer o decode no json.
-                var obj = Ext.decode(response.responseText);
+        // Ext.Ajax.request({
+        //     url: '/PRJSUB/TargetViewer/setTargetRating',
+        //     scope: this,
+        //     params: {
+        //         'catalog_id' : record.get('_meta_catalog_id'),
+        //         'rating': record.get('rating'),
+        //         'id_auto': record.get('_meta_id')
+        //     },
+        //     success: function (response) {
+        //         // Recuperar a resposta e fazer o decode no json.
+        //         var obj = Ext.decode(response.responseText);
 
-                if (obj.success !== true) {
+        //         if (obj.success !== true) {
 
-                    store.rejectChanges();
-                    // Se Model.py retornar alguma falha exibe a mensagem
-                    Ext.Msg.alert('Status', obj.msg);
-                } else {
-                    store.commitChanges();
+        //             store.rejectChanges();
+        //             // Se Model.py retornar alguma falha exibe a mensagem
+        //             Ext.Msg.alert('Status', obj.msg);
+        //         } else {
+        //             store.commitChanges();
 
-                    // Mensagem de sucesso
-                    Ext.toast({
-                        html: 'Changes saved.',
-                        align: 't'
-                    });
-                }
+        //             // Mensagem de sucesso
+        //             Ext.toast({
+        //                 html: 'Changes saved.',
+        //                 align: 't'
+        //             });
+        //         }
 
-            },
-            failure: function (response) {
-                //console.log('server-side failure ' + response.status);
-                Ext.MessageBox.show({
-                    title: 'Server Side Failure',
-                    msg: response.status + ' ' + response.statusText,
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
-                });
-            }
-        });
+        //     },
+        //     failure: function (response) {
+        //         //console.log('server-side failure ' + response.status);
+        //         Ext.MessageBox.show({
+        //             title: 'Server Side Failure',
+        //             msg: response.status + ' ' + response.statusText,
+        //             buttons: Ext.MessageBox.OK,
+        //             icon: Ext.MessageBox.WARNING
+        //         });
+        //     }
+        // });
     },
 
     onClickColumnAssociation: function () {
-        console.log('onClickColumnAssociation(%o)', arguments);
-
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -507,8 +501,6 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('objects');
-
-        console.log('store', '=', store);
 
         store.load({
             scope: this,

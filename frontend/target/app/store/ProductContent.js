@@ -11,8 +11,10 @@ Ext.define('Target.store.ProductContent', {
 
     remoteFilter: true,
 
+    pageSize: 0,
+
     proxy: {
-        url: '/dri/api/productcontent'
+        url: '/dri/api/productcontent/'
     }
 
 });

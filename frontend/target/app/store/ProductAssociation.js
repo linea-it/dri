@@ -11,8 +11,10 @@ Ext.define('Target.store.ProductAssociation', {
 
     remoteFilter: true,
 
+    pageSize: 0,
+
     proxy: {
-        url: '/dri/api/productassociation'
+        url: '/dri/api/productassociation/'
     }
 
 });
