@@ -21,7 +21,7 @@ from product_classifier import views as product_classifier_views
 from product_register import views as product_register_views
 from validation import views as validation_views
 from catalog import views as catalog_views
-
+from interfaces import views as interfaces_views
 
 from django.conf.urls import url, include
 from django.contrib import admin
@@ -54,7 +54,7 @@ router.register(r'defect', validation_views.DefectViewSet)
 router.register(r'filters', common_views.FilterViewSet)
 
 router.register(r'externalprocess', product_register_views.ExternalProcessViewSet)
-
+router.register(r'application',interfaces_views.ApplicationViewSet)
 
 
 urlpatterns = [
