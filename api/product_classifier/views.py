@@ -1,6 +1,4 @@
 from rest_framework import viewsets
-from .models import ProductClass, ProductGroup
-from .serializers import ProductClassSerializer, ProductGroupSerializer
 from rest_framework.response import Response
 from rest_framework.decorators import list_route
 from .models import ProductClass, ProductGroup, ProductClassContent

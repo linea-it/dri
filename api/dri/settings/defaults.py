@@ -53,7 +53,8 @@ PROJECT_APPS = [
     'product',
     'product_catalog',
     'validation',
-    'catalog'
+    'catalog',
+    'interfaces'
 ]
 
 INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
