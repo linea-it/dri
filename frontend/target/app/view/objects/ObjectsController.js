@@ -69,7 +69,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         // filtrar as stores de colunas
         storeCatalogCollumns.filter([
             {
-                property: 'pcl_product_id',
+                property: 'pcn_product_id',
                 value: record.get('id')
             }
         ]);
@@ -134,39 +134,39 @@ Ext.define('Target.view.objects.ObjectsController', {
                 params: {
                     product: catalog
                 },
-                callback: function(records, operation, success) {
-                    
+                callback: function (records, operation, success) {
+
                 },
                 scope: this
             });
 
-        //     filters = [
-        //         {
-        //             property: 'catalog_id',
-        //             value: catalog
-        //         }
-        //     ];
+            //     filters = [
+            //         {
+            //             property: 'catalog_id',
+            //             value: catalog
+            //         }
+            //     ];
 
-        //     if ((release > 0) && (field > 0)) {
-        //         filters.push({
-        //             property: 'tag_id',
-        //             value: release
-        //         });
+            //     if ((release > 0) && (field > 0)) {
+            //         filters.push({
+            //             property: 'tag_id',
+            //             value: release
+            //         });
 
-        //         filters.push({
-        //             property: 'field_id',
-        //             value: field
-        //         });
-        //     }
+            //         filters.push({
+            //             property: 'field_id',
+            //             value: field
+            //         });
+            //     }
 
-        //     if (tilename) {
-        //         filters.push({
-        //             property: 'tilename',
-        //             value: tilename
-        //         });
-        //     }
+            //     if (tilename) {
+            //         filters.push({
+            //             property: 'tilename',
+            //             value: tilename
+            //         });
+            //     }
 
-        //     objects.filter(filters);
+            //     objects.filter(filters);
         }
     },
 
