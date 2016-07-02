@@ -4,10 +4,10 @@ from django.db import models
 class Rating(models.Model):
 
     catalog_id = models.IntegerField(
-        verbose_name='Catalog', null=False, blank=False)
+        verbose_name='Catalog', null=False)
 
     owner = models.IntegerField(
-        verbose_name='Owner', null=False, blank=False)
+        verbose_name='Owner', null=False)
 
     object_id = models.IntegerField(
         verbose_name='Object Id', null=False, blank=False)

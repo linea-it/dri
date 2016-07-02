@@ -12,7 +12,8 @@ Ext.define('Target.view.objects.ObjectsController', {
     requires: [
         'Target.view.catalog.Export',
         'Target.view.catalog.SubmitCutout',
-        'Target.view.association.Panel'
+        'Target.view.association.Panel',
+        'Target.model.Rating'
     ],
 
     listen: {
@@ -22,7 +23,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 beforeloadcatalog: 'onBeforeLoadCatalog'
             },
             'targets-objects-tabpanel': {
-                select: 'onSelectObject'
+                // select: 'onSelectObject'
             }
         },
         store: {
@@ -258,46 +259,60 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onRatingTarget: function (record, store) {
-        console.log('onRatingTarget(%o, %o)', record, store);
+        if ((record.get('rating_id') === 0) && (record.get('rating') === 0)) {
+            return false;
+        }
 
-        // Ext.Ajax.request({
-        //     url: '/PRJSUB/TargetViewer/setTargetRating',
-        //     scope: this,
-        //     params: {
-        //         'catalog_id' : record.get('_meta_catalog_id'),
-        //         'rating': record.get('rating'),
-        //         'id_auto': record.get('_meta_id')
-        //     },
-        //     success: function (response) {
-        //         // Recuperar a resposta e fazer o decode no json.
-        //         var obj = Ext.decode(response.responseText);
+        if (record.get('rating_id') > 0) {
+            // Cria um model com o id que ja existe no banco de dados
+            rating = Ext.create('Target.model.Rating', {
+                "id": record.get('rating_id')
+            })
+            // faz o set no atributo que vai ser feito update
+            rating.set("rating", record.get('rating'));
 
-        //         if (obj.success !== true) {
+            rating.save({
+                callback: function(savedRating, operation, success) {
+                    if (success) {
 
-        //             store.rejectChanges();
-        //             // Se Model.py retornar alguma falha exibe a mensagem
-        //             Ext.Msg.alert('Status', obj.msg);
-        //         } else {
-        //             store.commitChanges();
+                        store.commitChanges();                                  
 
-        //             // Mensagem de sucesso
-        //             Ext.toast({
-        //                 html: 'Changes saved.',
-        //                 align: 't'
-        //             });
-        //         }
+                        Ext.toast({ 
+                            html: 'Changes saved.',
+                            align: 't'
+                        });
+                    }
+                }
+            })
+        }
+        else {
+            // Criar um novo registro de Rating sem ID
+            rating = Ext.create('Target.model.Rating', {
+                "catalog_id": record.get('_meta_catalog_id'),
+                "object_id": record.get('_meta_id'),
+                "rating": record.get('rating')
+            })
 
-        //     },
-        //     failure: function (response) {
-        //         //console.log('server-side failure ' + response.status);
-        //         Ext.MessageBox.show({
-        //             title: 'Server Side Failure',
-        //             msg: response.status + ' ' + response.statusText,
-        //             buttons: Ext.MessageBox.OK,
-        //             icon: Ext.MessageBox.WARNING
-        //         });
-        //     }
-        // });
+            rating.save({
+                callback: function(savedRating, operation, success) {
+                    if (success) {
+                        // recupera o objeto inserido no banco de dados
+                        var obj = Ext.decode(operation.getResponse().responseText);
+                        
+                        // seta no record da grid o atributo rating_id para que nao seja necessario 
+                        // o reload da grid
+                        record.set('rating_id', obj.id)
+
+                        store.commitChanges();                                  
+
+                        Ext.toast({ 
+                            html: 'Changes saved.',
+                            align: 't'
+                        });
+                    }
+                }
+            })
+        }
     },
 
     onClickColumnAssociation: function () {

@@ -78,7 +78,8 @@ Ext.define('Target.view.objects.Grid', {
 
         if (storeColumns.count() > 0) {
 
-            flag = false;
+            // flag = false;
+            flag = true;
 
             // Criar as colunas de acordo com as propriedades na store
             storeColumns.each(function (record) {

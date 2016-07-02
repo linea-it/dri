@@ -56,6 +56,8 @@ router.register(r'filters', common_views.FilterViewSet)
 router.register(r'externalprocess', product_register_views.ExternalProcessViewSet)
 
 
+# API Relacionadas ao Banco de Dados de Catalogo
+router.register(r'objectsrating', catalog_views.RatingViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

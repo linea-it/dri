@@ -1,5 +1,6 @@
 
 from rest_framework import viewsets
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from .models import Rating
@@ -19,6 +20,8 @@ class RatingViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id',)
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user.pk)
 
 
 class ObjectsViewSet(ViewSet):
@@ -113,7 +116,10 @@ class ObjectsViewSet(ViewSet):
             "NAME_": 1983,
             "RA": 328.296,
             "DEC": -54.1354,
-            "TILENAME ": 'DES2154-5414'
+            "TILENAME ": 'DES2154-5414',
+            "rating_id": 0,
+            "rating": None,
+            "reject": False
         })
 
         rows.append(obj)
