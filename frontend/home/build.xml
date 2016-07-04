@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<project name="Admin" default=".help">
+<project name="Home" default=".help">
     <!--
     The build-impl.xml file imported here contains the guts of the build process. It is
     a great idea to read that file to understand how the process works, but it is best to
@@ -38,19 +38,5 @@
             <target name="-before-build"/>
             <target name="-after-build"/>
     -->
-    <target name="-after-resources">
-        <!--
-        Determine the location of the built version of the page and copy shared
-        resources to that location.
-        -->
-        <dirname property="shared.resources.dir"
-                 file="${app.output.base}/${app.output.page.path}"/>
-
-        <x-echo>Copying shared resources to ${shared.resources.dir}...</x-echo>
-
-        <copy todir="${shared.resources.dir}">
-            <fileset dir="${app.dir}" includes="resources/**/*"/>
-        </copy>
-    </target>
 
 </project>
