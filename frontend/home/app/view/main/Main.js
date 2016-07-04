@@ -15,7 +15,6 @@ Ext.define('Home.view.main.Main', {
 
         'Home.view.main.MainController',
         'Home.view.main.MainModel',
-        'Home.view.main.List',
         'Home.view.pages.Sky',
         'Home.view.pages.Target',
 
@@ -81,10 +80,6 @@ Ext.define('Home.view.main.Main', {
     items: [{
         title: 'Home',
         iconCls: 'fa-home',
-        // The following grid shares a store with the classic version's grid as well!
-        items: [{
-            xtype: 'mainlist'
-        }]
     }, {
         title: 'Sky',
         iconCls: 'fa-star',
