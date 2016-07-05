@@ -65,7 +65,7 @@ Ext.define('Target.view.objects.Grid', {
     },
 
     reconfigureGrid: function (storeColumns) {
-        console.log('Targets Objects - reconfigureGrid(%o)', storeColumns);
+        // console.log('Targets Objects - reconfigureGrid(%o)', storeColumns);
 
         var me = this,
             columns = [];
@@ -79,21 +79,23 @@ Ext.define('Target.view.objects.Grid', {
         if (storeColumns.count() > 0) {
 
             flag = false;
+            // flag = true;
 
             // Criar as colunas de acordo com as propriedades na store
             storeColumns.each(function (record) {
 
-                type = me.getTypeColumn(record.get('data_type'));
+                // type = me.getTypeColumn(record.get('data_type'));
 
                 var column = {
                     text: me.createColumnText(record),
-                    dataIndex: record.get('property_name').toLowerCase(),
+                    dataIndex: record.get('property_name'),
+                    // dataIndex: record.get('property_name').toLowerCase(),
                     tooltip: me.createColumnTooltip(record)
                 };
 
-                if (type != undefined) {
-                    column.filter = {type: type, itemDefaults: {emptyText: 'Search for...'}};
-                }
+                // if (type != undefined) {
+                //     column.filter = {type: type, itemDefaults: {emptyText: 'Search for...'}};
+                // }
 
                 //  Tratamento Tilename default hidden
                 if (record.get('property_name') == 'tilename') {
@@ -109,6 +111,10 @@ Ext.define('Target.view.objects.Grid', {
 
                     column.xtype = 'numbercolumn';
                     column.format = '0.0000';
+                }
+
+                // Se tiver a coluna id habilita as colunas de rating e reject
+                if (record.get('ucd') == 'meta.id;meta.main') {
                     flag = true;
                 }
 
@@ -124,7 +130,7 @@ Ext.define('Target.view.objects.Grid', {
                     width: 100,
                     sortable: true,
                     text: 'Rating',
-                    dataIndex: 'rating',
+                    dataIndex: '_meta_rating',
                     tooltip: 'Rating',
                     widget: {
                         xtype: 'rating',
@@ -141,7 +147,7 @@ Ext.define('Target.view.objects.Grid', {
                 columns.push({
                     xtype: 'checkcolumn',
                     text: 'Reject',
-                    dataIndex: 'reject',
+                    dataIndex: '_meta_reject',
                     tooltip: 'Reject'
                 });
             }

@@ -9,8 +9,8 @@ class Application(models.Model):
         max_length=128, verbose_name='Short Description', blank=True)
     app_long_description = models.CharField(
         max_length=1024, verbose_name='Long Description', blank=True)
-    app_icon = models.ImageField(blank=True)
-    app_thumbnail = models.ImageField(blank=True)
+    # app_icon = models.ImageField(blank=True)
+    # app_thumbnail = models.ImageField(blank=True)
 
     def __str__(self):
         return self.app_name

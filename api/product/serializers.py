@@ -277,3 +277,25 @@ class ProductContentAssociationSerializer(serializers.HyperlinkedModelSerializer
 
     def get_pcn_column_name(self, obj):
         return obj.pca_product_content.pcn_column_name
+
+
+class AssociationSerializer(serializers.HyperlinkedModelSerializer):
+    # Atributos da  product_classifier.ProductClassContent
+    pcc_ucd = serializers.SerializerMethodField()
+
+    # Atributos da  product.ProductContent
+    pcn_column_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductContentAssociation
+
+        fields = (
+            'pcc_ucd',
+            'pcn_column_name'
+        )
+
+    def get_pcc_ucd(self, obj):
+        return obj.pca_class_content.pcc_ucd
+
+    def get_pcn_column_name(self, obj):
+        return obj.pca_product_content.pcn_column_name

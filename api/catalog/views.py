@@ -1,11 +1,13 @@
+from lib.CatalogDB import CatalogDB
+from product.models import Catalog, ProductContentAssociation
+from product.serializers import AssociationSerializer
 
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from .models import Rating
-from .serializers import RatingSerializer
-from product.models import Catalog, ProductContent
-from lib.CatalogDB import CatalogDB
+from .models import Rating, Reject
+from .serializers import RatingSerializer, RejectSerializer
+
 
 class RatingViewSet(viewsets.ModelViewSet):
     """
@@ -19,23 +21,40 @@ class RatingViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id',)
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user.pk)
 
 
-class ObjectsViewSet(ViewSet):
+class RejectViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Reject to be viewed or edited
+    """
+    queryset = Reject.objects.all()
+
+    serializer_class = RejectSerializer
+
+    filter_fields = ('id', 'catalog_id', 'owner', 'object_id', 'reject')
+
+    ordering_fields = ('id',)
+
+    def perform_create(self, serializer):
+        if not self.request.user.pk:
+            raise Exception('It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user.pk)
+
+class TargetViewSet(ViewSet):
     """
 
     """
 
     def list(self, request):
         """
-        Return a list of all users.
+        Return a list of targets in catalog.
         """
         # Recuperar o parametro product id que e obrigatorio
-
         product_id = request.query_params.get('product', None)
         if not product_id:
-            # TODO retornar mensagem de que o paramtro e obrigatorio
-            pass
+            raise Exception('Product parameter is missing.')
 
         print('------------------------------------------------------------')
         print('Product Id: %s' % product_id)
@@ -45,26 +64,16 @@ class ObjectsViewSet(ViewSet):
 
         print(catalog)
         if not catalog:
-            # TODO retornar mensagem de nenhum catalogo encontrado
-            pass
+            raise Exception('No product found for this id.')
 
         # Com o modelo catalog em maos deve ter um atributo para schema e tabela esses atributos estao descritos no
         # model table.
-        schema = catalog.tbl_name
-        table = catalog.tbl_schema
+        schema = catalog.tbl_schema
+        table = catalog.tbl_name
 
         print('Schema: %s' % schema)
         print('Table: %s' % table)
 
-<<<<<<< Updated upstream
-        # # com o produto descobrir as colunas do produto usar o model product_content.
-        # mColumns = ProductContent.objects.select_related().filter(pcn_product_id=product_id)
-        # columns = list()
-        # for col in mColumns:
-        #     columns.append(col.pcn_column_name)
-        #
-        # print('Columns: %s' % columns)
-=======
         # colunas associadas ao produto
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
         serializer = AssociationSerializer(queryset, many=True)
@@ -74,7 +83,6 @@ class ObjectsViewSet(ViewSet):
         for property in associations:
             if property.get('pcc_ucd'):
                 properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
->>>>>>> Stashed changes
 
         # Parametros de Paginacao
         limit = request.query_params.get('limit', None)
@@ -86,44 +94,66 @@ class ObjectsViewSet(ViewSet):
         # retornar uma lista com os objetos da tabela
         rows = list()
 
-
         db = CatalogDB()
 
-        rows = db.fetchall_dict('SELECT * FROM E_10021813_294763 WHERE ROWNUM < 5')
+        rows = db.wrapper.fetchall_dict('SELECT * FROM tom_strong_lensing WHERE ROWNUM < 5')
+
+        # sql = (
+        #     "SELECT * "
+        #     "FROM ( "
+        #         "SELECT /*+ first_rows(25) */ "
+        #         "*, "
+        #         "row_number() "
+        #         "OVER (order by ID_AUTO) rn "
+        #         "FROM tom_strong_lensing ) "
+        #     "WHERE rn between 1 and 20 "
+        #     "ORDER BY rn; "
+        # )
+
+        # print(sql)
+
+        # rows = db.wrapper.fetchall_dict(sql)
+
         # rows, count = db.query(
-        #     'readmapper_y1a1',
-        #     # columns=['RA', 'DEC'],
-        #     limit=limit,
-        #     offset=offset
+        #     'tom_strong_lensing',
+        # #     # columns=['RA', 'DEC'],
+        # #     limit=limit,
+        # #     offset=offset
         # )
 
         print(rows)
         # print(count)
 
-        print('--------------------------')
+        for row in rows:
+            row.update({
+                "_meta_catalog_id": catalog.pk,
+                "_meta_is_system": catalog.prd_class.pcl_is_system,
+                "_meta_id": '',
+                "_meta_ra": 0,
+                "_meta_dec": 0,
+                "_meta_radius": 0,
+                "_meta_rating_id": 0,
+                "_meta_rating": None,
+                "_meta_reject_id": 0,
+                "_meta_reject": False
+            })
 
-        # recuperar as colunas de uma tabela
-        # print(c.get_table_columns('target_teste'))
+            row.update({
+                "_meta_id": row.get(properties.get("meta.id;meta.main"))
+            })
+            row.update({
+                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main"))
+            })
+            row.update({
+                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main"))
+            })
+            row.update({
+                "_meta_radius": row.get(properties.get("phys.angSize;src"))
+            })
 
-
-        # Placeholder objeto de exemplo
-        # obj = dict({
-        #     "_meta_id": 4397,
-        #     "_meta_catalog_id": 1944,
-        #     "_meta_ra": 0.53667891025543202,
-        #     "_meta_dec": -0.33503088355064398,
-        #     "_meta_radius": 70.585837680639102,
-        #     "_meta_is_system": True,
-        #     "id_auto": 4397,
-        #     "id": 1983,
-        #     "ra": 0.53667891025543202,
-        #     "dec": -0.33503088355064398,
-        #     "radius_arcsec_zm ": 70.585837680639102
-        # })
-        #
-        # rows.append(obj)
+        count = len(rows)
 
         return Response(dict({
-            # 'count': count,
+            'count': count,
             'results': rows
         }))

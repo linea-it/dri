@@ -55,6 +55,9 @@ class Catalog(Table):
     ctl_num_objects = models.PositiveIntegerField(
         verbose_name='Num of objects', null=True, blank=True)
 
+    def __str__(self):
+        return self.prd_display_name
+
 
 class Map(Table):
 

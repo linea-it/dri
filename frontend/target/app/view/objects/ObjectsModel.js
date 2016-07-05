@@ -11,8 +11,8 @@ Ext.define('Target.view.objects.ObjectsModel', {
         'Target.model.CatalogObject',
         'Target.store.Tiles',
         'Target.store.Objects',
-        'Target.store.CatalogColumns',
-        'Target.store.CatalogClassColumns'
+        'Target.store.ProductContent',
+        'Target.store.ProductAssociation'
     ],
 
     data: {
@@ -29,13 +29,13 @@ Ext.define('Target.view.objects.ObjectsModel', {
             type: 'targets-objects',
             storeId: 'objects'
         },
-        catalogColumns: {
-            type: 'catalog-columns',
-            storeId: 'catalogColumns'
+        productcontent: {
+            type: 'product-content',
+            storeId: 'ProductContent'
         },
-        catalogClassColumns: {
-            type: 'catalog-class-columns',
-            storeId: 'catalogClassColumns'
+        productassociation: {
+            type: 'product-association',
+            storeId: 'ProductAssociation'
         }
     },
 
