@@ -4,8 +4,9 @@ from product.models import Catalog
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
-from .models import Rating
-from .serializers import RatingSerializer
+from .models import Rating, Reject
+from .serializers import RatingSerializer, RejectSerializer
+
 
 
 class RatingViewSet(viewsets.ModelViewSet):
@@ -23,6 +24,23 @@ class RatingViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user.pk)
 
+
+class RejectViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Reject to be viewed or edited
+    """
+    queryset = Reject.objects.all()
+
+    serializer_class = RejectSerializer
+
+    filter_fields = ('id', 'catalog_id', 'owner', 'object_id', 'reject')
+
+    ordering_fields = ('id',)
+
+    def perform_create(self, serializer):
+        if not self.request.user.pk:
+            raise Exception('It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user.pk)
 
 class ObjectsViewSet(ViewSet):
     """

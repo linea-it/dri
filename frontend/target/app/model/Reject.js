@@ -1,4 +1,4 @@
-Ext.define('Target.model.Rating', {
+Ext.define('Target.model.Reject', {
     extend: 'Ext.data.Model',
 
     requires: [
@@ -7,7 +7,7 @@ Ext.define('Target.model.Rating', {
 
     proxy: {
         type: 'django',
-        url: '/dri/api/objectsrating/'
+        url: '/dri/api/objectsreject/'
     },
 
     fields: [
@@ -15,7 +15,7 @@ Ext.define('Target.model.Rating', {
         {name:'catalog_id', type:'int'},
         {name:'owner', type:'int'},
         {name:'object_id', type:'int'},
-        {name:'rating', type:'int'}
+        {name:'reject', type: 'boolean'}
     ]
 
 });
