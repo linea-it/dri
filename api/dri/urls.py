@@ -36,9 +36,7 @@ router.register(r'surveys', coadd_views.SurveyViewSet)
 router.register(r'productclass', product_classifier_views.ProductClassViewSet, base_name='productclass')
 router.register(r'productgroup', product_classifier_views.ProductGroupViewSet, base_name='productgroup')
 router.register(r'productclasscontent', product_classifier_views.ProductClassContentViewSet)
-# router.register(r'catalogobjects', product_catalog_views.CatalogObjectsViewSet, base_name='catalogobjects')
-router.register(r'catalogobjectsrating', catalog_views.RatingViewSet)
-router.register(r'target', catalog_views.TargetViewSet, base_name='target')
+
 
 router.register(r'product', product_views.ProductViewSet)
 router.register(r'catalog', product_views.CatalogViewSet)
@@ -55,6 +53,7 @@ router.register(r'externalprocess', product_register_views.ExternalProcessViewSe
 
 
 # API Relacionadas ao Banco de Dados de Catalogo
+router.register(r'target', catalog_views.TargetViewSet, base_name='target')
 router.register(r'objectsrating', catalog_views.RatingViewSet)
 router.register(r'objectsreject', catalog_views.RejectViewSet)
 
