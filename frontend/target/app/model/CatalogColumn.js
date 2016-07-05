@@ -26,7 +26,14 @@ Ext.define('Target.model.CatalogColumn', {
         // {name:'reference', type:'string'}
         //
         // Campos genericos para ser usado pela grid de objetos.
-        {name:'ucd', type:'string'},
+        {
+            name:'ucd',
+            type:'string',
+            convert: function (value, record) {
+                // Valor default temporario para o ucd da coluna
+                return record.get('pcc_ucd');
+            }
+        },
         {name:'reference', type:'string'},
         {name:'unit', type:'string'},
         {

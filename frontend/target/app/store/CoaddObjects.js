@@ -11,7 +11,7 @@ Ext.define('Target.store.CoaddObjects', {
 
     proxy: {
         type: 'ajax',
-        url: '/PRJSUB/TileViewer/get_coadd_objects',
+        url: '/PRJSUB/TileViewer/get_coadd_objects/',
         reader: {
             type: 'json',
             rootProperty: 'data',

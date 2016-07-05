@@ -17,10 +17,10 @@ Ext.define('Target.store.Objects', {
         type: 'django',
         api: {
             // create  : '/PRJSUB/TileViewer/setCatalogObject',
-            read    : '/dri/api/catalogobjects/',
+            read    : '/dri/api/target/'
             // update  : '/PRJSUB/TargetViewer/updateTargetObject'
             // destroy : '/PRJSUB/TileViewer/deleteCatalogObject'
-        },
+        }
         // reader: {
         //     type: 'json',
         //     rootProperty: 'data',

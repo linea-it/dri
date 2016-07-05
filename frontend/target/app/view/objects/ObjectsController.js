@@ -12,7 +12,9 @@ Ext.define('Target.view.objects.ObjectsController', {
     requires: [
         'Target.view.catalog.Export',
         'Target.view.catalog.SubmitCutout',
-        'Target.view.association.Panel'
+        'Target.view.association.Panel',
+        'Target.model.Rating',
+        'Target.model.Reject'
     ],
 
     listen: {
@@ -22,17 +24,17 @@ Ext.define('Target.view.objects.ObjectsController', {
                 beforeloadcatalog: 'onBeforeLoadCatalog'
             },
             'targets-objects-tabpanel': {
-                select: 'onSelectObject'
+                // select: 'onSelectObject'
             }
         },
         store: {
-            '#catalogColumns': {
-                load: 'onLoadCatalogColumns',
-                clear: 'onLoadCatalogColumns'
+            '#ProductContent': {
+                load: 'onLoadProductContent',
+                clear: 'onLoadProductContent'
             },
-            '#catalogClassColumns': {
-                load: 'onLoadCatalogClassColumns',
-                clear: 'onLoadCatalogClassColumns'
+            '#ProductAssociation': {
+                load: 'onLoadProductAssociation',
+                clear: 'onLoadProductAssociation'
             },
             '#objects': {
                 update: 'onUpdateObject'
@@ -60,21 +62,20 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onBeforeLoadCatalog: function (record) {
-        console.log('onBeforeLoadCatalog(%o)', record);
         var me = this,
             vm = me.getViewModel(),
-            storeCatalogCollumns = vm.getStore('catalogColumns'),
-            storeCatalogClassCollumns = vm.getStore('catalogClassColumns');
+            storeProductContent = vm.getStore('productcontent'),
+            storeProductAssociation = vm.getStore('productassociation');
 
         // filtrar as stores de colunas
-        storeCatalogCollumns.filter([
+        storeProductContent.filter([
             {
                 property: 'pcn_product_id',
                 value: record.get('id')
             }
         ]);
 
-        storeCatalogClassCollumns.filter([
+        storeProductAssociation.filter([
             {
                 property: 'pca_product',
                 value: record.get('id')
@@ -83,36 +84,35 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     /**
-     * Toda Vez que a store catalogColumns e carregada e passado a lista
+     * Toda Vez que a store productContent e carregada e passado a lista
      * com todas as colunas do catalogo para a grid que contem todas as colunas
      * do catalogo.
-     * @param  {Target.store.CatalogColumns} catalogColumns store com todas
+     * @param  {Target.store.ProductContent} productContent store com todas
      * as colunas do catalog.
      */
-    onLoadCatalogColumns: function (catalogColumns) {
+    onLoadProductContent: function (productContent) {
         var me = this,
             refs = me.getReferences(),
             objectsTabPanel = refs.targetsObjectsTabpanel;
 
-        objectsTabPanel.setCatalogColumns(catalogColumns);
+        objectsTabPanel.setCatalogColumns(productContent);
 
     },
 
-    onLoadCatalogClassColumns: function (catalogClassColumns) {
+    onLoadProductAssociation: function (productAssociation) {
         var me = this,
             refs = me.getReferences(),
             objectsTabPanel = refs.targetsObjectsTabpanel,
             preview = refs.targetsPreviewPanel;
 
-        objectsTabPanel.setCatalogClassColumns(catalogClassColumns);
+        objectsTabPanel.setCatalogClassColumns(productAssociation);
 
         // Adiciona a store ao painel de preview que sera usada na propertygrid
         // class properties
-        preview.setClassColumns(catalogClassColumns);
+        // preview.setClassColumns(productAssociation);
     },
 
     onObjectPanelReady: function () {
-        console.log('onObjectPanelReady');
         var me = this,
             vm = this.getViewModel(),
             catalog = vm.get('currentCatalog');
@@ -130,10 +130,10 @@ Ext.define('Target.view.objects.ObjectsController', {
             store = vm.getStore('objects');
 
         if (catalog) {
+
+            store.getProxy().setExtraParam('product', catalog);
+
             store.load({
-                params: {
-                    product: catalog
-                },
                 callback: function (records, operation, success) {
 
                 },
@@ -171,8 +171,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     clearObjects: function () {
-        console.log('clearObjects()');
-
         var vm = this.getViewModel(),
             objects = vm.getStore('objects');
 
@@ -208,105 +206,124 @@ Ext.define('Target.view.objects.ObjectsController', {
     onUpdateObject: function (store, record, operation, modifiedFieldNames) {
         if (modifiedFieldNames) {
             // Caso o campo alterado seja o reject
-            if (modifiedFieldNames.indexOf('reject') >= 0) {
+            if (modifiedFieldNames.indexOf('_meta_reject') >= 0) {
                 this.onRejectTarget(record, store);
             }
 
             // Caso o campo alterado seja Rating
-            if (modifiedFieldNames.indexOf('rating') >= 0) {
+            if (modifiedFieldNames.indexOf('_meta_rating') >= 0) {
                 this.onRatingTarget(record, store);
             }
         }
     },
 
     onRejectTarget: function (record, store) {
-        // console.log('onRejectTarget(%o, %o)', record, store)
+        console.log('onRejectTarget(%o, %o)', record, store)
+        if (!record.get('reject_id')) {
+            // Criar um novo registro de Reject sem ID
+            reject = Ext.create('Target.model.Reject', {
+                "catalog_id": record.get('_meta_catalog_id'),
+                "object_id": record.get('_meta_id'),
+                "reject": record.get('reject')
+            })
 
-        Ext.Ajax.request({
-            url: '/PRJSUB/TargetViewer/setTargetAcceptReject',
-            scope: this,
-            params: {
-                'catalog_id' : record.get('_meta_catalog_id'),
-                'reject': record.get('reject'),
-                'id_auto': record.get('_meta_id')
-            },
-            success: function (response) {
-                // Recuperar a resposta e fazer o decode no json.
-                var obj = Ext.decode(response.responseText);
+            reject.save({
+                callback: function(savedReject, operation, success) {
+                    if (success) {
+                        // recupera o objeto inserido no banco de dados
+                        var obj = Ext.decode(operation.getResponse().responseText);
 
-                if (obj.success !== true) {
+                        // seta no record da grid o atributo reject_id para que nao seja necessario
+                        // o reload da grid
+                        record.set('reject_id', obj.id)
 
-                    store.rejectChanges();
-                    // Se Model.py retornar alguma falha exibe a mensagem
-                    Ext.Msg.alert('Status', obj.msg);
-                } else {
-                    store.commitChanges();
+                        store.commitChanges();
 
-                    // Mensagem de sucesso
-                    Ext.toast({
-                        html: 'Changes saved.',
-                        align: 't'
-                    });
+                        Ext.toast({
+                            html: 'Changes saved.',
+                            align: 't'
+                        });
+                    }
                 }
-            },
-            failure: function (response) {
-                //console.log('server-side failure ' + response.status);
-                Ext.MessageBox.show({
-                    title: 'Server Side Failure',
-                    msg: response.status + ' ' + response.statusText,
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
-                });
-            }
-        });
+            })
+        } else {
+            // Se ja tiver o registro de Reject deleta
+            reject = Ext.create('Target.model.Reject', {
+                "id": record.get('reject_id')
+            })
+
+            reject.erase({
+                callback: function(savedReject, operation, success) {
+                    if (success) {
+                        store.commitChanges();
+
+                        Ext.toast({
+                            html: 'Changes saved.',
+                            align: 't'
+                        });
+                    }
+                }
+            });
+        }
     },
 
     onRatingTarget: function (record, store) {
-        // console.log('onRatingTarget(%o, %o)', record, store)
+        if ((record.get('_meta_rating_id') === 0) && (record.get('_meta_rating') === 0)) {
+            return false;
+        }
 
-        Ext.Ajax.request({
-            url: '/PRJSUB/TargetViewer/setTargetRating',
-            scope: this,
-            params: {
-                'catalog_id' : record.get('_meta_catalog_id'),
-                'rating': record.get('rating'),
-                'id_auto': record.get('_meta_id')
-            },
-            success: function (response) {
-                // Recuperar a resposta e fazer o decode no json.
-                var obj = Ext.decode(response.responseText);
+        if (record.get('_meta_rating_id') > 0) {
+            // Cria um model com o id que ja existe no banco de dados
+            rating = Ext.create('Target.model.Rating', {
+                'id': record.get('_meta_rating_id')
+            });
+            // faz o set no atributo que vai ser feito update
+            rating.set('rating', record.get('_meta_rating'));
 
-                if (obj.success !== true) {
+            rating.save({
+                callback: function (savedRating, operation, success) {
+                    if (success) {
 
-                    store.rejectChanges();
-                    // Se Model.py retornar alguma falha exibe a mensagem
-                    Ext.Msg.alert('Status', obj.msg);
-                } else {
-                    store.commitChanges();
+                        store.commitChanges();
 
-                    // Mensagem de sucesso
-                    Ext.toast({
-                        html: 'Changes saved.',
-                        align: 't'
-                    });
+                        Ext.toast({
+                            html: 'Changes saved.',
+                            align: 't'
+                        });
+                    }
                 }
+            });
+        } else {
+            // Criar um novo registro de Rating sem ID
+            rating = Ext.create('Target.model.Rating', {
+                'catalog_id': record.get('_meta_catalog_id'),
+                'object_id': record.get('_meta_id'),
+                'rating': record.get('rating')
+            });
 
-            },
-            failure: function (response) {
-                //console.log('server-side failure ' + response.status);
-                Ext.MessageBox.show({
-                    title: 'Server Side Failure',
-                    msg: response.status + ' ' + response.statusText,
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
-                });
-            }
-        });
+            rating.save({
+                callback: function (savedRating, operation, success) {
+                    if (success) {
+                        // recupera o objeto inserido no banco de dados
+                        var obj = Ext.decode(operation.getResponse().responseText);
+
+                        // seta no record da grid o atributo rating_id para que nao seja necessario
+                        // o reload da grid
+                        record.set('_meta_rating_id', obj.id);
+
+                        store.commitChanges();
+
+                        Ext.toast({
+                            html: 'Changes saved.',
+                            align: 't'
+                        });
+                    }
+                }
+            });
+        }
     },
 
     onClickColumnAssociation: function () {
-        console.log('onClickColumnAssociation(%o)', arguments);
-
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -507,8 +524,6 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('objects');
-
-        console.log('store', '=', store);
 
         store.load({
             scope: this,
