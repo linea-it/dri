@@ -3,7 +3,7 @@ Ext.define('Home.view.pages.Target', {
     xtype: 'pages-target',
 
     data: {
-        host: '',
+        host: 'http://desportal.cosmology.illinois.edu/dri/apps/',
         pageTitle: 'Target Viewer',
         appURL: 'target',
         imageUrl: 'resources/target.png',
