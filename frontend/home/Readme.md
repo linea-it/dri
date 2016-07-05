@@ -1,16 +1,16 @@
-# Admin Dashboard
+# Home
 
-The Admin Dashboard is an application template for you to copy and adapt to suite
-your specific needs. While you can remove the files and folders that your application
-does not use, be sure to read below before deciding what can be deleted and what needs
-to be kept in source control.
+This folder is primarily a container for the top-level pieces of the application.
+While you can remove some files and folders that this application does not use,
+be sure to read below before deciding what can be deleted and what needs to be
+kept in source control.
 
 The following files are all needed to build and load the application.
 
- - `"app.js"` - The file that launches the application. This is primarily used to
-   launch an instance of the `Admin.Application` class.
  - `"app.json"` - The application descriptor which controls how the application is
    built and loaded.
+ - `"app.js"` - The file that launches the application. This is primarily used to
+   launch an instance of the `MyApp.Application` class.
  - `"index.html"` - The default web page for this application. This can be customized
    in `"app.json"`.
  - `"build.xml"` - The entry point for Sencha Cmd to access the generated build
@@ -32,10 +32,9 @@ process.
 
 # Other Folders
 
-## Application Structure
+## Basic Application Structure
 
-This application is a Universal Application. The following folders contain the code,
-resources, etc. that are shared by both Classic and Modern build profiles.
+Applications that target a single toolkit will have the following structure.
 
     app/                # Contains JavaScript code
         model/          # Data model classes
@@ -54,8 +53,12 @@ resources, etc. that are shared by both Classic and Modern build profiles.
 
 See the [Sass readme](sass/Readme.md) for details on the "sass" folder.
 
-The following additional directories are used to isolate code and other files that are
-toolkit-specific:
+## Universal Applications
+
+In a Universal Application, the basic application structure above is retained but
+only holds code, resources, etc. pieces that are used in both classic and modern
+build profiles. The following additional directories are used to isolate code and
+other files that are toolkit-specific:
 
     classic/                # Content specific to the classic toolkit
         src/
@@ -95,7 +98,7 @@ The contents of "overrides" folders are automatically required and included in
 builds. These should not be explicitly mentioned in "requires" or "uses" in code.
 This area is intended for overrides like these:
 
-    Ext.define('Admin.overrides.foo.Bar', {
+    Ext.define('Home.overrides.foo.Bar', {
         override: 'Ext.foo.Bar',
         ...
     });
