@@ -56,6 +56,7 @@ class ObjectsViewSet(ViewSet):
         print('Schema: %s' % schema)
         print('Table: %s' % table)
 
+<<<<<<< Updated upstream
         # # com o produto descobrir as colunas do produto usar o model product_content.
         # mColumns = ProductContent.objects.select_related().filter(pcn_product_id=product_id)
         # columns = list()
@@ -63,6 +64,17 @@ class ObjectsViewSet(ViewSet):
         #     columns.append(col.pcn_column_name)
         #
         # print('Columns: %s' % columns)
+=======
+        # colunas associadas ao produto
+        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
+        serializer = AssociationSerializer(queryset, many=True)
+        associations = serializer.data
+        properties = dict()
+
+        for property in associations:
+            if property.get('pcc_ucd'):
+                properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
+>>>>>>> Stashed changes
 
         # Parametros de Paginacao
         limit = request.query_params.get('limit', None)
@@ -70,9 +82,6 @@ class ObjectsViewSet(ViewSet):
 
         # Parametros de Ordenacao
         ordering = request.query_params.get('ordering', None)
-
-        # usar a funcao que executa a query no banco do oracle nesse momento vc ja tem os parametros schema, table e colums
-        #  os demais parametros vamos usar depois.
 
         # retornar uma lista com os objetos da tabela
         rows = list()
