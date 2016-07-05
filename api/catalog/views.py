@@ -166,7 +166,6 @@ class TargetViewSet(ViewSet):
         Return a list of targets in catalog.
         """
         # Recuperar o parametro product id que e obrigatorio
-
         product_id = request.query_params.get('product', None)
         if not product_id:
             raise Exception('Product parameter is missing.')
@@ -190,24 +189,14 @@ class TargetViewSet(ViewSet):
         print('Table: %s' % table)
 
         # colunas associadas ao produto
-        print('--------------------------------------------')
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
         serializer = AssociationSerializer(queryset, many=True)
         associations = serializer.data
-        print(associations)
         properties = dict()
 
         for property in associations:
             if property.get('pcc_ucd'):
                 properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
-
-        print(properties)
-        print('--------------------------------------------')
-        # columns = list()
-        # for col in mColumns:
-        #     columns.append(col.pcn_column_name)
-        #
-        # print('Columns: %s' % columns)
 
         # Parametros de Paginacao
         limit = request.query_params.get('limit', None)
@@ -216,15 +205,29 @@ class TargetViewSet(ViewSet):
         # Parametros de Ordenacao
         ordering = request.query_params.get('ordering', None)
 
-        # usar a funcao que executa a query no banco do oracle nesse momento vc ja tem os parametros schema, table e colums
-        #  os demais parametros vamos usar depois.
-
         # retornar uma lista com os objetos da tabela
         rows = list()
 
         db = CatalogDB()
 
         rows = db.wrapper.fetchall_dict('SELECT * FROM tom_strong_lensing WHERE ROWNUM < 5')
+
+        # sql = (
+        #     "SELECT * "
+        #     "FROM ( "
+        #         "SELECT /*+ first_rows(25) */ "
+        #         "*, "
+        #         "row_number() "
+        #         "OVER (order by ID_AUTO) rn "
+        #         "FROM tom_strong_lensing ) "
+        #     "WHERE rn between 1 and 20 "
+        #     "ORDER BY rn; "
+        # )
+
+        print(sql)
+
+        rows = db.wrapper.fetchall_dict(sql)
+
         # rows, count = db.query(
         #     'tom_strong_lensing',
         # #     # columns=['RA', 'DEC'],
