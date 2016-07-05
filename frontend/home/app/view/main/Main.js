@@ -81,7 +81,7 @@ Ext.define('Home.view.main.Main', {
         title: 'Home',
         iconCls: 'fa-home',
     }, {
-        title: 'Sky',
+        title: 'Sky Viewer',
         iconCls: 'fa-star',
         items: [{
             xtype: 'pages-sky'
@@ -93,13 +93,13 @@ Ext.define('Home.view.main.Main', {
             xtype: 'pages-release'
         }]
     }, {
-        title: 'Tiles',
+        title: 'Tile Viewer',
         iconCls: 'fa-th',
         bind: {
             html: '{loremIpsum}'
         }
     },{
-        title: 'Target',
+        title: 'Target Viewer',
         iconCls: 'fa-dot-circle-o',
         items: [{
             xtype: 'pages-target'

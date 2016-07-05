@@ -3,7 +3,7 @@ Ext.define('Home.view.pages.Sky', {
     xtype: 'pages-sky',
 
     data: {
-        host: '',
+        host: 'http://desportal.cosmology.illinois.edu/dri/apps/',
         pageTitle: 'Sky Viewer',
         appURL: 'sky',
         imageUrl: 'resources/sky.png',
@@ -27,5 +27,5 @@ Ext.define('Home.view.pages.Sky', {
 //        '<p></p>',
 //        '<p class="app-paragrafo2">{paragrafo2}</p>',
 //    ]
-
+    
 });
