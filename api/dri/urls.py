@@ -13,15 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from catalog import views as catalog_views
 from coadd import views as coadd_views
 from common import views as common_views
 from product import views as product_views
-from product_catalog import views as product_catalog_views
 from product_classifier import views as product_classifier_views
 from product_register import views as product_register_views
 from validation import views as validation_views
-from catalog import views as catalog_views
-
 
 from django.conf.urls import url, include
 from django.contrib import admin
@@ -58,6 +56,7 @@ router.register(r'externalprocess', product_register_views.ExternalProcessViewSe
 
 # API Relacionadas ao Banco de Dados de Catalogo
 router.register(r'objectsrating', catalog_views.RatingViewSet)
+router.register(r'objectsreject', catalog_views.RejectViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
