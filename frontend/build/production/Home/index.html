@@ -45,7 +45,7 @@
         };
     </script>
     -->
-
+    
     <!-- The line below must be kept intact for Sencha Cmd to build your application -->
     <script id="microloader" data-app="bae5289e-00b6-4edd-aa91-2f8634471e9d" type="text/javascript">var Ext=Ext||{};Ext.manifest=Ext.manifest||"app.json";Ext=Ext||{};
 Ext.Boot=Ext.Boot||function(e){function g(a){if(a.$isRequest)return a;a=a.url?a:{url:a};var m=a.url,m=m.charAt?[m]:m,d=a.charset||b.config.charset;v(this,a);delete this.url;this.urls=m;this.charset=d}function p(a){if(a.$isEntry)return a;var m=a.charset||b.config.charset,d=Ext.manifest,d=d&&d.loader,f=void 0!==a.cache?a.cache:d&&d.cache,j;b.config.disableCaching&&(void 0===f&&(f=!b.config.disableCaching),!1===f?j=+new Date:!0!==f&&(j=f),j&&(d=d&&d.cacheParam||b.config.disableCachingParam,j=d+"\x3d"+
@@ -99,8 +99,7 @@ function(a){return function(b){c.onFullAssetUpdateLoaded(a,b)}}(b)):"delta"===b.
 (b.updateContent(a.content),c.updatedAssets.push(b)):b.uncache();if(0===c.remainingUpdatingAssets)c.onAllUpdatedAssetsReady()},onDeltaAssetUpdateLoaded:function(b,a,e){var d,f,j;e=c.parseResult(e);c.remainingUpdatingAssets--;if(e.error)g("Error loading delta patch for "+b.assetConfig.path+" with hash "+a.assetConfig.hash+" . This asset will be uncached for future loading"),b.uncache();else try{d=JSON.parse(e.content),j=c.patch(a.content,d),(f=c.checksum(j,b.assetConfig.hash))?(b.updateContent(j),
 c.updatedAssets.push(b)):b.uncache()}catch(k){g("Error parsing delta patch for "+b.assetConfig.path+" with hash "+a.assetConfig.hash+" . This asset will be uncached for future loading"),b.uncache()}if(0===c.remainingUpdatingAssets)c.onAllUpdatedAssetsReady()},onAllUpdatedAssetsReady:function(){var b;c.updatedAssetsReady=!0;if(c.updatedManifest){for(;0<c.removedAssets.length;)b=c.removedAssets.pop(),b.uncache();for(c.updatedManifest&&c.updatedManifest.cache();0<c.updatedAssets.length;)b=c.updatedAssets.pop(),
 b.cache()}c.notifyUpdateReady()},notifyUpdateReady:function(){if("checking"!==c.appCacheState&&c.updatedAssetsReady&&("updated"===c.appCacheState||c.updatedManifest))c.appUpdate={updated:!0,app:"updated"===c.appCacheState,manifest:c.updatedManifest&&c.updatedManifest.exportContent()},c.fireAppUpdate()},fireAppUpdate:function(){Ext.GlobalEvents&&Ext.defer(function(){Ext.GlobalEvents.fireEvent("appupdate",c.appUpdate)},100)},checksum:function(b,a){if(!b||!a)return!1;var c=!0,d=a.length,e=b.substring(0,
-1);"/"==e?b.substring(2,d+2)!==a&&(c=!1):"f"==e?b.substring(10,d+10)!==a&&(c=!1):"."==e&&b.substring(1,d+1)!==a&&(c=!1);return c},parseResult:function(b){var a={};(b.exception||0===b.status)&&!e.env.phantom?a.error=!0:200<=b.status&&300>b.status||304===b.status||e.env.phantom||0===b.status&&0<b.content.length?a.content=b.content:a.error=!0;return a}};return c}();Ext.manifest=Ext.manifest||"bootstrap";Ext.Microloader.run();
-    </script>
+1);"/"==e?b.substring(2,d+2)!==a&&(c=!1):"f"==e?b.substring(10,d+10)!==a&&(c=!1):"."==e&&b.substring(1,d+1)!==a&&(c=!1);return c},parseResult:function(b){var a={};(b.exception||0===b.status)&&!e.env.phantom?a.error=!0:200<=b.status&&300>b.status||304===b.status||e.env.phantom||0===b.status&&0<b.content.length?a.content=b.content:a.error=!0;return a}};return c}();Ext.manifest=Ext.manifest||"bootstrap";Ext.Microloader.run();</script>
 
 </head>
 <body></body>

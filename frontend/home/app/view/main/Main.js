@@ -88,10 +88,10 @@ Ext.define('Home.view.main.Main', {
         }]
     }, {
         title: 'Release Validation',
-        iconCls: 'fa-eye',
-        bind: {
-            html: '{loremIpsum}'
-        }
+        iconCls: 'fa-eye',        
+        items: [{
+            xtype: 'pages-release'
+        }]
     }, {
         title: 'Tiles',
         iconCls: 'fa-th',
