@@ -205,12 +205,12 @@ Ext.define('Target.view.objects.ObjectsController', {
     onUpdateObject: function (store, record, operation, modifiedFieldNames) {
         if (modifiedFieldNames) {
             // Caso o campo alterado seja o reject
-            if (modifiedFieldNames.indexOf('reject') >= 0) {
+            if (modifiedFieldNames.indexOf('_meta_reject') >= 0) {
                 this.onRejectTarget(record, store);
             }
 
             // Caso o campo alterado seja Rating
-            if (modifiedFieldNames.indexOf('rating') >= 0) {
+            if (modifiedFieldNames.indexOf('_meta_rating') >= 0) {
                 this.onRatingTarget(record, store);
             }
         }
@@ -259,59 +259,58 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onRatingTarget: function (record, store) {
-        if ((record.get('rating_id') === 0) && (record.get('rating') === 0)) {
+        if ((record.get('_meta_rating_id') === 0) && (record.get('_meta_rating') === 0)) {
             return false;
         }
 
-        if (record.get('rating_id') > 0) {
+        if (record.get('_meta_rating_id') > 0) {
             // Cria um model com o id que ja existe no banco de dados
             rating = Ext.create('Target.model.Rating', {
-                "id": record.get('rating_id')
-            })
+                'id': record.get('_meta_rating_id')
+            });
             // faz o set no atributo que vai ser feito update
-            rating.set("rating", record.get('rating'));
+            rating.set('rating', record.get('_meta_rating'));
 
             rating.save({
-                callback: function(savedRating, operation, success) {
+                callback: function (savedRating, operation, success) {
                     if (success) {
 
-                        store.commitChanges();                                  
+                        store.commitChanges();
 
-                        Ext.toast({ 
+                        Ext.toast({
                             html: 'Changes saved.',
                             align: 't'
                         });
                     }
                 }
-            })
-        }
-        else {
+            });
+        } else {
             // Criar um novo registro de Rating sem ID
             rating = Ext.create('Target.model.Rating', {
-                "catalog_id": record.get('_meta_catalog_id'),
-                "object_id": record.get('_meta_id'),
-                "rating": record.get('rating')
-            })
+                'catalog_id': record.get('_meta_catalog_id'),
+                'object_id': record.get('_meta_id'),
+                'rating': record.get('rating')
+            });
 
             rating.save({
-                callback: function(savedRating, operation, success) {
+                callback: function (savedRating, operation, success) {
                     if (success) {
                         // recupera o objeto inserido no banco de dados
                         var obj = Ext.decode(operation.getResponse().responseText);
-                        
-                        // seta no record da grid o atributo rating_id para que nao seja necessario 
+
+                        // seta no record da grid o atributo rating_id para que nao seja necessario
                         // o reload da grid
-                        record.set('rating_id', obj.id)
+                        record.set('_meta_rating_id', obj.id);
 
-                        store.commitChanges();                                  
+                        store.commitChanges();
 
-                        Ext.toast({ 
+                        Ext.toast({
                             html: 'Changes saved.',
                             align: 't'
                         });
                     }
                 }
-            })
+            });
         }
     },
 

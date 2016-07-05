@@ -78,8 +78,8 @@ Ext.define('Target.view.objects.Grid', {
 
         if (storeColumns.count() > 0) {
 
-            // flag = false;
-            flag = true;
+            flag = false;
+            // flag = true;
 
             // Criar as colunas de acordo com as propriedades na store
             storeColumns.each(function (record) {
@@ -130,7 +130,7 @@ Ext.define('Target.view.objects.Grid', {
                     width: 100,
                     sortable: true,
                     text: 'Rating',
-                    dataIndex: 'rating',
+                    dataIndex: '_meta_rating',
                     tooltip: 'Rating',
                     widget: {
                         xtype: 'rating',
@@ -147,7 +147,7 @@ Ext.define('Target.view.objects.Grid', {
                 columns.push({
                     xtype: 'checkcolumn',
                     text: 'Reject',
-                    dataIndex: 'reject',
+                    dataIndex: '_meta_reject',
                     tooltip: 'Reject'
                 });
             }
