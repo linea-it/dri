@@ -21,22 +21,10 @@ Ext.define('Target.store.Objects', {
             // update  : '/PRJSUB/TargetViewer/updateTargetObject'
             // destroy : '/PRJSUB/TileViewer/deleteCatalogObject'
         }
-        // reader: {
-        //     type: 'json',
-        //     rootProperty: 'data',
-        //     totalProperty: 'totalCount'
-        // },
-        // writer: {
-        //     type: 'json',
-        //     rootProperty: 'data',
-        //     writeAllFields: false,
-        //     encode: true,
-        //     allowSingle: true
-        // }
-    },
+    }
 
-    sorters: [{
-        property: 'tilename',
-        direction: 'ASC'
-    }]
+    // sorters: [{
+    //     property: 'tilename',
+    //     direction: 'ASC'
+    // }]
 });

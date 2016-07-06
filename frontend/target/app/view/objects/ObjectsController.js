@@ -218,24 +218,24 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onRejectTarget: function (record, store) {
-        console.log('onRejectTarget(%o, %o)', record, store)
+        console.log('onRejectTarget(%o, %o)', record, store);
         if (!record.get('reject_id')) {
             // Criar um novo registro de Reject sem ID
             reject = Ext.create('Target.model.Reject', {
-                "catalog_id": record.get('_meta_catalog_id'),
-                "object_id": record.get('_meta_id'),
-                "reject": record.get('reject')
-            })
+                'catalog_id': record.get('_meta_catalog_id'),
+                'object_id': record.get('_meta_id'),
+                'reject': record.get('reject')
+            });
 
             reject.save({
-                callback: function(savedReject, operation, success) {
+                callback: function (savedReject, operation, success) {
                     if (success) {
                         // recupera o objeto inserido no banco de dados
                         var obj = Ext.decode(operation.getResponse().responseText);
 
                         // seta no record da grid o atributo reject_id para que nao seja necessario
                         // o reload da grid
-                        record.set('reject_id', obj.id)
+                        record.set('reject_id', obj.id);
 
                         store.commitChanges();
 
@@ -245,15 +245,15 @@ Ext.define('Target.view.objects.ObjectsController', {
                         });
                     }
                 }
-            })
+            });
         } else {
             // Se ja tiver o registro de Reject deleta
             reject = Ext.create('Target.model.Reject', {
-                "id": record.get('reject_id')
-            })
+                'id': record.get('reject_id')
+            });
 
             reject.erase({
-                callback: function(savedReject, operation, success) {
+                callback: function (savedReject, operation, success) {
                     if (success) {
                         store.commitChanges();
 
@@ -298,7 +298,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             rating = Ext.create('Target.model.Rating', {
                 'catalog_id': record.get('_meta_catalog_id'),
                 'object_id': record.get('_meta_id'),
-                'rating': record.get('rating')
+                'rating': record.get('_meta_rating')
             });
 
             rating.save({

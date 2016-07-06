@@ -1,5 +1,5 @@
 from lib.CatalogDB import CatalogDB
-from product.models import Catalog, ProductContentAssociation
+from product.models import Catalog, ProductContent, ProductContentAssociation
 from product.serializers import AssociationSerializer
 
 from rest_framework import viewsets
@@ -62,17 +62,19 @@ class TargetViewSet(ViewSet):
         # Recuperar no model Catalog pelo id passado na url
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
 
-        print(catalog)
         if not catalog:
             raise Exception('No product found for this id.')
+
+        db = CatalogDB()
 
         # Com o modelo catalog em maos deve ter um atributo para schema e tabela esses atributos estao descritos no
         # model table.
         schema = catalog.tbl_schema
         table = catalog.tbl_name
+        tablename = table
 
-        print('Schema: %s' % schema)
-        print('Table: %s' % table)
+        if schema:
+            tablename = "%s.%s" % (schema, table)
 
         # colunas associadas ao produto
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
@@ -84,47 +86,73 @@ class TargetViewSet(ViewSet):
             if property.get('pcc_ucd'):
                 properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
 
+        property_id = properties.get("meta.id;meta.main", None)
+
+        # Todas as colunas de catalogo.
+        columns = list()
+        queryset = ProductContent.objects.all()
+        for row in queryset:
+            columns.append(row.pcn_column_name)
+        sColumns = ", ".join(columns)
+
+
         # Parametros de Paginacao
         limit = request.query_params.get('limit', None)
-        offset = request.query_params.get('offset', None)
+        start = request.query_params.get('offset', None)
+        end = start + limit
+
 
         # Parametros de Ordenacao
-        ordering = request.query_params.get('ordering', None)
+        ordering = db.wrapper.do_order(request.query_params.get('ordering', 'rn'), columns)
 
         # retornar uma lista com os objetos da tabela
         rows = list()
 
-        db = CatalogDB()
+        owner = 3
 
-        rows = db.wrapper.fetchall_dict('SELECT * FROM tom_strong_lensing WHERE ROWNUM < 5')
+        sql = (
+            "SELECT * "
+            "FROM ( "
+                "SELECT /*+ first_rows(%s) */ "
+                "%s, b.id rating_id, b.rating rating,"
+                "row_number() "
+                "OVER (ORDER BY %s) rn "
+                "FROM tom_strong_lensing a "
+                "LEFT JOIN catalog_rating b "
+                    "ON (a.%s = b.object_id) AND b.owner = %s  AND b.catalog_id = %s ) "
 
-        # sql = (
-        #     "SELECT * "
-        #     "FROM ( "
-        #         "SELECT /*+ first_rows(25) */ "
-        #         "*, "
-        #         "row_number() "
-        #         "OVER (order by ID_AUTO) rn "
-        #         "FROM tom_strong_lensing ) "
-        #     "WHERE rn between 1 and 20 "
-        #     "ORDER BY rn; "
-        # )
+            "WHERE rn BETWEEN %s and %s "
+            "%s "
+        ) % (limit, sColumns, property_id, property_id, owner, product_id, start, end, ordering)
 
-        # print(sql)
+        print(sql)
 
-        # rows = db.wrapper.fetchall_dict(sql)
+        rows = db.wrapper.fetchall_dict(sql)
 
-        # rows, count = db.query(
-        #     'tom_strong_lensing',
+        if limit:
+            sql = (
+                  "SELECT COUNT(*) as count FROM %s"
+            ) % (tablename)
+
+            count = db.wrapper.fetchall(sql)[0][0]
+        else:
+            count = len(rows)
+
+        # rows, count = db.wrapper.query(
+        #     table,
         # #     # columns=['RA', 'DEC'],
-        # #     limit=limit,
-        # #     offset=offset
+        #     limit=limit,
+        #     offset=start,
+        #     order_by=ordering
         # )
 
-        print(rows)
-        # print(count)
+        teste = db.wrapper.fetchall("SELECT * FROM catalog_rating")
+        print(teste)
+
+        print(rows[0])
 
         for row in rows:
+
             row.update({
                 "_meta_catalog_id": catalog.pk,
                 "_meta_is_system": catalog.prd_class.pcl_is_system,
@@ -132,11 +160,14 @@ class TargetViewSet(ViewSet):
                 "_meta_ra": 0,
                 "_meta_dec": 0,
                 "_meta_radius": 0,
-                "_meta_rating_id": 0,
-                "_meta_rating": None,
+                "_meta_rating_id": row.get('RATING_ID'),
+                "_meta_rating": row.get('RATING'),
                 "_meta_reject_id": 0,
                 "_meta_reject": False
             })
+
+            row.pop("RATING_ID", None)
+            row.pop("RATING", None)
 
             row.update({
                 "_meta_id": row.get(properties.get("meta.id;meta.main"))
@@ -150,8 +181,6 @@ class TargetViewSet(ViewSet):
             row.update({
                 "_meta_radius": row.get(properties.get("phys.angSize;src"))
             })
-
-        count = len(rows)
 
         return Response(dict({
             'count': count,
