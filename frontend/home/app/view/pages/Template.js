@@ -19,7 +19,7 @@ Ext.define('Home.view.pages.Template', {
         '<div style="height: 190px;">',
         '<figure class="app-image alignleft" style="width: 150px height: 150px">',
             '<a target="_self" alt="{pageTitle}" href="{host}{appURL}">',
-                '<img width="150" height="150" src="{imageUrl}" alt="Go To {pageTitle}">',
+                '<img width="150" height="134" src="{imageUrl}" alt="Go To {pageTitle}">',
 
             '</a>',
         '</figure>',

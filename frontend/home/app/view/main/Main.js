@@ -17,6 +17,8 @@ Ext.define('Home.view.main.Main', {
         'Home.view.main.MainModel',
         'Home.view.pages.Sky',
         'Home.view.pages.Target',
+        'Home.view.pages.Home',
+        'Home.view.pages.Release'
 
     ],
 
@@ -80,6 +82,9 @@ Ext.define('Home.view.main.Main', {
     items: [{
         title: 'Home',
         iconCls: 'fa-home',
+        items: [{
+            xtype: 'pages-home'
+        }]
     }, {
         title: 'Sky Viewer',
         iconCls: 'fa-star',
