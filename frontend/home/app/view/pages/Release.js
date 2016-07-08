@@ -7,8 +7,8 @@ Ext.define('Home.view.pages.Release', {
         pageTitle: 'Release Validation',
         appURL: 'eyeballing',
         imageUrl: 'resources/release.png',
-        paragrafo1: 'The first implementation of the Release Validation was based on Aladin Lite, we plan to replace the display component by VisiOmatic. It includes the following functionalities.  ',
-        paragrafo2: '<ul class="app-paragrafo2"> <li>Flag images with artifacts</li>  <li>Add comments associated to a position (annotations)</li> <li>Ability to mark defects associated to position like Airplane trails, Bright horizontal stripes, Bright star, Cosmic Ray, Ghosts, Incomplete tile, Noisybackground, Satellite trails, Scattered light</li>  <li>Overlay of objects and object properties</li>  <li>View statistic of defects</li>  <li>Overlay of CCDs and mangle mask</li>  </ul> '
+        paragrafo1: 'The first implementation of the Release Validation was based on Aladin Lite, we plan to replace the display component by VisiOmatic.',
+        paragrafo2: 'It includes the following functionalities: <ul class="app-paragrafo2"> <li>Flag images with artifacts</li>  <li>Add comments associated to a position (annotations)</li> <li>Ability to mark defects associated to position like Airplane trails, Bright horizontal stripes, Bright star, Cosmic Ray, Ghosts, Incomplete tile, Noisybackground, Satellite trails, Scattered light</li>  <li>Overlay of objects and object properties</li>  <li>View statistic of defects</li>  <li>Overlay of CCDs and mangle mask</li>  </ul> '
     },
 
 //    tpl: [

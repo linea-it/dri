@@ -86,18 +86,18 @@ Ext.define('Home.view.main.Main', {
             xtype: 'pages-home'
         }]
     }, {
+        title: 'Releases',
+        iconCls: 'fa-check',        
+        items: [{
+            xtype: 'pages-release'
+        }]
+    },{
         title: 'Sky Viewer',
         iconCls: 'fa-star',
         items: [{
             xtype: 'pages-sky'
         }]
-    }, {
-        title: 'Release Validation',
-        iconCls: 'fa-eye',        
-        items: [{
-            xtype: 'pages-release'
-        }]
-    }, {
+    },{
         title: 'Tile Viewer',
         iconCls: 'fa-th',
         bind: {
