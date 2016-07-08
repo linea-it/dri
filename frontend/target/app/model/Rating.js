@@ -11,7 +11,7 @@ Ext.define('Target.model.Rating', {
     },
 
     fields: [
-        {name:'id'},
+        {name:'id', type:'int', default: null},
         {name:'catalog_id', type:'int'},
         {name:'owner', type:'int'},
         {name:'object_id', type:'int'},

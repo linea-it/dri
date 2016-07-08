@@ -40,8 +40,9 @@ Ext.define('Target.view.objects.Grid', {
             ],
             viewConfig: {
                 stripeRows: false,
+                markDirty: false,
                 getRowClass: function (record) {
-                    return record.get('reject') === true ? 'rejected-row' : '';
+                    return record.get('_meta_reject') === true ? 'rejected-row' : '';
                 }
             }
         });
@@ -139,6 +140,14 @@ Ext.define('Target.view.objects.Grid', {
                         style: {
                             'color': '#777777'
                         }
+                        // listeners: {
+                        //     change: function (picker, value, oldvalue) {
+                        //         console.log('picker ', value);
+                        //         console.log('oldvalue ', oldvalue);
+                        //         var record = picker.getWidgetRecord();
+                        //         me.fireEvent('changerating', record, value, oldvalue);
+                        //     }
+                        // }
                     }
                 });
             }

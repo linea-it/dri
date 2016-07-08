@@ -19,7 +19,7 @@ Ext.define('Target.view.objects.TabPanel', {
     * @param {Target.view.objects.TabPanel} [this] this panel
     */
 
-    activeTab: 2,
+    activeTab: 1,
 
     config: {
         ready: false
@@ -58,7 +58,6 @@ Ext.define('Target.view.objects.TabPanel', {
                         select: this.onSelectItem,
                         rowdblclick: this.onDbClickItem
                     }
-
                 },
                 {
                     xtype: 'targets-objects-grid',
@@ -71,7 +70,8 @@ Ext.define('Target.view.objects.TabPanel', {
                         scope: this,
                         ready: this.onItemReady,
                         select: this.onSelectItem
-                    }
+                    },
+                    hidden: true
                 }
             ],
 

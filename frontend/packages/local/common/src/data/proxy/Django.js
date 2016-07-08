@@ -133,6 +133,7 @@ Ext.define('common.data.proxy.Django', {
                 url       = me.getUrl(request),
                 id, params;
 
+            console.log(request);
             if (record && !record.phantom) {
                 id = record.getId();
             } else {
@@ -140,6 +141,7 @@ Ext.define('common.data.proxy.Django', {
             }
 
             if (me.getAppendId() && me.isValidId(id)) {
+
                 if (!url.match(me.slashRe)) {
                     url += '/';
                 }

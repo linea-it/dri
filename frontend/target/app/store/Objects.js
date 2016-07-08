@@ -1,6 +1,10 @@
 Ext.define('Target.store.Objects', {
     extend: 'common.store.MyStore',
 
+    requires: [
+        'Target.model.Object'
+    ],
+
     alias: 'store.targets-objects',
 
     remoteFilter: true,
@@ -9,9 +13,20 @@ Ext.define('Target.store.Objects', {
 
     autoLoad: false,
 
-    fields: [{
-        name: 'tilename'
-    }],
+    model: 'Target.model.Object',
+    // fields: [
+    //     {name: '_meta_id'},
+    //     {name: '_meta_catalog_id', type:'int'},
+    //     {name: '_meta_is_system', type:'boolean'},
+    //     {name: '_meta_ra', type:'float'},
+    //     {name: '_meta_dec', type:'float'},
+    //     {name: '_meta_radius', type:'float'},
+    //     {name: '_meta_rating_id', type:'int'},
+    //     // {name: '_meta_rating', type:'int', default: null},
+    //     {name: '_meta_reject_id', type:'int'},
+    //     {name: '_meta_reject', type:'boolean', default: false}
+
+    // ],
 
     proxy: {
         type: 'django',
@@ -21,22 +36,10 @@ Ext.define('Target.store.Objects', {
             // update  : '/PRJSUB/TargetViewer/updateTargetObject'
             // destroy : '/PRJSUB/TileViewer/deleteCatalogObject'
         }
-        // reader: {
-        //     type: 'json',
-        //     rootProperty: 'data',
-        //     totalProperty: 'totalCount'
-        // },
-        // writer: {
-        //     type: 'json',
-        //     rootProperty: 'data',
-        //     writeAllFields: false,
-        //     encode: true,
-        //     allowSingle: true
-        // }
-    },
+    }
 
-    sorters: [{
-        property: 'tilename',
-        direction: 'ASC'
-    }]
+    // sorters: [{
+    //     property: 'tilename',
+    //     direction: 'ASC'
+    // }]
 });
