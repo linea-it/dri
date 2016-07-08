@@ -103,53 +103,49 @@ class TargetViewSet(ViewSet):
 
 
         # Parametros de Ordenacao
-        ordering = db.wrapper.do_order(request.query_params.get('ordering', 'rn'), columns)
+        # ordering = db.wrapper.do_order(request.query_params.get('ordering', 'rn'), columns)
+        ordering = request.query_params.get('ordering', None)
 
         # retornar uma lista com os objetos da tabela
         rows = list()
 
-        owner = 3
+        owner = request.user.pk
 
-        sql = (
-            "SELECT * "
-            "FROM ( "
-                "SELECT /*+ first_rows(%s) */ "
-                "%s, b.id rating_id, b.rating rating,"
-                "row_number() "
-                "OVER (ORDER BY %s) rn "
-                "FROM tom_strong_lensing a "
-                "LEFT JOIN catalog_rating b "
-                    "ON (a.%s = b.object_id) AND b.owner = %s  AND b.catalog_id = %s ) "
+        # sql = (
+        #     "SELECT * "
+        #     "FROM ( "
+        #         "SELECT /*+ first_rows(%s) */ "
+        #         "%s, b.id rating_id, b.rating rating,"
+        #         "row_number() "
+        #         "OVER (ORDER BY %s) rn "
+        #         "FROM tom_strong_lensing a "
+        #         "LEFT JOIN catalog_rating b "
+        #         "ON (a.%s = b.object_id AND b.owner = %s  AND b.catalog_id = %s) "
+        #     ") "
+        #
+        #     "WHERE rn BETWEEN %s and %s "
+        #     "%s "
+        # ) % (limit, sColumns, property_id, property_id, owner, product_id, start, end, ordering)
 
-            "WHERE rn BETWEEN %s and %s "
-            "%s "
-        ) % (limit, sColumns, property_id, property_id, owner, product_id, start, end, ordering)
+        # print("---------------------------")
+        # sql = "SELECT * FROM (SELECT /*+ first_rows(25) */ a.NAME_, a.DEC, a.RA, a.ID_AUTO, a.TILENAME, b.id rating_id, b.rating rating, row_number() OVER (ORDER BY a.ID_AUTO) rn FROM tom_strong_lensing a LEFT JOIN catalog_rating b ON (a.ID_AUTO = b.object_id AND b.owner = 3  AND b.catalog_id = 2)   ) WHERE rn BETWEEN 0 and 25"
+        # rows = db.wrapper.fetchall_dict(sql)
+        # print("---------------------------")
 
-        print(sql)
+        rows, count = db.wrapper.query(
+            table,
+            limit=limit,
+            offset=start,
+            order_by=ordering,
+            joins = list([dict({
+                'operation': 'LEFT',
+                'tablename': 'catalog_rating',
+                'alias': 'b',
+                'condition': 'a.%s = b.object_id AND b.owner = %s  AND b.catalog_id = %s' % (property_id, owner, product_id),
+                'columns': list(['id meta_rating_id', 'rating meta_rating'])
+            })])
+        )
 
-        rows = db.wrapper.fetchall_dict(sql)
-
-        if limit:
-            sql = (
-                  "SELECT COUNT(*) as count FROM %s"
-            ) % (tablename)
-
-            count = db.wrapper.fetchall(sql)[0][0]
-        else:
-            count = len(rows)
-
-        # rows, count = db.wrapper.query(
-        #     table,
-        # #     # columns=['RA', 'DEC'],
-        #     limit=limit,
-        #     offset=start,
-        #     order_by=ordering
-        # )
-
-        teste = db.wrapper.fetchall("SELECT * FROM catalog_rating")
-        print(teste)
-
-        print(rows[0])
 
         for row in rows:
 
@@ -160,14 +156,14 @@ class TargetViewSet(ViewSet):
                 "_meta_ra": 0,
                 "_meta_dec": 0,
                 "_meta_radius": 0,
-                "_meta_rating_id": row.get('RATING_ID'),
-                "_meta_rating": row.get('RATING'),
+                "_meta_rating_id": row.get('META_RATING_ID'),
+                "_meta_rating": row.get('META_RATING'),
                 "_meta_reject_id": 0,
                 "_meta_reject": False
             })
 
-            row.pop("RATING_ID", None)
-            row.pop("RATING", None)
+            row.pop("META_RATING_ID", None)
+            row.pop("META_RATING", None)
 
             row.update({
                 "_meta_id": row.get(properties.get("meta.id;meta.main"))
