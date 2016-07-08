@@ -27,7 +27,7 @@ Ext.define('Home.view.pages.Template', {
         '<p class="app-paragrafo1">{paragrafo1}</p>',
         '</div>',
         '<br>',
-        '<a target="_self" alt="{pageTitle}" href="{host}{appURL}">Go To {pageTitle}</a>',
+        // '<a target="_self" alt="{pageTitle}" href="{host}{appURL}">Go To {pageTitle}</a>',
         '<p></p>',
         '<p class="app-paragrafo2">{paragrafo2}</p>',
     ]
