@@ -13,7 +13,7 @@ Ext.define('Target.view.objects.Panel', {
         'Target.view.objects.ObjectsModel',
         'Target.view.objects.Tiles',
         'Target.view.objects.TabPanel',
-        'Target.view.preview.Panel'
+        'Target.view.preview.Preview'
     ],
 
     controller: 'objects',
@@ -68,24 +68,24 @@ Ext.define('Target.view.objects.Panel', {
                 //     reference: 'btnCutout'
                 // }
             ]
+        },
+        {
+            xtype: 'targets-preview',
+            region: 'east',
+            // title: 'Selected Target',
+            reference: 'targetsPreviewPanel',
+            width: 500,
+            split: true,
+            // collapsible: true,
+            resizable: true,
+            // bind: {
+            //     release: '{tag_id}',
+            //     field: '{field_id}'
+            // },
+            listeners: {
+                changeinobject: 'onChangeInObjects'
+            }
         }
-        // {
-        //     xtype: 'targets-preview-panel',
-        //     region: 'east',
-        //     // title: 'Selected Target',
-        //     reference: 'targetsPreviewPanel',
-        //     width: 400,
-        //     split: true,
-        //     // collapsible: true,
-        //     resizable: true,
-        //     // bind: {
-        //     //     release: '{tag_id}',
-        //     //     field: '{field_id}'
-        //     // },
-        //     listeners: {
-        //         changeinobject: 'onChangeInObjects'
-        //     }
-        // }
     ],
 
     loadPanel: function (arguments) {

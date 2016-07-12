@@ -60,6 +60,7 @@ class TileViewSet(viewsets.ModelViewSet):
 class DatasetFilter(django_filters.FilterSet):
     tag__in = django_filters.MethodFilter()
     tli_tilename = django_filters.CharFilter(name='tile__tli_tilename', label='Tilename')
+    position = django_filters.MethodFilter()
 
     class Meta:
         model = Dataset
@@ -68,6 +69,38 @@ class DatasetFilter(django_filters.FilterSet):
 
     def filter_tag__in(self, queryset, value):
         return queryset.filter(tag__in=value.split(','))
+
+    def filter_position(self, queryset, value):
+        negative = False
+
+        if value.find('-'):
+            radec = value.split('-')
+            negative = True
+
+        elif value.find('+'):
+            radec = value.split('+')
+
+        else:
+            raise Exception(
+                'Invalid format to coordinate. the two values must be separated by the signal.'
+                'example 317.8463+1.4111 or 317.8463-1.4111')
+
+        ra = float(radec[0])
+        dec = float(radec[1])
+
+        if negative:
+            dec = (dec * -1)
+
+        if (not ra > 0) or (not ra < 360):
+            raise Exception(
+                'Invalid format to coordinate. RA must be between 0 and 360 and Dec must be between -90 to 90.')
+
+        return queryset.filter(
+            tile__tli_urall__lt=ra,
+            tile__tli_udecll__lt=dec,
+            tile__tli_uraur__gt=ra,
+            tile__tli_udecur__gt=dec
+        )
 
 
 class DatasetViewSet(viewsets.ModelViewSet):

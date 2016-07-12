@@ -4,6 +4,7 @@ from product_register.models import ExternalProcess
 
 from django.db import models
 
+
 class Product(models.Model):
     prd_process_id = models.ForeignKey(
         ExternalProcess, on_delete=models.CASCADE, verbose_name='External Process')
@@ -40,7 +41,7 @@ class Table(Product):
     tbl_schema = models.CharField(
         max_length=128, verbose_name='Schema name', null=True, blank=True)
     tbl_name = models.CharField(
-        max_length=128, verbose_name='Tablename without schema')
+        max_length=128, verbose_name='Tablename', help_text='Tablename without schema')
 
     def __str__(self):
         return self.tbl_name

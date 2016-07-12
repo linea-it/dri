@@ -31,47 +31,11 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'django.log'),
             'formatter': 'verbose'
         },
-        'coadd': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'coadd.log'),
-            'formatter': 'verbose'
-        },
-        'product_classifier': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'product_classifier.log'),
-            'formatter': 'verbose'
-        },
-        'product_classifier': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'product.log'),
-            'formatter': 'verbose'
-        },
-        'product_register': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(LOG_DIR, 'product_register.log'),
-            'formatter': 'verbose'
-        },
     },
     'loggers': {
         'django': {
             'handlers': ['django'],
             'propagate': True,
-            'level': 'DEBUG',
-        },
-        'coadd': {
-            'handlers': ['coadd'],
-            'level': 'DEBUG',
-        },
-        'product_classifier': {
-            'handlers': ['product_classifier'],
-            'level': 'DEBUG',
-        },
-        'product_register': {
-            'handlers': ['product_register'],
             'level': 'DEBUG',
         },
     }
