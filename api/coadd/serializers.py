@@ -77,7 +77,9 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
 
 class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     tag = serializers.PrimaryKeyRelatedField(read_only=True)
-    release = serializers.SerializerMethodField()
+    tag_display_name = serializers.SerializerMethodField(read_only=True)
+    release = serializers.SerializerMethodField(read_only=True)
+    release_display_name = serializers.SerializerMethodField(read_only=True)
     tile = serializers.SerializerMethodField()
     tli_tilename = serializers.SerializerMethodField()
     tli_ra = serializers.SerializerMethodField()
@@ -90,7 +92,9 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'tag',
+            'tag_display_name',
             'release',
+            'release_display_name',
             'tile',
             'run',
             'tli_tilename',
@@ -99,8 +103,14 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'image_src',
         )
 
+    def get_tag_display_name(self, obj):
+        return obj.tag.tag_display_name
+
     def get_release(self, obj):
         return obj.tag.tag_release.pk
+
+    def get_release_display_name(self, obj):
+        return obj.tag.tag_release.rls_display_name
 
     def get_tile(self, obj):
         return obj.tile.pk

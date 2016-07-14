@@ -201,11 +201,11 @@
   "toolkit": "classic",
   "theme": "theme-triton",
   "loader": {
-    "cache": "20160711170558",
+    "cache": "20160714113237",
     "cacheParam": "_dc"
   },
   "id": "85a0e2c2-ad9b-4f4a-84ed-649bd3f711fd",
-  "hash": "ba81c11b458e7f47a3a32064c06ab9b05f77dc5b",
+  "hash": "4739c4ed6e26426e9da4d2e9d2704833075598e9",
   "profile": "",
   "resources": {
     "path": "resources"

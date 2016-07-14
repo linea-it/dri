@@ -5,7 +5,9 @@ Ext.define('common.model.Dataset', {
     fields: [
         {name:'id', type:'int'},
         {name:'tag', type:'int'},
+        {name:'tag_display_name', type:'string'},
         {name:'release', type:'int'},
+        {name:'release_display_name', type:'string'},
         {name:'tite', type:'int'},
         {name:'run', type:'string'},
 
@@ -14,6 +16,15 @@ Ext.define('common.model.Dataset', {
         {name:'tli_ra', type:'float'},
         {name:'tli_dec', type:'float'},
 
+        {
+            name:'release_tag',
+            type:'string',
+            convert: function (value, record) {
+                return Ext.String.format('{0} - {1}',
+                    record.get('release_display_name'), record.get('tag_display_name'));
+            }
+        },
+
         // Maping para as imagens Thumb
         {name:'image_src', type:'string'},
         {
@@ -21,7 +32,7 @@ Ext.define('common.model.Dataset', {
             type:'string',
             convert: function (value, record) {
                 return Ext.String.format('{0}/{1}/{2}.png',
-                    record.get('image_src'), 'g', record.get('tli_tilename') );
+                    record.get('image_src'), 'g', record.get('tli_tilename'));
             }
         },
         {
@@ -64,9 +75,9 @@ Ext.define('common.model.Dataset', {
             type:'string',
             convert: function (value, record) {
                 return Ext.String.format('{0}/{1}/{2}.png',
-                    record.get('image_src'), 'irg', record.get('tli_tilename') );
+                    record.get('image_src'), 'irg', record.get('tli_tilename'));
             }
-        }        
+        }
     ]
 });
 

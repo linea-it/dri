@@ -24,7 +24,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 beforeloadcatalog: 'onBeforeLoadCatalog'
             },
             'targets-objects-tabpanel': {
-                // select: 'onSelectObject'
+                select: 'onSelectObject'
             }
         },
         store: {
