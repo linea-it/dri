@@ -20,7 +20,8 @@ Ext.define('Home.view.pages.Home', {
         margin: '0 10 10 0'
     },{
         xtype: 'wtile',
-        margin: '0 10 10 0'
+        margin: '0 10 10 0',
+        hidden: true
     },{
         xtype: 'wtarget',
         margin: '0 10 10 0'

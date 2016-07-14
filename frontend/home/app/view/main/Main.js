@@ -87,7 +87,7 @@ Ext.define('Home.view.main.Main', {
         }]
     }, {
         title: 'Releases',
-        iconCls: 'fa-check',        
+        iconCls: 'fa-check',
         items: [{
             xtype: 'pages-release'
         }]
@@ -100,6 +100,7 @@ Ext.define('Home.view.main.Main', {
     },{
         title: 'Tile Viewer',
         iconCls: 'fa-th',
+        hidden: true,
         bind: {
             html: '{loremIpsum}'
         }
