@@ -3,11 +3,14 @@ import json
 import requests
 from requests.auth import HTTPBasicAuth
 from pprint import pprint
+from time import sleep
 
 class ImportProcessProduct():
 
     def __init__(self):
 
+        self.data = None
+        #self.data = json.loads(open('data.json').read())
         self.url = 'http://186.232.60.126:8150/'
         self.user = 'admin'
         self.password = 'adminadmin'
@@ -36,9 +39,6 @@ class ImportProcessProduct():
                             "tbl_name":"",
                         }
 
-        #self.data = None
-        self.data = json.loads(open('data.json').read())
-
     def Import(self, data=None):
 
         # Iniciar a integracao
@@ -66,6 +66,8 @@ class ImportProcessProduct():
         
         # Checar se tem os parametros obrigatorios
         try:
+            pprint(mandatory_values)
+            pprint(data.keys())
             missing_values = [option for option in mandatory_values if not list(data.keys())]
         except ValueError:
             print('Missing mandatory values %s' % missing_values)
@@ -89,9 +91,19 @@ class ImportProcessProduct():
 
         if len(process_exists.json()) == 0:
 
-            data_products = data['process']['products']
+            self.process_local_data = {
+                                "epr_name": data['process']['process_name'],
+                                "epr_username": data['process']['owner_username'],
+                                "epr_start_date": data['process']['process_start_date'],
+                                "epr_end_date": data['process']['process_end_date'],
+                                "epr_readme": data['process']['process_description'],
+                                "epr_comment": data['process']['process_comment'],
+                                "epr_original_id": data['process']['process_id'] ,
+                                "epr_site": "linea"
+                            }
+
             # se a checagem retornar igual a 0 entao inclui processo na api
-            resp = self.perform_http_methods(uri, http_method='post', params=data_products)
+            resp = self.perform_http_methods(uri, http_method='post', params=self.process_local_data)
 
             # Guardar o id retornado pelo API
             epr_id = resp.json()['id']
@@ -100,9 +112,10 @@ class ImportProcessProduct():
             # no retorno se for bem sucedido passa para a proxima funcao
             if resp.ok:
                 # no callback vc recebeu um json que e o processo ja registrado
-                self.ImportProducts(epr_id, data.get('products'))
+                self.ImportProducts(epr_id, data.get('process').get('products'))
 
         elif len(process_exists.json()) > 0:
+            print('Process already exists, juts registering products 2s...')
 
             # se processo ja registrado entao chama registro de produtos
             #resp = self.perform_http_methods(res.url, params=self.epr_original_id)
@@ -175,7 +188,6 @@ class ImportProcessProduct():
 
         # Tudo ok chamar a API http://dri.com/dri/api/catalog/
         resp = self.perform_http_methods(uri, http_method='post', params=self.product_local_data)
-        pprint(resp)
 
         # TODO: Usar a funcao que retorna as colunas da tabela
         # e gravar na API http://dri.com/dri/api/productcontent/
@@ -244,10 +256,7 @@ class ImportProcessProduct():
             res = requests.get(url=url, auth=HTTPBasicAuth(self.user, self.password), params=params)
             return res
         elif http_method == 'post' and params is not None:
-            print('POST')
             res = requests.post(url=url, auth=HTTPBasicAuth(self.user, self.password), data=params)
-            print('POST')
-            print('RES', res.text)
             return res
         else:
             return url
