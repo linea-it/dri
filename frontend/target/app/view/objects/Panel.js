@@ -11,7 +11,6 @@ Ext.define('Target.view.objects.Panel', {
         'Ext.layout.container.Accordion',
         'Target.view.objects.ObjectsController',
         'Target.view.objects.ObjectsModel',
-        'Target.view.objects.Tiles',
         'Target.view.objects.TabPanel',
         'Target.view.preview.Preview'
     ],
@@ -72,16 +71,10 @@ Ext.define('Target.view.objects.Panel', {
         {
             xtype: 'targets-preview',
             region: 'east',
-            // title: 'Selected Target',
             reference: 'targetsPreviewPanel',
             width: 500,
             split: true,
-            // collapsible: true,
             resizable: true,
-            // bind: {
-            //     release: '{tag_id}',
-            //     field: '{field_id}'
-            // },
             listeners: {
                 changeinobject: 'onChangeInObjects'
             }

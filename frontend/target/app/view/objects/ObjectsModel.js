@@ -9,7 +9,6 @@ Ext.define('Target.view.objects.ObjectsModel', {
     requires: [
         'Target.model.Catalog',
         'Target.model.CatalogObject',
-        'Target.store.Tiles',
         'Target.store.Objects',
         'Target.store.ProductContent',
         'Target.store.ProductAssociation'
@@ -22,9 +21,6 @@ Ext.define('Target.view.objects.ObjectsModel', {
     },
 
     stores: {
-        tiles: {
-            type: 'catalog-tiles'
-        },
         objects: {
             type: 'targets-objects',
             storeId: 'objects'

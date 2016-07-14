@@ -73,23 +73,15 @@ class DatasetFilter(django_filters.FilterSet):
     def filter_position(self, queryset, value):
         negative = False
 
-        if value.find('-'):
-            radec = value.split('-')
-            negative = True
+        radec = value.split(',')
 
-        elif value.find('+'):
-            radec = value.split('+')
-
-        else:
+        if len(radec) != 2:
             raise Exception(
-                'Invalid format to coordinate. the two values must be separated by the signal.'
-                'example 317.8463+1.4111 or 317.8463-1.4111')
+                'Invalid format to coordinate. the two values must be separated by \',\'.'
+                'example 317.8463,1.4111 or 317.8463,-1.4111')
 
-        ra = float(radec[0])
-        dec = float(radec[1])
-
-        if negative:
-            dec = (dec * -1)
+        ra = float(radec[0].strip())
+        dec = float(radec[1].strip())
 
         if (not ra > 0) or (not ra < 360):
             raise Exception(
