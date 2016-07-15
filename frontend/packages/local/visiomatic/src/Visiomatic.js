@@ -54,9 +54,19 @@ Ext.define('visiomatic.Visiomatic', {
             zoomLevelOffset: -6,
             nativeCelsys: true
         },
-        miniMap: null,
+        miniMap: false,
 
         image: null,
+        imageLayer: null,
+        imageOptions: {
+            center: false,
+            fov: false,
+            mixingMode: 'color',
+            defaultChannel: 2,
+            contrast: 0.7,
+            gamma: 2.8,
+            colorSat: 2.0
+        },
 
         release: null,
         tag: null,
@@ -153,27 +163,36 @@ Ext.define('visiomatic.Visiomatic', {
 
     },
 
-    setImage: function (image, args) {
+    setImage: function (image, options) {
         var me = this,
             libL = me.libL,
             map = me.getMap(),
             miniMap = me.getMiniMap(),
-            imageLayer, navlayer;
+            imageLayer = me.getImageLayer(),
+            imageOptions = me.getImageOptions(),
+            args,
+            navlayer;
 
-        args = args || {};
+        options = options || {};
 
         me.image = image;
 
-        imageLayer = libL.tileLayer.iip(image, {
-            center: args['center'] ? args['center'] : false,
-            fov: args['fov'] ? parseFloat(args['fov']) : false,
-            mixingMode: args['mode'] ? args['mode'] : 'color',
-            defaultChannel: args['channel'] ? parseInt(args['channel'], 10) : 2,
-            contrast: 0.7,
-            gamma: 2.8,
-            colorSat: 2.0
-        }).addTo(map);
+        console.log(image);
 
+        args = Ext.Object.merge(imageOptions, options);
+
+        // SETAR COORDENADAS PROCURAR POR ESSA FUNCAO
+        // var latlng = newcrs.parseCoords(this.options.center);
+        // usar o map.setView passando a latlog
+
+        if (!imageLayer) {
+            imageLayer = libL.tileLayer.iip(image, args).addTo(map);
+
+            me.setImageLayer(imageLayer);
+
+        } else {
+            imageLayer.setUrl(image);
+        }
 
         // Mini Map
         if (me.getEnableMiniMap()) {
@@ -183,11 +202,11 @@ Ext.define('visiomatic.Visiomatic', {
 
             } else {
                 navlayer = libL.tileLayer.iip(image, {});
-
                 miniMap.changeLayer(navlayer);
             }
         }
 
+        me.fireEvent('changeimage', me);
     },
 
     createMiniMap: function () {
@@ -196,14 +215,33 @@ Ext.define('visiomatic.Visiomatic', {
             map = me.getMap(),
             navoptions = me.getMiniMapOptions(),
             image = me.getImage(),
-            navmap,
+            miniMap,
             navlayer;
 
         if (image) {
             navlayer = libL.tileLayer.iip(image, {});
 
-            navmap = libL.control.extraMap(navlayer, navoptions).addTo(map);
+            miniMap = libL.control.extraMap(navlayer, navoptions).addTo(map);
+
+            me.setMiniMap(miniMap);
         }
+    },
+
+    setView: function (ra, dec, fov) {
+        console.log('setView(%o, %o, %o)', ra, dec, fov);
+        // var me = this,
+        //     imageLayer = me.getImageLayer(),
+        //     wcs = imageLayer.wcs,
+        //     center = Ext.String.format('{0} {1}', ra, dec),
+        //     latlng;
+
+        // console.log(imageLayer);
+        // console.log(imageLayer.wcs);
+        // console.log(wcs);
+
+        // latlng = wcs.parseCoords(center);
+
+        // console.log('latlng: %o', latlng);
     }
 
 });

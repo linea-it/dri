@@ -71,8 +71,6 @@ class DatasetFilter(django_filters.FilterSet):
         return queryset.filter(tag__in=value.split(','))
 
     def filter_position(self, queryset, value):
-        negative = False
-
         radec = value.split(',')
 
         if len(radec) != 2:

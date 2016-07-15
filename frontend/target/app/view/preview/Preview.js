@@ -33,7 +33,8 @@ Ext.define('Target.view.preview.Preview', {
             displayField: 'release_tag',
             bind: {
                 store: '{datasets}',
-                disabled: '{!currentRecord._meta_id}'
+                disabled: '{!currentRecord._meta_id}',
+                selection: '{!currentDataset}'
             },
             queryMode: 'local',
             listConfig: {
@@ -42,7 +43,12 @@ Ext.define('Target.view.preview.Preview', {
                 ]
             },
             listeners: {
-                change: 'onChangeImage'
+                change: 'onChangeDataset'
+            }
+        }, {
+            xtype: 'tbtext',
+            bind: {
+                html: '{currentDataset.tli_tilename}'
             }
         }
     ],
