@@ -207,11 +207,6 @@ Ext.define('Target.view.objects.ObjectsController', {
                         record.set('reject_id', obj.id);
 
                         store.commitChanges();
-
-                        Ext.toast({
-                            html: 'Changes saved.',
-                            align: 't'
-                        });
                     }
                 }
             });
@@ -226,10 +221,6 @@ Ext.define('Target.view.objects.ObjectsController', {
                     if (success) {
                         store.commitChanges();
 
-                        Ext.toast({
-                            html: 'Changes saved.',
-                            align: 't'
-                        });
                     }
                 }
             });
@@ -252,10 +243,6 @@ Ext.define('Target.view.objects.ObjectsController', {
 
                         store.commitChanges();
 
-                        Ext.toast({
-                            html: 'Changes saved.',
-                            align: 't'
-                        });
                     }
                 }
             });
@@ -279,10 +266,6 @@ Ext.define('Target.view.objects.ObjectsController', {
 
                         store.commitChanges();
 
-                        Ext.toast({
-                            html: 'Changes saved.',
-                            align: 't'
-                        });
                     }
                 }
             });

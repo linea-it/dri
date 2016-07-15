@@ -16,6 +16,9 @@ Ext.define('Target.view.preview.PreviewController', {
                 changerecord: 'onChangeRecord'
                 // compareimages: 'onCompareImages',
                 // changeimages: 'onChangeImages'
+            },
+            'targets-visiomatic': {
+                changeimage: 'onChangeImage'
             }
         },
         store: {
@@ -29,8 +32,6 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     onChangeRecord: function (record) {
-        console.log('onChangeRecord(%o)', record);
-
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -38,6 +39,8 @@ Ext.define('Target.view.preview.PreviewController', {
             ra = record.get('_meta_ra'),
             dec = record.get('_meta_dec'),
             position;
+
+        vm.set('currentRecord', record);
 
         position = String(ra) + ',' + String(dec);
 
@@ -62,141 +65,78 @@ Ext.define('Target.view.preview.PreviewController', {
             //me.setCurrentImage(store.first());
 
             cmb.select(store.first());
+
             // Desabilitar a combobox Image
             cmb.setReadOnly(true);
 
+        } else if (store.count() > 1) {
+
+            // Seleciona a primeira tile disponivel
+            cmb.select(store.first());
+
+            // Habilitar a combobox Image
+            cmb.setReadOnly(false);
+
+        } else {
+            console.log('Nenhuma tile encontrada para o objeto');
         }
-        // else if (store.count() > 1) {
-
-        //     me.setTiles(store);
-
-        //     // Desabilitar a combobox Image
-        //     cmb.setReadOnly(false);
-
-        //     // Localizar a tile para o release e field do catalogo
-        //     var tile = store.findRecord('field_id', me.getField());
-
-        //     if (tile) {
-        //         me.setCurrentImage(tile);
-
-        //     } else {
-        //         // caso nao tenha no mesmo release e field
-        //         me.setCurrentImage(null);
-
-        //         //  Seta a primeira que tiver
-        //         me.setCurrentImage(store.first());
-        //     }
-
-        // } else {
-        //     console.log('Nenhuma tile encontrada para o objeto');
-        // }
 
     },
 
-    onChangeImage: function (combo) {
-        console.log('onChangeImage(%o)', combo);
+    onChangeDataset: function (combo) {
+        var me = this,
+            dataset = combo.getSelectedRecord();
+
+        me.changeImage(dataset);
+    },
+
+    changeImage: function (dataset) {
+        console.log('changeImage(%o)', dataset);
 
         var me = this,
             refs = me.getReferences(),
             visiomatic = refs.visiomatic,
             vm = me.getViewModel(),
-            dataset = combo.getSelectedRecord(),
             release = vm.getStore('releases').getById(dataset.get('release')),
-            tag = vm.getStore('tags').getById(dataset.get('tag'));
+            tag = vm.getStore('tags').getById(dataset.get('tag')),
+            host = window.location.host;
 
         if ((dataset) && (release) && (tag)) {
 
+            // 'http:///visiomatic?FIF=data/releases/y1_supplemental_d04/images/visiomatic/DES0222-0541.ptif';
+
+            host = 'desportal.cosmology.illinois.edu';
+            var url = Ext.String.format(
+                'http://{0}/visiomatic?FIF=data/releases/{1}/images/visiomatic/{2}.ptif',
+                host,
+                release.get('rls_name'),
+                encodeURIComponent(dataset.get('tli_tilename'))
+            );
+
+            // var center = Ext.String.format('{0} {1}', object.get('_meta_ra'), object.get('_meta_dec'));
+
+            // var args = {
+            //     center: center,
+            //     fov: 0.10
+            // };
+
             // visiomatic.setImage(release, tag, dataset);
-            visiomatic.setImage('http://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/y1_supplemental_d04/images/visiomatic/DES0222-0541.ptif');
+            visiomatic.setImage(url);
 
-            console.log('ok');
-            // me.setRelease(record.get('tag_id'));
-            // me.setField(record.get('field_id'));
-
-            // me.loadCurrentImage(record);
-
-            // // Disparar evento que a imagem o release e o field foi alterado
-            // me.fireEvent('changeimages', me, record);
+        } else {
+            console.log('nao sei o que aconteceu');
         }
+    },
+
+    onChangeImage: function (visiomatic) {
+        console.log('onChangeImage');
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('currentRecord');
+
+        visiomatic.setView(object.get('_meta_ra'), object.get('_meta_dec'), 0.10);
+
     }
-
-
-
-    // getCoaddObject: function (ra, dec, release, field) {
-    //     // console.log('getCoaddObject(%o)', arguments);
-
-    //     var me = this,
-    //         view = me.getView(),
-    //         vm = view.getViewModel(),
-    //         store = vm.getStore('coaddObjects'),
-    //         refs = view.getReferences(),
-    //         properties = refs.CoaddProperties;
-
-    //     // adicioanar loading o painel coadd properties
-    //     properties.setLoading({
-    //         store: store
-    //     });
-
-    //     // Release e Field estao como atributos do painel preview,
-    //     // que sao atualizados pelo bind
-    //     store.filter([
-    //         {property: 'tag_id', value: release},
-    //         {property: 'field_id', value: field},
-    //         {property: '_meta_ra', value: ra},
-    //         {property: '_meta_dec', value: dec}
-    //     ]);
-    // },
-
-    // /**
-    //  * @method onLoadCoaddObjects Este metodo e executado toda vez que a store
-    //  * CoaddObjectes fizer um load. verifica se a store contem apenas 1 objeto
-    //  * nesse caso carrega seta o viewModel com o coaddObject carregado.
-    //  * caso contrario cria uma instancia vazia.
-    //  */
-    // onLoadCoaddObjects: function (store) {
-    //     // console.log('onLoadCoaddObjects(%o)', arguments);
-
-    //     var me = this,
-    //         view = me.getView(),
-    //         vm = view.getViewModel();
-
-    //     if (store.count() == 1) {
-
-    //         vm.set('currentCoaddRecord', store.first());
-
-    //     } else {
-    //         // recupera o model antigo setado apenas para criar uma instancia
-    //         // vazia da mesma classe.
-    //         record = Ext.create('Target.model.CatalogObject', {});
-
-    //         vm.set('currentCoaddRecord', record);
-    //     }
-    // },
-
-    // /**
-    //  * @method onCompareImages [description]
-
-    //  * @return {void}
-    //  */
-    // onCompareImages: function (tiles, object) {
-    //     console.log('onCompareImages(%o)', arguments);
-
-    // },
-
-    // onChangeImages: function (view, image) {
-
-    //     var me = this,
-    //         current = view.getCurrentRecord();
-
-    //     // ao trocar a imagem atualizar o coadd properties
-    //     me.getCoaddObject(
-    //         current.get('_meta_ra'),
-    //         current.get('_meta_dec'),
-    //         image.get('tag_id'),
-    //         image.get('field_id')
-    //     );
-
-    // },
 
     // onComment: function (btn) {
     //     // console.log('onComment(%o)', btn);

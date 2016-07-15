@@ -19,17 +19,13 @@ Ext.define('Target.view.preview.PreviewModel', {
         currentRecord: {
             type: 'Target.model.Object',
             create: true
+        },
+        currentDataset: {
+            type: 'common.model.Dataset',
+            create: true
         }
-        // currentCoaddRecord: {
-        //     type: 'Target.model.CatalogObject',
-        //     create: true
-        // }
     },
     stores: {
-        // coaddObjects: {
-        //     type: 'coadd-objects',
-        //     storeId: 'coaddObjects'
-        // },
         releases: {
             type: 'releases',
             storeId: 'releases',

@@ -6,8 +6,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from .models import Rating, Reject
+from .models import Reject
 from .serializers import RatingSerializer, RejectSerializer
-
 
 class RatingViewSet(viewsets.ModelViewSet):
     """

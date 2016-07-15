@@ -46,7 +46,7 @@ Ext.define('Target.view.objects.Panel', {
             ],
             tbar: [
                 {
-                    iconCls: 'icon-columns-association',
+                    iconCls: 'x-fa fa-cog',
                     tooltip: 'Columns Association',
                     handler: 'onClickColumnAssociation'
                     //disabled: true
@@ -72,7 +72,7 @@ Ext.define('Target.view.objects.Panel', {
             xtype: 'targets-preview',
             region: 'east',
             reference: 'targetsPreviewPanel',
-            width: 500,
+            width: 600,
             split: true,
             resizable: true,
             listeners: {
@@ -97,8 +97,6 @@ Ext.define('Target.view.objects.Panel', {
 
         // Limpar o painel e as stores antes de carregar um catalogo novo
         me.clearPanel();
-
-        // me.setCatalog(catalog);
 
         vm.set('catalog', catalog);
 
