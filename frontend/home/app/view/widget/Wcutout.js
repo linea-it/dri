@@ -1,6 +1,6 @@
-Ext.define('Home.view.widget.Wrelease', {
+Ext.define('Home.view.widget.Wcutout', {
     extend: 'Ext.panel.Panel',
-    xtype: 'wrelease',
+    xtype: 'wcutout',
     layout: 'vbox',
     frame: true,
     width: 260,
@@ -9,23 +9,24 @@ Ext.define('Home.view.widget.Wrelease', {
         layout: 'hbox',
         items: [{
             xtype: 'image',
-            src: 'resources/release.png',
+            src: 'resources/cutout.png',
             width: 130,
             height: 114
         },{
-            html: '<br>Summary information of DES releases and validation',
+            html: '<br>Create co-added or single epoch cutouts from a list of coordinates',
             // xtype: 'container',
             // text: 'testando',
-            width: 130,
+            width: 128,
             // height: 134
         }]
     },{
         xtype: 'button', 
-        text    : 'Releases',
+        text    : 'Cutout Server',
         width: 260,
         scale: 'large',
+        disabled : true,
         handler : function() {
-            window.open("/dri/apps/eyeballing","_self")
+            window.open("/dri/apps/sky","_self")
         }
     }]
 });

@@ -1,6 +1,6 @@
-Ext.define('Home.view.widget.Wrelease', {
+Ext.define('Home.view.widget.Wsquery', {
     extend: 'Ext.panel.Panel',
-    xtype: 'wrelease',
+    xtype: 'wsquery',
     layout: 'vbox',
     frame: true,
     width: 260,
@@ -9,23 +9,24 @@ Ext.define('Home.view.widget.Wrelease', {
         layout: 'hbox',
         items: [{
             xtype: 'image',
-            src: 'resources/release.png',
+            src: 'resources/sq.png',
             width: 130,
             height: 114
         },{
-            html: '<br>Summary information of DES releases and validation',
+            html: '<br>Query catalogs using sample queries or keep your own query library',
             // xtype: 'container',
             // text: 'testando',
-            width: 130,
+            width: 128,
             // height: 134
         }]
     },{
         xtype: 'button', 
-        text    : 'Releases',
+        text    : 'Sky Query',
         width: 260,
         scale: 'large',
+        disabled : true,
         handler : function() {
-            window.open("/dri/apps/eyeballing","_self")
+            window.open("/dri/apps/sky","_self")
         }
     }]
 });

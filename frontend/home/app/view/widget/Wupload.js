@@ -1,6 +1,6 @@
-Ext.define('Home.view.widget.Wrelease', {
+Ext.define('Home.view.widget.Wupload', {
     extend: 'Ext.panel.Panel',
-    xtype: 'wrelease',
+    xtype: 'wupload',
     layout: 'vbox',
     frame: true,
     width: 260,
@@ -9,23 +9,24 @@ Ext.define('Home.view.widget.Wrelease', {
         layout: 'hbox',
         items: [{
             xtype: 'image',
-            src: 'resources/release.png',
+            src: 'resources/upload.png',
             width: 130,
             height: 114
         },{
-            html: '<br>Summary information of DES releases and validation',
+            html: '<br>Upload external data to the Science Server',
             // xtype: 'container',
             // text: 'testando',
-            width: 130,
+            width: 128,
             // height: 134
         }]
     },{
         xtype: 'button', 
-        text    : 'Releases',
+        text    : 'Upload',
         width: 260,
         scale: 'large',
+        disabled : true,
         handler : function() {
-            window.open("/dri/apps/eyeballing","_self")
+            window.open("/dri/apps/sky","_self")
         }
     }]
 });
