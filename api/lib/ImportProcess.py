@@ -1,15 +1,16 @@
-import sys
-import json
+from pprint import pprint
+
 import requests
 from requests.auth import HTTPBasicAuth
-from pprint import pprint
-from time import sleep
+
 
 class ImportProcessProduct():
+    def __init__(self, data=None):
+        print('--------------- INICIO IMPORT ----------------')
+        self.data = data
 
-    def __init__(self):
+        pprint(data)
 
-        self.data = None
         #self.data = json.loads(open('data.json').read())
         self.url = 'http://186.232.60.126:8150/'
         self.user = 'admin'

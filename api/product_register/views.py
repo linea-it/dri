@@ -1,4 +1,7 @@
+from lib.ImportProcess import ImportProcessProduct
+
 from rest_framework import viewsets
+from rest_framework.viewsets import ViewSet
 from .models import ExternalProcess
 from .serializers import ExternalProcessSerializer
 
@@ -18,3 +21,11 @@ class ExternalProcessViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'epr_name', 'epr_original_id')
 
     ordering_fields = ('id', 'epr_original_id', 'epr_site')
+
+
+class ExternalProcessImportViewSet(ViewSet):
+    def create(self, request):
+        print('-------------------- Teste ---------------------')
+        print(request.data)
+        ImportProcessProduct(request.data)
+        pass
