@@ -153,35 +153,6 @@ class OracleWrapper(BaseWrapper):
         except Exception as error:
             raise Exception('Limit needs to be integer greater than zero. Offset must be integer.')
 
-    # def do_limit(self, limit):
-    #     """
-    #     Gera string usada para paginar os resultados
-    #     """
-    #     slimit = str()
-    #
-    #     print(limit)
-    #
-    #     if limit is None:
-    #         return ''
-    #     try:
-    #         limit = int(limit)
-    #         if offset:
-    #             offset = int(offset)
-    #
-    #         if (isinstance(limit, int)) and (limit > 0):
-    #             slimit = "WHERE ROWNUM <=%s" % limit
-    #
-    #             # if isinstance(offset, int):
-    #             #     slimit += " OFFSET %s" % offset
-    #
-    #             return slimit
-    #         else:
-    #             raise Exception('Limit needs to be integer greater than zero.')
-    #
-    #     except Exception as error:
-    #         raise Exception('Limit needs to be integer greater than zero. Offset must be integer.')
-
-
     def do_order(self, order_by, return_str=True):
         """
         Gera string usada para Ordernar os resultados

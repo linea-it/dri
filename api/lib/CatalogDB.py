@@ -2,7 +2,7 @@ from django.db import connections
 from collections import namedtuple
 
 from lib.OracleWrapper import OracleWrapper
-# from lib.OracleWrapper import SqliteWrapper
+from lib.SqliteWrapper import SqliteWrapper
 
 class CatalogDB:
     available_engines = list(['sqlite3', 'oracle'])
@@ -34,8 +34,8 @@ class CatalogDB:
         # cria uma intancia da classe wrapper a ser usada de acordo com o banco de dados
         engine = self.engine
 
-        if engine == 'sqlite':
-            self.wrapper = SqliteWrapper()
+        if engine == 'sqlite3':
+            self.wrapper = SqliteWrapper(self.cursor)
 
         elif engine == 'oracle':
             self.wrapper = OracleWrapper(self.cursor)
