@@ -40,6 +40,9 @@ Ext.define('Eyeballing.view.eyeballing.Eyeballing', {
                                 storeSurveys: '{surveys}',
                                 storeTags: '{tags}',
                                 storeTiles: '{tiles}'
+                            },
+                            listeners: {
+                                ondblclick: 'onDblClickAladin'
                             }
                         },
                         {

@@ -24,7 +24,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 beforeloadcatalog: 'onBeforeLoadCatalog'
             },
             'targets-objects-tabpanel': {
-                // select: 'onSelectObject'
+                select: 'onSelectObject'
             }
         },
         store: {
@@ -54,7 +54,6 @@ Ext.define('Target.view.objects.ObjectsController', {
         currentCatalog.load({
             callback: function (model) {
                 objectsPanel.setLoading(false);
-
                 me.onBeforeLoadCatalog(model);
             }
         });
@@ -207,11 +206,6 @@ Ext.define('Target.view.objects.ObjectsController', {
                         record.set('reject_id', obj.id);
 
                         store.commitChanges();
-
-                        Ext.toast({
-                            html: 'Changes saved.',
-                            align: 't'
-                        });
                     }
                 }
             });
@@ -226,10 +220,6 @@ Ext.define('Target.view.objects.ObjectsController', {
                     if (success) {
                         store.commitChanges();
 
-                        Ext.toast({
-                            html: 'Changes saved.',
-                            align: 't'
-                        });
                     }
                 }
             });
@@ -252,10 +242,6 @@ Ext.define('Target.view.objects.ObjectsController', {
 
                         store.commitChanges();
 
-                        Ext.toast({
-                            html: 'Changes saved.',
-                            align: 't'
-                        });
                     }
                 }
             });
@@ -279,10 +265,6 @@ Ext.define('Target.view.objects.ObjectsController', {
 
                         store.commitChanges();
 
-                        Ext.toast({
-                            html: 'Changes saved.',
-                            align: 't'
-                        });
                     }
                 }
             });

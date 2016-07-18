@@ -6,8 +6,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from .models import Rating, Reject
+from .models import Reject
 from .serializers import RatingSerializer, RejectSerializer
-
 
 class RatingViewSet(viewsets.ModelViewSet):
     """
@@ -56,9 +56,6 @@ class TargetViewSet(ViewSet):
         if not product_id:
             raise Exception('Product parameter is missing.')
 
-        print('------------------------------------------------------------')
-        print('Product Id: %s' % product_id)
-
         # Recuperar no model Catalog pelo id passado na url
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
 
@@ -71,10 +68,6 @@ class TargetViewSet(ViewSet):
         # model table.
         schema = catalog.tbl_schema
         table = catalog.tbl_name
-        tablename = table
-
-        if schema:
-            tablename = "%s.%s" % (schema, table)
 
         # colunas associadas ao produto
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
@@ -93,17 +86,15 @@ class TargetViewSet(ViewSet):
         queryset = ProductContent.objects.all()
         for row in queryset:
             columns.append(row.pcn_column_name)
-        sColumns = ", ".join(columns)
 
+        if not property_id:
+            property_id = columns[0]
 
         # Parametros de Paginacao
         limit = request.query_params.get('limit', None)
         start = request.query_params.get('offset', None)
-        end = start + limit
-
 
         # Parametros de Ordenacao
-        # ordering = db.wrapper.do_order(request.query_params.get('ordering', 'rn'), columns)
         ordering = request.query_params.get('ordering', None)
 
         # retornar uma lista com os objetos da tabela
@@ -111,43 +102,44 @@ class TargetViewSet(ViewSet):
 
         owner = request.user.pk
 
-        # sql = (
-        #     "SELECT * "
-        #     "FROM ( "
-        #         "SELECT /*+ first_rows(%s) */ "
-        #         "%s, b.id rating_id, b.rating rating,"
-        #         "row_number() "
-        #         "OVER (ORDER BY %s) rn "
-        #         "FROM tom_strong_lensing a "
-        #         "LEFT JOIN catalog_rating b "
-        #         "ON (a.%s = b.object_id AND b.owner = %s  AND b.catalog_id = %s) "
-        #     ") "
-        #
-        #     "WHERE rn BETWEEN %s and %s "
-        #     "%s "
-        # ) % (limit, sColumns, property_id, property_id, owner, product_id, start, end, ordering)
-
-        # print("---------------------------")
-        # sql = "SELECT * FROM (SELECT /*+ first_rows(25) */ a.NAME_, a.DEC, a.RA, a.ID_AUTO, a.TILENAME, b.id rating_id, b.rating rating, row_number() OVER (ORDER BY a.ID_AUTO) rn FROM tom_strong_lensing a LEFT JOIN catalog_rating b ON (a.ID_AUTO = b.object_id AND b.owner = 3  AND b.catalog_id = 2)   ) WHERE rn BETWEEN 0 and 25"
-        # rows = db.wrapper.fetchall_dict(sql)
-        # print("---------------------------")
-
         rows, count = db.wrapper.query(
             table,
             limit=limit,
             offset=start,
             order_by=ordering,
-            joins = list([dict({
+            joins=list([dict({
                 'operation': 'LEFT',
                 'tablename': 'catalog_rating',
                 'alias': 'b',
                 'condition': 'a.%s = b.object_id AND b.owner = %s  AND b.catalog_id = %s' % (property_id, owner, product_id),
                 'columns': list(['id meta_rating_id', 'rating meta_rating'])
+            }), dict({
+                'operation': 'LEFT',
+                'tablename': 'catalog_reject',
+                'alias': 'c',
+                'condition': 'a.%s = c.object_id AND c.owner = %s  AND c.catalog_id = %s' % (property_id, owner, product_id),
+                'columns': list(['id meta_reject_id', 'reject meta_reject'])
             })])
         )
 
 
         for row in rows:
+
+            if 'META_RATING_ID' in row:
+                rating_id = row.get('META_RATING_ID')
+                rating = row.get('META_RATING')
+                reject_id = row.get('META_REJECT_ID')
+                reject = row.get('META_REJECT')
+            elif 'meta_rating_id' in row:
+                rating_id = row.get('meta_rating_id')
+                rating = row.get('meta_rating')
+                reject_id = row.get('meta_reject_id')
+                reject = row.get('meta_reject')
+            else:
+                rating_id = None
+                rating = None
+                reject_id = None
+                reject = None
 
             row.update({
                 "_meta_catalog_id": catalog.pk,
@@ -156,14 +148,21 @@ class TargetViewSet(ViewSet):
                 "_meta_ra": 0,
                 "_meta_dec": 0,
                 "_meta_radius": 0,
-                "_meta_rating_id": row.get('META_RATING_ID'),
-                "_meta_rating": row.get('META_RATING'),
-                "_meta_reject_id": 0,
-                "_meta_reject": False
+                "_meta_rating_id": rating_id,
+                "_meta_rating": rating,
+                "_meta_reject_id": reject_id,
+                "_meta_reject": reject,
             })
 
             row.pop("META_RATING_ID", None)
+            row.pop("meta_rating_id", None)
             row.pop("META_RATING", None)
+            row.pop("meta_rating", None)
+            row.pop("META_REJECT_ID", None)
+            row.pop("meta_reject_id", None)
+            row.pop("META_REJECT", None)
+            row.pop("meta_reject", None)
+
 
             row.update({
                 "_meta_id": row.get(properties.get("meta.id;meta.main"))

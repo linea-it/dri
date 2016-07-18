@@ -11,9 +11,8 @@ Ext.define('Target.view.objects.Panel', {
         'Ext.layout.container.Accordion',
         'Target.view.objects.ObjectsController',
         'Target.view.objects.ObjectsModel',
-        'Target.view.objects.Tiles',
         'Target.view.objects.TabPanel',
-        'Target.view.preview.Panel'
+        'Target.view.preview.Preview'
     ],
 
     controller: 'objects',
@@ -31,9 +30,9 @@ Ext.define('Target.view.objects.Panel', {
             region: 'center',
             layout: 'border',
             reference: 'targetsGrid',
-            bind: {
-                title: '{currentCatalog.catalog_name}'
-            },
+            // bind: {
+            //     title: '{currentCatalog.prd_display_name}'
+            // },
             items: [
                 {
                     xtype: 'targets-objects-tabpanel',
@@ -47,7 +46,7 @@ Ext.define('Target.view.objects.Panel', {
             ],
             tbar: [
                 {
-                    iconCls: 'icon-columns-association',
+                    iconCls: 'x-fa fa-cog',
                     tooltip: 'Columns Association',
                     handler: 'onClickColumnAssociation'
                     //disabled: true
@@ -68,24 +67,18 @@ Ext.define('Target.view.objects.Panel', {
                 //     reference: 'btnCutout'
                 // }
             ]
+        },
+        {
+            xtype: 'targets-preview',
+            region: 'east',
+            reference: 'targetsPreviewPanel',
+            width: 600,
+            split: true,
+            resizable: true,
+            listeners: {
+                changeinobject: 'onChangeInObjects'
+            }
         }
-        // {
-        //     xtype: 'targets-preview-panel',
-        //     region: 'east',
-        //     // title: 'Selected Target',
-        //     reference: 'targetsPreviewPanel',
-        //     width: 400,
-        //     split: true,
-        //     // collapsible: true,
-        //     resizable: true,
-        //     // bind: {
-        //     //     release: '{tag_id}',
-        //     //     field: '{field_id}'
-        //     // },
-        //     listeners: {
-        //         changeinobject: 'onChangeInObjects'
-        //     }
-        // }
     ],
 
     loadPanel: function (arguments) {
@@ -104,8 +97,6 @@ Ext.define('Target.view.objects.Panel', {
 
         // Limpar o painel e as stores antes de carregar um catalogo novo
         me.clearPanel();
-
-        // me.setCatalog(catalog);
 
         vm.set('catalog', catalog);
 

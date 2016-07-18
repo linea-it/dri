@@ -7,29 +7,38 @@ Ext.define('Target.view.preview.PreviewModel', {
     alias: 'viewmodel.preview',
 
     requires: [
-        'Target.model.CatalogObject',
-        'Target.store.CoaddObjects',
-        'common.store.Tiles'
+        'Target.model.Object',
+        'common.store.Releases',
+        'common.store.Tags',
+        'common.store.Datasets'
+        // 'Target.store.CoaddObjects',
+
     ],
 
     links: {
         currentRecord: {
-            type: 'Target.model.CatalogObject',
+            type: 'Target.model.Object',
             create: true
         },
-        currentCoaddRecord: {
-            type: 'Target.model.CatalogObject',
+        currentDataset: {
+            type: 'common.model.Dataset',
             create: true
         }
     },
     stores: {
-        coaddObjects: {
-            type: 'coadd-objects',
-            storeId: 'coaddObjects'
+        releases: {
+            type: 'releases',
+            storeId: 'releases',
+            autoLoad: true
         },
-        tiles: {
-            type: 'tiles',
-            storeId: 'tiles'
+        tags: {
+            type: 'tags',
+            storeId: 'tags',
+            autoLoad: true
+        },
+        datasets: {
+            type: 'datasets',
+            storeId: 'datasets'
         }
     }
 });

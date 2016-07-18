@@ -1,6 +1,7 @@
 import logging
 
 from product_classifier.models import ProductClass, ProductClassContent
+from product_register.models import ExternalProcess
 
 from rest_framework import serializers
 from .models import File, Catalog, ProductContent, ProductContentAssociation
@@ -89,6 +90,9 @@ class TableSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CatalogSerializer(serializers.HyperlinkedModelSerializer):
+    prd_process_id = serializers.PrimaryKeyRelatedField(
+        queryset=ExternalProcess.objects.all(), many=False)
+
     prd_class = serializers.PrimaryKeyRelatedField(
         queryset=ProductClass.objects.all(), many=False)
 
@@ -119,6 +123,7 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
 
         fields = (
             'id',
+            'prd_process_id',
             'prd_name',
             'prd_display_name',
             'prd_flag_removed',
@@ -139,6 +144,8 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'epr_end_date',
             'epr_readme',
             'epr_comment',
+            'tbl_schema',
+            'tbl_name'
         )
 
     def get_pcl_name(self, obj):
