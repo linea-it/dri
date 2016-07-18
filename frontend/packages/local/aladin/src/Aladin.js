@@ -10,7 +10,8 @@ Ext.define('aladin.Aladin', {
 
     mixins: {
         events: 'aladin.Events',
-        interface: 'aladin.Interfaces'
+        interface: 'aladin.Interfaces',
+        maps:'aladin.Maps'
     },
 
     layout: 'fit',
@@ -67,8 +68,10 @@ Ext.define('aladin.Aladin', {
         autoSize: true,
 
         storeSurveys: null,
+        storeMaps: null,
 
         surveys: [],
+        maps: [],
 
         colorMaps: [],
 
@@ -138,7 +141,10 @@ Ext.define('aladin.Aladin', {
         location: '',
 
         // FoV inicial tem preferencia sobre o FoV do survey.
-        initialFov: null
+        initialFov: null,
+
+        // habilitar ou desabilitar a exibicao de mapas
+        enableMaps: true
     },
 
     /**
@@ -633,6 +639,27 @@ Ext.define('aladin.Aladin', {
         bandFilter.setFilter(filter);
     },
 
+    changeMapSurvey: function (menuitem) {
+        console.log('menuitem: %o', menuitem);
+
+        var me = this,
+            aladin = me.getAladin(),
+            survey;
+
+        survey = {
+            id: String(menuitem.map_id),
+            url: menuitem.map_url,
+            name: menuitem.map_name,
+            filter: menuitem.map_filter,
+            maxOrder: 3
+        };
+
+        mapSurvey = me.createImageSurvey(survey);
+
+        console.log(survey);
+        aladin.setImageSurvey(mapSurvey.id);
+    },
+
     exportAsPng: function () {
         var me = this,
             aladin = me.getAladin();
@@ -824,13 +851,15 @@ Ext.define('aladin.Aladin', {
         var me = this,
             aladin = me.getAladin();
 
-        // Fix if value in degrees need a space between values
-        if (position.indexOf(',')) {
-            position = position.split(',');
-            position = position.join(', ');
-        }
+        if (position) {
+            // Fix if value in degrees need a space between values
+            if (position.indexOf(',')) {
+                position = position.split(',');
+                position = position.join(', ');
+            }
 
-        aladin.gotoObject(position);
+            aladin.gotoObject(position);
+        }
     },
 
     setFov: function (fovDegrees) {

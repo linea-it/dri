@@ -26,7 +26,8 @@ Ext.define('Sky.view.home.Home', {
                     bind: {
                         storeSurveys: '{surveys}',
                         storeTags: '{tagsbyrelease}',
-                        storeTiles: '{tiles}'
+                        storeTiles: '{tiles}',
+                        storeMaps: '{maps}'
                     },
                     listeners: {
                         ondblclick: 'onDblClickFootprint'
