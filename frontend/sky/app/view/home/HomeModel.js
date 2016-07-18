@@ -11,6 +11,7 @@ Ext.define('Sky.view.home.HomeModel', {
         'Sky.store.Datasets',
         'Sky.store.Footprints',
         'Sky.store.Surveys',
+        'Sky.store.Maps',
         'Sky.model.Release',
         'Sky.store.Tags',
         'Sky.model.Dataset'
@@ -49,6 +50,10 @@ Ext.define('Sky.view.home.HomeModel', {
         // Surveys = Imagens que estao disponiveis para um release
         surveys: {
             type: 'surveys'
+        },
+
+        maps: {
+            type: 'maps'
         },
 
         tagsbyrelease: {
