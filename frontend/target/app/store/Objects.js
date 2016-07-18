@@ -36,10 +36,10 @@ Ext.define('Target.store.Objects', {
             // update  : '/PRJSUB/TargetViewer/updateTargetObject'
             // destroy : '/PRJSUB/TileViewer/deleteCatalogObject'
         }
-    }
+    },
 
-    // sorters: [{
-    //     property: 'tilename',
-    //     direction: 'ASC'
-    // }]
+    sorters: [{
+        property: 'id_auto',
+        direction: 'ASC'
+    }]
 });

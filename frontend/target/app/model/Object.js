@@ -12,8 +12,8 @@ Ext.define('Target.model.Object', {
         {name: '_meta_radius', type:'float'},
         {name: '_meta_rating_id', type:'int'},
         // {name: '_meta_rating', type:'int', default: null},
-        {name: '_meta_reject_id', type:'int'},
-        {name: '_meta_reject', type:'boolean', default: false}
+        {name: '_meta_reject_id', type:'int'}
+        // {name: '_meta_reject', type:'boolean', default: false}
 
     ]
 

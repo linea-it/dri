@@ -59,10 +59,10 @@ Ext.define('Target.view.preview.PreviewController', {
             refs = me.getReferences(),
             cmb = refs.currentDataset;
 
+        // Apenas uma tile na coordenada do objeto,
         if (store.count() == 1) {
-            // Apenas uma tile na coordenada do objeto,
             // setar essa tile no imagepreview
-            //me.setCurrentImage(store.first());
+            me.changeImage(store.first());
 
             cmb.select(store.first());
 
@@ -70,6 +70,7 @@ Ext.define('Target.view.preview.PreviewController', {
             cmb.setReadOnly(true);
 
         } else if (store.count() > 1) {
+            me.changeImage(store.first());
 
             // Seleciona a primeira tile disponivel
             cmb.select(store.first());

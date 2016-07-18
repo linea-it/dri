@@ -56,9 +56,6 @@ class TargetViewSet(ViewSet):
         if not product_id:
             raise Exception('Product parameter is missing.')
 
-        print('------------------------------------------------------------')
-        print('Product Id: %s' % product_id)
-
         # Recuperar no model Catalog pelo id passado na url
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
 
@@ -110,7 +107,7 @@ class TargetViewSet(ViewSet):
             limit=limit,
             offset=start,
             order_by=ordering,
-            joins = list([dict({
+            joins=list([dict({
                 'operation': 'LEFT',
                 'tablename': 'catalog_rating',
                 'alias': 'b',
