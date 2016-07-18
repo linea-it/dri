@@ -24,7 +24,7 @@ Ext.define('Home.view.main.Main', {
 
     controller: 'main',
     viewModel: 'main',
-
+    scrollable : true,
     ui: 'navigation',
 
     tabBarHeaderPosition: 1,
@@ -129,7 +129,7 @@ Ext.define('Home.view.main.Main', {
             html: '{loremIpsum}'
         }
     },{
-        title: 'Catalogs',
+        title: 'Science Products',
         iconCls: 'fa-leanpub',
         bind: {
             html: '{loremIpsum}'

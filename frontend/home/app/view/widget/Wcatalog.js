@@ -21,7 +21,7 @@ Ext.define('Home.view.widget.Wcatalog', {
         }]
     },{
         xtype: 'button', 
-        text    : 'catalog',
+        text    : 'Science Products',
         width: 260,
         scale: 'large',
         disabled : true,
