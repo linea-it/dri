@@ -30,9 +30,9 @@ Ext.define('Target.view.objects.Panel', {
             region: 'center',
             layout: 'border',
             reference: 'targetsGrid',
-            bind: {
-                title: '{currentCatalog.catalog_name}'
-            },
+            // bind: {
+            //     title: '{currentCatalog.prd_display_name}'
+            // },
             items: [
                 {
                     xtype: 'targets-objects-tabpanel',

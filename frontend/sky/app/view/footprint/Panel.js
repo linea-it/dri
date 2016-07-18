@@ -12,6 +12,7 @@ Ext.define('Sky.view.footprint.Panel', {
 
         Ext.apply(this, {
             hideFootprint: false
+
         });
 
         me.callParent(arguments);

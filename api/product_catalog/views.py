@@ -13,7 +13,7 @@ class CatalogObjectsViewSet(ViewSet):
 
     def list(self, request):
         """
-        Return a list of all users.
+
         """
         # Recuperar o parametro product id que e obrigatorio
 
@@ -21,9 +21,6 @@ class CatalogObjectsViewSet(ViewSet):
         if not product_id:
             # TODO retornar mensagem de que o paramtro e obrigatorio
             pass
-
-        print('------------------------------------------------------------')
-        print('Product Id: %s' % product_id)
 
         # Recuperar no model Catalog pelo id passado na url
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
