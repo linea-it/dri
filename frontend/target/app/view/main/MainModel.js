@@ -7,7 +7,7 @@ Ext.define('Target.view.main.MainModel', {
     alias: 'viewmodel.main',
 
     data: {
-        name: 'Target'
+        name: 'Target Viewer'
     }
 
 });

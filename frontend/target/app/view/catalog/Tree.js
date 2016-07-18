@@ -70,14 +70,14 @@ Ext.define('Target.view.catalog.Tree', {
                         type: 'date'
                     }
                 },
-                {
-                    text: 'Pipeline',
-                    dataIndex: 'epr_name',
-                    sortable: true,
-                    filter: {
-                        type: 'string'
-                    }
-                },
+                // {
+                //     text: 'Pipeline',
+                //     dataIndex: 'epr_name',
+                //     sortable: true,
+                //     filter: {
+                //         type: 'string'
+                //     }
+                // },
                 {
                     text: 'Process',
                     dataIndex: 'epr_original_id',
@@ -146,8 +146,9 @@ Ext.define('Target.view.catalog.Tree', {
                     handler: 'onStarredCatalog',
                     width: 60,
                     enableToggle: true,
+                    disabled: true,
                     bind: {
-                        disabled: '{!selectedCatalog.markable}',
+                        // disabled: '{!selectedCatalog.markable}',
                         pressed: '{selectedCatalog.starred}'
                     },
                     menu: [{
@@ -295,9 +296,9 @@ Ext.define('Target.view.catalog.Tree', {
             }
 
             f = {
-                property: 'catalog_name',
-                value: value,
-                operator: 'like'
+                property: 'search',
+                value: value
+                // operator: 'like'
             };
 
             fts.push(f);

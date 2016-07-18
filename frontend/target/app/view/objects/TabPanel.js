@@ -2,12 +2,12 @@
  *
  */
 Ext.define('Target.view.objects.TabPanel', {
-    extend: 'Ext.tab.Panel',
+    extend: 'Ext.panel.Panel',
 
     xtype: 'targets-objects-tabpanel',
 
     requires: [
-        'Ext.tab.Panel',
+        'Ext.panel.Panel',
         'Target.view.objects.Mosaic',
         'Target.view.objects.Grid'
     ],
@@ -19,11 +19,13 @@ Ext.define('Target.view.objects.TabPanel', {
     * @param {Target.view.objects.TabPanel} [this] this panel
     */
 
-    activeTab: 1,
+    // activeTab: 1,
 
     config: {
         ready: false
     },
+
+    layout: 'border',
 
     initComponent: function () {
         var me = this;
@@ -32,7 +34,7 @@ Ext.define('Target.view.objects.TabPanel', {
             items: [
                 {
                     xtype: 'targets-objects-mosaic',
-                    title: 'Mosaic',
+                    // title: 'Mosaic',
                     itemId: 'CatalogMosaic',
                     bind: {
                         store: '{objects}'
@@ -47,7 +49,8 @@ Ext.define('Target.view.objects.TabPanel', {
                 },
                 {
                     xtype: 'targets-objects-grid',
-                    title: 'Class Properties',
+                    region: 'center',
+                    // title: 'Class Properties',
                     itemId: 'CatalogClassGrid',
                     bind: {
                         store: '{objects}'
@@ -61,7 +64,7 @@ Ext.define('Target.view.objects.TabPanel', {
                 },
                 {
                     xtype: 'targets-objects-grid',
-                    title: 'Catalog Properties',
+                    // title: 'Catalog Properties',
                     itemId: 'CatalogPropertiesGrid',
                     bind: {
                         store: '{objects}'

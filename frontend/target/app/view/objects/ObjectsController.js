@@ -54,7 +54,6 @@ Ext.define('Target.view.objects.ObjectsController', {
         currentCatalog.load({
             callback: function (model) {
                 objectsPanel.setLoading(false);
-
                 me.onBeforeLoadCatalog(model);
             }
         });

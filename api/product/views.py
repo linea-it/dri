@@ -93,6 +93,11 @@ class CatalogViewSet(viewsets.ModelViewSet):
             prd_flag_removed=False
         )
 
+        # Search
+        prd_display_name = request.query_params.get('search', None)
+        if prd_display_name:
+            queryset = self.queryset.filter(prd_display_name__icontains=prd_display_name)
+
         # Esse dicionario vai receber os nos principais que sao as classes.
         classes = dict()
 

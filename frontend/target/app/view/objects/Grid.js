@@ -129,7 +129,7 @@ Ext.define('Target.view.objects.Grid', {
                 columns.push({
                     xtype: 'widgetcolumn',
                     width: 100,
-                    sortable: true,
+                    sortable: false,
                     text: 'Rating',
                     dataIndex: '_meta_rating',
                     tooltip: 'Rating',
@@ -157,16 +157,19 @@ Ext.define('Target.view.objects.Grid', {
                     xtype: 'checkcolumn',
                     text: 'Reject',
                     dataIndex: '_meta_reject',
-                    tooltip: 'Reject'
+                    tooltip: 'Reject',
+                    sortable: false
                 });
             }
             // Coluna Comments
             if ((me.getColumnComments()) && (flag == true)) {
                 columns.push({
-                    text: 'Comments',
+                    text: '',
                     dataIndex: 'comments',
                     tooltip: 'Comments',
                     align: 'center',
+                    flex: 1,
+                    sortable: false,
                     renderer: function (value, metadata, record) {
                         var newValue = '';
                         if (value > 0) {
