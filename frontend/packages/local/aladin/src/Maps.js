@@ -119,12 +119,12 @@ Ext.define('aladin.Maps', {
             },
             {
                 xtype: 'menucheckitem',
-                text: 'VAC Footprint',
+                text: 'Footprint (test)',
                 scope: me,
                 checkHandler: me.changeMapSurvey,
                 map_id: 'map6',
-                map_url:'http://desportal.cosmology.illinois.edu/data/maps/VAC/S82/footprint_map_525_1568/',
-                map_name: 'VAC Footprint',
+                map_url:'http://desportal.cosmology.illinois.edu/data/maps/VAC/S82/footprint_map_510_1542/',
+                map_name: 'Footprint (test)',
                 map_filter: ''
             }
         );
