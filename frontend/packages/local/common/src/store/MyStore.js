@@ -5,6 +5,10 @@ Ext.define('common.store.MyStore', {
         'common.data.proxy.Django'
     ],
 
+    proxy: {
+        type: 'django'
+    },
+
     // Verificar se a store recebeu success=false e trata mostrando a mensagem
     // Usado para quando o request funciona mas o model python retorna falso um
     // Exemplo e erro de sessao.
@@ -25,9 +29,9 @@ Ext.define('common.store.MyStore', {
                     var error = eOpts.getError(),
                         response = JSON.parse(error.response.responseText);
 
-                    switch(error.status) {
+                    switch (error.status) {
                         case 403:
-                            // 403 - Forbidden          
+                            // 403 - Forbidden
                             Ext.MessageBox.show({
                                 title: error.status + ' - ' + error.statusText,
                                 msg: response.detail,
@@ -44,7 +48,7 @@ Ext.define('common.store.MyStore', {
 
                                     window.location.assign(location);
 
-                                }                   
+                                }
                             });
 
                             break;
@@ -57,7 +61,7 @@ Ext.define('common.store.MyStore', {
                                 icon: Ext.MessageBox.WARNING,
                                 scope: this
                             });
-                    }                    
+                    }
                 }
             }
         }

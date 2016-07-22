@@ -40,6 +40,7 @@ BASE_APPS = [
 
 THIRD_PARTY_APPS = [
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'django_filters',
     'url_filter',
@@ -51,7 +52,10 @@ PROJECT_APPS = [
     'product_classifier',
     'product_register',
     'product',
-    'validation'
+    'product_catalog',
+    'validation',
+    'catalog',
+    'interfaces'
 ]
 
 INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
@@ -95,6 +99,10 @@ WSGI_APPLICATION = 'dri.wsgi.application'
 
 DATABASES = {}
 
+DATABASE_ROUTERS = ['catalog.router.CatalogRouter']
+
+APPEND_SLASH = False
+
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -136,12 +144,15 @@ STATIC_URL = '/static/'
 
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+
+    'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-    ],
+    ),
 
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
 
@@ -150,8 +161,4 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
     ),
-
-    # 'DEFAULT_AUTHENTICATION_CLASSES': {
-    #     'rest_framework.authentication.SessionAuthentication',
-    # }
 }

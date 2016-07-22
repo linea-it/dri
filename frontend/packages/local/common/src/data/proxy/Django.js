@@ -24,6 +24,17 @@ Ext.define('common.data.proxy.Django', {
         totalProperty: 'count'
     },
 
+    // ExtJS sends partitial updates by default (only the changed fields)
+    // The REST-Apis PUT-MEthod-Handler expects complete Records and fails if fields are missing
+    // We correct this by telling ExtJS to send a PATCH-Request instead of POST for updates
+    // Djangos The REST-Api handles PATCH like POST but without the check for completion
+    actionMethods: {
+        create: 'POST',
+        read: 'GET',
+        update: 'PATCH',
+        destroy: 'DELETE'
+    },
+
     encodeSorters: function (sorters) {
         // console.log('Django - encodeSorters(%o, %o)', sorters, preventArray)
 
@@ -43,7 +54,7 @@ Ext.define('common.data.proxy.Django', {
     },
 
     getParams: function (operation) {
-        // console.log('DjangoProxy - getParams(%o)', operation)
+        // console.log('DjangoProxy - getParams(%o)', operation);
 
         var params = this.callParent(arguments);
 
@@ -111,6 +122,53 @@ Ext.define('common.data.proxy.Django', {
         });
 
         return params;
-    }
+    },
+
+    buildUrl: function (request) {
+            var me        = this,
+                operation = request.getOperation(),
+                records   = operation.getRecords(),
+                record    = records ? records[0] : null,
+                format    = me.getFormat(),
+                url       = me.getUrl(request),
+                id, params;
+
+            if (record && !record.phantom) {
+                id = record.getId();
+            } else {
+                id = operation.getId();
+            }
+
+            if (me.getAppendId() && me.isValidId(id)) {
+
+                if (!url.match(me.slashRe)) {
+                    url += '/';
+                }
+                url += encodeURIComponent(id);
+
+                params = request.getParams();
+                if (params) {
+                    delete params[me.getIdParam()];
+                }
+
+                // Adiciona '/' apos o id para ficar compativel com Django REST.
+                url += '/';
+            }
+
+            if (format) {
+                if (!url.match(me.periodRe)) {
+                    url += '.';
+                }
+
+                url += format;
+            }
+
+            request.setUrl(url);
+
+            // Substitui pelo metodo da superclass por que estava adicionando o id ao final da url novamente.
+            //return me.callParent([request]);
+            return Ext.data.RestProxy.superclass.buildUrl.apply(this, arguments);
+
+        }
 
 });

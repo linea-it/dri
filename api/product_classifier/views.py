@@ -1,6 +1,9 @@
 from rest_framework import viewsets
-from .models import ProductClass, ProductGroup
-from .serializers import ProductClassSerializer, ProductGroupSerializer
+from rest_framework.response import Response
+from rest_framework.decorators import list_route
+from .models import ProductClass, ProductGroup, ProductClassContent
+from .serializers import ProductClassSerializer, ProductGroupSerializer, ProductClassContentSerializer
+
 
 class ProductClassViewSet(viewsets.ModelViewSet):
 
@@ -22,9 +25,26 @@ class ProductGroupViewSet(viewsets.ModelViewSet):
 
     search_fields = ('pgr_name', 'pgr_display_name')
 
-    filter_fields = ('id', 'pgr_name', 'pgr_display_name',)
+    filter_fields = ('id', 'pgr_name', 'pgr_display_name', 'is_catalog')
 
     ordering_fields = ('pgr_name', 'pgr_display_name')
+
+    @list_route()
+    def get_group(self, request):
+        queryset = ProductGroup.objects.select_related().filter(is_catalog=True)
+        result = {
+            "expanded": True,
+            "children": list()
+        }
+
+        for row in queryset:
+            result['children'].append({
+                "text": "%s" % row.pgr_name,
+                "expanded": False,
+                "leaf": True
+            })
+        # return Response(dict({'success':True}))
+        return Response(result)
 
 # class ProductGroupFilter(django_filters.FilterSet):
 #     target = django_filters.MethodFilter()
@@ -100,3 +120,8 @@ class ProductGroupViewSet(viewsets.ModelViewSet):
 #             })
 #
 #             return content
+
+class ProductClassContentViewSet(viewsets.ModelViewSet):
+    queryset = ProductClassContent.objects.all()
+
+    serializer_class = ProductClassContentSerializer

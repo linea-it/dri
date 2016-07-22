@@ -7,8 +7,7 @@ Ext.define('Eyeballing.view.main.MainModel', {
     alias: 'viewmodel.main',
 
     data: {
-        name: 'Eyeballing',
-        desPortalLogo: 'resources/des-portal-logo.png'
+        name: 'Release Validation'
     }
 
 });

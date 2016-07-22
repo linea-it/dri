@@ -33,14 +33,31 @@ Ext.define('Eyeballing.view.eyeballing.Eyeballing', {
                     layout: 'border',
                     items: [
                         {
-                            xtype: 'eyeballing-aladin',
-                            reference: 'aladin',
+                            xtype: 'container',
                             region: 'center',
-                            bind: {
-                                storeSurveys: '{surveys}',
-                                storeTags: '{tags}',
-                                storeTiles: '{tiles}'
-                            }
+                            reference: 'cardPanel',
+                            layout: {
+                                type: 'card',
+                                anchor: '100%'
+                            },
+                            items: [
+                                {
+                                    xtype: 'eyeballing-aladin',
+                                    reference: 'aladin',
+                                    bind: {
+                                        storeSurveys: '{surveys}',
+                                        storeTags: '{tags}',
+                                        storeTiles: '{tiles}'
+                                    },
+                                    listeners: {
+                                        ondblclick: 'onDblClickAladin'
+                                    }
+                                },
+                                {
+                                    xtype: 'eyeballing-visiomatic',
+                                    reference: 'visiomatic'
+                                }
+                            ]
                         },
                         {
                             xtype: 'eyeballing-defects',
@@ -54,6 +71,12 @@ Ext.define('Eyeballing.view.eyeballing.Eyeballing', {
                                 }
                             }),
                             tbar: [
+                                {
+                                    xtype: 'button',
+                                    iconCls: 'x-fa fa-refresh',
+                                    handler: 'aladinVisiomatic',
+                                    tooltip: 'Toggle the display between Aladin and Visiomatic'
+                                },
                                 {
                                     xtype: 'button',
                                     iconCls: 'x-fa fa-exclamation-triangle',
