@@ -55,8 +55,3 @@ class CatalogDB:
         else:
             raise Exception("The engine %s is not available to be used as database for catalogs."
                             "The available engines are these: %s" % (engine, ', '.join(self.available_engines)))
-
-
-
-
-

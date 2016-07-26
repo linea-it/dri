@@ -41,3 +41,16 @@ class BaseWrapper():
         Return all columns in a table"
         """
         return self.wrapper.get_table_columns(table)
+
+
+    def get_count(self, table):
+        """
+        Return all columns in a table"
+        """
+        query = "SELECT COUNT(*) as count FROM %s" % table
+
+        cursor = self.execute(query)
+        count = self.execute(query).fetchone()[0]
+
+        return count
+
