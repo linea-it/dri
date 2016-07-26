@@ -1,17 +1,35 @@
-from lib.ImportProcess import ImportProcessProduct
-
+from django.db import transaction
 from rest_framework import viewsets
-from rest_framework.viewsets import ViewSet
-from .models import ExternalProcess
-from .serializers import ExternalProcessSerializer
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+
+from .ImportProcess import Import
+from .models import ExternalProcess, Site
+from .serializers import ExternalProcessSerializer, SiteSerializer
 
 
-# Create your views here.
+
+class SiteViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows External Sites to be viewed or edited
+    """
+
+    queryset = Site.objects.select_related().all()
+
+    serializer_class = SiteSerializer
+
+    search_fields = ('sti_user', 'sti_name', 'sti_url',)
+
+    filter_fields = ('id', 'sti_user', 'sti_name')
+
+    ordering_fields = ('id',)
+
 
 class ExternalProcessViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows External Processes to be viewed or edited
     """
+
     queryset = ExternalProcess.objects.select_related().all()
 
     serializer_class = ExternalProcessSerializer
@@ -23,9 +41,22 @@ class ExternalProcessViewSet(viewsets.ModelViewSet):
     ordering_fields = ('id', 'epr_original_id', 'epr_site')
 
 
-class ExternalProcessImportViewSet(ViewSet):
+class ExternalProcessImportViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows External Processes to be imported
+    """
+    authentication_classes = (TokenAuthentication,)
+
+    permission_classes = (IsAuthenticated,)
+
+    serializer_class = ExternalProcessSerializer
+
+    @transaction.atomic
     def create(self, request):
-        print('-------------------- Teste ---------------------')
-        print(request.data)
-        ImportProcessProduct(request.data)
-        pass
+
+        response = Import().start_import(request)
+
+        if response is not None and response.data.get('id') > 0:
+            return response
+        else:
+            raise Exception('was a failure to create the record.')

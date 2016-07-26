@@ -1,8 +1,7 @@
+from django.db import models
 from product_classifier.models import ProductClass
 from product_classifier.models import ProductClassContent
 from product_register.models import ExternalProcess
-
-from django.db import models
 
 
 class Product(models.Model):
@@ -49,10 +48,6 @@ class Table(Product):
 
 class Catalog(Table):
 
-    ctl_num_columns = models.PositiveIntegerField(
-        verbose_name='Num of columns', null=True, blank=True)
-    ctl_num_tiles = models.PositiveIntegerField(
-        verbose_name='Num of tiles', null=True, blank=True)
     ctl_num_objects = models.PositiveIntegerField(
         verbose_name='Num of objects', null=True, blank=True)
 

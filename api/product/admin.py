@@ -24,7 +24,7 @@ class TableAdmin(admin.ModelAdmin):
 
 class CatalogAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'prd_name', 'prd_display_name', 'prd_class', 'ctl_num_columns', 'ctl_num_tiles', 'ctl_num_objects',
+        'id', 'prd_name', 'prd_display_name', 'prd_class', 'ctl_num_objects',
         'prd_flag_removed',
     )
     # list_display_links = ('pcn_column_name',)
