@@ -2,8 +2,8 @@ import logging
 
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ExternalProcess
-
 from rest_framework import serializers
+
 from .models import File, Catalog, ProductContent, ProductContentAssociation
 from .models import Map
 from .models import Mask
@@ -134,8 +134,6 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'pgr_group',
             # 'pgr_name',
             'pgr_display_name',
-            'ctl_num_columns',
-            'ctl_num_tiles',
             'ctl_num_objects',
             'epr_original_id',
             'epr_name',
