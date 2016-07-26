@@ -49,9 +49,9 @@ router.register(r'defect', validation_views.DefectViewSet)
 
 router.register(r'filters', common_views.FilterViewSet)
 
-router.register(r'externalprocess', product_register_views.ExternalProcessViewSet)
-router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet,
-                base_name='importprocess')
+
+router.register(r'site', product_register_views.SiteViewSet)
+router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet, base_name='importprocess')
 router.register(r'application',interfaces_views.ApplicationViewSet)
 
 # API Relacionadas ao Banco de Dados de Catalogo

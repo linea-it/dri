@@ -12,7 +12,7 @@ class Export(models.Model):
 
 class Site(models.Model):
 
-    sti = models.ForeignKey(
+    sti_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE, default=get_current_user, verbose_name='User Name')
 
