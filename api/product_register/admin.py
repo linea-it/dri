@@ -3,11 +3,11 @@ from django.contrib import admin
 from .models import Export, ExternalProcess
 
 class ExportAdmin(admin.ModelAdmin):
-    list_display = ('id', 'exp_username', 'exp_date', 'exp_product_id',
+    list_display = ('id', 'exp_username', 'exp_date',
                     'exp_external_process', )
-    list_display_links = ('id', 'exp_username', 'exp_date', 'exp_product_id',
+    list_display_links = ('id', 'exp_username', 'exp_date',
                     'exp_external_process', )
-    search_field = ('id', 'exp_username', 'exp_product_id', )
+    search_field = ('id', 'exp_username', )
 
 
 class ExternalProcessAdmin(admin.ModelAdmin):

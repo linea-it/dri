@@ -616,6 +616,56 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             window.open(location, '_self');
 
         }
+    },
+
+    aladinVisiomatic: function () {
+        var me = this,
+            card = me.lookupReference('cardPanel'),
+            layout = card.getLayout(),
+            active = layout.getActiveItem();
+
+        if (active.reference === 'aladin') {
+            // Setar o Visiomatic
+            me.activeVisiomatic();
+        } else {
+            me.activeAladin();
+        }
+    },
+
+    activeVisiomatic: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            dataset = vm.get('currentDataset'),
+            releases = vm.getStore('releases'),
+            release = releases.findRecord('id', dataset.get('release')),
+            card = me.lookupReference('cardPanel'),
+            layout = card.getLayout(),
+            visiomatic = me.lookupReference('visiomatic'),
+            host;
+
+        layout.next();
+
+        host = 'desportal.cosmology.illinois.edu';
+        var url = Ext.String.format(
+            'http://{0}/visiomatic?FIF=data/releases/{1}/images/visiomatic/{2}.ptif',
+            host,
+            release.get('rls_name'),
+            encodeURIComponent(dataset.get('tli_tilename'))
+        );
+
+        visiomatic.setImage(url);
+
+    },
+
+    activeAladin: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            dataset = vm.get('currentDataset'),
+            card = me.lookupReference('cardPanel'),
+            layout = card.getLayout(),
+            aladin = me.lookupReference('aladin');
+
+        layout.prev();
     }
 
 });

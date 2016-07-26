@@ -18,7 +18,7 @@ Ext.define('Target.view.preview.PreviewController', {
                 // changeimages: 'onChangeImages'
             },
             'targets-visiomatic': {
-                changeimage: 'onChangeImage'
+                //changeimage: 'onChangeImage'
             }
         },
         store: {
@@ -100,6 +100,7 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = me.getViewModel(),
             release = vm.getStore('releases').getById(dataset.get('release')),
             tag = vm.getStore('tags').getById(dataset.get('tag')),
+            object = vm.get('currentRecord'),
             host = window.location.host;
 
         if ((dataset) && (release) && (tag)) {
@@ -114,29 +115,24 @@ Ext.define('Target.view.preview.PreviewController', {
                 encodeURIComponent(dataset.get('tli_tilename'))
             );
 
-            // var center = Ext.String.format('{0} {1}', object.get('_meta_ra'), object.get('_meta_dec'));
-
-            // var args = {
-            //     center: center,
-            //     fov: 0.10
-            // };
-
             // visiomatic.setImage(release, tag, dataset);
             visiomatic.setImage(url);
+
+            // visiomatic.setView(object.get('_meta_ra'), object.get('_meta_dec'), 0.10);
 
         } else {
             console.log('nao sei o que aconteceu');
         }
     },
 
-    onChangeImage: function (visiomatic) {
-        console.log('onChangeImage');
+    onCenterTarget: function (visiomatic) {
         var me = this,
+            refs = me.getReferences(),
+            visiomatic = refs.visiomatic,
             vm = me.getViewModel(),
             object = vm.get('currentRecord');
 
         visiomatic.setView(object.get('_meta_ra'), object.get('_meta_dec'), 0.10);
-
     }
 
     // onComment: function (btn) {

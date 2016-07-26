@@ -114,6 +114,15 @@ Ext.define('visiomatic.Visiomatic', {
         // Add a Reticle to Map
         libL.control.reticle().addTo(map);
 
+
+        // Add Events Listeners to Map
+        // map.on('layeradd', me.onTileLoad, me);
+        // map.on('baselayerchange', function () {
+        //         console.log('TESTE');
+
+        //     }, me);
+
+
         // instancia de L.map
         me.setMap(map);
 
@@ -177,8 +186,6 @@ Ext.define('visiomatic.Visiomatic', {
 
         me.image = image;
 
-        console.log(image);
-
         args = Ext.Object.merge(imageOptions, options);
 
         // SETAR COORDENADAS PROCURAR POR ESSA FUNCAO
@@ -187,6 +194,11 @@ Ext.define('visiomatic.Visiomatic', {
 
         if (!imageLayer) {
             imageLayer = libL.tileLayer.iip(image, args).addTo(map);
+
+            // imageLayer.on('load', function () {
+            //     console.log('TESTE');
+
+            // }, me);
 
             me.setImageLayer(imageLayer);
 
@@ -205,8 +217,6 @@ Ext.define('visiomatic.Visiomatic', {
                 miniMap.changeLayer(navlayer);
             }
         }
-
-        me.fireEvent('changeimage', me);
     },
 
     createMiniMap: function () {
@@ -229,19 +239,22 @@ Ext.define('visiomatic.Visiomatic', {
 
     setView: function (ra, dec, fov) {
         console.log('setView(%o, %o, %o)', ra, dec, fov);
-        // var me = this,
-        //     imageLayer = me.getImageLayer(),
-        //     wcs = imageLayer.wcs,
-        //     center = Ext.String.format('{0} {1}', ra, dec),
-        //     latlng;
+        var me = this,
+            libL = me.libL,
+            map = me.getMap(),
+            latlng;
 
-        // console.log(imageLayer);
-        // console.log(imageLayer.wcs);
-        // console.log(wcs);
+        latlng = libL.latLng(dec, ra);
+        map.setView(latlng, map.options.crs.fovToZoom(map, fov, latlng));
+    },
 
-        // latlng = wcs.parseCoords(center);
+    onTileLoad: function () {
+        console.log('onTileLoad(%o)', arguments);
 
-        // console.log('latlng: %o', latlng);
+        var me = this;
+
+        // me.fireEvent('changeimage', me);
+
     }
 
 });

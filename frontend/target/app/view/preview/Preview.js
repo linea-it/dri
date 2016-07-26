@@ -50,6 +50,11 @@ Ext.define('Target.view.preview.Preview', {
             bind: {
                 html: '{currentDataset.tli_tilename}'
             }
+        }, {
+            xtype: 'button',
+            iconCls: 'x-fa fa-crosshairs',
+            tooltip: 'Center',
+            handler: 'onCenterTarget'
         }
     ],
 

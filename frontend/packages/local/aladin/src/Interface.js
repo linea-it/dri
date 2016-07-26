@@ -240,7 +240,19 @@ Ext.define('aladin.Interfaces', {
             checked: me.getTilesGridVisible()
         });
 
-        // Separador
+        // Maps
+        var maps = me.createMapsMenuItems();
+        if (me.getEnableMaps()) {
+            items.push({
+                text: 'Maps',
+                itemId: 'MapsMenu',
+                menu: maps,
+                menuAlign: 'tr'
+                // disabled: true
+            });
+        }
+
+        // -------------------- Separador -----------------------------
         items.push('-');
 
         // Des Footprint

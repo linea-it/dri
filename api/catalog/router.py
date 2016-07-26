@@ -36,7 +36,13 @@ class CatalogRouter(object):
         Determine if the migration operation is allowed to run on the database with alias db.
         Return True if the operation should run, False if it shouldnt run, or None if the router has no opinion.
         """
-        if app_label == 'catalog':
-            return db == 'catalog'
-
-        return False
+        if db == 'catalog':
+            if app_label == 'catalog':
+                return True
+            else:
+                return False
+        else:
+            if app_label == 'catalog':
+                return False
+            else:
+                return True
