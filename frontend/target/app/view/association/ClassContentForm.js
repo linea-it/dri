@@ -5,7 +5,7 @@ Ext.define('Target.view.association.ClassContentForm', {
 
     layout: 'anchor',
 
-    bodyPadding: 5,
+    // bodyPadding: 5,
 
     items: [
         {
@@ -31,6 +31,10 @@ Ext.define('Target.view.association.ClassContentForm', {
                 {
                     fieldLabel: 'UCD',
                     bind: '{classcontentgrid.selection.pcc_ucd}'
+                },
+                {
+                    fieldLabel: 'Category',
+                    bind: '{classcontentgrid.selection.pcc_category}'
                 }
             ]
         }
