@@ -36,8 +36,7 @@ class ProductClassContentSerializer(serializers.HyperlinkedModelSerializer):
     pcc_class = serializers.PrimaryKeyRelatedField(
         queryset=ProductClass.objects.all(), many=False)
 
-    pcc_category = serializers.PrimaryKeyRelatedField(
-        queryset=ContentCategory.objects.all(), many=False)
+    pcc_category = serializers.SerializerMethodField()
 
     class Meta:
         model = ProductClassContent
@@ -53,3 +52,7 @@ class ProductClassContentSerializer(serializers.HyperlinkedModelSerializer):
             'pcc_reference',
             'pcc_mandatory'
         )
+
+    def get_pcc_category(self, obj):
+        if obj.pcc_category is not None:
+            return obj.pcc_category.cct_name

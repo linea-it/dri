@@ -50,20 +50,24 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     loadClassContents: function () {
-        console.log('loadClassContents');
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
             classContents = vm.getStore('classcontent');
 
         // Carregar as propriedades associadas a classe
-        // Todo filtrar por classe trazer os com classe null
-        classContents.load();
+        classContents.removeAll();
+        classContents.clearFilter(true);
+        classContents.filter([
+            {
+                property: 'pcc_class',
+                value: currentCatalog.get('prd_class')
+            }
+        ]);
 
     },
 
     onLoadClassContent: function () {
-        console.log('onLoadClassContent()');
         var me = this;
 
         me.loadProductContent();
@@ -71,11 +75,14 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     loadProductContent: function () {
-        console.log('loadProductContent');
         var me = this,
             vm = me.getViewModel(),
+            refs = me.getReferences(),
+            grid = refs.productcontentgrid,
             currentCatalog = vm.get('currentCatalog'),
             productContents = vm.getStore('productcontent');
+
+        grid.setLoading(true);
 
         // Carregar as propriedades do catalogo.
         productContents.filter([
@@ -87,7 +94,6 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     onLoadProductContent: function () {
-        console.log('onLoadProductContent()');
         var me = this;
 
         me.loadAssociations();
@@ -95,7 +101,6 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     loadAssociations: function () {
-        console.log('loadAssociations');
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
@@ -111,8 +116,9 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     onLoadProductAssociation: function () {
-        console.log('onLoadProductAssociation');
         var me = this,
+            refs = me.getReferences(),
+            grid = refs.productcontentgrid,
             vm = me.getViewModel(),
             association = vm.getStore('association'),
             productContents = vm.getStore('productcontent'),
@@ -120,13 +126,11 @@ Ext.define('Target.view.association.AssociationController', {
 
         // Para cada propriedade que o produto possui adicionar a store que está na associada a grid
         productContents.each(function (record) {
-            console.log(record);
             var a = productAssociations.findRecord('pca_product_content', record.get('id'));
 
             // Se houver associacao adicionar o elemento a store.
             if (!a) {
                 // nao tem associacao criar uma vazia.
-                console.log('record: %o', record);
                 a = Ext.create('Target.model.CatalogColumn', {
                     'pca_product_id': record.get('pcn_product_id'),
                     'pca_product_content': record.get('id'),
@@ -137,6 +141,45 @@ Ext.define('Target.view.association.AssociationController', {
             association.add(a);
 
         },this);
+
+        grid.setLoading(false);
+
+    },
+
+    onSearchClassContent: function (value) {
+        console.log('onSearchClassContent');
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog'),
+            classContents = vm.getStore('classcontent');
+
+        classContents.removeAll();
+        classContents.clearFilter(true);
+        classContents.filter([
+            {
+                property: 'pcc_class',
+                value: currentCatalog.get('prd_class')
+            },
+            {
+                property: 'search',
+                value: value
+            }
+        ]);
+
+    },
+
+    onCancelClassContent: function () {
+        console.log('onCancelClassContent');
+        this.loadClassContents();
+    },
+
+    onSearchAssociation: function () {
+        console.log('onSearchAssociation');
+
+    },
+
+    onCancelAssociation: function () {
+        console.log('onCancelAssociation');
 
     }
 
