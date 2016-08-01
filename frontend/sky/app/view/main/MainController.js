@@ -10,16 +10,15 @@ Ext.define('Sky.view.main.MainController', {
     alias: 'controller.main',
 
     requires: [
-        'Sky.view.home.Home',
-        // 'Sky.view.eyeballing.Eyeballing'
+        'Sky.view.home.Home'
     ],
 
     routes : {
         'home': {
             action: 'onHome'
         },
-        'ebl/:release': {
-            action: 'onEyeballing'
+        'sky/:release': {
+            action: 'onSky'
         }
     },
 
@@ -64,13 +63,13 @@ Ext.define('Sky.view.main.MainController', {
         this.setActivePanel(newView);
     },
 
-    onEyeballing: function (release) {
+    onSky: function (release) {
 
-        console.log('onEyeballing(%o)', release);
+        console.log('onSky(%o)', release);
 
         var newView = Ext.create('Sky.view.eyeballing.Eyeballing', {
             hideMode: 'offsets',
-            routeId: 'eyeballing',
+            routeId: 'sky',
             layout: 'fit',
             release: release
         });
