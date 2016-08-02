@@ -12,14 +12,23 @@ Ext.define('Sky.view.footprint.FootprintModel', {
         'Sky.store.Footprints',
         'Sky.store.Surveys',
         'Sky.store.Maps',
-        'Sky.model.Release',
         'Sky.store.Tags',
+        'Sky.model.Release',
+        'Sky.model.Tag',
         'Sky.model.Dataset'
     ],
+
+    data: {
+        release: null
+    },
 
     links: {
         currentRelease: {
             type: 'Sky.model.Release',
+            create: true
+        },
+        currentTag: {
+            type: 'Sky.model.Tag',
             create: true
         },
         currentDataset: {
@@ -31,40 +40,38 @@ Ext.define('Sky.view.footprint.FootprintModel', {
     stores: {
         // Releases  = Todos os releases disponiveis.
         releases: {
-            type: 'releases'
-        },
-        // Tags = esta store e filtrada localmente e possui todos os tags
-        // independente de release.
-        tags: {
-            type: 'tags',
-            storeId: 'AllTags',
-            autoLoad: true,
-            remoteFilter: false
+            type: 'releases',
+            storeId: 'Releases',
+            autoLoad: false,
+            remoteFilter: true
         },
 
-        // Datasets = tiles que estao nos tags de um release
-        // esta store e paginada
-        datasets: {
-            type: 'datasets'
-        },
         // Surveys = Imagens que estao disponiveis para um release
         surveys: {
             type: 'surveys'
         },
 
-        maps: {
-            type: 'maps'
+        // Tags = Tags associados ao Release
+        tags: {
+            type: 'tags',
+            storeId: 'Tags'
+        },
+
+        // Datasets = Tiles que estao nos tags de um release
+        datasets: {
+            type: 'datasets'
+        },
+
+        // Tile = Uma instancia reduzida de um dataset somente informacoes das coordenadas
+        // de cada tile.
+        tiles: {
+            type: 'footprints',
+            pageSize: 0
         },
 
         tagsbyrelease: {
             type: 'tags'
-        },
-
-        tiles: {
-            type: 'footprints',
-            pageSize: 0
         }
-
     }
 
 });

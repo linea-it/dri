@@ -67,7 +67,7 @@ Ext.define('Sky.view.main.MainController', {
 
         console.log('onSky(%o)', release);
 
-        var newView = Ext.create('Sky.view.eyeballing.Eyeballing', {
+        var newView = Ext.create('Sky.view.footprint.Footprint', {
             hideMode: 'offsets',
             routeId: 'sky',
             layout: 'fit',
