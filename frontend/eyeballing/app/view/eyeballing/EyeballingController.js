@@ -13,13 +13,11 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
         component: {
             'eyeballing': {
                 loadpanel: 'onLoadPanel',
-                updatepanel: 'onUpdatePanel',
-                changerelease: 'onChangeRelease'
+                updatepanel: 'onUpdatePanel'
             },
             'eyeballing-aladin': {
                 changetile: 'onChangeTile',
                 changefilter: 'onChangeFilter'
-
             }
         },
         store: {
@@ -44,18 +42,14 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
     /**
      * @method onLoadPanel [description]
      */
-    onLoadPanel: function () {
-        var me = this,
-            view = me.getView(),
-            release = view.getRelease();
+    onLoadPanel: function (release) {
+        var me = this;
 
         me.loadReleaseById(release);
     },
 
-    onUpdatePanel: function () {
+    onUpdatePanel: function (release) {
         var me = this,
-            view = me.getView(),
-            release = view.getRelease(),
             aladin = me.lookupReference('aladin');
 
         if (aladin.aladinIsReady()) {
@@ -63,14 +57,6 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
         }
 
         me.loadReleaseById(release);
-
-    },
-
-    /**
-     * @method onChangeRelease [description]
-     */
-    onChangeRelease: function (release) {
-
     },
 
     loadReleaseById: function (release) {

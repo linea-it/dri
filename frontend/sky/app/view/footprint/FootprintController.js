@@ -13,8 +13,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
         component: {
             'footprint': {
                 loadpanel: 'onLoadPanel',
-                updatepanel: 'onUpdatePanel',
-                changerelease: 'onChangeRelease'
+                updatepanel: 'onUpdatePanel'
             }
         },
         store: {
@@ -30,41 +29,51 @@ Ext.define('Sky.view.footprint.FootprintController', {
         }
     },
 
-    onLoadPanel: function () {
-        var me = this,
-            view = me.getView(),
-            release = view.getRelease();
+    onLoadPanel: function (release) {
+        var me = this;
 
         me.loadReleaseById(release);
     },
 
-    onUpdatePanel: function () {
-        console.log('onUpdatePanel');
-        // var me = this,
-        //     view = me.getView(),
-        //     release = view.getRelease(),
-        //     aladin = me.lookupReference('aladin');
+    onUpdatePanel: function (release, view) {
+        var me = this,
+            aladin = me.lookupReference('aladin');
 
-        // if (aladin.aladinIsReady()) {
-        //     aladin.removeLayers();
-        // }
+        if (aladin.aladinIsReady()) {
+            aladin.removeLayers();
+        }
 
-        // me.loadReleaseById(release);
+        me.onChangeRelease();
 
+        me.loadReleaseById(release);
     },
 
-    /**
-     * @method onChangeRelease [description]
-     */
-    onChangeRelease: function (release) {
+    onChangeRelease: function () {
+
+        var me = this,
+            vm = me.getViewModel(),
+            releases = vm.getStore('releases'),
+            surveys = vm.getStore('surveys'),
+            datasets = vm.getStore('datasets'),
+            tiles = vm.getStore('tiles');
+
+        releases.clearFilter(true);
+
+        surveys.removeAll();
+        surveys.clearFilter(true);
+
+        datasets.removeAll();
+        datasets.clearFilter(true);
+
+        tiles.removeAll();
+        tiles.clearFilter(true);
 
     },
 
     loadReleaseById: function (release) {
-        console.log('loadReleaseById');
-
         var me = this,
             vm = me.getViewModel(),
+            release = vm.get('release'),
             store = vm.getStore('releases');
 
         if (release > 0) {
@@ -78,7 +87,6 @@ Ext.define('Sky.view.footprint.FootprintController', {
     },
 
     onLoadReleases: function (store) {
-        console.log('onLoadReleases');
         var me = this,
             vm = me.getViewModel(),
             currentRelease;
@@ -91,7 +99,6 @@ Ext.define('Sky.view.footprint.FootprintController', {
             me.loadReleaseData(currentRelease);
 
         }
-
     },
 
     /**
@@ -100,8 +107,6 @@ Ext.define('Sky.view.footprint.FootprintController', {
      * dispara o carregamento da imagens usadas no Aladin.
      */
     loadReleaseData: function (record) {
-        console.log('loadReleaseData(%o)', record);
-
         if (record.get('id') > 0) {
 
             this.loadSurveys(record);
@@ -191,7 +196,6 @@ Ext.define('Sky.view.footprint.FootprintController', {
                     property: 'srv_project',
                     value: 'DES'
                 },
-
                 {
                     property: 'srv_release',
                     value: release.get('id')

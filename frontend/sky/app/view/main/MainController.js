@@ -53,7 +53,6 @@ Ext.define('Sky.view.main.MainController', {
     },
 
     onHome: function () {
-
         var newView = Ext.create('Sky.view.home.Home', {
             hideMode: 'offsets',
             routeId: 'home',
@@ -64,9 +63,6 @@ Ext.define('Sky.view.main.MainController', {
     },
 
     onSky: function (release) {
-
-        console.log('onSky(%o)', release);
-
         var newView = Ext.create('Sky.view.footprint.Footprint', {
             hideMode: 'offsets',
             routeId: 'sky',
@@ -74,7 +70,7 @@ Ext.define('Sky.view.main.MainController', {
             release: release
         });
 
-        this.setActivePanel(newView);
+        this.setActivePanel(newView, release);
     }
 
 });

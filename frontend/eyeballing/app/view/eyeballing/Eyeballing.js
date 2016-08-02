@@ -134,26 +134,31 @@ Ext.define('Eyeballing.view.eyeballing.Eyeballing', {
         me.callParent(arguments);
     },
 
-    loadPanel: function () {
-        this.fireEvent('loadpanel', this);
-
-    },
-
-    updatePanel: function () {
-        this.fireEvent('updatePanel', this);
-
-    },
-
-    setRelease: function (release) {
+    loadPanel: function (arguments) {
         var me = this,
-            vm = me.getViewModel();
+            release = me.getRelease(),
+            vm = this.getViewModel();
 
         if (release > 0) {
-            me.release = release;
 
             vm.set('release', release);
 
-            me.fireEvent('changerelease', release, me);
+            this.fireEvent('loadpanel', release, this);
+        }
+    },
+
+    updatePanel: function (arguments) {
+        var me = this,
+            oldrelease = me.getRelease(),
+            release = arguments[1],
+            vm = this.getViewModel();
+
+        if ((release > 0) && (release != oldrelease)) {
+            me.setRelease(release);
+
+            vm.set('release', release);
+
+            this.fireEvent('updatePanel', release, this);
         }
     }
 

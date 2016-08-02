@@ -269,6 +269,7 @@ Ext.define('aladin.Aladin', {
     },
 
     setSurveys: function (surveys) {
+        this.surveys = null;
         this.surveys = surveys;
 
         if ((this.getAladin()) && (surveys.length > 0)) {
