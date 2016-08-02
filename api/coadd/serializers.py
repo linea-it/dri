@@ -1,12 +1,15 @@
 import logging
 
 from rest_framework import serializers
+
 from .models import Release, Tag, Tile, Dataset, Survey
 
 logger = logging.getLogger(__name__)
 
 
 class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
+    tiles_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Release
 
@@ -19,7 +22,15 @@ class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
             'rls_doc_url',
             'rls_description',
             'rls_default',
+            'tiles_count'
         )
+
+    def get_tiles_count(self, obj):
+        count = 0
+        for tag in obj.tags.all():
+            count += tag.tiles.count()
+
+        return count
 
 
 class TileSerializer(serializers.HyperlinkedModelSerializer):

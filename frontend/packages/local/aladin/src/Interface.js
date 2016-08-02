@@ -3,7 +3,6 @@ Ext.define('aladin.Interfaces', {
     windowInfo: null,
 
     enableDisableInfo: function (btn, state) {
-        console.log('enableDisableInfo(%o)', state);
         var me = this,
             w = me.windowInfo;
 
@@ -16,7 +15,6 @@ Ext.define('aladin.Interfaces', {
     },
 
     createWindowInfo: function () {
-        console.log('createWindowInfo()');
         var me = this,
             w;
 
