@@ -218,12 +218,16 @@
      *
      */
     "js": [
-        // // Biblioteca Jquery/ JQuery UI
+        // Biblioteca Jquery/ JQuery UI Versao 2.1.4 usada no visiomatic para corrigir erro de compatibilidade
+        // com o aladin  usar a mesma Jquery para ambos.
         {
-            "path": "https://code.jquery.com/jquery-1.11.1.min.js",
-            "remote": true
+            "path": "../packages/local/visiomatic/src/visiomatic/dist/jquery-min.js"
         },
         // biblioteca Aladin (Necessita do JQuery)
+        // {
+        //     "path": "https://code.jquery.com/jquery-1.11.1.min.js",
+        //     "remote": true
+        // },
         {
             "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js",
             "remote": true
@@ -232,9 +236,10 @@
         {
             "path": "../packages/local/visiomatic/src/Leaflet/dist/leaflet.js"
         },
-        {
-            "path": "../packages/local/visiomatic/src/visiomatic/dist/jquery-min.js"
-        },
+        // Importar apenas uma jquery para ser compativel com o Aladin.
+        // {
+        //     "path": "../packages/local/visiomatic/src/visiomatic/dist/jquery-min.js"
+        // },
         {
             "path": "../packages/local/visiomatic/src/visiomatic/dist/jqplot-min.js"
         },
