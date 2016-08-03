@@ -16,16 +16,17 @@ Ext.define('Home.view.widget.Wtarget', {
             html: '<br>Manage lists of targets with image display, cutouts, ranking and reject functionalities.',
             // xtype: 'container',
             // text: 'testando',
-            width: 128,
+            width: 128
             // height: 134
         }]
     },{
-        xtype: 'button', 
+        xtype: 'button',
         text    : 'Target Viewer',
         width: 260,
         scale: 'large',
-        handler : function() {
-            window.open("/dri/apps/target","_self")
+        disabled: true,
+        handler : function () {
+            window.open('/dri/apps/target','_self');
         }
     }]
 });

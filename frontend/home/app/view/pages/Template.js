@@ -1,6 +1,10 @@
 Ext.define('Home.view.pages.Template', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Ext.Component',
     xtype: 'pages-template',
+
+    scrollable : {
+        direction: 'vertical'
+    },
 
     data: {
         host: '',
@@ -29,7 +33,19 @@ Ext.define('Home.view.pages.Template', {
         '<br>',
         // '<a target="_self" alt="{pageTitle}" href="{host}{appURL}">Go To {pageTitle}</a>',
         '<p></p>',
-        '<p class="app-paragrafo2">{paragrafo2}</p>',
-    ]
+        '<p class="app-paragrafo2">{paragrafo2}</p>'
+    ],
+
+    afterRender: function () {
+        this.callParent(arguments);
+
+        // console.log('afterrender');
+        // Fix Scroll
+
+        var me = this;
+        // me.setHeight(this.bodyElement.dom.scrollHeight);
+        // me.setHeight(me.getEl().dom.scrollHeight);
+
+    }
 
 });

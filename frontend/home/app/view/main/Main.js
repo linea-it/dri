@@ -24,7 +24,6 @@ Ext.define('Home.view.main.Main', {
 
     controller: 'main',
     viewModel: 'main',
-    scrollable : true,
     ui: 'navigation',
 
     tabBarHeaderPosition: 1,
@@ -47,8 +46,8 @@ Ext.define('Home.view.main.Main', {
     tabBar: {
         flex: 1,
         layout: {
-            align: 'stretch',
-            overflowHandler: 'none'
+            align: 'stretch'
+            // overflowHandler: 'none'
         }
     },
 
@@ -64,6 +63,9 @@ Ext.define('Home.view.main.Main', {
     defaults: {
         bodyPadding: 20,
         tabConfig: {
+            scrollable : {
+                direction: 'vertical'
+            },
             plugins: 'responsive',
             responsiveConfig: {
                 wide: {
@@ -109,30 +111,35 @@ Ext.define('Home.view.main.Main', {
         iconCls: 'fa-dot-circle-o',
         items: [{
             xtype: 'pages-target'
-        }]
+        }],
+        disabled: true
     },{
         title: 'Sky Query',
         iconCls: 'fa-database',
         bind: {
             html: '{loremIpsum}'
-        }
+        },
+        disabled: true
     },{
         title: 'Upload',
         iconCls: 'fa-upload',
         bind: {
             html: '{loremIpsum}'
-        }
+        },
+        disabled: true
     },{
         title: 'Cutout Server',
         iconCls: 'fa-picture-o',
         bind: {
             html: '{loremIpsum}'
-        }
+        },
+        disabled: true
     },{
         title: 'Science Products',
         iconCls: 'fa-leanpub',
         bind: {
             html: '{loremIpsum}'
-        }
+        },
+        disabled: true
     }]
 });
