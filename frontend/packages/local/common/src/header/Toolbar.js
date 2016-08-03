@@ -13,11 +13,17 @@ Ext.define('common.header.Toolbar', {
 
     height: 52,
 
+    layout: {
+        type: 'hbox',
+        align: 'middle'
+    },
+
     viewModel: {
         data: {
             // name: '',
             home: '',
-            desPortalLogo: 'resources/des-portal-logo.png'
+            desPortalLogo: 'resources/des-portal-logo.png',
+            tooltip: 'Home page of Science Server'
         }
     },
 
@@ -27,15 +33,16 @@ Ext.define('common.header.Toolbar', {
             cls: 'des-portal-logo',
             bind: {
                 html: '<a href=\"{home}\">' +
-                           '<img border="0" alt="Home" src="{desPortalLogo}">' +
+                           '<img border="0" alt="Home" src="{desPortalLogo}" title="{tooltip}">' +
                         '</a>'
             }
         }, {
             xtype: 'component',
             cls: 'des-portal-appname',
             bind: {
-                html: '<div>{name}</div>'
-            }
+                html: '{name}'
+            },
+            flex: 1
         }
     ],
 
