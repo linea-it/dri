@@ -6,7 +6,8 @@ Ext.define('Sky.view.footprint.Footprint', {
     requires: [
         'Sky.view.footprint.FootprintController',
         'Sky.view.footprint.FootprintModel',
-        'Sky.view.footprint.Aladin'
+        'Sky.view.footprint.Aladin',
+        'Sky.view.footprint.Visiomatic'
     ],
 
     controller: 'footprint',
@@ -23,17 +24,32 @@ Ext.define('Sky.view.footprint.Footprint', {
         Ext.apply(this, {
             items: [
                 {
-                    xtype: 'footprint-aladin',
-                    reference: 'aladin',
-                    tilesGridVisible: true,
-                    bind: {
-                        storeSurveys: '{surveys}',
-                        storeTags: '{tags}',
-                        storeTiles: '{tiles}'
+                    xtype: 'container',
+                    region: 'center',
+                    reference: 'cardPanel',
+                    layout: {
+                        type: 'card',
+                        anchor: '100%'
                     },
-                    listeners: {
-                        ondblclick: 'onDblClickFootprint'
-                    }
+                    items: [
+                        {
+                            xtype: 'footprint-aladin',
+                            reference: 'aladin',
+                            tilesGridVisible: true,
+                            bind: {
+                                storeSurveys: '{surveys}',
+                                storeTags: '{tags}',
+                                storeTiles: '{tiles}'
+                            },
+                            listeners: {
+                                ondblclick: 'onDblClickAladin'
+                            }
+                        },
+                        {
+                            xtype: 'sky-visiomatic',
+                            reference: 'visiomatic'
+                        }
+                    ]
                 }
             ]
         });

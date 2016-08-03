@@ -223,7 +223,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
         }
     },
 
-    onDblClickFootprint: function (radec) {
+    onDblClickAladin: function (radec) {
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('tiles'),
@@ -231,7 +231,9 @@ Ext.define('Sky.view.footprint.FootprintController', {
             tags = vm.getStore('tags'),
             releases = vm.getStore('releases'),
             host = window.location.host,
-            tilename, tag, tag_name, release, release_name, location;
+            tilename, tag, tag_name, release, release_name, location,
+            card = me.lookupReference('cardPanel'),
+            layout = card.getLayout();
 
         // TODO [CMP] URL HARDCORDED :p
         if (dataset) {
@@ -241,10 +243,14 @@ Ext.define('Sky.view.footprint.FootprintController', {
             release = releases.findRecord('id', dataset.get('release'));
             release_name = release.get('rls_name');
 
-            // http://desportal.cosmology.illinois.edu:8080/dri/apps/visio/tmp/index2.html?survey_name=y1_supplemental_d04&tile_name=DES0959%2B0126
-            location = Ext.String.format('http://{0}/dri/apps/visiomatic/?release={1}&tilename={2}', host, release_name, encodeURIComponent(tilename));
+            console.log('visiomatic');
 
-            window.open(location);
+            layout.next();
+
+            // http://desportal.cosmology.illinois.edu:8080/dri/apps/visio/tmp/index2.html?survey_name=y1_supplemental_d04&tile_name=DES0959%2B0126
+            // location = Ext.String.format('http://{0}/dri/apps/visiomatic/?release={1}&tilename={2}', host, release_name, encodeURIComponent(tilename));
+
+            // window.open(location);
         }
     }
 
