@@ -21,8 +21,11 @@ source env/bin/activate || error_exit "Error, exit" 6
 
 echo
 echo "= Updating requirements ="
+pip3 install -U -r api/requirements.txt || error_exit "Error, exit" 7
+
+echo
+echo "= Entering in the application folder ="
 cd api  || error_exit "Error, exit" 8
-pip3 install -U -r requirements.txt || error_exit "Error, exit" 7
 
 echo
 echo "= Updating the database structure ="
@@ -45,6 +48,11 @@ cd ..
 #   https://www.quora.com/How-can-I-grant-a-user-access-to-run-etc-init-d-apache2-reload-without-giving-them-sudo-or-root
 # - enabling a non root user to open the port 80
 #   http://askubuntu.com/questions/694036/apache-as-non-root
+
+echo
+echo "= Reloading apache ="
+sudo /etc/init.d/apache2 reload || error_exit "Error, exit" 12
+cd ..
 
 echo
 echo "= Exiting ="
