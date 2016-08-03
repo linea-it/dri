@@ -219,11 +219,11 @@
   "toolkit": "classic",
   "theme": "theme-triton",
   "loader": {
-    "cache": "20160802172417",
+    "cache": "20160803112310",
     "cacheParam": "_dc"
   },
   "id": "f819e9bd-9643-45a0-b315-b6e66c9f2ec6",
-  "hash": "eb4ebe7270293f51c6d1e2609b78a03999487dbe",
+  "hash": "5ed6ef3b14ef287ea7c5a129f0986a709e5da9f9",
   "profile": "",
   "resources": {
     "path": "resources"
