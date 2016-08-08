@@ -48,10 +48,10 @@ Ext.define('Eyeballing.view.eyeballing.Eyeballing', {
                                         storeSurveys: '{surveys}',
                                         storeTags: '{tags}',
                                         storeTiles: '{tiles}'
-                                    },
-                                    listeners: {
-                                        ondblclick: 'onDblClickAladin'
                                     }
+                                    // listeners: {
+                                    //     ondblclick: 'onDblClickAladin'
+                                    // }
                                 },
                                 {
                                     xtype: 'eyeballing-visiomatic',
@@ -71,12 +71,12 @@ Ext.define('Eyeballing.view.eyeballing.Eyeballing', {
                                 }
                             }),
                             tbar: [
-                                {
-                                    xtype: 'button',
-                                    iconCls: 'x-fa fa-refresh',
-                                    handler: 'aladinVisiomatic',
-                                    tooltip: 'Toggle the display between Aladin and Visiomatic'
-                                },
+                                // {
+                                //     xtype: 'button',
+                                //     iconCls: 'x-fa fa-refresh',
+                                //     handler: 'aladinVisiomatic',
+                                //     tooltip: 'Toggle the display between Aladin and Visiomatic'
+                                // },
                                 {
                                     xtype: 'button',
                                     iconCls: 'x-fa fa-exclamation-triangle',

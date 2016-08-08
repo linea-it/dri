@@ -17,7 +17,11 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             },
             'eyeballing-aladin': {
                 changetile: 'onChangeTile',
-                changefilter: 'onChangeFilter'
+                changefilter: 'onChangeFilter',
+                ondblclick: 'activeVisiomatic'
+            },
+            'eyeballing-visiomatic': {
+                dblclick: 'activeAladin'
             }
         },
         store: {
@@ -578,31 +582,31 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
         });
     },
 
-    onDblClickAladin: function (radec) {
-        var me = this,
-            vm = me.getViewModel(),
-            store = vm.getStore('tiles'),
-            dataset = store.filterByRaDec(radec[0], radec[1]),
-            tags = vm.getStore('tags'),
-            releases = vm.getStore('releases'),
-            host = window.location.host,
-            tilename, tag, tag_name, release, release_name, location;
+    // onDblClickAladin: function (radec) {
+    //     var me = this,
+    //         vm = me.getViewModel(),
+    //         store = vm.getStore('tiles'),
+    //         dataset = store.filterByRaDec(radec[0], radec[1]),
+    //         tags = vm.getStore('tags'),
+    //         releases = vm.getStore('releases'),
+    //         host = window.location.host,
+    //         tilename, tag, tag_name, release, release_name, location;
 
-        // TODO [CMP] URL HARDCORDED :p
-        if (dataset) {
-            tilename = dataset.get('tli_tilename');
-            tag = tags.findRecord('id', dataset.get('tag'));
-            tag_name = tag.get('tag_name');
-            release = releases.findRecord('id', dataset.get('release'));
-            release_name = release.get('rls_name');
+    //     // TODO [CMP] URL HARDCORDED :p
+    //     if (dataset) {
+    //         tilename = dataset.get('tli_tilename');
+    //         tag = tags.findRecord('id', dataset.get('tag'));
+    //         tag_name = tag.get('tag_name');
+    //         release = releases.findRecord('id', dataset.get('release'));
+    //         release_name = release.get('rls_name');
 
-            // http://desportal.cosmology.illinois.edu:8080/dri/apps/visio/tmp/index2.html?survey_name=y1_supplemental_d04&tile_name=DES0959%2B0126
-            location = Ext.String.format('http://{0}/dri/apps/visiomatic/?release={1}&tilename={2}', host, release_name, encodeURIComponent(tilename));
+    //         // http://desportal.cosmology.illinois.edu:8080/dri/apps/visio/tmp/index2.html?survey_name=y1_supplemental_d04&tile_name=DES0959%2B0126
+    //         location = Ext.String.format('http://{0}/dri/apps/visiomatic/?release={1}&tilename={2}', host, release_name, encodeURIComponent(tilename));
 
-            window.open(location, '_self');
+    //         window.open(location, '_self');
 
-        }
-    },
+    //     }
+    // },
 
     aladinVisiomatic: function () {
         var me = this,
@@ -627,11 +631,11 @@ Ext.define('Eyeballing.view.eyeballing.EyeballingController', {
             card = me.lookupReference('cardPanel'),
             layout = card.getLayout(),
             visiomatic = me.lookupReference('visiomatic'),
-            host;
+            host = window.location.host;
 
         layout.next();
 
-        host = 'desportal.cosmology.illinois.edu';
+        // host = 'desportal.cosmology.illinois.edu';
         var url = Ext.String.format(
             'http://{0}/visiomatic?FIF=data/releases/{1}/images/visiomatic/{2}.ptif',
             host,
