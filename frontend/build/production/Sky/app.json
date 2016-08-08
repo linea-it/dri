@@ -136,16 +136,33 @@
       },
       "type": "code",
       "version": "6.0.1.250"
+    },
+    "visiomatic": {
+      "creator": "anonymous",
+      "namespace": "visiomatic",
+      "type": "code",
+      "version": "1.0.0"
     }
   },
   "js": [
     {
-      "remote": true,
-      "path": "https://code.jquery.com/jquery-1.11.1.min.js"
+      "path": "packages/local/visiomatic/src/visiomatic/dist/jquery-min.js"
     },
     {
       "remote": true,
       "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js"
+    },
+    {
+      "path": "packages/local/visiomatic/src/Leaflet/dist/leaflet.js"
+    },
+    {
+      "path": "packages/local/visiomatic/src/visiomatic/dist/jqplot-min.js"
+    },
+    {
+      "path": "packages/local/visiomatic/src/visiomatic/dist/spectrum-min.js"
+    },
+    {
+      "path": "packages/local/visiomatic/src/visiomatic/dist/visiomatic-src.js"
     },
     {
       "path": "app.js"
@@ -155,6 +172,18 @@
     {
       "remote": true,
       "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css"
+    },
+    {
+      "path": "packages/local/visiomatic/src/Leaflet/dist/leaflet.css"
+    },
+    {
+      "path": "packages/local/visiomatic/src/visiomatic/dist/visiomatic.css"
+    },
+    {
+      "path": "packages/local/visiomatic/src/visiomatic/dist/spectrum.css"
+    },
+    {
+      "path": "packages/local/visiomatic/src/visiomatic/dist/jqplot.css"
     },
     {
       "remote": false,
@@ -186,11 +215,11 @@
   "toolkit": "classic",
   "theme": "theme-triton",
   "loader": {
-    "cache": "20160803111640",
+    "cache": "20160808150236",
     "cacheParam": "_dc"
   },
   "id": "495a5aab-e912-414c-bd2d-7b69ef5766b9",
-  "hash": "62f1a37be7cc8898bda43b057925792deef84cbb",
+  "hash": "fd7fa949e09c70cc5ee5599c0c9c7203ba92d34f",
   "profile": "",
   "resources": {
     "path": "resources"

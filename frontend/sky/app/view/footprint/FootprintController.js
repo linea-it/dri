@@ -14,6 +14,12 @@ Ext.define('Sky.view.footprint.FootprintController', {
             'footprint': {
                 loadpanel: 'onLoadPanel',
                 updatepanel: 'onUpdatePanel'
+            },
+            'footprint-aladin': {
+                ondblclick: 'onDblClickAladin'
+            },
+            'sky-visiomatic': {
+                dblclick: 'onDblClickVisiomatic'
             }
         },
         store: {
@@ -35,7 +41,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
         me.loadReleaseById(release);
     },
 
-    onUpdatePanel: function (release, view) {
+    onUpdatePanel: function (release) {
         var me = this,
             aladin = me.lookupReference('aladin');
 
@@ -70,7 +76,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
     },
 
-    loadReleaseById: function (release) {
+    loadReleaseById: function () {
         var me = this,
             vm = me.getViewModel(),
             release = vm.get('release'),
@@ -204,25 +210,6 @@ Ext.define('Sky.view.footprint.FootprintController', {
         );
     },
 
-    /**
-     * executado toda vez que a store
-     * datasets for load ou filtered. se a store tiver apenas um
-     * resultado este passa a ser o currentDataset.
-     * @param {Object} store - Instancia da Store Dataset no viewModel.
-     */
-    onLoadDatasets: function (store) {
-        var me = this,
-            vm = me.getViewModel(),
-            dataset;
-
-        if (store.count() === 1) {
-            dataset = store.first();
-
-            vm.set('currentDataset', dataset);
-
-        }
-    },
-
     onDblClickAladin: function (radec) {
         var me = this,
             vm = me.getViewModel(),
@@ -231,11 +218,11 @@ Ext.define('Sky.view.footprint.FootprintController', {
             tags = vm.getStore('tags'),
             releases = vm.getStore('releases'),
             host = window.location.host,
-            tilename, tag, tag_name, release, release_name, location,
+            tilename, tag, tag_name, release, release_name,
             card = me.lookupReference('cardPanel'),
-            layout = card.getLayout();
+            layout = card.getLayout(),
+            visiomatic = me.lookupReference('visiomatic');
 
-        // TODO [CMP] URL HARDCORDED :p
         if (dataset) {
             tilename = dataset.get('tli_tilename');
             tag = tags.findRecord('id', dataset.get('tag'));
@@ -243,15 +230,29 @@ Ext.define('Sky.view.footprint.FootprintController', {
             release = releases.findRecord('id', dataset.get('release'));
             release_name = release.get('rls_name');
 
-            console.log('visiomatic');
-
             layout.next();
 
-            // http://desportal.cosmology.illinois.edu:8080/dri/apps/visio/tmp/index2.html?survey_name=y1_supplemental_d04&tile_name=DES0959%2B0126
-            // location = Ext.String.format('http://{0}/dri/apps/visiomatic/?release={1}&tilename={2}', host, release_name, encodeURIComponent(tilename));
+            // host = 'desportal.cosmology.illinois.edu:8080';
+            // host = 'localhost:8080';
 
-            // window.open(location);
+            var url = Ext.String.format(
+                'http://{0}/visiomatic?FIF=data/releases/{1}/images/visiomatic/{2}.ptif',
+                host,
+                release.get('rls_name'),
+                encodeURIComponent(dataset.get('tli_tilename'))
+                // 'DES2342%2B0043'
+            );
+
+            visiomatic.setImage(url);
         }
+    },
+
+    onDblClickVisiomatic: function () {
+        var me = this,
+            card = me.lookupReference('cardPanel'),
+            layout = card.getLayout();
+
+        layout.prev();
     }
 
 });

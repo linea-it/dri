@@ -116,6 +116,7 @@ Ext.define('visiomatic.Visiomatic', {
 
 
         // Add Events Listeners to Map
+        map.on('dblclick', me.onDblClick, me);
         // map.on('layeradd', me.onTileLoad, me);
         // map.on('baselayerchange', function () {
         //         console.log('TESTE');
@@ -255,6 +256,13 @@ Ext.define('visiomatic.Visiomatic', {
 
         // me.fireEvent('changeimage', me);
 
+    },
+
+    onDblClick: function () {
+        var me = this,
+            map = me.getMap();
+
+        me.fireEvent('dblclick', me);
     }
 
 });

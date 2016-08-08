@@ -34,6 +34,7 @@ Ext.define('Sky.view.footprint.Footprint', {
                     items: [
                         {
                             xtype: 'footprint-aladin',
+                            id: 'card-aladin',
                             reference: 'aladin',
                             tilesGridVisible: true,
                             bind: {
@@ -47,6 +48,7 @@ Ext.define('Sky.view.footprint.Footprint', {
                         },
                         {
                             xtype: 'sky-visiomatic',
+                            id: 'card-visiomatic',
                             reference: 'visiomatic'
                         }
                     ]
