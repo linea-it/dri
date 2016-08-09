@@ -992,6 +992,7 @@ $include-aladin-interfaces: dynamic(true);;
 $include-aladin-maps: dynamic(true);;
 $include-common-bandfilter: dynamic(true);;
 $include-common-searchfield: dynamic(true);;
+$include-common-toolbarcontroller: dynamic(true);;
 $include-common-data-proxy-crsftoken: dynamic(true);;
 $include-common-data-proxy-django: dynamic(true);;
 $include-common-header-toolbar: dynamic(true);;

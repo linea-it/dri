@@ -21,7 +21,11 @@ Ext.define('Eyeballing.Application', {
         // Checar se o usuario esta logado
 
         Ext.Ajax.request({
-            url: '/dri/api?format=json',
+            url: '/dri/api/logged/get_logged/?format=json',
+            success: function (response) {
+                var data = JSON.parse(response.responseText);
+                window.sessionStorage.setItem('dri_username', data.username);
+            },
             failure: function () {
                 var pathname = window.location.pathname,
                     hostname = window.location.host,
@@ -32,7 +36,6 @@ Ext.define('Eyeballing.Application', {
                 window.location.assign(location);
 
             }
-
         });
     },
 
