@@ -2,7 +2,8 @@ Ext.define('Target.view.association.AssociationController', {
     extend: 'Ext.app.ViewController',
 
     requires: [
-        'Target.model.CatalogColumn'
+        'Target.model.CatalogColumn',
+        'Target.model.Association'
     ],
 
     alias: 'controller.association',
@@ -31,10 +32,9 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     onChangeProduct: function (product) {
-        console.log('onChangeProduct');
         var me = this,
             vm = me.getViewModel(),
-            association = vm.getStore('association'),
+            association = vm.getStore('fakeassociation'),
             currentCatalog = vm.get('currentCatalog');
 
         // Limpar a store de associacao usada na grid
@@ -64,7 +64,6 @@ Ext.define('Target.view.association.AssociationController', {
                 value: currentCatalog.get('prd_class')
             }
         ]);
-
     },
 
     onLoadClassContent: function () {
@@ -120,9 +119,12 @@ Ext.define('Target.view.association.AssociationController', {
             refs = me.getReferences(),
             grid = refs.productcontentgrid,
             vm = me.getViewModel(),
-            association = vm.getStore('association'),
+            currentCatalog = vm.get('currentCatalog'),
+            association = vm.getStore('fakeassociation'),
             productContents = vm.getStore('productcontent'),
             productAssociations = vm.getStore('productassociation');
+
+        association.removeAll();
 
         // Para cada propriedade que o produto possui adicionar a store que está na associada a grid
         productContents.each(function (record) {
@@ -132,7 +134,7 @@ Ext.define('Target.view.association.AssociationController', {
             if (!a) {
                 // nao tem associacao criar uma vazia.
                 a = Ext.create('Target.model.CatalogColumn', {
-                    'pca_product_id': record.get('pcn_product_id'),
+                    'pca_product': currentCatalog.get('id'),
                     'pca_product_content': record.get('id'),
                     'pcn_column_name': record.get('pcn_column_name')
                 });
@@ -147,7 +149,6 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     onSearchClassContent: function (value) {
-        console.log('onSearchClassContent');
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
@@ -181,6 +182,111 @@ Ext.define('Target.view.association.AssociationController', {
     onCancelAssociation: function () {
         console.log('onCancelAssociation');
 
+    },
+
+    onCellDrop: function (target, dragData) {
+        var tRecord = target.record,
+            previousValues = tRecord.previousValues.pcc_display_name,
+            record;
+
+        // Checar se a coluna que recebeu estava vazia
+        if (previousValues == '') {
+            // Criar um model Association
+            record = Ext.create('Target.model.Association', {
+                pca_product: tRecord.get('pca_product'),
+                pca_class_content: dragData.record.get('id'),
+                pca_product_content: tRecord.get('pca_product_content')
+            });
+
+            this.addAssociation(record, tRecord);
+
+        } else {
+            if (previousValues != dragData.record.pcc_display_name) {
+                console.log('update associacao');
+
+            }
+        }
+    },
+
+    addAssociation: function (record, target) {
+        console.log('addAssociation(%o, %o)', record, target);
+
+        record.save({
+            callback: function (saved, operation, success) {
+                if (success) {
+                    // recupera o objeto inserido no banco de dados
+                    var obj = Ext.decode(operation.getResponse().responseText);
+
+                    console.log('success');
+
+                    // Seta ao os id que foi adicionado para não precisar fazer reload na grid
+                    target.set('id', obj.id);
+                    target.set('pca_class_content', obj.pca_class_content);
+                    target.commit(true);
+                }
+            }
+        });
+    },
+
+    onRemove: function () {
+        var me = this,
+            refs = me.getReferences(),
+            grid = refs.productcontentgrid,
+            fakeAssociation = grid.selection,
+            record;
+
+        record = Ext.create('Target.model.Association', {
+            'id': fakeAssociation.get('id')
+        });
+
+        record.erase({
+            callback: function (savedReject, operation, success) {
+                if (success) {
+                    me.loadProductContent();
+                }
+            }
+        });
+    },
+
+    onRemoveAll: function () {
+
+        Ext.MessageBox.confirm(
+            'Confirm',
+            'Are you sure you want to do that?',
+            function (btn) {
+                if (btn == 'yes') {
+                    this.removeAll();
+                }
+            },
+            this
+        );
+    },
+
+    removeAll: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog'),
+            store;
+
+        store = Ext.create('Target.store.Association', {
+            filters: [
+                {
+                    property: 'pca_product',
+                    value: currentCatalog.get('id')
+                }
+            ]
+        });
+        store.load({
+            scope: store,
+            callback: function () {
+                this.removeAll();
+                this.sync({
+                    scope: me,
+                    callback: me.loadProductContent()
+                });
+            }
+        });
+        store = null;
     }
 
 });

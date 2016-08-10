@@ -225,7 +225,7 @@ class ProductContentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ProductContentAssociationSerializer(serializers.HyperlinkedModelSerializer):
-    pca_product_id = serializers.PrimaryKeyRelatedField(
+    pca_product = serializers.PrimaryKeyRelatedField(
         queryset=Product.objects.all(), many=False)
 
     pca_class_content = serializers.PrimaryKeyRelatedField(
@@ -250,7 +250,7 @@ class ProductContentAssociationSerializer(serializers.HyperlinkedModelSerializer
 
         fields = (
             'id',
-            'pca_product_id',
+            'pca_product',
             'pca_class_content',
             'pca_product_content',
             'pcc_category',
@@ -261,6 +261,8 @@ class ProductContentAssociationSerializer(serializers.HyperlinkedModelSerializer
             'pcc_mandatory',
             'pcn_column_name'
         )
+
+        read_only_fields = ('id')
 
     def get_pcc_category(self, obj):
         return obj.pca_class_content.pcc_category.cct_name
@@ -304,3 +306,17 @@ class AssociationSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_pcn_column_name(self, obj):
         return obj.pca_product_content.pcn_column_name
+
+
+class ProductAssociationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductContentAssociation
+
+        fields = (
+            'id',
+            'pca_product',
+            'pca_class_content',
+            'pca_product_content',
+        )
+
+        read_only_fields = ('id')
