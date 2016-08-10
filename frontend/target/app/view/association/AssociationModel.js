@@ -6,7 +6,8 @@ Ext.define('Target.view.association.AssociationModel', {
     requires: [
         'Target.store.ClassContent',
         'Target.store.ProductContent',
-        'Target.store.ProductAssociation'
+        'Target.store.ProductAssociation',
+        'Target.store.Association'
     ],
 
     links: {
@@ -32,9 +33,8 @@ Ext.define('Target.view.association.AssociationModel', {
             storeId: 'ProductAssociation'
         },
 
-        association: {
+        fakeassociation: {
             type: 'product-association'
-            // storeId: 'catalogColumns'
         }
     }
 });

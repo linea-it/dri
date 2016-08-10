@@ -21,11 +21,17 @@ Ext.define('Target.view.wizard.Wizard', {
 
     defaultListenerScope: true,
 
+    config: {
+        product: null
+    },
+
     items: [
         {
             id: 'card-0',
             xtype: 'targets-association',
-            title: 'Panel 1'
+            bind: {
+                product: '{product}'
+            }
         },
         {
             id: 'card-1',
@@ -52,6 +58,15 @@ Ext.define('Target.view.wizard.Wizard', {
             handler: 'showNext'
         }
     ],
+
+    setProduct: function (product) {
+        var me = this,
+            vm = me.getViewModel();
+
+        this.product = product;
+
+        vm.set('product', product);
+    },
 
     showNext: function () {
         this.doCardNavigation(1);

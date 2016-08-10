@@ -285,7 +285,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             layout: 'fit',
             closeAction: 'destroy',
             width: 800,
-            height: 600,
+            height: 620,
             items: [{
                 xtype: 'targets-association',
                 listeners: {
@@ -505,17 +505,20 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     showWizard: function () {
         console.log('showWizard');
-        var me = this;
+        var me = this,
+            vm = me.getViewModel(),
+            catalog = vm.get('catalog');
 
         this.wizard = Ext.create('Ext.window.Window', {
             title: 'WIZARD DE CONFIGURACAO',
             layout: 'fit',
             closeAction: 'destroy',
             width: 800,
-            height: 600,
+            height: 620,
             modal:true,
             items: [{
                 xtype: 'targets-wizard',
+                product: catalog,
                 listeners: {
                     scope: me
                     // todo evento que vai indicar que associacao foi finalizada

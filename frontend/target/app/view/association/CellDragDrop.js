@@ -167,6 +167,8 @@ Ext.define('Target.view.association.CellDragDrop', {
                         if (me.applyEmptyText) {
                             dragData.record.set(dragData.columnName, me.emptyText);
                         }
+
+                        view.fireEvent('celldrop', target, dragData, me);
                         return true;
                     }
                 },

@@ -1,9 +1,6 @@
 Ext.define('Target.view.association.Panel', {
     extend: 'Ext.panel.Panel',
 
-    /**
-     * @requires AssociationController
-     */
     requires: [
         'Target.view.association.AssociationController',
         'Target.view.association.AssociationModel',
@@ -39,11 +36,12 @@ Ext.define('Target.view.association.Panel', {
                     xtype: 'targets-association-grid',
                     itemId: 'grid1',
                     bind: {
-                        store: '{association}'
+                        store: '{fakeassociation}'
                     },
                     region: 'center',
                     reference: 'productcontentgrid',
                     viewConfig: {
+                        markDirty: false,
                         plugins: {
                             ptype: 'customcelldragdrop',
                             ddGroup: group1,
@@ -53,23 +51,10 @@ Ext.define('Target.view.association.Panel', {
                             dropColumn: 'pcc_display_name'
                         },
                         listeners: {
-                            drop: function (node, data, dropRec, dropPosition) {
-                                console.log('DROP');
-                                console.log(node, data, dropRec, dropPosition);
-                                // var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-                                // console.log('Drag from right to left Dropped ' + data.records[0].get('pcc_name') + dropOn);
-                            }
+                            celldrop: 'onCellDrop'
                         }
                     },
                     tbar: [
-                        {
-                            xtype: 'button',
-                            text: 'CLEAR'
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'CLEAR ALL'
-                        },
                         {
                             xtype: 'common-searchfield',
                             minSearch: 1,
@@ -78,17 +63,25 @@ Ext.define('Target.view.association.Panel', {
                                 'cancel': 'onCancelAssociation'
                             },
                             flex: 1
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Remove',
+                            iconCls: 'x-fa fa-minus-circle',
+                            tooltip: 'Remove the selected association.',
+                            handler: 'onRemove',
+                            bind: {
+                                disabled: '{!productcontentgrid.selection}'
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Clear',
+                            iconCls: 'x-fa fa-eraser',
+                            tooltip: 'Removes all associations.',
+                            handler: 'onRemoveAll'
                         }
                     ]
-
-                    // listeners: {
-                    //     drop: function (node, data, dropRec, dropPosition) {
-                    //         console.log('DROP');
-                    //         console.log(node, data, dropRec, dropPosition);
-                    //         // var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-                    //         // console.log('Drag from right to left Dropped ' + data.records[0].get('pcc_name') + dropOn);
-                    //     }
-                    // }
                 },
                 {
                     xtype: 'panel',
@@ -112,7 +105,7 @@ Ext.define('Target.view.association.Panel', {
                             flex: 2,
                             viewConfig: {
                                 plugins: {
-                                    ptype: 'celldragdrop',
+                                    ptype: 'customcelldragdrop',
 
                                     applyEmptyText: true,
 
@@ -121,9 +114,6 @@ Ext.define('Target.view.association.Panel', {
                                     enableDrag: true,
 
                                     enableDrop: false
-                                },
-                                listeners: {
-
                                 }
                             }
                         },
@@ -137,6 +127,7 @@ Ext.define('Target.view.association.Panel', {
                         {
                             xtype: 'common-searchfield',
                             minSearch: 1,
+                            disabled: true,
                             listeners: {
                                 'search': 'onSearchClassContent',
                                 'cancel': 'onCancelClassContent'
@@ -155,8 +146,9 @@ Ext.define('Target.view.association.Panel', {
 
         this.product = product;
 
-        this.fireEvent('changeproduct', product, this);
-
+        if (product) {
+            this.fireEvent('changeproduct', product, this);
+        }
     }
 
 });

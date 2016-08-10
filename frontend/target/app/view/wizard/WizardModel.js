@@ -28,5 +28,9 @@ Ext.define('Target.view.wizard.WizardModel', {
             type: 'Target.model.Catalog',
             create: true
         }
+    },
+
+    data: {
+        product: null
     }
 });

@@ -45,6 +45,8 @@ router.register(r'product', product_views.ProductViewSet)
 router.register(r'catalog', product_views.CatalogViewSet)
 router.register(r'productcontent', product_views.ProductContentViewSet)
 router.register(r'productassociation', product_views.ProductContentAssociationViewSet)
+router.register(r'association', product_views.ProductAssociationViewSet)
+
 
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
