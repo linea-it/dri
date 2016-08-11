@@ -58,6 +58,7 @@ Ext.define('Target.view.association.Panel', {
                         {
                             xtype: 'common-searchfield',
                             minSearch: 1,
+                            disabled: true,
                             listeners: {
                                 'search': 'onSearchAssociation',
                                 'cancel': 'onCancelAssociation'
@@ -127,7 +128,6 @@ Ext.define('Target.view.association.Panel', {
                         {
                             xtype: 'common-searchfield',
                             minSearch: 1,
-                            disabled: true,
                             listeners: {
                                 'search': 'onSearchClassContent',
                                 'cancel': 'onCancelClassContent'

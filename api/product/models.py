@@ -90,11 +90,11 @@ class ProductContent(models.Model):
 
 class ProductContentAssociation(models.Model):
     pca_product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, verbose_name='Product'
+        Product, on_delete=models.CASCADE, verbose_name='Product', default=None
     )
     pca_class_content = models.ForeignKey(
-        ProductClassContent, on_delete=models.CASCADE, verbose_name='Class Content'
+        ProductClassContent, on_delete=models.CASCADE, verbose_name='Class Content', default=None
     )
     pca_product_content = models.ForeignKey(
-        ProductContent, on_delete=models.CASCADE, verbose_name='Product Content'
+        ProductContent, on_delete=models.CASCADE, verbose_name='Product Content', default=None
     )
