@@ -152,6 +152,7 @@ class DatasetFootprintSerializer(serializers.BaseSerializer):
             obj.id,
             obj.tag.id,
             obj.tag.tag_release.id,
+            obj.tag.tag_release.rls_display_name,
             obj.tile.id,
             obj.tile.tli_tilename,
             obj.tile.tli_ra,

@@ -158,7 +158,8 @@ Ext.define('aladin.Aladin', {
         data: {
             location: '',
             tile: null,
-            tag: null
+            tag: null,
+            release: null
         }
     },
 
@@ -598,6 +599,7 @@ Ext.define('aladin.Aladin', {
             if (tile.get('id') !== oldtile) {
                 tag = me.getStoreTags().getById(tile.get('tag'));
 
+                vm.set('release', tile.get('release_display_name'));
                 vm.set('tile', tile);
                 vm.set('tag', tag);
 
