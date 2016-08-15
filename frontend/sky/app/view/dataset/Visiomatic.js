@@ -1,4 +1,4 @@
-Ext.define('Sky.view.footprint.Visiomatic', {
+Ext.define('Sky.view.dataset.Visiomatic', {
     extend: 'visiomatic.Visiomatic',
 
     xtype: 'sky-visiomatic',
