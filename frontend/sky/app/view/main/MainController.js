@@ -10,7 +10,9 @@ Ext.define('Sky.view.main.MainController', {
     alias: 'controller.main',
 
     requires: [
-        'Sky.view.home.Home'
+        'Sky.view.home.Home',
+        'Sky.view.footprint.Footprint',
+        'Sky.view.dataset.Dataset'
     ],
 
     routes : {
@@ -19,6 +21,9 @@ Ext.define('Sky.view.main.MainController', {
         },
         'sky/:release': {
             action: 'onSky'
+        },
+        'dataset/:dataset': {
+            action: 'onDataset'
         }
     },
 
@@ -71,6 +76,20 @@ Ext.define('Sky.view.main.MainController', {
         });
 
         this.setActivePanel(newView, release);
+    },
+
+    onDataset: function (dataset) {
+        console.log('onDataset(%o)', dataset);
+
+        var newView = Ext.create('Sky.view.dataset.Dataset', {
+            hideMode: 'offsets',
+            routeId: 'tile',
+            layout: 'fit',
+            dataset: dataset
+        });
+
+        this.setActivePanel(newView, dataset);
+
     }
 
 });

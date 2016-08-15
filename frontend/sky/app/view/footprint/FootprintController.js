@@ -17,9 +17,6 @@ Ext.define('Sky.view.footprint.FootprintController', {
             },
             'footprint-aladin': {
                 ondblclick: 'onDblClickAladin'
-            },
-            'sky-visiomatic': {
-                dblclick: 'onDblClickVisiomatic'
             }
         },
         store: {
@@ -217,11 +214,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
             dataset = store.filterByRaDec(radec[0], radec[1]),
             tags = vm.getStore('tags'),
             releases = vm.getStore('releases'),
-            host = window.location.host,
-            tilename, tag, tag_name, release, release_name,
-            card = me.lookupReference('cardPanel'),
-            layout = card.getLayout(),
-            visiomatic = me.lookupReference('visiomatic');
+            tilename, tag, tag_name, release, release_name;
 
         if (dataset) {
             tilename = dataset.get('tli_tilename');
@@ -230,29 +223,25 @@ Ext.define('Sky.view.footprint.FootprintController', {
             release = releases.findRecord('id', dataset.get('release'));
             release_name = release.get('rls_name');
 
-            layout.next();
+            hash = 'dataset/' + dataset.get('id');
+
+            me.redirectTo(hash);
+
+            // layout.next();
 
             // host = 'desportal.cosmology.illinois.edu:8080';
             // host = 'localhost:8080';
 
-            var url = Ext.String.format(
-                'http://{0}/visiomatic?FIF=data/releases/{1}/images/visiomatic/{2}.ptif',
-                host,
-                release.get('rls_name'),
-                encodeURIComponent(dataset.get('tli_tilename'))
-                // 'DES2342%2B0043'
-            );
+            // var url = Ext.String.format(
+            //     'http://{0}/visiomatic?FIF=data/releases/{1}/images/visiomatic/{2}.ptif',
+            //     host,
+            //     release.get('rls_name'),
+            //     encodeURIComponent(dataset.get('tli_tilename'))
+            //     // 'DES2342%2B0043'
+            // );
 
-            visiomatic.setImage(url);
+            // visiomatic.setImage(url);
         }
-    },
-
-    onDblClickVisiomatic: function () {
-        var me = this,
-            card = me.lookupReference('cardPanel'),
-            layout = card.getLayout();
-
-        layout.prev();
     }
 
 });

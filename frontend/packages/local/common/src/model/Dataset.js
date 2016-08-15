@@ -25,14 +25,18 @@ Ext.define('common.model.Dataset', {
             }
         },
 
+        // Maping para as imagens Visiomatic PTIF
+        {name:'image_src_ptif', type:'string'},
+
         // Maping para as imagens Thumb
-        {name:'image_src', type:'string'},
+        {name:'image_src_thumbnails', type:'string'},
+
         {
             name:'g',
             type:'string',
             convert: function (value, record) {
                 return Ext.String.format('{0}/{1}/{2}.png',
-                    record.get('image_src'), 'g', record.get('tli_tilename'));
+                    record.get('image_src_thumbnails'), 'g', record.get('tli_tilename'));
             }
         },
         {
@@ -40,7 +44,7 @@ Ext.define('common.model.Dataset', {
             type:'string',
             convert: function (value, record) {
                 return Ext.String.format('{0}/{1}/{2}.png',
-                    record.get('image_src'), 'r', record.get('tli_tilename'));
+                    record.get('image_src_thumbnails'), 'r', record.get('tli_tilename'));
             }
         },
         {
@@ -48,7 +52,7 @@ Ext.define('common.model.Dataset', {
             type:'string',
             convert: function (value, record) {
                 return Ext.String.format('{0}/{1}/{2}.png',
-                    record.get('image_src'), 'i', record.get('tli_tilename'));
+                    record.get('image_src_thumbnails'), 'i', record.get('tli_tilename'));
 
             }
         },
@@ -57,7 +61,7 @@ Ext.define('common.model.Dataset', {
             type:'string',
             convert: function (value, record) {
                 return Ext.String.format('{0}/{1}/{2}.png',
-                    record.get('image_src'), 'z', record.get('tli_tilename'));
+                    record.get('image_src_thumbnails'), 'z', record.get('tli_tilename'));
 
             }
         },
@@ -66,7 +70,7 @@ Ext.define('common.model.Dataset', {
             type:'string',
             convert: function (value, record) {
                 return Ext.String.format('{0}/{1}/{2}.png',
-                    record.get('image_src'), 'y', record.get('tli_tilename'));
+                    record.get('image_src_thumbnails'), 'y', record.get('tli_tilename'));
 
             }
         },
@@ -75,7 +79,7 @@ Ext.define('common.model.Dataset', {
             type:'string',
             convert: function (value, record) {
                 return Ext.String.format('{0}/{1}/{2}.png',
-                    record.get('image_src'), 'irg', record.get('tli_tilename'));
+                    record.get('image_src_thumbnails'), 'irg', record.get('tli_tilename'));
             }
         }
     ]
