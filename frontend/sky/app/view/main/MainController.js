@@ -22,7 +22,7 @@ Ext.define('Sky.view.main.MainController', {
         'sky/:release': {
             action: 'onSky'
         },
-        'dataset/:dataset': {
+        'dataset/:dataset/:coordinate/:fov': {
             action: 'onDataset'
         }
     },
@@ -78,17 +78,17 @@ Ext.define('Sky.view.main.MainController', {
         this.setActivePanel(newView, release);
     },
 
-    onDataset: function (dataset) {
-        console.log('onDataset(%o)', dataset);
-
+    onDataset: function (dataset, coordinate, fov) {
         var newView = Ext.create('Sky.view.dataset.Dataset', {
             hideMode: 'offsets',
             routeId: 'tile',
             layout: 'fit',
-            dataset: dataset
+            dataset: dataset,
+            coordinate: coordinate,
+            fov: fov
         });
 
-        this.setActivePanel(newView, dataset);
+        this.setActivePanel(newView, dataset, coordinate, fov);
 
     }
 
