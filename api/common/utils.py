@@ -5,7 +5,7 @@ class Utils():
     def generate_ptif_url(self, release, host):
         print("Generate PTIFs URLs")
 
-        datasets = Dataset.objects.select_related().filter(tag__tag_release=1)
+        datasets = Dataset.objects.select_related().filter(tag__tag_release=release)
         print('Datasets: %s', datasets.count())
         for dataset in datasets:
             release = dataset.tag.tag_release
@@ -19,4 +19,4 @@ class Utils():
             dataset.save()
 
             print(url)
-        print "Complete"
+        print("Complete")
