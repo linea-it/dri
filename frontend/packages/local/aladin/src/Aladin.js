@@ -97,7 +97,7 @@ Ext.define('aladin.Aladin', {
         enableViewMenu: true,
 
         // Botao para exportar para PNG
-        enableExportPng: true,
+        enableExportPng: false,
 
         // Botao para mostrar ou ocultar a crosshair
         enableReticle: true,
@@ -106,7 +106,7 @@ Ext.define('aladin.Aladin', {
         enableHealpixGrid: true,
 
         // Menu que permite trocar as cores da imagem
-        enableColorMap: true,
+        enableColorMap: false,
 
         // Botao para mostrar ou ocultar o footprint
         enableFootprint: true,
@@ -873,6 +873,13 @@ Ext.define('aladin.Aladin', {
         if (fov) {
             aladin.setFoV(fov);
         }
+    },
+
+    getFov: function () {
+        var me = this,
+            aladin = me.getAladin();
+
+        return aladin.getFov();
     },
 
     getFootprintByName: function (name) {
