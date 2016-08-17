@@ -1,0 +1,156 @@
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:68 */
+.ext-dirty-rtl:before {
+    content: "\e603";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:71 */
+.ext-edit-html:before {
+    content: "\e604";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:74 */
+.ext-equals:before {
+    content: "\e605";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:77 */
+.ext-expand:before {
+    content: "\e606";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:80 */
+.ext-group-by:before {
+    content: "\e607";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:83 */
+.ext-minimize:before {
+    content: "\e608";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:86 */
+.ext-nw-handle:before {
+    content: "\e609";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:89 */
+.ext-ne-handle:before {
+    content: "\e60a";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:92 */
+.ext-sw-handle:before {
+    content: "\e60b";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:95 */
+.ext-se-handle:before {
+    content: "\e60c";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:98 */
+.ext-text-background-color:before {
+    content: "\e60d";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:101 */
+.ext-text-color:before {
+    content: "\e60e";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:104 */
+.ext-text-decrease:before {
+    content: "\e60f";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:107 */
+.ext-text-increase:before {
+    content: "\e610";
+}
+/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:110 */
+.ext-unpin:before {
+    content: "\e611";
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:3 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-Light.ttf');
+    font-weight: 300;
+    font-style: normal;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:10 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-LightItalic.ttf');
+    font-weight: 300;
+    font-style: italic;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:17 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-Regular.ttf');
+    font-weight: 400;
+    font-style: normal;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:24 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-Italic.ttf');
+    font-weight: 400;
+    font-style: italic;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:31 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-Semibold.ttf');
+    font-weight: 600;
+    font-style: normal;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:38 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-SemiboldItalic.ttf');
+    font-weight: 600;
+    font-style: italic;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:45 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-Bold.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:52 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-BoldItalic.ttf');
+    font-weight: 700;
+    font-style: italic;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:59 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-ExtraBold.ttf');
+    font-weight: 800;
+    font-style: normal;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:66 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-ExtraBoldItalic.ttf');
+    font-weight: 800;
+    font-style: italic;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-triton/sass/src/menu/Menu.scss:1 */
+.x-menu-item-active .x-menu-item-text {
+    font-weight: 400;
+}
+/* /home/rafael/dri/frontend/products/sass/src/view/main/Main.scss:1 */
+.des-portal-logo {
+    background-color: #32404e !important;
+    height: 52px;
+    font-size: 18px;
+    color: #fff;
+    font-weight: bold;
+    padding: 5px 0 5px;
+}
+/* /home/rafael/dri/frontend/products/sass/src/view/main/Main.scss:9 */
+.des-portal-logo .main-logo img {
+    margin-left: 22px;
+    margin-right: 22px;
+    top: 8px;
+    position: relative;
+}
+/* /home/rafael/dri/frontend/products/sass/src/view/main/Main.scss:18 */
+.des-portal-headerbar {
+    background-color: #32404e !important;
+    padding: 0 30px 0 0 !important;
+    border: none !important;
+}
