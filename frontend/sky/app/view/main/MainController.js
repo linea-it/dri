@@ -11,15 +11,19 @@ Ext.define('Sky.view.main.MainController', {
 
     requires: [
         'Sky.view.home.Home',
-        // 'Sky.view.eyeballing.Eyeballing'
+        'Sky.view.footprint.Footprint',
+        'Sky.view.dataset.Dataset'
     ],
 
     routes : {
         'home': {
             action: 'onHome'
         },
-        'ebl/:release': {
-            action: 'onEyeballing'
+        'sky/:release': {
+            action: 'onSky'
+        },
+        'dataset/:dataset/:coordinate/:fov': {
+            action: 'onDataset'
         }
     },
 
@@ -54,7 +58,6 @@ Ext.define('Sky.view.main.MainController', {
     },
 
     onHome: function () {
-
         var newView = Ext.create('Sky.view.home.Home', {
             hideMode: 'offsets',
             routeId: 'home',
@@ -64,18 +67,29 @@ Ext.define('Sky.view.main.MainController', {
         this.setActivePanel(newView);
     },
 
-    onEyeballing: function (release) {
-
-        console.log('onEyeballing(%o)', release);
-
-        var newView = Ext.create('Sky.view.eyeballing.Eyeballing', {
+    onSky: function (release) {
+        var newView = Ext.create('Sky.view.footprint.Footprint', {
             hideMode: 'offsets',
-            routeId: 'eyeballing',
+            routeId: 'sky',
             layout: 'fit',
             release: release
         });
 
-        this.setActivePanel(newView);
+        this.setActivePanel(newView, release);
+    },
+
+    onDataset: function (dataset, coordinate, fov) {
+        var newView = Ext.create('Sky.view.dataset.Dataset', {
+            hideMode: 'offsets',
+            routeId: 'tile',
+            layout: 'fit',
+            dataset: dataset,
+            coordinate: coordinate,
+            fov: fov
+        });
+
+        this.setActivePanel(newView, dataset, coordinate, fov);
+
     }
 
 });

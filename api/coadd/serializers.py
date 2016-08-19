@@ -1,12 +1,15 @@
 import logging
 
 from rest_framework import serializers
+
 from .models import Release, Tag, Tile, Dataset, Survey
 
 logger = logging.getLogger(__name__)
 
 
 class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
+    tiles_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Release
 
@@ -19,7 +22,15 @@ class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
             'rls_doc_url',
             'rls_description',
             'rls_default',
+            'tiles_count'
         )
+
+    def get_tiles_count(self, obj):
+        count = 0
+        for tag in obj.tags.all():
+            count += tag.tiles.count()
+
+        return count
 
 
 class TileSerializer(serializers.HyperlinkedModelSerializer):
@@ -84,7 +95,7 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     tli_tilename = serializers.SerializerMethodField()
     tli_ra = serializers.SerializerMethodField()
     tli_dec = serializers.SerializerMethodField()
-    image_src = serializers.SerializerMethodField()
+    # image_src_ptif = serializers.SerializerMethodField()
 
     class Meta:
         model = Dataset
@@ -100,7 +111,8 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'tli_tilename',
             'tli_ra',
             'tli_dec',
-            'image_src',
+            'image_src_thumbnails',
+            'image_src_ptif'
         )
 
     def get_tag_display_name(self, obj):
@@ -124,15 +136,13 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     def get_tli_dec(self, obj):
         return obj.tile.tli_dec
 
-    def get_image_src(self, obj):
-        tag = obj.tag
-        release = obj.tag.tag_release
-        # http://desportal.cosmology.illinois.edu/data/releases/Y1_WIDE_SURVEY/images/thumb/g/DES2311-0124.png
-        base_src = "http://desportal.cosmology.illinois.edu/data/releases/"
-
-        image_src = "%s/images/thumb" % (release.rls_name)
-
-        return base_src + image_src
+    # def image_src_ptif(self, obj):
+    #     tile = obj.tile
+    #     base_src = obj.image_src_ptif
+    #
+    #     image_src = "/%s.ptif" % (tile.tli_tilename)
+    #
+    #     return base_src + image_src
 
 
 class DatasetFootprintSerializer(serializers.BaseSerializer):
@@ -141,6 +151,7 @@ class DatasetFootprintSerializer(serializers.BaseSerializer):
             obj.id,
             obj.tag.id,
             obj.tag.tag_release.id,
+            obj.tag.tag_release.rls_display_name,
             obj.tile.id,
             obj.tile.tli_tilename,
             obj.tile.tli_ra,

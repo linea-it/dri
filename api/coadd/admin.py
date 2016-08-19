@@ -32,16 +32,16 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = ('id','tag_release','tag_name','tag_display_name',)
 
 class DatasetAdmin(admin.ModelAdmin):
-    list_display = ('id','tag','tile','run',)
-    list_display_links = ('id','tag','tile','run',)
-    search_fields = ('id','tag','tile','run',)
+    list_display = ('id','tag','tile','run', 'image_src_thumbnails', 'image_src_ptif',)
+    list_display_links = ('id','tag','tile','run', 'image_src_thumbnails', 'image_src_ptif',)
+    search_fields = ('id', 'tag__tag_display_name', 'tile__tli_tilename', 'run',)
 
 class SurveyAdmin(admin.ModelAdmin):
     list_display = ('id', 'srv_release','srv_filter',  'srv_project', 'srv_display_name',
                     'srv_url', 'srv_target', 'srv_fov',)
     list_display_links = ('id', 'srv_release','srv_filter',  'srv_project', 'srv_display_name',
                     'srv_url', 'srv_target', 'srv_fov',)
-    search_fields = ('id', 'srv_release', 'srv_project', 'srv_display_name')
+    search_fields = ('id', 'srv_release__rls_display_name', 'srv_project', 'srv_display_name')
 
 
 admin.site.register(Release, ReleaseAdmin)

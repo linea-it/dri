@@ -21,7 +21,7 @@ Ext.define('Eyeballing.view.home.Home', {
     columns: [
         {text: 'Name',  dataIndex: 'rls_display_name', flex: 1},
         {xtype: 'datecolumn', text: 'Date', dataIndex: 'rls_date', format:'Y-m-d', flex: 1},
-        {text: 'Tiles', dataIndex: '', flex: 1},
+        {text: 'Tiles', dataIndex: 'tiles_count', flex: 1},
         {text: 'Flagged', dataIndex: '', flex: 1},
         {text: 'Defects', dataIndex: '', flex: 1}
     ],

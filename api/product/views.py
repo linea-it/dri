@@ -7,9 +7,10 @@ from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
+
 from .models import Product, Catalog, ProductContent, ProductContentAssociation
 from .serializers import ProductSerializer, CatalogSerializer, ProductContentSerializer, \
-    ProductContentAssociationSerializer
+    ProductContentAssociationSerializer, ProductAssociationSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -166,6 +167,19 @@ class ProductContentAssociationViewSet(viewsets.ModelViewSet):
     queryset = ProductContentAssociation.objects.select_related().all()
 
     serializer_class = ProductContentAssociationSerializer
+
+    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content')
+
+    ordering_fields = ('id',)
+
+
+class ProductAssociationViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows product content Association to be viewed or edited
+    """
+    queryset = ProductContentAssociation.objects.select_related().all()
+
+    serializer_class = ProductAssociationSerializer
 
     filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content')
 

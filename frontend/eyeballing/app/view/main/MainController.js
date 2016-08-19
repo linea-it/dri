@@ -54,7 +54,6 @@ Ext.define('Eyeballing.view.main.MainController', {
     },
 
     onHome: function () {
-
         var newView = Ext.create('Eyeballing.view.home.Home', {
             hideMode: 'offsets',
             routeId: 'home',
@@ -65,9 +64,6 @@ Ext.define('Eyeballing.view.main.MainController', {
     },
 
     onEyeballing: function (release) {
-
-        console.log('onEyeballing(%o)', release);
-
         var newView = Ext.create('Eyeballing.view.eyeballing.Eyeballing', {
             hideMode: 'offsets',
             routeId: 'eyeballing',
@@ -75,6 +71,6 @@ Ext.define('Eyeballing.view.main.MainController', {
             release: release
         });
 
-        this.setActivePanel(newView);
+        this.setActivePanel(newView, release);
     }
 });

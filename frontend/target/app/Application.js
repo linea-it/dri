@@ -23,10 +23,13 @@ Ext.define('Target.Application', {
         Ext.enableAriaButtons = false;
 
         // Checar se o usuario esta logado
-
         Ext.Ajax.request({
-            url: '/dri/api?format=json',
-            failure: function () {
+            url: '/dri/api/logged/get_logged/?format=json',
+            success: function (response) {
+                var data = JSON.parse(response.responseText);
+                window.sessionStorage.setItem('dri_username', data.username);
+            },
+            failure: function (response, opts) {
                 var pathname = window.location.pathname,
                     hostname = window.location.host,
                     location;
@@ -36,8 +39,8 @@ Ext.define('Target.Application', {
                 window.location.assign(location);
 
             }
-
         });
+
     },
 
     launch: function () {

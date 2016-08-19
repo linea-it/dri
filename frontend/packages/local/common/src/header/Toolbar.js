@@ -7,17 +7,31 @@
  */
 Ext.define('common.header.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
+
+    requires: [
+        'common.ToolbarController'
+    ],
+
     xtype: 'dri-header',
+
+    controller: 'toolbar',
 
     cls: 'des-portal-headerbar toolbar-btn-shadow',
 
     height: 52,
 
+    layout: {
+        type: 'hbox',
+        align: 'middle'
+    },
+
     viewModel: {
         data: {
             // name: '',
             home: '',
-            desPortalLogo: 'resources/des-portal-logo.png'
+            desPortalLogo: 'resources/des-portal-logo.png',
+            tooltip: 'Home page of Science Server',
+            username: ''
         }
     },
 
@@ -27,15 +41,32 @@ Ext.define('common.header.Toolbar', {
             cls: 'des-portal-logo',
             bind: {
                 html: '<a href=\"{home}\">' +
-                           '<img border="0" alt="Home" src="{desPortalLogo}">' +
+                           '<img border="0" alt="Home" src="{desPortalLogo}" title="{tooltip}">' +
                         '</a>'
             }
         }, {
             xtype: 'component',
             cls: 'des-portal-appname',
             bind: {
-                html: '<div>{name}</div>'
-            }
+                html: '{name}'
+            },
+            flex: 1
+        },
+        '->',
+        {
+            xtype: 'button',
+            cls: 'x-btn-username',
+            arrowVisible: false,
+            scale: 'large',
+            bind: {
+                text: '{username}'
+            },
+            menu: [{
+                text: 'Log out',
+                iconCls: 'x-fa fa-sign-out',
+                handler: 'logout'
+            }]
+
         }
     ],
 
@@ -48,7 +79,10 @@ Ext.define('common.header.Toolbar', {
 
         me.getViewModel().set('home', home);
 
+        if (window.sessionStorage.dri_username != 'undefined') {
+            me.getViewModel().set('username', window.sessionStorage.dri_username);
+        }
+
         me.callParent(arguments);
     }
-
 });

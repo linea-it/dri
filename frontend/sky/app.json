@@ -3,7 +3,7 @@
      * The application's namespace.
      */
     "name": "Sky",
-    
+
     /**
      * The version of the application.
      */
@@ -40,22 +40,22 @@
     /**
      * The Sencha Framework for this application: "ext" or "touch".
      */
-    "framework": "ext",    
-    
+    "framework": "ext",
+
     /**
      * The toolkit to use. Select either "classic" or "modern".
      */
 
-    "toolkit": "classic",    
-    
-    
+    "toolkit": "classic",
+
+
     /**
      * The name of the theme for this application.
      */
-    
+
     "theme": "theme-triton",
-    
-    
+
+
     /**
      * The list of required packages (with optional versions; default is "latest").
      *
@@ -68,7 +68,8 @@
     "requires": [
         "font-awesome",
         "common",
-        "aladin"
+        "aladin",
+        "visiomatic"
     ],
 
     /**
@@ -104,9 +105,9 @@
          *      "save": "sass/save.scss"
          *
          */
-         
+
         // "save": "sass/save.scss",
-        
+
         /**
          * Comma-separated list of files or folders containing extra Sass. These
          * files are automatically included in the Sass compilation. By default this
@@ -220,15 +221,36 @@
      *
      */
     "js": [
-        // Biblioteca Jquery/ JQuery UI
+        // Biblioteca Jquery/ JQuery UI Versao 2.1.4 usada no visiomatic para corrigir erro de compatibilidade
+        // com o aladin  usar a mesma Jquery para ambos.
         {
-            "path": "https://code.jquery.com/jquery-1.11.1.min.js",
-            "remote": true
+            "path": "../packages/local/visiomatic/src/visiomatic/dist/jquery-min.js"
         },
         // biblioteca Aladin (Necessita do JQuery)
+        // {
+        //     "path": "https://code.jquery.com/jquery-1.11.1.min.js",
+        //     "remote": true
+        // },
         {
             "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js",
             "remote": true
+        },
+        // Biblioteca Visiomatic
+        {
+            "path": "../packages/local/visiomatic/src/Leaflet/dist/leaflet.js"
+        },
+        // Importar apenas uma jquery para ser compativel com o Aladin.
+        // {
+        //     "path": "../packages/local/visiomatic/src/visiomatic/dist/jquery-min.js"
+        // },
+        {
+            "path": "../packages/local/visiomatic/src/visiomatic/dist/jqplot-min.js"
+        },
+        {
+            "path": "../packages/local/visiomatic/src/visiomatic/dist/spectrum-min.js"
+        },
+        {
+            "path": "../packages/local/visiomatic/src/visiomatic/dist/visiomatic-src.js"
         },
         {
             "path": "app.js",
@@ -290,6 +312,19 @@
         {
             "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css",
             "remote": true
+        },
+        // Biblioteca Visiomatic
+        {
+            "path": "../packages/local/visiomatic/src/Leaflet/dist/leaflet.css"
+        },
+        {
+            "path": "../packages/local/visiomatic/src/visiomatic/dist/visiomatic.css"
+        },
+        {
+            "path": "../packages/local/visiomatic/src/visiomatic/dist/spectrum.css"
+        },
+        {
+            "path": "../packages/local/visiomatic/src/visiomatic/dist/jqplot.css"
         },
         {
             // this entry uses an ant variable that is the calculated
@@ -520,9 +555,9 @@
      * generated inside this directory must be kept intact for proper generation of
      * deltas between updates.
      */
-    
+
     "archivePath": "archive",
-    
+
 
 
     /**

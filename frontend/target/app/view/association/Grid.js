@@ -5,12 +5,12 @@ Ext.define('Target.view.association.Grid', {
 
     columns: [
         {
-            text     : 'Product',
+            text     : 'Their properties',
             dataIndex: 'pcn_column_name',
             flex: 1
         },
         {
-            text     : 'Class',
+            text     : 'Class Properties',
             dataIndex: 'pcc_display_name',
             flex: 1
         }

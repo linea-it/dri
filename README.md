@@ -12,7 +12,7 @@ Virtualenv
 ```
 sudo apt-get install python3-pip
 sudo apt-get install python-virtualenv
-sudo apt-get install python3.4-venv
+sudo apt install virtualenv
 ```
 
 * In RedHat/CentOS OS:
@@ -100,6 +100,7 @@ if you are a developer change only the development case file do not want to use 
 
 ## Setting up Database
 ```
+cd api
 python manage.py migrate
 ```
 ## Create a Super User in django

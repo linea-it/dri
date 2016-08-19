@@ -2,8 +2,8 @@ import logging
 
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ExternalProcess
-
 from rest_framework import serializers
+
 from .models import File, Catalog, ProductContent, ProductContentAssociation
 from .models import Map
 from .models import Mask
@@ -134,8 +134,6 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'pgr_group',
             # 'pgr_name',
             'pgr_display_name',
-            'ctl_num_columns',
-            'ctl_num_tiles',
             'ctl_num_objects',
             'epr_original_id',
             'epr_name',
@@ -227,7 +225,7 @@ class ProductContentSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ProductContentAssociationSerializer(serializers.HyperlinkedModelSerializer):
-    pca_product_id = serializers.PrimaryKeyRelatedField(
+    pca_product = serializers.PrimaryKeyRelatedField(
         queryset=Product.objects.all(), many=False)
 
     pca_class_content = serializers.PrimaryKeyRelatedField(
@@ -252,7 +250,7 @@ class ProductContentAssociationSerializer(serializers.HyperlinkedModelSerializer
 
         fields = (
             'id',
-            'pca_product_id',
+            'pca_product',
             'pca_class_content',
             'pca_product_content',
             'pcc_category',
@@ -263,6 +261,8 @@ class ProductContentAssociationSerializer(serializers.HyperlinkedModelSerializer
             'pcc_mandatory',
             'pcn_column_name'
         )
+
+        read_only_fields = ('id')
 
     def get_pcc_category(self, obj):
         return obj.pca_class_content.pcc_category.cct_name
@@ -306,3 +306,17 @@ class AssociationSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_pcn_column_name(self, obj):
         return obj.pca_product_content.pcn_column_name
+
+
+class ProductAssociationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductContentAssociation
+
+        fields = (
+            'id',
+            'pca_product',
+            'pca_class_content',
+            'pca_product_content',
+        )
+
+        read_only_fields = ('id')

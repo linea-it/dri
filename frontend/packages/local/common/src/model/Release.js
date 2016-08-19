@@ -9,7 +9,7 @@ Ext.define('common.model.Release', {
         {name:'rls_description', type:'float'},
         {name:'rls_doc_url', type:'string'},
         {name:'rls_display_name', type:'string'},
-        {name:'rls_default', type:'boolean'}
-
+        {name:'rls_default', type:'boolean'},
+        {name:'tiles_count', type:'int'}
     ]
 });

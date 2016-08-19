@@ -5,7 +5,7 @@ Ext.define('Target.view.association.ClassContent', {
 
     columns: [
         {
-            text     : 'Name',
+            text     : 'Properties available in this class',
             dataIndex: 'pcc_display_name',
             flex: 1
         }

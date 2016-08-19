@@ -98,15 +98,15 @@ Ext.define('Target.view.catalog.Tree', {
                     filter: {
                         type: 'number'
                     }
-                },
-                {
-                    text: 'Release',
-                    dataIndex: 'release_display_name',
-                    sortable: true,
-                    filter: {
-                        type: 'string'
-                    }
                 }
+                // {
+                //     text: 'Release',
+                //     dataIndex: 'release_display_name',
+                //     sortable: true,
+                //     filter: {
+                //         type: 'string'
+                //     }
+                // }
             ],
             listeners: {
                 load: function (treeStore) {

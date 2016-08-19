@@ -108,6 +108,19 @@ class Dataset(models.Model):
     run = models.CharField(
         null=True, blank=True, max_length=30, verbose_name='Run')
 
+    image_src_thumbnails = models.URLField(
+        null=True, blank=True, verbose_name='Thumbnails PNG', default=None,
+        help_text=('Full url to image including the host and directory. '
+                   'example: http://{host}/data/releases/{release_name}/images/thumb')
+    )
+
+    image_src_ptif = models.URLField(
+        null=True, blank=True, verbose_name='Visiomatic PTIF', default=None,
+        help_text=('url complete for visiomatic ptif image, including the host and directory.'
+                   'use the release name and tilename to create the path. '
+                   'example: http://{host}/visiomatic?FIF=data/releases/{release_name}/images/visiomatic/{tilename}.ptif')
+    )
+
     def __str__(self):
         return str(self.pk)
 

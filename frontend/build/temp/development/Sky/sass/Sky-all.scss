@@ -968,10 +968,16 @@ $include-sky-store-maps: dynamic(true);;
 $include-sky-store-releases: dynamic(true);;
 $include-sky-store-surveys: dynamic(true);;
 $include-sky-store-tags: dynamic(true);;
-$include-sky-view-footprint-panel: dynamic(true);;
+$include-sky-view-dataset-dataset: dynamic(true);;
+$include-sky-view-dataset-datasetcontroller: dynamic(true);;
+$include-sky-view-dataset-datasetmodel: dynamic(true);;
+$include-sky-view-dataset-visiomatic: dynamic(true);;
+$include-sky-view-footprint-aladin: dynamic(true);;
+$include-sky-view-footprint-footprint: dynamic(true);;
+$include-sky-view-footprint-footprintcontroller: dynamic(true);;
+$include-sky-view-footprint-footprintmodel: dynamic(true);;
 $include-sky-view-home-home: dynamic(true);;
 $include-sky-view-home-homecontroller: dynamic(true);;
-$include-sky-view-home-homemodel: dynamic(true);;
 $include-sky-view-lists-dataset: dynamic(true);;
 $include-sky-view-main-main: dynamic(true);;
 $include-sky-view-main-maincontroller: dynamic(true);;
@@ -988,6 +994,8 @@ $include-aladin-events: dynamic(true);;
 $include-aladin-interfaces: dynamic(true);;
 $include-aladin-maps: dynamic(true);;
 $include-common-bandfilter: dynamic(true);;
+$include-common-searchfield: dynamic(true);;
+$include-common-toolbarcontroller: dynamic(true);;
 $include-common-data-proxy-crsftoken: dynamic(true);;
 $include-common-data-proxy-django: dynamic(true);;
 $include-common-header-toolbar: dynamic(true);;
@@ -1008,6 +1016,9 @@ $include-common-store-releases: dynamic(true);;
 $include-common-store-surveys: dynamic(true);;
 $include-common-store-tags: dynamic(true);;
 $include-common-store-tiles: dynamic(true);;
+$include-visiomatic-visiomatic: dynamic(true);;
+$include-visiomatic-visiomaticcontroller: dynamic(true);;
+$include-visiomatic-visiomaticmodel: dynamic(true);;
 $output-paths: ("path": "../resources");
 
 /* ======================== ETC ======================== */
@@ -1083,6 +1094,14 @@ $current-package: 'aladin';
 $current-resource-root: $aladin-resource-root;
 $relative-image-path-for-uis: $aladin-resource-path;
 @import '../../../../../packages/local/aladin/sass/etc/all';
+
+/* including package visiomatic */
+$visiomatic-resource-root: 'visiomatic' !default;
+$visiomatic-resource-path: 'visiomatic/images' !default;
+$current-package: 'visiomatic';
+$current-resource-root: $visiomatic-resource-root;
+$relative-image-path-for-uis: $visiomatic-resource-path;
+@import '../../../../../packages/local/visiomatic/sass/etc/all';
 
 /* including package Sky */
 $Sky-resource-root: '' !default;
@@ -1544,5 +1563,5 @@ $Sky-resource-path: 'images' !default;
 $current-package: false;
 $current-resource-root: $Sky-resource-root;
 $relative-image-path-for-uis: $Sky-resource-path;
-@import '../../../../../sky/sass/src/view/mosaic/View';
 @import '../../../../../sky/sass/src/view/main/Main';
+@import '../../../../../sky/sass/src/view/mosaic/View';

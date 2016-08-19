@@ -2,10 +2,22 @@ import logging
 
 from rest_framework import serializers
 from .models import Export
-from .models import ExternalProcess
+from .models import ExternalProcess, Site
 
 logger = logging.getLogger(__name__)
 
+class SiteSerializer(serializers.HyperlinkedModelSerializer):
+
+    class Meta:
+
+        model = Export
+
+        fields = (
+            'id',
+            'sti_user',
+            'sti_name',
+            'sti_url',
+        )
 
 class ExportSerializer(serializers.HyperlinkedModelSerializer):
 
@@ -23,6 +35,9 @@ class ExportSerializer(serializers.HyperlinkedModelSerializer):
 
 class ExternalProcessSerializer(serializers.HyperlinkedModelSerializer):
 
+    epr_site = serializers.PrimaryKeyRelatedField(
+        queryset=Site.objects.all(), many=False)
+
     class Meta:
 
         model = ExternalProcess
@@ -38,3 +53,4 @@ class ExternalProcessSerializer(serializers.HyperlinkedModelSerializer):
             'epr_original_id',
             'epr_site'
         )
+

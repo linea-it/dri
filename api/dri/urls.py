@@ -26,6 +26,9 @@ from rest_framework import routers
 from validation import views as validation_views
 
 router = routers.DefaultRouter()
+
+router.register(r'logged', common_views.LoggedUserViewSet, base_name='logged')
+
 router.register(r'releases', coadd_views.ReleaseViewSet)
 router.register(r'tags', coadd_views.TagViewSet)
 router.register(r'tiles', coadd_views.TileViewSet)
@@ -42,6 +45,8 @@ router.register(r'product', product_views.ProductViewSet)
 router.register(r'catalog', product_views.CatalogViewSet)
 router.register(r'productcontent', product_views.ProductContentViewSet)
 router.register(r'productassociation', product_views.ProductContentAssociationViewSet)
+router.register(r'association', product_views.ProductAssociationViewSet)
+
 
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
@@ -49,9 +54,8 @@ router.register(r'defect', validation_views.DefectViewSet)
 
 router.register(r'filters', common_views.FilterViewSet)
 
-router.register(r'externalprocess', product_register_views.ExternalProcessViewSet)
-router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet,
-                base_name='importprocess')
+router.register(r'site', product_register_views.SiteViewSet)
+router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet, base_name='importprocess')
 router.register(r'application',interfaces_views.ApplicationViewSet)
 
 # API Relacionadas ao Banco de Dados de Catalogo

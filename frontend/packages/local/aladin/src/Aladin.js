@@ -97,7 +97,7 @@ Ext.define('aladin.Aladin', {
         enableViewMenu: true,
 
         // Botao para exportar para PNG
-        enableExportPng: true,
+        enableExportPng: false,
 
         // Botao para mostrar ou ocultar a crosshair
         enableReticle: true,
@@ -106,7 +106,7 @@ Ext.define('aladin.Aladin', {
         enableHealpixGrid: true,
 
         // Menu que permite trocar as cores da imagem
-        enableColorMap: true,
+        enableColorMap: false,
 
         // Botao para mostrar ou ocultar o footprint
         enableFootprint: true,
@@ -158,7 +158,8 @@ Ext.define('aladin.Aladin', {
         data: {
             location: '',
             tile: null,
-            tag: null
+            tag: null,
+            release: null
         }
     },
 
@@ -269,6 +270,7 @@ Ext.define('aladin.Aladin', {
     },
 
     setSurveys: function (surveys) {
+        this.surveys = null;
         this.surveys = surveys;
 
         if ((this.getAladin()) && (surveys.length > 0)) {
@@ -597,6 +599,7 @@ Ext.define('aladin.Aladin', {
             if (tile.get('id') !== oldtile) {
                 tag = me.getStoreTags().getById(tile.get('tag'));
 
+                vm.set('release', tile.get('release_display_name'));
                 vm.set('tile', tile);
                 vm.set('tag', tag);
 
@@ -870,6 +873,13 @@ Ext.define('aladin.Aladin', {
         if (fov) {
             aladin.setFoV(fov);
         }
+    },
+
+    getFov: function () {
+        var me = this,
+            aladin = me.getAladin();
+
+        return aladin.getFov();
     },
 
     getFootprintByName: function (name) {

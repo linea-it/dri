@@ -79,11 +79,6 @@ Ext.define('visiomatic.Visiomatic', {
         dataset: '{dataset}'
     },
 
-    // listeners: {
-    //     afterrender: 'onAfterRender',
-    //     click: 'testando'
-    // },
-
     initComponent: function () {
         var me = this;
 
@@ -116,12 +111,8 @@ Ext.define('visiomatic.Visiomatic', {
 
 
         // Add Events Listeners to Map
-        // map.on('layeradd', me.onTileLoad, me);
-        // map.on('baselayerchange', function () {
-        //         console.log('TESTE');
-
-        //     }, me);
-
+        map.on('dblclick', me.onDblClick, me);
+        map.on('layeradd', me.onLayerAdd, me);
 
         // instancia de L.map
         me.setMap(map);
@@ -180,7 +171,8 @@ Ext.define('visiomatic.Visiomatic', {
             imageLayer = me.getImageLayer(),
             imageOptions = me.getImageOptions(),
             args,
-            navlayer;
+            navlayer,
+            newImageLayer;
 
         options = options || {};
 
@@ -188,22 +180,17 @@ Ext.define('visiomatic.Visiomatic', {
 
         args = Ext.Object.merge(imageOptions, options);
 
-        // SETAR COORDENADAS PROCURAR POR ESSA FUNCAO
-        // var latlng = newcrs.parseCoords(this.options.center);
-        // usar o map.setView passando a latlog
-
         if (!imageLayer) {
             imageLayer = libL.tileLayer.iip(image, args).addTo(map);
-
-            // imageLayer.on('load', function () {
-            //     console.log('TESTE');
-
-            // }, me);
 
             me.setImageLayer(imageLayer);
 
         } else {
-            imageLayer.setUrl(image);
+            me.removeImageLayer();
+
+            newImageLayer = libL.tileLayer.iip(image, args).addTo(map);
+
+            me.setImageLayer(newImageLayer);
         }
 
         // Mini Map
@@ -238,7 +225,6 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     setView: function (ra, dec, fov) {
-        console.log('setView(%o, %o, %o)', ra, dec, fov);
         var me = this,
             libL = me.libL,
             map = me.getMap(),
@@ -248,12 +234,26 @@ Ext.define('visiomatic.Visiomatic', {
         map.setView(latlng, map.options.crs.fovToZoom(map, fov, latlng));
     },
 
-    onTileLoad: function () {
-        console.log('onTileLoad(%o)', arguments);
-
+    onLayerAdd: function () {
         var me = this;
 
-        // me.fireEvent('changeimage', me);
+        me.fireEvent('changeimage', me);
+
+    },
+
+    onDblClick: function () {
+        var me = this,
+            map = me.getMap();
+
+        me.fireEvent('dblclick', me);
+    },
+
+    removeImageLayer: function () {
+        var me = this,
+            map = me.getMap(),
+            imageLayer = me.getImageLayer();
+
+        map.removeLayer(imageLayer);
 
     }
 

@@ -3,7 +3,6 @@ Ext.define('aladin.Interfaces', {
     windowInfo: null,
 
     enableDisableInfo: function (btn, state) {
-        console.log('enableDisableInfo(%o)', state);
         var me = this,
             w = me.windowInfo;
 
@@ -16,7 +15,6 @@ Ext.define('aladin.Interfaces', {
     },
 
     createWindowInfo: function () {
-        console.log('createWindowInfo()');
         var me = this,
             w;
 
@@ -35,7 +33,7 @@ Ext.define('aladin.Interfaces', {
                 zIndex: 999
             },
             tpl: [
-                '<spam>{tag}</spam>',
+                '<spam>{release}</spam> <spam>{tag}</spam>',
                 '</br><spam>{tilename}</spam>',
                 '</br><spam>J2000 {location}</spam>'
             ]
@@ -51,11 +49,14 @@ Ext.define('aladin.Interfaces', {
             vm = me.getViewModel(),
             tile = vm.get('tile'),
             tag = vm.get('tag'),
+            release = vm.get('release'),
             data,
             tl = '',
-            tg = '';
+            tg = '',
+            rl = '';
 
         if (tag) {
+            rl = release;
             tg = tag.get('tag_display_name');
         }
         if (tile) {
@@ -64,6 +65,7 @@ Ext.define('aladin.Interfaces', {
 
         data = {
             location: vm.get('location'),
+            release: rl,
             tag: tg,
             tilename: tl
         };
@@ -133,13 +135,13 @@ Ext.define('aladin.Interfaces', {
         if (me.getEnableGoto()) {
             tools.push({
                 iconCls: 'x-fa fa-search',
-                tooltip: 'Go To position',
+                tooltip: 'Go To position. 356.0085, 0.5168 or 23 44 2.040 +00 31 0.48',
                 menuAlign: 'tr',
                 arrowVisible: false,
                 menu: [
                     {
                         xtype: 'textfield',
-                        emptyText: 'Go To position',
+                        emptyText: '356.0085, 0.5168 or 23 44 2.040 +00 31 0.48',
                         triggers: {
                             goto: {
                                 cls: 'x-form-search-trigger',

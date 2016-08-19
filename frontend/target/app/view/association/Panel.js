@@ -1,9 +1,6 @@
 Ext.define('Target.view.association.Panel', {
     extend: 'Ext.panel.Panel',
 
-    /**
-     * @requires AssociationController
-     */
     requires: [
         'Target.view.association.AssociationController',
         'Target.view.association.AssociationModel',
@@ -11,7 +8,9 @@ Ext.define('Target.view.association.Panel', {
         'Target.view.association.ClassContent',
         'Target.view.association.ClassContentForm',
         'Ext.ux.dd.CellFieldDropZone',
-        'Ext.ux.CellDragDrop'
+        'Ext.ux.CellDragDrop',
+        'Target.view.association.CellDragDrop',
+        'common.SearchField'
     ],
 
     xtype: 'targets-association',
@@ -37,86 +36,66 @@ Ext.define('Target.view.association.Panel', {
                     xtype: 'targets-association-grid',
                     itemId: 'grid1',
                     bind: {
-                        store: '{association}'
+                        store: '{fakeassociation}'
                     },
                     region: 'center',
-
+                    reference: 'productcontentgrid',
                     viewConfig: {
+                        markDirty: false,
                         plugins: {
-                            ptype: 'celldragdrop',
+                            ptype: 'customcelldragdrop',
                             ddGroup: group1,
-
+                            containerScroll: true,
                             enableDrag: false,
-
-                            enableDrop: true
+                            enableDrop: true,
+                            dropColumn: 'pcc_display_name'
                         },
-                        dropZone: {
-                            onNodeEnter : function (target, dd, e, data) {
-                                console.log('onNodeEnter');
-                                console.log(target, dd, e, data);
-                                Ext.fly(target).addCls('my-row-highlight-class');
-                            }
+                        listeners: {
+                            celldrop: 'onCellDrop'
                         }
-                    }
-                    // viewConfig: {
-                    //     plugins: {
-                    //         ptype: 'gridviewdragdrop',
-                    //         containerScroll: true,
-                    //         ddGroup: group1,
-                    //         enableDrag: false,
-                    //         enableDrop: true
-                    //         // dropZone: {
-                    //         //     // On entry into a target node, highlight that node.
-                    //         //     onNodeEnter : function (target, dd, e, data) {
-                    //         //         console.log('onNodeEnter');
-                    //         //         console.log(target, dd, e, data);
-                    //         //         Ext.fly(target).addCls('my-row-highlight-class');
-                    //         //     },
-
-                    //         //     // On exit from a target node, unhighlight that node.
-                    //         //     onNodeOut : function (target, dd, e, data) {
-                    //         //         console.log('onNodeOut');
-                    //         //         Ext.fly(target).removeCls('my-row-highlight-class');
-
-                    //         //     },
-
-                    //         //     // While over a target node, return the default drop allowed class which
-                    //         //     // places a "tick" icon into the drag proxy.
-                    //         //     onNodeOver : function (target, dd, e, data) {
-                    //         //         console.log('onNodeOver');
-                    //         //         return Ext.dd.DropZone.prototype.dropAllowed;
-
-                    //         //     }
-                    //         // }
-                    //     },
-                    //     listeners: {
-                    //         drop: function (node, data, dropRec, dropPosition) {
-                    //             console.log('DROP');
-                    //             console.log(node, data, dropRec, dropPosition);
-                    //             // var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-                    //             // console.log('Drag from right to left Dropped ' + data.records[0].get('pcc_name') + dropOn);
-
-                    //         }
-                    //     }
-                    // }
+                    },
+                    tbar: [
+                        {
+                            xtype: 'common-searchfield',
+                            minSearch: 1,
+                            disabled: true,
+                            listeners: {
+                                'search': 'onSearchAssociation',
+                                'cancel': 'onCancelAssociation'
+                            },
+                            flex: 1
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Remove',
+                            iconCls: 'x-fa fa-minus-circle',
+                            tooltip: 'Remove the selected association.',
+                            handler: 'onRemove',
+                            bind: {
+                                disabled: '{!productcontentgrid.selection}'
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Clear',
+                            iconCls: 'x-fa fa-eraser',
+                            tooltip: 'Removes all associations.',
+                            handler: 'onRemoveAll'
+                        }
+                    ]
                 },
                 {
                     xtype: 'panel',
                     split: true,
                     resizable: true,
                     region: 'east',
-                    width: 300,
+                    width: 400,
                     layout: {
                         type: 'vbox',
                         pack: 'start',
                         align: 'stretch'
                     },
                     items: [
-                        {
-                            xtype: 'targets-association-class-content-form',
-                            reference: 'classcontentform',
-                            height: 200
-                        },
                         {
                             xtype: 'targets-association-class-content',
                             itemId: 'grid2',
@@ -125,44 +104,35 @@ Ext.define('Target.view.association.Panel', {
                                 store: '{classcontent}'
                             },
                             flex: 2,
-                            // viewConfig: {
-                            //     plugins: {
-                            //         ptype: 'gridviewdragdrop',
-                            //         containerScroll: true,
-                            //         ddGroup: group1,
-                            //         // dropGroup: group1,
-                            //         enableDrop: false
-                            //     },
-                            //     listeners: {
-                            //         // drop: function(node, data, dropRec, dropPosition) {
-                            //         //     var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-                            //         //     Ext.example.msg('Drag from right to left', 'Dropped ' + data.records[0].get('name') + dropOn);
-                            //         // }
-                            //     }
-                            // }
-                            // }
                             viewConfig: {
                                 plugins: {
-                                    ptype: 'celldragdrop',
+                                    ptype: 'customcelldragdrop',
 
-                                    // Remove text from source cell and replace with value of emptyText.
                                     applyEmptyText: true,
-
-                                    //emptyText: Ext.String.htmlEncode('<<foo>>'),
-
-                                    // Will only allow drops of the same type.
-                                    //enforceType: true,
 
                                     ddGroup: group1,
 
                                     enableDrag: true,
 
                                     enableDrop: false
-                                },
-                                listeners: {
-
                                 }
                             }
+                        },
+                        {
+                            xtype: 'targets-association-class-content-form',
+                            reference: 'classcontentform',
+                            height: 220
+                        }
+                    ],
+                    tbar: [
+                        {
+                            xtype: 'common-searchfield',
+                            minSearch: 1,
+                            listeners: {
+                                'search': 'onSearchClassContent',
+                                'cancel': 'onCancelClassContent'
+                            },
+                            flex: 1
                         }
                     ]
                 }
@@ -176,8 +146,9 @@ Ext.define('Target.view.association.Panel', {
 
         this.product = product;
 
-        this.fireEvent('changeproduct', product, this);
-
+        if (product) {
+            this.fireEvent('changeproduct', product, this);
+        }
     }
 
 });

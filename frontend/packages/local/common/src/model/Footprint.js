@@ -8,6 +8,7 @@ Ext.define('common.model.Footprint', {
         {name:'id', type:'int'},
         {name:'tag', type:'int'},
         {name:'release', type:'int'},
+        {name:'release_display_name', type:'string'},
         {name:'tite', type:'int'},
         {name:'tli_tilename', type:'string'},
         {name:'tli_ra', type:'float'},

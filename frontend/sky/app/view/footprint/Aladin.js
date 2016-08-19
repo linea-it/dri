@@ -1,7 +1,7 @@
-Ext.define('Sky.view.footprint.Panel', {
+Ext.define('Sky.view.footprint.Aladin', {
     extend: 'aladin.Aladin',
 
-    xtype: 'tile-footprint',
+    xtype: 'footprint-aladin',
 
     requires: [
         'aladin.Aladin'

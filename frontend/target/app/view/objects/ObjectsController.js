@@ -14,7 +14,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         'Target.view.catalog.SubmitCutout',
         'Target.view.association.Panel',
         'Target.model.Rating',
-        'Target.model.Reject'
+        'Target.model.Reject',
+        'Target.view.wizard.Wizard'
     ],
 
     listen: {
@@ -101,14 +102,16 @@ Ext.define('Target.view.objects.ObjectsController', {
     onLoadProductAssociation: function (productAssociation) {
         var me = this,
             refs = me.getReferences(),
-            objectsTabPanel = refs.targetsObjectsTabpanel,
-            preview = refs.targetsPreviewPanel;
+            objectsTabPanel = refs.targetsObjectsTabpanel;
 
-        objectsTabPanel.setCatalogClassColumns(productAssociation);
+        if (productAssociation.count() > 0) {
 
-        // Adiciona a store ao painel de preview que sera usada na propertygrid
-        // class properties
-        // preview.setClassColumns(productAssociation);
+            objectsTabPanel.setCatalogClassColumns(productAssociation);
+        } else {
+            if (!this.wizard) {
+                me.showWizard();
+            }
+        }
     },
 
     onObjectPanelReady: function () {
@@ -282,7 +285,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             layout: 'fit',
             closeAction: 'destroy',
             width: 800,
-            height: 500,
+            height: 620,
             items: [{
                 xtype: 'targets-association',
                 listeners: {
@@ -498,6 +501,34 @@ Ext.define('Target.view.objects.ObjectsController', {
                 host, route, record.get('_meta_catalog_id'), record.get('_meta_id'));
 
         window.open(url);
+    },
+
+    showWizard: function () {
+        console.log('showWizard');
+        var me = this,
+            vm = me.getViewModel(),
+            catalog = vm.get('catalog');
+
+        this.wizard = Ext.create('Ext.window.Window', {
+            title: 'WIZARD DE CONFIGURACAO',
+            layout: 'fit',
+            closeAction: 'destroy',
+            width: 800,
+            height: 620,
+            modal:true,
+            items: [{
+                xtype: 'targets-wizard',
+                product: catalog,
+                listeners: {
+                    scope: me
+                    // todo evento que vai indicar que associacao foi finalizada
+                    // submitexport: me.exportCatalog
+                }
+            }]
+        });
+
+        this.wizard.show();
+
     }
 
 });
