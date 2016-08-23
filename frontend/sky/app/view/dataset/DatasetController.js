@@ -13,47 +13,29 @@ Ext.define('Sky.view.dataset.DatasetController', {
         component: {
             'dataset': {
                 loadpanel: 'onLoadPanel',
-                updatePanel: 'onUpdatePanel'
+                updatePanel: 'onUpdatePanel',
+                updatePosition: 'changeImage'
             },
             'sky-visiomatic': {
-                // dblclick: 'onDblClickVisiomatic'
+                dblclick: 'onDblClickVisiomatic',
+                changeimage: 'onChangeImage'
             }
         }
-        // store: {
-        //     '#Releases': {
-        //         load: 'onLoadReleases'
-        //     },
-        //     '#Tags': {
-        //         load: 'onLoadTags'
-        //     },
-        //     'datasets': {
-        //         load: 'onLoadDatasets'
-        //     }
-        // }
     },
 
     onLoadPanel: function (dataset) {
-        console.log('onLoadPanel(%o)', dataset);
         var me = this;
 
         me.loadData(dataset);
     },
 
-    onUpdatePanel: function (release) {
-        // var me = this,
-        //     aladin = me.lookupReference('aladin');
+    onUpdatePanel: function (dataset) {
+        var me = this;
 
-        // if (aladin.aladinIsReady()) {
-        //     aladin.removeLayers();
-        // }
-
-        // me.onChangeRelease();
-
-        // me.loadReleaseById(release);
+        me.loadData(dataset);
     },
 
     loadData: function (dataset) {
-        console.log('loadData(%o)', dataset);
         var me = this,
             vm = me.getViewModel(),
             store = vm.get('datasets');
@@ -83,38 +65,47 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
         view.setLoading(false);
 
-        console.log(current);
         // Setar a Imagem no Visiomatic
         me.changeImage(current);
+    },
+
+    changeImage: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            visiomatic = me.lookupReference('visiomatic'),
+            current = vm.get('currentDataset'),
+            url = current.get('image_src_ptif');
+
+        if (url != '') {
+            visiomatic.setImage(url);
+
+        } else {
+            visiomatic.removeImageLayer();
+
+        }
+    },
+
+    onChangeImage: function () {
+        var me = this,
+            view = me.getView(),
+            radec = view.getRadec(),
+            fov = view.getFov(),
+            visiomatic = me.lookupReference('visiomatic');
+
+        visiomatic.setView(radec.ra, radec.dec, fov);
 
     },
 
-    changeImage: function (current) {
-        console.log('changeImage()');
-
+    onDblClickVisiomatic: function () {
         var me = this,
-            refs = me.getReferences(),
-            visiomatic = refs.visiomatic,
-            url = current.get('image_src_ptif');
+            vm = me.getViewModel(),
+            current = vm.get('currentDataset'),
+            release = current.get('release'),
+            hash;
 
-        console.log('PTIF: %o', url);
+        hash = 'sky/' + release;
 
-        if (url != '') {
-
-            // http://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/y1_wide_survey/images/visiomatic/DES2342+0043.ptif
-
-            // var url = Ext.String.format(
-            //     'http://{0}/visiomatic?FIF=data/releases/{1}/images/visiomatic/{2}.ptif',
-            //     host,
-            //     release.get('rls_name'),
-            //     encodeURIComponent(dataset.get('tli_tilename'))
-            //     // 'DES2342%2B0043'
-            // );
-            //
-
-            visiomatic.setImage(url);
-
-        }
+        me.redirectTo(hash);
     }
 
 });
