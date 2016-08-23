@@ -10,6 +10,6 @@ Ext.define('Products.view.main.ComboType', {
     fieldLabel: 'Type',
     labelWidth: 40,
     width: 250,
-    displayField: 'display_name',
-    valueField: 'catalog_id'
+    displayField: 'pgr_display_name',
+    valueField: 'id'
 });

@@ -68,15 +68,17 @@ Ext.define('Products.view.main.Main', {
                 //     select: 'onSelectType'
                 //     //deselect: 'onDeselectReleaseField'
                 // }
-            },{
-                xtype: 'comboBand',
-                margin: '0 0 0 20',
-                reference: 'bands'
-                // listeners: {
-                //     select: 'onSelectBand'
-                //     //deselect: 'onDeselectReleaseField'
-                // }
-            },{
+            },
+//            {
+//                xtype: 'comboBand',
+//                margin: '0 0 0 20',
+//                reference: 'bands'
+//                // listeners: {
+//                //     select: 'onSelectBand'
+//                //     //deselect: 'onDeselectReleaseField'
+//                // }
+            //},
+            {
                 xtype: 'button',
                 margin: '0 10 0 10',
                 text: 'Clear Filters',
