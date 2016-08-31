@@ -31,7 +31,7 @@ Ext.define('Target.view.objects.ObjectsModel', {
         },
         productassociation: {
             type: 'product-association',
-            storeId: 'ProductAssociation'
+            storeId: 'Association'
         }
     },
 

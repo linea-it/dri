@@ -1,6 +1,6 @@
 from django.db import transaction
 from rest_framework import viewsets
-from rest_framework.authentication import TokenAuthentication
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from .ImportProcess import Import
@@ -45,7 +45,7 @@ class ExternalProcessImportViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows External Processes to be imported
     """
-    authentication_classes = (TokenAuthentication,)
+    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
 
     permission_classes = (IsAuthenticated,)
 
