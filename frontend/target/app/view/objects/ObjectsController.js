@@ -33,9 +33,9 @@ Ext.define('Target.view.objects.ObjectsController', {
                 load: 'onLoadProductContent',
                 clear: 'onLoadProductContent'
             },
-            '#ProductAssociation': {
-                load: 'onLoadProductAssociation',
-                clear: 'onLoadProductAssociation'
+            '#Association': {
+                load: 'onLoadAssociation',
+                clear: 'onLoadAssociation'
             },
             '#objects': {
                 update: 'onUpdateObject'
@@ -99,7 +99,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     },
 
-    onLoadProductAssociation: function (productAssociation) {
+    onLoadAssociation: function (productAssociation) {
         var me = this,
             refs = me.getReferences(),
             objectsTabPanel = refs.targetsObjectsTabpanel;

@@ -46,9 +46,10 @@ Ext.define('Target.view.preview.Preview', {
                 change: 'onChangeDataset'
             }
         }, {
-            xtype: 'tbtext',
+            xtype: 'textfield',
+            readOnly: true,
             bind: {
-                html: '{currentDataset.tli_tilename}'
+                value: '{currentDataset.tli_tilename}'
             }
         }, {
             xtype: 'button',
