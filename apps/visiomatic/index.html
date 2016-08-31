@@ -50,7 +50,7 @@
             // [CMP] added end
 
             var args = L.IIPUtils.parseURL(window.location.search.substring(1)),
-                iip = '/visiomatic?FIF=data/releases/' + release + '/images/visiomatic/' + tilename + '.ptif',
+                iip = '/visiomatic?FIF=data/releases/' + encodeURIComponent(release) + '/images/visiomatic/' + encodeURIComponent(tilename) + '.ptif',
                 map = L.map('map', {fullscreenControl: true, zoom: zoom}),
                 layer = L.tileLayer.iip(iip, {
                     center: args['center'] ? args['center'] : false,
