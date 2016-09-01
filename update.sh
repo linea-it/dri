@@ -55,6 +55,10 @@ sudo /etc/init.d/apache2 reload || error_exit "Error, exit" 12
 cd ..
 
 echo
+echo "= Running bash ="
+bash || error_exit "Error, exit" 13
+
+echo
 echo "= Exiting ="
 deactivate' && exit 0 || exit 127
 
