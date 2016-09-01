@@ -49,10 +49,17 @@ class Utils():
 
                 print('Tile: %s' %  tile.id)
 
-                dataset = Dataset(tag=tag, tile=tile, image_src_ptif=row.get('ptif'))
+                ptif = row.get('ptif')
+                ptif = ptif.replace("+", "%2B")
+
+                dataset, created = Dataset.objects.update_or_create(
+                    tag=tag, tile=tile)
+
+                dataset.image_src_ptif = ptif
+
                 dataset.save()
 
-                print('Dataset: %s' % row.get('tilename'))
+                print('Dataset: %s  %s' % (dataset.id, created))
 
                 print('Complete!')
 

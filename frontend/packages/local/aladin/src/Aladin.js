@@ -237,6 +237,9 @@ Ext.define('aladin.Aladin', {
             me.enableDisableInfo(null, me.getInfoEnabled());
         }
 
+        // Custon events
+        me.addCustonEvents();
+
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);
 
@@ -393,7 +396,6 @@ Ext.define('aladin.Aladin', {
         } else {
             // TODO NAO MOSTRAR SURVEY NENHUM
             aladin.setImageSurvey(empty.id);
-
         }
     },
 
@@ -430,9 +432,18 @@ Ext.define('aladin.Aladin', {
 
     onStoreSurveysLoad: function (store) {
         var me = this,
+            aladin = me.getAladin(),
+            empty = me.getEmptySurvey(),
             surveys = [],
             filters = [],
             s;
+
+        if (store.count() === 0) {
+            console.log('NAO TEM SURVEY');
+
+            me.setImageSurvey(empty);
+
+        }
 
         // criar um array com os elementos da store
         // fazendo um parse para o formato usado pelo aladin
