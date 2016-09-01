@@ -38,7 +38,7 @@ python manage.py loaddata initial_data.json || error_exit "Error, exit" 10
 echo
 echo "= Cleaning up the auto-generated static files ="
 python manage.py collectstatic --clear --noinput --verbosity 0 || error_exit "Error, exit" 11
-cd ..
+# cd ..
 
 ### REMEMBER TO IMPLEMENT A WAY TO apache reload
 # this can be done using
@@ -52,15 +52,14 @@ cd ..
 echo
 echo "= Reloading apache ="
 sudo /etc/init.d/apache2 reload || error_exit "Error, exit" 12
-cd ..
 
-echo
-echo "= Running bash ="
-bash || error_exit "Error, exit" 13
+# echo
+# echo "= Running bash ="
+# bash || error_exit "Error, exit" 13
 
-echo
-echo "= Exiting ="
-deactivate' && exit 0 || exit 127
+# echo
+# echo "= Exiting ="
+# deactivate' && exit 0 || exit 127
 
 
 
