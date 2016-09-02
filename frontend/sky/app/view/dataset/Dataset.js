@@ -92,12 +92,12 @@ Ext.define('Sky.view.dataset.Dataset', {
 
         } else {
             coordinates = coordinate.split('-');
-
+            coordinates[1] = '-' + coordinates[1];
         }
 
         radec = {
-            ra: coordinates[0].replace(',', '.'),
-            dec: coordinates[1].replace(',', '.')
+            ra: parseFloat(coordinates[0].replace(',', '.')),
+            dec: parseFloat(coordinates[1].replace(',', '.'))
         };
 
         me.setRadec(radec);

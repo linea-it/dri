@@ -16,16 +16,17 @@ Ext.define('Home.view.widget.Wrelease', {
             html: '<br>Summary information of DES releases and validation',
             // xtype: 'container',
             // text: 'testando',
-            width: 130,
+            width: 130
             // height: 134
         }]
     },{
-        xtype: 'button', 
+        xtype: 'button',
         text    : 'Releases',
         width: 260,
         scale: 'large',
-        handler : function() {
-            window.open("/dri/apps/eyeballing","_self")
-        }
+        handler : function () {
+            window.open('/dri/apps/eyeballing','_self');
+        },
+        disabled: true
     }]
 });

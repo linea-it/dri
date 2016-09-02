@@ -110,8 +110,9 @@ Ext.define('Target.view.objects.Grid', {
                 if ((record.get('ucd') == 'pos.eq.ra;meta.main') ||
                     (record.get('ucd') == 'pos.eq.dec;meta.main')) {
 
+                    column.width = 90;
                     column.xtype = 'numbercolumn';
-                    column.format = '0.0000';
+                    column.format = '0.000';
                 }
 
                 // Se tiver a coluna id habilita as colunas de rating e reject
@@ -128,7 +129,7 @@ Ext.define('Target.view.objects.Grid', {
 
                 columns.push({
                     xtype: 'widgetcolumn',
-                    width: 100,
+                    width: 90,
                     sortable: false,
                     text: 'Rating',
                     dataIndex: '_meta_rating',
@@ -158,7 +159,8 @@ Ext.define('Target.view.objects.Grid', {
                     text: 'Reject',
                     dataIndex: '_meta_reject',
                     tooltip: 'Reject',
-                    sortable: false
+                    sortable: false,
+                    width: 80
                 });
             }
             // Coluna Comments

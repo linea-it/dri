@@ -53,12 +53,23 @@ Ext.define('Target.view.association.AssociationController', {
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
-            classContents = vm.getStore('classcontent');
+            classContents = vm.getStore('classcontent'),
+            auxClassContents = vm.getStore('auxclasscontent');
 
         // Carregar as propriedades associadas a classe
         classContents.removeAll();
         classContents.clearFilter(true);
         classContents.filter([
+            {
+                property: 'pcc_class',
+                value: currentCatalog.get('prd_class')
+            }
+        ]);
+
+        // Carregar as propriedades associadas a classe
+        auxClassContents.removeAll();
+        auxClassContents.clearFilter(true);
+        auxClassContents.filter([
             {
                 property: 'pcc_class',
                 value: currentCatalog.get('prd_class')
@@ -86,7 +97,7 @@ Ext.define('Target.view.association.AssociationController', {
         // Carregar as propriedades do catalogo.
         productContents.filter([
             {
-                property: 'pcl_product_id',
+                property: 'pcn_product_id',
                 value: currentCatalog.get('id')
             }
         ]);
@@ -152,35 +163,61 @@ Ext.define('Target.view.association.AssociationController', {
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
-            classContents = vm.getStore('classcontent');
+            classContents = vm.getStore('auxclasscontent');
 
-        classContents.removeAll();
-        classContents.clearFilter(true);
-        classContents.filter([
-            {
-                property: 'pcc_class',
-                value: currentCatalog.get('prd_class')
-            },
-            {
-                property: 'search',
-                value: value
-            }
-        ]);
+        if (value !== '') {
+
+            classContents.removeAll();
+            classContents.clearFilter(true);
+            classContents.filter([
+                {
+                    property: 'pcc_class',
+                    value: currentCatalog.get('prd_class')
+                },
+                {
+                    property: 'search',
+                    value: value
+                }
+            ]);
+        } else {
+            me.onCancelClassContent();
+        }
 
     },
 
     onCancelClassContent: function () {
-        console.log('onCancelClassContent');
         this.loadClassContents();
     },
 
-    onSearchAssociation: function () {
+    onSearchAssociation: function (value) {
         console.log('onSearchAssociation');
+
+        var me = this,
+            vm = me.getViewModel(),
+            association = vm.getStore('fakeassociation');
+
+        if (value !== '') {
+            association.clearFilter(true);
+
+            association.filter([
+                {
+                    property: 'pcn_column_name',
+                    value: value
+                }
+            ]);
+        } else {
+            me.onCancelAssociation();
+        }
 
     },
 
     onCancelAssociation: function () {
         console.log('onCancelAssociation');
+        var me = this,
+            vm = me.getViewModel(),
+            association = vm.getStore('fakeassociation');
+
+        association.clearFilter();
 
     },
 

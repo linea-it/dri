@@ -18,7 +18,7 @@ Ext.define('Target.view.preview.PreviewController', {
                 // changeimages: 'onChangeImages'
             },
             'targets-visiomatic': {
-                //changeimage: 'onChangeImage'
+                changeimage: 'onChangeImage'
             }
         },
         store: {
@@ -95,44 +95,49 @@ Ext.define('Target.view.preview.PreviewController', {
         console.log('changeImage(%o)', dataset);
 
         var me = this,
-            refs = me.getReferences(),
-            visiomatic = refs.visiomatic,
-            vm = me.getViewModel(),
-            release = vm.getStore('releases').getById(dataset.get('release')),
-            tag = vm.getStore('tags').getById(dataset.get('tag')),
-            object = vm.get('currentRecord'),
-            host = window.location.host;
+            visiomatic = me.lookupReference('visiomatic'),
+            url = dataset.get('image_src_ptif');
 
-        if ((dataset) && (release) && (tag)) {
+        if (dataset) {
+            if (url != '') {
+                console.log(url);
+                visiomatic.setImage(url);
 
-            // 'http:///visiomatic?FIF=data/releases/y1_supplemental_d04/images/visiomatic/DES0222-0541.ptif';
+            } else {
+                console.log('removeImageLayer');
+                visiomatic.removeImageLayer();
 
-            host = 'desportal.cosmology.illinois.edu';
-            var url = Ext.String.format(
-                'http://{0}/visiomatic?FIF=data/releases/{1}/images/visiomatic/{2}.ptif',
-                host,
-                release.get('rls_name'),
-                encodeURIComponent(dataset.get('tli_tilename'))
-            );
-
-            // visiomatic.setImage(release, tag, dataset);
-            visiomatic.setImage(url);
-
-            // visiomatic.setView(object.get('_meta_ra'), object.get('_meta_dec'), 0.10);
+            }
 
         } else {
-            console.log('nao sei o que aconteceu');
+            console.log('dataset nao encontrado');
         }
+    },
+
+    onChangeImage: function () {
+        console.log('onChangeImage');
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('currentRecord'),
+            visiomatic = me.lookupReference('visiomatic'),
+            fov = 0.05;
+
+        console.log(visiomatic);
+
+        visiomatic.setView(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
+            fov);
+
     },
 
     onCenterTarget: function (visiomatic) {
         var me = this,
-            refs = me.getReferences(),
-            visiomatic = refs.visiomatic,
+            visiomatic = me.lookupReference('visiomatic'),
             vm = me.getViewModel(),
             object = vm.get('currentRecord');
 
-        visiomatic.setView(object.get('_meta_ra'), object.get('_meta_dec'), 0.10);
+        visiomatic.setView(object.get('_meta_ra'), object.get('_meta_dec'), 0.05);
     }
 
     // onComment: function (btn) {

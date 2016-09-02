@@ -58,7 +58,7 @@ Ext.define('Target.view.association.Panel', {
                         {
                             xtype: 'common-searchfield',
                             minSearch: 1,
-                            disabled: true,
+                            // disabled: true,
                             listeners: {
                                 'search': 'onSearchAssociation',
                                 'cancel': 'onCancelAssociation'
@@ -101,7 +101,7 @@ Ext.define('Target.view.association.Panel', {
                             itemId: 'grid2',
                             reference: 'classcontentgrid',
                             bind: {
-                                store: '{classcontent}'
+                                store: '{auxclasscontent}'
                             },
                             flex: 2,
                             viewConfig: {
