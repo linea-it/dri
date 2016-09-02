@@ -29,7 +29,7 @@ Ext.define('Target.view.preview.Preview', {
             xtype: 'combobox',
             reference: 'currentDataset',
             publishes: 'id',
-            width: 300,
+            width: 250,
             displayField: 'release_tag',
             bind: {
                 store: '{datasets}',
@@ -47,11 +47,13 @@ Ext.define('Target.view.preview.Preview', {
             }
         }, {
             xtype: 'textfield',
+            width: 120,
             readOnly: true,
             bind: {
                 value: '{currentDataset.tli_tilename}'
             }
-        }, {
+        }
+        ,{
             xtype: 'button',
             iconCls: 'x-fa fa-crosshairs',
             tooltip: 'Center',
