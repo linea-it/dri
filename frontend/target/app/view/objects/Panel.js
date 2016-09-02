@@ -39,8 +39,8 @@ Ext.define('Target.view.objects.Panel', {
                     region: 'center',
                     reference: 'targetsObjectsTabpanel',
                     listeners: {
-                        ready: 'onObjectPanelReady',
-                        rowdblclick: 'onDbClickTarget'
+                        ready: 'onObjectPanelReady'
+                        // rowdblclick: 'onDbClickTarget'
                     }
                 }
             ],
