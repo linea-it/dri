@@ -8,9 +8,9 @@ from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
-from .models import Product, Catalog, ProductContent, ProductContentAssociation
-from .serializers import ProductSerializer, CatalogSerializer, ProductContentSerializer, \
-    ProductContentAssociationSerializer, ProductAssociationSerializer
+from .models import Product, Catalog, Map, ProductContent, ProductContentAssociation
+from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, ProductContentSerializer, \
+    ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -184,3 +184,35 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content')
 
     ordering_fields = ('id',)
+
+
+class MapViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Map to be viewed or edited
+    """
+    queryset = Map.objects.select_related().all()
+
+    serializer_class = MapSerializer
+
+    filter_fields = ('prd_name', 'prd_display_name', 'prd_class')
+
+    search_fields = ('prd_name', 'prd_display_name', 'prd_class')
+
+    ordering_fields = ('id',)
+
+
+class AllProductViewSet(viewsets.ModelViewSet):
+    """
+    
+    """
+    queryset = Product.objects.select_related().all()
+
+    serializer_class = AllProductsSerializer
+
+    search_fields = ('prd_name', 'prd_display_name', 'prd_class')
+
+    filter_backends = (filters.DjangoFilterBackend,)
+
+    filter_class = ProductFilter
+
+    ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')

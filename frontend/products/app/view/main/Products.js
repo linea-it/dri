@@ -18,7 +18,7 @@ Ext.define('Products.view.main.Products', {
                 },
                 { 
                   text: 'Type', 
-                  dataIndex: 'type_display_name',
+                  dataIndex: 'pgr_display_name',
                   width: 150,
                   renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
                     return "<b>" + value + "</b>"
@@ -32,7 +32,7 @@ Ext.define('Products.view.main.Products', {
                 },
                 { 
                   text: 'Name', 
-                  dataIndex: 'prodname',
+                  dataIndex: 'prd_display_name',
                   width: 150,
                   renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
                     return "<b>" + value + "</b>"
@@ -46,7 +46,7 @@ Ext.define('Products.view.main.Products', {
                 },
                 { 
                   text: 'Class', 
-                  dataIndex: 'class_display_name',
+                  dataIndex: 'pcl_display_name',
                   width: 150,
                   renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
                     return "<b>" + value + "</b>"
@@ -60,7 +60,7 @@ Ext.define('Products.view.main.Products', {
                 },
                 { 
                     text: 'Process ID', 
-                    dataIndex: 'process_id',
+                    dataIndex: 'prd_process_id',
                     renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
                         return "<b>" + value + "</b>"
                     },
@@ -126,7 +126,7 @@ Ext.define('Products.view.main.Products', {
                 // },
                 { 
                   text: 'Date', 
-                  dataIndex: 'end_time',
+                  dataIndex: 'epr_end_date',
                   width: 150,
                   renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
                     return "<b>" + value.substring(0,10) + "</b>"

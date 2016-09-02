@@ -195,7 +195,6 @@ class MapSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'mpa_nside',
-            'mpa_filter',
             'mpa_ordering'
         )
 
@@ -320,3 +319,26 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
         )
 
         read_only_fields = ('id')
+
+
+class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
+    ctl_num_objects = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+
+        fields = (
+            'id',
+            'prd_name',
+            'prd_display_name',
+            'prd_flag_removed',
+            'ctl_num_objects'
+        )
+    
+    def get_ctl_num_objects(self, obj):
+        try:
+            return obj.table.catalog.ctl_num_objects
+        except AttributeError:
+            return None
+
+

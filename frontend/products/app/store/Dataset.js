@@ -26,10 +26,29 @@
 // });
 
 
+
+
 Ext.define('Products.store.Dataset', {
-    extend: 'common.store.Datasets',
+    extend: 'common.store.Tiles',
+
+    /**
+     * @requires common.model.Dataset
+     */
+    
+
     alias: 'store.dataset',
-    requires: [
-        'common.store.Datasets'
-    ]
+
+    // model: 'common.model.Dataset',
+
+    remoteFilter: true,
+
+    remoteSort: true,
+
+    pageSize: 100,
+
+    proxy: {
+        type: 'django',
+        url: '/dri/api/tags/'
+    }
+
 });

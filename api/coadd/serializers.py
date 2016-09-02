@@ -111,7 +111,7 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'tli_tilename',
             'tli_ra',
             'tli_dec',
-            'image_src_thumbnails',
+            #'image_src_thumbnails',
             'image_src_ptif'
         )
 

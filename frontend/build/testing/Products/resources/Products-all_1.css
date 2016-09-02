@@ -1036,6 +1036,25 @@ td.x-frame-mc {
 .x-panel-collapsed-mini {
     visibility: hidden;
 }
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/plugin/Viewport.scss:1 */
+.x-viewport,
+.x-viewport > .x-body {
+    margin: 0;
+    padding: 0;
+    border: 0 none;
+    overflow: hidden;
+    position: static;
+    touch-action: none;
+    -ms-touch-action: none;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/plugin/Viewport.scss:21 */
+.x-viewport {
+    height: 100%;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/plugin/Viewport.scss:27 */
+.x-viewport > .x-body {
+    min-height: 100%;
+}
 /* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/resizer/SplitterTracker.scss:1 */
 .x-resizable-overlay {
     position: absolute;
@@ -1234,6 +1253,104 @@ div.x-form-text-grow .x-form-textarea {
 /* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/view/BoundList.scss:8 */
 .x-ie9 .x-boundlist-list-ct {
     min-height: 0%;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:1 */
+.x-datepicker {
+    position: relative;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:4 */
+.x-datepicker .x-monthpicker {
+    left: 0;
+    top: 0;
+    display: block;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:10 */
+.x-datepicker .x-monthpicker-months,
+.x-datepicker .x-monthpicker-years {
+    height: 100%;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:16 */
+.x-datepicker-inner {
+    table-layout: fixed;
+    width: 100%;
+    border-collapse: separate;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:22 */
+.x-datepicker-cell {
+    padding: 0;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:26 */
+.x-datepicker-header {
+    position: relative;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:30 */
+.x-datepicker-arrow {
+    position: absolute;
+    outline: none;
+    font-size: 0;
+    display: table;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:37 */
+.x-datepicker-arrow:before {
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:45 */
+.x-datepicker-column-header {
+    padding: 0;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:49 */
+.x-datepicker-date {
+    display: block;
+    text-decoration: none;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:54 */
+.x-monthpicker {
+    display: table;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:57 */
+.x-monthpicker-body {
+    height: 100%;
+    position: relative;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:62 */
+.x-monthpicker-months,
+.x-monthpicker-years {
+    float: left;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:67 */
+.x-monthpicker-item {
+    float: left;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:71 */
+.x-monthpicker-item-inner {
+    display: block;
+    text-decoration: none;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:76 */
+.x-monthpicker-yearnav-button-ct {
+    float: left;
+    text-align: center;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:81 */
+.x-monthpicker-yearnav-button {
+    display: inline-block;
+    outline: none;
+    font-size: 0;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:87 */
+.x-monthpicker-buttons {
+    width: 100%;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:91 */
+.x-datepicker .x-monthpicker-buttons {
+    position: absolute;
+    bottom: 0;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/picker/Date.scss:96 */
+.x-datepicker-month .x-btn-split > .x-btn-button:after {
+    content: none;
 }
 /* /home/rafael/dri/frontend/ext/classic/theme-base/sass/src/tip/Tip.scss:1 */
 .x-tip {
@@ -8445,6 +8562,302 @@ body > .x-mask {
     border-top-width: 1px;
     border-bottom-width: 1px;
 }
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:9 */
+.x-datepicker {
+    border-width: 1px;
+    border-style: solid;
+    border-color: #d0d0d0;
+    background-color: #fff;
+    width: 310px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:19 */
+.x-datepicker-header {
+    padding: 0;
+    text-align: center;
+    background-color: #ececec;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:29 */
+.x-datepicker-arrow {
+    width: 32px;
+    height: 44px;
+    top: 0px;
+    cursor: pointer;
+    -webkit-touch-callout: none;
+    color: #919191;
+    background-color: #ececec;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+    opacity: 0.7;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:51 */
+div.x-datepicker-arrow:hover {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    opacity: 1;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:56 */
+.x-datepicker-next {
+    right: 0;
+    font: 16px/1 FontAwesome;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-datepicker-next:before {
+    content: "\f101";
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:65 */
+.x-datepicker-prev {
+    left: 0;
+    font: 16px/1 FontAwesome;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-datepicker-prev:before {
+    content: "\f100";
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:74 */
+.x-datepicker-month {
+    background: transparent;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:77 */
+.x-datepicker-month .x-btn,
+.x-datepicker-month .x-btn .x-btn-tc,
+.x-datepicker-month .x-btn .x-btn-tl,
+.x-datepicker-month .x-btn .x-btn-tr,
+.x-datepicker-month .x-btn .x-btn-mc,
+.x-datepicker-month .x-btn .x-btn-ml,
+.x-datepicker-month .x-btn .x-btn-mr,
+.x-datepicker-month .x-btn .x-btn-bc,
+.x-datepicker-month .x-btn .x-btn-bl,
+.x-datepicker-month .x-btn .x-btn-br {
+    background: transparent;
+    border-width: 0 !important;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:93 */
+.x-datepicker-month .x-btn-inner {
+    color: #404040;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:98 */
+.x-datepicker-month .x-btn-split-right:after,
+.x-datepicker-month .x-btn-over .x-btn-split-right:after {
+    content: "\f107";
+    font: 16px/1 FontAwesome;
+    color: #606060;
+    background: none;
+    padding: 0;
+    text-align: right;
+    width: 16px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:111 */
+.x-datepicker-month .x-btn {
+    padding: 14px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:115 */
+.x-datepicker-month .x-btn-over {
+    border-color: transparent;
+    background: #dfdfdf;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:120 */
+.x-datepicker-month .x-btn.x-btn-pressed {
+    border-color: transparent;
+    background: #d3d3d3;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:125 */
+.x-datepicker-month .x-btn-inner {
+    font-size: 15px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:130 */
+.x-datepicker-column-header {
+    width: 44px;
+    color: #404040;
+    font: 400 13px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    text-align: right;
+    background-color: #ececec;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:149 */
+.x-datepicker-column-header-inner {
+    line-height: 36px;
+    padding: 0 15px 0 0;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:154 */
+.x-datepicker-cell {
+    text-align: right;
+    border: 0;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:163 */
+.x-datepicker-date {
+    padding: 0 15px 0 0;
+    font: 300 13px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    color: #404040;
+    cursor: pointer;
+    line-height: 36px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:176 */
+div.x-datepicker-date:hover {
+    color: #404040;
+    background-color: #ececec;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:181 */
+.x-datepicker-selected {
+    border-style: solid;
+    border-color: #7fb5e4;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:184 */
+.x-datepicker-selected div.x-datepicker-date {
+    background-color: #5fa2dd;
+    color: #fff;
+    font-weight: 300;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:191 */
+.x-datepicker-today {
+    border-color: darkred;
+    border-style: solid;
+    background-color: #bfdaf1;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:202 */
+.x-datepicker-prevday .x-datepicker-date,
+.x-datepicker-nextday .x-datepicker-date {
+    color: #d0d0d0;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:209 */
+.x-datepicker-disabled .x-datepicker-date {
+    background-color: #eee;
+    cursor: default;
+    color: silver;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:217 */
+.x-datepicker-disabled div.x-datepicker-date:hover {
+    background-color: #eee;
+    color: silver;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:222 */
+.x-datepicker-footer,
+.x-monthpicker-buttons {
+    padding: 6px 0;
+    background-color: #fff;
+    text-align: center;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:239 */
+.x-datepicker-footer .x-btn,
+.x-monthpicker-buttons .x-btn {
+    margin: 0 3px 0 2px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:245 */
+.x-monthpicker {
+    width: 310px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: #d0d0d0;
+    background-color: #fff;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:255 */
+.x-monthpicker-months {
+    border-width: 0 1px 0 0;
+    border-color: #d0d0d0;
+    border-style: solid;
+    width: 154px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:264 */
+.x-monthpicker-months .x-monthpicker-item {
+    width: 76px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:269 */
+.x-monthpicker-years {
+    width: 154px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:272 */
+.x-monthpicker-years .x-monthpicker-item {
+    width: 77px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:277 */
+.x-monthpicker-item {
+    margin: 5px 0 5px;
+    font: 300 13px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    text-align: center;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:283 */
+.x-monthpicker-item-inner {
+    margin: 0 5px 0 5px;
+    color: #404040;
+    border: 0;
+    line-height: 37px;
+    cursor: pointer;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:301 */
+a.x-monthpicker-item-inner:hover {
+    color: #404040;
+    background-color: #ececec;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:307 */
+.x-monthpicker-item a.x-monthpicker-selected {
+    background-color: #5fa2dd;
+    color: #fff;
+    border-style: solid;
+    border-color: #7fb5e4;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:314 */
+.x-monthpicker-yearnav {
+    height: 47px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:318 */
+.x-monthpicker-yearnav-button-ct {
+    width: 77px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:322 */
+.x-monthpicker-yearnav-button {
+    height: 16px;
+    width: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+    opacity: 0.7;
+    -webkit-touch-callout: none;
+    color: #919191;
+    background-color: #fff;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:343 */
+a.x-monthpicker-yearnav-button:hover {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    opacity: 1;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:348 */
+.x-monthpicker-yearnav-next {
+    font: 16px/1 FontAwesome;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-monthpicker-yearnav-next:before {
+    content: "\f101";
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:362 */
+.x-monthpicker-yearnav-prev {
+    font: 16px/1 FontAwesome;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-monthpicker-yearnav-prev:before {
+    content: "\f100";
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:377 */
+.x-monthpicker-small .x-monthpicker-item {
+    margin: 2px 0 2px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:381 */
+.x-monthpicker-small .x-monthpicker-item-inner {
+    margin: 0 5px 0 5px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:385 */
+.x-monthpicker-small .x-monthpicker-yearnav {
+    height: 41px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/picker/Date.scss:389 */
+.x-monthpicker-small .x-monthpicker-yearnav-button {
+    margin-top: 12px;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/etc/mixins/slicer.scss:83 */
+.x-cmd-slicer.x-datepicker-header:before {
+    display: none;
+    content: "x-slicer:, stretch:bottom" !important;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-base/sass/etc/mixins/slicer.scss:83 */
+.x-cmd-slicer.x-datepicker-footer:before {
+    display: none;
+    content: "x-slicer:, stretch:bottom" !important;
+}
 /* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/tip/Tip.scss:180 */
 .x-tip-anchor {
     position: absolute;
@@ -9442,6 +9855,51 @@ body > .x-mask {
 /* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/menu/Menu.scss:704 */
 .x-ie8 .x-box-scroller-menu-default {
     background-color: #fff;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/grid/filters/Filters.scss:1 */
+.x-grid-filters-filtered-column {
+    font-style: italic;
+    font-weight: 600;
+    text-decoration: underline;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/grid/filters/Filters.scss:7 */
+.x-grid-filters-icon {
+    background-repeat: no-repeat;
+    background-position: center center;
+    color: #919191;
+    text-align: center;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/grid/filters/Filters.scss:16 */
+.x-grid-filters-find .x-form-item-label-inner {
+    font: 16px/1 FontAwesome;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-grid-filters-find .x-form-item-label-inner:before {
+    content: "\f002";
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/grid/filters/Filters.scss:26 */
+.x-grid-filters-gt .x-form-item-label-inner {
+    font: 16px/1 FontAwesome;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-grid-filters-gt .x-form-item-label-inner:before {
+    content: "\f054";
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/grid/filters/Filters.scss:36 */
+.x-grid-filters-lt .x-form-item-label-inner {
+    font: 16px/1 FontAwesome;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-grid-filters-lt .x-form-item-label-inner:before {
+    content: "\f053";
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/grid/filters/Filters.scss:46 */
+.x-grid-filters-eq .x-form-item-label-inner {
+    font: 16px/1 ExtJS;
+}
+/* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-grid-filters-eq .x-form-item-label-inner:before {
+    content: "\e605";
 }
 /* /home/rafael/dri/frontend/ext/classic/theme-neutral/sass/src/grid/locking/Lockable.scss:1 */
 .x-grid-locked .x-grid-inner-locked {
@@ -15120,377 +15578,4 @@ body > .x-mask {
 /* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:594 */
 .fa-user-times:before {
     content: "\f235" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:595 */
-.fa-hotel:before,
-.fa-bed:before {
-    content: "\f236" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:597 */
-.fa-viacoin:before {
-    content: "\f237" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:598 */
-.fa-train:before {
-    content: "\f238" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:599 */
-.fa-subway:before {
-    content: "\f239" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:600 */
-.fa-medium:before {
-    content: "\f23a" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:601 */
-.fa-yc:before,
-.fa-y-combinator:before {
-    content: "\f23b" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:603 */
-.fa-optin-monster:before {
-    content: "\f23c" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:604 */
-.fa-opencart:before {
-    content: "\f23d" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:605 */
-.fa-expeditedssl:before {
-    content: "\f23e" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:606 */
-.fa-battery-4:before,
-.fa-battery-full:before {
-    content: "\f240" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:608 */
-.fa-battery-3:before,
-.fa-battery-three-quarters:before {
-    content: "\f241" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:610 */
-.fa-battery-2:before,
-.fa-battery-half:before {
-    content: "\f242" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:612 */
-.fa-battery-1:before,
-.fa-battery-quarter:before {
-    content: "\f243" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:614 */
-.fa-battery-0:before,
-.fa-battery-empty:before {
-    content: "\f244" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:616 */
-.fa-mouse-pointer:before {
-    content: "\f245" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:617 */
-.fa-i-cursor:before {
-    content: "\f246" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:618 */
-.fa-object-group:before {
-    content: "\f247" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:619 */
-.fa-object-ungroup:before {
-    content: "\f248" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:620 */
-.fa-sticky-note:before {
-    content: "\f249" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:621 */
-.fa-sticky-note-o:before {
-    content: "\f24a" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:622 */
-.fa-cc-jcb:before {
-    content: "\f24b" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:623 */
-.fa-cc-diners-club:before {
-    content: "\f24c" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:624 */
-.fa-clone:before {
-    content: "\f24d" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:625 */
-.fa-balance-scale:before {
-    content: "\f24e" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:626 */
-.fa-hourglass-o:before {
-    content: "\f250" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:627 */
-.fa-hourglass-1:before,
-.fa-hourglass-start:before {
-    content: "\f251" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:629 */
-.fa-hourglass-2:before,
-.fa-hourglass-half:before {
-    content: "\f252" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:631 */
-.fa-hourglass-3:before,
-.fa-hourglass-end:before {
-    content: "\f253" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:633 */
-.fa-hourglass:before {
-    content: "\f254" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:634 */
-.fa-hand-grab-o:before,
-.fa-hand-rock-o:before {
-    content: "\f255" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:636 */
-.fa-hand-stop-o:before,
-.fa-hand-paper-o:before {
-    content: "\f256" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:638 */
-.fa-hand-scissors-o:before {
-    content: "\f257" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:639 */
-.fa-hand-lizard-o:before {
-    content: "\f258" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:640 */
-.fa-hand-spock-o:before {
-    content: "\f259" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:641 */
-.fa-hand-pointer-o:before {
-    content: "\f25a" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:642 */
-.fa-hand-peace-o:before {
-    content: "\f25b" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:643 */
-.fa-trademark:before {
-    content: "\f25c" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:644 */
-.fa-registered:before {
-    content: "\f25d" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:645 */
-.fa-creative-commons:before {
-    content: "\f25e" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:646 */
-.fa-gg:before {
-    content: "\f260" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:647 */
-.fa-gg-circle:before {
-    content: "\f261" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:648 */
-.fa-tripadvisor:before {
-    content: "\f262" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:649 */
-.fa-odnoklassniki:before {
-    content: "\f263" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:650 */
-.fa-odnoklassniki-square:before {
-    content: "\f264" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:651 */
-.fa-get-pocket:before {
-    content: "\f265" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:652 */
-.fa-wikipedia-w:before {
-    content: "\f266" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:653 */
-.fa-safari:before {
-    content: "\f267" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:654 */
-.fa-chrome:before {
-    content: "\f268" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:655 */
-.fa-firefox:before {
-    content: "\f269" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:656 */
-.fa-opera:before {
-    content: "\f26a" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:657 */
-.fa-internet-explorer:before {
-    content: "\f26b" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:658 */
-.fa-tv:before,
-.fa-television:before {
-    content: "\f26c" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:660 */
-.fa-contao:before {
-    content: "\f26d" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:661 */
-.fa-500px:before {
-    content: "\f26e" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:662 */
-.fa-amazon:before {
-    content: "\f270" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:663 */
-.fa-calendar-plus-o:before {
-    content: "\f271" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:664 */
-.fa-calendar-minus-o:before {
-    content: "\f272" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:665 */
-.fa-calendar-times-o:before {
-    content: "\f273" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:666 */
-.fa-calendar-check-o:before {
-    content: "\f274" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:667 */
-.fa-industry:before {
-    content: "\f275" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:668 */
-.fa-map-pin:before {
-    content: "\f276" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:669 */
-.fa-map-signs:before {
-    content: "\f277" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:670 */
-.fa-map-o:before {
-    content: "\f278" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:671 */
-.fa-map:before {
-    content: "\f279" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:672 */
-.fa-commenting:before {
-    content: "\f27a" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:673 */
-.fa-commenting-o:before {
-    content: "\f27b" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:674 */
-.fa-houzz:before {
-    content: "\f27c" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:675 */
-.fa-vimeo:before {
-    content: "\f27d" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:676 */
-.fa-black-tie:before {
-    content: "\f27e" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:677 */
-.fa-fonticons:before {
-    content: "\f280" !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-awesome/sass/src/all.scss:20 */
-.x-fa:before {
-    font-family: FontAwesome !important;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:5 */
-@font-face {
-    font-family: 'ExtJS';
-    src: url('../resources/font-ext/fonts/ExtJS.eot?-tqegh9');
-    src: url('../resources/font-ext/fonts/ExtJS.eot?#iefix-tqegh9') format('embedded-opentype'), url('../resources/font-ext/fonts/ExtJS.ttf?-tqegh9') format('truetype'), url('../resources/font-ext/fonts/ExtJS.woff?-tqegh9') format('woff'), url('../resources/font-ext/fonts/ExtJS.svg?-tqegh9#ExtJS') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:16 */
-.ext {
-    font-family: ExtJS;
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:20 */
-.ext-sencha:before {
-    content: "\e61e";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:23 */
-.ext-checkbox-checked:before {
-    content: "\e613";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:26 */
-.ext-checkbox-unchecked:before {
-    content: "\e614";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:29 */
-.ext-chevron-left:before {
-    content: "\e615";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:32 */
-.ext-chevron-right:before {
-    content: "\e616";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:35 */
-.ext-double-chevron-left:before {
-    content: "\e617";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:38 */
-.ext-double-chevron-right:before {
-    content: "\e618";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:41 */
-.ext-sort-down:before {
-    content: "\e619";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:44 */
-.ext-sort-up:before {
-    content: "\e61a";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:47 */
-.ext-spinner-down:before {
-    content: "\e61b";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:50 */
-.ext-spinner-up:before {
-    content: "\e61c";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:53 */
-.ext-square-edit:before {
-    content: "\e61d";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:56 */
-.ext-equals-vertical:before {
-    content: "\e612";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:59 */
-.ext-collapse:before {
-    content: "\e600";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:62 */
-.ext-columns:before {
-    content: "\e601";
-}
-/* /home/rafael/dri/frontend/ext/packages/font-ext/sass/src/all.scss:65 */
-.ext-dirty:before {
-    content: "\e602";
 }

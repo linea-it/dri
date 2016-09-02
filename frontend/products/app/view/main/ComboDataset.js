@@ -9,7 +9,7 @@ Ext.define('Products.view.main.ComboDataset', {
     },
     fieldLabel: 'Dataset',
     labelWidth: 60,
-    displayField: 'display_name',
-    valueField: 'display_name'
+    displayField: 'tag_display_name',
+    valueField: 'id'
 
 });

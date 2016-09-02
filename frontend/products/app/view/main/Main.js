@@ -14,8 +14,11 @@ Ext.define('Products.view.main.Main', {
         'Products.view.main.MainController',
         'Products.view.main.MainModel',
         'Products.view.main.Products',
+        'Products.view.main.ComboRelease',
+        'Products.view.main.ComboDataset',
         'Products.view.main.ComboBand',
-        'Products.view.main.ComboBand'
+        'Ext.plugin.Viewport',
+        'Ext.grid.filters.Filters',
     ],
     controller: 'main',
     viewModel: 'main',
@@ -47,14 +50,14 @@ Ext.define('Products.view.main.Main', {
             },
             items:[{
                 xtype: 'comboRelease',
-                reference: 'releasefield'
-                // listeners: {
-                //     select: 'onSelectReleaseField'
-                //     //deselect: 'onDeselectReleaseField'
-                // }
+                reference: 'releasefield',
+                listeners: {
+                    select: 'onSelectRelease'
+                    //deselect: 'onDeselectReleaseField'
+                }
             },{
                 xtype: 'comboDataset',
-                reference: 'releasefield',
+                reference: 'field',
                 margin: '0 0 0 20'
                 // listeners: {
                 //     select: 'onSelectReleaseField'
@@ -63,21 +66,21 @@ Ext.define('Products.view.main.Main', {
             },{
                 xtype: 'comboType',
                 margin: '0 0 0 20',
-                reference: 'type'
-                // listeners: {
-                //     select: 'onSelectType'
-                //     //deselect: 'onDeselectReleaseField'
-                // }
+                reference: 'type',
+                listeners: {
+                    select: 'onSelectType'
+                    //deselect: 'onDeselectReleaseField'
+                }
             },
-//            {
-//                xtype: 'comboBand',
-//                margin: '0 0 0 20',
-//                reference: 'bands'
-//                // listeners: {
-//                //     select: 'onSelectBand'
-//                //     //deselect: 'onDeselectReleaseField'
-//                // }
-            //},
+            // {
+            //     xtype: 'comboBand',
+            //     margin: '0 0 0 20',
+            //     reference: 'bands'
+            //     // listeners: {
+            //     //     select: 'onSelectBand'
+            //     //     //deselect: 'onDeselectReleaseField'
+            //     // }
+            // },
             {
                 xtype: 'button',
                 margin: '0 10 0 10',

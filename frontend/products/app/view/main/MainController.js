@@ -17,5 +17,38 @@ Ext.define('Products.view.main.MainController', {
         if (choice === 'yes') {
             //
         }
-    }
+    },
+
+    onSelectRelease: function(combo, record){
+        var refs = this.getReferences(),
+            gridfield = refs.field,
+            store = gridfield.getStore();
+
+        //console.log(release)
+        id = record.getData().id
+        console.log(store)
+
+        store.filter([
+            {
+                property: "tag_release",
+                value: id
+            }
+        ])
+    },
+    onSelectType: function(combo, record){
+        var refs = this.getReferences(),
+            gridcatalogs = refs.catalogs,
+            store = gridcatalogs.getStore();
+
+        //console.log(release)
+        id = record.getData().id
+        console.log(store)
+
+        store.filter([
+            {
+                property: "pgr_group",
+                value: id
+            }
+        ])
+    },
 });
