@@ -39,11 +39,8 @@ Ext.define('visiomatic.Visiomatic', {
         enableCatalogs: true,
         availableCatalogs: [
             'GALEX_AIS',
-            'SDSS',
             '2MASS',
-            'AllWISE',
-            'NVSS',
-            'FIRST'
+            'AllWISE'
         ],
 
         enableMiniMap: false,
@@ -55,6 +52,18 @@ Ext.define('visiomatic.Visiomatic', {
             nativeCelsys: true
         },
         miniMap: false,
+
+        enableWcs: true,
+        wcsUnits: [
+            {
+                label: 'RA, Dec (Deg)',
+                units: 'deg'
+            },
+            {
+                label: 'RA, Dec (HMS)',
+                units: 'HMS'
+            }
+        ],
 
         image: null,
         imageLayer: null,
@@ -124,6 +133,11 @@ Ext.define('visiomatic.Visiomatic', {
             me.createSidebar();
         }
 
+        // Wcs Control
+        if (me.getEnableWcs()) {
+            me.addWcsController();
+        }
+
     },
 
     getMapContainer: function () {
@@ -156,11 +170,29 @@ Ext.define('visiomatic.Visiomatic', {
 
         libL.control.iip.catalog(catalogs).addTo(sidebar);
 
+        // Region
+        libL.control.iip.region(
+            [
+            ]
+        ).addTo(sidebar);
+
         // Profile Overlays
         libL.control.iip.profile().addTo(sidebar);
 
         sidebar.addTabList();
 
+    },
+
+    addWcsController: function () {
+        var me = this,
+            libL = me.libL,
+            map = me.getMap(),
+            units = me.getWcsUnits();
+
+        libL.control.wcs({
+            coordinates: units,
+            position: 'topright'
+        }).addTo(map);
     },
 
     setImage: function (image, options) {
