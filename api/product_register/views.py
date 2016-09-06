@@ -4,8 +4,8 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from rest_framework.permissions import IsAuthenticated
 
 from .ImportProcess import Import
-from .models import ExternalProcess, Site
-from .serializers import ExternalProcessSerializer, SiteSerializer
+from .models import ExternalProcess, Site, Authorization
+from .serializers import ExternalProcessSerializer, SiteSerializer, AuthorizationSerializer
 
 
 
@@ -41,6 +41,27 @@ class ExternalProcessViewSet(viewsets.ModelViewSet):
     ordering_fields = ('id', 'epr_original_id', 'epr_site')
 
 
+class AuthorizationViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows External Authorization to be viewed or edited
+    """
+    authentication_classes = (SessionAuthentication, BasicAuthentication, )
+
+    queryset = Authorization.objects.select_related().all()
+
+    serializer_class = AuthorizationSerializer
+
+    search_fields = ('ath_ticket', )
+
+    filter_fields = ('ath_ticket', )
+
+    ordering_fields = ('id',)
+
+
+    def perform_create(self, serializer):
+        serializer.save(ath_owner=self.request.user)
+
+
 class ExternalProcessImportViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows External Processes to be imported
@@ -60,3 +81,4 @@ class ExternalProcessImportViewSet(viewsets.ModelViewSet):
             return response
         else:
             raise Exception('was a failure to create the record.')
+
