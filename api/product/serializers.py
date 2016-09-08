@@ -195,7 +195,8 @@ class MapSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'mpa_nside',
-            'mpa_ordering'
+            'mpa_ordering',
+            'mpa_filter'
         )
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
@@ -203,7 +204,7 @@ class MaskSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
 
         model = Mask
-        
+
         fields = (
             'id',
             'msk_filter'
@@ -323,6 +324,11 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
 
 class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
     ctl_num_objects = serializers.SerializerMethodField()
+    # mpa_filter = serializers.SerializerMethodField()
+    msk_filter = serializers.SerializerMethodField()
+    mpa_nside = serializers.SerializerMethodField()
+    mpa_ordering = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Product
@@ -332,12 +338,41 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             'prd_name',
             'prd_display_name',
             'prd_flag_removed',
-            'ctl_num_objects'
+            'ctl_num_objects',
+            'msk_filter',
+            'mpa_nside',
+            'mpa_ordering',
+            # 'mpa_filter'
+
         )
     
     def get_ctl_num_objects(self, obj):
         try:
             return obj.table.catalog.ctl_num_objects
+        except AttributeError:
+            return None
+
+    def get_msk_filter(self, obj):
+        try:
+            return obj.table.mask.msk_filter
+        except AttributeError:
+            return None
+
+    # def get_mpa_filter(self, obj):
+    #     try:
+    #         return obj.table.map.mpa_filter
+    #     except AttributeError:
+    #         return None
+
+    def get_mpa_nside(self, obj):
+        try:
+            return obj.table.map.mpa_nside
+        except AttributeError:
+            return None
+
+    def get_mpa_ordering(self, obj):
+        try:
+            return obj.table.map.mpa_ordering
         except AttributeError:
             return None
 
