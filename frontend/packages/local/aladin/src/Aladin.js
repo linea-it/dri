@@ -144,7 +144,10 @@ Ext.define('aladin.Aladin', {
         initialFov: null,
 
         // habilitar ou desabilitar a exibicao de mapas
-        enableMaps: true
+        enableMaps: true,
+
+        // habilitar botao que permite troca entre Visiomatic / Aladin
+        enableShift: true
     },
 
     /**
@@ -952,6 +955,11 @@ Ext.define('aladin.Aladin', {
         color = me.colorsAvailable.shift();
 
         return color;
+
+    },
+
+    onShift: function () {
+        this.fireEvent('shift', this.getRaDec(), this);
 
     },
 
