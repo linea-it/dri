@@ -16,7 +16,8 @@ Ext.define('Sky.view.footprint.FootprintController', {
                 updatepanel: 'onUpdatePanel'
             },
             'footprint-aladin': {
-                ondblclick: 'onDblClickAladin'
+                ondblclick: 'onDblClickAladin',
+                shift: 'onShift'
             }
         },
         store: {
@@ -208,6 +209,17 @@ Ext.define('Sky.view.footprint.FootprintController', {
     },
 
     onDblClickAladin: function (radec) {
+        this.toVisiomatic(radec);
+
+    },
+
+    onShift: function (radec) {
+        this.toVisiomatic(radec);
+
+    },
+
+    toVisiomatic: function (radec) {
+
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('tiles'),
@@ -224,12 +236,6 @@ Ext.define('Sky.view.footprint.FootprintController', {
                 coordinate = radec[0].toFixed(3).replace('.', ',') + radec[1].toFixed(3).replace('.', ',');
             }
 
-            // if (radec[1] > 0) {
-            //     coordinate = radec[0].toFixed(3) + '+' + radec[1].toFixed(3);
-            // } else {
-            //     coordinate = radec[0].toFixed(3) + radec[1].toFixed(3);
-            // }
-
             coordinate = encodeURIComponent(coordinate);
 
             hash = 'dataset/' + dataset.get('id') + '/' + coordinate + '/' + fov;
@@ -237,6 +243,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
             me.redirectTo(hash);
 
         }
+
     }
 
 });

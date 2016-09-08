@@ -1,8 +1,7 @@
 import logging
 
 from rest_framework import serializers
-from .models import Export
-from .models import ExternalProcess, Site
+from .models import Export, ExternalProcess, Site, Authorization
 
 logger = logging.getLogger(__name__)
 
@@ -54,3 +53,17 @@ class ExternalProcessSerializer(serializers.HyperlinkedModelSerializer):
             'epr_site'
         )
 
+class AuthorizationSerializer(serializers.HyperlinkedModelSerializer):
+
+    ticket = serializers.SerializerMethodField()
+
+    class Meta:
+
+        model = Authorization
+
+        fields = (
+            'ticket',
+        )
+
+    def get_ticket(self, obj):
+        return obj.ath_ticket

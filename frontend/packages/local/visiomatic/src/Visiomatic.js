@@ -1,10 +1,15 @@
 Ext.define('visiomatic.Visiomatic', {
-    extend: 'Ext.container.Container',
+    extend: 'Ext.panel.Panel',
 
     requires: [
         'visiomatic.VisiomaticModel',
         'visiomatic.VisiomaticController'
+
     ],
+
+    mixins: {
+        interface: 'visiomatic.Interface'
+    },
 
     xtype: 'visiomatic',
 
@@ -39,11 +44,8 @@ Ext.define('visiomatic.Visiomatic', {
         enableCatalogs: true,
         availableCatalogs: [
             'GALEX_AIS',
-            'SDSS',
             '2MASS',
-            'AllWISE',
-            'NVSS',
-            'FIRST'
+            'AllWISE'
         ],
 
         enableMiniMap: false,
@@ -54,7 +56,19 @@ Ext.define('visiomatic.Visiomatic', {
             zoomLevelOffset: -6,
             nativeCelsys: true
         },
-        miniMap: false,
+        miniMap: true,
+
+        enableWcs: true,
+        wcsUnits: [
+            {
+                label: 'RA, Dec (Deg)',
+                units: 'deg'
+            },
+            {
+                label: 'RA, Dec (HMS)',
+                units: 'HMS'
+            }
+        ],
 
         image: null,
         imageLayer: null,
@@ -70,7 +84,17 @@ Ext.define('visiomatic.Visiomatic', {
 
         release: null,
         tag: null,
-        dataset: null
+        dataset: null,
+
+        // adicionar uma toolbar
+        enableTools: true,
+
+        ////// buttons //////
+
+        // Get Link
+        enableLink: true,
+        // Shift Visiomatic/Aladin
+        enableShift: true
     },
 
     bind: {
@@ -80,13 +104,37 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     initComponent: function () {
-        var me = this;
+        var me = this,
+            tollbar, btns, cmpVisiomatic;
 
         if (window.L) {
             me.libL  = window.L;
         } else {
             console.log('window.L ainda nao esta carregada, incluir no app.json a biblioteca Leaflet');
         }
+
+        cmpVisiomatic = Ext.create('Ext.Component', {
+            id: me.getMapContainer(),
+            width: '100%',
+            height: '100%'
+        });
+
+        // Toolbar
+        if (me.getEnableTools()) {
+            tollbar = me.makeToolbar();
+            tools = me.makeToolbarButtons();
+
+            tollbar.add(tools);
+
+            me.tbar = tollbar;
+
+        }
+
+        Ext.apply(this, {
+            items: [
+                cmpVisiomatic
+            ]
+        });
 
         me.callParent(arguments);
     },
@@ -124,11 +172,16 @@ Ext.define('visiomatic.Visiomatic', {
             me.createSidebar();
         }
 
+        // Wcs Control
+        if (me.getEnableWcs()) {
+            me.addWcsController();
+        }
+
     },
 
     getMapContainer: function () {
 
-        return this.getId();
+        return this.getId() + '-placeholder';
     },
 
     createSidebar: function () {
@@ -156,11 +209,29 @@ Ext.define('visiomatic.Visiomatic', {
 
         libL.control.iip.catalog(catalogs).addTo(sidebar);
 
+        // Region
+        libL.control.iip.region(
+            [
+            ]
+        ).addTo(sidebar);
+
         // Profile Overlays
         libL.control.iip.profile().addTo(sidebar);
 
         sidebar.addTabList();
 
+    },
+
+    addWcsController: function () {
+        var me = this,
+            libL = me.libL,
+            map = me.getMap(),
+            units = me.getWcsUnits();
+
+        libL.control.wcs({
+            coordinates: units,
+            position: 'topright'
+        }).addTo(map);
     },
 
     setImage: function (image, options) {
@@ -254,6 +325,45 @@ Ext.define('visiomatic.Visiomatic', {
             imageLayer = me.getImageLayer();
 
         map.removeLayer(imageLayer);
+
+    },
+
+    getRaDec: function () {
+        var me = this,
+            libL = me.libL,
+            map = me.getMap(),
+            wcs = map.options.crs,
+            latlng = map.getCenter();
+
+        return {
+            'ra': parseFloat(latlng.lng.toFixed(4)),
+            'dec': parseFloat(latlng.lat.toFixed(4))
+        };
+
+    },
+
+    getLinkToPosition: function () {
+        var me = this,
+            map = me.getMap(),
+            coordinate = me.getRaDec(),
+            fov = map.options.fov,
+            coord;
+
+        if (coordinate.dec > 0) {
+            coord = coordinate.ra.toFixed(3).replace('.', ',') + '+' + coordinate.dec.toFixed(3).replace('.', ',');
+        } else {
+            coord = coordinate.ra.toFixed(3).replace('.', ',') + coordinate.dec.toFixed(3).replace('.', ',');
+        }
+
+        if (fov) {
+            fov = fov.toFixed(2).replace('.', ',');
+        }
+
+        me.fireEvent('link', encodeURIComponent(coord), fov, coordinate, me);
+    },
+
+    onShift: function () {
+        this.fireEvent('shift', this.getRaDec(), this);
 
     }
 

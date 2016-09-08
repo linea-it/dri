@@ -18,7 +18,9 @@ Ext.define('Sky.view.dataset.DatasetController', {
             },
             'sky-visiomatic': {
                 dblclick: 'onDblClickVisiomatic',
-                changeimage: 'onChangeImage'
+                changeimage: 'onChangeImage',
+                link: 'onGetLink',
+                shift: 'onShift'
             }
         }
     },
@@ -97,6 +99,33 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     onDblClickVisiomatic: function () {
+        this.toAladin();
+    },
+
+    onShift: function () {
+        this.toAladin();
+
+    },
+
+    onGetLink: function (coordinate, fov, originalcoord) {
+        var me = this,
+            vm = me.getViewModel(),
+            current = vm.get('currentDataset'),
+            href = window.location.href,
+            host = href.split('/#')[0],
+            link;
+
+        if (fov) {
+            link = Ext.String.format('{0}/#dataset/{1}/{2}/{3}', host, current.get('id'), coordinate, fov);
+        } else {
+            link = Ext.String.format('{0}/#dataset/{1}/{2}', host, current.get('id'), coordinate);
+        }
+
+        Ext.Msg.alert('Link', '<a href="">' + link + '</a>');
+
+    },
+
+    toAladin: function () {
         var me = this,
             vm = me.getViewModel(),
             current = vm.get('currentDataset'),
@@ -106,6 +135,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
         hash = 'sky/' + release;
 
         me.redirectTo(hash);
+
     }
 
 });

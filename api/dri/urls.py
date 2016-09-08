@@ -51,6 +51,7 @@ router.register(r'association', product_views.ProductAssociationViewSet)
 router.register(r'AllProducts', product_views.AllProductViewSet)
 
 
+
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
 router.register(r'defect', validation_views.DefectViewSet)
@@ -59,6 +60,7 @@ router.register(r'filters', common_views.FilterViewSet)
 
 router.register(r'site', product_register_views.SiteViewSet)
 router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet, base_name='importprocess')
+router.register(r'importauthorization', product_register_views.AuthorizationViewSet)
 router.register(r'application',interfaces_views.ApplicationViewSet)
 
 # API Relacionadas ao Banco de Dados de Catalogo
