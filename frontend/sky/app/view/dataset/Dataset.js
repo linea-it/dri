@@ -17,7 +17,9 @@ Ext.define('Sky.view.dataset.Dataset', {
         dataset: null,
         coordinate: null,
         fov: null,
-        radec: null
+        radec: null,
+
+        defaultFov: 0.5
     },
 
     initComponent: function () {
@@ -102,7 +104,11 @@ Ext.define('Sky.view.dataset.Dataset', {
 
         me.setRadec(radec);
 
-        me.setFov(fov.replace(',', '.'));
+        if (fov) {
+            me.setFov(fov.replace(',', '.'));
+        } else {
+            me.setFov(me.getDefaultFov());
+        }
 
         coordinate = radec.ra + ', ' + radec.dec;
         me.setCoordinate(coordinate);
