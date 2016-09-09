@@ -68,7 +68,7 @@ Ext.define('Products.view.main.Products', {
                 },
                 { 
                     text: 'Owner', 
-                    dataIndex: 'owner',
+                    dataIndex: 'epr_username',
                     renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
                         return "<b>" + value + "</b>"
                     },
@@ -236,53 +236,53 @@ Ext.define('Products.view.main.Products', {
                         }
                     }]
                 },
-                {
-                    xtype: 'actioncolumn',
-                    width: 30,
-                    sortable: false,
-                    menuDisabled: true,
-                    // flex:true,
-                    items: [{
-                        iconCls:'x-fa fa-minus-circle',
-                        tooltip: 'Delete',
-                        handler: 'purgeWindow'
-                    }]
-                },{
-                    xtype: 'actioncolumn',
-                    width: 30,
-                    sortable: false,
-                    menuDisabled: true,
-                    items: [{
-                        iconCls:'x-fa fa-sitemap',
-                        tooltip: 'Provenance',
-                        handler: 'provenance'
-                    }]
-                },{
-                    xtype: 'actioncolumn',
-                    width: 30,
-                    sortable: false,
-                    menuDisabled: true,
-                    // flex:true,
-                    items: [{
-                        iconCls:'x-fa fa-link',
-                        tooltip: 'Product log',
-                        handler: function(grid, rowIndex, colIndex){
-                            process_id = grid.getStore().getAt(rowIndex).get('process_id');
-                            window.open("/VP/getViewProcessCon?process_id="+process_id);
-                        }
-                    }]
-                },{
-                    xtype: 'actioncolumn',
-                    width: 30,
-                    sortable: false,
-                    menuDisabled: true,
-                    flex:true,
-                    items: [{
-                        iconCls:'x-fa fa-share',
-                        tooltip: 'Export',
-                        handler: 'validExport'
-                    }]
-                }
+                // {
+                //     xtype: 'actioncolumn',
+                //     width: 30,
+                //     sortable: false,
+                //     menuDisabled: true,
+                //     // flex:true,
+                //     items: [{
+                //         iconCls:'x-fa fa-minus-circle',
+                //         tooltip: 'Delete',
+                //         handler: 'purgeWindow'
+                //     }]
+                // },{
+                //     xtype: 'actioncolumn',
+                //     width: 30,
+                //     sortable: false,
+                //     menuDisabled: true,
+                //     items: [{
+                //         iconCls:'x-fa fa-sitemap',
+                //         tooltip: 'Provenance',
+                //         handler: 'provenance'
+                //     }]
+                // },{
+                //     xtype: 'actioncolumn',
+                //     width: 30,
+                //     sortable: false,
+                //     menuDisabled: true,
+                //     // flex:true,
+                //     items: [{
+                //         iconCls:'x-fa fa-link',
+                //         tooltip: 'Product log',
+                //         handler: function(grid, rowIndex, colIndex){
+                //             process_id = grid.getStore().getAt(rowIndex).get('process_id');
+                //             window.open("/VP/getViewProcessCon?process_id="+process_id);
+                //         }
+                //     }]
+                // },{
+                //     xtype: 'actioncolumn',
+                //     width: 30,
+                //     sortable: false,
+                //     menuDisabled: true,
+                //     flex:true,
+                //     items: [{
+                //         iconCls:'x-fa fa-share',
+                //         tooltip: 'Export',
+                //         handler: 'validExport'
+                //     }]
+                // }
             ],
 
             bbar: Ext.create('Ext.PagingToolbar', {

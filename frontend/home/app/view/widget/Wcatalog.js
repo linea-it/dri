@@ -24,9 +24,9 @@ Ext.define('Home.view.widget.Wcatalog', {
         text    : 'Science Products',
         width: 260,
         scale: 'large',
-        disabled : true,
+        //disabled : true,
         handler : function() {
-            window.open("/dri/apps/sky","_self")
+            window.open("/dri/apps/products","_self")
         }
     }]
 });
