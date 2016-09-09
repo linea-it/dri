@@ -24,7 +24,7 @@ Ext.define('Home.view.widget.Wtarget', {
         text    : 'Target Viewer',
         width: 260,
         scale: 'large',
-        disabled: true,
+        // disabled: true,
         handler : function () {
             window.open('/dri/apps/target','_self');
         }
