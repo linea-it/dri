@@ -2,6 +2,7 @@ from django.db import models
 from product_classifier.models import ProductClass
 from product_classifier.models import ProductClassContent
 from product_register.models import ExternalProcess
+from coadd.models import Release, Tag
 
 
 class Product(models.Model):
@@ -56,22 +57,23 @@ class Catalog(Table):
 
 
 class Map(Table):
-
+    mpa_release = models.ForeignKey(
+        Release, on_delete=models.CASCADE, verbose_name='Release', null=True, default=None)
+    mpa_tag = models.ForeignKey(
+        Tag, on_delete=models.CASCADE, verbose_name='Tag', null=True, default=None)
+    mpa_filter = models.ForeignKey(
+        'common.Filter', verbose_name='Filter', null=True, default=None)
     mpa_nside = models.PositiveSmallIntegerField(
         verbose_name='Nside')
-    mpa_filter = models.CharField(
-        max_length=1, verbose_name='Filter')
     mpa_ordering = models.CharField(
         max_length=8, verbose_name='Ordering')
-    # tag_id integer NOT NULL,      # [CMP] already exist for product
-    # field_id integer,             # [CMP] already exist for product
-    # image character varying(256), # [CMP] should be a relation with File?
-    #                                       a product table map can have
-    #                                       a file with same id of product...
 
 
 class Mask(Table):
-
+    msk_release = models.ForeignKey(
+        Release, on_delete=models.CASCADE, verbose_name='Release', null=True, default=None)
+    msk_tag = models.ForeignKey(
+        Tag, on_delete=models.CASCADE, verbose_name='Tag', null=True, default=None)
     msk_filter = models.CharField(
         max_length=1, verbose_name='Filter')
     # tag_id integer NOT NULL,      # [CMP] already exist for product

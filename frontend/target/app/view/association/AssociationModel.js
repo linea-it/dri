@@ -22,7 +22,10 @@ Ext.define('Target.view.association.AssociationModel', {
             type: 'class-content',
             storeId: 'ClassContent'
         },
-
+        auxclasscontent: {
+            type: 'class-content',
+            storeId: 'AuxClassContent'
+        },
         productcontent: {
             type: 'product-content',
             storeId: 'ProductContent'
@@ -34,7 +37,10 @@ Ext.define('Target.view.association.AssociationModel', {
         },
 
         fakeassociation: {
-            type: 'product-association'
+            type: 'product-association',
+            remoteFilter: false,
+            remoteSorter: false
+
         }
     }
 });

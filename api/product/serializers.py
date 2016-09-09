@@ -195,8 +195,8 @@ class MapSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'mpa_nside',
-            'mpa_filter',
-            'mpa_ordering'
+            'mpa_ordering',
+            'mpa_filter'
         )
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
@@ -204,7 +204,7 @@ class MaskSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
 
         model = Mask
-        
+
         fields = (
             'id',
             'msk_filter'
@@ -320,3 +320,84 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
         )
 
         read_only_fields = ('id')
+
+
+class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
+    ctl_num_objects = serializers.SerializerMethodField()
+    # mpa_filter = serializers.SerializerMethodField()
+    msk_filter = serializers.SerializerMethodField()
+    mpa_nside = serializers.SerializerMethodField()
+    mpa_ordering = serializers.SerializerMethodField()
+    pgr_display_name = serializers.SerializerMethodField()
+    pcl_display_name = serializers.SerializerMethodField()
+    prd_process_id = serializers.PrimaryKeyRelatedField(
+        queryset=ExternalProcess.objects.all(), many=False)
+    epr_username = serializers.SerializerMethodField()
+    epr_end_date = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Product
+
+        fields = (
+            'id',
+            'prd_name',
+            'prd_display_name',
+            'prd_flag_removed',
+            'ctl_num_objects',
+            'msk_filter',
+            'mpa_nside',
+            'mpa_ordering',
+            "pgr_display_name",
+            'pcl_display_name',
+            'prd_process_id',
+            'epr_username',
+            'epr_end_date',
+            # 'mpa_filter'
+
+        )
+    
+    def get_ctl_num_objects(self, obj):
+        try:
+            return obj.table.catalog.ctl_num_objects
+        except AttributeError:
+            return None
+
+    def get_msk_filter(self, obj):
+        try:
+            return obj.table.mask.msk_filter
+        except AttributeError:
+            return None
+
+    # def get_mpa_filter(self, obj):
+    #     try:
+    #         return obj.table.map.mpa_filter
+    #     except AttributeError:
+    #         return None
+
+    def get_mpa_nside(self, obj):
+        try:
+            return obj.table.map.mpa_nside
+        except AttributeError:
+            return None
+
+    def get_mpa_ordering(self, obj):
+        try:
+            return obj.table.map.mpa_ordering
+        except AttributeError:
+            return None
+
+    def get_pgr_display_name(self, obj):
+        return obj.prd_class.pcl_group.pgr_display_name
+
+
+    def get_pcl_display_name(self, obj):
+        return obj.prd_class.pcl_display_name
+
+    def get_epr_original_id(self, obj):
+        return obj.prd_process_id.epr_original_id
+
+    def get_epr_username(self, obj):
+        return obj.prd_process_id.epr_username
+
+    def get_epr_end_date(self, obj):
+        return obj.prd_process_id.epr_end_date

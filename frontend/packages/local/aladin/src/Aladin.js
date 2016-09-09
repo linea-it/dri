@@ -97,7 +97,7 @@ Ext.define('aladin.Aladin', {
         enableViewMenu: true,
 
         // Botao para exportar para PNG
-        enableExportPng: true,
+        enableExportPng: false,
 
         // Botao para mostrar ou ocultar a crosshair
         enableReticle: true,
@@ -106,7 +106,7 @@ Ext.define('aladin.Aladin', {
         enableHealpixGrid: true,
 
         // Menu que permite trocar as cores da imagem
-        enableColorMap: true,
+        enableColorMap: false,
 
         // Botao para mostrar ou ocultar o footprint
         enableFootprint: true,
@@ -144,7 +144,10 @@ Ext.define('aladin.Aladin', {
         initialFov: null,
 
         // habilitar ou desabilitar a exibicao de mapas
-        enableMaps: true
+        enableMaps: true,
+
+        // habilitar botao que permite troca entre Visiomatic / Aladin
+        enableShift: true
     },
 
     /**
@@ -236,6 +239,9 @@ Ext.define('aladin.Aladin', {
         if (me.getInfoEnabled()) {
             me.enableDisableInfo(null, me.getInfoEnabled());
         }
+
+        // Custon events
+        me.addCustonEvents();
 
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);
@@ -393,7 +399,6 @@ Ext.define('aladin.Aladin', {
         } else {
             // TODO NAO MOSTRAR SURVEY NENHUM
             aladin.setImageSurvey(empty.id);
-
         }
     },
 
@@ -430,9 +435,18 @@ Ext.define('aladin.Aladin', {
 
     onStoreSurveysLoad: function (store) {
         var me = this,
+            aladin = me.getAladin(),
+            empty = me.getEmptySurvey(),
             surveys = [],
             filters = [],
             s;
+
+        if (store.count() === 0) {
+            console.log('NAO TEM SURVEY');
+
+            me.setImageSurvey(empty);
+
+        }
 
         // criar um array com os elementos da store
         // fazendo um parse para o formato usado pelo aladin
@@ -875,6 +889,13 @@ Ext.define('aladin.Aladin', {
         }
     },
 
+    getFov: function () {
+        var me = this,
+            aladin = me.getAladin();
+
+        return aladin.getFov();
+    },
+
     getFootprintByName: function (name) {
         var me = this,
             aladin = me.getAladin(),
@@ -934,6 +955,11 @@ Ext.define('aladin.Aladin', {
         color = me.colorsAvailable.shift();
 
         return color;
+
+    },
+
+    onShift: function () {
+        this.fireEvent('shift', this.getRaDec(), this);
 
     },
 

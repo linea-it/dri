@@ -1,6 +1,7 @@
 from current_user import get_current_user
 from django.conf import settings
 from django.db import models
+import random, string
 
 
 class Export(models.Model):
@@ -8,6 +9,7 @@ class Export(models.Model):
     exp_username = models.CharField(max_length=128)
     exp_date = models.DateTimeField()
     exp_external_process = models.PositiveIntegerField()
+
 
 class Site(models.Model):
 
@@ -17,6 +19,7 @@ class Site(models.Model):
 
     sti_name = models.CharField(max_length=128, verbose_name='Site')
     sti_url = models.URLField(verbose_name='Url', null=True, blank=True)
+
 
 class ExternalProcess(models.Model):
     epr_name = models.CharField(
@@ -37,6 +40,23 @@ class ExternalProcess(models.Model):
     epr_comment = models.CharField(
         max_length=128, null=True, blank=True, verbose_name='Comment', help_text='Process submission comment.')
 
-
     def __str__(self):
         return str(self.epr_original_id)
+
+
+class Authorization(models.Model):
+
+    def ticket():
+        a = ''.join(random.choice(string.ascii_uppercase) for i in range(3))
+        n = ''.join(str(random.randint(0, 9)) for i in range(4))
+        return a + n
+
+    ath_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Owner')
+    ath_ticket = models.CharField(
+        max_length=6, verbose_name='Ticket', default=ticket
+    )
+    ath_date = models.DateTimeField(
+        auto_now_add=True, verbose_name='Date')

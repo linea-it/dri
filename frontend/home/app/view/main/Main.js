@@ -92,7 +92,8 @@ Ext.define('Home.view.main.Main', {
         iconCls: 'fa-check',
         items: [{
             xtype: 'pages-release'
-        }]
+        }],
+        disabled: true
     },{
         title: 'Sky Viewer',
         iconCls: 'fa-star',

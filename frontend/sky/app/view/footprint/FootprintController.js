@@ -16,7 +16,8 @@ Ext.define('Sky.view.footprint.FootprintController', {
                 updatepanel: 'onUpdatePanel'
             },
             'footprint-aladin': {
-                ondblclick: 'onDblClickAladin'
+                ondblclick: 'onDblClickAladin',
+                shift: 'onShift'
             }
         },
         store: {
@@ -208,40 +209,41 @@ Ext.define('Sky.view.footprint.FootprintController', {
     },
 
     onDblClickAladin: function (radec) {
+        this.toVisiomatic(radec);
+
+    },
+
+    onShift: function (radec) {
+        this.toVisiomatic(radec);
+
+    },
+
+    toVisiomatic: function (radec) {
+
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('tiles'),
             dataset = store.filterByRaDec(radec[0], radec[1]),
-            tags = vm.getStore('tags'),
-            releases = vm.getStore('releases'),
-            tilename, tag, tag_name, release, release_name;
+            aladin = me.lookupReference('aladin'),
+            coordinate,
+            fov = aladin.getFov()[0].toFixed(2).replace('.', ','),
+            hash;
 
         if (dataset) {
-            tilename = dataset.get('tli_tilename');
-            tag = tags.findRecord('id', dataset.get('tag'));
-            tag_name = tag.get('tag_name');
-            release = releases.findRecord('id', dataset.get('release'));
-            release_name = release.get('rls_name');
+            if (radec[1] > 0) {
+                coordinate = radec[0].toFixed(3).replace('.', ',') + '+' + radec[1].toFixed(3).replace('.', ',');
+            } else {
+                coordinate = radec[0].toFixed(3).replace('.', ',') + radec[1].toFixed(3).replace('.', ',');
+            }
 
-            hash = 'dataset/' + dataset.get('id');
+            coordinate = encodeURIComponent(coordinate);
+
+            hash = 'dataset/' + dataset.get('id') + '/' + coordinate + '/' + fov;
 
             me.redirectTo(hash);
 
-            // layout.next();
-
-            // host = 'desportal.cosmology.illinois.edu:8080';
-            // host = 'localhost:8080';
-
-            // var url = Ext.String.format(
-            //     'http://{0}/visiomatic?FIF=data/releases/{1}/images/visiomatic/{2}.ptif',
-            //     host,
-            //     release.get('rls_name'),
-            //     encodeURIComponent(dataset.get('tli_tilename'))
-            //     // 'DES2342%2B0043'
-            // );
-
-            // visiomatic.setImage(url);
         }
+
     }
 
 });

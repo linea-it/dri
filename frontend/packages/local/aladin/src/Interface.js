@@ -101,6 +101,19 @@ Ext.define('aladin.Interfaces', {
             auxTools,
             tools = [];
 
+        if (me.getEnableShift()) {
+            tools.push({
+                xtype: 'button',
+                tooltip: 'Switch between Aladdin / Visiomatic.',
+                iconCls: 'x-fa fa-exchange',
+                scope: me,
+                handler: me.onShift,
+                bind: {
+                    disabled:'{!tile}'
+                }
+            });
+        }
+
         // Filtros
         if (me.getShowFilters()) {
 

@@ -39,8 +39,8 @@ Ext.define('Target.view.objects.Panel', {
                     region: 'center',
                     reference: 'targetsObjectsTabpanel',
                     listeners: {
-                        ready: 'onObjectPanelReady',
-                        rowdblclick: 'onDbClickTarget'
+                        ready: 'onObjectPanelReady'
+                        // rowdblclick: 'onDbClickTarget'
                     }
                 }
             ],
@@ -72,7 +72,7 @@ Ext.define('Target.view.objects.Panel', {
             xtype: 'targets-preview',
             region: 'east',
             reference: 'targetsPreviewPanel',
-            width: 600,
+            width: 500,
             split: true,
             resizable: true,
             listeners: {
