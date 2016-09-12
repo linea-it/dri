@@ -20,7 +20,13 @@ Ext.define('Sky.view.dataset.DatasetController', {
                 dblclick: 'onDblClickVisiomatic',
                 changeimage: 'onChangeImage',
                 link: 'onGetLink',
-                shift: 'onShift'
+                shift: 'onShift',
+                compare: 'onCompareImages'
+            }
+        },
+        store: {
+            '#compare': {
+                load: 'onLoadDatasetInOtherReleases'
             }
         }
     },
@@ -69,6 +75,9 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
         // Setar a Imagem no Visiomatic
         me.changeImage(current);
+
+        // Verificar se a imagem esta em mais de um release
+        me.getDatasetInOtherReleases(current);
     },
 
     changeImage: function () {
@@ -135,6 +144,38 @@ Ext.define('Sky.view.dataset.DatasetController', {
         hash = 'sky/' + release;
 
         me.redirectTo(hash);
+
+    },
+
+    getDatasetInOtherReleases: function (current) {
+        console.log('getDatasetInOtherReleases(%o)');
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('compare');
+
+        store.filter([
+            {
+                'property': 'tli_tilename',
+                'value': current.get('tli_tilename')
+            }
+        ]);
+
+    },
+
+    onLoadDatasetInOtherReleases: function (store) {
+        console.log('onLoadDatasetInOtherReleases(%o)', store);
+
+        console.log(store.count());
+        if (store.count() > 1) {
+            this.getViewModel().set('disablecompare', false);
+        } else {
+            this.getViewModel().set('disablecompare', true);
+        }
+
+    },
+
+    onCompareImages: function () {
+        console.log('onCompare');
 
     }
 

@@ -8,7 +8,7 @@ Ext.define('visiomatic.Interface', {
 
     makeToolbarButtons: function () {
         var me = this,
-            auxTools,
+            auxTools = me.getAuxTools(),
             tools = [];
 
         // Shift Aladin/Visiomatic
@@ -30,6 +30,13 @@ Ext.define('visiomatic.Interface', {
                 iconCls: 'x-fa fa-link',
                 scope: me,
                 handler: me.getLinkToPosition
+            });
+        }
+
+        if (auxTools.length > 0) {
+            Ext.each(auxTools, function (tool) {
+                tools.push(tool);
+
             });
         }
 

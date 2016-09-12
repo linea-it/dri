@@ -88,6 +88,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         // adicionar uma toolbar
         enableTools: true,
+        auxTools: [],
 
         ////// buttons //////
 

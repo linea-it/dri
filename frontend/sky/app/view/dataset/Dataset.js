@@ -6,7 +6,8 @@ Ext.define('Sky.view.dataset.Dataset', {
     requires: [
         'Sky.view.dataset.Visiomatic',
         'Sky.view.dataset.DatasetController',
-        'Sky.view.dataset.DatasetModel'
+        'Sky.view.dataset.DatasetModel',
+        'Sky.view.dataset.Compare'
     ],
 
     controller: 'dataset',
@@ -26,10 +27,19 @@ Ext.define('Sky.view.dataset.Dataset', {
         var me = this;
 
         Ext.apply(this, {
+            layout: 'border',
             items: [
                 {
                     xtype: 'sky-visiomatic',
-                    reference: 'visiomatic'
+                    reference: 'visiomatic',
+                    region: 'center',
+                    split: true
+                },{
+                    xtype: 'sky-compare',
+                    reference: 'compare',
+                    region: 'east',
+                    width: 400,
+                    split: true
                 }
             ]
         });
