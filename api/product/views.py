@@ -8,8 +8,8 @@ from rest_framework import viewsets
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
-from .models import Product, Catalog, Map, ProductContent, ProductContentAssociation
-from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, ProductContentSerializer, \
+from .models import Product, Catalog, Map, Mask, ProductContent, ProductContentAssociation
+from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, MaskSerializer, ProductContentSerializer, \
     ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer
 
 logger = logging.getLogger(__name__)
@@ -193,6 +193,20 @@ class MapViewSet(viewsets.ModelViewSet):
     queryset = Map.objects.select_related().all()
 
     serializer_class = MapSerializer
+
+    filter_fields = ('prd_name', 'prd_display_name', 'prd_class')
+
+    search_fields = ('prd_name', 'prd_display_name', 'prd_class')
+
+    ordering_fields = ('id',)
+
+class MaskViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Map to be viewed or edited
+    """
+    queryset = Mask.objects.select_related().all()
+
+    serializer_class = MaskSerializer
 
     filter_fields = ('prd_name', 'prd_display_name', 'prd_class')
 
