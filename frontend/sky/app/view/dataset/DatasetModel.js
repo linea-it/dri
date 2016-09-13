@@ -17,6 +17,7 @@ Ext.define('Sky.view.dataset.DatasetModel', {
         dataset: null,
 
         disablecompare: true
+
     },
 
     links: {

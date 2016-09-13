@@ -95,7 +95,9 @@ Ext.define('visiomatic.Visiomatic', {
         // Get Link
         enableLink: true,
         // Shift Visiomatic/Aladin
-        enableShift: true
+        enableShift: true,
+
+        ready: false
     },
 
     bind: {
@@ -162,6 +164,7 @@ Ext.define('visiomatic.Visiomatic', {
         // Add Events Listeners to Map
         map.on('dblclick', me.onDblClick, me);
         map.on('layeradd', me.onLayerAdd, me);
+        map.on('move', me.onMove, me);
 
         // instancia de L.map
         me.setMap(map);
@@ -246,6 +249,8 @@ Ext.define('visiomatic.Visiomatic', {
             navlayer,
             newImageLayer;
 
+        me.setReady(false);
+
         options = options || {};
 
         me.image = image;
@@ -309,6 +314,8 @@ Ext.define('visiomatic.Visiomatic', {
     onLayerAdd: function () {
         var me = this;
 
+        me.setReady(true);
+
         me.fireEvent('changeimage', me);
 
     },
@@ -343,6 +350,13 @@ Ext.define('visiomatic.Visiomatic', {
 
     },
 
+    onMove: function (event) {
+        var me = this,
+            radec = me.getRaDec();
+
+        me.fireEvent('changeposition', radec, me);
+    },
+
     getLinkToPosition: function () {
         var me = this,
             map = me.getMap(),
@@ -365,6 +379,11 @@ Ext.define('visiomatic.Visiomatic', {
 
     onShift: function () {
         this.fireEvent('shift', this.getRaDec(), this);
+
+    },
+
+    isReady: function () {
+        return this.getReady();
 
     }
 

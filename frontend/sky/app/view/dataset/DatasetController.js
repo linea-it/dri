@@ -21,7 +21,11 @@ Ext.define('Sky.view.dataset.DatasetController', {
                 changeimage: 'onChangeImage',
                 link: 'onGetLink',
                 shift: 'onShift',
-                compare: 'onCompareImages'
+                compare: 'onCompareImages',
+                changeposition: 'onChangePosition'
+            },
+            'sky-compare': {
+                close: 'onCloseCompare'
             }
         },
         store: {
@@ -75,9 +79,6 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
         // Setar a Imagem no Visiomatic
         me.changeImage(current);
-
-        // Verificar se a imagem esta em mais de um release
-        me.getDatasetInOtherReleases(current);
     },
 
     changeImage: function () {
@@ -87,13 +88,19 @@ Ext.define('Sky.view.dataset.DatasetController', {
             current = vm.get('currentDataset'),
             url = current.get('image_src_ptif');
 
-        if (url != '') {
+        if (url !== '') {
             visiomatic.setImage(url);
 
         } else {
             visiomatic.removeImageLayer();
 
         }
+
+        // Clear Compare Panel
+        me.clearComparePanel();
+
+        // Verificar se a imagem esta em mais de um release
+        me.getDatasetInOtherReleases(current);
     },
 
     onChangeImage: function () {
@@ -107,6 +114,24 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     },
 
+    onChangePosition: function (radec) {
+        var me = this,
+            compare = me.lookupReference('compare'),
+            visiomatic = me.lookupReference('visiomatic'),
+            btn = visiomatic.down('#btnMagnetic');
+
+        // Checa se o painel compare esta visivel e com a imagem ja carregada.
+        if ((compare.isVisible()) && (compare.isReady())) {
+
+            // Se o botao magnetic estiver marcado seta sincroniza a posicao entre os viewers.
+            if ((btn) && (btn.checked)) {
+                compare.setView(radec.ra, radec.dec, 0.10);
+
+            }
+
+        }
+    },
+
     onDblClickVisiomatic: function () {
         this.toAladin();
     },
@@ -116,7 +141,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     },
 
-    onGetLink: function (coordinate, fov, originalcoord) {
+    onGetLink: function (coordinate, fov) {
         var me = this,
             vm = me.getViewModel(),
             current = vm.get('currentDataset'),
@@ -148,7 +173,6 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     getDatasetInOtherReleases: function (current) {
-        console.log('getDatasetInOtherReleases(%o)');
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('compare');
@@ -163,19 +187,56 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     onLoadDatasetInOtherReleases: function (store) {
-        console.log('onLoadDatasetInOtherReleases(%o)', store);
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
 
-        console.log(store.count());
-        if (store.count() > 1) {
-            this.getViewModel().set('disablecompare', false);
-        } else {
-            this.getViewModel().set('disablecompare', true);
-        }
+        visiomatic.setDatasets(store);
 
     },
 
-    onCompareImages: function () {
-        console.log('onCompare');
+    onCompareImages: function (dataset) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic'),
+            compare = me.lookupReference('compare'),
+            width = visiomatic.getWidth() / 2;
+
+        // Habilitar o painel de comparacao.
+        compare.setVisible(true);
+
+        // Configurar o tamanho do painel de comparacao.
+        compare.divide(width);
+
+        // Setar o Dataset
+        compare.setCompareDataset(dataset);
+
+    },
+
+    onCompareChangeImage: function () {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic'),
+            compare = me.lookupReference('compare'),
+            radec = visiomatic.getRaDec();
+
+        // TODO o FOV deveria ser o mesmo do visiomatic
+        compare.setView(radec.ra, radec.dec, 0.10);
+    },
+
+    onCloseCompare: function () {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
+
+        // Atualizar as opcoes de comparacao.
+        visiomatic.updateCompareOptions();
+
+    },
+
+    clearComparePanel: function () {
+        var me = this,
+            compare = me.lookupReference('compare');
+
+        if (compare.isVisible()) {
+            compare.close();
+        }
 
     }
 

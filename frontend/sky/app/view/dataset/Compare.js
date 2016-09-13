@@ -7,39 +7,68 @@ Ext.define('Sky.view.dataset.Compare', {
         'visiomatic.Visiomatic'
     ],
 
+    config: {
+        splited: 0,
+        originalDataset: null,
+        compareDataset: null
+    },
+
+    bind: {
+        originalDataset: '{currentDataset}'
+    },
+
     initComponent: function () {
         var me = this;
 
         Ext.apply(this, {
-            // enableShift: false,
-            // enableLink: false,
-            enableTools: false
-            // auxTools: [
-            //     {
-            //         xtype: 'combobox',
-            //         // reference: 'currentDataset',
-            //         publishes: 'id',
-            //         width: 250,
-            //         displayField: 'release_tag',
-            //         bind: {
-            //             store: '{compare}'
-            //             // disabled: '{!currentRecord._meta_id}',
-            //             // selection: '{!currentDataset}'
-            //         },
-            //         queryMode: 'local',
-            //         listConfig: {
-            //             itemTpl: [
-            //                 '<div data-qtip="{release_display_name} - {tag_display_name}">{release_display_name} - {tag_display_name}</div>'
-            //             ]
-            //         }
-            //         // listeners: {
-            //         //     change: 'onChangeDataset'
-            //         // }
-            //     }
-            // ]
+            enableTools: false,
+
+            listeners: {
+                changeimage: 'onCompareChangeImage'
+            }
+
         });
 
         me.callParent(arguments);
+    },
+
+    divide: function (width) {
+        var me = this;
+
+        if (me.getSplited() === 0) {
+            me.setWidth(width);
+
+            me.setSplited(width);
+
+        }
+    },
+
+    setCompareDataset: function (dataset) {
+        var me = this,
+            title;
+
+        me.compareDataset = dataset;
+
+        // Setar o titulo do Painel
+        title = dataset.get('release_display_name') + ' - ' + dataset.get('tag_display_name') + ' - ' + dataset.get('tli_tilename');
+        me.setTitle(title);
+
+        // Setar a Imagem
+        me.changeImage(dataset);
+
+    },
+
+    changeImage: function (dataset) {
+        var me = this,
+            url = dataset.get('image_src_ptif');
+
+        if (url != '') {
+            me.setImage(url);
+
+        } else {
+            me.removeImageLayer();
+
+        }
     }
 
 });

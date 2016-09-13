@@ -39,7 +39,23 @@ Ext.define('Sky.view.dataset.Dataset', {
                     reference: 'compare',
                     region: 'east',
                     width: 400,
-                    split: true
+                    split: true,
+                    hidden: true,
+                    closable: true,
+                    closeAction: 'hide'
+                    // tools: [
+                    //     {
+                    //         type:'close',
+                    //         tooltip: 'Refresh form Data',
+                    //         // hidden:true,
+                    //         handler: function(event, toolEl, panelHeader) {
+                    //             // refresh logic
+                    //         }
+                    //     }
+                    // ]
+                    // collapsible: true,
+                    // collapseMode: 'mini',
+                    // collapseDirection: 'right'
                 }
             ]
         });
