@@ -956,6 +956,7 @@ $include-sky-store-maps: dynamic(true);;
 $include-sky-store-releases: dynamic(true);;
 $include-sky-store-surveys: dynamic(true);;
 $include-sky-store-tags: dynamic(true);;
+$include-sky-view-dataset-compare: dynamic(true);;
 $include-sky-view-dataset-dataset: dynamic(true);;
 $include-sky-view-dataset-datasetcontroller: dynamic(true);;
 $include-sky-view-dataset-datasetmodel: dynamic(true);;
