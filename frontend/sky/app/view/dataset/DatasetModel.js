@@ -14,7 +14,10 @@ Ext.define('Sky.view.dataset.DatasetModel', {
     ],
 
     data: {
-        dataset: null
+        dataset: null,
+
+        disablecompare: true
+
     },
 
     links: {
@@ -36,6 +39,11 @@ Ext.define('Sky.view.dataset.DatasetModel', {
         // Datasets = Tiles que estao nos tags de um release
         datasets: {
             type: 'datasets'
+        },
+
+        compare: {
+            type: 'datasets',
+            storeId: 'compare'
         }
 
     }
