@@ -103,6 +103,7 @@ Ext.define('Sky.view.dataset.Visiomatic', {
                 text: 'Magnetic',
                 iconCls: 'x-fa fa-magnet',
                 itemId: 'btnMagnetic'
+                // checked: true
             });
 
 
