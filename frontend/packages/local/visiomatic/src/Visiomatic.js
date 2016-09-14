@@ -350,6 +350,21 @@ Ext.define('visiomatic.Visiomatic', {
 
     },
 
+    getFov: function () {
+        var me = this,
+            libL = me.libL,
+            map = me.getMap(),
+            wcs = map.options.crs,
+            latlng = map.getCenter(),
+            fov;
+
+        console.log(wcs);
+
+        fov = wcs.zoomToFov(map, map.getZoom(), latlng);
+        console.log(fov);
+        return parseFloat(fov);
+    },
+
     onMove: function (event) {
         var me = this,
             radec = me.getRaDec();
@@ -361,7 +376,7 @@ Ext.define('visiomatic.Visiomatic', {
         var me = this,
             map = me.getMap(),
             coordinate = me.getRaDec(),
-            fov = map.options.fov,
+            fov = me.getFov(),
             coord;
 
         if (coordinate.dec > 0) {
