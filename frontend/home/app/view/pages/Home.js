@@ -10,7 +10,7 @@ Ext.define('Home.view.pages.Home', {
         'Home.view.widget.Wupload',
         'Home.view.widget.Wcutout',
         'Home.view.widget.Wcatalog',
-        'Home.view.widget.Wlist',
+        'Home.view.widget.Wlist'
     ],
     layout: 'column',
     items: [{
@@ -38,8 +38,10 @@ Ext.define('Home.view.pages.Home', {
     },{
         xtype: 'wcatalog',
         margin: '0 10 10 0'
-    },{
-        xtype: 'wlist',
-        margin: '0 10 10 0'
-    }]
+    }
+    // {
+    //     xtype: 'wlist',
+    //     margin: '0 10 10 0'
+    // }
+    ]
 });
