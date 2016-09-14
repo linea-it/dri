@@ -82,8 +82,6 @@ Ext.define('Sky.view.main.MainController', {
     },
 
     onDataset: function (dataset, coordinate, fov) {
-
-        console.log('onDataset');
         var newView = Ext.create('Sky.view.dataset.Dataset', {
             hideMode: 'offsets',
             routeId: 'tile',

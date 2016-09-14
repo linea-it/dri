@@ -72,12 +72,11 @@ Ext.define('common.header.Toolbar', {
 
     afterRender: function () {
         var me = this,
-            host = window.location.host,
-            home;
+            href = window.location.href,
+            host;
 
-        home = Ext.String.format('http://{0}', host);
-
-        me.getViewModel().set('home', home);
+        host = href.split('#')[0];
+        me.getViewModel().set('home', host);
 
         if (window.sessionStorage.dri_username != 'undefined') {
             me.getViewModel().set('username', window.sessionStorage.dri_username);
