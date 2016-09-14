@@ -135,12 +135,14 @@ Ext.define('Home.view.main.Main', {
             html: '{loremIpsum}'
         },
         disabled: true
-    },{
-        title: 'Science Products',
-        iconCls: 'fa-leanpub',
-        bind: {
-            html: '{loremIpsum}'
-        },
-        disabled: true
-    }]
+    }
+    // {
+    //     title: 'Science Products',
+    //     iconCls: 'fa-leanpub',
+    //     bind: {
+    //         html: '{loremIpsum}'
+    //     },
+    //     disabled: true
+    // }
+    ]
 });
