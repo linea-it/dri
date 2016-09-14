@@ -53,7 +53,8 @@
      * The name of the theme for this application.
      */
 
-    "theme": "theme-triton",
+    // "theme": "theme-triton",
+    "theme": "theme-crisp",
 
 
     /**
