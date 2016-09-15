@@ -108,6 +108,12 @@ class Dataset(models.Model):
     run = models.CharField(
         null=True, blank=True, max_length=30, verbose_name='Run')
 
+    date = models.DateField(
+        null=True, blank=True, verbose_name='Created Date')
+
+    archive_path = models.TextField(
+        null=True, blank=True, verbose_name='Archive Path', help_text='Original file path')
+
     image_src_thumbnails = models.URLField(
         null=True, blank=True, verbose_name='Thumbnails PNG', default=None,
         help_text=('Full url to image including the host and directory. '

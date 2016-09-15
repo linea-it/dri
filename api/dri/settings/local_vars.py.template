@@ -19,6 +19,12 @@ DATABASES = {
     }
 }
 
+DATADISCOVERY_DATABASE = {
+    'host': '<host para o database oracle 'desoper'>',
+    'port': 0,
+    'service_name': '<database>'
+}
+
 # Exemple using Mysql need mysqlclient in requiments.txt
 # DATABASES = {
 #     'default': {
