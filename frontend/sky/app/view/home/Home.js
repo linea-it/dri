@@ -22,8 +22,6 @@ Ext.define('Sky.view.home.Home', {
             dataIndex: 'rls_display_name',
             flex: 1,
             renderer: function (value, cell, record) {
-                console.log(value);
-                console.log(record);
                 if (record.get('is_new')) {
                     // return value + '    <spam style="color:#e67e22;">New</spam>';
                     return '<spam style="color:#e67e22;">New</spam>    ' + value;

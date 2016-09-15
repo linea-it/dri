@@ -15,14 +15,13 @@ Ext.define('common.model.Release', {
             name: 'is_new',
             type: 'boolean',
             convert: function (value, record) {
-                var create_date = record.get('rls_date'),
-                    interval = -2,
-                    sysdate = Ext.Date.add(new Date(), Ext.Date.DAY, interval);
+                if (record.get('rls_date')) {
+                    var create_date = record.get('rls_date'),
+                        interval = -2,
+                        sysdate = Ext.Date.add(new Date(), Ext.Date.DAY, interval);
 
-                // console.log('create_date: %o', create_date);
-                // console.log('sysdate: %o', sysdate);
-
-                return teste = Ext.Date.between(create_date, sysdate, create_date);
+                    return Ext.Date.between(create_date, sysdate, create_date);
+                }
             }
         }
     ]

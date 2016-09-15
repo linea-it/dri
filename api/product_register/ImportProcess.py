@@ -97,6 +97,8 @@ class Import():
         for product in data:
             if product.get('type') == 'catalog':
                 self.register_catalog(product)
+            else:
+                raise Exception('Product Type not implemented yet.')
 
     def register_catalog(self, data):
 
