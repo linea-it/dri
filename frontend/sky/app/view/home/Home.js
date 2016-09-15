@@ -32,7 +32,6 @@ Ext.define('Sky.view.home.Home', {
                 return value;
             }
         },
-        {text: 'New',  dataIndex: 'is_new'},
         {xtype: 'datecolumn', text: 'Date', dataIndex: 'rls_date', format:'Y-m-d', flex: 1},
         {text: 'Tiles', dataIndex: 'tiles_count', flex: 1}
     ],
