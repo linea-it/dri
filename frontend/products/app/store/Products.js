@@ -46,7 +46,7 @@ Ext.define('Products.store.Products', {
 
     proxy: {
         type: 'django',
-        url: '/dri/api/product/'
+        url: '/dri/api/AllProducts/'
     }
 
 });
