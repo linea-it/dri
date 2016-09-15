@@ -4,7 +4,7 @@ from product_classifier.models import ProductClass
 from rest_framework import status
 from rest_framework.response import Response
 
-from .models import Site
+from .models import Site, Authorization
 from .serializers import ExternalProcessSerializer
 
 
@@ -20,6 +20,12 @@ class Import():
             'request': request
         }
 
+        if 'ticket' in self.data:
+            self.owner = self.get_owner(self.data.get('ticket'))
+
+        else:
+            raise Exception('the ticket parameter is required.')
+
         if 'process' in self.data:
             return self.import_process(self.data.get('process'))
 
@@ -28,6 +34,16 @@ class Import():
                 data={"It is still not possible to import a product without being associated with a process."},
                 status=status.HTTP_501_NOT_IMPLEMENTED
             )
+
+    def get_owner(self, ticket):
+
+        try:
+            record = Authorization.objects.get(ath_ticket=ticket)
+            return record.ath_owner
+
+        except Authorization.DoesNotExist:
+            raise Exception('This ticket %s is not valid.' % ticket)
+
 
     def get_site(self, user):
 
@@ -45,6 +61,7 @@ class Import():
 
         # Parse Json to model properties
         process_data = {
+            "epr_owner": self.owner.pk,
             "epr_site": self.site.pk,
             "epr_username": data.get('owner_username'),
             "epr_name": data.get('process_name', ''),

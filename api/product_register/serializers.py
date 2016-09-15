@@ -2,6 +2,7 @@ import logging
 
 from rest_framework import serializers
 from .models import Export, ExternalProcess, Site, Authorization
+from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -34,6 +35,9 @@ class ExportSerializer(serializers.HyperlinkedModelSerializer):
 
 class ExternalProcessSerializer(serializers.HyperlinkedModelSerializer):
 
+    epr_owner = serializers.PrimaryKeyRelatedField(
+        queryset=User.objects.all(), many=False)
+
     epr_site = serializers.PrimaryKeyRelatedField(
         queryset=Site.objects.all(), many=False)
 
@@ -43,6 +47,7 @@ class ExternalProcessSerializer(serializers.HyperlinkedModelSerializer):
 
         fields = (
             'id',
+            'epr_owner',
             'epr_name',
             'epr_username',
             'epr_start_date',
