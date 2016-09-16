@@ -10,6 +10,7 @@ Ext.define('common.model.Dataset', {
         {name:'release_display_name', type:'string'},
         {name:'tite', type:'int'},
         {name:'run', type:'string'},
+        {name:'date', type:'string'},
 
         {name:'tli_tilename', type:'string'},
         {name:'tli_ra', type:'float'},

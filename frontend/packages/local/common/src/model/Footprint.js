@@ -25,6 +25,22 @@ Ext.define('common.model.Footprint', {
         {name:'tli_udecll', type:'float'},
         {name:'tli_uraur', type:'float'},
         {name:'tli_udecur', type:'float'},
+        {name:'date', type:'date'},
+
+        // Saber se a tile e recente
+        {
+            name: 'is_new',
+            type: 'boolean',
+            convert: function (value, record) {
+                if (record.get('date')) {
+                    var create_date = record.get('date'),
+                        interval = -2,
+                        sysdate = Ext.Date.add(new Date(), Ext.Date.DAY, interval);
+
+                    return Ext.Date.between(create_date, sysdate, create_date);
+                }
+            }
+        },
 
         // 4 Cantos da Tile
         {
