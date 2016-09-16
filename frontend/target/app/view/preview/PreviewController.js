@@ -92,8 +92,6 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     changeImage: function (dataset) {
-        console.log('changeImage(%o)', dataset);
-
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
             url = dataset.get('image_src_ptif');
@@ -115,14 +113,11 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     onChangeImage: function () {
-        console.log('onChangeImage');
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
             visiomatic = me.lookupReference('visiomatic'),
             fov = 0.05;
-
-        console.log(visiomatic);
 
         visiomatic.setView(
             object.get('_meta_ra'),
