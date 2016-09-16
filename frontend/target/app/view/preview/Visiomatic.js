@@ -5,6 +5,8 @@ Ext.define('Target.view.preview.Visiomatic', {
         'visiomatic.Visiomatic'
     ],
 
-    xtype: 'targets-visiomatic'
+    xtype: 'targets-visiomatic',
+
+    enableTools: false
 
 });
