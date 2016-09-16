@@ -11,6 +11,16 @@ Ext.define('common.model.Release', {
         {name:'rls_display_name', type:'string'},
         {name:'rls_default', type:'boolean'},
         {name:'tiles_count', type:'int'},
+
+        {
+            name:'tags_count',
+            type:'int',
+            convert: function (value) {
+                if (value == 1) {
+                    return '';
+                }
+            }
+        },
         {
             name: 'is_new',
             type: 'boolean',
