@@ -398,7 +398,7 @@ L.Projection.WCS.COE = L.Projection.WCS.conical.extend({
 #	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 15/06/2016
+#	Last modified: 05/09/2016
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -583,6 +583,15 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		return fov > 0.0 ? this.zoom(scale / fov) : this.nzoom - 1;
 	},
 
+	// return the FoV in degrees that corresponds to the given zoom level
+	zoomToFov: function (map, zoom, latlng) {
+		var size = map.getSize(),
+			scale = this.rawPixelScale(latlng) *
+			  Math.sqrt(size.x * size.x + size.y * size.y),
+			zscale = this.scale(zoom);
+		return  zscale > 0.0 ? scale / zscale : scale;
+	},
+
 	distance: function (latlng1, latlng2) {
 		var rad = Math.PI / 180.0,
 		    lat1 = latlng1.lat * rad,
@@ -727,7 +736,7 @@ L.CRS.wcs = function (options) {
 #	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 15/06/2016
+#	Last modified: 08/09/2016
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -737,7 +746,7 @@ L.IIPUtils = {
 // Ajax call to server
 	requestURL: function (url, purpose, action, context, timeout) {
 		var	httpRequest;
-		// console.log('------------------- TESTE -----------------------')
+
 		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
 			httpRequest = new XMLHttpRequest();
 		} else if (window.ActiveXObject) { // IE
@@ -761,14 +770,8 @@ L.IIPUtils = {
 				alert('Time out while ' + purpose);
 			};
 		}
-
 		httpRequest.open('GET', url);
 		httpRequest.withCredentials = true;
-		// httpRequest.setRequestHeader("Access-Control-Allow-Origin","*")
-		// httpRequest.setRequestHeader('Access-Control-Allow-Methods', "GET, OPTIONS")
-		// httpRequest.setRequestHeader('Access-Control-Allow-Headers', "Authorization")
-		// console.log('httpRequest: %o', httpRequest)
-
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};
@@ -786,6 +789,15 @@ L.IIPUtils = {
 		return dict;
 	},
 
+	// Return a URL with an updated keyword/value queryString(from http://stackoverflow.com/a/5999118)
+	updateURL: function (url, keyword, value) {
+		var re = new RegExp('([?&])' + keyword + '=.*?(&|$)', 'i'),
+			separator = url.indexOf('?') !== -1 ? '&' : '?';
+
+		return url.match(re) ? url.replace(re, '$1' + keyword + '=' + value + '$2') :
+		  url + separator + keyword + '=' + value;
+	},
+
 	// Return the domain of a given URL (from http://stackoverflow.com/a/28054735)
 	checkDomain: function (url) {
 		if (url.indexOf('//') === 0) {
@@ -798,6 +810,35 @@ L.IIPUtils = {
 	isExternal: function (url) {
 		return ((url.indexOf(':') > -1 || url.indexOf('//') > -1) &&
 			this.checkDomain(location.href) !== this.checkDomain(url));
+	},
+
+	// Copy string to clipboard (from http://stackoverflow.com/a/33928558)
+	// Chrome 43+, Firefox 42+, Edge and Safari 10+ supported
+	copyToClipboard: function (text) {
+		if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
+			var textarea = document.createElement('textarea');
+			textarea.textContent = text;
+			textarea.style.position = 'fixed';  // Prevent scrolling to bottom of page in MS Edge.
+			document.body.appendChild(textarea);
+			textarea.select();
+			try {
+				return document.execCommand('copy');  // Security exception may be thrown by some browsers.
+			} catch (ex) {
+				console.warn('Copy to clipboard failed.', ex);
+				return false;
+			} finally {
+				document.body.removeChild(textarea);
+			}
+		}
+	},
+
+	// Add a short (<400ms) "flash" animation to an element
+	flashElement: function (elem) {
+		L.DomUtil.addClass(elem, 'leaflet-control-flash');
+		setTimeout(function () {
+			L.DomUtil.removeClass(elem, 'leaflet-control-flash');
+		}, 400);
+
 	},
 
 	// Read content of a FITS header keyword
@@ -841,11 +882,9 @@ L.IIPUtils = {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud,
-#                             Ruven Pillay - C2RMF/CNRS
+#	Copyright:		(C) 2014-2016 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		15/06/2016
+#	Last modified:		18/07/2016
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -868,6 +907,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		mixingMode: 'color',
 		channelColors: [],
 		channelLabels: [],
+		channelLabelMatch: '.*',
 		channelUnits: [],
 		minMaxValues: [],
 		defaultChannel: 0
@@ -899,9 +939,10 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			[''],
 			['#FFFFFF'],
 			['#0000FF', '#FFFF00'],
-			['#00FF00', '#00FF00', '#FF0000'],
-			['#0000FF', '#00FF00', '#FFFF00', '#FF0000'],
-			['#0000FF', '#00FFFF', '#00FF00', '#FFA000', '#FF0000']
+			['#0000FF', '#00FF00', '#FF0000'],
+			['#0000FF', '#00FFFF', '#FFFF00', '#FF0000'],
+			['#0000FF', '#00FFFF', '#00FF00', '#FFA000', '#FF0000'],
+			['#0000FF', '#00FFFF', '#00FF00', '#FFFF00', '#FFA000', '#FF0000']
 		],
 		quality: 90
 	},
@@ -1062,33 +1103,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					}
 				}
 
-				// Initialize mixing matrix depending on arguments and the number of channels
-				var m,
-				    mix = layer.iipMix,
-						omix = options.channelColors,
-						rgb = layer.iipRGB,
-						nmaxchannel = iipdefault.channelColors.length - 1;
-
-				if (nmaxchannel > nchannel) {
-					nmaxchannel = nchannel;
-				}
-
-				for (c = 0; c < nchannel; c++) {
-					mix[c] = [];
-					var	col = 3;
-					if (omix.length && omix[c] && omix[c].length === 3) {
-						// Copy RGB triplet
-						rgb[c] = L.rgb(omix[c][0], omix[c][1], omix[c][2]);
-					} else {
-						rgb[c] = L.rgb(0.0, 0.0, 0.0);
-					}
-					if (omix.length === 0 && c < nmaxchannel) {
-						rgb[c] = L.rgb(iipdefault.channelColors[nmaxchannel][c]);
-					}
-					// Compute the current row of the mixing matrix
-					layer.rgbToMix(c);
-				}
-
 				// Default channel
 				layer.iipChannel = options.defaultChannel;
 
@@ -1121,6 +1135,42 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				// Fill out units that are not provided with a default string
 				for (c = ninunits; c < nchannel; c++) {
 					units[c] = 'ADUs';
+				}
+
+				// Initialize mixing matrix depending on arguments and the number of channels
+				var cc = 0,
+				    mix = layer.iipMix,
+						omix = options.channelColors,
+						rgb = layer.iipRGB,
+						re = new RegExp(options.channelLabelMatch),
+						nmaxchannel = 0,
+						channelflag = [];
+
+				nmaxchannel = 0;
+				for (c = 0; c < nchannel; c++) {
+					channelflag[c] = re.test(labels[c]);
+					if (channelflag[c]) {
+						nmaxchannel++;
+					}
+				}
+				if (nmaxchannel >= iipdefault.channelColors.length) {
+					nmaxchannel = iipdefault.channelColors.length - 1;
+				}
+
+				for (c = 0; c < nchannel; c++) {
+					mix[c] = [];
+					var	col = 3;
+					if (omix.length && omix[c] && omix[c].length === 3) {
+						// Copy RGB triplet
+						rgb[c] = L.rgb(omix[c][0], omix[c][1], omix[c][2]);
+					} else {
+						rgb[c] = L.rgb(0.0, 0.0, 0.0);
+					}
+					if (omix.length === 0 && channelflag[c] && cc < nmaxchannel) {
+						rgb[c] = L.rgb(iipdefault.channelColors[nmaxchannel][cc++]);
+					}
+					// Compute the current row of the mixing matrix
+					layer.rgbToMix(c);
 				}
 
 				if (options.bounds) {
@@ -1204,16 +1254,20 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		    newcrs = this.wcs,
 				curcrs = map.options.crs,
 				prevcrs = map._prevcrs,
+				maploadedflag = map._loaded,
 				// Default center coordinates
 				center = map.options.center ? map.options.center : newcrs.projparam.crval;
 
-		if (map._loaded) {
+		if (maploadedflag) {
 			curcrs._prevLatLng = map.getCenter();
 			curcrs._prevZoom = map.getZoom();
 		}
 
+		map._prevcrs = map.options.crs = newcrs;
+		L.TileLayer.prototype.addTo.call(this, map);
+
 		// Go to previous layers' coordinates if applicable
-		if (prevcrs && newcrs !== curcrs && map._loaded &&
+		if (prevcrs && newcrs !== curcrs && maploadedflag &&
 		    newcrs.pixelFlag === curcrs.pixelFlag) {
 			center = curcrs._prevLatLng;
 			zoom = curcrs._prevZoom;
@@ -1227,8 +1281,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		} else if (newcrs._prevLatLng) {
 			center = newcrs._prevLatLng;
 			zoom = newcrs._prevZoom;
-		}
-		else {
+		} else {
 			// Default center coordinates and zoom
 			if (this.options.center) {
 				var	latlng = newcrs.parseCoords(this.options.center);
@@ -1271,9 +1324,6 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				map.setView(center, zoom, {reset: true, animate: false});
 			}
 		}
-
-		map._prevcrs = map.options.crs = newcrs;
-		L.TileLayer.prototype.addTo.call(this, map);
 	},
 
 	_getTileSizeFac: function () {
@@ -2523,10 +2573,10 @@ L.Map.addInitHook(function () {
 # (original copyright notice reproduced below).
 #
 #	This file part of:	VisiOmatic
-#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                             Chiara Marmo - IDES/Paris-Sud
+#	Copyright:		(C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                             Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 03/12/2015
+#	Last modified: 08/09/2016
 
 Original code Copyright (c) 2012-2015, Norkart AS
 All rights reserved.
@@ -2565,7 +2615,7 @@ L.Control.ExtraMap = L.Control.extend({
 		collapsedWidth: 24,
 		collapsedHeight: 24,
 		aimingRectOptions: {
-			color:  '#FF7800',
+			color:  '#FFFFFF',
 			weight: 1,
 			clickable: false
 		},
@@ -3078,10 +3128,10 @@ source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugi
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 13/11/2015
+#	Last modified: 08/09/2016
 */
 
 if (typeof require !== 'undefined') {
@@ -3407,6 +3457,7 @@ L.Control.IIP = L.Control.extend({
 			});
 
 		spinbox.on('change', function () {
+			L.IIPUtils.flashElement(spinbox._input);
 			this._onInputChange(layer, attr, spinbox.value(), func);
 		}, this);
 
@@ -3814,10 +3865,9 @@ L.control.iip.catalog = function (catalogs, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#				                      Chiara Marmo - IDES/Paris-Sud
+#	Copyright:		(C) 2014-2016 IAP/CNRS/UPMC and GEOPS/Paris-Sud
 #
-#	Last modified:		24/11/2015
+#	Last modified:		18/07/2016
 */
 
 if (typeof require !== 'undefined') {
@@ -3957,6 +4007,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			layer.iipChannel,
 			function () {
 				layer.iipChannel =  parseInt(this._chanSelect.selectedIndex - 1, 10);
+				this._updateChannel(layer, layer.iipChannel);
 				layer.redraw();
 			},
 			'Select image channel'
@@ -3984,6 +4035,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 
 	_initColorDialog: function (layer, box) {
 		// Multiple Channels with mixing matrix
+
 		var _this = this,
 			className = this._className,
 			line = this._addDialogLine('Channel:', box),
@@ -5710,10 +5762,10 @@ L.control.sidebar = function (map, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 05/11/2015
+#	Last modified: 07/09/2016
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -5723,16 +5775,19 @@ L.Control.WCS = L.Control.extend({
 			label: 'RA, Dec',
 			units: 'HMS',
 			nativeCelsys: false
-		}]
+		}],
+		centerQueryKey: 'center',
+		fovQueryKey: 'fov'
 	},
 
 	onAdd: function (map) {
 		// Create coordinate input/display box
 		var _this = this,
-			  dialog = this._wcsdialog =  L.DomUtil.create('div', 'leaflet-control-wcs-dialog'),
-			  coordSelect = L.DomUtil.create('select', 'leaflet-control-wcs-select', dialog),
+			  className = 'leaflet-control-wcs',
+			  dialog = this._wcsdialog =  L.DomUtil.create('div', className + '-dialog'),
+			  coordSelect = L.DomUtil.create('select', className + '-select', dialog),
 			  choose = document.createElement('option'),
-		    coords = this.options.coordinates,
+			  coords = this.options.coordinates,
 			  opt = [],
 			  coordIndex;
 
@@ -5756,11 +5811,12 @@ L.Control.WCS = L.Control.extend({
 			_this._onDrag();
 		});
 
-		var	input = this._wcsinput = L.DomUtil.create('input', 'leaflet-control-wcs-input', dialog);
+		var	input = this._wcsinput = L.DomUtil.create('input', className + '-input', dialog);
 
 		L.DomEvent.disableClickPropagation(input);
 		input.type = 'text';
 		input.title = this.options.title;
+
 		// Speech recognition on WebKit engine
 		if ('webkitSpeechRecognition' in window) {
 			input.setAttribute('x-webkit-speech', 'x-webkit-speech');
@@ -5772,6 +5828,22 @@ L.Control.WCS = L.Control.extend({
 		}, input);
 		L.DomEvent.on(input, 'change', function () {
 			this.panTo(this._wcsinput.value);
+		}, this);
+
+		var	clipboardbutton = L.DomUtil.create('div', className + '-clipboard', dialog);
+		clipboardbutton.title = 'Copy to clipboard';
+		L.DomEvent.on(clipboardbutton, 'click', function () {
+			var stateObj = {},
+				url = location.href,
+				wcs = this._map.options.crs,
+				latlng = map.getCenter();
+			L.IIPUtils.flashElement(this._wcsinput);
+			url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
+			  this._latLngToHMSDMS(latlng));
+			url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,
+			  wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
+			history.pushState(stateObj, '', url);
+			L.IIPUtils.copyToClipboard(url);
 		}, this);
 
 		return this._wcsdialog;
@@ -5824,7 +5896,7 @@ L.Control.WCS = L.Control.extend({
 			h++;
 			m = 0;
 		}
-		var str = h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
+		var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
 		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
 		 lat = Math.abs(latlng.lat),
 		 sgn = latlng.lat < 0.0 ? '-' : '+',

@@ -18,7 +18,7 @@ class ExportAdmin(admin.ModelAdmin):
 
 
 class ExternalProcessAdmin(admin.ModelAdmin):
-    list_display = ('id', 'epr_site', 'epr_original_id', 'epr_name', 'epr_username', 'epr_start_date', 'epr_end_date',)
+    list_display = ('id', 'epr_site', 'epr_original_id', 'epr_name', 'epr_owner', 'epr_username', 'epr_start_date', 'epr_end_date',)
     list_display_links = ('id', 'epr_original_id')
     search_fields = ('epr_site', 'epr_original_id', 'epr_name', 'epr_username')
 

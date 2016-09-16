@@ -20,12 +20,20 @@ class Site(models.Model):
     sti_name = models.CharField(max_length=128, verbose_name='Site')
     sti_url = models.URLField(verbose_name='Url', null=True, blank=True)
 
+    def __str__(self):
+        return str(self.sti_name)
 
 class ExternalProcess(models.Model):
+
+    epr_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Owner')
+
     epr_name = models.CharField(
-        max_length=128, null=True, blank=True, verbose_name='Internal Name')
+        max_length=128, null=True, blank=True, verbose_name='Name')
     epr_username = models.CharField(
-        max_length=128, verbose_name='User Name')
+        max_length=128, verbose_name='Original Owner', help_text='original process username on your instances of origin.')
     epr_site = models.ForeignKey(
         Site, on_delete=models.CASCADE, verbose_name='Site',
         help_text='origin of the process. instance from which it was imported.', default=None)
