@@ -14,14 +14,13 @@ Ext.define('Sky.view.dataset.DatasetController', {
             'dataset': {
                 loadpanel: 'onLoadPanel',
                 updatePanel: 'onUpdatePanel',
-                updatePosition: 'changeImage'
+                updatePosition: 'changeImage',
+                compare: 'onCompareImages'
             },
             'sky-visiomatic': {
                 dblclick: 'onDblClickVisiomatic',
                 changeimage: 'onChangeImage',
                 link: 'onGetLink',
-                shift: 'onShift',
-                compare: 'onCompareImages',
                 changeposition: 'onChangePosition'
             },
             'sky-compare': {
@@ -116,9 +115,9 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     onChangePosition: function (radec, fov) {
         var me = this,
+            view = me.getView(),
             compare = me.lookupReference('compare'),
-            visiomatic = me.lookupReference('visiomatic'),
-            btn = visiomatic.down('#btnMagnetic');
+            btn = view.down('#btnMagnetic');
 
         // Checa se o painel compare esta visivel e com a imagem ja carregada.
         if ((compare.isVisible()) && (compare.isReady())) {
@@ -186,11 +185,16 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     },
 
+    onResize: function () {
+        console.log('onResize');
+
+    },
+
     onLoadDatasetInOtherReleases: function (store) {
         var me = this,
-            visiomatic = me.lookupReference('visiomatic');
+            view = me.getView();
 
-        visiomatic.setDatasets(store);
+        view.setDatasets(store);
 
     },
 
@@ -223,10 +227,11 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     onCloseCompare: function () {
         var me = this,
+            view = me.getView(),
             visiomatic = me.lookupReference('visiomatic');
 
         // Atualizar as opcoes de comparacao.
-        visiomatic.updateCompareOptions();
+        view.updateCompareOptions();
 
     },
 
