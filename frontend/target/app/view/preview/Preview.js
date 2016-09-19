@@ -17,6 +17,8 @@ Ext.define('Target.view.preview.Preview', {
         currentRecord: null
     },
 
+    layout: 'fit',
+
     items: [
         {
             xtype: 'targets-visiomatic',

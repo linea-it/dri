@@ -16,17 +16,17 @@ Ext.define('Home.view.widget.Wcatalog', {
             html: '<br>Serve catalogs created by the collaboration',
             // xtype: 'container',
             // text: 'testando',
-            width: 128,
+            width: 128
             // height: 134
         }]
     },{
-        xtype: 'button', 
+        xtype: 'button',
         text    : 'Science Products',
         width: 260,
         scale: 'large',
         disabled : true,
-        handler : function() {
-            window.open("/dri/apps/sky","_self")
+        handler : function () {
+            window.open('/dri/apps/products','_self');
         }
     }]
 });

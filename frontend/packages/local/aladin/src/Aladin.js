@@ -812,7 +812,13 @@ Ext.define('aladin.Aladin', {
         var me = this,
             aladin = me.getAladin(),
             libA = me.libA,
-            overlay;
+            overlay, catalog, news;
+
+        catalog = libA.catalog({
+            name: 'Recent tiles',
+            sourceSize: 14,
+            color:'#e67e22'
+        });
 
         // checar se estas tiles ja foram plotadas
         overlay = me.getFootprintByName(tag.get('tag_name'));
@@ -844,7 +850,24 @@ Ext.define('aladin.Aladin', {
                 overlay.addFootprints(
                             libA.polygon(tPath));
 
+                if (tile.get('is_new')) {
+                    news = true;
+                    catalog.addSources([
+                        libA.marker(
+                            tile.get('tli_ra'),
+                            tile.get('tli_dec'),
+                            {
+                                popupTitle: 'Tile Recently Added',
+                                popupDesc: 'Creation date: ' + tile.get('date')
+                            })
+                    ]);
+                }
+
             }, this);
+
+            if ((news) && (!tag.get('is_new'))) {
+                aladin.addCatalog(catalog);
+            }
         }
     },
 

@@ -8,6 +8,7 @@ logger = logging.getLogger(__name__)
 
 
 class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
+    tags_count = serializers.SerializerMethodField()
     tiles_count = serializers.SerializerMethodField()
 
     class Meta:
@@ -22,6 +23,7 @@ class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
             'rls_doc_url',
             'rls_description',
             'rls_default',
+            'tags_count',
             'tiles_count'
         )
 
@@ -31,6 +33,9 @@ class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
             count += tag.tiles.count()
 
         return count
+
+    def get_tags_count(self, obj):
+        return obj.tags.count()
 
 
 class TileSerializer(serializers.HyperlinkedModelSerializer):
@@ -95,7 +100,6 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     tli_tilename = serializers.SerializerMethodField()
     tli_ra = serializers.SerializerMethodField()
     tli_dec = serializers.SerializerMethodField()
-    # image_src_ptif = serializers.SerializerMethodField()
 
     class Meta:
         model = Dataset
@@ -108,6 +112,7 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'release_display_name',
             'tile',
             'run',
+            'date',
             'tli_tilename',
             'tli_ra',
             'tli_dec',
@@ -168,6 +173,7 @@ class DatasetFootprintSerializer(serializers.BaseSerializer):
             obj.tile.tli_udecll,
             obj.tile.tli_uraur,
             obj.tile.tli_udecur,
+            obj.date
         ]
 
 

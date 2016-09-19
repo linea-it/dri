@@ -114,7 +114,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     },
 
-    onChangePosition: function (radec) {
+    onChangePosition: function (radec, fov) {
         var me = this,
             compare = me.lookupReference('compare'),
             visiomatic = me.lookupReference('visiomatic'),
@@ -125,7 +125,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
             // Se o botao magnetic estiver marcado seta sincroniza a posicao entre os viewers.
             if ((btn) && (btn.checked)) {
-                compare.setView(radec.ra, radec.dec, 0.10);
+                compare.setView(radec.ra, radec.dec, fov);
 
             }
 
@@ -215,10 +215,10 @@ Ext.define('Sky.view.dataset.DatasetController', {
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
             compare = me.lookupReference('compare'),
-            radec = visiomatic.getRaDec();
+            radec = visiomatic.getRaDec(),
+            fov = visiomatic.getFov();
 
-        // TODO o FOV deveria ser o mesmo do visiomatic
-        compare.setView(radec.ra, radec.dec, 0.10);
+        compare.setView(radec.ra, radec.dec, fov);
     },
 
     onCloseCompare: function () {

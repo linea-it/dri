@@ -41,13 +41,13 @@ Ext.define('Products.view.main.MainController', {
             store = gridcatalogs.getStore();
 
         //console.log(release)
-        id = record.getData().id
+        name = record.getData().pgr_display_name
         console.log(store)
 
         store.filter([
             {
-                property: "pgr_group",
-                value: id
+                property: "pgr_display_name",
+                value: name
             }
         ])
     },

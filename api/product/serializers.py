@@ -328,7 +328,12 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
     msk_filter = serializers.SerializerMethodField()
     mpa_nside = serializers.SerializerMethodField()
     mpa_ordering = serializers.SerializerMethodField()
-
+    pgr_display_name = serializers.SerializerMethodField()
+    pcl_display_name = serializers.SerializerMethodField()
+    prd_process_id = serializers.PrimaryKeyRelatedField(
+        queryset=ExternalProcess.objects.all(), many=False)
+    epr_username = serializers.SerializerMethodField()
+    epr_end_date = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -342,6 +347,11 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             'msk_filter',
             'mpa_nside',
             'mpa_ordering',
+            "pgr_display_name",
+            'pcl_display_name',
+            'prd_process_id',
+            'epr_username',
+            'epr_end_date',
             # 'mpa_filter'
 
         )
@@ -376,4 +386,18 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
         except AttributeError:
             return None
 
+    def get_pgr_display_name(self, obj):
+        return obj.prd_class.pcl_group.pgr_display_name
 
+
+    def get_pcl_display_name(self, obj):
+        return obj.prd_class.pcl_display_name
+
+    def get_epr_original_id(self, obj):
+        return obj.prd_process_id.epr_original_id
+
+    def get_epr_username(self, obj):
+        return obj.prd_process_id.epr_username
+
+    def get_epr_end_date(self, obj):
+        return obj.prd_process_id.epr_end_date
