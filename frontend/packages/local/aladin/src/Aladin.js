@@ -865,7 +865,7 @@ Ext.define('aladin.Aladin', {
 
             }, this);
 
-            if (news) {
+            if ((news) && (!tag.get('is_new'))) {
                 aladin.addCatalog(catalog);
             }
         }
