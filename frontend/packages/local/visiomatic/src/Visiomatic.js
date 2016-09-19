@@ -183,6 +183,14 @@ Ext.define('visiomatic.Visiomatic', {
 
     },
 
+    onResize: function () {
+        this.callParent(arguments);
+        var map = this.getMap();
+        if (map) {
+            map.invalidateSize();
+        }
+    },
+
     getMapContainer: function () {
 
         return this.getId() + '-placeholder';
@@ -344,8 +352,8 @@ Ext.define('visiomatic.Visiomatic', {
             latlng = map.getCenter();
 
         return {
-            'ra': parseFloat(latlng.lng.toFixed(4)),
-            'dec': parseFloat(latlng.lat.toFixed(4))
+            'ra': parseFloat(latlng.lng),
+            'dec': parseFloat(latlng.lat)
         };
 
     },
