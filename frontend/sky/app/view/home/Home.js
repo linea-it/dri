@@ -4,17 +4,19 @@ Ext.define('Sky.view.home.Home', {
 
     requires: [
         'Sky.view.home.HomeController',
+        'Sky.view.home.HomeModel',
         'Sky.store.Releases',
         'Ext.PagingToolbar'
     ],
 
     title: 'Releases',
 
-    store: {
-        type: 'releases'
-    },
-
     controller: 'home',
+    viewModel: 'home',
+
+    bind: {
+        store: '{releases}'
+    },
 
     initComponent: function () {
         var me = this;
@@ -27,8 +29,8 @@ Ext.define('Sky.view.home.Home', {
                     flex: 1,
                     renderer: function (value, cell, record) {
                         if (record.get('is_new')) {
-                            // return value + '    <spam style="color:#e67e22;">New</spam>';
-                            return '<spam style="color:#e67e22;">New</spam>    ' + value;
+                            return value + '    <spam style="color:#e67e22;">New</spam>';
+                            // return '<spam style="color:#e67e22;">New</spam>    ' + value;
 
                         }
                         return value;
@@ -37,18 +39,39 @@ Ext.define('Sky.view.home.Home', {
                 {xtype: 'datecolumn', text: 'Date', dataIndex: 'rls_date', format:'Y-m-d', flex: 1},
                 {text: 'Datasets', dataIndex: 'tags_count', flex: 1, sortable: false},
                 {text: 'Tiles', dataIndex: 'tiles_count', flex: 1, sortable: false}
+            ],
+            dockedItems: [
+                {
+                    xtype: 'toolbar',
+                    dock: 'top',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            emptyText: 'Search by name',
+                            width: 250,
+                            triggers: {
+                                clear: {
+                                    cls: 'x-form-clear-trigger',
+                                    handler: 'cancelFilter',
+                                    hidden: true
+                                },
+                                search: {
+                                    cls: ' x-form-search-trigger'
+                                }
+                            },
+                            listeners: {
+                                change: 'filterByname',
+                                buffer: 500
+                            }
+                        },
+                        {
+                            tooltip: 'Refresh and Clear filters',
+                            iconCls: 'x-fa fa-refresh',
+                            handler: 'refreshAndClear'
+                        }
+                    ]
+                }
             ]
-            // dockedItems: [
-            //     {
-            //         xtype: 'toolbar',
-            //         dock: 'bottom',
-            //         items:{
-            //             xtype: 'pagingtoolbar',
-            //             displayInfo: true,
-            //             store: me.getStore()
-            //         }
-            //     }
-            // ]
         });
 
         me.callParent(arguments);

@@ -9,6 +9,8 @@ Ext.define('common.store.Releases', {
 
     remoteSort: true,
 
+    remoteFilter: false,
+
     proxy: {
         type: 'django',
         url: '/dri/api/releases/'
