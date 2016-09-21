@@ -4,7 +4,12 @@
  */
 $des-portal-headerbar-background-color: #32404e;
 
-$button-toolbar-color: white;
-$button-toolbar-background-color: transparent;
-$button-toolbar-border-color: transparent;
-$button-toolbar-hover-background-color: #efefef;
+
+//UI Styles for buttons
+$headerbar-button-toolbar-hover-background-color: #efefef;
+$headerbar-button-toolbar-background-color: transparent;
+$headerbar-button-toolbar-border-color: transparent;
+
+//Toolbar Button UI colors
+$color-white: white;
+

@@ -56,16 +56,18 @@ Ext.define('common.header.Toolbar', {
         {
             xtype: 'button',
             iconCls: 'x-fa fa-home',
+            ui: 'white-toolbar',
             cls: 'delete-focus-bg',
             scale: 'medium',
             handler: 'projectHome',
             tooltip: 'Home of the Science Server'
+
         },
         {
             xtype: 'button',
             cls: 'delete-focus-bg',
+            ui: 'white-toolbar',
             arrowVisible: false,
-            // scale: 'large',
             scale: 'medium',
             bind: {
                 text: '{username}'

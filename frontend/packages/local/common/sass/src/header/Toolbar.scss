@@ -20,10 +20,11 @@
     height: 34px;
 }
 
+
 .toolbar-btn-shadow{
     @include box-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
     .x-btn-over{
-        background-color: $button-toolbar-hover-background-color;
+        background-color: $headerbar-button-toolbar-hover-background-color;
     }
 }
 
@@ -32,3 +33,12 @@
         background: none;
     }
 }
+
+@include extjs-button-toolbar-medium-ui(
+    $ui: 'white',
+    $background-color: $headerbar-button-toolbar-background-color,
+    $border-color: $headerbar-button-toolbar-border-color,
+    $color: $color-white,
+    $glyph-color: $color-white
+);
+
