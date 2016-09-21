@@ -14,9 +14,13 @@ class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'app_name',
+            'app_display_name',
             'app_url',
             'app_short_description',
             'app_long_description',
-            'app_icon',
-            'app_thumbnail',
+            'app_icon_cls',
+            'app_icon_src',
+            'app_order',
+            'app_disabled'
         )
+
