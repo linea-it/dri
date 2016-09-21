@@ -79,7 +79,8 @@ Ext.define('visiomatic.Visiomatic', {
             defaultChannel: 2,
             contrast: 0.7,
             gamma: 2.8,
-            colorSat: 2.0
+            colorSat: 2.0,
+            channelLabelMatch: '[ugrizY]'
         },
 
         release: null,
