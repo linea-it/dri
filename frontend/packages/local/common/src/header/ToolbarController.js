@@ -11,12 +11,9 @@ Ext.define('common.ToolbarController', {
     },
 
     projectHome: function () {
-        console.log('onProjectHome');
-
         var host = window.location.host,
             location = Ext.String.format('http://{0}/', host);
 
-        console.log(location);
         window.location.assign(location);
 
     }
