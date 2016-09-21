@@ -55,9 +55,18 @@ Ext.define('common.header.Toolbar', {
         '->',
         {
             xtype: 'button',
-            cls: 'x-btn-username',
+            iconCls: 'x-fa fa-home',
+            cls: 'delete-focus-bg',
+            scale: 'medium',
+            handler: 'projectHome',
+            tooltip: 'Home of the Science Server'
+        },
+        {
+            xtype: 'button',
+            cls: 'delete-focus-bg',
             arrowVisible: false,
-            scale: 'large',
+            // scale: 'large',
+            scale: 'medium',
             bind: {
                 text: '{username}'
             },

@@ -5,6 +5,7 @@
 .des-portal-headerbar {
     background-color: $des-portal-headerbar-background-color !important;
     border:none !important;
+    z-index:10;
 }
 
 .des-portal-appname {
@@ -19,11 +20,15 @@
     height: 34px;
 }
 
-.x-btn-username {
-    background-color: transparent !important;
-    border-style: none !important;
+.toolbar-btn-shadow{
+    @include box-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+    .x-btn-over{
+        background-color: $button-toolbar-hover-background-color;
+    }
 }
 
-.x-btn-username .x-btn-inner {
-    color: #fff !important;
+.delete-focus-bg {
+    &:focus, &:hover{
+        background: none;
+    }
 }
