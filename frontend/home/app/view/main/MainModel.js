@@ -7,7 +7,7 @@ Ext.define('Home.view.main.MainModel', {
     alias: 'viewmodel.main',
 
     data: {
-        name: 'Science Server',
+        name: 'Science Server'
     }
 
 });

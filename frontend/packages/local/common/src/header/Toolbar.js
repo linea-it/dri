@@ -9,7 +9,8 @@ Ext.define('common.header.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
 
     requires: [
-        'common.ToolbarController'
+        'common.ToolbarController',
+        'common.contact.Contact'
     ],
 
     xtype: 'dri-header',
@@ -18,7 +19,7 @@ Ext.define('common.header.Toolbar', {
 
     cls: 'des-portal-headerbar toolbar-btn-shadow',
 
-    height: 52,
+    // height: 38,
 
     layout: {
         type: 'hbox',
@@ -30,7 +31,7 @@ Ext.define('common.header.Toolbar', {
             // name: '',
             home: '',
             desPortalLogo: 'resources/des-portal-logo.png',
-            tooltip: 'Home page of Science Server',
+            tooltip: 'Home',
             username: ''
         }
     },
@@ -55,18 +56,48 @@ Ext.define('common.header.Toolbar', {
         '->',
         {
             xtype: 'button',
-            cls: 'x-btn-username',
-            arrowVisible: false,
-            scale: 'large',
+            cls: 'delete-focus-bg',
+            ui: 'white-toolbar',
+            scale: 'medium',
+            itemId: 'btnusername',
             bind: {
                 text: '{username}'
-            },
-            menu: [{
-                text: 'Log out',
-                iconCls: 'x-fa fa-sign-out',
-                handler: 'logout'
-            }]
+            }
+        },
+        {
+            xtype: 'button',
+            iconCls: 'x-fa fa-home',
+            ui: 'white-toolbar',
+            cls: 'delete-focus-bg',
+            scale: 'medium',
+            handler: 'projectHome',
+            tooltip: 'Home of the Science Server'
 
+        },
+        {
+            xtype: 'button',
+            iconCls: 'x-fa fa-bars',
+            cls: 'delete-focus-bg',
+            ui: 'white-toolbar',
+            scale: 'medium',
+            arrowVisible: false,
+            menu: [
+                {
+                    text: 'Contact',
+                    // iconCls: 'x-fa fa-sign-out',
+                    handler: 'contact'
+                },
+                {
+                    text: 'About LIneA',
+                    handler: 'about'
+                },
+                '-',
+                {
+                    text: 'Log out',
+                    iconCls: 'x-fa fa-sign-out',
+                    handler: 'logout'
+                }
+            ]
         }
     ],
 
@@ -80,6 +111,7 @@ Ext.define('common.header.Toolbar', {
 
         if (window.sessionStorage.dri_username != 'undefined') {
             me.getViewModel().set('username', window.sessionStorage.dri_username);
+            // me.down('#btnusername').setText(window.sessionStorage.dri_username);
         }
 
         me.callParent(arguments);

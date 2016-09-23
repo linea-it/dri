@@ -5,13 +5,23 @@
  */
 Ext.define('Home.Application', {
     extend: 'Ext.app.Application',
-    
+
     name: 'Home',
 
-    stores: [
-        // TODO: add global / shared stores here
+    requires: [
+        'home.store.Menu'
     ],
-    
+
+    stores: [
+
+    ],
+
+    init: function () {
+        // Desabilitar os erros de Aria
+        Ext.enableAriaButtons = false;
+
+    },
+
     launch: function () {
         // TODO - Launch the application
     },

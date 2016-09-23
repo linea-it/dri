@@ -986,8 +986,12 @@ $include-aladin-maps: dynamic(true);;
 $include-common-bandfilter: dynamic(true);;
 $include-common-searchfield: dynamic(true);;
 $include-common-toolbarcontroller: dynamic(true);;
+$include-common-contact-contact: dynamic(true);;
+$include-common-contact-contactcontroller: dynamic(true);;
 $include-common-data-proxy-crsftoken: dynamic(true);;
 $include-common-data-proxy-django: dynamic(true);;
+$include-common-footer-footer: dynamic(true);;
+$include-common-footer-footercontroller: dynamic(true);;
 $include-common-header-toolbar: dynamic(true);;
 $include-common-model-dataset: dynamic(true);;
 $include-common-model-filter: dynamic(true);;
@@ -1283,6 +1287,7 @@ $common-resource-path: 'common/images' !default;
 $current-package: 'common';
 $current-resource-root: $common-resource-root;
 $relative-image-path-for-uis: $common-resource-path;
+@import '../../../../../packages/local/common/sass/var/footer/Footer';
 @import '../../../../../packages/local/common/sass/var/header/Toolbar';
 
 /* including package Sky */
@@ -1505,6 +1510,7 @@ $common-resource-path: 'common/images' !default;
 $current-package: 'common';
 $current-resource-root: $common-resource-root;
 $relative-image-path-for-uis: $common-resource-path;
+@import '../../../../../packages/local/common/sass/src/footer/Footer';
 @import '../../../../../packages/local/common/sass/src/header/Toolbar';
 
 /* including package aladin */

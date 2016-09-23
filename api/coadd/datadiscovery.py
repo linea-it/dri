@@ -3,8 +3,8 @@ from coadd.models import Release, Dataset, Tile, Tag
 from django.conf import settings
 from pprint import pprint
 
-class DataDiscovery:
 
+class DataDiscovery:
     def __init__(self):
 
         kwargs = settings.DATADISCOVERY_DATABASE
@@ -12,8 +12,14 @@ class DataDiscovery:
         try:
             print ("Connecting to database")
 
-            dsn = cx_Oracle.makedsn(**kwargs)
-            self.db = cx_Oracle.connect('brportal', 'brp70chips', dsn=dsn)
+            args = {
+                'host': kwargs.get('host'),
+                'port': kwargs.get('port'),
+                'service_name': kwargs.get('service_name')
+            }
+
+            dsn = cx_Oracle.makedsn(**args)
+            self.db = cx_Oracle.connect(kwargs.get('user'), kwargs.get('password'), dsn=dsn)
             self.cursor = self.db.cursor()
 
             print ("Connected")
@@ -23,7 +29,8 @@ class DataDiscovery:
 
     def start(self):
 
-        excludes = ["Y3A1_COADD_TEST_123", "Y3A1_COADD_TEST_123_t025", "Y3A1_COADD_TEST_123_t050", "Y3A1_COADD_TEST_123_t100", "Y3A1_COADD_TEST_DEEP"]
+        excludes = ["Y3A1_COADD_TEST_123", "Y3A1_COADD_TEST_123_t025", "Y3A1_COADD_TEST_123_t050",
+                    "Y3A1_COADD_TEST_123_t100", "Y3A1_COADD_TEST_DEEP"]
 
         patterns = ["tag like 'Y3A1_COADD_TEST%'", "tag='Y3A1_COADD'"]
 
@@ -107,13 +114,13 @@ class DataDiscovery:
                         except Tile.DoesNotExist:
                             count_fail = count_fail + 1
 
-                    print("Tiles Created [ %s ] Updated [ %s ] Fail [ %s ]" % (count_created, count_updated, count_fail))
+                    print(
+                        "Tiles Created [ %s ] Updated [ %s ] Fail [ %s ]" % (count_created, count_updated, count_fail))
 
                 else:
                     print("Tag: %s [ Ignored ]" % tag)
 
         print ("Done!")
-
 
     def get_tiles_by_tag(self, tag, field):
         # Checar se a quantidade de tiles e diferente das registradas
@@ -128,19 +135,24 @@ class DataDiscovery:
         if original_count != dri_count:
             print ('Tiles to be installed [ %s ]' % (original_count - dri_count))
 
-            sql = "SELECT unitname as tilename, archive_path, t.created_date FROM pfw_attempt p,proctag t WHERE t.tag='%s' AND t.pfw_attempt_id=p.id ORDER BY created_date" % tag
+            # sql = "SELECT unitname as tilename, archive_path, t.created_date FROM pfw_attempt p,proctag t WHERE t.tag='%s' AND t.pfw_attempt_id=p.id ORDER BY created_date" % tag
+            sql = ("SELECT p.unitname as tilename, p.reqnum, p.attnum, f.path as archive_path, d.filename "
+                   "FROM proctag t, pfw_attempt p, file_archive_info f, desfile d "
+                   "WHERE d.id=f.desfile_id AND d.pfw_attempt_id = p.id AND t.pfw_attempt_id = p.id "
+                   "AND t.tag='" + tag + "' AND f.filename like '%.ptif' ORDER by unitname")
             tiles = self.fetchall_dict(sql)
 
             for tile in tiles:
-
                 paths = tile.get('ARCHIVE_PATH').split('/')
-                file = paths[len(paths)-2]
+                file = paths[len(paths) - 2]
                 sfile = file.split('-')
-                run = sfile[len(sfile)-1]
-                p = paths[len(paths)-1]
-                filename = "%s_%s%s.ptif" %(tile.get('TILENAME'), run, p)
+                p = paths[len(paths) - 1]
 
-                image_src_ptif = "http://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/%s/qa/%s" % (tile.get('ARCHIVE_PATH'), filename)
+                run = tile.get('REQNUM')
+                filename = tile.get('FILENAME')
+
+                image_src_ptif = "http://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/%s/%s" % (
+                    tile.get('ARCHIVE_PATH'), filename)
 
                 tile.update({
                     'image_src_ptif': image_src_ptif.replace("+", "%2B")
@@ -150,11 +162,6 @@ class DataDiscovery:
 
         else:
             return list()
-
-
-
-
-
 
     def generate_display_name(self, tag):
 
@@ -185,7 +192,6 @@ class DataDiscovery:
 
         return result_dict
 
-
     def fetch_scalar(self, query, col=0):
         self.cursor.execute(query)
         row = self.cursor.fetchone()
@@ -195,12 +201,7 @@ class DataDiscovery:
             return None
 
 
-
-
 if __name__ == '__main__':
-
     print ("---------- stand alone -------------")
 
     DataDiscovery().start()
-
-

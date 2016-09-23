@@ -15,10 +15,8 @@ Ext.define('Home.view.main.Main', {
 
         'Home.view.main.MainController',
         'Home.view.main.MainModel',
-        'Home.view.pages.Sky',
-        'Home.view.pages.Target',
         'Home.view.pages.Home',
-        'Home.view.pages.Release'
+        'Home.view.pages.Template'
 
     ],
 
@@ -80,69 +78,51 @@ Ext.define('Home.view.main.Main', {
             }
         }
     },
-
     items: [{
         title: 'Home',
         iconCls: 'fa-home',
         items: [{
             xtype: 'pages-home'
         }]
-    }, {
-        title: 'Releases',
-        iconCls: 'fa-check',
-        items: [{
-            xtype: 'pages-release'
-        }],
-        disabled: true
-    },{
-        title: 'Sky Viewer',
-        iconCls: 'fa-star',
-        items: [{
-            xtype: 'pages-sky'
-        }]
-    },{
-        title: 'Tile Viewer',
-        iconCls: 'fa-th',
-        hidden: true,
-        bind: {
-            html: '{loremIpsum}'
-        }
-    },{
-        title: 'Target Viewer',
-        iconCls: 'fa-dot-circle-o',
-        items: [{
-            xtype: 'pages-target'
-        }],
-        disabled: true
-    },{
-        title: 'Sky Query',
-        iconCls: 'fa-database',
-        bind: {
-            html: '{loremIpsum}'
-        },
-        disabled: true
-    },{
-        title: 'Upload',
-        iconCls: 'fa-upload',
-        bind: {
-            html: '{loremIpsum}'
-        },
-        disabled: true
-    },{
-        title: 'Cutout Server',
-        iconCls: 'fa-picture-o',
-        bind: {
-            html: '{loremIpsum}'
-        },
-        disabled: true
+    }],
+
+    addMenu: function (store) {
+        var me = this;
+        store.each(function (record) {
+            var page = Ext.create('Home.view.pages.Template', {
+                data: {
+                    host: 'http://desportal.cosmology.illinois.edu/dri/apps/',
+                    pageTitle: record.get('app_display_name'),
+                    appURL: record.get('app_url'),
+                    imageUrl: record.get('app_icon_src'),
+                    paragrafo1: record.get('app_short_description'),
+                    paragrafo2: record.get('app_long_description')
+                }
+            });
+
+            me.add({
+                title: record.get('app_display_name'),
+                iconCls: record.get('app_icon_cls'),
+                disabled: record.get('app_disabled'),
+                items: [page]
+            });
+            // me.items.push(record.data)
+        },this);
+    },
+
+    initComponent: function () {
+        var me = this;
+        var pluginExpanded = true;
+        var store = Ext.create('home.store.Menu');
+
+        // me.addMenu(store)
+        store.load({
+            callback: function (records, options, success) {
+                if (success) {
+                    me.addMenu(store);
+                }
+            }
+        });
+        this.callParent();
     }
-    // {
-    //     title: 'Science Products',
-    //     iconCls: 'fa-leanpub',
-    //     bind: {
-    //         html: '{loremIpsum}'
-    //     },
-    //     disabled: true
-    // }
-    ]
 });
