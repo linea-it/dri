@@ -58,7 +58,8 @@
      *      ]
      */
     "requires": [
-        "font-awesome"
+        "font-awesome",
+        "common"
     ],
 
     /**
