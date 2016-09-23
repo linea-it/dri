@@ -17,7 +17,8 @@ Ext.define('Sky.view.main.Main', {
         'Sky.view.main.MainController',
         'Sky.view.main.MainModel',
         'Sky.view.search.SearchField',
-        'common.header.Toolbar'
+        'common.header.Toolbar',
+        'common.footer.Footer'
     ],
 
     controller: 'main',
@@ -49,6 +50,9 @@ Ext.define('Sky.view.main.Main', {
                 type: 'card',
                 anchor: '100%'
             }
+        },
+        {
+            xtype: 'dri-footer'
         }
     ]
 });

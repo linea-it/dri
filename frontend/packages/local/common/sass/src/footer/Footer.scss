@@ -1,0 +1,37 @@
+/**
+ * Classes pra o Header usados nos apps.
+ */
+
+.des-portal-footer {
+    background-color: $des-portal-footer-background-color !important;
+    border:none !important;
+    z-index:10;
+}
+
+.des-portal-footer-text {
+    //padding: 15px 0 10px 0;
+    font-size: 16px;
+    color: #fff;
+    //font-weight: bold;
+}
+
+.toolbar-btn-shadow{
+    @include box-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+    .x-btn-over{
+        background-color: $footer-button-toolbar-hover-background-color;
+    }
+}
+
+.delete-focus-bg {
+    &:focus, &:hover{
+        background: none;
+    }
+}
+
+@include extjs-button-toolbar-small-ui(
+    $ui: 'footer-white',
+    $background-color: $footer-button-toolbar-background-color,
+    $border-color: $footer-button-toolbar-border-color,
+    $color: $font-white,
+    $glyph-color: $font-white
+);
