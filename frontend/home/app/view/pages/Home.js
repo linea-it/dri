@@ -2,21 +2,20 @@ Ext.define('Home.view.pages.Home', {
     extend: 'Ext.panel.Panel',
     xtype: 'pages-home',
     requires: [
-        'Home.view.widget.Wsky',
-        'Home.view.widget.Wrelease',
-        'Home.view.widget.Wtile',
-        'Home.view.widget.Wtarget',
-        'Home.view.widget.Wsquery',
-        'Home.view.widget.Wupload',
-        'Home.view.widget.Wcutout',
-        'Home.view.widget.Wcatalog',
-        'Home.view.widget.Wlist'
+        // 'Home.view.widget.Wsky',
+        // 'Home.view.widget.Wrelease',
+        // 'Home.view.widget.Wtile',
+        // 'Home.view.widget.Wtarget',
+        // 'Home.view.widget.Wsquery',
+        // 'Home.view.widget.Wupload',
+        // 'Home.view.widget.Wcutout',
+        // 'Home.view.widget.Wcatalog',
+        // 'Home.view.widget.Wlist'
     ],
     layout: 'column',
     addMenu: function (store) {
         var me = this;
-        store.each(function(record){
-            console.log(record)
+        store.each(function (record) {
             me.add({
                 xtype: 'panel',
                 layout: 'vbox',
@@ -34,10 +33,7 @@ Ext.define('Home.view.pages.Home', {
                             height: 114
                         },{
                             html: '<br>' + record.get('app_short_description'),
-                            // xtype: 'container',
-                            // text: 'testando',
                             width: 128
-                            // height: 134
                         }
                     ]
                 },{
@@ -50,55 +46,23 @@ Ext.define('Home.view.pages.Home', {
                         window.open(record.get('app_url'),'_self');
                     }
                 }]
-                
-            })
-            // me.items.push(record.data)          
+
+            });
         },this);
     },
-    initComponent: function(){
+
+    initComponent: function () {
         var me = this;
         var pluginExpanded = true;
         var store = Ext.create('home.store.Menu');
-        
-        // me.addMenu(store)
+
         store.load({
             callback: function (records, options, success) {
                 if (success) {
-                    me.addMenu(store)
+                    me.addMenu(store);
                 }
             }
         });
         this.callParent();
-    },
-    // items: [{
-    //     xtype: 'wrelease',
-    //     margin: '0 10 10 0'
-    // },{
-    //     xtype: 'wsky',
-    //     margin: '0 10 10 0'
-    // },{
-    //     xtype: 'wtile',
-    //     margin: '0 10 10 0',
-    //     hidden: true
-    // },{
-    //     xtype: 'wtarget',
-    //     margin: '0 10 10 0'
-    // },{
-    //     xtype: 'wsquery',
-    //     margin: '0 10 10 0'
-    // },{
-    //     xtype: 'wupload',
-    //     margin: '0 10 10 0'
-    // },{
-    //     xtype: 'wcutout',
-    //     margin: '0 10 10 0'
-    // },{
-    //     xtype: 'wcatalog',
-    //     margin: '0 10 10 0'
-    // }
-    // {
-    //     xtype: 'wlist',
-    //     margin: '0 10 10 0'
-    // }
-    //]
+    }
 });

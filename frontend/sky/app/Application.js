@@ -43,7 +43,7 @@ Ext.define('Sky.Application', {
     },
 
     onAppUpdate: function () {
-        window.location.reload();
+        // window.location.reload();
 
     }
 });
