@@ -19,7 +19,7 @@ Ext.define('common.footer.Footer', {
 
     cls: 'des-portal-footer',
 
-    height: 36,
+    height: 6,
 
     layout: {
         type: 'hbox',
@@ -28,11 +28,7 @@ Ext.define('common.footer.Footer', {
 
     viewModel: {
         data: {
-            // name: '',
-            home: '',
-            desPortalLogo: 'resources/des-portal-logo.png',
-            tooltip: 'Home page of Science Server',
-            about: 'http://www.linea.gov.br'
+            // about: 'http://www.linea.gov.br'
         }
     },
 
@@ -42,28 +38,28 @@ Ext.define('common.footer.Footer', {
         //     html: 'Science Server',
         //     cls: 'des-portal-footer-text'
         // },
-        {
-            xtype: 'tbtext',
-            html: 'LIneA - Laboratório Interinstitucional de e-Astronomia',
-            cls: 'des-portal-footer-text'
-        },
-        '->',
-        {
-            xtype: 'button',
-            text: 'About LIneA',
-            cls: 'delete-focus-bg',
-            ui: 'footer-white-toolbar',
-            bind: {
-                href: '{about}'
-            }
-        },
-        {
-            xtype: 'button',
-            text: 'Contact',
-            cls: 'delete-focus-bg',
-            ui: 'footer-white-toolbar',
-            handler: 'onClickContact'
-        }
+        // {
+        //     xtype: 'tbtext',
+        //     html: 'LIneA - Laboratório Interinstitucional de e-Astronomia',
+        //     cls: 'des-portal-footer-text'
+        // },
+        // '->',
+        // {
+        //     xtype: 'button',
+        //     text: 'About LIneA',
+        //     cls: 'delete-focus-bg',
+        //     ui: 'footer-white-toolbar',
+        //     bind: {
+        //         href: '{about}'
+        //     }
+        // },
+        // {
+        //     xtype: 'button',
+        //     text: 'Contact',
+        //     cls: 'delete-focus-bg',
+        //     ui: 'footer-white-toolbar',
+        //     handler: 'onClickContact'
+        // }
     ]
 
     // afterRender: function () {

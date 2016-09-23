@@ -16,6 +16,22 @@ Ext.define('common.ToolbarController', {
 
         window.location.assign(location);
 
+    },
+
+    contact: function () {
+
+        if (this.wincontact) {
+            this.wincontact = null;
+        }
+
+        this.wincontact = Ext.create('common.contact.Contact', {});
+
+        this.wincontact.show();
+
+    },
+
+    about: function () {
+        window.open('http://www.linea.gov.br');
     }
 
 });
