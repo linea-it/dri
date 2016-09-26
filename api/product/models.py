@@ -1,8 +1,8 @@
+from coadd.models import Release, Tag
 from django.db import models
 from product_classifier.models import ProductClass
 from product_classifier.models import ProductClassContent
 from product_register.models import ExternalProcess
-from coadd.models import Release, Tag
 
 
 class Product(models.Model):
@@ -21,12 +21,39 @@ class Product(models.Model):
     prd_flag_removed = models.BooleanField(
         default=False, verbose_name='Is Removed', help_text='True to mark a product as removed.')
 
+    releases = models.ManyToManyField(
+        Release,
+        through='ProductRelease',
+        default=None,
+        verbose_name='Releases'
+    )
+
+    tags = models.ManyToManyField(
+        Tag,
+        through='ProductTag',
+        default=None,
+        verbose_name='Tags'
+    )
+
     def __str__(self):
         return self.prd_display_name
 
 
-class File(Product):
+class ProductRelease(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE)
+    release = models.ForeignKey(
+        Release, on_delete=models.CASCADE)
 
+
+class ProductTag(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE)
+    tag = models.ForeignKey(
+        Tag, on_delete=models.CASCADE)
+
+
+class File(Product):
     fli_base_path = models.CharField(
         max_length=256, verbose_name='Base path')
     fli_name = models.CharField(
@@ -37,7 +64,6 @@ class File(Product):
 
 
 class Table(Product):
-
     tbl_schema = models.CharField(
         max_length=128, verbose_name='Schema name', null=True, blank=True)
     tbl_name = models.CharField(
@@ -48,7 +74,6 @@ class Table(Product):
 
 
 class Catalog(Table):
-
     ctl_num_objects = models.PositiveIntegerField(
         verbose_name='Num of objects', null=True, blank=True)
 
