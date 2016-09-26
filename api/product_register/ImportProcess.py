@@ -3,6 +3,7 @@ from lib.CatalogDB import CatalogDB
 from product.models import ProductRelease, ProductTag
 from product.serializers import CatalogSerializer, ProductContentSerializer
 from product_classifier.models import ProductClass
+from product_register.models import ProcessRelease
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -79,6 +80,10 @@ class Import():
         if process_serializer.is_valid(raise_exception=True):
             self.process = process_serializer.save()
 
+        # Associar um Release ao Processo
+        if 'releases' in data:
+            self.process_release(self.process, data.get('releases'))
+
         # Registrar os produtos
         if 'products' in data and len(data.get('products')) > 0:
             self.import_products(data.get('products'))
@@ -90,6 +95,24 @@ class Import():
             data=process_serializer.data,
             status=status.HTTP_201_CREATED
         )
+
+    def process_release(self, process, releases):
+        for r in releases:
+            rls_name = r.lower()
+            try:
+                release = Release.objects.get(rls_name=rls_name)
+
+                # Associar Process a Release
+                pr = ProcessRelease.objects.create(
+                    process=process,
+                    release=release
+                )
+
+                pr.save()
+
+            except Release.DoesNotExist:
+                raise Exception("this Release '%s' is not valid." % rls_name)
+
 
     def import_products(self, data):
         """
@@ -172,7 +195,7 @@ class Import():
 
                 pr.save()
 
-            except Tag.DoesNotExist:
+            except Release.DoesNotExist:
                 raise Exception("this Release '%s' is not valid." % rls_name)
 
     def product_tag(self, product, tags, add_release):
