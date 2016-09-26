@@ -16,7 +16,8 @@ Ext.define('Target.view.main.Main', {
         'Target.view.main.MainController',
         'Target.view.main.MainModel',
 
-        'common.header.Toolbar'
+        'common.header.Toolbar',
+        'common.footer.Footer'
 
     ],
 
@@ -42,6 +43,9 @@ Ext.define('Target.view.main.Main', {
                 type: 'card',
                 anchor: '100%'
             }
+        },
+        {
+            xtype: 'dri-footer'
         }
     ]
 });

@@ -83,7 +83,7 @@ Ext.define('common.header.Toolbar', {
             arrowVisible: false,
             menu: [
                 {
-                    text: 'Contact',
+                    text: 'Contact Us',
                     // iconCls: 'x-fa fa-sign-out',
                     handler: 'contact'
                 },
