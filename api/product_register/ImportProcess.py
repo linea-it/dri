@@ -1,4 +1,6 @@
+from coadd.models import Release, Tag
 from lib.CatalogDB import CatalogDB
+from product.models import ProductRelease, ProductTag
 from product.serializers import CatalogSerializer, ProductContentSerializer
 from product_classifier.models import ProductClass
 from rest_framework import status
@@ -43,7 +45,6 @@ class Import():
 
         except Authorization.DoesNotExist:
             raise Exception('This ticket %s is not valid.' % ticket)
-
 
     def get_site(self, user):
 
@@ -132,6 +133,17 @@ class Import():
         if catalog_serializer.is_valid(raise_exception=True):
             catalog = catalog_serializer.save()
 
+            if 'releases' in data:
+                self.product_release(catalog, data.get('releases'))
+
+            # Registrar O produto a seus respectivos Tags
+            if 'fields' in data:
+                add_release = True
+                if 'releases' in data:
+                    add_release = False
+
+                self.product_tag(catalog, data.get('fields'), add_release)
+
             self.register_catalog_content(catalog)
 
     def get_product_class(self, name):
@@ -145,6 +157,46 @@ class Import():
             for cls in ProductClass.objects.all():
                 acls.append(cls.pcl_name)
             raise Exception('It is class is not available. these are available: %s' % (', '.join(acls)))
+
+    def product_release(self, product, releases):
+        for r in releases:
+            rls_name = r.lower()
+            try:
+                release = Release.objects.get(rls_name=rls_name)
+
+                # Associar Product a Release
+                pr = ProductRelease.objects.create(
+                    product=product.product_ptr,
+                    release=release
+                )
+
+                pr.save()
+
+            except Tag.DoesNotExist:
+                raise Exception("this Release '%s' is not valid." % rls_name)
+
+    def product_tag(self, product, tags, add_release):
+
+        for t in tags:
+            tag_name = t.lower()
+
+            try:
+                tag = Tag.objects.get(tag_name=tag_name)
+
+                # Associar Product a Tag
+                pt = ProductTag.objects.create(
+                    product=product.product_ptr,
+                    tag=tag
+                )
+
+                pt.save()
+
+                if add_release:
+                    rls_name = tag.tag_release.rls_name
+                    self.product_release(product, [rls_name])
+
+            except Tag.DoesNotExist:
+                raise Exception("this Tag '%s' is not valid." % tag_name)
 
     def register_catalog_content(self, catalog):
         # Recuperar as colunas do catalogo.
