@@ -1,3 +1,4 @@
+from coadd.models import Release, Tag
 from django.db import models
 from product_classifier.models import ProductClass
 from product_classifier.models import ProductClassContent
@@ -22,8 +23,36 @@ class Product(models.Model):
     prd_flag_removed = models.BooleanField(
         default=False, verbose_name='Is Removed', help_text='True to mark a product as removed.')
 
+    releases = models.ManyToManyField(
+        Release,
+        through='ProductRelease',
+        default=None,
+        verbose_name='Releases'
+    )
+
+    tags = models.ManyToManyField(
+        Tag,
+        through='ProductTag',
+        default=None,
+        verbose_name='Tags'
+    )
+
     def __str__(self):
         return self.prd_display_name
+
+
+class ProductRelease(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE)
+    release = models.ForeignKey(
+        Release, on_delete=models.CASCADE)
+
+
+class ProductTag(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE)
+    tag = models.ForeignKey(
+        Tag, on_delete=models.CASCADE)
 
 
 class File(Product):

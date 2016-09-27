@@ -1,7 +1,9 @@
 from common.models import Filter
+from coadd.models import Release, Tag
 from lib.CatalogDB import CatalogDB
-from product.models import Catalog, Map, ProductContent
 from product_classifier.models import ProductClass
+from product_register.models import ProcessRelease
+from product.models import Catalog, Map, ProductContent, ProductRelease, ProductTag
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -75,21 +77,43 @@ class Import():
 
         if process:
             self.process = process
+
+            # Associar um Release ao Processo
+            if 'releases' in data:
+                self.process_release(self.process, data.get('releases'))
+
+            # Registrar os produtos
+            if 'products' in data and len(data.get('products')) > 0:
+                self.import_products(data.get('products'))
+
+            else:
+                raise Exception('Any product to be imported.')
+
+            return Response(
+                status=status.HTTP_201_CREATED
+            )
+
         else:
             raise Exception(
                 "A failure has occurred and it was not possible to register the process '%s'." % (
                     data.get('process_name')))
 
-        # Registrar os produtos
-        if 'products' in data and len(data.get('products')) > 0:
-            self.import_products(data.get('products'))
+    def process_release(self, process, releases):
+        for r in releases:
+            rls_name = r.lower()
+            try:
+                release = Release.objects.get(rls_name=rls_name)
 
-        else:
-            raise Exception('Any product to be imported.')
+                # Associar Process a Release
+                pr = ProcessRelease.objects.create(
+                    process=process,
+                    release=release
+                )
 
-        return Response(
-            status=status.HTTP_201_CREATED
-        )
+                pr.save()
+
+            except Release.DoesNotExist:
+                raise Exception("this Release '%s' is not valid." % rls_name)
 
     def import_products(self, data):
         """
@@ -150,6 +174,18 @@ class Import():
         )
 
         if product:
+            if 'releases' in data:
+                self.product_release(product, data.get('releases'))
+
+            # Registrar O produto a seus respectivos Tags
+            if 'fields' in data:
+                add_release = True
+                if 'releases' in data:
+                    add_release = False
+
+                self.product_tag(product, data.get('fields'), add_release)
+
+            # Registar as colunas do catalogo
             self.register_catalog_content(product, created)
 
             return True
@@ -194,6 +230,46 @@ class Import():
                     pcn_column_name=column
                 )
 
+    def product_release(self, product, releases):
+        for r in releases:
+            rls_name = r.lower()
+            try:
+                release = Release.objects.get(rls_name=rls_name)
+
+                # Associar Product a Release
+                pr = ProductRelease.objects.create(
+                    product=product.product_ptr,
+                    release=release
+                )
+
+                pr.save()
+
+            except Release.DoesNotExist:
+                raise Exception("this Release '%s' is not valid." % rls_name)
+
+    def product_tag(self, product, tags, add_release):
+
+        for t in tags:
+            tag_name = t.lower()
+
+            try:
+                tag = Tag.objects.get(tag_name=tag_name)
+
+                # Associar Product a Tag
+                pt = ProductTag.objects.create(
+                    product=product.product_ptr,
+                    tag=tag
+                )
+
+                pt.save()
+
+                if add_release:
+                    rls_name = tag.tag_release.rls_name
+                    self.product_release(product, [rls_name])
+
+            except Tag.DoesNotExist:
+                raise Exception("this Tag '%s' is not valid." % tag_name)
+
     # =============================< MAP >=============================
     def register_map(self, data):
         # Instancia do banco de catalogo
@@ -230,9 +306,10 @@ class Import():
 
     def check_ordering(self, ordering):
 
-        a = ['ring', 'nest']
-        if ordering not in a:
-            raise Exception("This ordering '%s' is not valid. Available ordering is [ %s ]" % (ordering, ', '.join(a)))
+        available = ['ring', 'nest']
+        if ordering not in available:
+            raise Exception(
+                "This ordering '%s' is not valid. Available ordering is [ %s ]" % (ordering, ', '.join(available)))
 
         return ordering
 

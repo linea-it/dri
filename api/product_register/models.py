@@ -1,7 +1,10 @@
+import random
+import string
+
+from coadd.models import Release
 from current_user import get_current_user
 from django.conf import settings
 from django.db import models
-import random, string
 
 
 class Export(models.Model):
@@ -48,9 +51,22 @@ class ExternalProcess(models.Model):
     epr_comment = models.CharField(
         max_length=128, null=True, blank=True, verbose_name='Comment', help_text='Process submission comment.')
 
+    releases = models.ManyToManyField(
+        Release,
+        through='ProcessRelease',
+        default=None,
+        verbose_name='Releases'
+    )
+
     def __str__(self):
         return str(self.epr_original_id)
 
+
+class ProcessRelease(models.Model):
+    process = models.ForeignKey(
+        ExternalProcess, on_delete=models.CASCADE)
+    release = models.ForeignKey(
+        Release, on_delete=models.CASCADE)
 
 class Authorization(models.Model):
 

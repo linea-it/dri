@@ -28,7 +28,6 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     pgr_display_name = serializers.SerializerMethodField()
 
     class Meta:
-
         model = Product
 
         fields = (
@@ -65,9 +64,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
-
         model = File
 
         fields = (
@@ -76,12 +73,11 @@ class FileSerializer(serializers.HyperlinkedModelSerializer):
             'fli_name'
         )
 
+
 class TableSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
-
         model = Table
-        
+
         fields = (
             'id',
             'tbl_schema',
@@ -187,9 +183,7 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class MapSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
-
         model = Map
 
         fields = (
@@ -199,16 +193,16 @@ class MapSerializer(serializers.HyperlinkedModelSerializer):
             'mpa_filter'
         )
 
+
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
-
         model = Mask
 
         fields = (
             'id',
             'msk_filter'
         )
+
 
 class ProductContentSerializer(serializers.HyperlinkedModelSerializer):
     pcn_product_id = serializers.PrimaryKeyRelatedField(
@@ -335,6 +329,12 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
     epr_username = serializers.SerializerMethodField()
     epr_end_date = serializers.SerializerMethodField()
 
+    # Dados do Release
+    prd_release_id = serializers.SerializerMethodField()
+
+    # Dados do Field
+    prd_tags = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
 
@@ -352,10 +352,12 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             'prd_process_id',
             'epr_username',
             'epr_end_date',
+            'prd_release_id',
+            'prd_tags'
             # 'mpa_filter'
 
         )
-    
+
     def get_ctl_num_objects(self, obj):
         try:
             return obj.table.catalog.ctl_num_objects
@@ -389,7 +391,6 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
     def get_pgr_display_name(self, obj):
         return obj.prd_class.pcl_group.pgr_display_name
 
-
     def get_pcl_display_name(self, obj):
         return obj.prd_class.pcl_display_name
 
@@ -401,3 +402,20 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_epr_end_date(self, obj):
         return obj.prd_process_id.epr_end_date
+
+    def get_prd_release_id(self, obj):
+        try:
+            r = obj.releases.first()
+            return r.id
+        except AttributeError:
+            return None
+
+    def get_prd_tags(self, obj):
+        try:
+            tags = list()
+            for tag in obj.tags.values():
+                tags.append(tag.get('id'))
+
+            return tags
+        except AttributeError:
+            return None
