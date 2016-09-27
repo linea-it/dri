@@ -144,3 +144,15 @@ class SqliteWrapper(BaseWrapper):
             return b
         else:
             raise Exception("The parameter columns must be a list.")
+
+    def table_exists(self, schema, table):
+        tablename = self.get_tablename(schema, table)
+
+        query = "SELECT * FROM %s LIMIT 1" % tablename
+
+        cursor = self.execute(query)
+
+        if cursor:
+            return True
+        else:
+            return False
