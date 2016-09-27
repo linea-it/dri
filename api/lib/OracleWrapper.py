@@ -174,3 +174,15 @@ class OracleWrapper(BaseWrapper):
             return sql_sort
         else:
             return order_by, direction
+
+    def table_exists(self, schema, table):
+        tablename = self.get_tablename(schema, table)
+
+        query = "SELECT * FROM %s WHERE ROWNUM <= 1" % tablename
+
+        cursor = self.execute(query)
+
+        if cursor:
+            return True
+        else:
+            return False

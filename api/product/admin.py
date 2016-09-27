@@ -6,10 +6,12 @@ from .models import Product, ProductRelease, ProductTag, File, Table, Catalog, M
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'prd_process_id', 'prd_name',
-                    'prd_display_name', 'prd_version', 'prd_description', 'prd_class', 'prd_flag_removed',)
+                    'prd_display_name', 'prd_product_id', 'prd_version', 'prd_description', 'prd_class',
+                    'prd_flag_removed',)
     list_display_links = ('id', 'prd_process_id', 'prd_name',
-                          'prd_display_name', 'prd_version', 'prd_description', 'prd_class', 'prd_flag_removed',)
-    search_fields = ('id', 'prd_process_id', 'prd_name', 'prd_display_name',)
+                          'prd_display_name', 'prd_product_id', 'prd_version', 'prd_description', 'prd_class',
+                          'prd_flag_removed',)
+    search_fields = ('id', 'prd_process_id', 'prd_name', 'prd_display_name', 'prd_product_id',)
 
 
 class ProductReleaseAdmin(admin.ModelAdmin):
@@ -50,11 +52,10 @@ class CatalogAdmin(admin.ModelAdmin):
 
 class MapAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'prd_name', 'prd_display_name', 'prd_class', 'mpa_nside', 'mpa_ordering',
-        'mpa_release', 'mpa_tag', 'prd_flag_removed',
+        'id', 'prd_name', 'prd_display_name', 'prd_class', 'mpa_nside', 'mpa_ordering', 'prd_flag_removed',
     )
     list_display_links = ('id', 'prd_name')
-    search_fields = ('id', 'mpa_release__rls_display_name', 'mpa_tag__tag_display_name')
+    search_fields = ('id', 'prd_name')
 
 
 class MaskAdmin(admin.ModelAdmin):
@@ -62,7 +63,7 @@ class MaskAdmin(admin.ModelAdmin):
         'id', 'prd_name', 'prd_display_name', 'prd_class', 'prd_flag_removed', 'msk_filter',
     )
     list_display_links = ('id', 'prd_name')
-    # search_fields = ('id', 'mpa_release__rls_display_name', 'mpa_tag__tag_display_name')
+    search_fields = ('id', 'prd_name')
 
 
 class ProductContentAdmin(admin.ModelAdmin):

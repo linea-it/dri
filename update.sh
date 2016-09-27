@@ -31,9 +31,9 @@ echo
 echo "= Updating the database structure ="
 python manage.py migrate || error_exit "Error, exit" 9
 
-echo
-echo "= Importing the database data ="
-python manage.py loaddata initial_data.json || error_exit "Error, exit" 10
+#echo
+#echo "= Importing the database data ="
+#python manage.py loaddata initial_data.json || error_exit "Error, exit" 10
 
 echo
 echo "= Cleaning up the auto-generated static files ="

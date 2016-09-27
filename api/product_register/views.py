@@ -8,7 +8,6 @@ from .models import ExternalProcess, Site, Authorization
 from .serializers import ExternalProcessSerializer, SiteSerializer, AuthorizationSerializer
 
 
-
 class SiteViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows External Sites to be viewed or edited
@@ -45,18 +44,17 @@ class AuthorizationViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows External Authorization to be viewed or edited
     """
-    authentication_classes = (SessionAuthentication, BasicAuthentication, )
+    authentication_classes = (SessionAuthentication, BasicAuthentication,)
 
     queryset = Authorization.objects.select_related().all()
 
     serializer_class = AuthorizationSerializer
 
-    search_fields = ('ath_ticket', )
+    search_fields = ('ath_ticket',)
 
-    filter_fields = ('ath_ticket', )
+    filter_fields = ('ath_ticket',)
 
     ordering_fields = ('id',)
-
 
     def perform_create(self, serializer):
         serializer.save(ath_owner=self.request.user)
@@ -77,8 +75,7 @@ class ExternalProcessImportViewSet(viewsets.ModelViewSet):
 
         response = Import().start_import(request)
 
-        if response is not None and response.data.get('id') > 0:
+        if response is not None:
             return response
         else:
             raise Exception('was a failure to create the record.')
-
