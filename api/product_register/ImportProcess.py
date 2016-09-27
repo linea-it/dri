@@ -59,23 +59,6 @@ class Import():
     # =============================< PROCESS >=============================
     def import_process(self, data):
 
-        # Parse Json to model properties
-        # process_data = {
-        #     "epr_owner": self.owner.pk,
-        #     "epr_site": self.site.pk,
-        #     "epr_username": data.get('owner_username'),
-        #     "epr_name": data.get('process_name', ''),
-        #     "epr_original_id": data.get('process_id', None),
-        #     "epr_start_date": data.get('process_start_date', ''),
-        #     "epr_end_date": data.get('process_end_date', ''),
-        #     "epr_readme": data.get('process_description', ''),
-        #     "epr_comment": data.get('process_comment', ''),
-        # }
-
-        # process = ExternalProcess.objects.get(
-        #
-        # )
-
         process, created = ExternalProcess.objects.update_or_create(
             epr_site=self.site,
             epr_owner=self.owner,
@@ -89,8 +72,6 @@ class Import():
                 "epr_comment": data.get('process_comment', ''),
             }
         )
-
-        print(process, created)
 
         if process:
             self.process = process
