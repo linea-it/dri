@@ -301,9 +301,9 @@ class Import():
                 "prd_version": data.get('version', None),
                 "prd_flag_removed": False,
                 "prd_description": data.get('description', None),
+                "prd_filter": filter,
                 "mpa_nside": self.check_nside(data.get('nside')),
                 "mpa_ordering": self.check_ordering(data.get('ordering')),
-                "mpa_filter": filter,
             }
         )
 

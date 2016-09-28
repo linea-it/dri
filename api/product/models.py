@@ -22,6 +22,8 @@ class Product(models.Model):
         max_length=1024, null=True, blank=True, verbose_name='Description')
     prd_flag_removed = models.BooleanField(
         default=False, verbose_name='Is Removed', help_text='True to mark a product as removed.')
+    prd_filter = models.ForeignKey(
+        'common.Filter', verbose_name='Filter', null=True, default=None)
 
     releases = models.ManyToManyField(
         Release,
@@ -84,8 +86,6 @@ class Catalog(Table):
 
 
 class Map(Table):
-    mpa_filter = models.ForeignKey(
-        'common.Filter', verbose_name='Filter', null=True, default=None)
     mpa_nside = models.PositiveSmallIntegerField(
         verbose_name='Nside')
     mpa_ordering = models.CharField(
