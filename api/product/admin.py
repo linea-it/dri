@@ -46,8 +46,6 @@ class CatalogAdmin(admin.ModelAdmin):
         'id', 'prd_name', 'prd_display_name', 'prd_class', 'ctl_num_objects',
         'prd_flag_removed',
     )
-    # list_display_links = ('pcn_column_name',)
-    # search_fields = ('pcn_column_name',)
 
 
 class MapAdmin(admin.ModelAdmin):

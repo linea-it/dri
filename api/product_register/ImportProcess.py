@@ -1,9 +1,9 @@
-from common.models import Filter
 from coadd.models import Release, Tag
+from common.models import Filter
 from lib.CatalogDB import CatalogDB
+from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag
 from product_classifier.models import ProductClass
 from product_register.models import ProcessRelease
-from product.models import Catalog, Map, ProductContent, ProductRelease, ProductTag
 from rest_framework import status
 from rest_framework.response import Response
 
@@ -126,8 +126,11 @@ class Import():
             elif product.get('type') == 'map':
                 self.register_map(product)
 
+            elif product.get('type') == 'mask':
+                self.register_mask(product)
+
             else:
-                raise Exception('Product Type not implemented yet.')
+                raise Exception("Product Type '%s' not implemented yet." % product.get('type'))
 
     # =============================< CATALOG >=============================
     def register_catalog(self, data):
@@ -333,3 +336,35 @@ class Import():
                 a.append(f.filter)
             a = ', '.join(a)
             raise Exception("This filter '%s' is not valid. Available filters is [ %s ]" % (filter_name, a))
+
+    # =============================< MASK >=============================
+    def register_mask(self, data):
+        # Instancia do banco de catalogo
+        if not self.db:
+            con = CatalogDB()
+            self.db = con.wrapper
+
+        # Checar se a tabela existe
+        self.db.table_exists(data.get('schema', None), data.get('table'))
+
+        # Recuperar a classe do produto
+        cls = self.get_product_class(data.get('class'))
+
+        # Recuperar o filtro
+        filter = self.get_filter(data.get('filter'))
+
+        product, created = Mask.objects.update_or_create(
+            prd_name=data.get('name'),
+            tbl_schema=data.get('scheme', None),
+            tbl_name=data.get('table'),
+            defaults={
+                "prd_process_id": self.process,
+                "prd_class": cls,
+                "prd_display_name": data.get('display_name'),
+                "prd_product_id": data.get('product_id', None),
+                "prd_version": data.get('version', None),
+                "prd_flag_removed": False,
+                "prd_description": data.get('description', None),
+                "msk_filter": filter,
+            }
+        )
