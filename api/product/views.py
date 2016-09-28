@@ -17,14 +17,22 @@ logger = logging.getLogger(__name__)
 
 class ProductFilter(django_filters.FilterSet):
     group = django_filters.MethodFilter()
-
+    group_id = django_filters.MethodFilter()
+    band = django_filters.MethodFilter()
     class Meta:
         model = Product
-        fields = ['prd_name', 'prd_display_name', 'prd_class', 'group']
+        fields = ['prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id', 'releases',
+                  'tags', ]
 
     def filter_group(self, queryset, value):
-        # product -> product_class -> product_group
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
+
+    def filter_group_id(self, queryset, value):
+        return queryset.filter(prd_class__pcl_group__pk=str(value))
+
+    def filter_band(self, queryset, value):
+        return queryset.filter(prd_filter__filter=str(value))
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
@@ -223,7 +231,7 @@ class AllProductViewSet(viewsets.ModelViewSet):
 
     serializer_class = AllProductsSerializer
 
-    search_fields = ('prd_name', 'prd_display_name', 'prd_class')
+    search_fields = ('prd_name', 'prd_display_name')
 
     filter_backends = (filters.DjangoFilterBackend,)
 

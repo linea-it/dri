@@ -318,8 +318,6 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
 
 class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
     ctl_num_objects = serializers.SerializerMethodField()
-    # mpa_filter = serializers.SerializerMethodField()
-    msk_filter = serializers.SerializerMethodField()
     mpa_nside = serializers.SerializerMethodField()
     mpa_ordering = serializers.SerializerMethodField()
     pgr_display_name = serializers.SerializerMethodField()
@@ -335,6 +333,8 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
     # Dados do Field
     prd_tags = serializers.SerializerMethodField()
 
+    prd_filter = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
 
@@ -344,7 +344,6 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             'prd_display_name',
             'prd_flag_removed',
             'ctl_num_objects',
-            'msk_filter',
             'mpa_nside',
             'mpa_ordering',
             "pgr_display_name",
@@ -353,8 +352,8 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             'epr_username',
             'epr_end_date',
             'prd_release_id',
-            'prd_tags'
-            # 'mpa_filter'
+            'prd_tags',
+            'prd_filter'
 
         )
 
@@ -364,17 +363,12 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
         except AttributeError:
             return None
 
-    def get_msk_filter(self, obj):
+    def get_prd_filter(self, obj):
         try:
-            return obj.table.mask.msk_filter
+            return obj.prd_filter.filter
+
         except AttributeError:
             return None
-
-    # def get_mpa_filter(self, obj):
-    #     try:
-    #         return obj.table.map.mpa_filter
-    #     except AttributeError:
-    #         return None
 
     def get_mpa_nside(self, obj):
         try:
