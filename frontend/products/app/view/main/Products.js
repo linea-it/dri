@@ -5,7 +5,7 @@ Ext.define('Products.view.main.Products', {
     extend: 'Ext.grid.Panel',
     
     xtype: 'mainlist',
-    plugins: 'gridfilters',
+    // plugins: 'gridfilters',
     emptyText: 'No data to dysplay.',
     initComponent: function(){
         var pluginExpanded = true;
@@ -81,7 +81,7 @@ Ext.define('Products.view.main.Products', {
                 },
                 { 
                     text: 'Band', 
-                    dataIndex: 'filter',
+                    dataIndex: 'prd_filter',
                     renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
                         if (value == null){
                             return "<b>" + '---' + "</b>"
@@ -197,43 +197,43 @@ Ext.define('Products.view.main.Products', {
                         iconCls:'x-fa fa-download ',
                         tooltip: 'Download',
                         scope: this,
-                        handler: function(grid, rowIndex, colIndex){
-                          //teste()
-                          selected = grid.getStore().getAt(rowIndex);
-                          console.log(selected)
-                          Ext.MessageBox.confirm('Download', 'Are you sure ?', function(btn){
-                            if(btn === 'yes'){
-                              Ext.Msg.alert("Download", 'The creation of the file will be made in backgound, when finished you will receive an email containing the link to download.');
-                              // console.log(selected.get('process_id'))
-                              // console.log(selected.get('schema_name'))
-                              // console.log(selected.get('table_name'))
-                              Ext.Ajax.request({
-                                url: "/PRJSUB/Monitor/downloadCatalog",
-                                params: {
-                                    'process_id': selected.get('process_id'),
-                                    'pruduct_class_name': selected.get('class_display_name'),
-                                    'product_id': null                
-                                },
-                                success: function(response) {
-                                    // Recuperar a resposta e fazer o decode no json.
-                                    var obj = Ext.decode(response.responseText);
-                                    console.log(obj)
-                                    if (obj.data == true) {
-                                      console.log('true')                      
-                                    }else{
-                                      Ext.Msg.alert("Erro")
-                                    };
-                                }
-                              })
-                            }
-                            else{
-                              result = false
-                            }
-                          })
-                          
-                          // console.log(selected.get('catalog_id'))
-                          // download_csv(selected.get('catalog_id'))                  
-                        }
+                            //handler: function(grid, rowIndex, colIndex){
+                            //  //teste()
+                            //  selected = grid.getStore().getAt(rowIndex);
+                            //  console.log(selected)
+                            //  Ext.MessageBox.confirm('Download', 'Are you sure ?', function(btn){
+                            //    if(btn === 'yes'){
+                            //      Ext.Msg.alert("Download", 'The creation of the file will be made in backgound, when finished you will receive an email containing the link to download.');
+                            //      // console.log(selected.get('process_id'))
+                            //      // console.log(selected.get('schema_name'))
+                            //      // console.log(selected.get('table_name'))
+                            //      Ext.Ajax.request({
+                            //        url: "/PRJSUB/Monitor/downloadCatalog",
+                            //        params: {
+                            //            'process_id': selected.get('process_id'),
+                            //            'pruduct_class_name': selected.get('class_display_name'),
+                            //            'product_id': null                
+                            //        },
+                            //        success: function(response) {
+                            //            // Recuperar a resposta e fazer o decode no json.
+                            //            var obj = Ext.decode(response.responseText);
+                            //            console.log(obj)
+                            //            if (obj.data == true) {
+                            //              console.log('true')                      
+                            //            }else{
+                            //              Ext.Msg.alert("Erro")
+                            //            };
+                            //        }
+                            //      })
+                            //    }
+                            //    else{
+                            //      result = false
+                            //    }
+                            //  })
+                            //  
+                            //  // console.log(selected.get('catalog_id'))
+                            //  // download_csv(selected.get('catalog_id'))                  
+                            //}
                     }]
                 },
                 // {
