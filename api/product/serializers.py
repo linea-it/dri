@@ -190,7 +190,6 @@ class MapSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'mpa_nside',
             'mpa_ordering',
-            'mpa_filter'
         )
 
 
