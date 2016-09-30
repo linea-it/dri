@@ -23,7 +23,7 @@ class Product(models.Model):
     prd_flag_removed = models.BooleanField(
         default=False, verbose_name='Is Removed', help_text='True to mark a product as removed.')
     prd_filter = models.ForeignKey(
-        'common.Filter', verbose_name='Filter', null=True, default=None)
+        'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
 
     releases = models.ManyToManyField(
         Release,

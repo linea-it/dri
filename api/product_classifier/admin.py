@@ -5,17 +5,17 @@ from .models import ProductClass, ProductGroup, ContentCategory, ProductClassCon
 class ProductGroupAdmin(admin.ModelAdmin):
     list_display = ('id','pgr_name', 'pgr_display_name','is_catalog',)
     list_display_links = ('id','pgr_name', 'pgr_display_name','is_catalog',)
-    search_fields = ('id','pgr_name','pgr_display_name',)
+    search_fields = ('pgr_name','pgr_display_name',)
 
 class ProductClassAdmin(admin.ModelAdmin):
     list_display = ('id','pcl_name','pcl_group','pcl_display_name','pcl_is_system',)
     list_display_links = ('id','pcl_name','pcl_group','pcl_display_name','pcl_is_system',)
-    search_fields = ('id','pcl_name','pcl_group','pcl_display_name',)
+    search_fields = ('pcl_name','pcl_group__pgr_name', 'pcl_group__pgr_display_name','pcl_display_name',)
 
 class ContentCategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'cct_name',)
     list_display_links = ('id', 'cct_name',)
-    search_fields = ('id','cct_name',)
+    search_fields = ('cct_name',)
 
 class ProductClassContentAdmin(admin.ModelAdmin):
     list_display = ('pcc_name', 'pcc_display_name', 'pcc_category', 'pcc_ucd', 'pcc_unit', 'pcc_reference',
