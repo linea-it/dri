@@ -1,7 +1,7 @@
 from coadd.models import Release, Tag
 from common.models import Filter
 from lib.CatalogDB import CatalogDB
-from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag
+from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation
 from product_classifier.models import ProductClass
 from product_register.models import ProcessRelease
 from rest_framework import status
@@ -64,14 +64,14 @@ class Import():
         process, created = ExternalProcess.objects.update_or_create(
             epr_site=self.site,
             epr_owner=self.owner,
-            epr_name=data.get('process_name', ''),
+            epr_name=data.get('process_name', None),
             epr_original_id=data.get('process_id', None),
             defaults={
                 "epr_username": data.get('owner_username'),
-                "epr_start_date": data.get('process_start_date', ''),
-                "epr_end_date": data.get('process_end_date', ''),
-                "epr_readme": data.get('process_description', ''),
-                "epr_comment": data.get('process_comment', ''),
+                "epr_start_date": data.get('process_start_date', None),
+                "epr_end_date": data.get('process_end_date', None),
+                "epr_readme": data.get('process_description', None),
+                "epr_comment": data.get('process_comment', None),
             }
         )
 
@@ -144,12 +144,16 @@ class Import():
 
         """
         # Instancia do banco de catalogo
+        # Recupera a instancia de banco de dados enviada pela requisicao ou utiliza o catalog como default
+        database = data.get('database', 'catalog')
+        print('usando database: %s' % database)
         if not self.db:
-            con = CatalogDB()
+            con = CatalogDB(db=database)
             self.db = con.wrapper
 
         # Verifica se a tabela existe
-        self.db.table_exists(data.get('schema', None), data.get('table'))
+        if not self.db.table_exists(data.get('schema', None), data.get('table')):
+            raise Exception("Table or view  %s does not exist" % data.get('table'))
 
         # Recupera o nome da tabela
         tablename = self.db.get_tablename(data.get('schema', None), data.get('table'))
@@ -162,6 +166,7 @@ class Import():
 
         product, created = Catalog.objects.update_or_create(
             prd_name=data.get('name'),
+            tbl_database=data.get('database', None),
             tbl_schema=data.get('scheme', None),
             tbl_name=data.get('table'),
             defaults={
@@ -233,6 +238,19 @@ class Import():
                     pcn_column_name=column
                 )
 
+        self.product_content_association(catalog, created)
+
+    def product_content_association(self, product, created):
+        print ('-------------------------------------------')
+        print('product_content_association')
+
+        if not created:
+            # Apaga todas as colunas do catalogo para inserir novamente.
+            ProductContentAssociation.objects.filter(pca_product=product).delete()
+
+
+
+
     def product_release(self, product, releases):
         for r in releases:
             rls_name = r.lower()
@@ -280,8 +298,9 @@ class Import():
             con = CatalogDB()
             self.db = con.wrapper
 
-        # Checar se a tabela existe
-        self.db.table_exists(data.get('schema', None), data.get('table'))
+        # Verifica se a tabela existe
+        if not self.db.table_exists(data.get('schema', None), data.get('table')):
+            raise Exception("Table or view  %s does not exist" % data.get('table'))
 
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))
@@ -344,8 +363,9 @@ class Import():
             con = CatalogDB()
             self.db = con.wrapper
 
-        # Checar se a tabela existe
-        self.db.table_exists(data.get('schema', None), data.get('table'))
+        # Verifica se a tabela existe
+        if not self.db.table_exists(data.get('schema', None), data.get('table')):
+            raise Exception("Table or view  %s does not exist" % data.get('table'))
 
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))

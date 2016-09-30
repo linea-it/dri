@@ -68,6 +68,8 @@ class File(Product):
 
 
 class Table(Product):
+    tbl_database = models.CharField(
+        max_length=128, verbose_name='Database', null=True, blank=True, help_text='Database identifier in settings')
     tbl_schema = models.CharField(
         max_length=128, verbose_name='Schema name', null=True, blank=True)
     tbl_name = models.CharField(
