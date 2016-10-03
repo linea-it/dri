@@ -180,9 +180,10 @@ class OracleWrapper(BaseWrapper):
 
         query = "SELECT * FROM %s WHERE ROWNUM <= 1" % tablename
 
-        cursor = self.execute(query)
+        try:
+            cursor = self.execute(query)
 
-        if cursor:
             return True
-        else:
+
+        except:
             return False

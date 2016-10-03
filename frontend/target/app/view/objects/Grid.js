@@ -99,7 +99,7 @@ Ext.define('Target.view.objects.Grid', {
                 // }
 
                 //  Tratamento Tilename default hidden
-                if (record.get('property_name') == 'tilename') {
+                if (record.get('property_name').toLowerCase() == 'tilename') {
                     // column.hidden = true;
                     column.width = 120;
 

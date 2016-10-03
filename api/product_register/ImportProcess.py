@@ -1,11 +1,12 @@
 from coadd.models import Release, Tag
 from common.models import Filter
 from lib.CatalogDB import CatalogDB
-from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag
-from product_classifier.models import ProductClass
+from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation
+from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ProcessRelease
 from rest_framework import status
 from rest_framework.response import Response
+from django.db.models import Q
 
 from .models import Site, Authorization, ExternalProcess
 
@@ -64,14 +65,14 @@ class Import():
         process, created = ExternalProcess.objects.update_or_create(
             epr_site=self.site,
             epr_owner=self.owner,
-            epr_name=data.get('process_name', ''),
+            epr_name=data.get('process_name', None),
             epr_original_id=data.get('process_id', None),
             defaults={
                 "epr_username": data.get('owner_username'),
-                "epr_start_date": data.get('process_start_date', ''),
-                "epr_end_date": data.get('process_end_date', ''),
-                "epr_readme": data.get('process_description', ''),
-                "epr_comment": data.get('process_comment', ''),
+                "epr_start_date": data.get('process_start_date', None),
+                "epr_end_date": data.get('process_end_date', None),
+                "epr_readme": data.get('process_description', None),
+                "epr_comment": data.get('process_comment', None),
             }
         )
 
@@ -144,12 +145,16 @@ class Import():
 
         """
         # Instancia do banco de catalogo
+        # Recupera a instancia de banco de dados enviada pela requisicao ou utiliza o catalog como default
+        database = data.get('database', 'catalog')
+
         if not self.db:
-            con = CatalogDB()
+            con = CatalogDB(db=database)
             self.db = con.wrapper
 
         # Verifica se a tabela existe
-        self.db.table_exists(data.get('schema', None), data.get('table'))
+        if not self.db.table_exists(data.get('schema', None), data.get('table')):
+            raise Exception("Table or view  %s does not exist" % data.get('table'))
 
         # Recupera o nome da tabela
         tablename = self.db.get_tablename(data.get('schema', None), data.get('table'))
@@ -162,6 +167,7 @@ class Import():
 
         product, created = Catalog.objects.update_or_create(
             prd_name=data.get('name'),
+            tbl_database=data.get('database', None),
             tbl_schema=data.get('scheme', None),
             tbl_name=data.get('table'),
             defaults={
@@ -233,6 +239,50 @@ class Import():
                     pcn_column_name=column
                 )
 
+        self.product_content_association(catalog, created)
+
+    def product_content_association(self, product, created):
+        # Se o produto for da classe coadd_objects fazer a associacao de colunas
+        if product.prd_class.pcl_name == 'coadd_objects':
+
+            if not created:
+                # Apaga todas as associacoes para inserir novamente.
+                ProductContentAssociation.objects.filter(pca_product=product).delete()
+
+            # propriedades a serem associadas
+            meta = list([
+                dict({'property': 'coadd_objects_id', 'ucd': 'meta.id;meta.main'}),
+                dict({'property': 'ra', 'ucd': 'pos.eq.ra;meta.main'}),
+                dict({'property': 'dec', 'ucd': 'pos.eq.dec;meta.main'}),
+                dict({'property': 'a_image', 'ucd': 'phys.size.smajAxis;instr.det;meta.main'}),
+                dict({'property': 'b_image', 'ucd': 'phys.size.sminAxis;instr.det;meta.main'}),
+                dict({'property': 'theta_image', 'ucd': 'pos.posAng;instr.det;meta.main'}),
+            ])
+
+            for p in meta:
+                # para cada propriedade a ser associada
+                property = p.get('property')
+
+                try:
+                    # recuperar content do produto
+                    pc = ProductContent.objects.get(pcn_product_id=product, pcn_column_name__iexact=property)
+
+                    # recuperar class content
+                    # Todas as propriedades que comuns a todas as classes + as propriedades expecificas da classe.
+                    cc = ProductClassContent.objects.filter(
+                        Q(pcc_ucd__iexact=p.get('ucd')),
+                        Q(pcc_class=product.prd_class) | Q(pcc_class__isnull=True)).get()
+
+                    association = ProductContentAssociation.objects.create(
+                        pca_product=product,
+                        pca_class_content=cc,
+                        pca_product_content=pc
+                    )
+
+                except:
+                    raise Exception("it was not possible to create association for this column: %s", property)
+
+
     def product_release(self, product, releases):
         for r in releases:
             rls_name = r.lower()
@@ -280,8 +330,9 @@ class Import():
             con = CatalogDB()
             self.db = con.wrapper
 
-        # Checar se a tabela existe
-        self.db.table_exists(data.get('schema', None), data.get('table'))
+        # Verifica se a tabela existe
+        if not self.db.table_exists(data.get('schema', None), data.get('table')):
+            raise Exception("Table or view  %s does not exist" % data.get('table'))
 
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))
@@ -344,8 +395,9 @@ class Import():
             con = CatalogDB()
             self.db = con.wrapper
 
-        # Checar se a tabela existe
-        self.db.table_exists(data.get('schema', None), data.get('table'))
+        # Verifica se a tabela existe
+        if not self.db.table_exists(data.get('schema', None), data.get('table')):
+            raise Exception("Table or view  %s does not exist" % data.get('table'))
 
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))

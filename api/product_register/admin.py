@@ -6,7 +6,7 @@ from .models import Export, ExternalProcess, ProcessRelease, Site, Authorization
 class SiteAdmin(admin.ModelAdmin):
     list_display = ('id', 'sti_user', 'sti_name', 'sti_url',)
     list_display_links = ('id', 'sti_user', 'sti_name', 'sti_url',)
-    search_field = ('id', 'sti_user', 'sti_name')
+    search_field = ('sti_user', 'sti_name')
 
 
 class ExportAdmin(admin.ModelAdmin):
@@ -14,7 +14,7 @@ class ExportAdmin(admin.ModelAdmin):
                     'exp_external_process',)
     list_display_links = ('id', 'exp_username', 'exp_date',
                           'exp_external_process',)
-    search_field = ('id', 'exp_username',)
+    search_field = ('exp_username',)
 
 
 class ExternalProcessAdmin(admin.ModelAdmin):
@@ -27,7 +27,7 @@ class ExternalProcessAdmin(admin.ModelAdmin):
 class ProcessReleaseAdmin(admin.ModelAdmin):
     list_display = ('id', 'process', 'release',)
     list_display_links = ('id', 'process', 'release',)
-    search_fields = ('id', 'process', 'release',)
+    search_fields = ('process', 'release',)
 
 
 class AuthorizationAdmin(admin.ModelAdmin):
