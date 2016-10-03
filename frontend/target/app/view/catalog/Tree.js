@@ -213,8 +213,6 @@ Ext.define('Target.view.catalog.Tree', {
     },
 
     loadCatalogs: function (type) {
-        console.log('loadCatalogs()');
-
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('catalogs'),
@@ -229,12 +227,6 @@ Ext.define('Target.view.catalog.Tree', {
         // filters.push({
         //     property:'product_flag_removed',
         //     value: false
-        // });
-
-        // // Catalog status = 1
-        // filters.push({
-        //     property:'status_id',
-        //     value: 1
         // });
 
         // Product Type = 'targets'

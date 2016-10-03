@@ -5,7 +5,7 @@ Ext.define('Target.view.association.Grid', {
 
     columns: [
         {
-            text     : 'Their properties',
+            text     : 'My properties',
             dataIndex: 'pcn_column_name',
             flex: 1
         },

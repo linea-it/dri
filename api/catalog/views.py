@@ -83,7 +83,7 @@ class TargetViewSet(ViewSet):
 
         # Todas as colunas de catalogo.
         columns = list()
-        queryset = ProductContent.objects.all()
+        queryset = ProductContent.objects.filter(pcn_product_id=catalog)
         for row in queryset:
             columns.append(row.pcn_column_name)
 
@@ -122,24 +122,28 @@ class TargetViewSet(ViewSet):
             })])
         )
 
+        print("-------------------------------")
 
         for row in rows:
 
             if 'META_RATING_ID' in row:
                 rating_id = row.get('META_RATING_ID')
                 rating = row.get('META_RATING')
-                reject_id = row.get('META_REJECT_ID')
-                reject = row.get('META_REJECT')
+                reject_id = row.get('META_REJECT_ID', 0)
+                reject = row.get('META_REJECT', False)
             elif 'meta_rating_id' in row:
                 rating_id = row.get('meta_rating_id')
                 rating = row.get('meta_rating')
-                reject_id = row.get('meta_reject_id')
-                reject = row.get('meta_reject')
+                reject_id = row.get('meta_reject_id', 0)
+                reject = row.get('meta_reject', False)
             else:
                 rating_id = None
                 rating = None
                 reject_id = None
                 reject = None
+
+            print("Reject Id: %s  Reject: %s", reject_id, reject)
+
 
             row.update({
                 "_meta_catalog_id": catalog.pk,

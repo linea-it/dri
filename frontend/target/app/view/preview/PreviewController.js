@@ -97,12 +97,10 @@ Ext.define('Target.view.preview.PreviewController', {
             url = dataset.get('image_src_ptif');
 
         if (dataset) {
-            if (url != '') {
-                console.log(url);
+            if (url !== '') {
                 visiomatic.setImage(url);
 
             } else {
-                console.log('removeImageLayer');
                 visiomatic.removeImageLayer();
 
             }
