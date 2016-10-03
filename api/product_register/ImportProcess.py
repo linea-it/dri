@@ -147,7 +147,7 @@ class Import():
         # Instancia do banco de catalogo
         # Recupera a instancia de banco de dados enviada pela requisicao ou utiliza o catalog como default
         database = data.get('database', 'catalog')
-        print('usando database: %s' % database)
+
         if not self.db:
             con = CatalogDB(db=database)
             self.db = con.wrapper
@@ -242,9 +242,6 @@ class Import():
         self.product_content_association(catalog, created)
 
     def product_content_association(self, product, created):
-        print ('-------------------------------------------')
-        print('product_content_association')
-
         # Se o produto for da classe coadd_objects fazer a associacao de colunas
         if product.prd_class.pcl_name == 'coadd_objects':
 
@@ -254,12 +251,12 @@ class Import():
 
             # propriedades a serem associadas
             meta = list([
-                dict({'property': 'coadd_objects_id', 'ucd': 'meta.id;meta.main', 'class_content': 1206}),
-                dict({'property': 'ra', 'ucd': 'pos.eq.ra;meta.main', 'class_content': 2}),
-                dict({'property': 'dec', 'ucd': 'pos.eq.dec;meta.main', 'class_content': 3}),
-                dict({'property': 'a_image', 'ucd': 'phys.size.smajAxis;instr.det;meta.main', 'class_content': 1179}),
-                dict({'property': 'b_image', 'ucd': 'phys.size.sminAxis;instr.det;meta.main', 'class_content': 1185}),
-                dict({'property': 'theta_image', 'ucd': 'pos.posAng;instr.det;meta.main', 'class_content': 1633}),
+                dict({'property': 'coadd_objects_id', 'ucd': 'meta.id;meta.main'}),
+                dict({'property': 'ra', 'ucd': 'pos.eq.ra;meta.main'}),
+                dict({'property': 'dec', 'ucd': 'pos.eq.dec;meta.main'}),
+                dict({'property': 'a_image', 'ucd': 'phys.size.smajAxis;instr.det;meta.main'}),
+                dict({'property': 'b_image', 'ucd': 'phys.size.sminAxis;instr.det;meta.main'}),
+                dict({'property': 'theta_image', 'ucd': 'pos.posAng;instr.det;meta.main'}),
             ])
 
             for p in meta:
@@ -271,11 +268,10 @@ class Import():
                     pc = ProductContent.objects.get(pcn_product_id=product, pcn_column_name__iexact=property)
 
                     # recuperar class content
-                    # TODO Consertar o name com display name nas Class Content
-                    # TODO nao pode ser feito pelo id da class content deveria ser pelo ucd mais os ucds sao repetidos para mesma propriedade.
-                    # cc = ProductClassContent.objects.get(pcc_class=product.prd_class, pcc_name__iexact=property)
-
-                    cc = ProductClassContent.objects.get(pk=p.get('class_content'))
+                    # Todas as propriedades que comuns a todas as classes + as propriedades expecificas da classe.
+                    cc = ProductClassContent.objects.filter(
+                        Q(pcc_ucd__iexact=p.get('ucd')),
+                        Q(pcc_class=product.prd_class) | Q(pcc_class__isnull=True)).get()
 
                     association = ProductContentAssociation.objects.create(
                         pca_product=product,
@@ -285,6 +281,7 @@ class Import():
 
                 except:
                     raise Exception("it was not possible to create association for this column: %s", property)
+
 
     def product_release(self, product, releases):
         for r in releases:
