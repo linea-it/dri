@@ -56,7 +56,7 @@ class CatalogFilter(django_filters.FilterSet):
 
     class Meta:
         model = Product
-        fields = ['prd_name', 'prd_display_name', 'prd_class', 'group']
+        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'group']
 
     def filter_group(self, queryset, value):
         # product -> product_class -> product_group

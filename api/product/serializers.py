@@ -258,7 +258,10 @@ class ProductContentAssociationSerializer(serializers.HyperlinkedModelSerializer
         read_only_fields = ('id')
 
     def get_pcc_category(self, obj):
-        return obj.pca_class_content.pcc_category.cct_name
+        try:
+            return obj.pca_class_content.pcc_category.cct_name
+        except:
+            return None
 
     def get_pcc_display_name(self, obj):
         return obj.pca_class_content.pcc_display_name

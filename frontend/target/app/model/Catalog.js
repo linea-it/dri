@@ -5,14 +5,14 @@ Ext.define('Target.model.Catalog', {
         'common.data.proxy.Django'
     ],
 
-    proxy: {
-        type: 'django',
-        url: '/dri/api/catalog/',
-        reader: {
-            type: 'json',
-            rootProperty: 'children'
-        }
-    },
+    // proxy: {
+    //     type: 'django',
+    //     url: '/dri/api/catalog/',
+    //     reader: {
+    //         type: 'json',
+    //         rootProperty: 'children'
+    //     }
+    // },
 
     fields: [
         {name:'id'},

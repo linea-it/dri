@@ -15,6 +15,9 @@ Ext.define('Target.view.association.AssociationController', {
             }
         },
         store: {
+            '#Catalogs': {
+                load: 'onLoadCatalogs'
+            },
             '#ClassContent': {
                 load: 'onLoadClassContent'
             },
@@ -24,9 +27,6 @@ Ext.define('Target.view.association.AssociationController', {
             '#ProductAssociation': {
                 load: 'onLoadProductAssociation'
             }
-            // '#objects': {
-            //     update: 'onUpdateObject'
-            // }
         }
 
     },
@@ -35,24 +35,40 @@ Ext.define('Target.view.association.AssociationController', {
         var me = this,
             vm = me.getViewModel(),
             association = vm.getStore('fakeassociation'),
-            currentCatalog = vm.get('currentCatalog');
+            catalogs = vm.getStore('catalogs');
 
         // Limpar a store de associacao usada na grid
         association.removeAll();
 
-        currentCatalog.set('id', product);
-
-        currentCatalog.load({
-            callback: function () {
-                me.loadClassContents();
+        catalogs.removeAll();
+        catalogs.clearFilter(true);
+        catalogs.filter([
+            {
+                property: 'id',
+                value: product
             }
-        });
+        ]);
     },
 
-    loadClassContents: function () {
+    onLoadCatalogs: function (store) {
         var me = this,
             vm = me.getViewModel(),
-            currentCatalog = vm.get('currentCatalog'),
+            currentCatalog;
+
+        if (store.count() === 1) {
+            currentCatalog = store.first();
+
+            vm.set('currentCatalog', currentCatalog);
+
+            me.loadClassContents(currentCatalog);
+        }
+
+    },
+
+    loadClassContents: function (currentCatalog) {
+        var me = this,
+            vm = me.getViewModel(),
+            // currentCatalog = vm.get('currentCatalog'),
             classContents = vm.getStore('classcontent'),
             auxClassContents = vm.getStore('auxclasscontent');
 
@@ -190,8 +206,6 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     onSearchAssociation: function (value) {
-        console.log('onSearchAssociation');
-
         var me = this,
             vm = me.getViewModel(),
             association = vm.getStore('fakeassociation');
@@ -212,7 +226,6 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     onCancelAssociation: function () {
-        console.log('onCancelAssociation');
         var me = this,
             vm = me.getViewModel(),
             association = vm.getStore('fakeassociation');
@@ -246,15 +259,11 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     addAssociation: function (record, target) {
-        console.log('addAssociation(%o, %o)', record, target);
-
         record.save({
             callback: function (saved, operation, success) {
                 if (success) {
                     // recupera o objeto inserido no banco de dados
                     var obj = Ext.decode(operation.getResponse().responseText);
-
-                    console.log('success');
 
                     // Seta ao os id que foi adicionado para não precisar fazer reload na grid
                     target.set('id', obj.id);
