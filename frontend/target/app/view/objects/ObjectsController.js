@@ -195,7 +195,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onRejectTarget: function (record, store) {
-        if (!record.get('reject_id')) {
+        if (!record.get('_meta_reject_id')) {
             // Criar um novo registro de Reject sem ID
             reject = Ext.create('Target.model.Reject', {
                 'catalog_id': record.get('_meta_catalog_id'),
@@ -211,7 +211,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
                         // seta no record da grid o atributo reject_id para que nao seja necessario
                         // o reload da grid
-                        record.set('reject_id', obj.id);
+                        record.set('_meta_reject_id', obj.id);
 
                         store.commitChanges();
                     }
@@ -220,7 +220,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         } else {
             // Se ja tiver o registro de Reject deleta
             reject = Ext.create('Target.model.Reject', {
-                'id': record.get('reject_id')
+                'id': record.get('_meta_reject_id')
             });
 
             reject.erase({

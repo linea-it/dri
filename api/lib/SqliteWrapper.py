@@ -68,7 +68,7 @@ class SqliteWrapper(BaseWrapper):
 
         sql = ("SELECT %s FROM %s %s %s %s") % (sql_columns, sql_from, sql_where,  sql_sort, sql_limit)
 
-        print(sql)
+        print("Query: %s" % sql)
 
         rows = list()
         if dict:

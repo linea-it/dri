@@ -142,8 +142,12 @@ class TargetViewSet(ViewSet):
                 reject_id = None
                 reject = None
 
-            print("Reject Id: %s  Reject: %s", reject_id, reject)
 
+            if reject_id is not None:
+                reject_id = int(reject_id)
+                reject = True
+            else:
+                reject = False
 
             row.update({
                 "_meta_catalog_id": catalog.pk,
