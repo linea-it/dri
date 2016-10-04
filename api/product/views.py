@@ -5,6 +5,7 @@ import logging
 import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
+from rest_framework import mixins
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
@@ -64,7 +65,7 @@ class CatalogFilter(django_filters.FilterSet):
 
 
 # Create your views here.
-class CatalogViewSet(viewsets.ModelViewSet):
+class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     """
     API endpoint that allows product to be viewed or edited
     """

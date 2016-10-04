@@ -16,30 +16,23 @@ Ext.define('Target.view.catalog.CatalogController', {
         var me = this,
             vm = this.getViewModel(),
             store = vm.getStore('catalogs'),
-            selected = vm.get('selectedCatalog'),
-            catalog;
+            selected = vm.get('selectedCatalog');
 
         if (selected.get('id')) {
 
-            // Criar uma copia do model selecionado
-            catalog = Ext.create('Target.model.Catalog', selected.data);
-            catalog.set('prd_flag_removed', true);
+            selected.set('prd_flag_removed', true);
 
-            catalog.save(
-                {
-                    callback: function (record, operation, success) {
-                        Ext.toast({
-                            html: 'Data saved',
-                            align: 't'
-                        });
+            store.sync({
+                callback: function (record, operation, success) {
+                    Ext.toast({
+                        html: 'Data saved',
+                        align: 't'
+                    });
 
-                        // reload da Store
-                        store.load();
-                    }
+                    store.load();
                 }
-            );
+            });
         }
-
     },
 
     onStarredCatalog: function (btn) {
