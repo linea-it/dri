@@ -99,13 +99,13 @@ class TargetViewSet(ViewSet):
 
         # Parsing para os campos de rating e reject
         if ordering == '_meta_rating':
-            ordering = 'meta_rating'
+            ordering = 'b.rating'
         elif ordering == '-_meta_rating':
-            ordering = '-meta_rating'
+            ordering = '-b.rating'
         elif ordering == '_meta_reject':
-            ordering = 'meta_reject'
+            ordering = 'c.reject'
         elif ordering == '-_meta_reject':
-            ordering = '-meta_reject'
+            ordering = '-c.reject'
 
 
         # retornar uma lista com os objetos da tabela

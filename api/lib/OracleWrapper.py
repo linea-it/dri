@@ -24,6 +24,7 @@ class OracleWrapper(BaseWrapper):
         sql_limit = ''
         sql_count = None
         join_cols = list()
+        join_cols_whitout_alias = list()
 
 
         if schema:
@@ -49,6 +50,7 @@ class OracleWrapper(BaseWrapper):
 
                 for c in join.get('columns', list()):
                     join_cols.append(alias + '.' + c)
+                    join_cols_whitout_alias.append(c)
         else:
             sql_from = tablename
 
@@ -77,14 +79,16 @@ class OracleWrapper(BaseWrapper):
             start = int(offset)
             end = start + limit
 
-            sql_main = ("SELECT /*+ first_rows(%s) */ %s, row_number() OVER (ORDER BY %s %s) rn FROM %s %s ") % (limit, sql_columns, order_colun, direction, sql_from, sql_where)
+
+            # sql_main = ("SELECT /*+ first_rows(%s) */ %s, row_number() OVER (ORDER BY %s %s) rn FROM %s %s ") % (limit, sql_columns, order_colun, direction, sql_from, sql_where)
+            sql_main = ("SELECT /*+ first_rows(%s) */ %s, row_number() OVER (ORDER BY %s %s) rn FROM %s %s ") % (
+            limit, sql_columns, order_colun, direction, sql_from, sql_where)
 
             sql_base = (
                 "SELECT * "
                 "FROM (%s) "
                 "WHERE rn BETWEEN %s and %s "
-                "%s "
-            ) % (sql_main, start, end, order)
+            ) % (sql_main, start, end)
 
             sql_count = ("SELECT COUNT(*) as count FROM %s %s") % (tablename, sql_where)
 
@@ -100,7 +104,8 @@ class OracleWrapper(BaseWrapper):
 
 
         sql = sql_base
-
+        print('-----------------------------')
+        print(sql)
         rows = list()
         if dict:
             rows = self.fetchall_dict(sql)
