@@ -77,7 +77,7 @@ class OracleWrapper(BaseWrapper):
             start = int(offset)
             end = start + limit
 
-            sql_main = ("SELECT /*+ first_rows(%s) */ %s, row_number() OVER (ORDER BY %s) rn FROM %s %s ") % (limit, sql_columns, order_colun, sql_from, sql_where)
+            sql_main = ("SELECT /*+ first_rows(%s) */ %s, row_number() OVER (ORDER BY %s %s) rn FROM %s %s ") % (limit, sql_columns, order_colun, direction, sql_from, sql_where)
 
             sql_base = (
                 "SELECT * "

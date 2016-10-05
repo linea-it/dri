@@ -169,8 +169,6 @@ class TargetViewSet(ViewSet):
             row.pop("META_REJECT", None)
             row.pop("meta_reject", None)
 
-            print("----------------------------")
-
             row.update({
                 "_meta_id": row.get(properties.get("meta.id;meta.main"))
             })
