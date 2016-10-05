@@ -70,8 +70,8 @@ class OracleWrapper(BaseWrapper):
             else:
                 order_colun = order_by
 
-            order_colun, direction = self.do_order(order_colun, False)
-            order = self.do_order(order_by)
+            order_colun, direction = self.do_order(order_colun, False, cls)
+            order = self.do_order(order_by, cls)
 
             limit = int(limit)
             start = int(offset)
@@ -94,7 +94,7 @@ class OracleWrapper(BaseWrapper):
                 sql_count = ("SELECT COUNT(*) as count FROM %s %s") % (sql_from, sql_where)
 
             if order_by:
-                sql_sort = self.do_order(order_by, tbl_columns)
+                sql_sort = self.do_order(order_by, tbl_columns, cls)
 
             sql_base = ("SELECT %s FROM %s %s %s %s") % (sql_columns, sql_from, sql_where, sql_limit, sql_sort)
 
@@ -153,7 +153,7 @@ class OracleWrapper(BaseWrapper):
         except Exception as error:
             raise Exception('Limit needs to be integer greater than zero. Offset must be integer.')
 
-    def do_order(self, order_by, return_str=True):
+    def do_order(self, order_by, return_str=True, cls=None):
         """
         Gera string usada para Ordernar os resultados
         """
@@ -167,6 +167,21 @@ class OracleWrapper(BaseWrapper):
         if order_by.find('-', 0, 1) >= 0:
             direction = 'DESC'
             order_by = order_by.replace('-', '', 1)
+
+        # Adiciona alias a coluna order by
+        if cls is not None:
+            for a in cls:
+                col = a.split('.')
+                col_name = col[len(col) - 1]
+                alias = None
+
+                if len(col) > 1:
+                    alias = col[0]
+
+                if order_by == col_name:
+                    if alias is not None:
+                        order_by = "%s.%s" % (alias, order_by)
+                    break
 
         sql_sort = "ORDER BY %s %s" % (order_by, direction)
 
