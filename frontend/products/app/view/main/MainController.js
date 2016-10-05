@@ -101,5 +101,11 @@ Ext.define('Products.view.main.MainController', {
                 value: filter
             }
         ])
+    },
+    loadProducts: function(){
+        var refs = this.getReferences(),
+            gridcatalogs = refs.catalogs,
+            store = gridcatalogs.getStore(); 
+        store.load()
     }
 });
