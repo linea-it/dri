@@ -97,6 +97,17 @@ class TargetViewSet(ViewSet):
         # Parametros de Ordenacao
         ordering = request.query_params.get('ordering', None)
 
+        # Parsing para os campos de rating e reject 
+        if ordering == '_meta_rating':
+            ordering = 'meta_rating'
+        elif ordering == '-_meta_rating':
+            ordering = '-meta_rating'
+        elif ordering == '_meta_reject':
+            ordering = 'meta_reject'
+        elif ordering == '-_meta_reject':
+            ordering = '-meta_reject'
+
+
         # retornar uma lista com os objetos da tabela
         rows = list()
 

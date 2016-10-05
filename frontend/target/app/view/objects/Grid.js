@@ -130,7 +130,7 @@ Ext.define('Target.view.objects.Grid', {
                 columns.push({
                     xtype: 'widgetcolumn',
                     width: 90,
-                    sortable: false,
+                    sortable: true,
                     text: 'Rating',
                     dataIndex: '_meta_rating',
                     tooltip: 'Rating',
@@ -159,7 +159,7 @@ Ext.define('Target.view.objects.Grid', {
                     text: 'Reject',
                     dataIndex: '_meta_reject',
                     tooltip: 'Reject',
-                    sortable: false,
+                    sortable: true,
                     width: 80
                 });
             }
