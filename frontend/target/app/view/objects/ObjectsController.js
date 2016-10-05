@@ -99,6 +99,14 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     },
 
+    reloadAssociation: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
+
+        me.onBeforeLoadCatalog(currentCatalog);
+    },
+
     onLoadAssociation: function (productAssociation) {
         var me = this,
             refs = me.getReferences(),
@@ -161,8 +169,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onSelectObject: function (record) {
-        // console.log('onSelectObject(%o, %o)', record, panel);
-
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -189,8 +195,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onRejectTarget: function (record, store) {
-        // console.log('onRejectTarget(%o, %o)', record, store);
-        if (!record.get('reject_id')) {
+        if (!record.get('_meta_reject_id')) {
             // Criar um novo registro de Reject sem ID
             reject = Ext.create('Target.model.Reject', {
                 'catalog_id': record.get('_meta_catalog_id'),
@@ -206,7 +211,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
                         // seta no record da grid o atributo reject_id para que nao seja necessario
                         // o reload da grid
-                        record.set('reject_id', obj.id);
+                        record.set('_meta_reject_id', obj.id);
 
                         store.commitChanges();
                     }
@@ -215,7 +220,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         } else {
             // Se ja tiver o registro de Reject deleta
             reject = Ext.create('Target.model.Reject', {
-                'id': record.get('reject_id')
+                'id': record.get('_meta_reject_id')
             });
 
             reject.erase({
@@ -286,6 +291,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             closeAction: 'destroy',
             width: 800,
             height: 620,
+            modal: true,
             items: [{
                 xtype: 'targets-association',
                 listeners: {
@@ -293,7 +299,11 @@ Ext.define('Target.view.objects.ObjectsController', {
                     // todo evento que vai indicar que associacao foi finalizada
                     // submitexport: me.exportCatalog
                 }
-            }]
+            }],
+            listeners: {
+                scope: me,
+                close: 'reloadAssociation'
+            }
         });
 
         this.winAssociation.show();
@@ -303,8 +313,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onClickExportCatalog: function () {
-        // console.log('onClickExportCatalog()');
-
         var me = this,
             vm = me.getViewModel(),
             catalog = vm.get('currentCatalog'),
@@ -333,8 +341,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     exportCatalog: function (catalog, params) {
-        // console.log('exportCatalog()');
-
         this.winExport.close();
 
         Ext.Msg.alert(
@@ -359,7 +365,6 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }
             },
             failure: function (response) {
-                // console.log('server-side failure ' + response.status);
                 if (response.status !== 0) {
                     Ext.MessageBox.show({
                         title: 'Server Side Failure',
@@ -373,7 +378,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onClickCreateCutout: function () {
-        // console.log('onClickCreateCutout()');
         // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
         var me = this,
             view = me.getView(),
@@ -409,7 +413,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             //     field_id: field_id
             // }
         };
-        // console.log('baseParams', '=', baseParams);
 
         var w = Ext.create('Target.view.catalog.SubmitCutout', {});
 
@@ -434,8 +437,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     submitCutoutPypeline: function (params) {
-        // console.log("TargetViewer - submitCutoutPypeline(%o)", params);
-
         Ext.Ajax.request({
             url: '/PRJSUB/TileViewer/submitCutoutPypeline',
             params: {
@@ -455,7 +456,6 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             },
             failure: function (response, opts) {
-                console.log('server-side failure ' + response.status);
                 Ext.MessageBox.show({
                     title: 'Server Side Failure',
                     msg: response.status + ' ' + response.statusText,
@@ -467,9 +467,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onChangeInObjects: function (argument) {
-
-        console.log('TESTE');
-
         // toda vez que houver uma modificacao no objeto ex. comentarios
         // atualiza a store de objetos
         var me = this,
@@ -484,33 +481,31 @@ Ext.define('Target.view.objects.ObjectsController', {
         });
     },
 
-    onDbClickTarget: function (record) {
-        console.log('onDbClickTarget(%o)', record);
-        var me = this,
-            host = window.location.hostname,
-            route = 'ps';
+    // onDbClickTarget: function (record) {
+    //     var me = this,
+    //         host = window.location.hostname,
+    //         route = 'ps';
 
-        // sys = Explorer System (cluster objects)
-        // ps = Explorer Point Source (single object)
+    //     // sys = Explorer System (cluster objects)
+    //     // ps = Explorer Point Source (single object)
 
-        if (record.get('_meta_is_system') === true) {
-            route = 'sys';
-        }
+    //     if (record.get('_meta_is_system') === true) {
+    //         route = 'sys';
+    //     }
 
-        var url = Ext.String.format('http://{0}/static/ws/explorer/index.html#{1}/{2}/{3}',
-                host, route, record.get('_meta_catalog_id'), record.get('_meta_id'));
+    //     var url = Ext.String.format('http://{0}/static/ws/explorer/index.html#{1}/{2}/{3}',
+    //             host, route, record.get('_meta_catalog_id'), record.get('_meta_id'));
 
-        window.open(url);
-    },
+    //     window.open(url);
+    // },
 
     showWizard: function () {
-        console.log('showWizard');
         var me = this,
             vm = me.getViewModel(),
             catalog = vm.get('catalog');
 
         this.wizard = Ext.create('Ext.window.Window', {
-            title: 'WIZARD DE CONFIGURACAO',
+            title: 'Initial Settings Wizard',
             layout: 'fit',
             closeAction: 'destroy',
             width: 800,
@@ -524,7 +519,11 @@ Ext.define('Target.view.objects.ObjectsController', {
                     // todo evento que vai indicar que associacao foi finalizada
                     // submitexport: me.exportCatalog
                 }
-            }]
+            }],
+            listeners: {
+                scope: me,
+                close: 'reloadAssociation'
+            }
         });
 
         this.wizard.show();

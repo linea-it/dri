@@ -8,6 +8,7 @@ Ext.define('Target.view.home.Home', {
 
     requires: [
         'Target.view.home.HomeController',
+        'Target.view.home.HomeModel',
         'Target.view.catalog.Tree'
     ],
 
@@ -16,11 +17,6 @@ Ext.define('Target.view.home.Home', {
     viewModel: 'home',
 
     layout: 'fit',
-
-    // config: {
-    //     release: null,
-    //     field: null
-    // },
 
     initComponent: function () {
         var me = this;
@@ -38,8 +34,6 @@ Ext.define('Target.view.home.Home', {
     },
 
     loadPanel: function (arguments) {
-        // console.log('loadPanel(%o)', arguments);
-
         var me = this,
             refs = me.getReferences(),
             vm = me.getViewModel();

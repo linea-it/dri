@@ -55,4 +55,7 @@ class ProductClassContentSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_pcc_category(self, obj):
         if obj.pcc_category is not None:
-            return obj.pcc_category.cct_name
+            try:
+                return obj.pcc_category.cct_name
+            except:
+                return None

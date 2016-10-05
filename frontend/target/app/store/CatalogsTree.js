@@ -16,7 +16,9 @@ Ext.define('Target.store.CatalogsTree', {
 
     proxy: {
         api: {
-            read    : '/dri/api/catalog/get_class_tree_by_group/'
+            read: '/dri/api/catalog/get_class_tree_by_group/',
+            create: '/dri/api/catalog/',
+            update: '/dri/api/catalog/'
         }
     }
 

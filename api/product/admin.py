@@ -11,34 +11,34 @@ class ProductAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'prd_process_id', 'prd_name',
                           'prd_display_name', 'prd_product_id', 'prd_version', 'prd_description', 'prd_class',
                           'prd_flag_removed',)
-    search_fields = ('id', 'prd_process_id', 'prd_name', 'prd_display_name', 'prd_product_id',)
+    search_fields = ('prd_process_id', 'prd_name', 'prd_display_name', 'prd_product_id',)
 
 
 class ProductReleaseAdmin(admin.ModelAdmin):
     list_display = ('id', 'product', 'release',)
     list_display_links = ('id', 'product', 'release',)
-    search_fields = ('id', 'product', 'release',)
+    search_fields = ('product', 'release',)
 
 
 class ProductTagAdmin(admin.ModelAdmin):
     list_display = ('id', 'product', 'tag',)
     list_display_links = ('id', 'product', 'tag',)
-    search_fields = ('id', 'product', 'tag',)
+    search_fields = ('product', 'tag',)
 
 
 class FileAdmin(admin.ModelAdmin):
     list_display = ('id', 'prd_name', 'prd_display_name',
                     'prd_class', 'fli_base_path', 'fli_name',)
     list_display_links = ('id', 'prd_name', 'prd_display_name', 'prd_class',)
-    search_fields = ('id', 'fli_name',)
+    search_fields = ('fli_name',)
 
 
 class TableAdmin(admin.ModelAdmin):
     list_display = ('id', 'prd_name', 'prd_display_name',
-                    'prd_class', 'tbl_schema', 'tbl_name',)
+                    'prd_class', 'tbl_database', 'tbl_schema', 'tbl_name',)
     list_display_links = ('id', 'prd_name', 'prd_display_name',
                           'prd_class', 'tbl_schema', 'tbl_name',)
-    search_fields = ('id', 'tbl_schema', 'tbl_name',)
+    search_fields = ('tbl_schema', 'tbl_name',)
 
 
 class CatalogAdmin(admin.ModelAdmin):
@@ -53,7 +53,7 @@ class MapAdmin(admin.ModelAdmin):
         'id', 'prd_name', 'prd_display_name', 'prd_class', 'mpa_nside', 'mpa_ordering', 'prd_flag_removed',
     )
     list_display_links = ('id', 'prd_name')
-    search_fields = ('id', 'prd_name')
+    search_fields = ('prd_name',)
 
 
 class MaskAdmin(admin.ModelAdmin):
@@ -61,7 +61,7 @@ class MaskAdmin(admin.ModelAdmin):
         'id', 'prd_name', 'prd_display_name', 'prd_class', 'prd_flag_removed', 'msk_filter',
     )
     list_display_links = ('id', 'prd_name')
-    search_fields = ('id', 'prd_name')
+    search_fields = ('prd_name',)
 
 
 class ProductContentAdmin(admin.ModelAdmin):

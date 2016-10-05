@@ -29,34 +29,35 @@ Ext.define('Target.view.wizard.Wizard', {
         {
             id: 'card-0',
             xtype: 'targets-association',
+            title: 'Association',
             bind: {
                 product: '{product}'
             }
-        },
-        {
-            id: 'card-1',
-            xtype: 'panel',
-            title: 'Panel 2'
-        },
-        {
-            id: 'card-2',
-            xtype: 'panel',
-            title: 'Panel 3'
         }
+        // {
+        //     id: 'card-1',
+        //     xtype: 'panel',
+        //     title: 'Panel 2'
+        // },
+        // {
+        //     id: 'card-2',
+        //     xtype: 'panel',
+        //     title: 'Panel 3'
+        // }
     ],
 
-    bbar: ['->',
-        {
-            itemId: 'card-prev',
-            text: '&laquo; Previous',
-            handler: 'showPrevious',
-            disabled: true
-        },
-        {
-            itemId: 'card-next',
-            text: 'Next &raquo;',
-            handler: 'showNext'
-        }
+    bbar: ['->'
+        // {
+        //     itemId: 'card-prev',
+        //     text: '&laquo; Previous',
+        //     handler: 'showPrevious',
+        //     disabled: true
+        // },
+        // {
+        //     itemId: 'card-next',
+        //     text: 'Next &raquo;',
+        //     handler: 'showNext'
+        // }
     ],
 
     setProduct: function (product) {

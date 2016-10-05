@@ -139,7 +139,7 @@ Ext.define('common.data.proxy.Django', {
                 id = operation.getId();
             }
 
-            if (me.getAppendId() && me.isValidId(id)) {
+            if ((me.getAppendId() && me.isValidId(id)) || (operation.action === 'update')) {
 
                 if (!url.match(me.slashRe)) {
                     url += '/';

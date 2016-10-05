@@ -13,6 +13,11 @@ Ext.define('Target.store.ClassContent', {
 
     proxy: {
         url: '/dri/api/productclasscontent/'
-    }
+    },
+
+    sorters: [{
+        property: 'id',
+        direction: 'ASC'
+    }]
 
 });

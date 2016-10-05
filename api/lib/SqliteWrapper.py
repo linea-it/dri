@@ -64,11 +64,11 @@ class SqliteWrapper(BaseWrapper):
             sql_count = ("SELECT COUNT(*) as count FROM %s %s") % (sql_from, sql_where)
 
         if order_by:
-            sql_sort = self.do_order(order_by)
+            sql_sort = self.do_order(order_by, cls)
 
         sql = ("SELECT %s FROM %s %s %s %s") % (sql_columns, sql_from, sql_where,  sql_sort, sql_limit)
 
-        print(sql)
+        print("Query: %s" % sql)
 
         rows = list()
         if dict:
@@ -111,7 +111,7 @@ class SqliteWrapper(BaseWrapper):
             raise Exception('Limit needs to be integer greater than zero. Offset must be integer.')
 
 
-    def do_order(self, order_by):
+    def do_order(self, order_by, cls=None):
         """
         Gera string usada para Ordernar os resultados
         """
@@ -125,6 +125,21 @@ class SqliteWrapper(BaseWrapper):
         if order_by.find('-', 0, 1) >= 0:
             direction = 'DESC'
             order_by = order_by.replace('-', '', 1)
+
+        # Adiciona alias a coluna order by
+        if cls is not None:
+            for a in cls:
+                col = a.split('.')
+                col_name = col[len(col) - 1]
+                alias = None
+
+                if len(col) > 1:
+                    alias = col[0]
+
+                if order_by == col_name:
+                    if alias is not None:
+                        order_by = "%s.%s" % (alias, order_by)
+                    break
 
         sql_sort = "ORDER BY %s %s" % (order_by, direction)
 
@@ -150,9 +165,10 @@ class SqliteWrapper(BaseWrapper):
 
         query = "SELECT * FROM %s LIMIT 1" % tablename
 
-        cursor = self.execute(query)
+        try:
+            cursor = self.execute(query)
 
-        if cursor:
             return True
-        else:
+
+        except:
             return False
