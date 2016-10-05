@@ -28,6 +28,10 @@ Ext.define('Products.view.main.Main', {
         type: 'vbox',
         align: 'stretch'
     },
+    listeners: {
+        afterRender : 'loadProducts'
+        //deselect: 'onDeselectReleaseField'
+    },
 
     items: [
         {
