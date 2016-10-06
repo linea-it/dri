@@ -29,6 +29,9 @@ Ext.define('Target.view.objects.ObjectsController', {
             }
         },
         store: {
+            '#Catalogs': {
+                load: 'onLoadCatalogs'
+            },
             '#ProductContent': {
                 load: 'onLoadProductContent',
                 clear: 'onLoadProductContent'
@@ -46,18 +49,34 @@ Ext.define('Target.view.objects.ObjectsController', {
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
         var me = this,
             vm = objectsPanel.getViewModel(),
-            currentCatalog = vm.get('currentCatalog');
+            catalogs = vm.getStore('catalogs'),
+            refs = me.getReferences(),
+            objectsTabPanel = refs.targetsObjectsTabpanel;
 
-        objectsPanel.setLoading(true);
+        objectsTabPanel.setLoading(true);
 
-        currentCatalog.set('id', catalogId);
-
-        currentCatalog.load({
-            callback: function (model) {
-                objectsPanel.setLoading(false);
-                me.onBeforeLoadCatalog(model);
+        catalogs.removeAll();
+        catalogs.clearFilter(true);
+        catalogs.filter([
+            {
+                property: 'id',
+                value: catalogId
             }
-        });
+        ]);
+
+    },
+
+    onLoadCatalogs: function (store) {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog;
+        if (store.count() === 1) {
+            currentCatalog = store.first();
+
+            vm.set('currentCatalog', currentCatalog);
+
+            me.onBeforeLoadCatalog(currentCatalog);
+        }
 
     },
 
@@ -65,7 +84,9 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             storeProductContent = vm.getStore('productcontent'),
-            storeProductAssociation = vm.getStore('productassociation');
+            storeProductAssociation = vm.getStore('productassociation'),
+            refs = me.getReferences(),
+            objectsTabPanel = refs.targetsObjectsTabpanel;
 
         // filtrar as stores de colunas
         storeProductContent.filter([
@@ -135,7 +156,9 @@ Ext.define('Target.view.objects.ObjectsController', {
     loadObjects: function (catalog) {
         var me = this,
             vm = me.getViewModel(),
-            store = vm.getStore('objects');
+            store = vm.getStore('objects'),
+            refs = me.getReferences(),
+            objectsTabPanel = refs.targetsObjectsTabpanel;
 
         if (catalog) {
 
@@ -143,6 +166,10 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             store.load({
                 callback: function (records, operation, success) {
+
+                    // remover a mensagem de load do painel
+                    objectsTabPanel.setLoading(false);
+
                 },
                 scope: this
             });
