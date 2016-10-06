@@ -20,19 +20,21 @@ Ext.define('Target.view.objects.Panel', {
     viewModel: 'objects',
 
     config: {
-        catalog: null
+        catalog: null,
+        currentCatalog: null
     },
 
     layout: 'border',
+
+    bind: {
+        currentCatalog: '{currentCatalog}'
+    },
 
     items: [
         {
             region: 'center',
             layout: 'border',
             reference: 'targetsGrid',
-            // bind: {
-            //     title: '{currentCatalog.prd_display_name}'
-            // },
             items: [
                 {
                     xtype: 'targets-objects-tabpanel',
@@ -41,31 +43,15 @@ Ext.define('Target.view.objects.Panel', {
                     listeners: {
                         ready: 'onObjectPanelReady'
                         // rowdblclick: 'onDbClickTarget'
-                    }
+                    },
+                    tools:[
+                        {
+                            type: 'gear',
+                            tooltip: 'Settings',
+                            callback: 'onClickColumnAssociation'
+                        }
+                    ]
                 }
-            ],
-            tbar: [
-                {
-                    iconCls: 'x-fa fa-cog',
-                    tooltip: 'Columns Association',
-                    handler: 'onClickColumnAssociation'
-                    //disabled: true
-                }
-                // {
-                //     text: 'Export',
-                //     tooltip: 'Export',
-                //     iconCls: 'x-fa fa-share-square-o',
-                //     handler: 'onClickExportCatalog',
-                //     disabled: true
-                // },
-                // {
-                //     iconCls: 'x-fa fa-image',
-                //     text: 'Cutouts',
-                //     tooltip: 'Create Cutout',
-                //     handler: 'onClickCreateCutout',
-                //     disabled: true,
-                //     reference: 'btnCutout'
-                // }
             ]
         },
         {
@@ -108,6 +94,18 @@ Ext.define('Target.view.objects.Panel', {
 
         this.loadPanel(arguments);
 
+    },
+
+    setCurrentCatalog: function (catalog) {
+        var me = this,
+            tabPanel = me.down('targets-objects-tabpanel'),
+            title = '';
+
+        if (catalog.get('id') > 0) {
+            title = Ext.String.format('{0} - {1}', catalog.get('pcl_display_name'), catalog.get('prd_display_name'));
+
+            tabPanel.setTitle(title);
+        }
     },
 
     clearPanel: function () {

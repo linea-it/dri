@@ -376,6 +376,10 @@ class Import():
         return nside
 
     def get_filter(self, filter_name):
+
+        if filter_name is None:
+            return None
+
         try:
             f = Filter.objects.get(filter=filter_name)
             return f
