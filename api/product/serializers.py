@@ -328,6 +328,7 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
         queryset=ExternalProcess.objects.all(), many=False)
     epr_username = serializers.SerializerMethodField()
     epr_end_date = serializers.SerializerMethodField()
+    epr_original_id = serializers.SerializerMethodField()
 
     # Dados do Release
     prd_release_id = serializers.SerializerMethodField()
@@ -355,6 +356,7 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             'epr_end_date',
             'prd_release_id',
             'prd_tags',
+            'epr_original_id',
             'prd_filter'
 
         )
