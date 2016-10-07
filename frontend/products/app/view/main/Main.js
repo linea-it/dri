@@ -19,6 +19,8 @@ Ext.define('Products.view.main.Main', {
         'Products.view.main.ComboBand',
         'Ext.plugin.Viewport',
         'Ext.grid.filters.Filters',
+        'common.header.Toolbar',
+        'common.footer.Footer'
     ],
     controller: 'main',
     viewModel: 'main',
@@ -26,24 +28,17 @@ Ext.define('Products.view.main.Main', {
         type: 'vbox',
         align: 'stretch'
     },
+    listeners: {
+        afterRender : 'loadProducts'
+        //deselect: 'onDeselectReleaseField'
+    },
 
     items: [
         {
-            xtype: 'toolbar',
-            cls: 'des-portal-headerbar toolbar-btn-shadow',
-            height: 52,
-            itemId: 'headerBar',
-            items: [
-                {
-                    xtype: 'component',
-                    cls: 'des-portal-logo',
-                    bind: {
-                        html: '<div class="main-logo"><img src="{desPortalLogo}">{name}</div>'
-                    }
-                }
-            ]
+            xtype: 'dri-header'
         },{
             xtype: 'panel',
+            margin: '5 5 5 5',
             layout: {
                 type: 'hbox',
                 align: 'stretch'
@@ -51,40 +46,77 @@ Ext.define('Products.view.main.Main', {
             items:[{
                 xtype: 'comboRelease',
                 reference: 'releasefield',
+                triggers: {
+                    clear: {
+                        cls: 'x-form-clear-trigger',
+                        handler: 'ClearRelease'
+                        // hidden: true
+                    }
+                },
                 listeners: {
                     select: 'onSelectRelease'
                     //deselect: 'onDeselectReleaseField'
                 }
-            },{
-                xtype: 'comboDataset',
-                reference: 'field',
-                margin: '0 0 0 20'
-                // listeners: {
-                //     select: 'onSelectReleaseField'
-                //     //deselect: 'onDeselectReleaseField'
-                // }
-            },{
+            },
+            // {
+            //     xtype: 'comboDataset',
+            //     reference: 'field',
+            //     triggers: {
+            //         clear: {
+            //             cls: 'x-form-clear-trigger',
+            //             handler: 'cancelDataset'
+            //             // hidden: true
+            //         }
+            //     },
+            //     margin: '0 0 0 20'
+            //     // listeners: {
+            //     //     select: 'onSelectReleaseField'
+            //     //     //deselect: 'onDeselectReleaseField'
+            //     // }
+            // },
+            {
                 xtype: 'comboType',
                 margin: '0 0 0 20',
+                triggers: {
+                    clear: {
+                        cls: 'x-form-clear-trigger',
+                        handler: 'clearType'
+                        // hidden: true
+                    }
+                },
                 reference: 'type',
                 listeners: {
                     select: 'onSelectType'
                     //deselect: 'onDeselectReleaseField'
                 }
             },
-            // {
-            //     xtype: 'comboBand',
-            //     margin: '0 0 0 20',
-            //     reference: 'bands'
-            //     // listeners: {
-            //     //     select: 'onSelectBand'
-            //     //     //deselect: 'onDeselectReleaseField'
-            //     // }
-            // },
+            {
+                xtype: 'comboBand',
+                margin: '0 0 0 20',
+                reference: 'bands',
+                triggers: {
+                    clear: {
+                        cls: 'x-form-clear-trigger',
+                        handler: 'clearBand'
+                        // hidden: true
+                    }
+                },
+                listeners: {
+                    select: 'onSelectBand'
+                    //deselect: 'onDeselectReleaseField'
+                }
+            },
             {
                 xtype: 'button',
                 margin: '0 10 0 10',
                 text: 'Clear Filters',
+                triggers: {
+                    clear: {
+                        cls: 'x-form-clear-trigger',
+                        handler: 'cancelDataset'
+                        // hidden: true
+                    }
+                },
                 handler : 'clearFilters'
             }]
             
@@ -123,6 +155,9 @@ Ext.define('Products.view.main.Main', {
                 // }
                 ]
             }]
+        },
+        {
+            xtype: 'dri-footer'
         }
     ]
 

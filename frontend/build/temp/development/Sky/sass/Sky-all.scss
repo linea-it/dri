@@ -993,6 +993,7 @@ $include-common-data-proxy-django: dynamic(true);;
 $include-common-footer-footer: dynamic(true);;
 $include-common-footer-footercontroller: dynamic(true);;
 $include-common-header-toolbar: dynamic(true);;
+$include-common-link-linkprompt: dynamic(true);;
 $include-common-model-dataset: dynamic(true);;
 $include-common-model-filter: dynamic(true);;
 $include-common-model-footprint: dynamic(true);;
@@ -1512,6 +1513,7 @@ $current-resource-root: $common-resource-root;
 $relative-image-path-for-uis: $common-resource-path;
 @import '../../../../../packages/local/common/sass/src/footer/Footer';
 @import '../../../../../packages/local/common/sass/src/header/Toolbar';
+@import '../../../../../packages/local/common/sass/src/link/LinkPrompt';
 
 /* including package aladin */
 $aladin-resource-root: 'aladin' !default;

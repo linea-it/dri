@@ -1,7 +1,10 @@
+import random
+import string
+
+from coadd.models import Release
 from current_user import get_current_user
 from django.conf import settings
 from django.db import models
-import random, string
 
 
 class Export(models.Model):
@@ -37,20 +40,33 @@ class ExternalProcess(models.Model):
     epr_site = models.ForeignKey(
         Site, on_delete=models.CASCADE, verbose_name='Site',
         help_text='origin of the process. instance from which it was imported.', default=None)
-    epr_original_id = models.PositiveIntegerField(
-        null=True, verbose_name='Original Id', help_text='original process id on your instances of origin.')
+    epr_original_id = models.CharField(
+        max_length=128, null=True, verbose_name='Original Id', help_text='original process id on your instances of origin.')
     epr_start_date = models.DateTimeField(
-        auto_now_add=True, blank=True, verbose_name='Start Date')
+        auto_now_add=True, null=True, blank=True, verbose_name='Start Date')
     epr_end_date = models.DateTimeField(
-        auto_now_add=True, blank=True, verbose_name='End Date')
+        auto_now_add=True, null=True, blank=True, verbose_name='End Date')
     epr_readme = models.CharField(
         max_length=128, null=True, blank=True, verbose_name='Readme')
     epr_comment = models.CharField(
         max_length=128, null=True, blank=True, verbose_name='Comment', help_text='Process submission comment.')
 
+    releases = models.ManyToManyField(
+        Release,
+        through='ProcessRelease',
+        default=None,
+        verbose_name='Releases'
+    )
+
     def __str__(self):
         return str(self.epr_original_id)
 
+
+class ProcessRelease(models.Model):
+    process = models.ForeignKey(
+        ExternalProcess, on_delete=models.CASCADE)
+    release = models.ForeignKey(
+        Release, on_delete=models.CASCADE)
 
 class Authorization(models.Model):
 

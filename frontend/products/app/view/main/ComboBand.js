@@ -9,7 +9,7 @@ Ext.define('Products.view.main.ComboBand', {
     },
     fieldLabel: 'Band',
     labelWidth: 40,
-    displayField: 'band',
-    valueField: 'band'
+    displayField: 'filter',
+    valueField: 'id'
 
 });

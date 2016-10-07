@@ -21,7 +21,7 @@ Ext.define('Products.view.main.MainController', {
 
     onSelectRelease: function(combo, record){
         var refs = this.getReferences(),
-            gridfield = refs.field,
+            gridfield = refs.catalogs,
             store = gridfield.getStore();
 
         //console.log(release)
@@ -30,7 +30,7 @@ Ext.define('Products.view.main.MainController', {
 
         store.filter([
             {
-                property: "tag_release",
+                property: "releases",
                 value: id
             }
         ])
@@ -38,17 +38,74 @@ Ext.define('Products.view.main.MainController', {
     onSelectType: function(combo, record){
         var refs = this.getReferences(),
             gridcatalogs = refs.catalogs,
+            bandcombo = refs.bands,
             store = gridcatalogs.getStore();
-
+        store.removeFilter("band", false)
+        bandcombo.clearValue()
         //console.log(release)
-        name = record.getData().pgr_display_name
+        id = record.getData().id
         console.log(store)
 
         store.filter([
             {
-                property: "pgr_display_name",
-                value: name
+                property: "group_id",
+                value: id
             }
         ])
     },
+    ClearRelease: function(comboRelease){
+        var refs = this.getReferences(),
+            gridcatalogs = refs.catalogs,
+            store = gridcatalogs.getStore();
+        store.removeFilter("releases", false)
+        comboRelease.clearValue()
+    },
+    clearType: function(comboType){
+        var refs = this.getReferences(),
+            gridcatalogs = refs.catalogs,
+            store = gridcatalogs.getStore();
+        store.removeFilter("group_id", false)
+        comboType.clearValue()
+    },
+    clearBand: function(comboBand){
+        var refs = this.getReferences(),
+            gridcatalogs = refs.catalogs,
+            store = gridcatalogs.getStore();
+        store.removeFilter("band", false)
+        comboBand.clearValue()
+    },
+    clearFilters: function(){
+        var refs = this.getReferences(),
+            gridcatalogs = refs.catalogs,
+            bandcombo = refs.bands,
+            releasefield = refs.releasefield,
+            type = refs.type,
+            store = gridcatalogs.getStore();
+        store.clearFilter()
+        bandcombo.clearValue()
+        releasefield.clearValue()
+        type.clearValue()
+    },
+    onSelectBand: function(combo, record){
+        var refs = this.getReferences(),
+            gridcatalogs = refs.catalogs,
+            store = gridcatalogs.getStore();
+
+        //console.log(release)
+        filter = record.getData().filter
+        console.log(filter)
+
+        store.filter([
+            {
+                property: "band",
+                value: filter
+            }
+        ])
+    },
+    loadProducts: function(){
+        var refs = this.getReferences(),
+            gridcatalogs = refs.catalogs,
+            store = gridcatalogs.getStore(); 
+        store.load()
+    }
 });

@@ -5,6 +5,7 @@ import logging
 import django_filters
 from rest_framework import filters
 from rest_framework import viewsets
+from rest_framework import mixins
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
@@ -17,14 +18,22 @@ logger = logging.getLogger(__name__)
 
 class ProductFilter(django_filters.FilterSet):
     group = django_filters.MethodFilter()
-
+    group_id = django_filters.MethodFilter()
+    band = django_filters.MethodFilter()
     class Meta:
         model = Product
-        fields = ['prd_name', 'prd_display_name', 'prd_class', 'group']
+        fields = ['prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id', 'releases',
+                  'tags', ]
 
     def filter_group(self, queryset, value):
-        # product -> product_class -> product_group
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
+
+    def filter_group_id(self, queryset, value):
+        return queryset.filter(prd_class__pcl_group__pk=str(value))
+
+    def filter_band(self, queryset, value):
+        return queryset.filter(prd_filter__filter=str(value))
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     """
@@ -48,7 +57,7 @@ class CatalogFilter(django_filters.FilterSet):
 
     class Meta:
         model = Product
-        fields = ['prd_name', 'prd_display_name', 'prd_class', 'group']
+        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'group']
 
     def filter_group(self, queryset, value):
         # product -> product_class -> product_group
@@ -56,7 +65,7 @@ class CatalogFilter(django_filters.FilterSet):
 
 
 # Create your views here.
-class CatalogViewSet(viewsets.ModelViewSet):
+class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     """
     API endpoint that allows product to be viewed or edited
     """
@@ -223,7 +232,7 @@ class AllProductViewSet(viewsets.ModelViewSet):
 
     serializer_class = AllProductsSerializer
 
-    search_fields = ('prd_name', 'prd_display_name', 'prd_class')
+    search_fields = ('prd_name', 'prd_display_name')
 
     filter_backends = (filters.DjangoFilterBackend,)
 

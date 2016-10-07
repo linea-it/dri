@@ -154,8 +154,9 @@ Ext.define('Sky.view.dataset.DatasetController', {
             link = Ext.String.format('{0}/#dataset/{1}/{2}', host, current.get('id'), coordinate);
         }
 
-        Ext.Msg.alert('Link', '<a href="">' + link + '</a>');
-
+        Ext.create('common.link.LinkPrompt', {
+            link: link
+        }).show();
     },
 
     toAladin: function () {

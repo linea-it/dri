@@ -41,8 +41,12 @@ class CatalogRouter(object):
                 return True
             else:
                 return False
-        else:
+
+        elif db == 'default':
             if app_label == 'catalog':
                 return False
             else:
                 return True
+
+        else:
+            return False

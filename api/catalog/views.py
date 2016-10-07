@@ -83,7 +83,7 @@ class TargetViewSet(ViewSet):
 
         # Todas as colunas de catalogo.
         columns = list()
-        queryset = ProductContent.objects.all()
+        queryset = ProductContent.objects.filter(pcn_product_id=catalog)
         for row in queryset:
             columns.append(row.pcn_column_name)
 
@@ -96,6 +96,17 @@ class TargetViewSet(ViewSet):
 
         # Parametros de Ordenacao
         ordering = request.query_params.get('ordering', None)
+
+        # Parsing para os campos de rating e reject
+        if ordering == '_meta_rating':
+            ordering = 'b.rating'
+        elif ordering == '-_meta_rating':
+            ordering = '-b.rating'
+        elif ordering == '_meta_reject':
+            ordering = 'c.reject'
+        elif ordering == '-_meta_reject':
+            ordering = '-c.reject'
+
 
         # retornar uma lista com os objetos da tabela
         rows = list()
@@ -122,24 +133,30 @@ class TargetViewSet(ViewSet):
             })])
         )
 
-
         for row in rows:
 
             if 'META_RATING_ID' in row:
                 rating_id = row.get('META_RATING_ID')
                 rating = row.get('META_RATING')
-                reject_id = row.get('META_REJECT_ID')
-                reject = row.get('META_REJECT')
+                reject_id = row.get('META_REJECT_ID', 0)
+                reject = row.get('META_REJECT', False)
             elif 'meta_rating_id' in row:
                 rating_id = row.get('meta_rating_id')
                 rating = row.get('meta_rating')
-                reject_id = row.get('meta_reject_id')
-                reject = row.get('meta_reject')
+                reject_id = row.get('meta_reject_id', 0)
+                reject = row.get('meta_reject', False)
             else:
                 rating_id = None
                 rating = None
                 reject_id = None
                 reject = None
+
+
+            if reject_id is not None:
+                reject_id = int(reject_id)
+                reject = True
+            else:
+                reject = False
 
             row.update({
                 "_meta_catalog_id": catalog.pk,
@@ -162,7 +179,6 @@ class TargetViewSet(ViewSet):
             row.pop("meta_reject_id", None)
             row.pop("META_REJECT", None)
             row.pop("meta_reject", None)
-
 
             row.update({
                 "_meta_id": row.get(properties.get("meta.id;meta.main"))

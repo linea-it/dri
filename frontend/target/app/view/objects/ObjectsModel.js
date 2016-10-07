@@ -21,6 +21,10 @@ Ext.define('Target.view.objects.ObjectsModel', {
     },
 
     stores: {
+        catalogs: {
+            type: 'catalogs',
+            storeId: 'Catalogs'
+        },
         objects: {
             type: 'targets-objects',
             storeId: 'objects'

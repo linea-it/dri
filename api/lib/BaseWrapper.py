@@ -62,3 +62,4 @@ class BaseWrapper():
             tablename = table
 
         return tablename
+
