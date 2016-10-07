@@ -3,6 +3,8 @@ from django.db import models
 from product_classifier.models import ProductClass
 from product_classifier.models import ProductClassContent
 from product_register.models import ExternalProcess
+from current_user import get_current_user
+from django.conf import settings
 
 
 class Product(models.Model):
@@ -119,3 +121,19 @@ class ProductContentAssociation(models.Model):
     pca_product_content = models.ForeignKey(
         ProductContent, on_delete=models.CASCADE, verbose_name='Product Content', default=None
     )
+
+
+class ProductSettings(models.Model):
+    cst_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product')
+    cst_owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+    cst_display_name = models.CharField(
+        max_length=128, verbose_name='Name')
+    cst_description = models.CharField(
+        max_length=1024, null=True, blank=True, verbose_name='Description')
+    cst_is_default = models.BooleanField(
+        default=False, verbose_name='Is Default')
+    cst_is_public = models.BooleanField(
+        default=False, verbose_name='Is Public')

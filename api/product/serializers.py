@@ -5,10 +5,8 @@ from product_register.models import ExternalProcess
 from rest_framework import serializers
 
 from .models import File, Catalog, ProductContent, ProductContentAssociation
-from .models import Map
-from .models import Mask
-from .models import Product
-from .models import Table
+from .models import Product, Map, Mask, Table, ProductSettings
+
 
 logger = logging.getLogger(__name__)
 
@@ -417,3 +415,18 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             return tags
         except AttributeError:
             return None
+
+
+class ProductSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductSettings
+
+        fields = (
+            'id',
+            'cst_product',
+            'cst_owner',
+            'cst_display_name',
+            'cst_description',
+            'cst_is_default',
+            'cst_is_public'
+        )

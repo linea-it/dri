@@ -9,9 +9,9 @@ from rest_framework import mixins
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
-from .models import Product, Catalog, Map, Mask, ProductContent, ProductContentAssociation
+from .models import Product, Catalog, Map, Mask, ProductContent, ProductContentAssociation, ProductSettings
 from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, MaskSerializer, ProductContentSerializer, \
-    ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer
+    ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer, ProductSettingsSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +20,7 @@ class ProductFilter(django_filters.FilterSet):
     group = django_filters.MethodFilter()
     group_id = django_filters.MethodFilter()
     band = django_filters.MethodFilter()
+
     class Meta:
         model = Product
         fields = ['prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id', 'releases',
@@ -209,6 +210,7 @@ class MapViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id',)
 
+
 class MaskViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Map to be viewed or edited
@@ -239,3 +241,16 @@ class AllProductViewSet(viewsets.ModelViewSet):
     filter_class = ProductFilter
 
     ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')
+
+
+class ProductSettingsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows product settings to be viewed or edited
+    """
+    queryset = ProductSettings.objects.select_related().all()
+
+    serializer_class = ProductSettingsSerializer
+
+    filter_fields = ('id', 'cst_product', 'cst_owner', 'cst_display_name')
+
+    ordering_fields = ('id', 'cst_display_name',)

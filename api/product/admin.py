@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models import Product, ProductRelease, ProductTag, File, Table, Catalog, Map, Mask, ProductContent, \
-    ProductContentAssociation
+    ProductContentAssociation, ProductSettings
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -74,6 +74,10 @@ class ProductContentAssociationAdmin(admin.ModelAdmin):
     list_display = ('pca_product', 'pca_class_content', 'pca_product_content',)
     search_fields = ('pca_product__prd_display_name', 'pca_product__prd_name')
 
+class ProductSettingsAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cst_product', 'cst_owner', 'cst_display_name', 'cst_description', 'cst_is_default', 'cst_is_public')
+    search_fields = ('cst_product__prd_display_name', 'cst_display_name', 'cst_description',)
+
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductRelease, ProductReleaseAdmin)
@@ -85,3 +89,4 @@ admin.site.register(Map, MapAdmin)
 admin.site.register(Mask, MaskAdmin)
 admin.site.register(ProductContent, ProductContentAdmin)
 admin.site.register(ProductContentAssociation, ProductContentAssociationAdmin)
+admin.site.register(ProductSettings, ProductSettingsAdmin)
