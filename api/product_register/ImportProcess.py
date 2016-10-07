@@ -375,6 +375,20 @@ class Import():
             }
         )
 
+        if product:
+            add_release = True
+
+            if 'releases' in data and len(data.get('releases')) > 0:
+                self.product_release(product, data.get('releases'))
+                add_release = False
+
+            # Registrar O produto a seus respectivos Tags
+            if 'fields' in data:
+                self.product_tag(product, data.get('fields'), add_release)
+        else:
+            raise Exception(
+                "A failure has occurred and it was not possible to register the product '%s'." % (data.get('name')))
+
     def check_ordering(self, ordering):
 
         available = ['ring', 'nest']
@@ -441,3 +455,18 @@ class Import():
                 "msk_filter": filter,
             }
         )
+
+
+        if product:
+            add_release = True
+
+            if 'releases' in data and len(data.get('releases')) > 0:
+                self.product_release(product, data.get('releases'))
+                add_release = False
+
+            # Registrar O produto a seus respectivos Tags
+            if 'fields' in data:
+                self.product_tag(product, data.get('fields'), add_release)
+        else:
+            raise Exception(
+                "A failure has occurred and it was not possible to register the product '%s'." % (data.get('name')))
