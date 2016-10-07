@@ -79,9 +79,14 @@ class Import():
         if process:
             self.process = process
 
+            add_release = True
             # Associar um Release ao Processo
-            if 'releases' in data:
+            if 'releases' in data and len(data.get('releases')) > 0:
                 self.process_release(self.process, data.get('releases'))
+                add_release = False
+
+            if 'fields' in data and len(data.get('fields')) > 0:
+                self.process_tags(self.process, data.get('fields'), add_release)
 
             # Registrar os produtos
             if 'products' in data and len(data.get('products')) > 0:
@@ -115,6 +120,20 @@ class Import():
 
             except Release.DoesNotExist:
                 raise Exception("this Release '%s' is not valid." % rls_name)
+
+    def process_tags(self, process, tags, add_release=True):
+        for t in tags:
+            tag_name = t.lower()
+
+            try:
+                tag = Tag.objects.get(tag_name=tag_name)
+
+                if add_release:
+                    rls_name = tag.tag_release.rls_name
+                    self.process_release(process, [rls_name])
+
+            except Tag.DoesNotExist:
+                raise Exception("this Tag '%s' is not valid." % tag_name)
 
     def import_products(self, data):
         """
@@ -183,15 +202,14 @@ class Import():
         )
 
         if product:
-            if 'releases' in data:
+            add_release = True
+
+            if 'releases' in data and len(data.get('releases')) > 0:
                 self.product_release(product, data.get('releases'))
+                add_release = False
 
             # Registrar O produto a seus respectivos Tags
             if 'fields' in data:
-                add_release = True
-                if 'releases' in data:
-                    add_release = False
-
                 self.product_tag(product, data.get('fields'), add_release)
 
             # Registar as colunas do catalogo
@@ -281,7 +299,6 @@ class Import():
 
                 except:
                     raise Exception("it was not possible to create association for this column: %s", property)
-
 
     def product_release(self, product, releases):
         for r in releases:
