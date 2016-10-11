@@ -18,6 +18,51 @@ Ext.define('Products.view.main.MainController', {
             //
         }
     },
+    productInfo: function (){
+        var refs = this.getReferences(),
+            gridcatalogs = refs.catalogs,
+            store = gridcatalogs.getStore();
+            source = gridcatalogs.getSelectionModel().getSelection() 
+        if (source.length == 0){
+            Ext.Msg.alert('', 'select a product');
+        }else{
+            source = source[0].data
+            Ext.create('Ext.window.Window', {
+                height: 500,
+                title: 'Properties Grid',
+                width: 400,
+                layout: 'fit',
+                items: {  // Let's put an empty grid in just to illustrate fit layout
+                    xtype: 'propertygrid',
+                    
+                     sourceConfig: {
+                        
+                        editor: {disabled: true}
+                        
+                    },
+                    source: {
+                        //"id": source.id,
+                        "Name": source.prd_name,
+                        "Display name": source.prd_display_name,
+                        //"prd_flag_removed": source.prd_flag_removed,
+                        "Num Objects": source.ctl_num_objects,
+                        "Nside": source.mpa_nside,
+                        "Ordering": source.mpa_ordering,
+                        "Type": source.pgr_display_name,
+                        "Class": source.pcl_display_name,
+                        "Process ID": source.prd_process_id,
+                        "Username": source.epr_username,
+                        "Date": source.epr_end_date,
+                        //"prd_release_id": source.prd_release_id,
+                        "Tags": source.prd_tags,
+                        "Original ID": source.epr_original_id,
+                        "Band": source.prd_filter,
+                        "Tablename": source.prd_table_ptr
+                    }
+                }
+            }).show();
+        }
+    },
 
     onSelectRelease: function(combo, record){
         var refs = this.getReferences(),
