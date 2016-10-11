@@ -110,14 +110,15 @@ Ext.define('Products.view.main.Main', {
                 xtype: 'button',
                 margin: '0 10 0 10',
                 text: 'Clear Filters',
-                triggers: {
-                    clear: {
-                        cls: 'x-form-clear-trigger',
-                        handler: 'cancelDataset'
-                        // hidden: true
-                    }
-                },
                 handler : 'clearFilters'
+            },{
+                xtype: 'button',
+                iconCls: 'fa fa-info',
+                scale: 'medium',
+                handler: 'projectHome',
+                tooltip: 'Product information',
+                handler : 'productInfo'
+
             }]
             
             

@@ -133,6 +133,19 @@ Ext.define('Products.view.main.Products', {
                   }
                 },
                 // { 
+                //   text: 'Tablename', 
+                //   dataIndex: 'prd_table_ptr',
+                //   width: 250,
+                  
+                //   filter: {
+                //     type: 'string',
+                //     itemDefaults: {
+                //         emptyText: 'Search for...'
+                //     }
+                //   }
+                // },
+                
+                // { 
                 //   text: 'Start Time', 
                 //   dataIndex: 'start_time',
                 //   width: 150,

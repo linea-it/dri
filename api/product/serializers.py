@@ -320,6 +320,7 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
     ctl_num_objects = serializers.SerializerMethodField()
     mpa_nside = serializers.SerializerMethodField()
     mpa_ordering = serializers.SerializerMethodField()
+    prd_table_ptr = serializers.SerializerMethodField()
     pgr_display_name = serializers.SerializerMethodField()
     pcl_display_name = serializers.SerializerMethodField()
     prd_process_id = serializers.PrimaryKeyRelatedField(
@@ -327,6 +328,7 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
     epr_username = serializers.SerializerMethodField()
     epr_end_date = serializers.SerializerMethodField()
     epr_original_id = serializers.SerializerMethodField()
+
 
     # Dados do Release
     prd_release_id = serializers.SerializerMethodField()
@@ -355,7 +357,8 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             'prd_release_id',
             'prd_tags',
             'epr_original_id',
-            'prd_filter'
+            'prd_filter',
+            'prd_table_ptr'
 
         )
 
@@ -383,6 +386,12 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             return obj.table.map.mpa_ordering
         except AttributeError:
             return None
+
+    def get_prd_table_ptr(self, obj):
+        try:
+            return str(obj.table.map.table_ptr)
+        except AttributeError:
+            return str(obj.table.catalog.table_ptr)
 
     def get_pgr_display_name(self, obj):
         return obj.prd_class.pcl_group.pgr_display_name
