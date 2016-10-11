@@ -418,15 +418,20 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ProductSettingsSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+
     class Meta:
         model = ProductSettings
 
         fields = (
             'id',
             'cst_product',
-            'cst_owner',
             'cst_display_name',
             'cst_description',
             'cst_is_default',
-            'cst_is_public'
+            'cst_is_public',
+            'owner',
         )
+
+    def get_owner(self, obj):
+        return obj.owner.username

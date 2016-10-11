@@ -126,7 +126,7 @@ class ProductContentAssociation(models.Model):
 class ProductSettings(models.Model):
     cst_product = models.ForeignKey(
         Product, on_delete=models.CASCADE, verbose_name='Product')
-    cst_owner = models.ForeignKey(
+    owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
     cst_display_name = models.CharField(

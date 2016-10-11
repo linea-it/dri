@@ -75,7 +75,7 @@ class ProductContentAssociationAdmin(admin.ModelAdmin):
     search_fields = ('pca_product__prd_display_name', 'pca_product__prd_name')
 
 class ProductSettingsAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cst_product', 'cst_owner', 'cst_display_name', 'cst_description', 'cst_is_default', 'cst_is_public')
+    list_display = ('id', 'cst_product', 'owner', 'cst_display_name', 'cst_description', 'cst_is_default', 'cst_is_public')
     search_fields = ('cst_product__prd_display_name', 'cst_display_name', 'cst_description',)
 
 

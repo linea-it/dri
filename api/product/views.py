@@ -8,6 +8,8 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
+from rest_framework import filters
+from django.db.models import Q
 
 from .models import Product, Catalog, Map, Mask, ProductContent, ProductContentAssociation, ProductSettings
 from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, MaskSerializer, ProductContentSerializer, \
@@ -243,6 +245,15 @@ class AllProductViewSet(viewsets.ModelViewSet):
     ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')
 
 
+
+class ProductSettingsBackend(filters.BaseFilterBackend):
+    """
+    Filtra somente os settings do usuario ou os marcados como publicos.
+    """
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(Q(owner=request.user) | Q(cst_is_public=True))
+
+
 class ProductSettingsViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows product settings to be viewed or edited
@@ -251,6 +262,8 @@ class ProductSettingsViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductSettingsSerializer
 
-    filter_fields = ('id', 'cst_product', 'cst_owner', 'cst_display_name')
+    filter_backends = (filters.DjangoFilterBackend, ProductSettingsBackend)
+
+    filter_fields = ('id', 'cst_product', 'cst_display_name', 'cst_is_public')
 
     ordering_fields = ('id', 'cst_display_name',)

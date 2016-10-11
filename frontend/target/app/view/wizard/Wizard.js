@@ -10,6 +10,7 @@ Ext.define('Target.view.wizard.Wizard', {
         'Target.view.wizard.WizardController',
         'Target.view.wizard.WizardModel',
         'Ext.layout.container.Card',
+        'Target.view.settings.Settings',
         'Target.view.association.Panel'
     ],
 
@@ -28,11 +29,19 @@ Ext.define('Target.view.wizard.Wizard', {
     items: [
         {
             id: 'card-0',
-            xtype: 'targets-association',
-            title: 'Association',
+            xtype: 'targets-settings',
+            title: 'Settings',
             bind: {
                 product: '{product}'
             }
+        },
+        {
+            id: 'card-1',
+            xtype: 'targets-association',
+            title: 'Association'
+            // bind: {
+            //     product: '{product}'
+            // }
         }
         // {
         //     id: 'card-1',
