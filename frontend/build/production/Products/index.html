@@ -45,7 +45,26 @@
         };
     </script>
     -->
-    
+
+    <!-- Loading -->
+    <script>
+        function hideLoading(){
+            loading.style.display='none';
+        }
+    </script>
+
+    <!-- Google Analitics -->
+    <script>
+     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+     })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+     ga('create', 'UA-85679627-1', 'auto');
+     ga('send', 'pageview');
+
+    </script>
+
     <!-- The line below must be kept intact for Sencha Cmd to build your application -->
     <script id="microloader" data-app="61c015a6-f5c6-4b95-bd2d-9ea9b6f11c0d" type="text/javascript">var Ext=Ext||{};Ext.manifest=Ext.manifest||"app.json";Ext=Ext||{};
 Ext.Boot=Ext.Boot||function(e){function g(a){if(a.$isRequest)return a;a=a.url?a:{url:a};var m=a.url,m=m.charAt?[m]:m,d=a.charset||b.config.charset;v(this,a);delete this.url;this.urls=m;this.charset=d}function p(a){if(a.$isEntry)return a;var m=a.charset||b.config.charset,d=Ext.manifest,d=d&&d.loader,f=void 0!==a.cache?a.cache:d&&d.cache,j;b.config.disableCaching&&(void 0===f&&(f=!b.config.disableCaching),!1===f?j=+new Date:!0!==f&&(j=f),j&&(d=d&&d.cacheParam||b.config.disableCachingParam,j=d+"\x3d"+
@@ -102,5 +121,9 @@ b.cache()}c.notifyUpdateReady()},notifyUpdateReady:function(){if("checking"!==c.
 1);"/"==e?b.substring(2,d+2)!==a&&(c=!1):"f"==e?b.substring(10,d+10)!==a&&(c=!1):"."==e&&b.substring(1,d+1)!==a&&(c=!1);return c},parseResult:function(b){var a={};(b.exception||0===b.status)&&!e.env.phantom?a.error=!0:200<=b.status&&300>b.status||304===b.status||e.env.phantom||0===b.status&&0<b.content.length?a.content=b.content:a.error=!0;return a}};return c}();Ext.manifest=Ext.manifest||"bootstrap";Ext.Microloader.run();</script>
 
 </head>
-<body></body>
+<body onload="hideLoading()">
+    <div id='loading' style="width: 100;height: 100;position: absolute; top: 50%;left: 50%;margin-top: -50px; margin-left: -50px">
+        <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw margin-bottom" style="color: #DCDCDC;"></i>
+    </div>
+</body>
 </html>
