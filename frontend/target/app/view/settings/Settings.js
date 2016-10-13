@@ -33,6 +33,7 @@ Ext.define('Target.view.settings.Settings', {
                 {
                     xtype: 'fieldset',
                     layout: 'anchor',
+                    margin: '0 5 0 0',
                     defaults: {
                         labelAlign: 'top'
                         // anchor: '100%'

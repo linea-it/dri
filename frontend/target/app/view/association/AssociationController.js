@@ -32,6 +32,7 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     onChangeProduct: function (product) {
+        console.log('onChangeProduct');
         var me = this,
             vm = me.getViewModel(),
             association = vm.getStore('fakeassociation'),

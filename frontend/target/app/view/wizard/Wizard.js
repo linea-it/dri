@@ -38,10 +38,10 @@ Ext.define('Target.view.wizard.Wizard', {
         {
             id: 'card-1',
             xtype: 'targets-association',
-            title: 'Association'
-            // bind: {
-            //     product: '{product}'
-            // }
+            title: 'Association',
+            bind: {
+                product: '{product}'
+            }
         }
         // {
         //     id: 'card-1',
@@ -55,18 +55,18 @@ Ext.define('Target.view.wizard.Wizard', {
         // }
     ],
 
-    bbar: ['->'
-        // {
-        //     itemId: 'card-prev',
-        //     text: '&laquo; Previous',
-        //     handler: 'showPrevious',
-        //     disabled: true
-        // },
-        // {
-        //     itemId: 'card-next',
-        //     text: 'Next &raquo;',
-        //     handler: 'showNext'
-        // }
+    bbar: ['->',
+        {
+            itemId: 'card-prev',
+            text: '&laquo; Previous',
+            handler: 'showPrevious',
+            disabled: true
+        },
+        {
+            itemId: 'card-next',
+            text: 'Next &raquo;',
+            handler: 'showNext'
+        }
     ],
 
     setProduct: function (product) {
