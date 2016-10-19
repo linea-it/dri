@@ -14,30 +14,29 @@ Ext.define('Target.view.wizard.WizardController', {
     //     'Target.model.Reject'
     // ],
 
-    // listen: {
-    //     component: {
-    //         'targets-objects-panel': {
-    //             beforeLoadPanel: 'onBeforeLoadPanel',
-    //             beforeloadcatalog: 'onBeforeLoadCatalog'
-    //         },
-    //         'targets-objects-tabpanel': {
-    //             select: 'onSelectObject'
-    //         }
-    //     },
-    //     store: {
-    //         '#ProductContent': {
-    //             load: 'onLoadProductContent',
-    //             clear: 'onLoadProductContent'
-    //         },
-    //         '#ProductAssociation': {
-    //             load: 'onLoadProductAssociation',
-    //             clear: 'onLoadProductAssociation'
-    //         },
-    //         '#objects': {
-    //             update: 'onUpdateObject'
-    //         }
-    //     }
-    // },
+    listen: {
+        component: {
+            'targets-settings': {
+                selectsetting: 'onSelectSetting'
+            },
+            'targets-association': {
+                finish: 'finishWizard'
+            }
+        }
+        //     store: {
+        //         '#ProductContent': {
+        //             load: 'onLoadProductContent',
+        //             clear: 'onLoadProductContent'
+        //         },
+        //         '#ProductAssociation': {
+        //             load: 'onLoadProductAssociation',
+        //             clear: 'onLoadProductAssociation'
+        //         },
+        //         '#objects': {
+        //             update: 'onUpdateObject'
+        //         }
+        //     }
+    },
 
     showNext: function () {
         this.doCardNavigation(1);
@@ -58,6 +57,32 @@ Ext.define('Target.view.wizard.WizardController', {
 
         view.down('#card-prev').setDisabled(next === 0);
         view.down('#card-next').setDisabled(next === 2);
+    },
+
+    onSelectSetting: function (setting) {
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            l = view.getLayout(),
+            association = view.down('targets-association');
+
+        vm.set('currentSetting', setting);
+
+        // Setting selecionado
+        association.setSetting(setting.get('cst_setting'));
+
+        // Product
+        association.setProduct(setting.get('cst_product'));
+
+        // Ativar o painel
+        l.setActiveItem(association);
+
+    },
+
+    finishWizard: function () {
+        var me = this;
+        me.getView().fireEvent('finish', me);
+
     }
 
 });

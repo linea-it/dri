@@ -9,9 +9,11 @@ Ext.define('Target.view.objects.ObjectsModel', {
     requires: [
         'Target.model.Catalog',
         'Target.model.CatalogObject',
+        'Target.model.CurrentSetting',
         'Target.store.Objects',
         'Target.store.ProductContent',
-        'Target.store.ProductAssociation'
+        'Target.store.ProductAssociation',
+        'Target.store.CurrentSettings'
     ],
 
     data: {
@@ -36,12 +38,19 @@ Ext.define('Target.view.objects.ObjectsModel', {
         productassociation: {
             type: 'product-association',
             storeId: 'Association'
+        },
+        currentSettings: {
+            type: 'currentsettings'
         }
     },
 
     links: {
         currentCatalog: {
             type: 'Target.model.Catalog',
+            create: true
+        },
+        currentSetting: {
+            type: 'Target.model.CurrentSetting',
             create: true
         }
     }

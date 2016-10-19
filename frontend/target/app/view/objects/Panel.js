@@ -48,7 +48,7 @@ Ext.define('Target.view.objects.Panel', {
                         {
                             type: 'gear',
                             tooltip: 'Settings',
-                            callback: 'onClickColumnAssociation'
+                            callback: 'onClickSettings'
                         }
                     ]
                 }

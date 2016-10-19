@@ -13,7 +13,8 @@ Ext.define('Target.view.settings.Settings', {
     viewModel: 'settings',
 
     config: {
-        product: null
+        product: null,
+        currentSetting: null
     },
 
     initComponent: function () {
@@ -26,97 +27,68 @@ Ext.define('Target.view.settings.Settings', {
             },
             defaults: {
                 labelAlign: 'top',
-                readOnly: true,
-                labelStyle: 'font-weight:bold'
+                readOnly: true
             },
             items: [
                 {
-                    xtype: 'fieldset',
-                    layout: 'anchor',
-                    margin: '0 5 0 0',
-                    defaults: {
-                        labelAlign: 'top'
-                        // anchor: '100%'
-                    },
+                    xtype: 'component',
+                    html: [
+                        '<p>The Settings Wizard helps you to define how your target list will be displayed.</p>',
+                        '<p>Create or select an existing setting.</p>'
+                    ]
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    layout: 'hbox',
                     items: [
                         {
-                            xtype: 'component',
-                            html: [
-                                '<h3>Locally loaded data</h3>',
-                                '<p>This ComboBox uses local data from a JS array</p>'
-                            ]
+                            xtype: 'combobox',
+                            itemId: 'cmbSetting',
+                            reference: 'cmbSetting',
+                            publishes: 'id',
+                            fieldLabel: 'Setting',
+                            displayField: 'cst_display_name',
+                            store: {
+                                type: 'settings',
+                                listeners: {
+                                    scope: me,
+                                    load: 'onLoadComboSetting'
+                                }
+                            },
+                            bind: {
+                                selection: '{selectedSetting}'
+                            },
+                            minChars: 0,
+                            queryMode: 'local',
+                            typeAhead: true,
+                            labelStyle: 'font-weight:bold',
+                            readOnly: false,
+                            labelWidth: 60,
+                            width: 300
                         },
                         {
-                            xtype: 'fieldcontainer',
-                            layout: 'hbox',
-                            items: [
-                                {
-                                    xtype: 'combobox',
-                                    reference: 'cmbSetting',
-                                    publishes: 'id',
-                                    fieldLabel: 'Select Setting',
-                                    displayField: 'cst_display_name',
-                                    store: {
-                                        type: 'settings'
-                                    },
-                                    bind: {
-                                        selection: '{currentSetting}'
-                                    },
-                                    minChars: 0,
-                                    queryMode: 'local',
-                                    typeAhead: true,
-                                    labelStyle: 'font-weight:bold'
-                                },
-                                {
-                                    xtype: 'button',
-                                    iconCls: 'x-fa fa-plus',
-                                    handler: 'newSetting',
-                                    margin: '0 0 0 5',
-                                    tooltip: 'Add New Setting'
-                                },
-                                {
-                                    xtype: 'button',
-                                    iconCls: 'x-fa fa-pencil',
-                                    handler: 'editSetting',
-                                    tooltip: 'Edit Selected Setting',
-                                    bind: {
-                                        disabled: '{!currentSetting}'
-                                    }
-                                }
-                            ]
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-plus',
+                            handler: 'newSetting',
+                            margin: '0 0 0 5',
+                            tooltip: 'Add New Setting'
+                        },
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-pencil',
+                            handler: 'editSetting',
+                            tooltip: 'Edit Selected Setting',
+                            bind: {
+                                disabled: '{!selectedSetting.editable}'
+                            }
                         }
                     ]
                 },
                 {
                     xtype: 'textfield',
-                    fieldLabel: 'Name',
-                    allowBlank: false,
-                    name: 'cst_display_name',
-                    bind: {
-                        value: '{currentSetting.cst_display_name}'
-                    }
-                },
-                {
-                    xtype: 'textfield',
                     fieldLabel: 'Owner',
                     bind: {
-                        value: '{currentSetting.owner}'
-                    }
-                },
-                {
-                    xtype: 'checkbox',
-                    boxLabel: 'Is Default',
-                    name: 'cst_is_default',
-                    bind: {
-                        value: '{currentSetting.cst_is_default}'
-                    }
-                },
-                {
-                    xtype: 'checkbox',
-                    boxLabel: 'Is Public',
-                    name: 'cst_is_public',
-                    bind: {
-                        value: '{currentSetting.cst_is_public}'
+                        value: '{selectedSetting.owner}'
                     }
                 },
                 {
@@ -124,7 +96,18 @@ Ext.define('Target.view.settings.Settings', {
                     fieldLabel: 'Description',
                     name: 'cst_description',
                     bind: {
-                        value: '{currentSetting.cst_description}'
+                        value: '{selectedSetting.cst_description}'
+                    }
+                }
+            ],
+            buttons: [
+                {
+                    itemId: 'card-next',
+                    text: 'Next',
+                    handler: 'onChooseSetting',
+                    bind: {
+                        disabled: '{!selectedSetting}'
+                        //hidden: '{!selectedSetting.editable}'
                     }
                 }
             ]
@@ -139,6 +122,30 @@ Ext.define('Target.view.settings.Settings', {
         if (product > 0) {
             this.fireEvent('changeproduct', product, this);
         }
+    },
+
+    setCurrentSetting: function (currentSetting) {
+        this.currentSetting = currentSetting;
+
+        this.getViewModel().set('currentSetting', currentSetting);
+    },
+
+    onLoadComboSetting: function (store) {
+        var me = this,
+            currentSetting = me.getCurrentSetting(),
+            combo = me.down('#cmbSetting'),
+            setting;
+
+        if (currentSetting.get('id') > 0) {
+            setting = store.getById(currentSetting.get('cst_setting'));
+            combo.select(setting);
+        }
+    },
+
+    selectSetting: function (currentSetting) {
+
+        this.fireEvent('selectsetting', currentSetting);
+
     }
 
 });

@@ -82,27 +82,74 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     onBeforeLoadCatalog: function (record) {
         var me = this,
+            refs = me.getReferences(),
+            objectsTabPanel = refs.targetsObjectsTabpanel;
+
+        me.loadCurrentSetting();
+    },
+
+    loadCurrentSetting: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('currentSettings'),
+            product = vm.get('currentCatalog');
+
+        store.addFilter([
+            {
+                property: 'cst_product',
+                value: product.get('id')
+            }
+        ]);
+
+        store.load({
+            callback: function (records, operations, success) {
+                if ((success) && (records.length == 1)) {
+                    vm.set('currentSetting', records[0]);
+
+                    me.configurePanelBySettings();
+
+                } else if (((success) && (records.length > 1))) {
+                    console.log('Mais de uma setting');
+
+                } else {
+                    me.showWizard();
+                }
+            }
+        });
+    },
+
+    configurePanelBySettings: function () {
+        var me = this,
             vm = me.getViewModel(),
             storeProductContent = vm.getStore('productcontent'),
             storeProductAssociation = vm.getStore('productassociation'),
-            refs = me.getReferences(),
-            objectsTabPanel = refs.targetsObjectsTabpanel;
+            currentSetting = vm.get('currentSetting'),
+            currentCatalog = vm.get('currentCatalog');
+
+        // Carregar as propriedades do catalogo.
 
         // filtrar as stores de colunas
         storeProductContent.filter([
             {
                 property: 'pcn_product_id',
-                value: record.get('id')
+                value: currentCatalog.get('id')
             }
         ]);
 
         storeProductAssociation.filter([
             {
                 property: 'pca_product',
-                value: record.get('id')
+                value: currentCatalog.get('id')
+            },
+            {
+                property: 'pca_setting',
+                value: currentSetting.get('cst_setting')
             }
         ]);
+
     },
+
+
 
     /**
      * Toda Vez que a store productContent e carregada e passado a lista
@@ -306,37 +353,10 @@ Ext.define('Target.view.objects.ObjectsController', {
         }
     },
 
-    onClickColumnAssociation: function () {
-        var me = this,
-            view = me.getView(),
-            vm = view.getViewModel(),
-            catalog = vm.get('currentCatalog');
+    onClickSettings: function () {
+        var me = this;
 
-        this.winAssociation = Ext.create('Ext.window.Window', {
-            title: 'Association',
-            layout: 'fit',
-            closeAction: 'destroy',
-            width: 800,
-            height: 620,
-            modal: true,
-            items: [{
-                xtype: 'targets-association',
-                listeners: {
-                    scope: me
-                    // todo evento que vai indicar que associacao foi finalizada
-                    // submitexport: me.exportCatalog
-                }
-            }],
-            listeners: {
-                scope: me,
-                close: 'reloadAssociation'
-            }
-        });
-
-        this.winAssociation.show();
-
-        this.winAssociation.down('targets-association').setProduct(catalog.get('id'));
-
+        me.showWizard();
     },
 
     onClickExportCatalog: function () {
@@ -508,32 +528,16 @@ Ext.define('Target.view.objects.ObjectsController', {
         });
     },
 
-    // onDbClickTarget: function (record) {
-    //     var me = this,
-    //         host = window.location.hostname,
-    //         route = 'ps';
-
-    //     // sys = Explorer System (cluster objects)
-    //     // ps = Explorer Point Source (single object)
-
-    //     if (record.get('_meta_is_system') === true) {
-    //         route = 'sys';
-    //     }
-
-    //     var url = Ext.String.format('http://{0}/static/ws/explorer/index.html#{1}/{2}/{3}',
-    //             host, route, record.get('_meta_catalog_id'), record.get('_meta_id'));
-
-    //     window.open(url);
-    // },
-
     showWizard: function () {
         var me = this,
             vm = me.getViewModel(),
-            catalog = vm.get('catalog');
+            catalog = vm.get('catalog'),
+            currentSetting = vm.get('currentSetting');
 
         this.wizard = Ext.create('Ext.window.Window', {
-            title: 'Initial Settings Wizard',
+            title: 'Settings Wizard',
             layout: 'fit',
+            closable: false,
             closeAction: 'destroy',
             width: 800,
             height: 620,
@@ -542,18 +546,28 @@ Ext.define('Target.view.objects.ObjectsController', {
                 xtype: 'targets-wizard',
                 product: catalog,
                 listeners: {
-                    scope: me
-                    // todo evento que vai indicar que associacao foi finalizada
-                    // submitexport: me.exportCatalog
+                    scope: me,
+                    finish: 'onFinishWizard'
                 }
-            }],
-            listeners: {
-                scope: me,
-                close: 'reloadAssociation'
-            }
+            }]
+            // listeners: {
+            //     scope: me,
+            //     close: 'onFinishWizard'
+            // }
         });
 
+        if (currentSetting.get('id') > 0) {
+            this.wizard.down('targets-wizard').setCurrentSetting(currentSetting);
+        }
+
         this.wizard.show();
+
+    },
+
+    onFinishWizard: function () {
+        this.wizard.close();
+
+        this.loadCurrentSetting();
 
     }
 

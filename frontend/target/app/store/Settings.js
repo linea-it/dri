@@ -14,7 +14,14 @@ Ext.define('Target.store.Settings', {
     pageSize: 0,
 
     proxy: {
-        url: '/dri/api/productsettings/'
-    }
+        url: '/dri/api/productsetting/'
+    },
+
+    sorters: [
+        {
+            property: 'id',
+            direction: 'DESC'
+        }
+    ]
 
 });

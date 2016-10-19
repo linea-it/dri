@@ -18,10 +18,14 @@ Ext.define('Target.view.association.AssociationModel', {
         }
     },
 
+    data: {
+        setting: null
+    },
+
     stores: {
         catalogs: {
             type: 'catalogs',
-            storeId: 'Catalogs'
+            storeId: 'AuxCatalogs'
         },
         classcontent: {
             type: 'class-content',
@@ -33,7 +37,7 @@ Ext.define('Target.view.association.AssociationModel', {
         },
         productcontent: {
             type: 'product-content',
-            storeId: 'ProductContent'
+            storeId: 'AuxProductContent'
         },
 
         productassociation: {

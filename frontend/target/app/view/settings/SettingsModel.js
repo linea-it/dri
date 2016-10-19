@@ -5,12 +5,18 @@ Ext.define('Target.view.settings.SettingsModel', {
 
     requires: [
         'Target.store.Settings',
-        'Target.model.Setting'
+        'Target.model.Setting',
+        'Target.store.CurrentSettings',
+        'Target.model.CurrentSetting'
     ],
 
     links: {
-        currentSetting: {
+        selectedSetting: {
             type: 'Target.model.Setting',
+            create: true
+        },
+        currentSetting: {
+            type: 'Target.model.CurrentSetting',
             create: true
         }
     },
@@ -20,8 +26,11 @@ Ext.define('Target.view.settings.SettingsModel', {
     },
 
     stores: {
-        catalogs: {
+        settings: {
             type: 'settings'
+        },
+        currentSettings: {
+            type: 'currentsettings'
         }
     }
 });

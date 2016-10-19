@@ -15,13 +15,13 @@ Ext.define('Target.view.association.AssociationController', {
             }
         },
         store: {
-            '#Catalogs': {
+            '#AuxCatalogs': {
                 load: 'onLoadCatalogs'
             },
             '#ClassContent': {
                 load: 'onLoadClassContent'
             },
-            '#ProductContent': {
+            '#AuxProductContent': {
                 load: 'onLoadProductContent'
             },
             '#ProductAssociation': {
@@ -32,7 +32,6 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     onChangeProduct: function (product) {
-        console.log('onChangeProduct');
         var me = this,
             vm = me.getViewModel(),
             association = vm.getStore('fakeassociation'),
@@ -131,6 +130,7 @@ Ext.define('Target.view.association.AssociationController', {
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
+            setting = vm.get('setting'),
             productAssociations = vm.getStore('productassociation');
 
         // Carregar as propriedades associadas.
@@ -138,6 +138,10 @@ Ext.define('Target.view.association.AssociationController', {
             {
                 property: 'pca_product',
                 value: currentCatalog.get('id')
+            },
+            {
+                property: 'pca_setting',
+                value: setting
             }
         ]);
     },
@@ -236,7 +240,9 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     onCellDrop: function (target, dragData) {
-        var tRecord = target.record,
+        var me = this,
+            vm = me.getViewModel(),
+            tRecord = target.record,
             previousValues = tRecord.previousValues.pcc_display_name,
             record;
 
@@ -246,7 +252,8 @@ Ext.define('Target.view.association.AssociationController', {
             record = Ext.create('Target.model.Association', {
                 pca_product: tRecord.get('pca_product'),
                 pca_class_content: dragData.record.get('id'),
-                pca_product_content: tRecord.get('pca_product_content')
+                pca_product_content: tRecord.get('pca_product_content'),
+                pca_setting: vm.get('setting')
             });
 
             this.addAssociation(record, tRecord);

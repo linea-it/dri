@@ -5,7 +5,7 @@ from product_register.models import ExternalProcess
 from rest_framework import serializers
 
 from .models import File, Catalog, ProductContent, ProductContentAssociation
-from .models import Product, Map, Mask, Table, ProductSettings
+from .models import Product, Map, Mask, Table, ProductSetting, CurrentSetting
 
 
 logger = logging.getLogger(__name__)
@@ -311,6 +311,7 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
             'pca_product',
             'pca_class_content',
             'pca_product_content',
+            'pca_setting',
         )
 
         read_only_fields = ('id')
@@ -426,21 +427,42 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             return None
 
 
-class ProductSettingsSerializer(serializers.ModelSerializer):
+class ProductSettingSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField()
+    editable = serializers.SerializerMethodField()
 
     class Meta:
-        model = ProductSettings
+        model = ProductSetting
 
         fields = (
             'id',
             'cst_product',
             'cst_display_name',
             'cst_description',
-            'cst_is_default',
             'cst_is_public',
+            'cst_is_editable',
             'owner',
+            'editable'
         )
 
     def get_owner(self, obj):
         return obj.owner.username
+
+    def get_editable(self, obj):
+        current_user = self.context['request'].user
+        if obj.owner.pk == current_user.pk:
+            return True
+        else:
+            return obj.cst_is_editable
+
+
+class CurrentSettingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CurrentSetting
+
+        fields = (
+            'id',
+            'cst_product',
+            'cst_setting',
+        )

@@ -10,10 +10,12 @@ from rest_framework.decorators import list_route
 from rest_framework.response import Response
 from rest_framework import filters
 from django.db.models import Q
-
-from .models import Product, Catalog, Map, Mask, ProductContent, ProductContentAssociation, ProductSettings
+from common.filters import IsOwnerFilterBackend
+from .models import Product, Catalog, Map, Mask, ProductContent, ProductContentAssociation, ProductSetting, \
+    CurrentSetting
 from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, MaskSerializer, ProductContentSerializer, \
-    ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer, ProductSettingsSerializer
+    ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer, ProductSettingSerializer, \
+    CurrentSettingSerializer
 
 logger = logging.getLogger(__name__)
 
@@ -180,7 +182,7 @@ class ProductContentAssociationViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductContentAssociationSerializer
 
-    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content')
+    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content', 'pca_setting')
 
     ordering_fields = ('id',)
 
@@ -193,7 +195,7 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductAssociationSerializer
 
-    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content')
+    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content', 'pca_setting')
 
     ordering_fields = ('id',)
 
@@ -245,25 +247,40 @@ class AllProductViewSet(viewsets.ModelViewSet):
     ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')
 
 
-
-class ProductSettingsBackend(filters.BaseFilterBackend):
+class ProductSettingBackend(filters.BaseFilterBackend):
     """
     Filtra somente os settings do usuario ou os marcados como publicos.
     """
+
     def filter_queryset(self, request, queryset, view):
         return queryset.filter(Q(owner=request.user) | Q(cst_is_public=True))
 
 
-class ProductSettingsViewSet(viewsets.ModelViewSet):
+class ProductSettingViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows product settings to be viewed or edited
     """
-    queryset = ProductSettings.objects.select_related().all()
+    queryset = ProductSetting.objects.select_related().all()
 
-    serializer_class = ProductSettingsSerializer
+    serializer_class = ProductSettingSerializer
 
-    filter_backends = (filters.DjangoFilterBackend, ProductSettingsBackend)
+    filter_backends = (filters.DjangoFilterBackend, ProductSettingBackend)
 
-    filter_fields = ('id', 'cst_product', 'cst_display_name', 'cst_is_public')
+    filter_fields = ('id', 'cst_product', 'cst_display_name', 'cst_description', 'cst_is_public')
+
+    ordering_fields = ('id', 'cst_display_name',)
+
+
+class CurrentSettingViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = CurrentSetting.objects.all()
+
+    serializer_class = CurrentSettingSerializer
+
+    filter_backends = (filters.DjangoFilterBackend, IsOwnerFilterBackend)
+
+    filter_fields = ('id', 'cst_product', 'cst_setting',)
 
     ordering_fields = ('id', 'cst_display_name',)

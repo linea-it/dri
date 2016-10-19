@@ -1,13 +1,13 @@
 Ext.define('Target.view.settings.SettingWindow', {
     extend: 'Ext.window.Window',
 
-    title: 'Add New Setting',
+    title: 'Create or edit a setting',
     reference: 'winSetting',
     width: 300,
     height: 350,
     layout: 'fit',
     modal: true,
-    defaultFocus: 'cst_display_name',
+    // defaultFocus: 'cst_display_name',
     closeAction: 'destroy',
     items: [
         {
@@ -37,13 +37,13 @@ Ext.define('Target.view.settings.SettingWindow', {
                 },
                 {
                     xtype: 'checkbox',
-                    boxLabel: 'Is Default',
-                    name: 'cst_is_default'
+                    boxLabel: 'Is Public',
+                    name: 'cst_is_public'
                 },
                 {
                     xtype: 'checkbox',
-                    boxLabel: 'Is Public',
-                    name: 'cst_is_public'
+                    boxLabel: 'Is Editable',
+                    name: 'cst_is_editable'
                 },
                 {
                     xtype: 'textareafield',

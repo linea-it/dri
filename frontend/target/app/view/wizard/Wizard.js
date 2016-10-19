@@ -23,14 +23,15 @@ Ext.define('Target.view.wizard.Wizard', {
     defaultListenerScope: true,
 
     config: {
-        product: null
+        product: null,
+        currentSetting: null
     },
 
     items: [
         {
             id: 'card-0',
             xtype: 'targets-settings',
-            title: 'Settings',
+            title: 'Setting',
             bind: {
                 product: '{product}'
             }
@@ -38,10 +39,10 @@ Ext.define('Target.view.wizard.Wizard', {
         {
             id: 'card-1',
             xtype: 'targets-association',
-            title: 'Association',
-            bind: {
-                product: '{product}'
-            }
+            title: 'Association'
+            // bind: {
+            //     product: '{product}'
+            // }
         }
         // {
         //     id: 'card-1',
@@ -55,19 +56,19 @@ Ext.define('Target.view.wizard.Wizard', {
         // }
     ],
 
-    bbar: ['->',
-        {
-            itemId: 'card-prev',
-            text: '&laquo; Previous',
-            handler: 'showPrevious',
-            disabled: true
-        },
-        {
-            itemId: 'card-next',
-            text: 'Next &raquo;',
-            handler: 'showNext'
-        }
-    ],
+    // bbar: ['->',
+    //     {
+    //         itemId: 'card-prev',
+    //         text: '&laquo; Previous',
+    //         handler: 'showPrevious',
+    //         disabled: true
+    //     },
+    //     {
+    //         itemId: 'card-next',
+    //         text: 'Next &raquo;',
+    //         handler: 'showNext'
+    //     }
+    // ],
 
     setProduct: function (product) {
         var me = this,
@@ -76,6 +77,17 @@ Ext.define('Target.view.wizard.Wizard', {
         this.product = product;
 
         vm.set('product', product);
+    },
+
+    setCurrentSetting: function (currentSetting) {
+        var me = this;
+
+        me.currentSetting = currentSetting;
+
+        me.getViewModel().set('currentSetting', currentSetting);
+
+        me.down('targets-settings').setCurrentSetting(currentSetting);
+
     },
 
     showNext: function () {
