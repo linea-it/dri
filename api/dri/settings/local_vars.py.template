@@ -32,6 +32,8 @@ EMAIL_PORT = '<porta do smtp>'
 EMAIL_HOST_USER = '<usuario que vai ser usado no smtp'
 EMAIL_HOST_PASSWORD = '<senha do smtp>'
 EMAIL_USE_TLS = True
+USER_CUTOUT = 'brportal' # User required for cutout
+PASS_CUTOUT = 'brp70chips' # password required for cutout
 
 
 # Exemple using Mysql need mysqlclient in requiments.txt

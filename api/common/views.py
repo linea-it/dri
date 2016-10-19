@@ -91,3 +91,15 @@ def contact_us(request):
                 return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['GET'])
+def teste(request):
+
+    if request.method == 'GET':
+        print('Teste---------------------')
+        from product.CutoutJobs import CutoutJobs
+        a = CutoutJobs.start_job([350.76500] , [-0.45300], 'coadd')
+        print(a)
+
+
+
+        return Response(dict({'teste':''}))

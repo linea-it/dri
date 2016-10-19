@@ -189,6 +189,10 @@ Ext.define('Target.view.catalog.Tree', {
                     tooltip: 'Refresh and Clear filters',
                     iconCls: 'x-fa fa-refresh',
                     handler: me.refreshAndClear
+                },{
+                    tooltip: 'Cutout',
+                    iconCls: 'x-fa fa-cut',
+                    handler: me.cutout
                 }
             ]
         });
@@ -342,6 +346,156 @@ Ext.define('Target.view.catalog.Tree', {
         var tree = this.up('treepanel');
 
         tree.filterCatalogs();
-    }
-});
+    },
+    cutout: function () {
+        var me = this,
+        win = Ext.create('Ext.window.Window', {
+            title: 'Cutout',
+            height: 300,
+            width: 400,
+            layout: 'fit',
+            items: {
+                xtype: 'form',
+                id: 'formcut',
+                items: {
+                    xtype: 'fieldset',
+                    margin: '5 5 5 5',
+                    // title: 'Cutout',
+                    defaultType: 'textfield',
+                    defaults: {
+                        anchor: '100%'
+                    },
+                    
+                    items: [{
+                        margin: '5 0 5 0',
+                        fieldLabel: 'Cutout Name',
+                        emptyText: 'Cutout Name',
+                        name: 'name'
+                    }, {
+                        fieldLabel: 'xsize',
+                        name: 'xsize',
+                        emptyText:'Ex: 1.0',
+                        triggers: {
+                        clear: {
+                            cls: 'fa fa-question-circle',
+                            tooltip: 'help',
+                                handler : function() {
+                                    Ext.Msg.alert('xsize', 'xsize of cutout in arcmin, can be single number or list');
+                                }
+                            }
+                        }
+                    }, {
+                        fieldLabel: 'ysize',
+                        name: 'ysize',
+                        emptyText:'Ex: 1.0',
+                        triggers: {
+                        clear: {
+                            cls: 'fa fa-question-circle',
+                            tooltip: 'help',
+                                handler : function() {
+                                    Ext.Msg.alert('ysize', 'ysize of cutout in arcmin, can be single number or list');
+                                }
+                            }
+                        }
+                    }, {
+                        xtype: 'combobox',
+                        fieldLabel: 'Job Type',
+                        name: 'jobType',
+                        store: [
+                            ['coadd', 'Coadd'],
+                            ['single', 'Single Epochs']
+                        ],
+                        valueField: 'abbr',
+                        displayField: 'state',
+                        typeAhead: true,
+                        queryMode: 'local',
+                        emptyText: 'Select a Type...',
+                        listeners: {
+                            change: function(ele, newValue, oldValue) { 
+                                if (newValue == 'single'){
+                                    Ext.getCmp('band').getEl().show();
+                                    Ext.getCmp('blacklist').getEl().show();
+                                }else{
+                                    Ext.getCmp('band').getEl().hide();
+                                    Ext.getCmp('blacklist').getEl().hide();
+                                }
+                            }
+                        }
+                    },{
+                        xtype: 'checkbox',
+                        fieldLabel: 'No Blacklist',
+                        hidden : true,
+                        id: 'blacklist',
+                        name: 'blacklist'     
+                    },{
+                        fieldLabel: 'Band',
+                        name: 'band',
+                        id: 'band',
+                        emptyText:'Ex: g,r,i',
+                        hidden: true,
+                        triggers: {
+                        clear: {
+                            cls: 'fa fa-question-circle',
+                            tooltip: 'help',
+                                handler : function() {
+                                    Ext.Msg.alert('Band', 'List of bands for single epoch exposures "g,r,i,z,Y"');
+                                }
+                            }
+                        }
+                    },{
+                        xtype: 'panel',
+                        layout: 'hbox',
+                        items:[
+                        {
+                        xtype: 'button',
+                        text: 'Submit',
+                        width: 150,
+                            handler: function() {
+                                console.log(me)
+                                values = Ext.getCmp('formcut').getValues()
+                                console.log(values)
 
+                                balacklist = null
+                                band = null
+                           
+                                if (values.jobType == "single"){
+                                    blacklist = values.blacklist
+                                    band = values.band
+                                }
+                                var myStore = Ext.create('Ext.data.Store', {
+                                    // model: 'User',
+                                    proxy: {
+                                        type: 'ajax',
+                                        url: '/dri/api/CutOutJob/',
+                                        reader: {
+                                            type: 'json',
+                                            rootProperty: 'users'
+                                        }
+                                    },
+                                    // autoLoad: true
+                                });
+
+                                myStore.add ({
+                                    "cjb_product": 13,
+                                    "cjb_display_name": values.name,
+                                    "cjb_status": "rn",
+                                    "cjb_job_id": "testando123456",
+                                    'cjb_xsize': values.xsize,
+                                    'cjb_ysize': values.ysize,
+                                    'cjb_job_type': values.jobType,
+                                    'cjb_band': band,
+                                    'cjb_Blacklist': blacklist,
+                                    // 'cjb_status': 'st'
+                                });
+                                console.log(myStore)
+                                myStore.sync()                                
+                            }
+                        }]
+                    }]
+                }
+            }
+        })
+        win.show();
+    }
+    
+});

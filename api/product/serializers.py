@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 from .models import File, Catalog, ProductContent, ProductContentAssociation
 from .models import Map
+from .models import CutOutJob
 from .models import Mask
 from .models import Product
 from .models import Table
@@ -190,6 +191,22 @@ class MapSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'mpa_nside',
             'mpa_ordering',
+        )
+
+class CutOutJobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CutOutJob
+
+        fields = (
+            'cjb_product',
+            'cjb_display_name',
+            'cjb_status',
+            'cjb_job_id',
+            'cjb_xsize',
+            'cjb_ysize',
+            'cjb_job_type',
+            'cjb_band',
+            'cjb_Blacklist',
         )
 
 
