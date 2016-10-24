@@ -97,9 +97,6 @@ def teste(request):
     if request.method == 'GET':
         print('Teste---------------------')
         from product.CutoutJobs import CutoutJobs
-        a = CutoutJobs.start_job([350.76500] , [-0.45300], 'coadd')
+        a = CutoutJobs.check_job()
         print(a)
-
-
-
         return Response(dict({'teste':''}))

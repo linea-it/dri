@@ -476,10 +476,10 @@ Ext.define('Target.view.catalog.Tree', {
                                 });
 
                                 myStore.add ({
-                                    "cjb_product": 13,
+                                    "cjb_product": 20,
                                     "cjb_display_name": values.name,
-                                    "cjb_status": "rn",
-                                    "cjb_job_id": "testando123456",
+                                    "cjb_status": "st",
+                                    "cjb_job_id": "---",
                                     'cjb_xsize': values.xsize,
                                     'cjb_ysize': values.ysize,
                                     'cjb_job_type': values.jobType,
