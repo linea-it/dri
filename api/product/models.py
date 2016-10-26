@@ -165,3 +165,14 @@ class CutOutJob(models.Model):
     
     cjb_job_id = models.CharField(
         max_length=1024, verbose_name='Job ID')
+
+class CutOut(models.Model):
+    
+    ctt_url = models.CharField(
+        max_length=20, verbose_name='url')
+
+    ctt_object_id = models.CharField(
+        max_length=5, verbose_name='Object ID')
+
+    ctt_filter = models.ForeignKey(
+        'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)

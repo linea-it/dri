@@ -10,6 +10,8 @@ from django.db.models import Q
 from django.conf import settings
 import requests
 from .models import CutOutJob
+from .models import CutOut
+from common.models import Filter
 from product.serializers import AssociationSerializer
 
 class CutoutJobs():
@@ -23,31 +25,13 @@ class CutoutJobs():
             print(i.cjb_status)
             product_id = i.cjb_product_id
             # muda Status para 2 status (antes de submeter)
-            if i.cjb_status == 'st':
-                CutOutJob.objects.filter(pk = i.pk).update(cjb_status = 'bs')
+            # if i.cjb_status == 'st':
+            #     CutOutJob.objects.filter(pk = i.pk).update(cjb_status = 'bs')
             # Recupera o model Catalog pelo product id
-            catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
-            queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
-            serializer = AssociationSerializer(queryset, many=True)
-            associations = serializer.data            
-            properties = dict()
-            for property in associations:
-                if property.get('pcc_ucd'):
-                    properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
+            rows = get_ra_dec(product_id)
             ra = list()
             dec = list()
-            schema = catalog.tbl_schema
-            table = catalog.tbl_name
-            db = CatalogDB()
-            rows, count = db.wrapper.query(table)
-            # Cria os array
             for row in rows:
-                row.update({
-                    "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main"))
-                    })
-                row.update({
-                    "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main"))
-                    })
                 ra.append(float(row['_meta_ra']))
                 dec.append(float(row['_meta_dec']))
             
@@ -56,8 +40,8 @@ class CutoutJobs():
             req = requests.get('http://descut.cosmology.illinois.edu/api/token/?token='+token)
             body = {
               'token': token,
-              'ra': str(ra[:1]),
-              'dec': str(dec[:1]),
+              'ra': str(ra[:6]),
+              'dec': str(dec[:6]),
               'job_type': i.cjb_job_type            
             }
             if i.cjb_xsize:
@@ -90,19 +74,114 @@ class CutoutJobs():
         from os import mkdir
         for i in cutoutjobs:
             print(i.cjb_job_id)
+            product_id = i.cjb_product_id
             req = requests.post('http://descut.cosmology.illinois.edu/api/token/',data={'username':settings.USER_CUTOUT, 'password': settings.PASS_CUTOUT})
             token = req.json()['token']
             req = requests.get('http://descut.cosmology.illinois.edu/api/jobs/?token='+token+'&jobid='+i.cjb_job_id)
-            print(req.json()['status'])
-            if req.json()['status'] != 'error':
+            # print(req.json())
+            if req.json()['status'] != 'error' and req.json()['job_status'] == 'SUCCESS':
                 links = req.json()['links']
                 cutname = i.cjb_display_name.replace(' ', '_') +'_'+ str(i.pk)
                 mkdir('/home/rafael/teste/'+cutname)
+
+
+                # Pegar a lista com todos os objetos do target 
+                rows = get_ra_dec(product_id)
+                # Cria uma função que 
                 for url in links:
                     a = url.split('/')
                     a = a[len(a) -1]
+                    raDecList = a[+4:].split('.')
+                    raDecList[0] = raDecList[0] + '.'+raDecList[1][-1:] 
+                    raDecList[1] =raDecList[1][+1:] + '.' +raDecList[2]
+                    ra = raDecList[0][:+2] + ' ' + raDecList[0][+2:][:+2] + ' ' + raDecList[0][+4:]
+                    dec = raDecList[1][:+3] + ' ' + raDecList[1][+3:][:+2] + ' ' + raDecList[1][+5:].split("_")[0]
+                    object_id = '-'
+                    ra = sextodec(ra)*15 
+                    dec = sextodec(dec)
+
+                    for row in rows:
+                        originalRa = float(row['_meta_ra'])
+                        originalDec = float(row['_meta_dec'])
+                        ra = float(ra)
+                        dec = float(dec)
+                        # print('--------------ra---------------------')
+                        # print(round(originalRa, 4))
+                        # print(round(ra, 4))
+                        # print('--------------ra---------------------') 
+
+                        # print('--------------dec---------------------')
+                        # print(round(originalDec, 4))
+                        # print(round(dec, 4))
+                        # print('--------------dec---------------------')
+                        if int(originalRa) == int(ra) and round(originalDec, 4) == round(dec, 4):
+                            object_id = row['_meta_id']
                     r = requests.get(url)
-                    with open("/home/rafael/teste/"+cutname+"/"+a, "wb") as code:
+                    urlF = "/home/rafael/teste/"+cutname+"/"+a
+                    with open(urlF, "wb") as code:
                         code.write(r.content)
+                    f = Filter.objects.get(filter__iexact = 'g')
+                    CutOut(ctt_url = urlF, ctt_object_id = object_id, ctt_filter = f).save()
                 CutOutJob.objects.filter(pk = i.pk).update(cjb_status = 'ok')
         return({"status": "ok"})
+
+def get_ra_dec(product_id):
+    catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
+    queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
+    serializer = AssociationSerializer(queryset, many=True)
+    associations = serializer.data            
+    properties = dict()
+    for property in associations:
+        if property.get('pcc_ucd'):
+            properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
+    ra = list()
+    dec = list()
+    schema = catalog.tbl_schema
+    table = catalog.tbl_name
+    db = CatalogDB()
+    rows, count = db.wrapper.query(table)
+    # Cria os array
+    auxDict = dict()
+    raDec = list()
+    for row in rows:
+        if len(raDec) < 10:
+            auxDict.update({
+                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main"))
+                })
+            auxDict.update({
+                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main"))
+                })
+            auxDict.update({
+                    "_meta_id": row.get(properties.get("meta.id;meta.main"))
+                })
+            raDec.append(auxDict)
+            auxDict = dict()
+    return raDec
+    # Funcao para converter ra dec
+
+def sextodec(xyz,delimiter=None):
+    """Decimal value from numbers in sexagesimal system.
+    The input value can be either a floating point number or a string
+    such as "hh mm ss.ss" or "dd mm ss.ss". Delimiters other than " "
+    can be specified using the keyword ``delimiter``.
+    """
+    divisors = [1,60.0,3600.0]
+
+    xyzlist = str(xyz).split(delimiter)
+
+    sign = 1
+
+    if "-" in xyzlist[0]:
+      sign = -1
+
+    xyzlist = [abs(float(x)) for x in xyzlist]
+
+    decimal_value = 0 
+
+    for i,j in zip(xyzlist,divisors): # if xyzlist has <3 values then
+                                    # divisors gets clipped.
+        decimal_value += i/j
+
+    decimal_value = -decimal_value if sign == -1 else decimal_value
+
+    return decimal_value

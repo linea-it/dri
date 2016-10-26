@@ -98,5 +98,6 @@ def teste(request):
         print('Teste---------------------')
         from product.CutoutJobs import CutoutJobs
         a = CutoutJobs.check_job()
-        print(a)
+        # a = CutoutJobs.sextodec('22 03 31.8')
+        # print(a * 15)
         return Response(dict({'teste':''}))
