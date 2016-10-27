@@ -156,3 +156,17 @@ class ProductContentAssociation(models.Model):
     pca_setting = models.ForeignKey(
         ProductSetting, on_delete=models.CASCADE, verbose_name='Setting', default=None, null=True, blank=True
     )
+
+class ProductContentSetting(models.Model):
+    pcs_content = models.ForeignKey(
+        ProductContent, on_delete=models.CASCADE, verbose_name='Content', default=None
+    )
+    pcs_setting = models.ForeignKey(
+        ProductSetting, on_delete=models.CASCADE, verbose_name='Setting', default=None, null=True, blank=True
+    )
+    pcs_is_visible = models.BooleanField(
+        default=False, verbose_name='Is Visible'
+    )
+    pcs_order = models.PositiveIntegerField(
+        null=True, blank=True, verbose_name='Order'
+    )

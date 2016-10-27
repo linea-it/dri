@@ -14,22 +14,7 @@ Ext.define('Target.view.settings.SettingsController', {
             }
         }
     },
-    //     store: {
-    //         '#Catalogs': {
-    //             load: 'onLoadCatalogs'
-    //         },
-    //         '#ClassContent': {
-    //             load: 'onLoadClassContent'
-    //         },
-    //         '#ProductContent': {
-    //             load: 'onLoadProductContent'
-    //         },
-    //         '#ProductAssociation': {
-    //             load: 'onLoadProductAssociation'
-    //         }
-    //     }
 
-    // },
     onChangeProduct: function (product) {
         var me = this,
             vm = me.getViewModel(),
@@ -107,8 +92,6 @@ Ext.define('Target.view.settings.SettingsController', {
 
         store.load({
             callback: function () {
-                console.log(this.first());
-
                 combo.select(this.first());
             }
         });
@@ -230,6 +213,27 @@ Ext.define('Target.view.settings.SettingsController', {
             }
         });
 
+    },
+
+    onDeleteSetting: function () {
+        // var me = this,
+        //     view = me.getView(),
+        //     vm = me.getViewModel(),
+        //     store = vm.getStore('settings'),
+        //     selected = vm.get('selectedSetting');
+
+        // if (selected.get('id') > 0) {
+        //     store.remove(selected);
+        //     store.sync({
+        //         callback: function () {
+        //             store.load({
+        //                 // callback: function () {
+        //                 //     view.selectSetting(this.first());
+        //                 // }
+        //             });
+        //         }
+        //     });
+        // }
     }
 
 });

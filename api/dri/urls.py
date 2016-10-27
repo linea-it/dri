@@ -51,6 +51,8 @@ router.register(r'association', product_views.ProductAssociationViewSet)
 router.register(r'AllProducts', product_views.AllProductViewSet)
 router.register(r'productsetting', product_views.ProductSettingViewSet)
 router.register(r'currentsetting', product_views.CurrentSettingViewSet)
+router.register(r'contentsetting', product_views.ProductContentSettingViewSet)
+
 
 
 

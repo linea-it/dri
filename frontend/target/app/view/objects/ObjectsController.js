@@ -22,7 +22,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         component: {
             'targets-objects-panel': {
                 beforeLoadPanel: 'onBeforeLoadPanel',
-                beforeloadcatalog: 'onBeforeLoadCatalog'
+                beforeloadcatalog: 'loadCurrentSetting'
             },
             'targets-objects-tabpanel': {
                 select: 'onSelectObject'
@@ -69,30 +69,31 @@ Ext.define('Target.view.objects.ObjectsController', {
     onLoadCatalogs: function (store) {
         var me = this,
             vm = me.getViewModel(),
-            currentCatalog;
+            currentCatalog,
+            refs = me.getReferences(),
+            objectsTabPanel = refs.targetsObjectsTabpanel;
+
         if (store.count() === 1) {
             currentCatalog = store.first();
 
             vm.set('currentCatalog', currentCatalog);
 
-            me.onBeforeLoadCatalog(currentCatalog);
+            objectsTabPanel.setLoading(false);
+
+            me.loadCurrentSetting();
         }
 
-    },
-
-    onBeforeLoadCatalog: function (record) {
-        var me = this,
-            refs = me.getReferences(),
-            objectsTabPanel = refs.targetsObjectsTabpanel;
-
-        me.loadCurrentSetting();
     },
 
     loadCurrentSetting: function () {
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('currentSettings'),
-            product = vm.get('currentCatalog');
+            product = vm.get('currentCatalog'),
+            refs = me.getReferences(),
+            objectsTabPanel = refs.targetsObjectsTabpanel;
+
+        objectsTabPanel.setLoading(true);
 
         store.addFilter([
             {
@@ -103,6 +104,9 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         store.load({
             callback: function (records, operations, success) {
+
+                objectsTabPanel.setLoading(false);
+
                 if ((success) && (records.length == 1)) {
                     vm.set('currentSetting', records[0]);
 
@@ -110,6 +114,10 @@ Ext.define('Target.view.objects.ObjectsController', {
 
                 } else if (((success) && (records.length > 1))) {
                     console.log('Mais de uma setting');
+                    console.log('TODO ISSO NAO PODE ACONTECER');
+
+                    vm.set('currentSetting', records[records.length - 1]);
+                    me.configurePanelBySettings();
 
                 } else {
                     me.showWizard();
@@ -168,11 +176,9 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     reloadAssociation: function () {
-        var me = this,
-            vm = me.getViewModel(),
-            currentCatalog = vm.get('currentCatalog');
+        var me = this;
 
-        me.onBeforeLoadCatalog(currentCatalog);
+        me.loadCurrentSetting();
     },
 
     onLoadAssociation: function (productAssociation) {
@@ -539,7 +545,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             layout: 'fit',
             closable: false,
             closeAction: 'destroy',
-            width: 800,
+            width: 880,
             height: 620,
             modal:true,
             items: [{
@@ -550,10 +556,6 @@ Ext.define('Target.view.objects.ObjectsController', {
                     finish: 'onFinishWizard'
                 }
             }]
-            // listeners: {
-            //     scope: me,
-            //     close: 'onFinishWizard'
-            // }
         });
 
         if (currentSetting.get('id') > 0) {

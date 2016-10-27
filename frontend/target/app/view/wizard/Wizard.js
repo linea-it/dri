@@ -2,7 +2,7 @@
  *
  */
 Ext.define('Target.view.wizard.Wizard', {
-    extend: 'Ext.panel.Panel',
+    extend: 'Ext.tab.Panel',
 
     xtype: 'targets-wizard',
 
@@ -11,14 +11,16 @@ Ext.define('Target.view.wizard.Wizard', {
         'Target.view.wizard.WizardModel',
         'Ext.layout.container.Card',
         'Target.view.settings.Settings',
-        'Target.view.association.Panel'
+        'Target.view.association.Panel',
+        'Target.view.settings.Columns',
+        'Ext.layout.container.Card'
     ],
 
     controller: 'wizard',
 
     viewModel: 'wizard',
 
-    layout: 'card',
+    //layout: 'card',
 
     defaultListenerScope: true,
 
@@ -26,6 +28,10 @@ Ext.define('Target.view.wizard.Wizard', {
         product: null,
         currentSetting: null
     },
+
+    ui: 'navigation',
+    tabPosition: 'left',
+    tabRotation: 0,
 
     items: [
         {
@@ -39,36 +45,16 @@ Ext.define('Target.view.wizard.Wizard', {
         {
             id: 'card-1',
             xtype: 'targets-association',
-            title: 'Association'
-            // bind: {
-            //     product: '{product}'
-            // }
+            title: 'Association',
+            disabled: true
+        },
+        {
+            id: 'card-2',
+            xtype: 'targets-columns',
+            title: 'Columns',
+            disabled: true
         }
-        // {
-        //     id: 'card-1',
-        //     xtype: 'panel',
-        //     title: 'Panel 2'
-        // },
-        // {
-        //     id: 'card-2',
-        //     xtype: 'panel',
-        //     title: 'Panel 3'
-        // }
     ],
-
-    // bbar: ['->',
-    //     {
-    //         itemId: 'card-prev',
-    //         text: '&laquo; Previous',
-    //         handler: 'showPrevious',
-    //         disabled: true
-    //     },
-    //     {
-    //         itemId: 'card-next',
-    //         text: 'Next &raquo;',
-    //         handler: 'showNext'
-    //     }
-    // ],
 
     setProduct: function (product) {
         var me = this,
@@ -88,6 +74,10 @@ Ext.define('Target.view.wizard.Wizard', {
 
         me.down('targets-settings').setCurrentSetting(currentSetting);
 
+        if (me.currentSetting.get('id') > 0) {
+            me.enableTabs();
+
+        }
     },
 
     showNext: function () {
@@ -106,8 +96,16 @@ Ext.define('Target.view.wizard.Wizard', {
 
         l.setActiveItem(next);
 
-        me.down('#card-prev').setDisabled(next === 0);
-        me.down('#card-next').setDisabled(next === 2);
+        // me.down('#card-prev').setDisabled(next === 0);
+        // me.down('#card-next').setDisabled(next === 2);
+    },
+
+    enableTabs: function () {
+        var me = this;
+
+        me.down('targets-association').enable();
+        me.down('targets-columns').enable();
+
     }
 
 });

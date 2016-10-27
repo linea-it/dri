@@ -12,10 +12,12 @@ from rest_framework import filters
 from django.db.models import Q
 from common.filters import IsOwnerFilterBackend
 from .models import Product, Catalog, Map, Mask, ProductContent, ProductContentAssociation, ProductSetting, \
-    CurrentSetting
+    CurrentSetting, ProductContentSetting
 from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, MaskSerializer, ProductContentSerializer, \
     ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer, ProductSettingSerializer, \
-    CurrentSettingSerializer
+    CurrentSettingSerializer, ProductContentSettingSerializer
+
+import operator
 
 logger = logging.getLogger(__name__)
 
@@ -173,6 +175,86 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id', 'pcc_column_name',)
 
+    @list_route()
+    def get_display_content(self, request):
+        print('---------------------- get_display_content ----------------------')
+
+        pcn_product_id = request.query_params.get('pcn_product_id', None)
+        if pcn_product_id is None:
+            raise Exception('pcn_product_id is required.')
+
+        pca_setting = request.query_params.get('pca_setting', None)
+        if pca_setting is None:
+            raise Exception('pca_setting is required.')
+
+        # queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id, pk=1360)
+        queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id)
+
+        contents = list()
+        for row in queryset:
+
+            # Recupera a associacao feita para uma coluna em usando como filtro uma configuracao.
+            association = row.productcontentassociation_set.all().filter(pca_setting=pca_setting).first()
+            contentSetting = row.productcontentsetting_set.all().filter(pcs_setting=pca_setting).first()
+
+            content = dict({
+                'id': row.pk,
+                'product_id': row.pcn_product_id.pk,
+                'setting_id': pca_setting,
+                'column_name': row.pcn_column_name,
+
+                'class_id': None,
+                'category': None,
+                'ucd': None,
+                'unit': None,
+                'reference': None,
+                'mandatory': None,
+
+                'display_name': row.pcn_column_name,
+
+                'content_setting': None,
+                'is_visible': True,
+                'order': 999999
+            })
+
+            if association is not None:
+                content.update({
+                    'class_id': association.pca_class_content.pk,
+                    'display_name': association.pca_class_content.pcc_display_name,
+                    'ucd': association.pca_class_content.pcc_ucd,
+                    'unit': association.pca_class_content.pcc_unit,
+                    'reference': association.pca_class_content.pcc_reference,
+                    'mandatory': association.pca_class_content.pcc_mandatory,
+
+                    # Substitui o display name pelo nome da associacao
+                    'display_name': association.pca_class_content.pcc_display_name
+                })
+
+                try:
+                    content.update({
+                        'category': association.pca_class_content.pcc_category.cct_name
+                    })
+                except:
+                    pass
+
+            if contentSetting is not None:
+                content.update({
+                    'content_setting': contentSetting.pk,
+                    'is_visible': contentSetting.pcs_is_visible,
+                    'order': contentSetting.pcs_order,
+                })
+
+
+            # print (content)
+            contents.append(content)
+
+        ordered = sorted(contents, key=operator.itemgetter('order'))
+        print(ordered)
+
+        return Response(ordered)
+
+
+
 
 class ProductContentAssociationViewSet(viewsets.ModelViewSet):
     """
@@ -198,6 +280,7 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content', 'pca_setting')
 
     ordering_fields = ('id',)
+
 
 
 class MapViewSet(viewsets.ModelViewSet):
@@ -284,3 +367,16 @@ class CurrentSettingViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'cst_product', 'cst_setting',)
 
     ordering_fields = ('id', 'cst_display_name',)
+
+
+class ProductContentSettingViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = ProductContentSetting.objects.all()
+
+    serializer_class = ProductContentSettingSerializer
+
+    filter_fields = ('id', 'pcs_content', 'pcs_setting',)
+
+    ordering_fields = ('id', 'order',)

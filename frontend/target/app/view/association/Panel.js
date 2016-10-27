@@ -149,13 +149,23 @@ Ext.define('Target.view.association.Panel', {
             ],
             buttons: [
                 {
+                    text: 'Previous',
+                    scope: me,
+                    handler: function () {
+                        this.fireEvent('previous');
+                    }
+                },
+                {
+                    text: 'Next',
+                    scope: me,
+                    handler: function () {
+                        this.fireEvent('next');
+                    }
+                },
+                {
                     text: 'Finish',
                     scope: me,
-                    handler: 'onFinish',
-                    bind: {
-                        //disabled: '{!selectedSetting}'
-                        //hidden: '{!selectedSetting.editable}'
-                    }
+                    handler: 'onFinish'
                 }
             ]
         });

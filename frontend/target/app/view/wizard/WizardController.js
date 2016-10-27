@@ -17,9 +17,18 @@ Ext.define('Target.view.wizard.WizardController', {
     listen: {
         component: {
             'targets-settings': {
-                selectsetting: 'onSelectSetting'
+                selectsetting: 'onSelectSetting',
+                finish: 'finishWizard'
             },
             'targets-association': {
+                previous: 'showPrevious',
+                next: 'showNext',
+                finish: 'finishWizard'
+            },
+            'targets-columns': {
+                activate: 'onActiveColumns',
+                previous: 'showPrevious',
+                //next: 'showNext'
                 finish: 'finishWizard'
             }
         }
@@ -55,8 +64,8 @@ Ext.define('Target.view.wizard.WizardController', {
 
         l.setActiveItem(next);
 
-        view.down('#card-prev').setDisabled(next === 0);
-        view.down('#card-next').setDisabled(next === 2);
+        // view.down('#card-prev').setDisabled(next === 0);
+        // view.down('#card-next').setDisabled(next === 2);
     },
 
     onSelectSetting: function (setting) {
@@ -67,6 +76,8 @@ Ext.define('Target.view.wizard.WizardController', {
             association = view.down('targets-association');
 
         vm.set('currentSetting', setting);
+
+        view.enableTabs();
 
         // Setting selecionado
         association.setSetting(setting.get('cst_setting'));
@@ -82,6 +93,19 @@ Ext.define('Target.view.wizard.WizardController', {
     finishWizard: function () {
         var me = this;
         me.getView().fireEvent('finish', me);
+
+    },
+
+    onActiveColumns: function () {
+        console.log('onActiveColumns');
+
+        var me = this,
+            vm = me.getViewModel(),
+            currentSetting = vm.get('currentSetting'),
+            view = me.getView(),
+            columns = view.down('targets-columns');
+
+        columns.setCurrentSetting(currentSetting);
 
     }
 

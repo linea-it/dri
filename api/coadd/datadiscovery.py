@@ -146,6 +146,7 @@ class DataDiscovery:
                 paths = tile.get('ARCHIVE_PATH').split('/')
                 file = paths[len(paths) - 2]
                 sfile = file.split('-')
+                sfile = file.split('-')
                 p = paths[len(paths) - 1]
 
                 run = tile.get('REQNUM')

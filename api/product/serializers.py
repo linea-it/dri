@@ -5,7 +5,7 @@ from product_register.models import ExternalProcess
 from rest_framework import serializers
 
 from .models import File, Catalog, ProductContent, ProductContentAssociation
-from .models import Product, Map, Mask, Table, ProductSetting, CurrentSetting
+from .models import Product, Map, Mask, Table, ProductSetting, CurrentSetting, ProductContentSetting
 
 
 logger = logging.getLogger(__name__)
@@ -465,4 +465,17 @@ class CurrentSettingSerializer(serializers.ModelSerializer):
             'id',
             'cst_product',
             'cst_setting',
+        )
+
+class ProductContentSettingSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ProductContentSetting
+
+        fields = (
+            'id',
+            'pcs_content',
+            'pcs_setting',
+            'pcs_is_visible',
+            'pcs_order'
         )

@@ -102,6 +102,15 @@ Ext.define('Target.view.settings.Settings', {
             ],
             buttons: [
                 {
+                    text: 'Finish',
+                    itemId: 'SettingBtnFinish',
+                    scope: me,
+                    handler: function () {
+                        this.fireEvent('finish', this);
+                    },
+                    hidden: true
+                },
+                {
                     itemId: 'card-next',
                     text: 'Next',
                     handler: 'onChooseSetting',
@@ -128,6 +137,8 @@ Ext.define('Target.view.settings.Settings', {
         this.currentSetting = currentSetting;
 
         this.getViewModel().set('currentSetting', currentSetting);
+
+        this.down('#SettingBtnFinish').setVisible(true);
     },
 
     onLoadComboSetting: function (store) {
@@ -136,9 +147,11 @@ Ext.define('Target.view.settings.Settings', {
             combo = me.down('#cmbSetting'),
             setting;
 
-        if (currentSetting.get('id') > 0) {
-            setting = store.getById(currentSetting.get('cst_setting'));
-            combo.select(setting);
+        if (currentSetting) {
+            if (currentSetting.get('id') > 0) {
+                setting = store.getById(currentSetting.get('cst_setting'));
+                combo.select(setting);
+            }
         }
     },
 

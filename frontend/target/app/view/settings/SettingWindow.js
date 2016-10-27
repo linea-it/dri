@@ -8,6 +8,8 @@ Ext.define('Target.view.settings.SettingWindow', {
     layout: 'fit',
     modal: true,
     // defaultFocus: 'cst_display_name',
+    //
+    viewModel: 'settings',
     closeAction: 'destroy',
     items: [
         {
@@ -59,6 +61,11 @@ Ext.define('Target.view.settings.SettingWindow', {
         }
     ],
     buttons: [
+        // {
+        //     text: 'Delete',
+        //     handler: 'onDeleteSetting'
+        // },
+        '->',
         {
             text: 'Cancel',
             handler: 'onCancelSetting'
