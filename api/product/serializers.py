@@ -457,6 +457,7 @@ class ProductSettingSerializer(serializers.ModelSerializer):
 
 
 class CurrentSettingSerializer(serializers.ModelSerializer):
+    editable = serializers.SerializerMethodField()
 
     class Meta:
         model = CurrentSetting
@@ -465,7 +466,16 @@ class CurrentSettingSerializer(serializers.ModelSerializer):
             'id',
             'cst_product',
             'cst_setting',
+            'editable'
         )
+
+    def get_editable(self, obj):
+        current_user = self.context['request'].user
+        if obj.cst_setting.owner.pk == current_user.pk:
+            return True
+        else:
+            return obj.cst_setting.cst_is_editable
+
 
 class ProductContentSettingSerializer(serializers.ModelSerializer):
 

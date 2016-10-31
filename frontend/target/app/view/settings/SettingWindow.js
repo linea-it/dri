@@ -9,8 +9,13 @@ Ext.define('Target.view.settings.SettingWindow', {
     modal: true,
     // defaultFocus: 'cst_display_name',
     //
-    viewModel: 'settings',
+    //viewModel: 'settings',
     closeAction: 'destroy',
+
+    config: {
+        edit: false
+    },
+
     items: [
         {
             xtype: 'form',
@@ -61,17 +66,34 @@ Ext.define('Target.view.settings.SettingWindow', {
         }
     ],
     buttons: [
-        // {
-        //     text: 'Delete',
-        //     handler: 'onDeleteSetting'
-        // },
+        {
+            text: 'Delete',
+            itemId: 'btnDeleteSetting',
+            ui: 'soft-red',
+            handler: 'onDeleteSetting',
+            hidden: true
+        },
         '->',
         {
             text: 'Cancel',
             handler: 'onCancelSetting'
         }, {
             text: 'Save',
+            ui: 'soft-green',
             handler: 'onAddSetting'
         }
-    ]
+    ],
+
+    setEdit: function (edit) {
+        if (edit) {
+            this.down('#btnDeleteSetting').setVisible(true);
+        }
+    },
+
+    onDelete: function () {
+        this.fireEvent('delete', this);
+
+        this.close();
+    }
+
 });

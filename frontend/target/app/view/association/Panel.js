@@ -21,7 +21,8 @@ Ext.define('Target.view.association.Panel', {
 
     config: {
         product: null,
-        setting: null
+        setting: null,
+        currentSetting: null
     },
 
     layout: 'border',
@@ -36,10 +37,12 @@ Ext.define('Target.view.association.Panel', {
                 {
                     xtype: 'panel',
                     region: 'north',
-                    height: 50,
+                    height: 80,
                     bodyPadding: 10,
                     html: [
-                        '<p>The properties in your catalog must be associated with the available properties for the target class.</p>'
+                        '<p>The properties in your catalog must be associated with the available properties for the target class.</br>' +
+                        'It is necessary to make association for property ID, RA and Dec.' +
+                        '</p>'
                     ]
                 },
                 {
@@ -164,8 +167,11 @@ Ext.define('Target.view.association.Panel', {
                 },
                 {
                     text: 'Finish',
+                    itemId: 'AssociationBtnFinish',
+                    ui: 'soft-green',
                     scope: me,
-                    handler: 'onFinish'
+                    handler: 'onFinish',
+                    hidden: true
                 }
             ]
         });
@@ -193,6 +199,49 @@ Ext.define('Target.view.association.Panel', {
 
         this.fireEvent('finish', this);
 
+    },
+
+    setCurrentSetting: function (currentSetting) {
+
+        if (this.currentSetting !== null) {
+            if (this.currentSetting.get('id') == currentSetting.get('id')) {
+                return;
+            }
+        }
+
+        this.currentSetting = currentSetting;
+
+        this.getViewModel().set('currentSetting', currentSetting);
+
+        this.setSetting(currentSetting.get('cst_setting'));
+
+        this.setProduct(currentSetting.get('cst_product'));
+
+        this.fireEvent('changesetting', currentSetting);
+
+        this.checkFinish();
+    },
+
+    checkFinish: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('displayContents'),
+            currentSetting = vm.get('currentSetting');
+
+        store.addFilter([
+            {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
+            {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
+        ]);
+        store.load({
+            callback: function () {
+
+                if (this.check_ucds()) {
+                    me.down('#AssociationBtnFinish').setVisible(true);
+                } else {
+                    me.down('#AssociationBtnFinish').setVisible(false);
+                }
+            }
+        });
     }
 
 });

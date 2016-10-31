@@ -52,6 +52,24 @@ Ext.define('Target.view.settings.SettingsController', {
 
     },
 
+    onCloseSettingWindow: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('settings'),
+            refs = me.getReferences(),
+            combo = refs.cmbSetting;
+
+        store.load({
+            callback: function () {
+                // if (this.first()) {
+                //     combo.select(this.first());
+                // } else {
+                combo.select(null);
+                // }
+            }
+        });
+    },
+
     onAddSetting: function () {
         var me = this,
             refs = me.getReferences(),
@@ -110,9 +128,15 @@ Ext.define('Target.view.settings.SettingsController', {
             setting = vm.get('selectedSetting'),
             win;
 
-        win = Ext.create('Target.view.settings.SettingWindow',{});
+        win = Ext.create('Target.view.settings.SettingWindow',{
+            listeners: {
+                delete: 'onCloseSettingWindow'
+            }
+        });
 
         win.down('form').loadRecord(setting);
+
+        win.setEdit(true);
 
         me.getView().add(win);
 
@@ -120,7 +144,43 @@ Ext.define('Target.view.settings.SettingsController', {
 
     },
 
+    onDeleteSetting: function () {
+        var me = this,
+            win = me.lookupReference('winSetting'),
+            vm = me.getViewModel(),
+            store = vm.getStore('settings'),
+            form = me.lookupReference('settingForm').getForm(),
+            record = form.getRecord();
+
+        if ((record) && (record.get('id') > 0)) {
+
+            store.load({
+                callback: function () {
+                    store.remove(record);
+
+                    store.sync({
+                        callback: function () {
+                            win.onDelete();
+                        }
+                    });
+                }
+            });
+        }
+    },
+
+    onSelectSetting: function (combo, record) {
+        var me = this;
+
+        if (record.get('id') > 0) {
+
+            me.onChooseSetting();
+
+        }
+    },
+
     onChooseSetting: function () {
+        console.log('onChooseSetting');
+
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
@@ -183,6 +243,7 @@ Ext.define('Target.view.settings.SettingsController', {
     },
 
     changeCurrentSetting: function () {
+        console.log('changeCurrentSetting');
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
@@ -213,27 +274,6 @@ Ext.define('Target.view.settings.SettingsController', {
             }
         });
 
-    },
-
-    onDeleteSetting: function () {
-        // var me = this,
-        //     view = me.getView(),
-        //     vm = me.getViewModel(),
-        //     store = vm.getStore('settings'),
-        //     selected = vm.get('selectedSetting');
-
-        // if (selected.get('id') > 0) {
-        //     store.remove(selected);
-        //     store.sync({
-        //         callback: function () {
-        //             store.load({
-        //                 // callback: function () {
-        //                 //     view.selectSetting(this.first());
-        //                 // }
-        //             });
-        //         }
-        //     });
-        // }
     }
 
 });

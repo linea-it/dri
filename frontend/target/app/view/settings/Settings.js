@@ -58,6 +58,9 @@ Ext.define('Target.view.settings.Settings', {
                             bind: {
                                 selection: '{selectedSetting}'
                             },
+                            listeners: {
+                                select: 'onSelectSetting'
+                            },
                             minChars: 0,
                             queryMode: 'local',
                             typeAhead: true,
@@ -102,22 +105,26 @@ Ext.define('Target.view.settings.Settings', {
             ],
             buttons: [
                 {
+                    itemId: 'card-next',
+                    text: 'Next',
+                    scope: me,
+                    handler: function () {
+                        this.fireEvent('next');
+                    },
+                    bind: {
+                        disabled: '{!selectedSetting}',
+                        hidden: '{!selectedSetting.editable}'
+                    }
+                },
+                {
                     text: 'Finish',
                     itemId: 'SettingBtnFinish',
                     scope: me,
+                    ui: 'soft-green',
                     handler: function () {
                         this.fireEvent('finish', this);
                     },
                     hidden: true
-                },
-                {
-                    itemId: 'card-next',
-                    text: 'Next',
-                    handler: 'onChooseSetting',
-                    bind: {
-                        disabled: '{!selectedSetting}'
-                        //hidden: '{!selectedSetting.editable}'
-                    }
                 }
             ]
         });
@@ -138,7 +145,8 @@ Ext.define('Target.view.settings.Settings', {
 
         this.getViewModel().set('currentSetting', currentSetting);
 
-        this.down('#SettingBtnFinish').setVisible(true);
+        this.checkFinish();
+
     },
 
     onLoadComboSetting: function (store) {
@@ -156,8 +164,31 @@ Ext.define('Target.view.settings.Settings', {
     },
 
     selectSetting: function (currentSetting) {
-
+        this.checkFinish();
         this.fireEvent('selectsetting', currentSetting);
+
+    },
+
+    checkFinish: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('displayContents'),
+            currentSetting = vm.get('currentSetting');
+
+        store.addFilter([
+            {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
+            {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
+        ]);
+        store.load({
+            callback: function () {
+
+                if (this.check_ucds()) {
+                    me.down('#SettingBtnFinish').setVisible(true);
+                } else {
+                    me.down('#SettingBtnFinish').setVisible(false);
+                }
+            }
+        });
 
     }
 

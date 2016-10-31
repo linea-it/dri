@@ -31,6 +31,7 @@ Ext.define('common.SearchField', {
             } else {
                 f.getTrigger('clear').hide();
                 f.getTrigger('search').show();
+                this.fireEvent('cancel');
             }
         },
 

@@ -7,6 +7,7 @@ Ext.define('Target.view.settings.SettingsModel', {
         'Target.store.Settings',
         'Target.model.Setting',
         'Target.store.CurrentSettings',
+        'Target.store.ProductDisplayContents',
         'Target.model.CurrentSetting'
     ],
 
@@ -31,6 +32,10 @@ Ext.define('Target.view.settings.SettingsModel', {
         },
         currentSettings: {
             type: 'currentsettings'
+        },
+        displayContents: {
+            type: 'product-display-contents',
+            autoLoad: false
         }
     }
 });

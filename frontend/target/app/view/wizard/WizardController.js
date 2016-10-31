@@ -6,21 +6,15 @@ Ext.define('Target.view.wizard.WizardController', {
 
     alias: 'controller.wizard',
 
-    // requires: [
-    //     'Target.view.catalog.Export',
-    //     'Target.view.catalog.SubmitCutout',
-    //     'Target.view.association.Panel',
-    //     'Target.model.Rating',
-    //     'Target.model.Reject'
-    // ],
-
     listen: {
         component: {
             'targets-settings': {
                 selectsetting: 'onSelectSetting',
+                next: 'showNext',
                 finish: 'finishWizard'
             },
             'targets-association': {
+                activate: 'onActiveAssociation',
                 previous: 'showPrevious',
                 next: 'showNext',
                 finish: 'finishWizard'
@@ -32,19 +26,6 @@ Ext.define('Target.view.wizard.WizardController', {
                 finish: 'finishWizard'
             }
         }
-        //     store: {
-        //         '#ProductContent': {
-        //             load: 'onLoadProductContent',
-        //             clear: 'onLoadProductContent'
-        //         },
-        //         '#ProductAssociation': {
-        //             load: 'onLoadProductAssociation',
-        //             clear: 'onLoadProductAssociation'
-        //         },
-        //         '#objects': {
-        //             update: 'onUpdateObject'
-        //         }
-        //     }
     },
 
     showNext: function () {
@@ -64,8 +45,6 @@ Ext.define('Target.view.wizard.WizardController', {
 
         l.setActiveItem(next);
 
-        // view.down('#card-prev').setDisabled(next === 0);
-        // view.down('#card-next').setDisabled(next === 2);
     },
 
     onSelectSetting: function (setting) {
@@ -73,21 +52,20 @@ Ext.define('Target.view.wizard.WizardController', {
             vm = me.getViewModel(),
             view = me.getView(),
             l = view.getLayout(),
-            association = view.down('targets-association');
+            association = view.down('targets-association'),
+            oldCurrentSetting = vm.get('currentSetting');
 
         vm.set('currentSetting', setting);
 
-        view.enableTabs();
+        // view.enableTabs();
 
-        // Setting selecionado
-        association.setSetting(setting.get('cst_setting'));
+        // // Setting selecionado
+        // association.setSetting(setting.get('cst_setting'));
 
-        // Product
-        association.setProduct(setting.get('cst_product'));
+        // // Product
+        // association.setProduct(setting.get('cst_product'));
 
-        // Ativar o painel
-        l.setActiveItem(association);
-
+        view.setCurrentSetting(setting);
     },
 
     finishWizard: function () {
@@ -96,9 +74,18 @@ Ext.define('Target.view.wizard.WizardController', {
 
     },
 
-    onActiveColumns: function () {
-        console.log('onActiveColumns');
+    onActiveAssociation: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentSetting = vm.get('currentSetting'),
+            view = me.getView(),
+            association = view.down('targets-association');
 
+        association.setCurrentSetting(currentSetting);
+
+    },
+
+    onActiveColumns: function () {
         var me = this,
             vm = me.getViewModel(),
             currentSetting = vm.get('currentSetting'),

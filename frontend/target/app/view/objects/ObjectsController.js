@@ -32,14 +32,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             '#Catalogs': {
                 load: 'onLoadCatalogs'
             },
-            '#ProductContent': {
-                load: 'onLoadProductContent',
-                clear: 'onLoadProductContent'
-            },
-            '#Association': {
-                load: 'onLoadAssociation',
-                clear: 'onLoadAssociation'
-            },
             '#objects': {
                 update: 'onUpdateObject'
             }
@@ -51,9 +43,9 @@ Ext.define('Target.view.objects.ObjectsController', {
             vm = objectsPanel.getViewModel(),
             catalogs = vm.getStore('catalogs'),
             refs = me.getReferences(),
-            objectsTabPanel = refs.targetsObjectsTabpanel;
+            objectsGrid = refs.targetsObjectsGrid;
 
-        objectsTabPanel.setLoading(true);
+        objectsGrid.setLoading(true);
 
         catalogs.removeAll();
         catalogs.clearFilter(true);
@@ -71,14 +63,14 @@ Ext.define('Target.view.objects.ObjectsController', {
             vm = me.getViewModel(),
             currentCatalog,
             refs = me.getReferences(),
-            objectsTabPanel = refs.targetsObjectsTabpanel;
+            objectsGrid = refs.targetsObjectsGrid;
 
         if (store.count() === 1) {
             currentCatalog = store.first();
 
             vm.set('currentCatalog', currentCatalog);
 
-            objectsTabPanel.setLoading(false);
+            objectsGrid.setLoading(false);
 
             me.loadCurrentSetting();
         }
@@ -91,9 +83,9 @@ Ext.define('Target.view.objects.ObjectsController', {
             store = vm.getStore('currentSettings'),
             product = vm.get('currentCatalog'),
             refs = me.getReferences(),
-            objectsTabPanel = refs.targetsObjectsTabpanel;
+            objectsGrid = refs.targetsObjectsGrid;
 
-        objectsTabPanel.setLoading(true);
+        objectsGrid.setLoading(true);
 
         store.addFilter([
             {
@@ -105,7 +97,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         store.load({
             callback: function (records, operations, success) {
 
-                objectsTabPanel.setLoading(false);
+                objectsGrid.setLoading(false);
 
                 if ((success) && (records.length == 1)) {
                     vm.set('currentSetting', records[0]);
@@ -120,7 +112,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                     me.configurePanelBySettings();
 
                 } else {
-                    me.showWizard();
+                    me.showAlertSetting();
                 }
             }
         });
@@ -129,49 +121,83 @@ Ext.define('Target.view.objects.ObjectsController', {
     configurePanelBySettings: function () {
         var me = this,
             vm = me.getViewModel(),
-            storeProductContent = vm.getStore('productcontent'),
-            storeProductAssociation = vm.getStore('productassociation'),
-            currentSetting = vm.get('currentSetting'),
-            currentCatalog = vm.get('currentCatalog');
+            store = vm.getStore('displayContents'),
+            currentSetting = vm.get('currentSetting');
 
-        // Carregar as propriedades do catalogo.
-
-        // filtrar as stores de colunas
-        storeProductContent.filter([
-            {
-                property: 'pcn_product_id',
-                value: currentCatalog.get('id')
-            }
+        store.addFilter([
+            {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
+            {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
         ]);
 
-        storeProductAssociation.filter([
-            {
-                property: 'pca_product',
-                value: currentCatalog.get('id')
-            },
-            {
-                property: 'pca_setting',
-                value: currentSetting.get('cst_setting')
-            }
-        ]);
+        store.load({
+            callback: function () {
+                me.onLoadProductContent(store);
 
+            }
+        });
     },
 
-
-
-    /**
-     * Toda Vez que a store productContent e carregada e passado a lista
-     * com todas as colunas do catalogo para a grid que contem todas as colunas
-     * do catalogo.
-     * @param  {Target.store.ProductContent} productContent store com todas
-     * as colunas do catalog.
-     */
     onLoadProductContent: function (productContent) {
         var me = this,
+            vm = me.getViewModel(),
             refs = me.getReferences(),
-            objectsTabPanel = refs.targetsObjectsTabpanel;
+            objectsGrid = refs.targetsObjectsGrid,
+            currentSetting = vm.get('currentSetting');
 
-        objectsTabPanel.setCatalogColumns(productContent);
+        // Checar se tem as associacoes obrigatorias
+        if (productContent.check_ucds()) {
+            objectsGrid.reconfigureGrid(productContent);
+
+        } else {
+            if (currentSetting.get('id') > 0) {
+                Ext.MessageBox.show({
+                    header: false,
+                    closable: false,
+                    msg: 'It is necessary to make association for property ID, RA and Dec.',
+                    buttons: Ext.MessageBox.OK,
+                    fn: function () {
+                        me.showWizard();
+                    }
+                });
+            } else {
+                me.showAlertSetting();
+            }
+
+        }
+    },
+
+    showAlertSetting: function () {
+        var me = this,
+            msg;
+
+        msg = '<p>' +
+            'É Necessario fazer uma configuração para visualizar este catalogo.' +
+            '</br></br>' +
+            'ao Clicar em Ok, sera exibido um Wizard que lhe ajudara ' +
+            'a fazer as configurações necessárias como associar as propriedades do seu catalogo com ' +
+            'propriedades comumente usadas para a mesma classe ou escolher as propriedades que deseja visualizar.' +
+            '</br></br>' +
+            'Neste Wizard você poderá escolher ou criar um conjunto de configurações.' + '</br>' +
+            'Dicas:' + '</br>' +
+            'As configurações são especificas por catalogos.' + '</br>' +
+            'Podem ser criadas mais de uma configuração para o mesmo catalogo.' + '</br>' +
+            'As configurações são por usuario mais é possivel escolher configurações que foram marcadas como publicas.' + '</br>' +
+            'Não é possivel visualizar o catalogo sem escolher uma configuração.' + '</br>' +
+            'É obrigatorio fazer associação para as propriedades ID, RA, Dec. </p>';
+
+        Ext.MessageBox.show({
+            header: false,
+            closable: false,
+            msg: msg,
+            buttons: Ext.MessageBox.OK,
+            fn: function () {
+                me.showWizard();
+            }
+        });
+
+
+
+        // 'It is necessary to make association for property ID, RA and Dec.'
 
     },
 
@@ -184,11 +210,11 @@ Ext.define('Target.view.objects.ObjectsController', {
     onLoadAssociation: function (productAssociation) {
         var me = this,
             refs = me.getReferences(),
-            objectsTabPanel = refs.targetsObjectsTabpanel;
+            objectsGrid = refs.targetsObjectsGrid;
 
         if (productAssociation.count() > 0) {
 
-            objectsTabPanel.setCatalogClassColumns(productAssociation);
+            objectsGrid.setCatalogClassColumns(productAssociation);
         } else {
             if (!this.wizard) {
                 me.showWizard();
@@ -196,7 +222,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         }
     },
 
-    onObjectPanelReady: function () {
+    onGridObjectsReady: function () {
         var me = this,
             vm = this.getViewModel(),
             catalog = vm.get('currentCatalog');
@@ -211,7 +237,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             vm = me.getViewModel(),
             store = vm.getStore('objects'),
             refs = me.getReferences(),
-            objectsTabPanel = refs.targetsObjectsTabpanel;
+            objectsGrid = refs.targetsObjectsGrid;
 
         if (catalog) {
 
@@ -221,7 +247,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 callback: function (records, operation, success) {
 
                     // remover a mensagem de load do painel
-                    objectsTabPanel.setLoading(false);
+                    objectsGrid.setLoading(false);
 
                 },
                 scope: this
@@ -248,7 +274,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.loadObjects(catalog);
     },
 
-    onSelectObject: function (record) {
+    onSelectObject: function (selModel, record) {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),

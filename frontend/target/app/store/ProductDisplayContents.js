@@ -19,11 +19,32 @@ Ext.define('Target.store.ProductDisplayContents', {
         url: '/dri/api/productcontent/get_display_content/'
     },
 
-    autoSort: true
+    autoSort: true,
 
     // sorters: [{
     //     property: 'order',
     //     direction: 'ASC'
     // }]
+    ucds: ['meta.id;meta.main', 'pos.eq.ra;meta.main', 'pos.eq.dec;meta.main'],
+
+    check_ucds: function () {
+        var me = this,
+            status = [];
+
+        me.each(function (record) {
+
+            if (me.ucds.indexOf(record.get('ucd')) !== -1) {
+                status.push(true);
+            }
+
+        }, me);
+
+        if (status.length === me.ucds.length) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
 
 });

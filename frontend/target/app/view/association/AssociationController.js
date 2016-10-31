@@ -25,7 +25,8 @@ Ext.define('Target.view.association.AssociationController', {
                 load: 'onLoadProductContent'
             },
             '#ProductAssociation': {
-                load: 'onLoadProductAssociation'
+                load: 'onLoadProductAssociation',
+                datachanged: 'onAssociationChange'
             }
         }
 
@@ -60,15 +61,15 @@ Ext.define('Target.view.association.AssociationController', {
 
             vm.set('currentCatalog', currentCatalog);
 
-            me.loadClassContents(currentCatalog);
+            me.loadClassContents();
         }
 
     },
 
-    loadClassContents: function (currentCatalog) {
+    loadClassContents: function () {
         var me = this,
             vm = me.getViewModel(),
-            // currentCatalog = vm.get('currentCatalog'),
+            currentCatalog = vm.get('currentCatalog'),
             classContents = vm.getStore('classcontent'),
             auxClassContents = vm.getStore('auxclasscontent');
 
@@ -267,6 +268,9 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     addAssociation: function (record, target) {
+        var me = this,
+            view = me.getView();
+
         record.save({
             callback: function (saved, operation, success) {
                 if (success) {
@@ -277,6 +281,8 @@ Ext.define('Target.view.association.AssociationController', {
                     target.set('id', obj.id);
                     target.set('pca_class_content', obj.pca_class_content);
                     target.commit(true);
+
+                    view.checkFinish();
                 }
             }
         });
@@ -341,6 +347,15 @@ Ext.define('Target.view.association.AssociationController', {
             }
         });
         store = null;
+    },
+
+    onAssociationChange: function () {
+        console.log('onAssociationChange');
+        var me = this,
+            view = me.getView();
+
+        view.checkFinish();
+
     }
 
 });

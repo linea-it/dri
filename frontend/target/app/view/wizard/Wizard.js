@@ -74,10 +74,8 @@ Ext.define('Target.view.wizard.Wizard', {
 
         me.down('targets-settings').setCurrentSetting(currentSetting);
 
-        if (me.currentSetting.get('id') > 0) {
-            me.enableTabs();
+        me.enableTabs();
 
-        }
     },
 
     showNext: function () {
@@ -101,10 +99,18 @@ Ext.define('Target.view.wizard.Wizard', {
     },
 
     enableTabs: function () {
-        var me = this;
+        var me = this,
+            vm = me.getViewModel(),
+            currentSetting = vm.get('currentSetting');
 
-        me.down('targets-association').enable();
-        me.down('targets-columns').enable();
+        if ((currentSetting.get('id') > 0) && (currentSetting.get('editable'))) {
+            me.down('targets-association').enable();
+            me.down('targets-columns').enable();
+
+        } else {
+            me.down('targets-association').disable();
+            me.down('targets-columns').disable();
+        }
 
     }
 

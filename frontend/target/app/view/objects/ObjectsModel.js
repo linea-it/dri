@@ -11,9 +11,10 @@ Ext.define('Target.view.objects.ObjectsModel', {
         'Target.model.CatalogObject',
         'Target.model.CurrentSetting',
         'Target.store.Objects',
-        'Target.store.ProductContent',
-        'Target.store.ProductAssociation',
-        'Target.store.CurrentSettings'
+        // 'Target.store.ProductContent',
+        // 'Target.store.ProductAssociation',
+        'Target.store.CurrentSettings',
+        'Target.store.ProductDisplayContents'
     ],
 
     data: {
@@ -31,16 +32,20 @@ Ext.define('Target.view.objects.ObjectsModel', {
             type: 'targets-objects',
             storeId: 'objects'
         },
-        productcontent: {
-            type: 'product-content',
-            storeId: 'ProductContent'
-        },
-        productassociation: {
-            type: 'product-association',
-            storeId: 'Association'
-        },
+        // productcontent: {
+        //     type: 'product-content',
+        //     storeId: 'ProductContent'
+        // },
+        // productassociation: {
+        //     type: 'product-association',
+        //     storeId: 'Association'
+        // },
         currentSettings: {
             type: 'currentsettings'
+        },
+        displayContents: {
+            type: 'product-display-contents',
+            autoLoad: false
         }
     },
 

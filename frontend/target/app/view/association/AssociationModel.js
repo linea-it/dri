@@ -8,12 +8,19 @@ Ext.define('Target.view.association.AssociationModel', {
         'Target.store.ProductContent',
         'Target.store.ProductAssociation',
         'Target.store.Association',
-        'Target.store.Catalogs'
+        'Target.store.Catalogs',
+        'Target.store.ProductDisplayContents',
+        'Target.model.Catalog',
+        'Target.model.CurrentSetting'
     ],
 
     links: {
         currentCatalog: {
             type: 'Target.model.Catalog',
+            create: true
+        },
+        currentSetting: {
+            type: 'Target.model.CurrentSetting',
             create: true
         }
     },
@@ -50,6 +57,10 @@ Ext.define('Target.view.association.AssociationModel', {
             remoteFilter: false,
             remoteSorter: false
 
+        },
+        displayContents: {
+            type: 'product-display-contents',
+            autoLoad: false
         }
     }
 });

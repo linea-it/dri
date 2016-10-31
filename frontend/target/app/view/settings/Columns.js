@@ -28,7 +28,7 @@ Ext.define('Target.view.settings.Columns', {
                 {
                     xtype: 'panel',
                     // region: 'north',
-                    height: 50,
+                    height: 80,
                     bodyPadding: 10,
                     html: [
                         '<p>TEXT.</p>'
@@ -107,6 +107,7 @@ Ext.define('Target.view.settings.Columns', {
                 },
                 {
                     text: 'Finish',
+                    ui: 'soft-green',
                     scope: me,
                     handler: function () {
                         this.fireEvent('finish', this);
