@@ -35,67 +35,138 @@ Ext.define('Target.view.settings.Columns', {
                     ]
                 },
                 {
-                    xtype: 'gridpanel',
-                    reference: 'gridColumns',
+                    xtype: 'panel',
                     flex: 1,
-                    scrollable: true,
-                    bind: {
-                        store: '{displayContents}'
+                    layout: {
+                        type: 'hbox',
+                        align: 'stretch'
                     },
-                    selType: 'checkboxmodel',
-                    columns: [
+                    items: [
                         {
-                            text     : 'Properties',
-                            dataIndex: 'display_name',
-                            flex: 1
-                        },
-                        // {
-                        //     text     : 'Order',
-                        //     dataIndex: 'order',
-                        //     flex: 1
-                        // },
-                        {
-                            xtype: 'widgetcolumn',
-                            text: 'Visible',
-                            dataIndex: 'is_visible',
-                            align: 'center',
-                            widget: {
-                                xtype: 'checkbox',
-                                checked: true,
-                                listeners: {
-                                    change: 'onSingleChangeVisible'
-                                }
-                            }
-                        }
-                    ],
-                    // columnLines: true,
-                    viewConfig: {
-                        stripeRows: false,
-                        markDirty: false,
-                        getRowClass: function (record) {
-                            return record.get('is_visible') === false ? 'hidden-row' : '';
-                        },
-
-                        plugins: {
-                            ptype: 'gridviewdragdrop',
-                            containerScroll: true
-                        },
-                        listeners: {
-                            drop: 'onDropGrid'
-                        }
-                    },
-                    tbar: [
-                        '->',
-                        {
-                            xtype: 'button',
-                            text: 'Change Visibility',
-                            handler: 'onChangeVisible',
+                            xtype: 'grid',
+                            reference: 'grid1',
+                            flex: 1,
+                            multiSelect: true,
+                            margin: '0 5 0 0',
                             bind: {
-                                disabled: '{!gridColumns.selection}'
+                                store: '{availableContents}'
+                            },
+                            selType: 'checkboxmodel',
+                            viewConfig: {
+                                plugins: {
+                                    ptype: 'gridviewdragdrop',
+                                    containerScroll: true,
+                                    ddGroup: 'columns'
+                                    // dragGroup: 'dd-grid-to-grid-group2',
+                                    // dropGroup: 'dd-grid-to-grid-group2'
+                                },
+                                listeners: {
+                                    drop: 'onDropGrid1'
+                                }
+                            },
+                            columns: [
+                                {
+                                    text: 'Properties',
+                                    dataIndex: 'display_name',
+                                    flex: 1
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'gridpanel',
+                            reference: 'grid2',
+                            flex: 1,
+                            scrollable: true,
+                            split: true,
+                            bind: {
+                                store: '{contentSettings}'
+                            },
+                            columns: [
+                                {
+                                    text: 'Properties',
+                                    dataIndex: 'display_name',
+                                    flex: 1
+                                }
+                            ],
+                            viewConfig: {
+                                stripeRows: false,
+                                markDirty: false,
+                                plugins: {
+                                    ptype: 'gridviewdragdrop',
+                                    containerScroll: true,
+                                    ddGroup: 'columns'
+                                    // dragGroup: 'dd-grid-to-grid-group2',
+                                    // dropGroup: 'dd-grid-to-grid-group2'
+                                },
+                                listeners: {
+                                    drop: 'onDropGrid2'
+                                }
                             }
                         }
                     ]
                 }
+                // {
+                //     xtype: 'gridpanel',
+                //     reference: 'gridColumns',
+                //     flex: 1,
+                //     scrollable: true,
+                //     bind: {
+                //         store: '{displayContents}'
+                //     },
+                //     selType: 'checkboxmodel',
+                //     columns: [
+                //         {
+                //             text     : 'Properties',
+                //             dataIndex: 'display_name',
+                //             flex: 1
+                //         },
+                //         // {
+                //         //     text     : 'Order',
+                //         //     dataIndex: 'order',
+                //         //     flex: 1
+                //         // },
+                //         {
+                //             xtype: 'widgetcolumn',
+                //             text: 'Visible',
+                //             dataIndex: 'is_visible',
+                //             align: 'center',
+                //             widget: {
+                //                 xtype: 'checkbox',
+                //                 checked: true,
+                //                 listeners: {
+                //                     change: 'onSingleChangeVisible'
+                //                 }
+                //             }
+                //         }
+                //     ],
+                //     // columnLines: true,
+                //     viewConfig: {
+                //         stripeRows: false,
+                //         markDirty: false,
+                //         getRowClass: function (record) {
+                //             return record.get('is_visible') === false ? 'hidden-row' : '';
+                //         },
+
+                //         plugins: {
+                //             ptype: 'gridviewdragdrop',
+                //             containerScroll: true
+                //         },
+                //         listeners: {
+                //             drop: 'onDropGrid'
+                //         }
+                //     },
+                //     tbar: [
+                //         '->',
+                //         {
+                //             xtype: 'button',
+                //             text: 'Change Visibility',
+                //             handler: 'onChangeVisible',
+                //             bind: {
+                //                 disabled: '{!gridColumns.selection}'
+                //             }
+                //         }
+                //     ]
+                // }
             ],
             buttons: [
                 {

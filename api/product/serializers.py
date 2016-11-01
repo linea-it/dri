@@ -478,6 +478,7 @@ class CurrentSettingSerializer(serializers.ModelSerializer):
 
 
 class ProductContentSettingSerializer(serializers.ModelSerializer):
+    display_name = serializers.SerializerMethodField()
 
     class Meta:
         model = ProductContentSetting
@@ -487,5 +488,14 @@ class ProductContentSettingSerializer(serializers.ModelSerializer):
             'pcs_content',
             'pcs_setting',
             'pcs_is_visible',
-            'pcs_order'
+            'pcs_order',
+            'display_name'
         )
+
+    def get_display_name(self, obj):
+
+        association = obj.pcs_content.productcontentassociation_set.filter(pca_setting=obj.pcs_setting).first()
+        if association is not None:
+            return association.pca_class_content.pcc_display_name
+        else:
+            return obj.pcs_content.pcn_column_name

@@ -20,11 +20,19 @@ Ext.define('Target.view.settings.ColumnsModel', {
         currentSettings: {
             type: 'currentsettings'
         },
-        displayContents: {
+        availableContents: {
+            type: 'product-display-contents',
+            autoLoad: false
+        },
+        auxAvailableContents: {
             type: 'product-display-contents',
             autoLoad: false
         },
         contentSettings: {
+            type: 'content-settings',
+            autoLoad: false
+        },
+        auxContentSettings: {
             type: 'content-settings',
             autoLoad: false
         }

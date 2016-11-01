@@ -190,6 +190,9 @@ class ProductContentViewSet(viewsets.ModelViewSet):
         # queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id, pk=1360)
         queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id)
 
+        # Se tiver alguma configuracao de setting visible default False
+        flag_content_settings = ProductContentSetting.objects.filter(pcs_setting=pca_setting).count()
+
         contents = list()
         for row in queryset:
 
@@ -216,6 +219,10 @@ class ProductContentViewSet(viewsets.ModelViewSet):
                 'is_visible': True,
                 'order': 999999
             })
+
+            if flag_content_settings > 0:
+                content.update({'is_visible': False})
+
 
             if association is not None:
                 content.update({
@@ -373,7 +380,7 @@ class ProductContentSettingViewSet(viewsets.ModelViewSet):
     """
 
     """
-    queryset = ProductContentSetting.objects.all()
+    queryset = ProductContentSetting.objects.all().order_by('pcs_order')
 
     serializer_class = ProductContentSettingSerializer
 
