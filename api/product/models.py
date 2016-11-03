@@ -167,12 +167,24 @@ class CutOutJob(models.Model):
         max_length=1024, verbose_name='Job ID')
 
 class CutOut(models.Model):
-    
+    cjb_cutout_job = models.ForeignKey(
+        CutOutJob, on_delete=models.CASCADE, verbose_name='CutOutJob', default=None
+    )
+
     ctt_url = models.CharField(
         max_length=20, verbose_name='url')
 
     ctt_object_id = models.CharField(
         max_length=5, verbose_name='Object ID')
+
+    ctt_ra = models.CharField(
+        max_length=5, verbose_name='ra')
+
+    ctt_dec = models.CharField(
+        max_length=5, verbose_name='Dec')
+
+    ctt_tipo = models.CharField(
+        max_length=5, verbose_name='Tipo')
 
     ctt_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)

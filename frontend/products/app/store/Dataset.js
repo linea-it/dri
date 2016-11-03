@@ -43,8 +43,21 @@ Ext.define('Products.store.Dataset', {
     remoteFilter: true,
 
     remoteSort: true,
-
+    autoLoad: false,
     pageSize: 100,
+    listeners: {
+        load: {
+            fn: function(store){
+                store.insert(0, {
+                    id: 10000,
+                    tag_display_name: "All"
+                })
+            }
+        },
+        exception: function(misc) {
+            alert("exception!");
+        }
+    },
 
     proxy: {
         type: 'django',

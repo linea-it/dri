@@ -67,7 +67,7 @@ class CutOutAdmin(admin.ModelAdmin):
         'id', 'ctt_url',
     )
     list_display_links = ('id',)
-    search_fields = ('ctt_url',)
+    search_fields = ('id',)
 
 class MaskAdmin(admin.ModelAdmin):
     list_display = (
