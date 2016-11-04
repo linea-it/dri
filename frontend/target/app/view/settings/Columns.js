@@ -66,8 +66,19 @@ Ext.define('Target.view.settings.Columns', {
                             },
                             columns: [
                                 {
-                                    text: 'Properties',
+                                    text: 'Available Properties',
                                     dataIndex: 'display_name',
+                                    flex: 1
+                                }
+                            ],
+                            tbar: [
+                                {
+                                    xtype: 'common-searchfield',
+                                    minSearch: 1,
+                                    listeners: {
+                                        'search': 'onSearch',
+                                        'cancel': 'onSearchCancel'
+                                    },
                                     flex: 1
                                 }
                             ]
@@ -83,7 +94,7 @@ Ext.define('Target.view.settings.Columns', {
                             },
                             columns: [
                                 {
-                                    text: 'Properties',
+                                    text: 'Displayed Properties',
                                     dataIndex: 'display_name',
                                     flex: 1
                                 }
@@ -101,7 +112,18 @@ Ext.define('Target.view.settings.Columns', {
                                 listeners: {
                                     drop: 'onDropGrid2'
                                 }
-                            }
+                            },
+                            tbar: [
+                                {
+                                    xtype: 'common-searchfield',
+                                    minSearch: 1,
+                                    listeners: {
+                                        'search': 'onSearchDisplayed',
+                                        'cancel': 'onSearchCancelDisplayed'
+                                    },
+                                    flex: 1
+                                }
+                            ]
                         }
                     ]
                 }

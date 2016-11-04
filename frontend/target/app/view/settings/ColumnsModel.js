@@ -22,7 +22,8 @@ Ext.define('Target.view.settings.ColumnsModel', {
         },
         availableContents: {
             type: 'product-display-contents',
-            autoLoad: false
+            autoLoad: false,
+            storeId: 'Available'
         },
         auxAvailableContents: {
             type: 'product-display-contents',

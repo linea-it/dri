@@ -177,7 +177,6 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
     @list_route()
     def get_display_content(self, request):
-        print('---------------------- get_display_content ----------------------')
 
         pcn_product_id = request.query_params.get('pcn_product_id', None)
         if pcn_product_id is None:
@@ -186,6 +185,9 @@ class ProductContentViewSet(viewsets.ModelViewSet):
         pca_setting = request.query_params.get('pca_setting', None)
         if pca_setting is None:
             raise Exception('pca_setting is required.')
+
+        qdisplay_name = request.query_params.get('display_name', None)
+
 
         # queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id, pk=1360)
         queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id)
@@ -251,12 +253,13 @@ class ProductContentViewSet(viewsets.ModelViewSet):
                     'order': contentSetting.pcs_order,
                 })
 
-
-            # print (content)
-            contents.append(content)
+            if qdisplay_name is not None:
+                if content.get('display_name').lower().find(qdisplay_name.lower()) is not -1:
+                    contents.append(content)
+            else:
+                contents.append(content)
 
         ordered = sorted(contents, key=operator.itemgetter('order'))
-        print(ordered)
 
         return Response(ordered)
 
@@ -374,6 +377,7 @@ class CurrentSettingViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'cst_product', 'cst_setting',)
 
     ordering_fields = ('id', 'cst_display_name',)
+
 
 
 class ProductContentSettingViewSet(viewsets.ModelViewSet):

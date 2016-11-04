@@ -12,57 +12,71 @@ Ext.define('Target.view.settings.ColumnsController', {
             'targets-columns': {
                 changesetting: 'onChangeSetting'
             }
+        },
+        store: {
+            '#Available': {
+                load: 'checkAvailable'
+            }
         }
     },
-
-    flag_multiple: false,
 
     onChangeSetting: function (currentSetting) {
         var me = this,
             vm = me.getViewModel(),
-            available = vm.getStore('availableContents'),
             auxAvailable = vm.getStore('auxAvailableContents'),
-            auxContentSetting = vm.getStore('auxContentSettings'),
-            storeContentSetting = vm.getStore('contentSettings');
-
-        storeContentSetting.addFilter([
-            {'property': 'pcs_setting', value: currentSetting.get('cst_setting')}
-        ]);
+            auxContentSetting = vm.getStore('auxContentSettings');
 
         auxContentSetting.addFilter([
             {'property': 'pcs_setting', value: currentSetting.get('cst_setting')}
-        ]);
-
-        available.addFilter([
-            {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
-            {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
         ]);
 
         auxAvailable.addFilter([
             {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
             {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
         ]);
-
-        storeContentSetting.load();
+        auxAvailable.load();
 
         auxContentSetting.load({
             callback: function () {
-                available.load({
-                    callback: function () {
-                        me.checkAvailable();
-                    }
-                });
+                me.loadAvailable();
 
             }
         });
 
-        auxAvailable.load();
+        me.loadContentSettings();
 
     },
 
-    checkAvailable: function () {
-        console.log('checkAvailable()');
+    loadAvailable: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            available = vm.getStore('availableContents'),
+            currentSetting = vm.get('currentSetting');
 
+        available.clearFilter();
+
+        available.addFilter([
+            {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
+            {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
+        ]);
+
+        available.load();
+    },
+
+    loadContentSettings: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentSetting = vm.get('currentSetting'),
+            storeContentSetting = vm.getStore('contentSettings');
+
+        storeContentSetting.addFilter([
+            {'property': 'pcs_setting', value: currentSetting.get('cst_setting')}
+        ]);
+
+        storeContentSetting.load();
+    },
+
+    checkAvailable: function () {
         var me = this,
             vm = me.getViewModel(),
             available = vm.getStore('availableContents'),
@@ -70,13 +84,10 @@ Ext.define('Target.view.settings.ColumnsController', {
             removeds = [];
 
         // Remover da store as propriedades que ja estao na contentSettings
-
-        available.each(function (item, key) {
-            console.log('item:', item);
-
+        available.each(function (item) {
             if (auxContentSetting.find('display_name', item.get('display_name')) > -1) {
-                console.log('esta na outra grid');
                 removeds.push(item);
+
             }
 
         }, this);
@@ -84,122 +95,30 @@ Ext.define('Target.view.settings.ColumnsController', {
         available.remove(removeds);
     },
 
-    // onChangeVisible: function () {
-    //     var me = this,
-    //         vm = me.getViewModel(),
-    //         grid = me.lookupReference('gridColumns'),
-    //         storeContentSetting = vm.getStore('contentSettings'),
-    //         store = vm.getStore('displayContents'),
-    //         selection = grid.getSelection();
+    onDropGrid1: function (node, data) {
+        var me = this,
+            vm = me.getViewModel(),
+            grid = me.lookupReference('grid1'),
+            auxStore = vm.getStore('auxContentSettings');
 
-    //     me.flag_multiple = true;
+        grid.setLoading(true);
 
-    //     grid.setLoading(true);
+        Ext.each(data.records, function (record) {
+            auxStore.remove(record);
 
-    //     Ext.each(selection, function (record) {
-    //         record.set('is_visible', !record.get('is_visible'));
+        }, me);
 
-    //     },me);
+        auxStore.sync({
+            callback: function () {
+                grid.setLoading(false);
+                me.loadContentSettings();
+                me.loadAvailable();
+            }
+        });
 
-    //     me.flag_multiple = false;
-
-    //     storeContentSetting.sync({
-    //         callback: function () {
-    //             grid.setLoading(false);
-    //             store.load();
-    //         }
-    //     });
-
-    // },
-
-    // onSingleChangeVisible: function (chb, val) {
-    //     var me = this,
-    //         vm = me.getViewModel(),
-    //         storeContentSetting = vm.getStore('contentSettings'),
-    //         rec = chb.getWidgetRecord(),
-    //         contentSetting;
-
-    //     rec.set('is_visible', val);
-    //     rec.commit();
-
-    //     contentSetting = storeContentSetting.getById(rec.get('content_setting'));
-
-    //     if (contentSetting) {
-    //         // Se ja exitir na contentSettings e um update mas so se o valor for diferente do que estava antes
-    //         if (rec.get('is_visible') !== contentSetting.get('pcs_is_visible')) {
-    //             contentSetting.set('pcs_is_visible', rec.get('is_visible'));
-    //         }
-
-    //     } else {
-    //         // Criar um ContentSetting
-    //         contentSetting = Ext.create('Target.model.ContentSetting', {
-    //             'pcs_content': rec.get('id'),
-    //             'pcs_setting': rec.get('setting_id'),
-    //             'pcs_is_visible': rec.get('is_visible'),
-    //             'pcs_order': rec.get('order')
-    //         });
-
-    //         storeContentSetting.add(contentSetting);
-    //     }
-
-    //     // So faz o sync se for operacao single.
-    //     if (!me.flag_multiple) {
-    //         storeContentSetting.sync();
-    //     }
-
-    // },
-
-    onDropGrid: function (node, data, dropRec, dropPosition) {
-        // var me = this,
-        //     vm = me.getViewModel(),
-        //     grid = me.lookupReference('gridColumns'),
-        //     store = vm.getStore('displayContents'),
-        //     storeContentSetting = vm.getStore('contentSettings'),
-        //     contentSetting;
-
-        // grid.setLoading(true);
-
-        // store.each(function (item, key) {
-
-        //     // console.log(item.get('display_name'), key, item.get('content_setting'));
-
-        //     if (item.get('content_setting') > 0) {
-        //         contentSetting = storeContentSetting.getById(item.get('content_setting'));
-
-        //         contentSetting.set('pcs_order', key);
-        //         contentSetting.set('pcs_is_visible', item.get('is_visible'));
-
-        //     } else {
-        //         contentSetting = Ext.create('Target.model.ContentSetting', {
-        //             'pcs_content': item.get('id'),
-        //             'pcs_setting': item.get('setting_id'),
-        //             'pcs_is_visible': item.get('is_visible'),
-        //             'pcs_order': key
-        //         });
-        //     }
-
-        //     storeContentSetting.add(contentSetting);
-
-        // }, me);
-
-        // storeContentSetting.sync({
-        //     callback: function () {
-        //         storeContentSetting.load({
-        //             callback: function () {
-        //                 grid.setLoading(false);
-        //                 store.load({
-        //                     callback: function () {
-
-        //                     }
-        //                 });
-        //             }
-        //         });
-        //     }
-        // });
     },
 
     onDropGrid2: function (node, data) {
-        console.log('onDropGrid2(%o)', data);
         var me = this,
             vm = me.getViewModel(),
             grid = me.lookupReference('grid2'),
@@ -239,15 +158,66 @@ Ext.define('Target.view.settings.ColumnsController', {
                 grid.setLoading(false);
                 auxStore.load({
                     callback: function () {
-                        storeContentSetting.load({
-                            callback: function () {
-
-                            }
-                        });
+                        me.loadContentSettings();
                     }
                 });
             }
         });
+    },
+
+    onSearch: function (value) {
+        var me = this,
+            vm = me.getViewModel(),
+            available = vm.getStore('availableContents');
+
+        if (value !== '') {
+            available.filter([
+                {
+                    property: 'display_name',
+                    value: value
+                }
+            ]);
+
+        } else {
+            me.onSearchCancel();
+        }
+
+    },
+
+    onSearchCancel: function () {
+        this.loadAvailable();
+
+    },
+
+    onSearchDisplayed: function (value) {
+        var me = this,
+            vm = me.getViewModel(),
+            storeContentSetting = vm.getStore('contentSettings'),
+            removeds = [],
+            display_name;
+
+        storeContentSetting.load({
+            callback: function () {
+
+                storeContentSetting.each(function (record) {
+                    display_name = record.get('display_name').toLowerCase();
+
+                    if (display_name.indexOf(value.toLowerCase()) === -1) {
+                        removeds.push(record);
+                    }
+
+                }, me);
+
+                storeContentSetting.remove(removeds);
+
+            }
+        });
+
+    },
+
+    onSearchCancelDisplayed: function () {
+        this.loadContentSettings();
+
     }
 
 });

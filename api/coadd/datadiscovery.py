@@ -215,7 +215,7 @@ class DataDiscovery:
             return row[col]
         else:
             return None
-git
+
 
 if __name__ == '__main__':
     print ("---------- stand alone -------------")
