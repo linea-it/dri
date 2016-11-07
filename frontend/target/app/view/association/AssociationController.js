@@ -261,8 +261,7 @@ Ext.define('Target.view.association.AssociationController', {
 
         } else {
             if (previousValues != dragData.record.pcc_display_name) {
-                console.log('update associacao');
-
+                // TODO
             }
         }
     },
@@ -350,7 +349,6 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     onAssociationChange: function () {
-        console.log('onAssociationChange');
         var me = this,
             view = me.getView();
 

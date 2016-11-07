@@ -31,7 +31,7 @@ Ext.define('Target.view.settings.Columns', {
                     height: 80,
                     bodyPadding: 10,
                     html: [
-                        '<p>TEXT.</p>'
+                        '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sed risus ornare, dignissim odio quis, fermentum odio. Proin mauris est, lobortis in malesuada ac, varius eu mi. Proin diam mi, tincidunt eu libero at, efficitur tempor nisl. Nunc feugiat, tortor vitae auctor porttitor, lectus lorem blandit orci, ut ullamcorper quam magna sit amet tellus.</p>'
                     ]
                 },
                 {
@@ -127,68 +127,6 @@ Ext.define('Target.view.settings.Columns', {
                         }
                     ]
                 }
-                // {
-                //     xtype: 'gridpanel',
-                //     reference: 'gridColumns',
-                //     flex: 1,
-                //     scrollable: true,
-                //     bind: {
-                //         store: '{displayContents}'
-                //     },
-                //     selType: 'checkboxmodel',
-                //     columns: [
-                //         {
-                //             text     : 'Properties',
-                //             dataIndex: 'display_name',
-                //             flex: 1
-                //         },
-                //         // {
-                //         //     text     : 'Order',
-                //         //     dataIndex: 'order',
-                //         //     flex: 1
-                //         // },
-                //         {
-                //             xtype: 'widgetcolumn',
-                //             text: 'Visible',
-                //             dataIndex: 'is_visible',
-                //             align: 'center',
-                //             widget: {
-                //                 xtype: 'checkbox',
-                //                 checked: true,
-                //                 listeners: {
-                //                     change: 'onSingleChangeVisible'
-                //                 }
-                //             }
-                //         }
-                //     ],
-                //     // columnLines: true,
-                //     viewConfig: {
-                //         stripeRows: false,
-                //         markDirty: false,
-                //         getRowClass: function (record) {
-                //             return record.get('is_visible') === false ? 'hidden-row' : '';
-                //         },
-
-                //         plugins: {
-                //             ptype: 'gridviewdragdrop',
-                //             containerScroll: true
-                //         },
-                //         listeners: {
-                //             drop: 'onDropGrid'
-                //         }
-                //     },
-                //     tbar: [
-                //         '->',
-                //         {
-                //             xtype: 'button',
-                //             text: 'Change Visibility',
-                //             handler: 'onChangeVisible',
-                //             bind: {
-                //                 disabled: '{!gridColumns.selection}'
-                //             }
-                //         }
-                //     ]
-                // }
             ],
             buttons: [
                 {
@@ -220,12 +158,6 @@ Ext.define('Target.view.settings.Columns', {
     },
 
     setCurrentSetting: function (currentSetting) {
-
-        if (this.currentSetting !== null) {
-            if (this.currentSetting.get('id') == currentSetting.get('id')) {
-                return;
-            }
-        }
 
         this.currentSetting = currentSetting;
 

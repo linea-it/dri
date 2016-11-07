@@ -55,17 +55,15 @@ Ext.define('Target.view.settings.SettingsController', {
     onCloseSettingWindow: function () {
         var me = this,
             vm = me.getViewModel(),
-            store = vm.getStore('settings'),
             refs = me.getReferences(),
-            combo = refs.cmbSetting;
+            combo = refs.cmbSetting,
+            store = combo.getStore();
 
         store.load({
             callback: function () {
-                // if (this.first()) {
-                //     combo.select(this.first());
-                // } else {
                 combo.select(null);
-                // }
+                vm.set('selectedSetting', null),
+                vm.set('currentSetting', null);
             }
         });
     },
@@ -111,6 +109,7 @@ Ext.define('Target.view.settings.SettingsController', {
         store.load({
             callback: function () {
                 combo.select(this.first());
+                me.onSelectSetting(combo, this.first());
             }
         });
 
@@ -179,8 +178,6 @@ Ext.define('Target.view.settings.SettingsController', {
     },
 
     onChooseSetting: function () {
-        console.log('onChooseSetting');
-
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
@@ -188,7 +185,7 @@ Ext.define('Target.view.settings.SettingsController', {
             currentSetting = vm.get('currentSetting');
 
         // Verificar se existe uma currentSetting
-        if (currentSetting.get('id') > 0) {
+        if ((currentSetting !== null) && (currentSetting.get('id') > 0)) {
             // Verificar se e igual a selecionada
             if (currentSetting.get('cst_setting') == selected.get('id')) {
                 // mesma currentSetting
@@ -243,7 +240,6 @@ Ext.define('Target.view.settings.SettingsController', {
     },
 
     changeCurrentSetting: function () {
-        console.log('changeCurrentSetting');
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),

@@ -57,14 +57,6 @@ Ext.define('Target.view.wizard.WizardController', {
 
         vm.set('currentSetting', setting);
 
-        // view.enableTabs();
-
-        // // Setting selecionado
-        // association.setSetting(setting.get('cst_setting'));
-
-        // // Product
-        // association.setProduct(setting.get('cst_product'));
-
         view.setCurrentSetting(setting);
     },
 

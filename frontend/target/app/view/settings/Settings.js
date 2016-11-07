@@ -164,7 +164,7 @@ Ext.define('Target.view.settings.Settings', {
     },
 
     selectSetting: function (currentSetting) {
-        this.checkFinish();
+        this.setCurrentSetting(currentSetting);
         this.fireEvent('selectsetting', currentSetting);
 
     },

@@ -203,12 +203,6 @@ Ext.define('Target.view.association.Panel', {
 
     setCurrentSetting: function (currentSetting) {
 
-        if (this.currentSetting !== null) {
-            if (this.currentSetting.get('id') == currentSetting.get('id')) {
-                return;
-            }
-        }
-
         this.currentSetting = currentSetting;
 
         this.getViewModel().set('currentSetting', currentSetting);
