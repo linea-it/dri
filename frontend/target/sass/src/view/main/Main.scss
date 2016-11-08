@@ -1,0 +1,13 @@
+
+// UI Styles for buttons
+@include extjs-button-small-ui(
+    $ui: 'soft-green',
+    $background-color: $color-soft-green,
+    $border-color:darken($color-soft-green, 5%)
+);
+
+@include extjs-button-small-ui(
+    $ui: 'soft-red',
+    $background-color: $color-soft-red,
+    $border-color:darken($color-soft-red, 5%)
+);

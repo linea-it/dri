@@ -20,7 +20,9 @@ Ext.define('Target.view.association.Panel', {
     viewModel: 'association',
 
     config: {
-        product: null
+        product: null,
+        setting: null,
+        currentSetting: null
     },
 
     layout: 'border',
@@ -32,6 +34,17 @@ Ext.define('Target.view.association.Panel', {
 
         Ext.apply(this, {
             items: [
+                {
+                    xtype: 'panel',
+                    region: 'north',
+                    height: 80,
+                    bodyPadding: 10,
+                    html: [
+                        '<p>The properties in your catalog must be associated with the available properties for the target class.</br>' +
+                        'It is necessary to make association for property ID, RA and Dec.' +
+                        '</p>'
+                    ]
+                },
                 {
                     xtype: 'targets-association-grid',
                     itemId: 'grid1',
@@ -136,6 +149,30 @@ Ext.define('Target.view.association.Panel', {
                         }
                     ]
                 }
+            ],
+            buttons: [
+                {
+                    text: 'Previous',
+                    scope: me,
+                    handler: function () {
+                        this.fireEvent('previous');
+                    }
+                },
+                {
+                    text: 'Next',
+                    scope: me,
+                    handler: function () {
+                        this.fireEvent('next');
+                    }
+                },
+                {
+                    text: 'Finish',
+                    itemId: 'AssociationBtnFinish',
+                    ui: 'soft-green',
+                    scope: me,
+                    handler: 'onFinish',
+                    hidden: true
+                }
             ]
         });
 
@@ -149,6 +186,56 @@ Ext.define('Target.view.association.Panel', {
         if (product) {
             this.fireEvent('changeproduct', product, this);
         }
+    },
+
+    setSetting: function (setting) {
+        this.setting = setting;
+
+        this.getViewModel().set('setting', setting);
+
+    },
+
+    onFinish: function () {
+
+        this.fireEvent('finish', this);
+
+    },
+
+    setCurrentSetting: function (currentSetting) {
+
+        this.currentSetting = currentSetting;
+
+        this.getViewModel().set('currentSetting', currentSetting);
+
+        this.setSetting(currentSetting.get('cst_setting'));
+
+        this.setProduct(currentSetting.get('cst_product'));
+
+        this.fireEvent('changesetting', currentSetting);
+
+        this.checkFinish();
+    },
+
+    checkFinish: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('displayContents'),
+            currentSetting = vm.get('currentSetting');
+
+        store.addFilter([
+            {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
+            {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
+        ]);
+        store.load({
+            callback: function () {
+
+                if (this.check_ucds()) {
+                    me.down('#AssociationBtnFinish').setVisible(true);
+                } else {
+                    me.down('#AssociationBtnFinish').setVisible(false);
+                }
+            }
+        });
     }
 
 });

@@ -3,6 +3,8 @@ from django.db import models
 from product_classifier.models import ProductClass
 from product_classifier.models import ProductClassContent
 from product_register.models import ExternalProcess
+from current_user import get_current_user
+from django.conf import settings
 
 
 class Product(models.Model):
@@ -109,6 +111,38 @@ class ProductContent(models.Model):
         return self.pcn_column_name
 
 
+
+class ProductSetting(models.Model):
+    cst_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+    cst_display_name = models.CharField(
+        max_length=128, verbose_name='Name')
+    cst_description = models.CharField(
+        max_length=1024, null=True, blank=True, verbose_name='Description')
+    cst_is_editable = models.BooleanField(
+        default=False, verbose_name='Is Editable')
+    cst_is_public = models.BooleanField(
+        default=False, verbose_name='Is Public')
+
+    def __str__(self):
+        return self.cst_display_name
+
+class CurrentSetting(models.Model):
+    cst_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product')
+    cst_setting = models.ForeignKey(
+        ProductSetting, on_delete=models.CASCADE, verbose_name='Setting')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+
+
+    def __str__(self):
+        return str(self.pk)
+
 class ProductContentAssociation(models.Model):
     pca_product = models.ForeignKey(
         Product, on_delete=models.CASCADE, verbose_name='Product', default=None
@@ -118,4 +152,21 @@ class ProductContentAssociation(models.Model):
     )
     pca_product_content = models.ForeignKey(
         ProductContent, on_delete=models.CASCADE, verbose_name='Product Content', default=None
+    )
+    pca_setting = models.ForeignKey(
+        ProductSetting, on_delete=models.CASCADE, verbose_name='Setting', default=None, null=True, blank=True
+    )
+
+class ProductContentSetting(models.Model):
+    pcs_content = models.ForeignKey(
+        ProductContent, on_delete=models.CASCADE, verbose_name='Content', default=None
+    )
+    pcs_setting = models.ForeignKey(
+        ProductSetting, on_delete=models.CASCADE, verbose_name='Setting', default=None, null=True, blank=True
+    )
+    pcs_is_visible = models.BooleanField(
+        default=False, verbose_name='Is Visible'
+    )
+    pcs_order = models.PositiveIntegerField(
+        null=True, blank=True, verbose_name='Order'
     )

@@ -32,36 +32,36 @@ Ext.define('Target.view.objects.TabPanel', {
 
         Ext.apply(this, {
             items: [
-                {
-                    xtype: 'targets-objects-mosaic',
-                    // title: 'Mosaic',
-                    itemId: 'CatalogMosaic',
-                    bind: {
-                        store: '{objects}'
-                    },
-                    listeners: {
-                        scope: this,
-                        ready: this.onItemReady,
-                        select: this.onSelectItem,
-                        rowdblclick: this.onDbClickItem
-                    },
-                    hidden: true
-                },
-                {
-                    xtype: 'targets-objects-grid',
-                    region: 'center',
-                    // title: 'Class Properties',
-                    itemId: 'CatalogClassGrid',
-                    bind: {
-                        store: '{objects}'
-                    },
-                    listeners: {
-                        scope: this,
-                        ready: this.onItemReady,
-                        select: this.onSelectItem,
-                        rowdblclick: this.onDbClickItem
-                    }
-                },
+                // {
+                //     xtype: 'targets-objects-mosaic',
+                //     // title: 'Mosaic',
+                //     itemId: 'CatalogMosaic',
+                //     bind: {
+                //         store: '{objects}'
+                //     },
+                //     listeners: {
+                //         scope: this,
+                //         ready: this.onItemReady,
+                //         select: this.onSelectItem,
+                //         rowdblclick: this.onDbClickItem
+                //     },
+                //     hidden: true
+                // },
+                // {
+                //     xtype: 'targets-objects-grid',
+                //     region: 'center',
+                //     // title: 'Class Properties',
+                //     itemId: 'CatalogClassGrid',
+                //     bind: {
+                //         store: '{objects}'
+                //     },
+                //     listeners: {
+                //         scope: this,
+                //         ready: this.onItemReady,
+                //         select: this.onSelectItem,
+                //         rowdblclick: this.onDbClickItem
+                //     }
+                // }
                 {
                     xtype: 'targets-objects-grid',
                     // title: 'Catalog Properties',
