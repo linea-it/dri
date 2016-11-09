@@ -73,6 +73,7 @@ Ext.define('visiomatic.Visiomatic', {
         image: null,
         imageLayer: null,
         imageOptions: {
+            credentials: true,
             center: false,
             fov: false,
             mixingMode: 'color',
