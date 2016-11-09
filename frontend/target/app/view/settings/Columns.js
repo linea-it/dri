@@ -31,7 +31,7 @@ Ext.define('Target.view.settings.Columns', {
                     height: 80,
                     bodyPadding: 10,
                     html: [
-                        '<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sed risus ornare, dignissim odio quis, fermentum odio. Proin mauris est, lobortis in malesuada ac, varius eu mi. Proin diam mi, tincidunt eu libero at, efficitur tempor nisl. Nunc feugiat, tortor vitae auctor porttitor, lectus lorem blandit orci, ut ullamcorper quam magna sit amet tellus.</p>'
+                        '<p> Select which columns you want to display.</br>Drag and drop from the left panel into the right. You can also choose the order of the parameters.</br> Use the search form to ease your choice.</p>'
                     ]
                 },
                 {
