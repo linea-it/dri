@@ -171,19 +171,31 @@ Ext.define('Target.view.objects.ObjectsController', {
             msg;
 
         msg = '<p>' +
-            'É Necessario fazer uma configuração para visualizar este catalogo.' +
+            'This catalog needs to have its columns associated to a default set of properties.' +
             '</br></br>' +
-            'ao Clicar em Ok, sera exibido um Wizard que lhe ajudara ' +
-            'a fazer as configurações necessárias como associar as propriedades do seu catalogo com ' +
-            'propriedades comumente usadas para a mesma classe ou escolher as propriedades que deseja visualizar.' +
+            'When clicking OK, a Wizard will assist you on the process of associating columns and selecting the ones you want to display.' +
             '</br></br>' +
-            'Neste Wizard você poderá escolher ou criar um conjunto de configurações.' + '</br>' +
-            'Dicas:' + '</br>' +
-            'As configurações são especificas por catalogos.' + '</br>' +
-            'Podem ser criadas mais de uma configuração para o mesmo catalogo.' + '</br>' +
-            'As configurações são por usuario mais é possivel escolher configurações que foram marcadas como publicas.' + '</br>' +
-            'Não é possivel visualizar o catalogo sem escolher uma configuração.' + '</br>' +
-            'É obrigatorio fazer associação para as propriedades ID, RA, Dec. </p>';
+            'Association of ID, RA, and Dec is mandatory in order to display the targets.' + '</br>' +
+            'You will not be able to visualize your catalog without choosing a configuration.'  + '</br>' +
+            'You can create different configurations.'  + '</br>' +
+            'Configurations are specific to a given catalog.'  + '</br>' +
+            'But each catalog can have more than one configuration.'  + '</br>' +
+            'Configurations are set by a user, but you can also pick from a public configuration (if a colleague is also working with same catalog).' + '</p>';
+
+        // msg = '<p>' +
+        //     'É Necessario fazer uma configuração para visualizar este catalogo.' +
+        //     '</br></br>' +
+        //     'ao Clicar em Ok, sera exibido um Wizard que lhe ajudara ' +
+        //     'a fazer as configurações necessárias como associar as propriedades do seu catalogo com ' +
+        //     'propriedades comumente usadas para a mesma classe ou escolher as propriedades que deseja visualizar.' +
+        //     '</br></br>' +
+        //     'Neste Wizard você poderá escolher ou criar um conjunto de configurações.' + '</br>' +
+        //     'Dicas:' + '</br>' +
+        //     'As configurações são especificas por catalogos.' + '</br>' +
+        //     'Podem ser criadas mais de uma configuração para o mesmo catalogo.' + '</br>' +
+        //     'As configurações são por usuario mais é possivel escolher configurações que foram marcadas como publicas.' + '</br>' +
+        //     'Não é possivel visualizar o catalogo sem escolher uma configuração.' + '</br>' +
+        //     'É obrigatorio fazer associação para as propriedades ID, RA, Dec. </p>';
 
         Ext.MessageBox.show({
             header: false,
