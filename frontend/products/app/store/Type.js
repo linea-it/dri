@@ -24,6 +24,7 @@ Ext.define('Products.store.Type', {
                 })
             }
         },
+        
         exception: function(misc) {
             alert("exception!");
         }
