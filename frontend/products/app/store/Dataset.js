@@ -48,10 +48,15 @@ Ext.define('Products.store.Dataset', {
     listeners: {
         load: {
             fn: function(store){
-                store.insert(0, {
-                    id: 10000,
-                    tag_display_name: "All"
-                })
+                console.log(store.getCount())
+                if(store.getCount() > 1 && store.getCount() < 20){
+                    store.insert(0, {
+                        id: 10000,
+                        tag_display_name: "All"
+                    })
+                }else{
+                    store.loadData([],false);
+                }                
             }
         },
         exception: function(misc) {

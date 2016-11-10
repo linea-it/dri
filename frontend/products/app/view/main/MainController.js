@@ -68,6 +68,7 @@ Ext.define('Products.view.main.MainController', {
         value = record.getData().rls_display_name
         if (value == 'All'){
             me.ClearRelease()
+            storedataset.removeFilter("tag_release", false)
             store.load()
         }else{
             storedataset.filter([
