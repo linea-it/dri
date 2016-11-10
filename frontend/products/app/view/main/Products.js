@@ -20,9 +20,7 @@ Ext.define('Products.view.main.Products', {
                   text: 'Type', 
                   dataIndex: 'pgr_display_name',
                   width: 150,
-                  renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
-                    return "<b>" + value + "</b>"
-                  },
+                   
                   filter: {
                     type: 'string',
                     itemDefaults: {
@@ -34,9 +32,7 @@ Ext.define('Products.view.main.Products', {
                   text: 'Name', 
                   dataIndex: 'prd_display_name',
                   width: 150,
-                  renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
-                    return "<b>" + value + "</b>"
-                  },
+                   
                   filter: {
                     type: 'string',
                     itemDefaults: {
@@ -48,9 +44,7 @@ Ext.define('Products.view.main.Products', {
                   text: 'Class', 
                   dataIndex: 'pcl_display_name',
                   width: 150,
-                  renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
-                    return "<b>" + value + "</b>"
-                  },
+                   
                   filter: {
                     type: 'string',
                     itemDefaults: {
@@ -60,9 +54,9 @@ Ext.define('Products.view.main.Products', {
                 },
                 { 
                     text: 'Process ID', 
-                    dataIndex: 'prd_process_id',
+                    dataIndex: 'epr_original_id',
                     renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
-                        return "<b>" + value + "</b>"
+                        return     value    
                     },
                     filter: 'number' 
                 },
@@ -70,7 +64,7 @@ Ext.define('Products.view.main.Products', {
                     text: 'Owner', 
                     dataIndex: 'epr_username',
                     renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
-                        return "<b>" + value + "</b>"
+                        return     value    
                     },
                       filter: {
                         type: 'string',
@@ -84,9 +78,9 @@ Ext.define('Products.view.main.Products', {
                     dataIndex: 'prd_filter',
                     renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
                         if (value == null){
-                            return "<b>" + '---' + "</b>"
+                            return     '---'    
                         }else{
-                            return "<b>" + value + "</b>"
+                            return     value    
                         }
                         
                     },
@@ -101,7 +95,7 @@ Ext.define('Products.view.main.Products', {
                 //   text: 'Release', 
                 //   dataIndex: 'release_display_name',
                 //   renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
-                //     return "<b>" + value + "</b>"
+                //     return     value    
                 //   },
                 //   filter: {
                 //     type: 'string',
@@ -115,7 +109,7 @@ Ext.define('Products.view.main.Products', {
                 //   dataIndex: 'display_name',
                 //   width: 150,
                 //   renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
-                //     return "<b>" + value + "</b>"
+                //     return     value    
                 //   },
                 //   filter: {
                 //     type: 'string',
@@ -129,7 +123,7 @@ Ext.define('Products.view.main.Products', {
                   dataIndex: 'epr_end_date',
                   width: 150,
                   renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
-                    return "<b>" + value.substring(0,10) + "</b>"
+                    return     value.substring(0,10)    
                   },
                   filter: {
                     type: 'string',
@@ -139,11 +133,24 @@ Ext.define('Products.view.main.Products', {
                   }
                 },
                 // { 
+                //   text: 'Tablename', 
+                //   dataIndex: 'prd_table_ptr',
+                //   width: 250,
+                  
+                //   filter: {
+                //     type: 'string',
+                //     itemDefaults: {
+                //         emptyText: 'Search for...'
+                //     }
+                //   }
+                // },
+                
+                // { 
                 //   text: 'Start Time', 
                 //   dataIndex: 'start_time',
                 //   width: 150,
                 //   renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
-                //     return "<b>" + value + "</b>"
+                //     return     value    
                 //   },
                 //   filter: {
                 //     type: 'string',
@@ -235,7 +242,18 @@ Ext.define('Products.view.main.Products', {
                             //  // download_csv(selected.get('catalog_id'))                  
                             //}
                     }]
-                },
+                },{
+                    xtype: 'actioncolumn',
+                    width: 30,
+                    sortable: false,
+                    menuDisabled: true,
+                    // flex:true,
+                    items: [{
+                        iconCls:'x-fa fa-info ',
+                        tooltip: 'Product information',
+                        handler : 'productInfo'
+                    }]
+                }
                 // {
                 //     xtype: 'actioncolumn',
                 //     width: 30,
@@ -268,7 +286,7 @@ Ext.define('Products.view.main.Products', {
                 //         tooltip: 'Product log',
                 //         handler: function(grid, rowIndex, colIndex){
                 //             process_id = grid.getStore().getAt(rowIndex).get('process_id');
-                //             window.open("/VP/getViewProcessCon?process_id="+process_id);
+                //             window.open("/VP/getViewProcessCon?process_id=" process_id);
                 //         }
                 //     }]
                 // },{
@@ -319,7 +337,7 @@ Ext.define('Products.view.main.Products', {
             //         selected = grid.getSelectionModel().getSelection();
             //         if (selected.length > 0) {
             //           lista = []
-            //           for(i=0; i<selected.length;i++){
+            //           for(i=0; i<selected.length;i  ){
             //             //console.log(selected[i].get('catalog_id'));
             //             lista.push(selected[i].get('process_id'))
             //           }

@@ -9,8 +9,8 @@ from rest_framework import mixins
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
-from .models import Product, Catalog, Map, Mask, ProductContent, ProductContentAssociation
-from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, MaskSerializer, ProductContentSerializer, \
+from .models import Product, Catalog, Map, CutOutJob, Mask, ProductContent, ProductContentAssociation
+from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, CutOutJobSerializer, MaskSerializer, ProductContentSerializer, \
     ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer
 
 logger = logging.getLogger(__name__)
@@ -208,6 +208,26 @@ class MapViewSet(viewsets.ModelViewSet):
     search_fields = ('prd_name', 'prd_display_name', 'prd_class')
 
     ordering_fields = ('id',)
+
+class CutOutJobViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Map to be viewed or edited
+    """
+    queryset = CutOutJob.objects.select_related().all()
+
+    serializer_class = CutOutJobSerializer
+
+    # filter_fields = ('prd_name', 'prd_display_name', 'prd_class')
+
+    # search_fields = ('prd_name', 'prd_display_name', 'prd_class')
+
+    ordering_fields = ('id',)
+
+    # def create(self, request, validated_data):
+    #     obj = CutOutJob.objects.create(**validated_data)
+    #     obj.save()
+    #     print('###########################')
+    #     return obj
 
 class MaskViewSet(viewsets.ModelViewSet):
     """

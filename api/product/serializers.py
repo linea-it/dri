@@ -6,6 +6,7 @@ from rest_framework import serializers
 
 from .models import File, Catalog, ProductContent, ProductContentAssociation
 from .models import Map
+from .models import CutOutJob
 from .models import Mask
 from .models import Product
 from .models import Table
@@ -192,6 +193,22 @@ class MapSerializer(serializers.HyperlinkedModelSerializer):
             'mpa_ordering',
         )
 
+class CutOutJobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CutOutJob
+
+        fields = (
+            'cjb_product',
+            'cjb_display_name',
+            'cjb_status',
+            'cjb_job_id',
+            'cjb_xsize',
+            'cjb_ysize',
+            'cjb_job_type',
+            'cjb_band',
+            'cjb_Blacklist',
+        )
+
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -322,12 +339,15 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
     ctl_num_objects = serializers.SerializerMethodField()
     mpa_nside = serializers.SerializerMethodField()
     mpa_ordering = serializers.SerializerMethodField()
+    prd_table_ptr = serializers.SerializerMethodField()
     pgr_display_name = serializers.SerializerMethodField()
     pcl_display_name = serializers.SerializerMethodField()
     prd_process_id = serializers.PrimaryKeyRelatedField(
         queryset=ExternalProcess.objects.all(), many=False)
     epr_username = serializers.SerializerMethodField()
     epr_end_date = serializers.SerializerMethodField()
+    epr_original_id = serializers.SerializerMethodField()
+
 
     # Dados do Release
     prd_release_id = serializers.SerializerMethodField()
@@ -355,7 +375,9 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             'epr_end_date',
             'prd_release_id',
             'prd_tags',
-            'prd_filter'
+            'epr_original_id',
+            'prd_filter',
+            'prd_table_ptr'
 
         )
 
@@ -383,6 +405,12 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             return obj.table.map.mpa_ordering
         except AttributeError:
             return None
+
+    def get_prd_table_ptr(self, obj):
+        try:
+            return str(obj.table.map.table_ptr)
+        except AttributeError:
+            return str(obj.table.catalog.table_ptr)
 
     def get_pgr_display_name(self, obj):
         return obj.prd_class.pcl_group.pgr_display_name

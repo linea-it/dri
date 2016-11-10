@@ -6,7 +6,7 @@
 bash -l -i -c '
 
 function error_exit {
-    echo "$1" >&2
+    echo "$@" >&2
     exit "${2:-1}"
 }
 

@@ -30,7 +30,7 @@ class DataDiscovery:
     def start(self):
 
         excludes = ["Y3A1_COADD_TEST_123", "Y3A1_COADD_TEST_123_t025", "Y3A1_COADD_TEST_123_t050",
-                    "Y3A1_COADD_TEST_123_t100", "Y3A1_COADD_TEST_DEEP"]
+                    "Y3A1_COADD_TEST_123_t100", "Y3A1_COADD_TEST_DEEP", "Y3A1_COADD_TEST_11"]
 
         patterns = ["tag like 'Y3A1_COADD_TEST%'", "tag='Y3A1_COADD'"]
 
@@ -90,7 +90,11 @@ class DataDiscovery:
                     count_created = 0
                     count_updated = 0
                     count_fail = 0
+                    count = 0
                     for row in tiles:
+
+                        count = count + 1
+
                         tilename = row.get('TILENAME')
 
                         try:
@@ -111,11 +115,13 @@ class DataDiscovery:
                             else:
                                 count_updated = count_updated + 1
 
+                            print("Tile: [%s] [ %s ] Created: [ %s ]" % (format(count, '6d'), tilename, created))
+
                         except Tile.DoesNotExist:
                             count_fail = count_fail + 1
 
                     print(
-                        "Tiles Created [ %s ] Updated [ %s ] Fail [ %s ]" % (count_created, count_updated, count_fail))
+                        "Tiles Total [%s] Created [ %s ] Updated [ %s ] Fail [ %s ]" % (count, count_created, count_updated, count_fail))
 
                 else:
                     print("Tag: %s [ Ignored ]" % tag)
@@ -130,29 +136,39 @@ class DataDiscovery:
         print("Tiles Available [ %s ]" % original_count)
 
         dri_count = Dataset.objects.filter(tag=field).count()
-        print("Tiles Installed [ %s ]" % dri_count)
+
+        last_tile = Dataset.objects.filter(tag=field).order_by('-date').first()
+
+        last_date = last_tile.date
+
+        print("Tiles Installed [ %s ] Recent Date [ %s ]" % (dri_count, last_date))
 
         if original_count != dri_count:
             print ('Tiles to be installed [ %s ]' % (original_count - dri_count))
 
             # sql = "SELECT unitname as tilename, archive_path, t.created_date FROM pfw_attempt p,proctag t WHERE t.tag='%s' AND t.pfw_attempt_id=p.id ORDER BY created_date" % tag
-            sql = ("SELECT p.unitname as tilename, p.reqnum, p.attnum, f.path as archive_path, d.filename "
-                   "FROM proctag t, pfw_attempt p, file_archive_info f, desfile d "
-                   "WHERE d.id=f.desfile_id AND d.pfw_attempt_id = p.id AND t.pfw_attempt_id = p.id "
-                   "AND t.tag='" + tag + "' AND f.filename like '%.ptif' ORDER by unitname")
+            # sql = ("SELECT p.unitname as tilename, p.reqnum, p.attnum, f.path as archive_path, d.filename "
+            #        "FROM proctag t, pfw_attempt p, file_archive_info f, desfile d "
+            #        "WHERE d.id=f.desfile_id AND d.pfw_attempt_id = p.id AND t.pfw_attempt_id = p.id "
+            #        "AND t.tag='" + tag + "' AND f.filename like '%.ptif' AND ROWNUM < 5 ORDER by unitname")
+
+            sql =("SELECT m.tilename, f.path as archive_path, m.filename, t.created_date FROM proctag t, file_archive_info f, miscfile m "
+                "WHERE t.pfw_attempt_id = m.pfw_attempt_id AND t.tag='"+ tag +"' AND m.filetype='coadd_ptif' "
+                "AND f.filename=m.filename")
+
+            if last_date:
+                datetime = last_date.split('.')[0]
+                sql = sql + " t.created_date >= TO_DATE('"+ datetime +"', 'YYYY-MM-DD HH24:MI:SS') "
+
+            sql = sql + " ORDER by t.created_date, m.tilename"
+
+            print("Query: %s" % sql)
+
             tiles = self.fetchall_dict(sql)
 
             for tile in tiles:
-                paths = tile.get('ARCHIVE_PATH').split('/')
-                file = paths[len(paths) - 2]
-                sfile = file.split('-')
-                p = paths[len(paths) - 1]
-
-                run = tile.get('REQNUM')
-                filename = tile.get('FILENAME')
-
                 image_src_ptif = "http://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/%s/%s" % (
-                    tile.get('ARCHIVE_PATH'), filename)
+                    tile.get('ARCHIVE_PATH'), tile.get('FILENAME'))
 
                 tile.update({
                     'image_src_ptif': image_src_ptif.replace("+", "%2B")

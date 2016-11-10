@@ -52,7 +52,7 @@ PROJECT_APPS = [
     'product_classifier',
     'product_register',
     'product',
-    'product_catalog',
+    # 'product_catalog',
     'validation',
     'catalog',
     'interfaces'
@@ -113,6 +113,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 4
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',

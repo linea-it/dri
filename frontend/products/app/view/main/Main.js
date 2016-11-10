@@ -46,61 +46,60 @@ Ext.define('Products.view.main.Main', {
             items:[{
                 xtype: 'comboRelease',
                 reference: 'releasefield',
-                triggers: {
-                    clear: {
-                        cls: 'x-form-clear-trigger',
-                        handler: 'ClearRelease'
-                        // hidden: true
-                    }
-                },
+                // triggers: {
+                //     clear: {
+                //         cls: 'x-form-clear-trigger',
+                //         handler: 'ClearRelease'
+                //         // hidden: true
+                //     }
+                // },
                 listeners: {
                     select: 'onSelectRelease'
                     //deselect: 'onDeselectReleaseField'
                 }
             },
-            // {
-            //     xtype: 'comboDataset',
-            //     reference: 'field',
-            //     triggers: {
-            //         clear: {
-            //             cls: 'x-form-clear-trigger',
-            //             handler: 'cancelDataset'
-            //             // hidden: true
-            //         }
-            //     },
-            //     margin: '0 0 0 20'
-            //     // listeners: {
-            //     //     select: 'onSelectReleaseField'
-            //     //     //deselect: 'onDeselectReleaseField'
-            //     // }
-            // },
+            {
+                xtype: 'comboDataset',
+                reference: 'field',
+                // triggers: {
+                //     clear: {
+                //         cls: 'x-form-clear-trigger',
+                //         handler: 'cancelDataset'
+                //         // hidden: true
+                //     }
+                // },
+                margin: '0 0 0 20',
+                listeners: {
+                    select: 'onSelectField'
+                    //deselect: 'onDeselectReleaseField'
+                }
+            },
             {
                 xtype: 'comboType',
                 margin: '0 0 0 20',
-                triggers: {
-                    clear: {
-                        cls: 'x-form-clear-trigger',
-                        handler: 'clearType'
-                        // hidden: true
-                    }
-                },
+                // triggers: {
+                //     clear: {
+                //         cls: 'x-form-clear-trigger',
+                //         handler: 'clearType'
+                //         // hidden: true
+                //     }
+                // },
                 reference: 'type',
                 listeners: {
-                    select: 'onSelectType'
-                    //deselect: 'onDeselectReleaseField'
+                    select: 'onSelectType',
                 }
             },
             {
                 xtype: 'comboBand',
                 margin: '0 0 0 20',
                 reference: 'bands',
-                triggers: {
-                    clear: {
-                        cls: 'x-form-clear-trigger',
-                        handler: 'clearBand'
-                        // hidden: true
-                    }
-                },
+                // triggers: {
+                //     clear: {
+                //         cls: 'x-form-clear-trigger',
+                //         handler: 'clearBand'
+                //         // hidden: true
+                //     }
+                // },
                 listeners: {
                     select: 'onSelectBand'
                     //deselect: 'onDeselectReleaseField'
@@ -110,15 +109,18 @@ Ext.define('Products.view.main.Main', {
                 xtype: 'button',
                 margin: '0 10 0 10',
                 text: 'Clear Filters',
-                triggers: {
-                    clear: {
-                        cls: 'x-form-clear-trigger',
-                        handler: 'cancelDataset'
-                        // hidden: true
-                    }
-                },
                 handler : 'clearFilters'
-            }]
+            }
+            // ,{
+            //     xtype: 'button',
+            //     iconCls: 'fa fa-info',
+            //     scale: 'medium',
+            //     handler: 'projectHome',
+            //     tooltip: 'Product information',
+            //     handler : 'productInfo'
+
+            // }
+            ]
             
             
         },{
