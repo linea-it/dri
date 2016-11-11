@@ -24,6 +24,9 @@ Ext.define('common.data.proxy.Django', {
         totalProperty: 'count'
     },
 
+    writer: {
+    },
+
     // ExtJS sends partitial updates by default (only the changed fields)
     // The REST-Apis PUT-MEthod-Handler expects complete Records and fails if fields are missing
     // We correct this by telling ExtJS to send a PATCH-Request instead of POST for updates

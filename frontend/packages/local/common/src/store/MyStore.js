@@ -14,7 +14,8 @@ Ext.define('common.store.MyStore', {
     // Exemplo e erro de sessao.
     listeners: {
         load: function (store, records, successful, eOpts) {
-            if (successful == false) {
+            if (successful === false) {
+
                 var proxy = store.proxy;
                 var reader = proxy.reader;
 
@@ -25,13 +26,14 @@ Ext.define('common.store.MyStore', {
                         console.log('Load Failure: %o', jsonData);
                         Ext.Msg.alert('Status', jsonData.msg);
                     }
+
                 } else {
-                    var error = eOpts.getError(),
-                        response = JSON.parse(error.response.responseText);
+                    var error = eOpts.getError();
 
                     switch (error.status) {
                         case 403:
                             // 403 - Forbidden
+                            var response = JSON.parse(error.response.responseText);
                             Ext.MessageBox.show({
                                 title: error.status + ' - ' + error.statusText,
                                 msg: response.detail,
@@ -39,7 +41,7 @@ Ext.define('common.store.MyStore', {
                                 icon: Ext.MessageBox.WARNING,
                                 closable: false,
                                 scope: this,
-                                fn: function (btn) {
+                                fn: function () {
                                     var pathname = window.location.pathname,
                                         hostname = window.location.hostname,
                                         location;
@@ -55,8 +57,9 @@ Ext.define('common.store.MyStore', {
 
                         default:
                             Ext.MessageBox.show({
-                                title: error.status + ' - ' + error.statusText,
-                                msg: response.detail,
+                                header: false,
+                                closable: false,
+                                msg: 'Error ' + error.status + ' - ' + error.statusText,
                                 buttons: Ext.MessageBox.OK,
                                 icon: Ext.MessageBox.WARNING,
                                 scope: this

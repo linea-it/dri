@@ -4,12 +4,7 @@ from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ExternalProcess
 from rest_framework import serializers
 
-from .models import File, Catalog, ProductContent, ProductContentAssociation
-from .models import Map
-from .models import CutOutJob
-from .models import Mask
-from .models import Product
-from .models import Table
+from .models import Product, Map, Mask, Table, ProductSetting, CurrentSetting, ProductContentSetting, CutOutJob, File, Catalog, ProductContent, ProductContentAssociation
 
 logger = logging.getLogger(__name__)
 
@@ -330,6 +325,7 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
             'pca_product',
             'pca_class_content',
             'pca_product_content',
+            'pca_setting',
         )
 
         read_only_fields = ('id')
@@ -443,3 +439,77 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             return tags
         except AttributeError:
             return None
+
+
+class ProductSettingSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+    editable = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductSetting
+
+        fields = (
+            'id',
+            'cst_product',
+            'cst_display_name',
+            'cst_description',
+            'cst_is_public',
+            'cst_is_editable',
+            'owner',
+            'editable'
+        )
+
+    def get_owner(self, obj):
+        return obj.owner.username
+
+    def get_editable(self, obj):
+        current_user = self.context['request'].user
+        if obj.owner.pk == current_user.pk:
+            return True
+        else:
+            return obj.cst_is_editable
+
+
+class CurrentSettingSerializer(serializers.ModelSerializer):
+    editable = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CurrentSetting
+
+        fields = (
+            'id',
+            'cst_product',
+            'cst_setting',
+            'editable'
+        )
+
+    def get_editable(self, obj):
+        current_user = self.context['request'].user
+        if obj.cst_setting.owner.pk == current_user.pk:
+            return True
+        else:
+            return obj.cst_setting.cst_is_editable
+
+
+class ProductContentSettingSerializer(serializers.ModelSerializer):
+    display_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductContentSetting
+
+        fields = (
+            'id',
+            'pcs_content',
+            'pcs_setting',
+            'pcs_is_visible',
+            'pcs_order',
+            'display_name'
+        )
+
+    def get_display_name(self, obj):
+
+        association = obj.pcs_content.productcontentassociation_set.filter(pca_setting=obj.pcs_setting).first()
+        if association is not None:
+            return association.pca_class_content.pcc_display_name
+        else:
+            return obj.pcs_content.pcn_column_name

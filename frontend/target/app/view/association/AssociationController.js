@@ -15,17 +15,18 @@ Ext.define('Target.view.association.AssociationController', {
             }
         },
         store: {
-            '#Catalogs': {
+            '#AuxCatalogs': {
                 load: 'onLoadCatalogs'
             },
             '#ClassContent': {
                 load: 'onLoadClassContent'
             },
-            '#ProductContent': {
+            '#AuxProductContent': {
                 load: 'onLoadProductContent'
             },
             '#ProductAssociation': {
-                load: 'onLoadProductAssociation'
+                load: 'onLoadProductAssociation',
+                datachanged: 'onAssociationChange'
             }
         }
 
@@ -60,15 +61,15 @@ Ext.define('Target.view.association.AssociationController', {
 
             vm.set('currentCatalog', currentCatalog);
 
-            me.loadClassContents(currentCatalog);
+            me.loadClassContents();
         }
 
     },
 
-    loadClassContents: function (currentCatalog) {
+    loadClassContents: function () {
         var me = this,
             vm = me.getViewModel(),
-            // currentCatalog = vm.get('currentCatalog'),
+            currentCatalog = vm.get('currentCatalog'),
             classContents = vm.getStore('classcontent'),
             auxClassContents = vm.getStore('auxclasscontent');
 
@@ -130,6 +131,7 @@ Ext.define('Target.view.association.AssociationController', {
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
+            setting = vm.get('setting'),
             productAssociations = vm.getStore('productassociation');
 
         // Carregar as propriedades associadas.
@@ -137,6 +139,10 @@ Ext.define('Target.view.association.AssociationController', {
             {
                 property: 'pca_product',
                 value: currentCatalog.get('id')
+            },
+            {
+                property: 'pca_setting',
+                value: setting
             }
         ]);
     },
@@ -235,7 +241,9 @@ Ext.define('Target.view.association.AssociationController', {
     },
 
     onCellDrop: function (target, dragData) {
-        var tRecord = target.record,
+        var me = this,
+            vm = me.getViewModel(),
+            tRecord = target.record,
             previousValues = tRecord.previousValues.pcc_display_name,
             record;
 
@@ -245,20 +253,23 @@ Ext.define('Target.view.association.AssociationController', {
             record = Ext.create('Target.model.Association', {
                 pca_product: tRecord.get('pca_product'),
                 pca_class_content: dragData.record.get('id'),
-                pca_product_content: tRecord.get('pca_product_content')
+                pca_product_content: tRecord.get('pca_product_content'),
+                pca_setting: vm.get('setting')
             });
 
             this.addAssociation(record, tRecord);
 
         } else {
             if (previousValues != dragData.record.pcc_display_name) {
-                console.log('update associacao');
-
+                // TODO
             }
         }
     },
 
     addAssociation: function (record, target) {
+        var me = this,
+            view = me.getView();
+
         record.save({
             callback: function (saved, operation, success) {
                 if (success) {
@@ -269,6 +280,8 @@ Ext.define('Target.view.association.AssociationController', {
                     target.set('id', obj.id);
                     target.set('pca_class_content', obj.pca_class_content);
                     target.commit(true);
+
+                    view.checkFinish();
                 }
             }
         });
@@ -333,6 +346,14 @@ Ext.define('Target.view.association.AssociationController', {
             }
         });
         store = null;
+    },
+
+    onAssociationChange: function () {
+        var me = this,
+            view = me.getView();
+
+        view.checkFinish();
+
     }
 
 });

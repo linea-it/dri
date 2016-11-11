@@ -52,7 +52,6 @@ PROJECT_APPS = [
     'product_classifier',
     'product_register',
     'product',
-    # 'product_catalog',
     'validation',
     'catalog',
     'interfaces'

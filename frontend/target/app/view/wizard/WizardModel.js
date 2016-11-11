@@ -9,7 +9,8 @@ Ext.define('Target.view.wizard.WizardModel', {
     requires: [
         'Target.model.Catalog',
         'Target.store.ProductContent',
-        'Target.store.ProductAssociation'
+        'Target.store.ProductAssociation',
+        'Target.model.CurrentSetting'
     ],
 
     stores: {
@@ -27,10 +28,15 @@ Ext.define('Target.view.wizard.WizardModel', {
         currentCatalog: {
             type: 'Target.model.Catalog',
             create: true
+        },
+        currentSetting: {
+            type: 'Target.model.CurrentSetting',
+            create: true
         }
     },
 
     data: {
-        product: null
+        product: null,
+        setting_editable: false
     }
 });

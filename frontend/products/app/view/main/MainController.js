@@ -66,6 +66,7 @@ Ext.define('Products.view.main.MainController', {
         console.log(storedataset)
         id = record.getData().id
         value = record.getData().rls_display_name
+        refs.field.clearValue()
         if (value == 'All'){
             me.ClearRelease()
             storedataset.removeFilter("tag_release", false)

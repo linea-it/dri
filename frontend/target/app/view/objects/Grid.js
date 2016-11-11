@@ -85,42 +85,46 @@ Ext.define('Target.view.objects.Grid', {
             // Criar as colunas de acordo com as propriedades na store
             storeColumns.each(function (record) {
 
-                // type = me.getTypeColumn(record.get('data_type'));
+                // Se a coluna nao estiver visivel
+                if (record.get('is_visible')) {
 
-                var column = {
-                    text: me.createColumnText(record),
-                    dataIndex: record.get('property_name'),
-                    // dataIndex: record.get('property_name').toLowerCase(),
-                    tooltip: me.createColumnTooltip(record)
-                };
+                    // type = me.getTypeColumn(record.get('data_type'));
 
-                // if (type != undefined) {
-                //     column.filter = {type: type, itemDefaults: {emptyText: 'Search for...'}};
-                // }
+                    var column = {
+                        text: me.createColumnText(record),
+                        dataIndex: record.get('column_name'),
 
-                //  Tratamento Tilename default hidden
-                if (record.get('property_name').toLowerCase() == 'tilename') {
-                    // column.hidden = true;
-                    column.width = 120;
+                        tooltip: me.createColumnTooltip(record)
+                    };
 
+                    // if (type != undefined) {
+                    //     column.filter = {type: type, itemDefaults: {emptyText: 'Search for...'}};
+                    // }
+
+                    //  Tratamento Tilename default hidden
+                    if (record.get('column_name').toLowerCase() == 'tilename') {
+                        // column.hidden = true;
+                        column.width = 120;
+
+                    }
+
+                    // Tratamento Ra e Dec caso possua colunas com estes ucds
+                    // Formata a coluna para decimal com 4 casas.
+                    if ((record.get('ucd') == 'pos.eq.ra;meta.main') ||
+                        (record.get('ucd') == 'pos.eq.dec;meta.main')) {
+
+                        column.width = 90;
+                        column.xtype = 'numbercolumn';
+                        column.format = '0.000';
+                    }
+
+                    // Se tiver a coluna id habilita as colunas de rating e reject
+                    if (record.get('ucd') == 'meta.id;meta.main') {
+                        flag = true;
+                    }
+
+                    columns.push(column);
                 }
-
-                // Tratamento Ra e Dec caso possua colunas com estes ucds
-                // Formata a coluna para decimal com 4 casas.
-                if ((record.get('ucd') == 'pos.eq.ra;meta.main') ||
-                    (record.get('ucd') == 'pos.eq.dec;meta.main')) {
-
-                    column.width = 90;
-                    column.xtype = 'numbercolumn';
-                    column.format = '0.000';
-                }
-
-                // Se tiver a coluna id habilita as colunas de rating e reject
-                if (record.get('ucd') == 'meta.id;meta.main') {
-                    flag = true;
-                }
-
-                columns.push(column);
 
             },this);
 
@@ -226,8 +230,8 @@ Ext.define('Target.view.objects.Grid', {
 
     createColumnText: function (record) {
 
-        var unit = record.get('pcc_unit'),
-            name = record.get('property_display_name');
+        var unit = record.get('unit'),
+            name = record.get('display_name');
 
         var text = unit != '' ? Ext.String.format('{0} ( {1} )', name, unit) : name;
 
@@ -239,20 +243,20 @@ Ext.define('Target.view.objects.Grid', {
 
         var tpl = new Ext.XTemplate(
             '<div>',
-            '<p><spam>{property_name}</spam></p>',
-            '<tpl if=\'pcn_column_name != ""\'>',
-                '<p><spam>Name:</spam> {pcn_column_name}</p>',
+            '<p><spam><b>{display_name}</b></spam></p>',
+            '<tpl if=\'column_name != ""\'>',
+                '<p><spam>Name:</spam> {column_name}</p>',
             '</tpl>',
-            '<tpl if=\'pcc_unit != ""\'>',
-                '<p><spam>Unit:</spam> {pcc_unit}</p>',
-            '</tpl>',
-
-            '<tpl if=\'pcc_ucd != ""\'>',
-                '<p><spam>ucd:</spam> {pcc_ucd}</p>',
+            '<tpl if=\'unit != ""\'>',
+                '<p><spam>Unit:</spam> {unit}</p>',
             '</tpl>',
 
-            '<tpl if=\'pcc_reference != ""\'>',
-                '<p><spam>Reference:</spam> {pcc_reference}</p>',
+            '<tpl if=\'ucd != ""\'>',
+                '<p><spam>ucd:</spam> {ucd}</p>',
+            '</tpl>',
+
+            '<tpl if=\'reference != ""\'>',
+                '<p><spam>Reference:</spam> {reference}</p>',
             '</tpl>',
 
             '</div>'
