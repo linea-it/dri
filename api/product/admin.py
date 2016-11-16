@@ -1,7 +1,8 @@
 from django.contrib import admin
 
+
 from .models import Product, ProductRelease, ProductTag, File, Table, Catalog, Map, Mask, ProductContent, \
-    ProductContentAssociation
+    ProductContentAssociation, ProductContentSetting, ProductSetting, CurrentSetting, CutOutJob, CutOut
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -55,6 +56,19 @@ class MapAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'prd_name')
     search_fields = ('prd_name',)
 
+class CutOutJobAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'cjb_display_name',
+    )
+    list_display_links = ('id',)
+    search_fields = ('cjb_display_name',)
+
+class CutOutAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'ctt_url',
+    )
+    list_display_links = ('id',)
+    search_fields = ('id',)
 
 class MaskAdmin(admin.ModelAdmin):
     list_display = (
@@ -65,14 +79,28 @@ class MaskAdmin(admin.ModelAdmin):
 
 
 class ProductContentAdmin(admin.ModelAdmin):
-    list_display = ('pcn_product_id', 'pcn_column_name',)
+    list_display = ('id', 'pcn_product_id', 'pcn_column_name',)
     list_display_links = ('pcn_column_name',)
     search_fields = ('pcn_column_name',)
 
 
 class ProductContentAssociationAdmin(admin.ModelAdmin):
-    list_display = ('pca_product', 'pca_class_content', 'pca_product_content',)
+    list_display = ('id', 'pca_product', 'pca_class_content', 'pca_product_content', 'pca_setting')
     search_fields = ('pca_product__prd_display_name', 'pca_product__prd_name')
+
+
+class ProductContentSettingAdmin(admin.ModelAdmin):
+    list_display = ('id', 'pcs_content', 'pcs_setting', 'pcs_is_visible', 'pcs_order')
+
+
+class ProductSettingAdmin(admin.ModelAdmin):
+    list_display = (
+    'id', 'cst_product', 'owner', 'cst_display_name', 'cst_description', 'cst_is_public', 'cst_is_editable',)
+    search_fields = ('cst_product__prd_display_name', 'cst_display_name', 'cst_description',)
+
+
+class CurrentSettingAdmin(admin.ModelAdmin):
+    list_display = ('id', 'cst_product', 'cst_setting', 'owner',)
 
 
 admin.site.register(Product, ProductAdmin)
@@ -82,6 +110,11 @@ admin.site.register(File, FileAdmin)
 admin.site.register(Table, TableAdmin)
 admin.site.register(Catalog, CatalogAdmin)
 admin.site.register(Map, MapAdmin)
+admin.site.register(CutOutJob, CutOutJobAdmin)
+admin.site.register(CutOut, CutOutAdmin)
 admin.site.register(Mask, MaskAdmin)
 admin.site.register(ProductContent, ProductContentAdmin)
 admin.site.register(ProductContentAssociation, ProductContentAssociationAdmin)
+admin.site.register(ProductContentSetting, ProductContentSettingAdmin)
+admin.site.register(ProductSetting, ProductSettingAdmin)
+admin.site.register(CurrentSetting, CurrentSettingAdmin)

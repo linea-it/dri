@@ -144,7 +144,7 @@ Ext.define('aladin.Aladin', {
         initialFov: null,
 
         // habilitar ou desabilitar a exibicao de mapas
-        enableMaps: true,
+        enableMaps: false,
 
         // habilitar botao que permite troca entre Visiomatic / Aladin
         enableShift: true

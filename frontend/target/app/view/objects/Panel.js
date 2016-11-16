@@ -36,22 +36,54 @@ Ext.define('Target.view.objects.Panel', {
             layout: 'border',
             reference: 'targetsGrid',
             items: [
-                {
-                    xtype: 'targets-objects-tabpanel',
+               {
+                    xtype: 'targets-objects-grid',
                     region: 'center',
-                    reference: 'targetsObjectsTabpanel',
+                    reference: 'targetsObjectsGrid',
+                    // title: 'Catalog Properties',
+                    //itemId: 'CatalogPropertiesGrid',
+                    bind: {
+                        store: '{objects}'
+                    },
                     listeners: {
-                        ready: 'onObjectPanelReady'
-                        // rowdblclick: 'onDbClickTarget'
+                        // scope: this
+                        ready: 'onGridObjectsReady',
+                        select: 'onSelectObject'
                     },
                     tools:[
                         {
                             type: 'gear',
                             tooltip: 'Settings',
-                            callback: 'onClickColumnAssociation'
+                            callback: 'onClickSettings'
                         }
-                    ]
+                    ],
+                    bbar: Ext.create('Ext.PagingToolbar', {
+                        reference: 'pagingtoolbar',
+                        bind: {
+                            store: '{objects}'
+                        },
+                        displayInfo: true,
+                        displayMsg: 'Displaying {0} - {1} of {2}',
+                        emptyMsg: 'No data to display'
+                    })
                 }
+
+                // {
+                //     xtype: 'targets-objects-tabpanel',
+                //     region: 'center',
+                //     reference: 'targetsObjectsTabpanel',
+                //     listeners: {
+                //         ready: 'onObjectPanelReady'
+                //         // rowdblclick: 'onDbClickTarget'
+                //     },
+                //     tools:[
+                //         {
+                //             type: 'gear',
+                //             tooltip: 'Settings',
+                //             callback: 'onClickSettings'
+                //         }
+                //     ]
+                // }
             ]
         },
         {
@@ -98,13 +130,13 @@ Ext.define('Target.view.objects.Panel', {
 
     setCurrentCatalog: function (catalog) {
         var me = this,
-            tabPanel = me.down('targets-objects-tabpanel'),
+            gridPanel = me.down('targets-objects-grid'),
             title = '';
 
         if (catalog.get('id') > 0) {
             title = Ext.String.format('{0} - {1}', catalog.get('pcl_display_name'), catalog.get('prd_display_name'));
 
-            tabPanel.setTitle(title);
+            gridPanel.setTitle(title);
         }
     },
 

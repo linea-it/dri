@@ -3,6 +3,8 @@ from django.db import models
 from product_classifier.models import ProductClass
 from product_classifier.models import ProductClassContent
 from product_register.models import ExternalProcess
+from current_user import get_current_user
+from django.conf import settings
 
 
 class Product(models.Model):
@@ -93,7 +95,6 @@ class Map(Table):
     mpa_ordering = models.CharField(
         max_length=8, verbose_name='Ordering')
 
-
 class Mask(Table):
     msk_filter = models.CharField(
         max_length=1, verbose_name='Filter')
@@ -109,6 +110,38 @@ class ProductContent(models.Model):
         return self.pcn_column_name
 
 
+
+class ProductSetting(models.Model):
+    cst_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+    cst_display_name = models.CharField(
+        max_length=128, verbose_name='Name')
+    cst_description = models.CharField(
+        max_length=1024, null=True, blank=True, verbose_name='Description')
+    cst_is_editable = models.BooleanField(
+        default=False, verbose_name='Is Editable')
+    cst_is_public = models.BooleanField(
+        default=False, verbose_name='Is Public')
+
+    def __str__(self):
+        return self.cst_display_name
+
+class CurrentSetting(models.Model):
+    cst_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product')
+    cst_setting = models.ForeignKey(
+        ProductSetting, on_delete=models.CASCADE, verbose_name='Setting')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+
+
+    def __str__(self):
+        return str(self.pk)
+
 class ProductContentAssociation(models.Model):
     pca_product = models.ForeignKey(
         Product, on_delete=models.CASCADE, verbose_name='Product', default=None
@@ -119,3 +152,89 @@ class ProductContentAssociation(models.Model):
     pca_product_content = models.ForeignKey(
         ProductContent, on_delete=models.CASCADE, verbose_name='Product Content', default=None
     )
+
+    pca_setting = models.ForeignKey(
+        ProductSetting, on_delete=models.CASCADE, verbose_name='Setting', default=None, null=True, blank=True
+    )
+
+class ProductContentSetting(models.Model):
+    pcs_content = models.ForeignKey(
+        ProductContent, on_delete=models.CASCADE, verbose_name='Content', default=None
+    )
+    pcs_setting = models.ForeignKey(
+        ProductSetting, on_delete=models.CASCADE, verbose_name='Setting', default=None, null=True, blank=True
+    )
+    pcs_is_visible = models.BooleanField(
+        default=False, verbose_name='Is Visible'
+    )
+    pcs_order = models.PositiveIntegerField(
+        null=True, blank=True, verbose_name='Order'
+    )
+
+class CutOutJob(models.Model):
+
+    status_job = (
+        ('st', 'start'),
+        ('bs', 'beforeSubmit'),
+        ('rn', 'running'),
+        ('ok', 'done'),
+    )
+
+    cjb_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product', default=None
+    )
+    
+    owner = models.ForeignKey(
+       settings.AUTH_USER_MODEL,
+       on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+    
+    cjb_display_name = models.CharField(
+        max_length=20, verbose_name='Name')
+
+    cjb_xsize = models.CharField(
+        max_length=5, verbose_name='Xsize')
+
+    cjb_ysize = models.CharField(
+        max_length=5, verbose_name='ysize')
+
+    cjb_job_type = models.CharField(
+        max_length=10, verbose_name='JobType')
+
+    cjb_band = models.CharField(
+        max_length=10, verbose_name='band', null=True)
+
+    cjb_Blacklist = models.CharField(
+        max_length=10, verbose_name='Blacklist', null=True)
+    
+    cjb_status = models.CharField(
+        max_length=2,
+        choices=status_job,
+        default='st', 
+        verbose_name='Status'
+        )
+    
+    cjb_job_id = models.CharField(
+        max_length=1024, verbose_name='Job ID')
+
+class CutOut(models.Model):
+    cjb_cutout_job = models.ForeignKey(
+        CutOutJob, on_delete=models.CASCADE, verbose_name='CutOutJob', default=None
+    )
+
+    ctt_url = models.CharField(
+        max_length=20, verbose_name='url')
+
+    ctt_object_id = models.CharField(
+        max_length=5, verbose_name='Object ID')
+
+    ctt_ra = models.CharField(
+        max_length=5, verbose_name='ra')
+
+    ctt_dec = models.CharField(
+        max_length=5, verbose_name='Dec')
+
+    ctt_tipo = models.CharField(
+        max_length=5, verbose_name='Tipo')
+
+    ctt_filter = models.ForeignKey(
+        'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)

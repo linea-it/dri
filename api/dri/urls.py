@@ -44,11 +44,17 @@ router.register(r'productclasscontent', product_classifier_views.ProductClassCon
 router.register(r'product', product_views.ProductViewSet)
 router.register(r'catalog', product_views.CatalogViewSet)
 router.register(r'map', product_views.MapViewSet)
+router.register(r'CutOutJob', product_views.CutOutJobViewSet)
 router.register(r'mask', product_views.MaskViewSet)
 router.register(r'productcontent', product_views.ProductContentViewSet)
 router.register(r'productassociation', product_views.ProductContentAssociationViewSet)
 router.register(r'association', product_views.ProductAssociationViewSet)
 router.register(r'AllProducts', product_views.AllProductViewSet)
+router.register(r'productsetting', product_views.ProductSettingViewSet)
+router.register(r'currentsetting', product_views.CurrentSettingViewSet)
+router.register(r'contentsetting', product_views.ProductContentSettingViewSet)
+
+
 
 
 
@@ -71,7 +77,10 @@ router.register(r'objectsreject', catalog_views.RejectViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^admin', admin.site.urls),
     url(r'^', include(router.urls)),
     url(r'^contact/', common_views.contact_us),
+   
+    url(r'^teste/', common_views.teste), 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]

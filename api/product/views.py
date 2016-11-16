@@ -8,10 +8,16 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
-
-from .models import Product, Catalog, Map, Mask, ProductContent, ProductContentAssociation
+from rest_framework import filters
+from django.db.models import Q
+from common.filters import IsOwnerFilterBackend
+from .models import Product, Catalog, Map, Mask, CutOutJob, ProductContent, ProductContentAssociation, ProductSetting, \
+    CurrentSetting, ProductContentSetting
 from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, MaskSerializer, ProductContentSerializer, \
-    ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer
+    ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer, ProductSettingSerializer, \
+    CurrentSettingSerializer, ProductContentSettingSerializer, CutOutJobSerializer
+
+import operator
 
 logger = logging.getLogger(__name__)
 
@@ -20,6 +26,7 @@ class ProductFilter(django_filters.FilterSet):
     group = django_filters.MethodFilter()
     group_id = django_filters.MethodFilter()
     band = django_filters.MethodFilter()
+
     class Meta:
         model = Product
         fields = ['prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id', 'releases',
@@ -168,6 +175,96 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id', 'pcc_column_name',)
 
+    @list_route()
+    def get_display_content(self, request):
+
+        pcn_product_id = request.query_params.get('pcn_product_id', None)
+        if pcn_product_id is None:
+            raise Exception('pcn_product_id is required.')
+
+        pca_setting = request.query_params.get('pca_setting', None)
+        if pca_setting is None:
+            raise Exception('pca_setting is required.')
+
+        qdisplay_name = request.query_params.get('display_name', None)
+
+
+        # queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id, pk=1360)
+        queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id)
+
+        # Se tiver alguma configuracao de setting visible default False
+        flag_content_settings = ProductContentSetting.objects.filter(pcs_setting=pca_setting).count()
+
+        contents = list()
+        for row in queryset:
+
+            # Recupera a associacao feita para uma coluna em usando como filtro uma configuracao.
+            association = row.productcontentassociation_set.all().filter(pca_setting=pca_setting).first()
+            contentSetting = row.productcontentsetting_set.all().filter(pcs_setting=pca_setting).first()
+
+            content = dict({
+                'id': row.pk,
+                'product_id': row.pcn_product_id.pk,
+                'setting_id': pca_setting,
+                'column_name': row.pcn_column_name,
+
+                'class_id': None,
+                'category': None,
+                'ucd': None,
+                'unit': None,
+                'reference': None,
+                'mandatory': None,
+
+                'display_name': row.pcn_column_name,
+
+                'content_setting': None,
+                'is_visible': True,
+                'order': 999999
+            })
+
+            if flag_content_settings > 0:
+                content.update({'is_visible': False})
+
+
+            if association is not None:
+                content.update({
+                    'class_id': association.pca_class_content.pk,
+                    'display_name': association.pca_class_content.pcc_display_name,
+                    'ucd': association.pca_class_content.pcc_ucd,
+                    'unit': association.pca_class_content.pcc_unit,
+                    'reference': association.pca_class_content.pcc_reference,
+                    'mandatory': association.pca_class_content.pcc_mandatory,
+
+                    # Substitui o display name pelo nome da associacao
+                    'display_name': association.pca_class_content.pcc_display_name
+                })
+
+                try:
+                    content.update({
+                        'category': association.pca_class_content.pcc_category.cct_name
+                    })
+                except:
+                    pass
+
+            if contentSetting is not None:
+                content.update({
+                    'content_setting': contentSetting.pk,
+                    'is_visible': contentSetting.pcs_is_visible,
+                    'order': contentSetting.pcs_order,
+                })
+
+            if qdisplay_name is not None:
+                if content.get('display_name').lower().find(qdisplay_name.lower()) is not -1:
+                    contents.append(content)
+            else:
+                contents.append(content)
+
+        ordered = sorted(contents, key=operator.itemgetter('order'))
+
+        return Response(ordered)
+
+
+
 
 class ProductContentAssociationViewSet(viewsets.ModelViewSet):
     """
@@ -177,7 +274,7 @@ class ProductContentAssociationViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductContentAssociationSerializer
 
-    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content')
+    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content', 'pca_setting')
 
     ordering_fields = ('id',)
 
@@ -190,9 +287,10 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductAssociationSerializer
 
-    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content')
+    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content', 'pca_setting')
 
     ordering_fields = ('id',)
+
 
 
 class MapViewSet(viewsets.ModelViewSet):
@@ -239,3 +337,66 @@ class AllProductViewSet(viewsets.ModelViewSet):
     filter_class = ProductFilter
 
     ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')
+
+
+class ProductSettingBackend(filters.BaseFilterBackend):
+    """
+    Filtra somente os settings do usuario ou os marcados como publicos.
+    """
+
+    def filter_queryset(self, request, queryset, view):
+        return queryset.filter(Q(owner=request.user) | Q(cst_is_public=True))
+
+
+class ProductSettingViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows product settings to be viewed or edited
+    """
+    queryset = ProductSetting.objects.select_related().all()
+
+    serializer_class = ProductSettingSerializer
+
+    filter_backends = (filters.DjangoFilterBackend, ProductSettingBackend)
+
+    filter_fields = ('id', 'cst_product', 'cst_display_name', 'cst_description', 'cst_is_public')
+
+    ordering_fields = ('id', 'cst_display_name',)
+
+
+class CurrentSettingViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = CurrentSetting.objects.all()
+
+    serializer_class = CurrentSettingSerializer
+
+    filter_backends = (filters.DjangoFilterBackend, IsOwnerFilterBackend)
+
+    filter_fields = ('id', 'cst_product', 'cst_setting',)
+
+    ordering_fields = ('id', 'cst_display_name',)
+
+
+
+class ProductContentSettingViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = ProductContentSetting.objects.all().order_by('pcs_order')
+
+    serializer_class = ProductContentSettingSerializer
+
+    filter_fields = ('id', 'pcs_content', 'pcs_setting',)
+
+    ordering_fields = ('id', 'order',)
+
+class CutOutJobViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Map to be viewed or edited
+    """
+    queryset = CutOutJob.objects.select_related().all()
+
+    serializer_class = CutOutJobSerializer
+
+    ordering_fields = ('id',)

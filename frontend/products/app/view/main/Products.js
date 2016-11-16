@@ -242,7 +242,18 @@ Ext.define('Products.view.main.Products', {
                             //  // download_csv(selected.get('catalog_id'))                  
                             //}
                     }]
-                },
+                },{
+                    xtype: 'actioncolumn',
+                    width: 30,
+                    sortable: false,
+                    menuDisabled: true,
+                    // flex:true,
+                    items: [{
+                        iconCls:'x-fa fa-info ',
+                        tooltip: 'Product information',
+                        handler : 'productInfo'
+                    }]
+                }
                 // {
                 //     xtype: 'actioncolumn',
                 //     width: 30,
