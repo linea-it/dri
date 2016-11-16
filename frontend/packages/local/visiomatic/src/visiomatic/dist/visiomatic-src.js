@@ -955,6 +955,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	initialize: function (url, options) {
+		this.type = 'tilelayer';
 		this._url = url.replace(/\&.*$/g, '');
 
 		options = L.setOptions(this, options);
@@ -1853,6 +1854,7 @@ L.Catalog = {
 	nmax: 10000,	// Sets the maximum number of sources per query
 
 	_csvToGeoJSON: function (str) {
+		console.log('---------------- _csvToGeoJSON ---------------- ')
 		// Check to see if the delimiter is defined. If not, then default to comma.
 		var badreg = new RegExp('#|--|^$'),
 		 lines = str.split('\n'),
@@ -1860,33 +1862,39 @@ L.Catalog = {
 
 		for (var i in lines) {
 			var line = lines[i];
-			if (badreg.test(line) === false) {
-				var feature = {
-					type: 'Feature',
-					id: '',
-					properties: {
-						items: []
-					},
-					geometry: {
-						type: 'Point',
-						coordinates: [0.0, 0.0]
-					},
-				},
-				geometry = feature.geometry,
-				properties = feature.properties;
+			// if (line !== ''){
 
-				var cell = line.split(/[,;\t]/);
-				feature.id = cell[0];
-				geometry.coordinates[0] = parseFloat(cell[1]);
-				geometry.coordinates[1] = parseFloat(cell[2]);
-				var items = cell.slice(3),
-				    item;
-				for (var j in items) {
-					item = parseFloat(items[j]);
-					properties.items.push(isNaN(item) ? '--' : item);
+				if (badreg.test(line) === false) {
+					var feature = {
+						type: 'Feature',
+						id: '',
+						properties: {
+							items: []
+						},
+						geometry: {
+							type: 'Point',
+							coordinates: [0.0, 0.0]
+						},
+					},
+					geometry = feature.geometry,
+					properties = feature.properties;
+
+					var cell = line.split(/[,;\t]/);
+
+					feature.id = cell[0];
+					geometry.coordinates[0] = parseFloat(cell[1]);
+					geometry.coordinates[1] = parseFloat(cell[2]);
+					var items = cell.slice(3),
+					    item;
+					for (var j in items) {
+						item = parseFloat(items[j]);
+						properties.items.push(isNaN(item) ? '--' : item);
+					}
+					geo.features.push(feature);
 				}
-				geo.features.push(feature);
-			}
+			// } else {
+			// 	console.log('Linha em branco')
+			// }
 		}
 		return geo;
 	},
@@ -1909,8 +1917,11 @@ L.Catalog = {
 		       '<TBODY style="vertical-align:top;text-align:left;">';
 		for	(var i in this.properties) {
 			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
-			       '<TD>' + feature.properties.items[i].toString() + ' ' +
-			       this.units[i] + '</TD></TR>';
+			       '<TD>' + feature.properties.items[i].toString() + ' ';
+	        if (this.units[i]){
+	        	str += this.units[i];
+	        }
+	        str += '</TD></TR>';
 		}
 		str += '</TBODY></TABLE>';
 		return str;
@@ -1924,7 +1935,9 @@ L.Catalog = {
 		});
 	},
 
-	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin'
+	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin',
+
+	scienceServerURL: 'http://localhost:8000'
 
 };
 
@@ -2081,6 +2094,31 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
+L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
+	name: 'Y3A1',
+	attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
+	color: 'pink',
+	// maglim: 17.0,
+	service: 'ScienceServer',
+	regionType: 'box',
+	// url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/246&' +
+	//  '-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
+	//  '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&' +
+	//  '-out.max={nmax}',
+	url: L.Catalog.scienceServerURL + '/teste/' +
+	'?mime=csv' +
+	'&product=27' + // Esse aqui tem que sair
+	'&source=Y3A1_COADD_OBJECT_SUMMARY' +
+	'&columns=COADD_OBJECT_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y' +
+	'&coordinate={lng},{lat}' +
+	'&bounding={dlng},{dlat}' +
+	// '&limit={nmax}',
+	'&limit=5',
+	// properties: ['COADD_OBJECT_ID', 'RA', 'DEC', 'MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
+	properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
+	units: ['', 'deg', 'deg'],
+	// objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
 
 
 /*
