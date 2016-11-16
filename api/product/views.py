@@ -11,11 +11,11 @@ from rest_framework.response import Response
 from rest_framework import filters
 from django.db.models import Q
 from common.filters import IsOwnerFilterBackend
-from .models import Product, Catalog, Map, Mask, ProductContent, ProductContentAssociation, ProductSetting, \
+from .models import Product, Catalog, Map, Mask, CutOutJob, ProductContent, ProductContentAssociation, ProductSetting, \
     CurrentSetting, ProductContentSetting
 from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, MaskSerializer, ProductContentSerializer, \
     ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer, ProductSettingSerializer, \
-    CurrentSettingSerializer, ProductContentSettingSerializer
+    CurrentSettingSerializer, ProductContentSettingSerializer, CutOutJobSerializer
 
 import operator
 
@@ -307,7 +307,6 @@ class MapViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id',)
 
-
 class MaskViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Map to be viewed or edited
@@ -391,3 +390,13 @@ class ProductContentSettingViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'pcs_content', 'pcs_setting',)
 
     ordering_fields = ('id', 'order',)
+
+class CutOutJobViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Map to be viewed or edited
+    """
+    queryset = CutOutJob.objects.select_related().all()
+
+    serializer_class = CutOutJobSerializer
+
+    ordering_fields = ('id',)

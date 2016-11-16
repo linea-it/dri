@@ -32,6 +32,19 @@ Ext.define('Products.store.Release', {
     requires: [
         'common.store.Releases'
     ],
+    listeners: {
+        load: {
+            fn: function(store){
+                store.insert(0, {
+                    id: 10000,
+                    rls_display_name: "All"
+                })
+            }
+        },
+        exception: function(misc) {
+            alert("exception!");
+        }
+    },
 
     sorters: [
         {

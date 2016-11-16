@@ -1,7 +1,8 @@
 from django.contrib import admin
 
+
 from .models import Product, ProductRelease, ProductTag, File, Table, Catalog, Map, Mask, ProductContent, \
-    ProductContentAssociation, ProductContentSetting, ProductSetting, CurrentSetting
+    ProductContentAssociation, ProductContentSetting, ProductSetting, CurrentSetting, CutOutJob, CutOut
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -55,6 +56,19 @@ class MapAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'prd_name')
     search_fields = ('prd_name',)
 
+class CutOutJobAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'cjb_display_name',
+    )
+    list_display_links = ('id',)
+    search_fields = ('cjb_display_name',)
+
+class CutOutAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'ctt_url',
+    )
+    list_display_links = ('id',)
+    search_fields = ('id',)
 
 class MaskAdmin(admin.ModelAdmin):
     list_display = (
@@ -96,6 +110,8 @@ admin.site.register(File, FileAdmin)
 admin.site.register(Table, TableAdmin)
 admin.site.register(Catalog, CatalogAdmin)
 admin.site.register(Map, MapAdmin)
+admin.site.register(CutOutJob, CutOutJobAdmin)
+admin.site.register(CutOut, CutOutAdmin)
 admin.site.register(Mask, MaskAdmin)
 admin.site.register(ProductContent, ProductContentAdmin)
 admin.site.register(ProductContentAssociation, ProductContentAssociationAdmin)

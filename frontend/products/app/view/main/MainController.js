@@ -18,106 +18,144 @@ Ext.define('Products.view.main.MainController', {
             //
         }
     },
-    productInfo: function (){
+    productInfo: function (rec, index){
         var refs = this.getReferences(),
             gridcatalogs = refs.catalogs,
-            store = gridcatalogs.getStore();
-            source = gridcatalogs.getSelectionModel().getSelection() 
-        if (source.length == 0){
-            Ext.Msg.alert('', 'select a product');
-        }else{
-            source = source[0].data
-            Ext.create('Ext.window.Window', {
-                height: 500,
-                title: 'Properties Grid',
-                width: 400,
-                layout: 'fit',
-                items: {  // Let's put an empty grid in just to illustrate fit layout
-                    xtype: 'propertygrid',
-                    
-                     sourceConfig: {
-                        
-                        editor: {disabled: true}
-                        
-                    },
-                    source: {
-                        //"id": source.id,
-                        "Name": source.prd_name,
-                        "Display name": source.prd_display_name,
-                        //"prd_flag_removed": source.prd_flag_removed,
-                        "Num Objects": source.ctl_num_objects,
-                        "Nside": source.mpa_nside,
-                        "Ordering": source.mpa_ordering,
-                        "Type": source.pgr_display_name,
-                        "Class": source.pcl_display_name,
-                        "Process ID": source.prd_process_id,
-                        "Username": source.epr_username,
-                        "Date": source.epr_end_date,
-                        //"prd_release_id": source.prd_release_id,
-                        "Tags": source.prd_tags,
-                        "Original ID": source.epr_original_id,
-                        "Band": source.prd_filter,
-                        "Tablename": source.prd_table_ptr
-                    }
+            source = gridcatalogs.getStore().getAt(index);
+            
+        source = source.data
+        Ext.create('Ext.window.Window', {
+            height: 500,
+            title: 'Product Information',
+            width: 400,
+            modal: true,
+            layout: 'fit',
+            items: {  // Let's put an empty grid in just to illustrate fit layout
+                xtype: 'propertygrid',
+                sourceConfig: {                    
+                    editor: {disabled: true}                    
+                },
+                source: {
+                    //"id": source.id,
+                    "Name": source.prd_name,
+                    "Display name": source.prd_display_name,
+                    //"prd_flag_removed": source.prd_flag_removed,
+                    "Num Objects": source.ctl_num_objects,
+                    "Nside": source.mpa_nside,
+                    "Ordering": source.mpa_ordering,
+                    "Type": source.pgr_display_name,
+                    "Class": source.pcl_display_name,
+                    "Process ID": source.prd_process_id,
+                    "Username": source.epr_username,
+                    "Date": source.epr_end_date,
+                    //"prd_release_id": source.prd_release_id,
+                    "Tags": source.prd_tags,
+                    "Original ID": source.epr_original_id,
+                    "Band": source.prd_filter,
+                    "Tablename": source.prd_table_ptr
                 }
-            }).show();
-        }
-    },
-
-    onSelectRelease: function(combo, record){
-        var refs = this.getReferences(),
-            gridfield = refs.catalogs,
-            store = gridfield.getStore();
-
-        //console.log(release)
-        id = record.getData().id
-        console.log(store)
-
-        store.filter([
-            {
-                property: "releases",
-                value: id
             }
-        ])
+        }).show();
     },
+    onSelectRelease: function(combo, record){
+        var me = this,
+            refs = this.getReferences(),
+            gridfield = refs.catalogs,
+            store = gridfield.getStore(),
+            storedataset = refs.field.getStore();
+        console.log(storedataset)
+        id = record.getData().id
+        value = record.getData().rls_display_name
+        refs.field.clearValue()
+        if (value == 'All'){
+            me.ClearRelease()
+            storedataset.removeFilter("tag_release", false)
+            me.clearField()
+            store.load()
+        }else{
+            storedataset.filter([
+                {
+                    property: "tag_release",
+                    value: id
+                }
+            ])
+            store.filter([
+                {
+                    property: "releases",
+                    value: id
+                }
+            ])
+        }
+        
+    },
+
+    onSelectField: function(combo, record){
+        var me = this,
+            refs = this.getReferences(),
+            gridfield = refs.catalogs,
+            store = gridfield.getStore(),
+            id = record.getData().id;
+        value = record.getData().tag_display_name
+
+        if (value == 'All'){
+            me.clearField()
+        }else{store.filter([
+                {
+                    property: "tags",
+                    value: id
+                }
+            ])
+        }
+        
+    },
+
     onSelectType: function(combo, record){
-        var refs = this.getReferences(),
+        var me = this,
+            refs = this.getReferences(),
             gridcatalogs = refs.catalogs,
             bandcombo = refs.bands,
             store = gridcatalogs.getStore();
         store.removeFilter("band", false)
         bandcombo.clearValue()
-        //console.log(release)
         id = record.getData().id
-        console.log(store)
-
-        store.filter([
-            {
-                property: "group_id",
-                value: id
-            }
-        ])
+        value = record.getData().pgr_display_name
+        console.log(value)
+        if (value == 'All'){
+            me.clearType()
+        }else{
+            store.filter([
+                {
+                    property: "group_id",
+                    value: id
+                }
+            ])
+        }
+        
     },
-    ClearRelease: function(comboRelease){
+    ClearRelease: function(){
         var refs = this.getReferences(),
             gridcatalogs = refs.catalogs,
             store = gridcatalogs.getStore();
         store.removeFilter("releases", false)
-        comboRelease.clearValue()
+
     },
-    clearType: function(comboType){
+    clearType: function(){
         var refs = this.getReferences(),
             gridcatalogs = refs.catalogs,
             store = gridcatalogs.getStore();
         store.removeFilter("group_id", false)
-        comboType.clearValue()
     },
-    clearBand: function(comboBand){
+    clearField: function(){
+        var refs = this.getReferences(),
+            gridcatalogs = refs.catalogs,
+            store = gridcatalogs.getStore();
+        store.removeFilter("tags", false)
+    },
+    clearBand: function(){
         var refs = this.getReferences(),
             gridcatalogs = refs.catalogs,
             store = gridcatalogs.getStore();
         store.removeFilter("band", false)
-        comboBand.clearValue()
     },
     clearFilters: function(){
         var refs = this.getReferences(),
@@ -130,27 +168,33 @@ Ext.define('Products.view.main.MainController', {
         bandcombo.clearValue()
         releasefield.clearValue()
         type.clearValue()
+        refs.field.clearValue()
     },
     onSelectBand: function(combo, record){
-        var refs = this.getReferences(),
+        var me = this,
+            refs = this.getReferences(),
             gridcatalogs = refs.catalogs,
             store = gridcatalogs.getStore();
 
         //console.log(release)
         filter = record.getData().filter
-        console.log(filter)
-
-        store.filter([
-            {
-                property: "band",
-                value: filter
-            }
-        ])
+        value = record.getData().filter
+        console.log(value)
+        if (value == 'All'){
+            me.clearBand()
+        }else{
+            store.filter([
+                {
+                    property: "band",
+                    value: filter
+                }
+            ])
+        }
     },
     loadProducts: function(){
         var refs = this.getReferences(),
             gridcatalogs = refs.catalogs,
-            store = gridcatalogs.getStore(); 
-        store.load()
+            store = gridcatalogs.getStore();           
+        // store.load()
     }
 });

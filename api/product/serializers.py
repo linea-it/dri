@@ -4,9 +4,7 @@ from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ExternalProcess
 from rest_framework import serializers
 
-from .models import File, Catalog, ProductContent, ProductContentAssociation
-from .models import Product, Map, Mask, Table, ProductSetting, CurrentSetting, ProductContentSetting
-
+from .models import Product, Map, Mask, Table, ProductSetting, CurrentSetting, ProductContentSetting, CutOutJob, File, Catalog, ProductContent, ProductContentAssociation
 
 logger = logging.getLogger(__name__)
 
@@ -188,6 +186,22 @@ class MapSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'mpa_nside',
             'mpa_ordering',
+        )
+
+class CutOutJobSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CutOutJob
+
+        fields = (
+            'cjb_product',
+            'cjb_display_name',
+            'cjb_status',
+            'cjb_job_id',
+            'cjb_xsize',
+            'cjb_ysize',
+            'cjb_job_type',
+            'cjb_band',
+            'cjb_Blacklist',
         )
 
 
