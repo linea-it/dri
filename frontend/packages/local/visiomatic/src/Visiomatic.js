@@ -43,9 +43,16 @@ Ext.define('visiomatic.Visiomatic', {
         // Catalog Overlays
         enableCatalogs: true,
         availableCatalogs: [
+            'Y3A1',
             'GALEX_AIS',
             '2MASS',
-            'AllWISE'
+            'AllWISE',
+            'SDSS',
+            'PPMXL',
+            'Abell',
+            'NVSS',
+            'FIRST',
+            'GAIA_DR1'
         ],
 
         enableMiniMap: false,
@@ -321,12 +328,13 @@ Ext.define('visiomatic.Visiomatic', {
         map.setView(latlng, map.options.crs.fovToZoom(map, fov, latlng));
     },
 
-    onLayerAdd: function () {
+    onLayerAdd: function (e) {
         var me = this;
+        if (e.layer.type === 'tilelayer') {
+            me.setReady(true);
 
-        me.setReady(true);
-
-        me.fireEvent('changeimage', me);
+            me.fireEvent('changeimage', me);
+        }
 
     },
 
