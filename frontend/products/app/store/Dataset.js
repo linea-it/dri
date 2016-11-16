@@ -56,6 +56,10 @@ Ext.define('Products.store.Dataset', {
                     })
                 }else{
                     store.loadData([],false);
+                    store.insert(0, {
+                        id: 10000,
+                        tag_display_name: "All"
+                    })
                 }                
             }
         },
