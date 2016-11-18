@@ -16,6 +16,31 @@ Ext.define('Products.view.main.Products', {
                 {
                     xtype: 'rownumberer'
                 },
+                
+                { 
+                  text: 'Release', 
+                  dataIndex: 'prd_release_display_name',
+                  width: 150,
+                   
+                  filter: {
+                    type: 'string',
+                    itemDefaults: {
+                        emptyText: 'Search for...'
+                    }
+                  }
+                },
+                { 
+                  text: 'Dataset', 
+                  dataIndex: 'prd_tags_name',
+                  width: 150,
+                   
+                  filter: {
+                    type: 'string',
+                    itemDefaults: {
+                        emptyText: 'Search for...'
+                    }
+                  }
+                },
                 { 
                   text: 'Type', 
                   dataIndex: 'pgr_display_name',
@@ -28,18 +53,7 @@ Ext.define('Products.view.main.Products', {
                     }
                   }
                 },
-                { 
-                  text: 'Name', 
-                  dataIndex: 'prd_display_name',
-                  width: 150,
-                   
-                  filter: {
-                    type: 'string',
-                    itemDefaults: {
-                        emptyText: 'Search for...'
-                    }
-                  }
-                },
+                
                 { 
                   text: 'Class', 
                   dataIndex: 'pcl_display_name',
@@ -53,13 +67,36 @@ Ext.define('Products.view.main.Products', {
                   }
                 },
                 { 
-                    text: 'Process ID', 
-                    dataIndex: 'epr_original_id',
-                    renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
-                        return     value    
-                    },
-                    filter: 'number' 
-                },
+                  text: 'Product Name', 
+                  dataIndex: 'prd_display_name',
+                  width: 150,
+                   
+                  filter: {
+                    type: 'string',
+                    itemDefaults: {
+                        emptyText: 'Search for...'
+                    }
+                  }
+                },{ 
+                  text: 'User selected name', 
+                  // dataIndex: 'prd_display_name',
+                  width: 150,
+                   
+                  filter: {
+                    type: 'string',
+                    itemDefaults: {
+                        emptyText: 'Search for...'
+                    }
+                  }
+                },                
+                // { 
+                //     text: 'Process ID', 
+                //     dataIndex: 'epr_original_id',
+                //     renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
+                //         return     value    
+                //     },
+                //     filter: 'number' 
+                // },
                 { 
                     text: 'Owner', 
                     dataIndex: 'epr_username',
@@ -76,6 +113,7 @@ Ext.define('Products.view.main.Products', {
                 { 
                     text: 'Band', 
                     dataIndex: 'prd_filter',
+                    width: 40,
                     renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
                         if (value == null){
                             return     '---'    
