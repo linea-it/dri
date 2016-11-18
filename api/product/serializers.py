@@ -347,9 +347,10 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
 
     # Dados do Release
     prd_release_id = serializers.SerializerMethodField()
-
+    prd_release_display_name = serializers.SerializerMethodField()
     # Dados do Field
     prd_tags = serializers.SerializerMethodField()
+    prd_tags_name = serializers.SerializerMethodField()
 
     prd_filter = serializers.SerializerMethodField()
 
@@ -370,7 +371,9 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             'epr_username',
             'epr_end_date',
             'prd_release_id',
+            'prd_release_display_name',
             'prd_tags',
+            'prd_tags_name',
             'epr_original_id',
             'prd_filter',
             'prd_table_ptr'
@@ -427,6 +430,23 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
         try:
             r = obj.releases.first()
             return r.id
+        except AttributeError:
+            return None
+
+    def get_prd_release_display_name(self, obj):
+        try:
+            r = obj.releases.first()
+            return r.rls_display_name
+        except AttributeError:
+            return None
+
+    def get_prd_tags_name(self, obj):
+        try:
+            tags = list()
+            for tag in obj.tags.values():
+                tags.append(tag.get('tag_display_name'))
+
+            return tags
         except AttributeError:
             return None
 
