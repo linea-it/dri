@@ -166,10 +166,12 @@ class Import():
         # Instancia do banco de catalogo
         # Recupera a instancia de banco de dados enviada pela requisicao ou utiliza o catalog como default
         database = data.get('database', 'catalog')
-
+        print(database)
         if not self.db:
             con = CatalogDB(db=database)
             self.db = con.wrapper
+
+        print(data)
 
         # Verifica se a tabela existe
         if not self.db.table_exists(data.get('schema', None), data.get('table')):
@@ -187,7 +189,7 @@ class Import():
         product, created = Catalog.objects.update_or_create(
             prd_name=data.get('name'),
             tbl_database=data.get('database', None),
-            tbl_schema=data.get('scheme', None),
+            tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
             defaults={
                 "prd_process_id": self.process,
@@ -359,7 +361,7 @@ class Import():
 
         product, created = Map.objects.update_or_create(
             prd_name=data.get('name'),
-            tbl_schema=data.get('scheme', None),
+            tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
             defaults={
                 "prd_process_id": self.process,
@@ -442,7 +444,7 @@ class Import():
 
         product, created = Mask.objects.update_or_create(
             prd_name=data.get('name'),
-            tbl_schema=data.get('scheme', None),
+            tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
             defaults={
                 "prd_process_id": self.process,

@@ -778,9 +778,15 @@ L.IIPUtils = {
 
 		}
 
+		// if request catalog need authenticate
+		if ((context) && (context.options.authenticate === 'csrftoken')) {
+			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
+		}
+
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};
+
 		httpRequest.send();
 	},
 
@@ -876,6 +882,22 @@ L.IIPUtils = {
 		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
 
 		return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 360.0 / Math.PI;
+	},
+
+	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
+	getCookie: function (cname) {
+	    var name = cname + "=";
+	    var ca = document.cookie.split(';');
+	    for(var i = 0; i <ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0)==' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) === 0) {
+	            return c.substring(name.length,c.length);
+	        }
+	    }
+	    return "";
 	}
 
 };
@@ -1854,7 +1876,6 @@ L.Catalog = {
 	nmax: 10000,	// Sets the maximum number of sources per query
 
 	_csvToGeoJSON: function (str) {
-		console.log('---------------- _csvToGeoJSON ---------------- ')
 		// Check to see if the delimiter is defined. If not, then default to comma.
 		var badreg = new RegExp('#|--|^$'),
 		 lines = str.split('\n'),
@@ -1862,39 +1883,34 @@ L.Catalog = {
 
 		for (var i in lines) {
 			var line = lines[i];
-			// if (line !== ''){
-
-				if (badreg.test(line) === false) {
-					var feature = {
-						type: 'Feature',
-						id: '',
-						properties: {
-							items: []
-						},
-						geometry: {
-							type: 'Point',
-							coordinates: [0.0, 0.0]
-						},
+			if (badreg.test(line) === false) {
+				var feature = {
+					type: 'Feature',
+					id: '',
+					properties: {
+						items: []
 					},
-					geometry = feature.geometry,
-					properties = feature.properties;
+					geometry: {
+						type: 'Point',
+						coordinates: [0.0, 0.0]
+					},
+				},
+				geometry = feature.geometry,
+				properties = feature.properties;
 
-					var cell = line.split(/[,;\t]/);
+				var cell = line.split(/[,;\t]/);
 
-					feature.id = cell[0];
-					geometry.coordinates[0] = parseFloat(cell[1]);
-					geometry.coordinates[1] = parseFloat(cell[2]);
-					var items = cell.slice(3),
-					    item;
-					for (var j in items) {
-						item = parseFloat(items[j]);
-						properties.items.push(isNaN(item) ? '--' : item);
-					}
-					geo.features.push(feature);
+				feature.id = cell[0];
+				geometry.coordinates[0] = parseFloat(cell[1]);
+				geometry.coordinates[1] = parseFloat(cell[2]);
+				var items = cell.slice(3),
+				    item;
+				for (var j in items) {
+					item = parseFloat(items[j]);
+					properties.items.push(isNaN(item) ? '--' : item);
 				}
-			// } else {
-			// 	console.log('Linha em branco')
-			// }
+				geo.features.push(feature);
+			}
 		}
 		return geo;
 	},
@@ -1936,8 +1952,6 @@ L.Catalog = {
 	},
 
 	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin',
-
-	scienceServerURL: 'http://localhost:8000'
 
 };
 
@@ -2097,26 +2111,22 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
 	name: 'Y3A1',
 	attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
-	color: 'pink',
-	// maglim: 17.0,
+	color: 'blue',
+	maglim: 27.0,
 	service: 'ScienceServer',
 	regionType: 'box',
-	// url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/246&' +
-	//  '-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
-	//  '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&' +
-	//  '-out.max={nmax}',
-	url: L.Catalog.scienceServerURL + '/teste/' +
+	authenticate: 'csrftoken',
+	url: 'http://desportal.cosmology.illinois.edu:8080/dri/api/visiomatic/coadd_objects/' +
 	'?mime=csv' +
 	'&product=27' + // Esse aqui tem que sair
 	'&source=Y3A1_COADD_OBJECT_SUMMARY' +
 	'&columns=COADD_OBJECT_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y' +
 	'&coordinate={lng},{lat}' +
 	'&bounding={dlng},{dlat}' +
-	// '&limit={nmax}',
-	'&limit=5',
-	// properties: ['COADD_OBJECT_ID', 'RA', 'DEC', 'MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
+	'&maglim={maglim}' +
+	'&limit={nmax}',
 	properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
-	units: ['', 'deg', 'deg'],
+	units: [],
 	// objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
@@ -3698,7 +3708,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		position: 'topleft',
 		nativeCelsys: true,
 		color: '#FFFF00',
-		timeOut: 30	// seconds
+		timeOut: 30,	// seconds,
+		authenticate: false // string define a method used to authenticate
 	},
 
 	initialize: function (catalogs, options) {
@@ -3775,6 +3786,10 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		templayer.notReady = true;
 		this.addLayer(templayer, catalog.name);
 
+		if (catalog.authenticate) {
+			this.options.authenticate = catalog.authenticate;
+		}
+
 		// Compute the search cone
 		var lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
 			  c = sysflag ?
@@ -3832,7 +3847,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 					lat: center.lat.toFixed(6),
 					dlng: dlng.toFixed(4),
 					dlat: dlat.toFixed(4),
-					nmax: catalog.nmax + 1
+					nmax: catalog.nmax + 1,
+					maglim: catalog.maglim
 				})),
 				'getting ' + catalog.service + ' data',
 				function (context, httpRequest) {
