@@ -4,10 +4,14 @@ from product.serializers import AssociationSerializer
 
 from rest_framework import viewsets
 from rest_framework.response import Response
+from django.http import HttpResponse
 from rest_framework.viewsets import ViewSet
 from .models import Rating, Reject
 from .models import Reject
 from .serializers import RatingSerializer, RejectSerializer
+from rest_framework.permissions import AllowAny
+import csv
+
 
 class RatingViewSet(viewsets.ModelViewSet):
     """
@@ -42,6 +46,7 @@ class RejectViewSet(viewsets.ModelViewSet):
             raise Exception('It is necessary an active login to perform this operation.')
         serializer.save(owner=self.request.user.pk)
 
+
 class TargetViewSet(ViewSet):
     """
 
@@ -62,7 +67,10 @@ class TargetViewSet(ViewSet):
         if not catalog:
             raise Exception('No product found for this id.')
 
-        db = CatalogDB()
+        if catalog.tbl_database is not None:
+            db = CatalogDB(db=catalog.tbl_database)
+        else:
+            db = CatalogDB()
 
         # Com o modelo catalog em maos deve ter um atributo para schema e tabela esses atributos estao descritos no
         # model table.
@@ -107,7 +115,6 @@ class TargetViewSet(ViewSet):
         elif ordering == '-_meta_reject':
             ordering = '-c.reject'
 
-
         # retornar uma lista com os objetos da tabela
         rows = list()
 
@@ -122,13 +129,15 @@ class TargetViewSet(ViewSet):
                 'operation': 'LEFT',
                 'tablename': 'catalog_rating',
                 'alias': 'b',
-                'condition': 'a.%s = b.object_id AND b.owner = %s  AND b.catalog_id = %s' % (property_id, owner, product_id),
+                'condition': 'a.%s = b.object_id AND b.owner = %s  AND b.catalog_id = %s' % (
+                property_id, owner, product_id),
                 'columns': list(['id meta_rating_id', 'rating meta_rating'])
             }), dict({
                 'operation': 'LEFT',
                 'tablename': 'catalog_reject',
                 'alias': 'c',
-                'condition': 'a.%s = c.object_id AND c.owner = %s  AND c.catalog_id = %s' % (property_id, owner, product_id),
+                'condition': 'a.%s = c.object_id AND c.owner = %s  AND c.catalog_id = %s' % (
+                property_id, owner, product_id),
                 'columns': list(['id meta_reject_id', 'reject meta_reject'])
             })])
         )
@@ -150,7 +159,6 @@ class TargetViewSet(ViewSet):
                 rating = None
                 reject_id = None
                 reject = None
-
 
             if reject_id is not None:
                 reject_id = int(reject_id)
@@ -197,3 +205,137 @@ class TargetViewSet(ViewSet):
             'count': count,
             'results': rows
         }))
+
+
+class VisiomaticCoaddObjects(ViewSet):
+    """
+
+    """
+    # permission_classes = (AllowAny,)
+    
+    def list(self, request):
+        """
+        Return a list of coadd objects for visiomatic.
+        """
+        # Recuperar o parametro product id ou sorce e obrigatorio
+        product_id = request.query_params.get('product', None)
+        source = request.query_params.get('source', None)
+        if product_id is not None:
+            # Recuperar no model Catalog pelo id passado na url
+            catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
+        elif source is not None:
+            catalog = Catalog.objects.select_related().get(prd_name=source)
+        else:
+            raise Exception('Product id or source is mandatory.')
+
+        if not catalog:
+            raise Exception('No product found.')
+
+        if catalog.tbl_database is not None:
+            com = CatalogDB(db=catalog.tbl_database)
+        else:
+            com = CatalogDB()
+
+        db = com.wrapper
+
+        # tablename
+        # Verifica se a tabela existe
+        if not db.table_exists(catalog.tbl_schema, catalog.tbl_name):
+            raise Exception("Table or view  %.%s does not exist" % (catalog.tbl_schema, catalog.tbl_name))
+
+        # Parametros de Paginacao
+        limit = request.query_params.get('limit', 1000)
+        start = request.query_params.get('offset', None)
+
+        # Parametros de Ordenacao
+        ordering = request.query_params.get('ordering', None)
+
+        # Parametros de Retorno
+        mime = request.query_params.get('mime', 'json')
+
+        # Parametro Columns
+        pcolumns = request.query_params.get('columns', None)
+        columns = None
+        if pcolumns is not None:
+            acolumns = pcolumns.split(',')
+            if len(acolumns) > 0:
+                columns = acolumns
+
+        coordinate = request.query_params.get('coordinate', None).split(',')
+        bounding = request.query_params.get('bounding', None).split(',')
+        maglim = request.query_params.get('maglim', None)
+
+        filters = list()
+        if coordinate and bounding:
+            ra = float(coordinate[0])
+            dec = float(coordinate[1])
+            bra = float(bounding[0])
+            bdec = float(bounding[1])
+            filters.append(
+                dict({
+                    "operator": "AND",
+                    "conditions": list([
+                        dict({
+                            "property": "RA",
+                            "operator": "between",
+                            "value": list([ra - bra, ra + bra])
+                        }),
+                        dict({
+                            "property": "DEC",
+                            "operator": "between",
+                            "value": list([dec - bdec, dec + bdec])
+                        })
+                    ])
+                })
+            )
+
+        if maglim is not None:
+            maglim = float(maglim)
+            mags = ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y']
+            for mag in mags:
+                filters.append(
+                    dict({
+                        "property": mag,
+                        "operator": "<=",
+                        "value": maglim
+                    })
+                )
+
+        # retornar uma lista com os objetos da tabela
+        rows = list()
+
+        owner = request.user.pk
+
+        rows, count = db.query(
+            schema=catalog.tbl_schema,
+            table=catalog.tbl_name,
+            columns=columns,
+            filters=filters,
+            limit=limit,
+            offset=start,
+            order_by=ordering
+        )
+
+        if mime == 'json':
+            return Response(rows)
+
+        elif mime == 'csv':
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'inline'
+
+            writer = csv.writer(response)
+            for row in rows:
+
+                r = list()
+                for col in columns:
+                    value = row.get(col)
+                    if isinstance(value, float):
+                        value = float(format(value, '.4f'))
+                    r.append(value)
+
+                writer.writerow(r)
+
+            return response
+
+        else:
+            pass
