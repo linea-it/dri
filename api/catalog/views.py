@@ -212,7 +212,7 @@ class VisiomaticCoaddObjects(ViewSet):
 
     """
     # permission_classes = (AllowAny,)
-    
+
     def list(self, request):
         """
         Return a list of coadd objects for visiomatic.
