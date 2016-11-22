@@ -248,7 +248,7 @@ L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
 	name: 'Y3A1',
 	attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
 	color: 'blue',
-	maglim: 27.0,
+	maglim: 23.0,
 	service: 'ScienceServer',
 	regionType: 'box',
 	authenticate: 'csrftoken',
