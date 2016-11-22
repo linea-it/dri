@@ -254,7 +254,6 @@ L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
 	authenticate: 'csrftoken',
 	url: 'http://dri.com/dri/api/visiomatic/coadd_objects/' +
 	'?mime=csv' +
-	'&product=27' + // Esse aqui tem que sair
 	'&source=Y3A1_COADD_OBJECT_SUMMARY' +
 	'&columns=COADD_OBJECT_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y' +
 	'&coordinate={lng},{lat}' +
