@@ -166,12 +166,10 @@ class Import():
         # Instancia do banco de catalogo
         # Recupera a instancia de banco de dados enviada pela requisicao ou utiliza o catalog como default
         database = data.get('database', 'catalog')
-        print(database)
+
         if not self.db:
             con = CatalogDB(db=database)
             self.db = con.wrapper
-
-        print(data)
 
         # Verifica se a tabela existe
         if not self.db.table_exists(data.get('schema', None), data.get('table')):
@@ -271,12 +269,12 @@ class Import():
 
             # propriedades a serem associadas
             meta = list([
-                dict({'property': 'coadd_objects_id', 'ucd': 'meta.id;meta.main'}),
+                dict({'property': 'coadd_object_id', 'ucd': 'meta.id;meta.main'}),
                 dict({'property': 'ra', 'ucd': 'pos.eq.ra;meta.main'}),
                 dict({'property': 'dec', 'ucd': 'pos.eq.dec;meta.main'}),
                 dict({'property': 'a_image', 'ucd': 'phys.size.smajAxis;instr.det;meta.main'}),
                 dict({'property': 'b_image', 'ucd': 'phys.size.sminAxis;instr.det;meta.main'}),
-                dict({'property': 'theta_image', 'ucd': 'pos.posAng;instr.det;meta.main'}),
+                # dict({'property': 'theta_image', 'ucd': 'pos.posAng;instr.det;meta.main'}),
             ])
 
             for p in meta:
@@ -285,6 +283,7 @@ class Import():
 
                 try:
                     # recuperar content do produto
+
                     pc = ProductContent.objects.get(pcn_product_id=product, pcn_column_name__iexact=property)
 
                     # recuperar class content
@@ -300,7 +299,7 @@ class Import():
                     )
 
                 except:
-                    raise Exception("it was not possible to create association for this column: %s", property)
+                    raise Exception("it was not possible to create association for this column: %s" % property)
 
     def product_release(self, product, releases):
         for r in releases:
@@ -457,7 +456,6 @@ class Import():
                 "msk_filter": filter,
             }
         )
-
 
         if product:
             add_release = True
