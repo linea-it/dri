@@ -70,6 +70,7 @@ Ext.define('Products.view.main.MainController', {
         if (value == 'All'){
             me.ClearRelease()
             storedataset.removeFilter("tag_release", false)
+            me.clearField()
             store.load()
         }else{
             storedataset.filter([
@@ -167,6 +168,7 @@ Ext.define('Products.view.main.MainController', {
         bandcombo.clearValue()
         releasefield.clearValue()
         type.clearValue()
+        refs.field.clearValue()
     },
     onSelectBand: function(combo, record){
         var me = this,

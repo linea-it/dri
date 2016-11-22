@@ -1,8 +1,7 @@
-
 from lib.BaseWrapper import BaseWrapper
 
-class OracleWrapper(BaseWrapper):
 
+class OracleWrapper(BaseWrapper):
     is_filtered = False
 
     def get_table_columns(self, table):
@@ -15,7 +14,8 @@ class OracleWrapper(BaseWrapper):
 
         return columns
 
-    def query(self, table, schema=None, columns=None, filters=None, order_by=None, limit=None, offset=None, joins=None, dict=True):
+    def query(self, table, schema=None, columns=None, filters=None, order_by=None, limit=None, offset=None, joins=None,
+              dict=True):
 
         sql_columns = '*'
         sql_from = ''
@@ -26,9 +26,8 @@ class OracleWrapper(BaseWrapper):
         join_cols = list()
         join_cols_whitout_alias = list()
 
-
         if schema:
-            tablename = '%s.%s' %(schema, table)
+            tablename = '%s.%s' % (schema, table)
         else:
             tablename = table
 
@@ -38,7 +37,6 @@ class OracleWrapper(BaseWrapper):
             sql_columns = ', '.join(self.__check_columns(tbl_columns, columns))
         else:
             sql_columns = ', '.join(tbl_columns)
-
 
         if joins and len(joins) > 0:
             tablename = "%s a" % tablename
@@ -54,16 +52,19 @@ class OracleWrapper(BaseWrapper):
         else:
             sql_from = tablename
 
-
+        cls = list()
         if len(join_cols):
-            cls = list()
-
             for c in tbl_columns:
-                cls.append('a.'+c)
+                cls.append('a.' + c)
             for c in join_cols:
                 cls.append(c)
 
             sql_columns = ', '.join(cls)
+        else:
+            cls = tbl_columns
+
+        if filters:
+            sql_where = self.do_filters(filters, cls)
 
         if limit and offset:
 
@@ -79,33 +80,33 @@ class OracleWrapper(BaseWrapper):
             start = int(offset)
             end = start + limit
 
-
-            # sql_main = ("SELECT /*+ first_rows(%s) */ %s, row_number() OVER (ORDER BY %s %s) rn FROM %s %s ") % (limit, sql_columns, order_colun, direction, sql_from, sql_where)
-            sql_main = ("SELECT /*+ first_rows(%s) */ %s, row_number() OVER (ORDER BY %s %s) rn FROM %s %s ") % (
-            limit, sql_columns, order_colun, direction, sql_from, sql_where)
+            sql_main = ("SELECT /*+ first_rows(%s) */ %s, row_number() OVER (ORDER BY %s %s) rownumber FROM %s %s ") % (
+                limit, sql_columns, order_colun, direction, sql_from, sql_where)
 
             sql_base = (
-                "SELECT * "
-                "FROM (%s) "
-                "WHERE rn BETWEEN %s and %s "
-            ) % (sql_main, start, end)
+                           "SELECT * "
+                           "FROM (%s) "
+                           "WHERE rownumber BETWEEN %s and %s "
+                       ) % (sql_main, start, end)
 
             sql_count = ("SELECT COUNT(*) as count FROM %s %s") % (tablename, sql_where)
 
         else:
             if limit:
                 sql_limit = self.do_limit(limit)
-                sql_count = ("SELECT COUNT(*) as count FROM %s %s") % (sql_from, sql_where)
+
+                sql_count = ("SELECT COUNT(*) as count FROM %s WHERE %s") % (sql_from, sql_where)
+
+                sql_base = ("SELECT %s FROM %s %s AND %s %s") % (sql_columns, sql_from, sql_limit, sql_where, sql_sort)
+
+            else:
+                sql_base = ("SELECT %s FROM %s %s %s %s") % (sql_columns, sql_from, sql_where, sql_limit, sql_sort)
 
             if order_by:
                 sql_sort = self.do_order(order_by, tbl_columns, cls)
 
-            sql_base = ("SELECT %s FROM %s %s %s %s") % (sql_columns, sql_from, sql_where, sql_limit, sql_sort)
-
-
         sql = sql_base
-        print('-----------------------------')
-        print(sql)
+
         rows = list()
         if dict:
             rows = self.fetchall_dict(sql)
@@ -117,8 +118,16 @@ class OracleWrapper(BaseWrapper):
         else:
             count = len(rows)
 
-        return rows, count
+        # Tratamento para retirar o ROWNUM do resultado
+        flag_pop_rn = False
+        for row in rows:
+            if 'ROWNUMBER' in row and flag_pop_rn is False:
+                flag_pop_rn = True
 
+            if flag_pop_rn:
+                row.pop("ROWNUMBER", None)
+
+        return rows, count
 
     def __check_columns(self, a, b):
         """
@@ -134,11 +143,9 @@ class OracleWrapper(BaseWrapper):
         else:
             raise Exception("The parameter columns must be a list.")
 
-
-    def do_paginate(self, limit, offset, columns=None, filters=None, property_id=None ):
+    def do_paginate(self, limit, offset, columns=None, filters=None, property_id=None):
 
         pass
-
 
     def do_limit(self, limit):
         """
@@ -207,3 +214,45 @@ class OracleWrapper(BaseWrapper):
 
         except:
             return False
+
+    def do_filters(self, filters, columns):
+        sql_where = ''
+        clauses = list()
+
+        for filter in filters:
+            if 'property' in filter:
+                property = filter.get('property')
+                if (property not in columns):
+                    raise Exception('%s is not a valid property.' % property)
+
+                clause = self.get_clauses(filter)
+                if clause:
+                    clauses.append(clause)
+
+            elif 'conditions' in filter:
+                conditions = list()
+                for cond in filter.get('conditions'):
+                    conditions.append(
+                        self.do_filters(list([cond]), columns)
+                    )
+                operator = ' %s ' % filter.get('operator')
+                condition = '( %s )' % operator.join(conditions)
+                clauses.append(condition)
+
+        sql_where = ' AND '.join(clauses)
+
+        return sql_where
+
+    def get_clauses(self, filter):
+
+        property = filter.get('property')
+        operator = filter.get('operator')
+        value = filter.get('value')
+        clause = None
+        if operator.lower() == 'between':
+            clause = '%s BETWEEN %s AND %s' % (property, value[0], value[1])
+
+        else:
+            clause = '%s %s %s' % (property, operator, value)
+
+        return clause

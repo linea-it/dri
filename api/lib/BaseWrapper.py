@@ -56,7 +56,7 @@ class BaseWrapper():
 
     def get_tablename(self, schema, table):
 
-        if schema is not None and schema is not '':
+        if schema is not None or schema is not '':
             tablename = '%s.%s' % (schema, table)
         else:
             tablename = table

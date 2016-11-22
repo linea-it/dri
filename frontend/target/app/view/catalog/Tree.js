@@ -62,6 +62,15 @@ Ext.define('Target.view.catalog.Tree', {
                     }
                 },
                 {
+                    text: 'Release',
+                    flex: 1,
+                    dataIndex: 'release_display_name',
+                    sortable: true,
+                    filter: {
+                        type: 'string'
+                    }
+                },
+                {
                     xtype: 'datecolumn',
                     text: 'Date',
                     dataIndex: 'epr_end_date',
@@ -70,14 +79,6 @@ Ext.define('Target.view.catalog.Tree', {
                         type: 'date'
                     }
                 },
-                // {
-                //     text: 'Pipeline',
-                //     dataIndex: 'epr_name',
-                //     sortable: true,
-                //     filter: {
-                //         type: 'string'
-                //     }
-                // },
                 {
                     text: 'Process',
                     dataIndex: 'epr_original_id',
@@ -192,7 +193,8 @@ Ext.define('Target.view.catalog.Tree', {
                 },{
                     tooltip: 'Cutout',
                     iconCls: 'x-fa fa-cut',
-                    handler: me.cutout
+                    handler: me.cutout,
+                    hidden: true
                 }
             ]
         });
@@ -365,7 +367,7 @@ Ext.define('Target.view.catalog.Tree', {
                     defaults: {
                         anchor: '100%'
                     },
-                    
+
                     items: [{
                         margin: '5 0 5 0',
                         fieldLabel: 'Cutout Name',
@@ -376,10 +378,10 @@ Ext.define('Target.view.catalog.Tree', {
                         name: 'xsize',
                         emptyText:'Ex: 1.0',
                         triggers: {
-                        clear: {
-                            cls: 'fa fa-question-circle',
-                            tooltip: 'help',
-                                handler : function() {
+                            clear: {
+                                cls: 'fa fa-question-circle',
+                                tooltip: 'help',
+                                handler : function () {
                                     Ext.Msg.alert('xsize', 'xsize of cutout in arcmin, can be single number or list');
                                 }
                             }
@@ -389,10 +391,10 @@ Ext.define('Target.view.catalog.Tree', {
                         name: 'ysize',
                         emptyText:'Ex: 1.0',
                         triggers: {
-                        clear: {
-                            cls: 'fa fa-question-circle',
-                            tooltip: 'help',
-                                handler : function() {
+                            clear: {
+                                cls: 'fa fa-question-circle',
+                                tooltip: 'help',
+                                handler : function () {
                                     Ext.Msg.alert('ysize', 'ysize of cutout in arcmin, can be single number or list');
                                 }
                             }
@@ -411,11 +413,11 @@ Ext.define('Target.view.catalog.Tree', {
                         queryMode: 'local',
                         emptyText: 'Select a Type...',
                         listeners: {
-                            change: function(ele, newValue, oldValue) { 
-                                if (newValue == 'single'){
+                            change: function (ele, newValue, oldValue) {
+                                if (newValue == 'single') {
                                     Ext.getCmp('band').getEl().show();
                                     Ext.getCmp('blacklist').getEl().show();
-                                }else{
+                                }else {
                                     Ext.getCmp('band').getEl().hide();
                                     Ext.getCmp('blacklist').getEl().hide();
                                 }
@@ -426,7 +428,7 @@ Ext.define('Target.view.catalog.Tree', {
                         fieldLabel: 'No Blacklist',
                         hidden : true,
                         id: 'blacklist',
-                        name: 'blacklist'     
+                        name: 'blacklist'
                     },{
                         fieldLabel: 'Band',
                         name: 'band',
@@ -434,10 +436,10 @@ Ext.define('Target.view.catalog.Tree', {
                         emptyText:'Ex: g,r,i',
                         hidden: true,
                         triggers: {
-                        clear: {
-                            cls: 'fa fa-question-circle',
-                            tooltip: 'help',
-                                handler : function() {
+                            clear: {
+                                cls: 'fa fa-question-circle',
+                                tooltip: 'help',
+                                handler : function () {
                                     Ext.Msg.alert('Band', 'List of bands for single epoch exposures "g,r,i,z,Y"');
                                 }
                             }
@@ -447,20 +449,20 @@ Ext.define('Target.view.catalog.Tree', {
                         layout: 'hbox',
                         items:[
                         {
-                        xtype: 'button',
-                        text: 'Submit',
-                        width: 150,
-                            handler: function() {
-                                console.log(me)
-                                values = Ext.getCmp('formcut').getValues()
-                                console.log(values)
+                            xtype: 'button',
+                            text: 'Submit',
+                            width: 150,
+                            handler: function () {
+                                console.log(me);
+                                values = Ext.getCmp('formcut').getValues();
+                                console.log(values);
 
-                                balacklist = null
-                                band = null
-                           
-                                if (values.jobType == "single"){
-                                    blacklist = values.blacklist
-                                    band = values.band
+                                balacklist = null;
+                                band = null;
+
+                                if (values.jobType == 'single') {
+                                    blacklist = values.blacklist;
+                                    band = values.band;
                                 }
                                 var myStore = Ext.create('Ext.data.Store', {
                                     // model: 'User',
@@ -471,31 +473,31 @@ Ext.define('Target.view.catalog.Tree', {
                                             type: 'json',
                                             rootProperty: 'users'
                                         }
-                                    },
+                                    }
                                     // autoLoad: true
                                 });
 
                                 myStore.add ({
-                                    "cjb_product": 20,
-                                    "cjb_display_name": values.name,
-                                    "cjb_status": "st",
-                                    "cjb_job_id": "---",
+                                    'cjb_product': 20,
+                                    'cjb_display_name': values.name,
+                                    'cjb_status': 'st',
+                                    'cjb_job_id': '---',
                                     'cjb_xsize': values.xsize,
                                     'cjb_ysize': values.ysize,
                                     'cjb_job_type': values.jobType,
                                     'cjb_band': band,
-                                    'cjb_Blacklist': blacklist,
+                                    'cjb_Blacklist': blacklist
                                     // 'cjb_status': 'st'
                                 });
-                                console.log(myStore)
-                                myStore.sync()                                
+                                console.log(myStore);
+                                myStore.sync();
                             }
                         }]
                     }]
                 }
             }
-        })
+        });
         win.show();
     }
-    
+
 });
