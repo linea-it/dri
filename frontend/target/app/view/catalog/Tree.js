@@ -62,6 +62,15 @@ Ext.define('Target.view.catalog.Tree', {
                     }
                 },
                 {
+                    text: 'Release',
+                    flex: 1,
+                    dataIndex: 'release_display_name',
+                    sortable: true,
+                    filter: {
+                        type: 'string'
+                    }
+                },
+                {
                     xtype: 'datecolumn',
                     text: 'Date',
                     dataIndex: 'epr_end_date',
@@ -70,14 +79,6 @@ Ext.define('Target.view.catalog.Tree', {
                         type: 'date'
                     }
                 },
-                // {
-                //     text: 'Pipeline',
-                //     dataIndex: 'epr_name',
-                //     sortable: true,
-                //     filter: {
-                //         type: 'string'
-                //     }
-                // },
                 {
                     text: 'Process',
                     dataIndex: 'epr_original_id',

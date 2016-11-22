@@ -24,7 +24,8 @@ Ext.define('Target.model.CatalogTree', {
         {name:'ctl_num_objects', type:'int'},
 
         {name:'editable', type:'boolean', defaultValue: false},
-        {name:'markable', type:'boolean', defaultValue: false}
+        {name:'markable', type:'boolean', defaultValue: false},
+        {name:'release_display_name', type:'string'}
 
     ]
 

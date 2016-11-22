@@ -108,7 +108,7 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
     epr_comment = serializers.SerializerMethodField()
 
     # epr_site = models.CharField(max_length=128)
-
+    release_display_name = serializers.SerializerMethodField()
 
     class Meta:
         model = Catalog
@@ -135,7 +135,8 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'epr_readme',
             'epr_comment',
             'tbl_schema',
-            'tbl_name'
+            'tbl_name',
+            'release_display_name'
         )
 
     def get_pcl_name(self, obj):
@@ -176,6 +177,14 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_epr_comment(self, obj):
         return obj.prd_process_id.epr_comment
+
+    def get_release_display_name(self, obj):
+        try:
+           r = obj.productrelease_set.first()
+           return r.release.rls_display_name
+        except:
+            return None
+
 
 
 class MapSerializer(serializers.HyperlinkedModelSerializer):

@@ -2124,7 +2124,7 @@ L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
 	'&coordinate={lng},{lat}' +
 	'&bounding={dlng},{dlat}' +
 	'&maglim={maglim}' +
-	'&limit={nmax}',
+	'&limit=2000',
 	properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
 	units: [],
 	// objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
