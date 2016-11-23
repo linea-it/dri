@@ -779,7 +779,6 @@ L.IIPUtils = {
 		}
 
 		// if request catalog need authenticate
-		console.log(context.options.authenticate)
 		if ((context) && (context.options.authenticate === 'csrftoken')) {
 			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
 		}
@@ -3797,6 +3796,8 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 
 		if (catalog.authenticate) {
 			this.options.authenticate = catalog.authenticate;
+		} else {
+			this.options.authenticate = false;
 		}
 
 		// Compute the search cone
