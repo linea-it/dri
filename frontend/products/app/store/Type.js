@@ -12,8 +12,6 @@ Ext.define('Products.store.Type', {
 
     remoteFilter: true,
 
-    remoteSort: true,
-
     pageSize: 100,
     listeners: {
         load: {
@@ -29,6 +27,12 @@ Ext.define('Products.store.Type', {
             alert("exception!");
         }
     },
+
+    remoteSort: false, //true for server sorting
+    sorters: [{
+        property: 'pgr_display_name',
+        direction: 'ASC' // or 'DESC'
+    }],
 
     proxy: {
         type: 'django',

@@ -5,7 +5,7 @@ Ext.define('Products.view.main.Products', {
     extend: 'Ext.grid.Panel',
     
     xtype: 'mainlist',
-    // plugins: 'gridfilters',
+    plugins: 'gridfilters',
     emptyText: 'No data to dysplay.',
     initComponent: function(){
         var pluginExpanded = true;
