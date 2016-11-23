@@ -779,6 +779,7 @@ L.IIPUtils = {
 		}
 
 		// if request catalog need authenticate
+		console.log(context.options.authenticate)
 		if ((context) && (context.options.authenticate === 'csrftoken')) {
 			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
 		}
@@ -2133,7 +2134,7 @@ L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
 	    return L.ellipse(latlng, {
 			majAxis: feature.properties.items[5] / 3600.0,
 			minAxis: feature.properties.items[6] / 3600.0,
-		  	posAngle: feature.properties.items[7]
+		  	posAngle: 90 - feature.properties.items[7]
 		});
 	}
 });
