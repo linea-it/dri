@@ -44,13 +44,29 @@ Ext.define('Target.view.settings.SettingWindow', {
                 },
                 {
                     xtype: 'checkbox',
-                    boxLabel: 'Is Public',
-                    name: 'cst_is_public'
+                    boxLabel: 'Public',
+                    name: 'cst_is_public',
+                    reference: 'isPublic',
+                    listeners: {
+                        change: function (chk, value) {
+                            var form = this.up('form'),
+                                editable = form.down('#isEditable');
+
+                            if (value === false) {
+                                editable.setValue(value);
+                            }
+
+                        }
+                    }
                 },
                 {
                     xtype: 'checkbox',
-                    boxLabel: 'Is Editable',
-                    name: 'cst_is_editable'
+                    boxLabel: 'Alow edition',
+                    name: 'cst_is_editable',
+                    itemId: 'isEditable',
+                    bind: {
+                        disabled: '{!isPublic.checked}'
+                    }
                 },
                 {
                     xtype: 'textareafield',

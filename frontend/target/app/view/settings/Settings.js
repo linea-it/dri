@@ -63,7 +63,7 @@ Ext.define('Target.view.settings.Settings', {
                             },
                             minChars: 0,
                             queryMode: 'local',
-                            typeAhead: true,
+                            editable: false,
                             labelStyle: 'font-weight:bold',
                             readOnly: false,
                             labelWidth: 60,
