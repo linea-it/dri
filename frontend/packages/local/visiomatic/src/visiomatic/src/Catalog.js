@@ -248,19 +248,27 @@ L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
 	name: 'Y3A1',
 	attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
 	color: 'blue',
-	maglim: 23.0,
+	maglim: 24.0,
 	service: 'ScienceServer',
 	regionType: 'box',
 	authenticate: 'csrftoken',
 	url: 'http://desportal.cosmology.illinois.edu/dri/api/visiomatic/coadd_objects/' +
+	//url: 'http://dri.com/dri/api/visiomatic/coadd_objects/' +
 	'?mime=csv' +
 	'&source=Y3A1_COADD_OBJECT_SUMMARY' +
-	'&columns=COADD_OBJECT_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y' +
+	'&columns=COADD_OBJECT_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y,A_IMAGE,B_IMAGE,THETA_J2000' +
 	'&coordinate={lng},{lat}' +
 	'&bounding={dlng},{dlat}' +
 	'&maglim={maglim}' +
-	'&limit={nmax}',
+	'&limit=2000',
 	properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
 	units: [],
 	// objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	draw: function (feature, latlng) {
+	    return L.ellipse(latlng, {
+			majAxis: feature.properties.items[5] / 3600.0,
+			minAxis: feature.properties.items[6] / 3600.0,
+		  	posAngle: feature.properties.items[7]
+		});
+	}
 });
