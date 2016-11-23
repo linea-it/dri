@@ -2116,7 +2116,8 @@ L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
 	service: 'ScienceServer',
 	regionType: 'box',
 	authenticate: 'csrftoken',
-	url: 'http://desportal.cosmology.illinois.edu/dri/api/visiomatic/coadd_objects/' +
+	url: 'http://desportal.cosmology.illinois.edu:8080/dri/api/visiomatic/coadd_objects/' +
+	//url: 'http://desportal.cosmology.illinois.edu/dri/api/visiomatic/coadd_objects/' +
 	//url: 'http://dri.com/dri/api/visiomatic/coadd_objects/' +
 	'?mime=csv' +
 	'&source=Y3A1_COADD_OBJECT_SUMMARY' +
