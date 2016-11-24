@@ -869,7 +869,7 @@ L.IIPUtils = {
 		}
 	},
 
-// Return the distance between two world coords latLng1 and latLng2 in degrees
+	// Return the distance between two world coords latLng1 and latLng2 in degrees
 	distance: function (latlng1, latlng2) {
 		var d2r = Math.PI / 180.0,
 		 lat1 = latlng1.lat * d2r,
@@ -1893,7 +1893,7 @@ L.Catalog = {
 					geometry: {
 						type: 'Point',
 						coordinates: [0.0, 0.0]
-					},
+					}
 				},
 				geometry = feature.geometry,
 				properties = feature.properties;
@@ -1951,7 +1951,7 @@ L.Catalog = {
 		});
 	},
 
-	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin',
+	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin'
 
 };
 
@@ -2107,37 +2107,6 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
-
-L.Catalog.Y3A1 = L.extend({}, L.Catalog, {
-	name: 'Y3A1',
-	attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
-	color: 'blue',
-	maglim: 24.0,
-	service: 'ScienceServer',
-	regionType: 'box',
-	authenticate: 'csrftoken',
-	//url: 'http://desportal.cosmology.illinois.edu:8080/dri/api/visiomatic/coadd_objects/' +
-	url: 'http://desportal.cosmology.illinois.edu/dri/api/visiomatic/coadd_objects/' +
-	//url: 'http://dri.com/dri/api/visiomatic/coadd_objects/' +
-	'?mime=csv' +
-	'&source=Y3A1_COADD_OBJECT_SUMMARY' +
-	'&columns=COADD_OBJECT_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y,A_IMAGE,B_IMAGE,THETA_J2000' +
-	'&coordinate={lng},{lat}' +
-	'&bounding={dlng},{dlat}' +
-	'&maglim={maglim}' +
-	'&limit=2000',
-	properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
-	units: [],
-	// objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
-	draw: function (feature, latlng) {
-	    return L.ellipse(latlng, {
-			majAxis: feature.properties.items[5] / 3600.0,
-			minAxis: feature.properties.items[6] / 3600.0,
-		  	posAngle: 90 - feature.properties.items[7]
-		});
-	}
-});
-
 
 /*
 # SpinBox implements a number spinbox with adaptive step increment
@@ -2355,7 +2324,7 @@ L.SpinBox = L.Evented.extend({
 				}
 			}, this);
 		}
-
+	
 		if (options.disabled) {
 			this.disable();
 		}
@@ -2501,9 +2470,9 @@ L.spinbox = function (parent, options) {
 //           loadMessage    - Message to display while initial tree loads (can be HTML)
 //
 // TERMS OF USE
-//
+// 
 // This plugin is dual-licensed under the GNU General Public License and the MIT License and
-// is copyright 2008 A Beautiful Site, LLC.
+// is copyright 2008 A Beautiful Site, LLC. 
 //
 */
 
@@ -2645,7 +2614,7 @@ L.Map.addInitHook(function () {
 
 
 /*
-# L.Control.ExtraMap adds support for extra synchronized maps
+# L.Control.ExtraMap adds support for extra synchronized maps 
 # (Picture-in-Picture style). Adapted from L.Control.MiniMap by Norkart
 # (original copyright notice reproduced below).
 #
@@ -2736,11 +2705,11 @@ L.Control.ExtraMap = L.Control.extend({
 			touchZoom: !this._isZoomLevelFixed(),
 			scrollWheelZoom: !this._isZoomLevelFixed(),
 			doubleClickZoom: !this._isZoomLevelFixed(),
-			boxZoom: !this._isZoomLevelFixed(),
+			boxZoom: !this._isZoomLevelFixed()
 		});
 
 		this._layer.addTo(this._extraMap);
-
+	
 		// These bools are used to prevent infinite loops of the two maps notifying
 		// each other that they've moved.
 		// this._mainMapMoving = false;
@@ -2978,19 +2947,19 @@ L.Control.ExtraMap = L.Control.extend({
 
 	_isDefined: function (value) {
 		return typeof value !== 'undefined';
-	},
+	}
 });
-
+	
 L.Map.mergeOptions({
 	extraMapControl: false
 });
-
+	
 L.Map.addInitHook(function () {
 	if (this.options.extraMapControl) {
 		this.extraMapControl = (new L.Control.ExtraMap()).addTo(this);
 	}
 });
-
+	
 L.control.extraMap = function (layer, options) {
 	return new L.Control.ExtraMap(layer, options);
 };
@@ -3045,21 +3014,21 @@ if (typeof require !== 'undefined') {
 			title: 'Toggle full screen mode',
 			forceSeparateButton: false
 		},
-
+	
 		onAdd: function (map) {
 			var className = 'leaflet-control-zoom-fullscreen', container;
-
+		
 			if (map.zoomControl && !this.options.forceSeparateButton) {
 				container = map.zoomControl._container;
 			} else {
 				container = L.DomUtil.create('div', 'leaflet-bar');
 			}
-
+		
 			this._createButton(this.options.title, className, container, this.toogleFullScreen, map);
 
 			return container;
 		},
-
+	
 		_createButton: function (title, className, container, fn, context) {
 			var link = L.DomUtil.create('a', className, container);
 			link.href = '#';
@@ -3107,7 +3076,7 @@ if (typeof require !== 'undefined') {
 				this._isFullscreen = true;
 			}
 		},
-
+	
 		_handleEscKey: function () {
 			if (!fullScreenApi.isFullScreen(this) && !this._exitFired) {
 				this.fire('exitFullscreen');
@@ -3128,7 +3097,7 @@ if (typeof require !== 'undefined') {
 		return new L.Control.FullScreen(options);
 	};
 
-/*
+/* 
 Native FullScreen JavaScript API
 -------------
 Assumes Mozilla naming conventions instead of W3C for now
@@ -3146,7 +3115,7 @@ source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugi
 			prefix: ''
 		},
 		browserPrefixes = 'webkit moz o ms khtml'.split(' ');
-
+	
 	// check for native support
 	if (typeof document.exitFullscreen !== 'undefined') {
 		fullScreenApi.supportsFullScreen = true;
@@ -3160,7 +3129,7 @@ source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugi
 			}
 		}
 	}
-
+	
 	// update methods to do something useful
 	if (fullScreenApi.supportsFullScreen) {
 		fullScreenApi.fullScreenEventName = fullScreenApi.prefix + 'fullscreenchange';
@@ -3221,7 +3190,6 @@ L.Control.IIP = L.Control.extend({
 		collapsed: true,
 		position: 'topleft'
 	},
-
 
 	initialize: function (baseLayers,  options) {
 		L.setOptions(this, options);
@@ -3621,7 +3589,7 @@ L.Control.IIP = L.Control.extend({
 			}, this);
 			inputdiv.appendChild(input);
 		}
-
+	
 		var name = L.DomUtil.create('div', 'leaflet-control-iip-layername', layerItem);
 		name.innerHTML = ' ' + obj.name;
 		name.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
@@ -4034,7 +4002,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		// Create Mode selection control section
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'mono',
 		  (this._mode === 'mono'), function () {
-			// Save previous settings
+			// Save previous settings 
 			_this.saveSettings(layer, _this._mode);
 
 			// Remove previous dialogs
@@ -4052,7 +4020,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'color',
 		  (this._mode !== 'mono'), function () {
-			// Save previous settings
+			// Save previous settings 
 			_this.saveSettings(layer, _this._mode);
 			// Remove previous dialogs
 			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
@@ -4119,7 +4087,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		this._addMinMax(layer, layer.iipChannel, box);
 		layer.redraw();
 	},
-
+ 
 	_initColorDialog: function (layer, box) {
 		// Multiple Channels with mixing matrix
 
@@ -4394,7 +4362,7 @@ L.Control.IIP.Doc = L.Control.IIP.extend({
 	_onloadNav: function () {
 		if (true) {
 			// Force all external iframe links to open in new tab/window
-			// from
+			// from 
 			var	as = this._iframe.contentDocument.getElementsByTagName('a');
 			for (var i = 0; i < as.length; i++) {
 				if (L.IIPUtils.isExternal(as[i].href)) {
@@ -5188,7 +5156,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 			L.DomEvent.on(input, 'click', this._onInputClick, this);
 			inputdiv.appendChild(input);
 		}
-
+		
 		var name = L.DomUtil.create('div', 'leaflet-control-layers-name', item);
 		name.innerHTML = ' ' + obj.name;
 		name.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
@@ -5532,7 +5500,7 @@ L.control.scale.wcs = function (options) {
 
 
 /*
-# L.Control.Sidebar adds support for responsive side bars
+# L.Control.Sidebar adds support for responsive side bars 
 # Adapted from the leaflet-sidebar plugin by Tobias Bieniek
 # (original copyright notice reproduced below).
 #
@@ -5620,7 +5588,7 @@ L.Control.Sidebar = L.Control.extend({
 		var className = 'leaflet-control-zoom-sidebar',
 				parent = map._controlContainer,
 		    buttonContainer;
-
+	
 		// Create sidebar
 		L.DomUtil.addClass(map._container, 'sidebar-map');
 		parent.insertBefore(this._sidebar, parent.firstChild);
@@ -5636,7 +5604,7 @@ L.Control.Sidebar = L.Control.extend({
 		} else {
 			buttonContainer = L.DomUtil.create('div', 'leaflet-bar');
 		}
-
+		
 		this._toggleButton = this._createButton(this.options.title,
 		  className + (this.options.collapsed ? ' collapsed' : ''), buttonContainer);
 

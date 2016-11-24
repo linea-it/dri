@@ -77,6 +77,8 @@ Ext.define('visiomatic.Visiomatic', {
             }
         ],
 
+        enableScale: true,
+
         image: null,
         imageLayer: null,
         imageOptions: {
@@ -117,10 +119,41 @@ Ext.define('visiomatic.Visiomatic', {
 
     initComponent: function () {
         var me = this,
+            host = window.location.host,
             tollbar, btns, cmpVisiomatic;
 
         if (window.L) {
             me.libL  = window.L;
+
+            // Registro do Catalogo
+            me.libL.Catalog.Y3A1 = L.extend({}, L.Catalog, {
+                name: 'Y3A1',
+                attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
+                color: 'blue',
+                maglim: 24.0,
+                service: 'ScienceServer',
+                regionType: 'box',
+                authenticate: 'csrftoken',
+                url: 'http://' + host + '/dri/api/visiomatic/coadd_objects/' +
+                '?mime=csv' +
+                '&source=Y3A1_COADD_OBJECT_SUMMARY' +
+                '&columns=COADD_OBJECT_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y,A_IMAGE,B_IMAGE,THETA_J2000' +
+                '&coordinate={lng},{lat}' +
+                '&bounding={dlng},{dlat}' +
+                '&maglim={maglim}' +
+                '&limit=2000',
+                properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
+                units: [],
+                // objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+                draw: function (feature, latlng) {
+                    return L.ellipse(latlng, {
+                        majAxis: feature.properties.items[5] / 3600.0,
+                        minAxis: feature.properties.items[6] / 3600.0,
+                        posAngle: 90 - feature.properties.items[7]
+                    });
+                }
+            });
+
         } else {
             console.log('window.L ainda nao esta carregada, incluir no app.json a biblioteca Leaflet');
         }
@@ -190,6 +223,10 @@ Ext.define('visiomatic.Visiomatic', {
             me.addWcsController();
         }
 
+        if (me.getEnableScale()) {
+            me.addScaleController();
+        }
+
     },
 
     onResize: function () {
@@ -253,6 +290,14 @@ Ext.define('visiomatic.Visiomatic', {
             coordinates: units,
             position: 'topright'
         }).addTo(map);
+    },
+
+    addScaleController: function () {
+        var me = this,
+            libL = me.libL,
+            map = me.getMap();
+
+        libL.control.scale.wcs({pixels: false}).addTo(map);
     },
 
     setImage: function (image, options) {
