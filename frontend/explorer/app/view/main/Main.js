@@ -41,10 +41,7 @@ Ext.define('Explorer.view.main.Main', {
             layout: {
                 type: 'card',
                 anchor: '100%'
-            },
-            items: [{
-                xtype: 'coadd-objects'
-            }]
+            }
         },
         {
             xtype: 'dri-footer'

@@ -9,13 +9,54 @@ Ext.define('Explorer.view.main.MainController', {
 
     alias: 'controller.main',
 
-    onItemSelected: function (sender, record) {
-        Ext.Msg.confirm('Confirm', 'Are you sure?', 'onConfirm', this);
+    requires: [
+        'Explorer.view.coadd.Coadd'
+    ],
+
+    routes : {
+        'coadd/:source/:object': {
+            action: 'onCoadd'
+        }
     },
 
-    onConfirm: function (choice) {
-        if (choice === 'yes') {
-            //
+    setActivePanel: function (panel) {
+
+        var me = this,
+            refs = me.getReferences(),
+            mainCard = refs.mainCardPanel,
+            mainLayout = mainCard.getLayout(),
+            routeId = panel.routeId,
+            existingItem = mainCard.child('component[routeId=' + routeId + ']'),
+            view = null;
+
+        // Saber se ja existe uma interface  criada.
+        if (!existingItem) {
+
+            view = mainCard.add(panel);
+
+            view.loadPanel(arguments);
+
+            mainLayout.setActiveItem(view);
+
+        } else {
+
+            view = existingItem;
+
+            view.updatePanel(arguments);
+
+            mainLayout.setActiveItem(view);
+
         }
+    },
+
+    onCoadd: function (source, object_id) {
+
+        var newView = Ext.create('Explorer.view.coadd.Coadd', {
+            hideMode: 'offsets',
+            routeId: 'coadd',
+            layout: 'fit'
+        });
+
+        this.setActivePanel(newView, source, object_id);
     }
 });
