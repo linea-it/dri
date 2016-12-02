@@ -66,6 +66,7 @@ class OracleWrapper(BaseWrapper):
         if filters:
             sql_where = self.do_filters(filters, cls)
 
+
         if limit and offset:
 
             if not order_by:
@@ -95,9 +96,12 @@ class OracleWrapper(BaseWrapper):
             if limit:
                 sql_limit = self.do_limit(limit)
 
-                sql_count = ("SELECT COUNT(*) as count FROM %s WHERE %s") % (sql_from, sql_where)
-
-                sql_base = ("SELECT %s FROM %s %s AND %s %s") % (sql_columns, sql_from, sql_limit, sql_where, sql_sort)
+                if filters:
+                    sql_count = ("SELECT COUNT(*) as count FROM %s WHERE %s") % (sql_from, sql_where)
+                    sql_base = ("SELECT %s FROM %s %s AND %s %s") % (sql_columns, sql_from, sql_limit, sql_where, sql_sort)
+                else:
+                    sql_count = ("SELECT COUNT(*) as count FROM %s ") % (sql_from)
+                    sql_base = ("SELECT %s FROM %s %s %s") % (sql_columns, sql_from, sql_limit, sql_sort)
 
             else:
                 sql_base = ("SELECT %s FROM %s %s %s %s") % (sql_columns, sql_from, sql_where, sql_limit, sql_sort)
@@ -239,7 +243,10 @@ class OracleWrapper(BaseWrapper):
                 condition = '( %s )' % operator.join(conditions)
                 clauses.append(condition)
 
-        sql_where = ' AND '.join(clauses)
+        if len(clauses) > 1:
+            sql_where = ' AND '.join(clauses)
+        else:
+            sql_where = ''.join(clauses)
 
         return sql_where
 
