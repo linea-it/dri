@@ -33,7 +33,10 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             vm = me.getViewModel(),
             store = vm.getStore('coaddObject'),
             source = vm.get('source'),
-            object_id = vm.get('object_id');
+            object_id = vm.get('object_id'),
+            view = me.getView();
+
+        view.setLoading(true);
 
         store.addFilter([
             {
@@ -57,6 +60,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             properties = vm.getStore('properties'),
             datasets = vm.getStore('datasets'),
             aladin = me.lookupReference('aladin'),
+            view = me.getView(),
             coaddObject, data, position;
 
         // Setar as propriedades
@@ -91,6 +95,8 @@ Ext.define('Explorer.view.coadd.CoaddController', {
         aladin.showDesFootprint();
         aladin.goToPosition(position);
         aladin.plotObject(data);
+
+        view.setLoading(false);
 
     },
 
@@ -181,6 +187,34 @@ Ext.define('Explorer.view.coadd.CoaddController', {
         // });
 
         // feature.addTo(map);
+
+    },
+
+    onSearch: function (value) {
+        var me = this,
+            vm = me.getViewModel(),
+            properties = vm.getStore('properties');
+
+        if (value !== '') {
+            properties.filter([
+                {
+                    property: 'property',
+                    value: value
+                }
+            ]);
+
+        } else {
+            me.onSearchCancel();
+        }
+
+    },
+
+    onSearchCancel: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            properties = vm.getStore('properties');
+
+        properties.clearFilter();
 
     }
 

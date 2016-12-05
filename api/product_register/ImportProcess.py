@@ -366,6 +366,7 @@ class Import():
                 "prd_process_id": self.process,
                 "prd_class": cls,
                 "prd_display_name": data.get('display_name'),
+                "prd_user_display_name": data.get('user_display_name'),
                 "prd_product_id": data.get('product_id', None),
                 "prd_version": data.get('version', None),
                 "prd_flag_removed": False,

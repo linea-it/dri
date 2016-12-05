@@ -6,6 +6,7 @@ Ext.define('Explorer.view.coadd.Coadd', {
     requires: [
         'Explorer.view.coadd.CoaddController',
         'Explorer.view.coadd.CoaddModel',
+        'Explorer.view.coadd.Form',
         'Explorer.view.coadd.Properties',
         'Explorer.view.coadd.Visiomatic',
         'Explorer.view.coadd.Aladin'
@@ -32,10 +33,30 @@ Ext.define('Explorer.view.coadd.Coadd', {
             items: [
                 // Painel Esquerdo
                 {
-                    xtype: 'coadd-properties',
-                    reference: 'properties-grid',
+                    xtype: 'panel',
                     width: 400,
-                    margin: '0 10 0 0'
+                    margin: '0 10 0 0',
+                    layout: {
+                        type: 'vbox',
+                        pack: 'start',
+                        align: 'stretch'
+                    },
+                    items:[
+                        // Superior Esquerdo
+                        {
+                            xtype: 'coadd-form',
+                            reference: 'properties-form',
+                            split: true,
+                            margin: '0 0 10 0'
+                        },
+                        // Inferior Esquerdo
+                        {
+                            xtype: 'coadd-properties',
+                            reference: 'properties-grid',
+                            split: true,
+                            flex: 1
+                        }
+                    ]
                 },
                 // Painel Direito
                 {
@@ -68,7 +89,6 @@ Ext.define('Explorer.view.coadd.Coadd', {
                                 {
                                     xtype: 'coadd-visiomatic',
                                     reference: 'visiomatic',
-                                    // width: 500,
                                     margin: '0 10 0 0',
                                     split: true,
                                     flex: 1
@@ -76,7 +96,6 @@ Ext.define('Explorer.view.coadd.Coadd', {
                                 {
                                     xtype: 'coadd-aladin',
                                     reference: 'aladin',
-                                    // width: 500,
                                     split: true,
                                     flex: 1
                                 }
@@ -85,7 +104,7 @@ Ext.define('Explorer.view.coadd.Coadd', {
                         // Painel Direito Inferior
                         {
                             xtype: 'panel',
-                            title: 'Inferior',
+                            //title: 'Inferior',
                             flex: 1
                         }
                     ]

@@ -3,10 +3,9 @@ Ext.define('Explorer.view.coadd.Properties', {
 
     xtype: 'coadd-properties',
 
-    // requires: [
-    //     'Explorer.view.coadd.CoaddController',
-    //     'Explorer.view.coadd.CoaddModel'
-    // ],
+    requires: [
+        'common.SearchField'
+    ],
 
     // controller: 'coadd',
 
@@ -17,8 +16,19 @@ Ext.define('Explorer.view.coadd.Properties', {
 
         Ext.apply(this, {
             columns: [
-                {text: 'Properties',  dataIndex: 'property', width: 200},
+                {text: 'Property',  dataIndex: 'property', width: 200},
                 {text: 'Value',  dataIndex: 'value', renderer: this.formatNumber, flex: 1}
+            ],
+            tbar: [
+                {
+                    xtype: 'common-searchfield',
+                    minSearch: 1,
+                    listeners: {
+                        'search': 'onSearch',
+                        'cancel': 'onSearchCancel'
+                    },
+                    flex: 1
+                }
             ]
         });
 

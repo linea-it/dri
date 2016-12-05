@@ -29,7 +29,13 @@ Ext.define('Explorer.view.coadd.CoaddModel', {
         },
         properties: {
             type: 'array',
-            fields: ['property', 'value']
+            fields: ['property', 'value'],
+            remoteSort: false,
+            remoteFilter: false,
+            sorters: [{
+                property: 'property',
+                direction: 'ASC'
+            }]
         },
         datasets: {
             type: 'datasets',
