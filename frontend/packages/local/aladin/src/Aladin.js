@@ -87,6 +87,9 @@ Ext.define('aladin.Aladin', {
             }
         },
 
+        // LayersControl
+        enableLayersControl: false,
+
         // Barra com botoes para escolher a banda da imagem
         showFilters: true,
         bandFilter: null,
@@ -147,7 +150,10 @@ Ext.define('aladin.Aladin', {
         enableMaps: false,
 
         // habilitar botao que permite troca entre Visiomatic / Aladin
-        enableShift: true
+        enableShift: true,
+
+        // toolbar position (left or top)
+        toolbarPosition: 'left'
     },
 
     /**
@@ -195,7 +201,11 @@ Ext.define('aladin.Aladin', {
             btns = me.makeToolbarButtons();
             tollbar.add(btns);
 
-            me.lbar = tollbar;
+            if (me.getToolbarPosition() === 'left') {
+                me.lbar = tollbar;
+            } else if (me.getToolbarPosition() === 'top') {
+                me.tbar = tollbar;
+            }
         }
 
         Ext.apply(this, {
@@ -220,6 +230,10 @@ Ext.define('aladin.Aladin', {
             libA = me.libA,
             aladinOptions = me.getAladinOptions(),
             aladin;
+
+        if (me.getEnableLayersControl()) {
+            aladinOptions.showLayersControl = me.getEnableLayersControl();
+        }
 
         aladin = libA.aladin(
             // Id da div que recebera o aladin

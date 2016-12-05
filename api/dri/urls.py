@@ -73,6 +73,7 @@ router.register(r'application',interfaces_views.ApplicationViewSet)
 router.register(r'target', catalog_views.TargetViewSet, base_name='target')
 router.register(r'objectsrating', catalog_views.RatingViewSet)
 router.register(r'objectsreject', catalog_views.RejectViewSet)
+router.register(r'coadd_objects', catalog_views.CoaddObjects, base_name='coadd_objects')
 
 # API Catalogos para o Visiomatic
 router.register(r'visiomatic/coadd_objects', catalog_views.VisiomaticCoaddObjects, base_name='visiomatic_coadd_objects')

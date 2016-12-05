@@ -16,6 +16,8 @@ class Product(models.Model):
         max_length=128, verbose_name='Internal Name')
     prd_display_name = models.CharField(
         max_length=128, verbose_name='Display Name')
+    prd_user_display_name = models.CharField(
+        max_length=128, null=True, blank=True, verbose_name='User Display Name')
     prd_product_id = models.CharField(
         max_length=128, null=True, blank=True, verbose_name='Product Id', help_text='Original Product Id')
     prd_version = models.CharField(
