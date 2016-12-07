@@ -5,7 +5,7 @@ Ext.define('Products.view.main.Products', {
     extend: 'Ext.grid.Panel',
     
     xtype: 'mainlist',
-    plugins: 'gridfilters',
+    // plugins: 'gridfilters',
     emptyText: 'No data to dysplay.',
     initComponent: function(){
         var pluginExpanded = true;
@@ -20,7 +20,7 @@ Ext.define('Products.view.main.Products', {
                 { 
                   text: 'Release', 
                   dataIndex: 'prd_release_display_name',
-                  width: 150,
+                  width: 95,
                    
                   filter: {
                     type: 'string',
@@ -32,7 +32,7 @@ Ext.define('Products.view.main.Products', {
                 { 
                   text: 'Dataset', 
                   dataIndex: 'prd_tags_name',
-                  width: 150,
+                  width: 120,
                    
                   filter: {
                     type: 'string',
@@ -57,7 +57,7 @@ Ext.define('Products.view.main.Products', {
                 { 
                   text: 'Class', 
                   dataIndex: 'pcl_display_name',
-                  width: 150,
+                  width: 120,
                    
                   filter: {
                     type: 'string',
@@ -77,18 +77,17 @@ Ext.define('Products.view.main.Products', {
                         emptyText: 'Search for...'
                     }
                   }
-                },{ 
-                  text: 'User selected name', 
-                  // dataIndex: 'prd_display_name',
-                  width: 150,
-                   
-                  filter: {
-                    type: 'string',
-                    itemDefaults: {
-                        emptyText: 'Search for...'
-                    }
-                  }
-                },                
+                },
+                { 
+                    text: 'Process ID', 
+                    dataIndex: 'epr_original_id',
+                    width: 95,
+                    renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
+                        return     value    
+                    },
+                    filter: 'number' 
+                },
+
                 // { 
                 //     text: 'Process ID', 
                 //     dataIndex: 'epr_original_id',
@@ -113,7 +112,7 @@ Ext.define('Products.view.main.Products', {
                 { 
                     text: 'Band', 
                     dataIndex: 'prd_filter',
-                    width: 40,
+                    width:70,
                     renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
                         if (value == null){
                             return     '---'    
@@ -159,7 +158,7 @@ Ext.define('Products.view.main.Products', {
                 { 
                   text: 'Date', 
                   dataIndex: 'epr_end_date',
-                  width: 150,
+                  width: 100,
                   renderer: function(value, metaData, record, rowIndex, colIndex, store, view){
                     return     value.substring(0,10)    
                   },
