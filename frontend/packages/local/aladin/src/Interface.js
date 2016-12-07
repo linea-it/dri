@@ -89,8 +89,16 @@ Ext.define('aladin.Interfaces', {
     ////////////////////////////////////////////////////////////////////////////
 
     makeToolbar: function () {
+        var me = this,
+            position = me.getToolbarPosition(),
+            vertical = false;
+
+        if ((position === 'left') || (position === 'right')) {
+            vertical = true;
+        }
+
         return Ext.create('Ext.toolbar.Toolbar', {
-            vertical: true
+            vertical: vertical
             //enableOverflow: true
         });
 
@@ -99,7 +107,13 @@ Ext.define('aladin.Interfaces', {
     makeToolbarButtons: function () {
         var me = this,
             auxTools,
-            tools = [];
+            tools = [],
+            position = me.getToolbarPosition(),
+            vertical = false;
+
+        if ((position === 'left') || (position === 'right')) {
+            vertical = true;
+        }
 
         if (me.getEnableShift()) {
             tools.push({
@@ -120,7 +134,7 @@ Ext.define('aladin.Interfaces', {
             var bandFilter = Ext.create('common.BandFilter', {
                 filters: ['g', 'r', 'i', 'z', 'Y', 'irg'],
                 defaultFilter: 'irg',
-                vertical: true,
+                vertical: vertical,
                 listeners: {
                     scope: me,
                     'onfilter': me.onFilter

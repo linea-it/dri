@@ -48,6 +48,7 @@ Ext.define('Products.view.main.MainController', {
                     "Process ID": source.prd_process_id,
                     "Username": source.epr_username,
                     "Date": source.epr_end_date,
+                    "Selected name": source.prd_user_display_name,
                     //"prd_release_id": source.prd_release_id,
                     "Tags": source.prd_tags,
                     "Original ID": source.epr_original_id,
