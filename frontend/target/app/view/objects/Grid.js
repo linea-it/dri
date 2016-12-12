@@ -93,8 +93,8 @@ Ext.define('Target.view.objects.Grid', {
                     var column = {
                         text: me.createColumnText(record),
                         dataIndex: record.get('column_name'),
-
-                        tooltip: me.createColumnTooltip(record)
+                        tooltip: me.createColumnTooltip(record),
+                        renderer: me.formatNumber
                     };
 
                     // if (type != undefined) {
@@ -263,6 +263,17 @@ Ext.define('Target.view.objects.Grid', {
         );
 
         return tpl.apply(record.data);
+    },
+
+    formatNumber: function (value) {
+        if (typeof(value) === 'number') {
+            if (!isNaN(value) && value.toString().indexOf('.') != -1) {
+
+                value =  value.toFixed(3);
+            }
+        }
+
+        return value;
     }
 });
 
