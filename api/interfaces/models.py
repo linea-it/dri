@@ -18,6 +18,9 @@ class Application(models.Model):
     app_icon_src = models.CharField(
         max_length=1024, verbose_name='Icon Source', blank=True, null=True, help_text='path to the applications icon.'
     )
+    app_video_src = models.CharField(
+        max_length=2048, verbose_name='Video Source', blank=True, null=True, help_text='Url to video. eg. https://www.youtube.com/embed/XGSy3_Czz8k'
+    )
     app_order = models.IntegerField (
         verbose_name='Order', blank=True, null=True, help_text='Order in menu.'
     )

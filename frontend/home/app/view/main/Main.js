@@ -96,7 +96,8 @@ Ext.define('Home.view.main.Main', {
                     appURL: record.get('app_url'),
                     imageUrl: record.get('app_icon_src'),
                     paragrafo1: record.get('app_short_description'),
-                    paragrafo2: record.get('app_long_description')
+                    paragrafo2: record.get('app_long_description'),
+                    video: record.get('app_video_src')
                 }
             });
 
