@@ -15,7 +15,7 @@ class OracleWrapper(BaseWrapper):
         return columns
 
     def query(self, table, schema=None, columns=None, filters=None, order_by=None, limit=None, offset=None, joins=None,
-              dict=True):
+              dict=True, return_count=True):
 
         sql_columns = '*'
         sql_from = ''
@@ -110,14 +110,15 @@ class OracleWrapper(BaseWrapper):
                 sql_sort = self.do_order(order_by, tbl_columns, cls)
 
         sql = sql_base
-
+        # print(sql)
         rows = list()
         if dict:
             rows = self.fetchall_dict(sql)
         else:
             rows = self.fetchall(sql)
 
-        if sql_count:
+        if sql_count and return_count:
+            # print(sql_count)
             count = self.fetchall(sql_count)[0][0]
         else:
             count = len(rows)

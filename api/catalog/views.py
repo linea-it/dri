@@ -245,7 +245,6 @@ class VisiomaticCoaddObjects(ViewSet):
 
         # Parametros de Paginacao
         limit = request.query_params.get('limit', 1000)
-        start = request.query_params.get('offset', None)
 
         # Parametros de Ordenacao
         ordering = request.query_params.get('ordering', None)
@@ -312,8 +311,8 @@ class VisiomaticCoaddObjects(ViewSet):
             columns=columns,
             filters=filters,
             limit=limit,
-            offset=start,
-            order_by=ordering
+            order_by=ordering,
+            return_count=False,
         )
 
         if mime == 'json':
