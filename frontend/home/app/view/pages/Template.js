@@ -17,7 +17,7 @@ Ext.define('Home.view.pages.Template', {
         video: ''
     },
 
-    height: 1000,
+    height: 3000,
 
     tpl: [
         '<div class="page-title">',
