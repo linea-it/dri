@@ -20,6 +20,7 @@ class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
             'app_long_description',
             'app_icon_cls',
             'app_icon_src',
+            'app_video_src',
             'app_order',
             'app_disabled'
         )
