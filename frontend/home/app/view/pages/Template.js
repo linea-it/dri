@@ -17,22 +17,24 @@ Ext.define('Home.view.pages.Template', {
         video: ''
     },
 
-    height: 2000,
+    // height: 2000,
 
     tpl: [
+        '<div style="height:100vh;  width: 1000px; overflow: hidden;">',
+        '<div style="height:100vh; width: 1200px;  overflow: scroll;">',
         '<div class="page-title">',
         '<h1>{pageTitle}</h1>',
         '</div>',
-        '<div style="height: 450px;">',
-            '<iframe width="800" height="450" src="{video}"></iframe>',
+        '<div style="height: 350px;">',
+            '<iframe width="500" height="350" src="{video}"></iframe>',
         '</div>',
         // '<figure class="app-image alignleft" style="width: 100px height: 100px">',
         //     '<a target="_self" alt="{pageTitle}" href="{appURL}">',
         //         '<img width="50" height="50" src="{imageUrl}" alt="Go To {pageTitle}">',
         //     '</a>',
         // '</figure>',
-        '<a target="_self" alt="{pageTitle}" href="{appURL}"><h2>{pageTitle}</h2></a>',
-        '<p class="app-paragrafo1">{paragrafo1}</p>',
+        // '<a target="_self" alt="{pageTitle}" href="{appURL}"><h2>{pageTitle}</h2></a>',
+        '<p class="app-paragrafo1">{paragrafo1} <a target="_self" alt="{pageTitle}" href="{appURL}">click here</a></p>',
         '<p></p>',
         // '<div style="height: 190px;">',
         // '<figure class="app-image alignleft" style="width: 150px height: 150px">',
@@ -44,7 +46,9 @@ Ext.define('Home.view.pages.Template', {
         // '<br>',
         '<br>',
         '<p></p>',
-        '<p class="app-paragrafo2">{paragrafo2}</p>'
+        '<p class="app-paragrafo2">{paragrafo2}</p>',
+        '</div>',
+        '</div>'
     ],
 
     afterRender: function () {
