@@ -29,3 +29,17 @@ class Application(models.Model):
     )
     def __str__(self):
         return self.app_display_name
+
+
+class Tutorial(models.Model):
+    application = models.ForeignKey(
+        Application, on_delete=models.CASCADE, verbose_name='Application')
+    ttr_title = models.CharField(
+        max_length=1024, verbose_name='Title', blank=False, null=False, default='')
+    ttr_src = models.CharField(
+        max_length=2048, verbose_name='Video Source', blank=True, null=True, help_text='Url to video. eg. https://www.youtube.com/embed/XGSy3_Czz8k')
+    ttr_description = models.TextField(
+        max_length=2048, verbose_name='Description', blank=True, null=True)
+
+    def __str__(self):
+        return self.ttr_title

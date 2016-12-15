@@ -15,6 +15,7 @@ Ext.define('Sky.Application', {
     defaultToken : 'home',
 
     init:function (argument) {
+        var me = this;
         // Desabilitar os erros de Aria
         Ext.enableAriaButtons = false;
 
@@ -24,6 +25,8 @@ Ext.define('Sky.Application', {
             success: function (response) {
                 var data = JSON.parse(response.responseText);
                 window.sessionStorage.setItem('dri_username', data.username);
+
+                me.username = data.username;
             },
             failure: function (response, opts) {
                 var pathname = window.location.pathname,
