@@ -7,7 +7,8 @@ Ext.define('Eyeballing.view.main.MainModel', {
     alias: 'viewmodel.main',
 
     data: {
-        name: 'Release Validation'
+        name: 'Release Validation',
+        internal_name: 'release'
     }
 
 });

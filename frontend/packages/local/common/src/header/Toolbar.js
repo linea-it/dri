@@ -10,7 +10,8 @@ Ext.define('common.header.Toolbar', {
 
     requires: [
         'common.ToolbarController',
-        'common.contact.Contact'
+        'common.contact.Contact',
+        'common.help.Tutorials'
     ],
 
     xtype: 'dri-header',
@@ -19,8 +20,6 @@ Ext.define('common.header.Toolbar', {
 
     cls: 'des-portal-headerbar toolbar-btn-shadow',
 
-    // height: 38,
-
     layout: {
         type: 'hbox',
         align: 'middle'
@@ -28,11 +27,25 @@ Ext.define('common.header.Toolbar', {
 
     viewModel: {
         data: {
-            // name: '',
+            // name: '', app Display name
+            // internal_name: '', app internal name in Django application model
             home: '',
             desPortalLogo: 'resources/des-portal-logo.png',
             tooltip: 'Home',
             username: ''
+        },
+        stores: {
+            tutorials: {
+                fields: ['id', 'application', 'application_display_name', 'ttr_title', 'ttr_src', 'ttr_description'],
+                remoteSort: true,
+                remoteFilter: true,
+                autoLoad: false,
+                pageSize: 0,
+                proxy: {
+                    type: 'django',
+                    url: '/dri/api/tutorial/'
+                }
+            }
         }
     },
 
@@ -76,6 +89,7 @@ Ext.define('common.header.Toolbar', {
         },
         {
             xtype: 'button',
+            reference: 'headermenu',
             iconCls: 'x-fa fa-bars',
             cls: 'delete-focus-bg',
             ui: 'white-toolbar',
@@ -90,6 +104,13 @@ Ext.define('common.header.Toolbar', {
                 {
                     text: 'About LIneA',
                     handler: 'about'
+                },
+                {
+                    text: 'Help',
+                    iconCls: 'x-fa fa-question-circle',
+                    reference: 'headermenututorials',
+                    disabled: true,
+                    handler: 'tutorials'
                 },
                 '-',
                 {
