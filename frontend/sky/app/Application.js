@@ -27,6 +27,9 @@ Ext.define('Sky.Application', {
                 window.sessionStorage.setItem('dri_username', data.username);
 
                 me.username = data.username;
+
+                // Identificar o usuario no Google Analitics
+                ga('set', 'userId', data.id);
             },
             failure: function (response, opts) {
                 var pathname = window.location.pathname,

@@ -25,6 +25,9 @@ Ext.define('Eyeballing.Application', {
             success: function (response) {
                 var data = JSON.parse(response.responseText);
                 window.sessionStorage.setItem('dri_username', data.username);
+
+                // Identificar o usuario no Google Analitics
+                ga('set', 'userId', data.id);
             },
             failure: function () {
                 var pathname = window.location.pathname,
