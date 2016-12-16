@@ -145,8 +145,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
 AUTHENTICATION_BACKENDS = (
-    # 'common.authentication.NscsaBackend',
-    'django.contrib.auth.backends.ModelBackend',
+    'common.authentication.NcsaBackend',
+    'django.contrib.auth.backends.ModelBackend'
 )
 
 
