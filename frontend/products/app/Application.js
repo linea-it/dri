@@ -5,7 +5,7 @@
  */
 Ext.define('Products.Application', {
     extend: 'Ext.app.Application',
-    
+
     name: 'Products',
 
     defaultToken : 'home',
@@ -28,6 +28,9 @@ Ext.define('Products.Application', {
             success: function (response) {
                 var data = JSON.parse(response.responseText);
                 window.sessionStorage.setItem('dri_username', data.username);
+
+                // Identificar o usuario no Google Analitics
+                ga('set', 'userId', data.id);
             },
             failure: function (response, opts) {
                 var pathname = window.location.pathname,
@@ -45,7 +48,7 @@ Ext.define('Products.Application', {
 
     launch: function () {
         // TODO - Launch the application
-    },
+    }
 
     // onAppUpdate: function () {
     //     window.location.reload();

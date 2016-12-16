@@ -10,10 +10,8 @@ class SiteAdmin(admin.ModelAdmin):
 
 
 class ExportAdmin(admin.ModelAdmin):
-    list_display = ('id', 'exp_username', 'exp_date',
-                    'exp_external_process',)
-    list_display_links = ('id', 'exp_username', 'exp_date',
-                          'exp_external_process',)
+    list_display = ('id', 'exp_username', 'exp_date',)
+    list_display_links = ('id', 'exp_username', 'exp_date',)
     search_field = ('exp_username',)
 
 

@@ -67,7 +67,9 @@ router.register(r'filters', common_views.FilterViewSet)
 router.register(r'site', product_register_views.SiteViewSet)
 router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet, base_name='importprocess')
 router.register(r'importauthorization', product_register_views.AuthorizationViewSet)
+
 router.register(r'application',interfaces_views.ApplicationViewSet)
+router.register(r'tutorial',interfaces_views.TutorialViewSet)
 
 # API Relacionadas ao Banco de Dados de Catalogo
 router.register(r'target', catalog_views.TargetViewSet, base_name='target')

@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from django.db.models import Q
 
-from .models import Site, Authorization, ExternalProcess
+from .models import Site, Authorization, ExternalProcess, Export
 
 
 class Import():
@@ -88,6 +88,10 @@ class Import():
             if 'fields' in data and len(data.get('fields')) > 0:
                 self.process_tags(self.process, data.get('fields'), add_release)
 
+            # Registrar dados do export
+            if 'register_username' in self.data:
+                self.process_export(self.process, self.data)
+
             # Registrar os produtos
             if 'products' in data and len(data.get('products')) > 0:
                 self.import_products(data.get('products'))
@@ -134,6 +138,16 @@ class Import():
 
             except Tag.DoesNotExist:
                 raise Exception("this Tag '%s' is not valid." % tag_name)
+
+    def process_export(self, process, data):
+
+        # Associar Process a Export
+        export = Export.objects.create(
+            process=process,
+            exp_username=data.get('register_username')
+        )
+
+        export.save()
 
     def import_products(self, data):
         """
@@ -184,6 +198,15 @@ class Import():
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))
 
+        tbl_info = data.get('ora_table_info', None)
+        tbl_rows = None
+        tbl_num_columns = None
+        tbl_size = None
+        if tbl_info:
+            tbl_rows = tbl_info.get('n_imported_rows', None)
+            tbl_num_columns = tbl_info.get('n_imported_columns', None)
+            tbl_size = tbl_info.get('table_size_in_bytes', None)
+
         product, created = Catalog.objects.update_or_create(
             prd_name=data.get('name'),
             tbl_database=data.get('database', None),
@@ -197,6 +220,9 @@ class Import():
                 "prd_version": data.get('version', None),
                 "prd_flag_removed": False,
                 "prd_description": data.get('description', None),
+                "tbl_rows": tbl_rows,
+                "tbl_num_columns": tbl_num_columns,
+                "tbl_size": tbl_size,
                 "ctl_num_objects": count,
             }
         )
@@ -358,6 +384,15 @@ class Import():
         # Recuperar o filtro
         filter = self.get_filter(data.get('filter'))
 
+        tbl_info = data.get('ora_table_info', None)
+        tbl_rows = None
+        tbl_num_columns = None
+        tbl_size = None
+        if tbl_info:
+            tbl_rows = tbl_info.get('n_imported_rows', None)
+            tbl_num_columns = tbl_info.get('n_imported_columns', None)
+            tbl_size = tbl_info.get('table_size_in_bytes', None)
+
         product, created = Map.objects.update_or_create(
             prd_name=data.get('name'),
             tbl_schema=data.get('schema', None),
@@ -374,6 +409,9 @@ class Import():
                 "prd_filter": filter,
                 "mpa_nside": self.check_nside(data.get('nside')),
                 "mpa_ordering": self.check_ordering(data.get('ordering')),
+                "tbl_rows": tbl_rows,
+                "tbl_num_columns": tbl_num_columns,
+                "tbl_size": tbl_size,
             }
         )
 
@@ -442,6 +480,15 @@ class Import():
         # Recuperar o filtro
         filter = self.get_filter(data.get('filter'))
 
+        tbl_info = data.get('ora_table_info', None)
+        tbl_rows = None
+        tbl_num_columns = None
+        tbl_size = None
+        if tbl_info:
+            tbl_rows = tbl_info.get('n_imported_rows', None)
+            tbl_num_columns = tbl_info.get('n_imported_columns', None)
+            tbl_size = tbl_info.get('table_size_in_bytes', None)
+
         product, created = Mask.objects.update_or_create(
             prd_name=data.get('name'),
             tbl_schema=data.get('schema', None),
@@ -455,6 +502,9 @@ class Import():
                 "prd_flag_removed": False,
                 "prd_description": data.get('description', None),
                 "msk_filter": filter,
+                "tbl_rows": tbl_rows,
+                "tbl_num_columns": tbl_num_columns,
+                "tbl_size": tbl_size,
             }
         )
 
