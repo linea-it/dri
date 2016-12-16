@@ -78,6 +78,12 @@ class Table(Product):
         max_length=128, verbose_name='Schema name', null=True, blank=True)
     tbl_name = models.CharField(
         max_length=128, verbose_name='Tablename', help_text='Tablename without schema')
+    tbl_rows = models.PositiveIntegerField(
+        verbose_name='Num of rows', null=True, blank=True)
+    tbl_num_columns = models.PositiveIntegerField(
+        verbose_name='Num of columns', null=True, blank=True)
+    tbl_size = models.PositiveIntegerField(
+        verbose_name='Size in bytes', null=True, blank=True)
 
     def __str__(self):
         return self.tbl_name

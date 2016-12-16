@@ -344,6 +344,7 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
 
 class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
     ctl_num_objects = serializers.SerializerMethodField()
+    tbl_rows = serializers.SerializerMethodField()
     mpa_nside = serializers.SerializerMethodField()
     mpa_ordering = serializers.SerializerMethodField()
     prd_table_ptr = serializers.SerializerMethodField()
@@ -354,8 +355,8 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
     epr_username = serializers.SerializerMethodField()
     epr_end_date = serializers.SerializerMethodField()
     epr_original_id = serializers.SerializerMethodField()
-
-
+    exp_username = serializers.SerializerMethodField()
+    exp_date = serializers.SerializerMethodField()
     # Dados do Release
     prd_release_id = serializers.SerializerMethodField()
     prd_release_display_name = serializers.SerializerMethodField()
@@ -375,6 +376,7 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             'prd_user_display_name',
             'prd_flag_removed',
             'ctl_num_objects',
+            'tbl_rows',
             'mpa_nside',
             'mpa_ordering',
             "pgr_display_name",
@@ -388,13 +390,21 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             'prd_tags_name',
             'epr_original_id',
             'prd_filter',
-            'prd_table_ptr'
+            'prd_table_ptr',
+            'exp_username',
+            'exp_date'
 
         )
 
     def get_ctl_num_objects(self, obj):
         try:
             return obj.table.catalog.ctl_num_objects
+        except AttributeError:
+            return None
+
+    def get_tbl_rows(self, obj):
+        try:
+            return obj.table.catalog.tbl_rows
         except AttributeError:
             return None
 
@@ -434,10 +444,24 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_epr_username(self, obj):
         return obj.prd_process_id.epr_username
-
+    
     def get_epr_end_date(self, obj):
         return obj.prd_process_id.epr_end_date
+    
+    def get_exp_username(self, obj):
+        try:
+            r = obj.prd_process_id.export_set.first()
+            return r.exp_username
+        except AttributeError:
+            return None
 
+    def get_exp_date(self, obj):
+        try:
+            r = obj.prd_process_id.export_set.first()
+            return r.exp_date
+        except AttributeError:
+            return None
+            
     def get_prd_release_id(self, obj):
         try:
             r = obj.releases.first()
