@@ -24,6 +24,10 @@ Ext.define('Products.view.main.MainController', {
             source = gridcatalogs.getStore().getAt(index);
             
         source = source.data
+        if(source.exp_date){
+            exp_date = source.exp_date.substring(0, 10)
+        }
+        alert(exp_date)
         Ext.create('Ext.window.Window', {
             height: 500,
             title: 'Product Information',
@@ -41,6 +45,7 @@ Ext.define('Products.view.main.MainController', {
                     "Display name": source.prd_display_name,
                     //"prd_flag_removed": source.prd_flag_removed,
                     "Num Objects": source.ctl_num_objects,
+                    "Num Rows": source.tbl_rows,
                     "Nside": source.mpa_nside,
                     "Ordering": source.mpa_ordering,
                     "Type": source.pgr_display_name,
@@ -53,7 +58,9 @@ Ext.define('Products.view.main.MainController', {
                     "Tags": source.prd_tags,
                     "Original ID": source.epr_original_id,
                     "Band": source.prd_filter,
-                    "Tablename": source.prd_table_ptr
+                    "Name of exporting user": source.exp_username,
+                    "Tablename": source.prd_table_ptr,
+                    "Export Date": exp_date
                 }
             }
         }).show();

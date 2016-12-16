@@ -20,7 +20,7 @@ Ext.define('Products.view.main.Main', {
         'Ext.plugin.Viewport',
         'Ext.grid.filters.Filters',
         'common.header.Toolbar',
-        'common.footer.Footer'
+        'common.footer.Footer' 
     ],
     controller: 'main',
     viewModel: 'main',
