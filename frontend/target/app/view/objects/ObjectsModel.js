@@ -32,14 +32,6 @@ Ext.define('Target.view.objects.ObjectsModel', {
             type: 'targets-objects',
             storeId: 'objects'
         },
-        // productcontent: {
-        //     type: 'product-content',
-        //     storeId: 'ProductContent'
-        // },
-        // productassociation: {
-        //     type: 'product-association',
-        //     storeId: 'Association'
-        // },
         currentSettings: {
             type: 'currentsettings'
         },
