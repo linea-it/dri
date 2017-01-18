@@ -27,7 +27,6 @@ Ext.define('Products.Application', {
             url: '/dri/api/logged/get_logged/?format=json',
             success: function (response) {
                 var data = JSON.parse(response.responseText);
-                window.sessionStorage.setItem('dri_username', data.username);
 
                 // Identificar o usuario no Google Analitics
                 ga('set', 'userId', data.id);
