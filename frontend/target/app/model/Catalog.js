@@ -5,15 +5,6 @@ Ext.define('Target.model.Catalog', {
         'common.data.proxy.Django'
     ],
 
-    // proxy: {
-    //     type: 'django',
-    //     url: '/dri/api/catalog/',
-    //     reader: {
-    //         type: 'json',
-    //         rootProperty: 'children'
-    //     }
-    // },
-
     fields: [
         {name:'id'},
         {name:'prd_name', type:'string'},
@@ -35,6 +26,9 @@ Ext.define('Target.model.Catalog', {
         {name:'ctl_num_columns', type:'int'},
         {name:'ctl_num_tiles', type:'int'},
         {name:'ctl_num_objects', type:'int'},
+
+        {name:'release_id', type:'int'},
+        {name:'release_display_name', type:'string'},
 
         {name:'editable', type:'boolean', defaultValue: false},
         {name:'markable', type:'boolean', defaultValue: false}

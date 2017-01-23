@@ -22,10 +22,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         component: {
             'targets-objects-panel': {
                 beforeLoadPanel: 'onBeforeLoadPanel',
-                beforeloadcatalog: 'loadCurrentSetting'
-            },
-            'targets-objects-tabpanel': {
-                select: 'onSelectObject'
+                beforeloadcatalog: 'loadCurrentSetting',
+                beforedeactivate: 'onBeforeDeactivate'
             }
         },
         store: {
@@ -37,6 +35,10 @@ Ext.define('Target.view.objects.ObjectsController', {
             }
         }
     },
+
+    winAlertSetting: null,
+
+    wizard: null,
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
         var me = this,
@@ -55,7 +57,6 @@ Ext.define('Target.view.objects.ObjectsController', {
                 value: catalogId
             }
         ]);
-
     },
 
     onLoadCatalogs: function (store) {
@@ -74,7 +75,6 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             me.loadCurrentSetting();
         }
-
     },
 
     loadCurrentSetting: function () {
@@ -197,20 +197,21 @@ Ext.define('Target.view.objects.ObjectsController', {
         //     'Não é possivel visualizar o catalogo sem escolher uma configuração.' + '</br>' +
         //     'É obrigatorio fazer associação para as propriedades ID, RA, Dec. </p>';
 
-        Ext.MessageBox.show({
+        me.winAlertSetting = Ext.MessageBox.show({
             header: false,
             closable: false,
+            modal: true,
             msg: msg,
-            buttons: Ext.MessageBox.OK,
-            fn: function () {
-                me.showWizard();
+            buttons: Ext.MessageBox.OKCANCEL,
+            fn: function (btn) {
+                if (btn === 'ok') {
+                    me.showWizard();
+                } else {
+                    // Redirecionar para o home
+                    me.redirectTo('home');
+                }
             }
         });
-
-
-
-        // 'It is necessary to make association for property ID, RA and Dec.'
-
     },
 
     reloadAssociation: function () {
@@ -291,10 +292,11 @@ Ext.define('Target.view.objects.ObjectsController', {
             view = me.getView(),
             vm = view.getViewModel(),
             refs = me.getReferences(),
-            preview = refs.targetsPreviewPanel;
+            preview = refs.targetsPreviewPanel,
+            catalog = vm.get('currentCatalog');
 
         // Setar o Objeto Selecionado
-        preview.setCurrentRecord(record);
+        preview.setCurrentRecord(record, catalog);
 
     },
 
@@ -403,160 +405,6 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.showWizard();
     },
 
-    onClickExportCatalog: function () {
-        var me = this,
-            vm = me.getViewModel(),
-            catalog = vm.get('currentCatalog'),
-            exportPanel = null;
-
-        this.winExport = Ext.create('Ext.window.Window', {
-            title: 'Export Targets',
-            layout: 'fit',
-            closeAction: 'destroy',
-            width: 500,
-            height: 400,
-            items: [{
-                xtype: 'targets-catalog-export',
-                record: catalog,
-                listeners: {
-                    scope: me,
-                    submitexport: me.exportCatalog
-                }
-            }]
-        });
-
-        exportPanel = this.winExport.down('targets-catalog-export');
-        exportPanel.setCatalog(catalog);
-
-        this.winExport.show();
-    },
-
-    exportCatalog: function (catalog, params) {
-        this.winExport.close();
-
-        Ext.Msg.alert(
-            'Background process.',
-            'The creation of the file will be made in background, when finished you will receive an email containing the link to download.'
-        );
-
-        Ext.Ajax.request({
-            url: '/PRJSUB/TargetViewer/exportCatalogCSV',
-            params: {
-                // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-                catalog_id: catalog.get('catalog_id'),
-                export_params: JSON.stringify(params)
-                // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
-            },
-            success: function (response) {
-                // Recuperar a resposta e fazer o decode no json.
-                var obj = Ext.decode(response.responseText);
-
-                if (obj.success === false) {
-                    Ext.Msg.alert('', obj.msg);
-                }
-            },
-            failure: function (response) {
-                if (response.status !== 0) {
-                    Ext.MessageBox.show({
-                        title: 'Server Side Failure',
-                        msg: response.status + ' ' + response.statusText,
-                        buttons: Ext.MessageBox.OK,
-                        icon: Ext.MessageBox.WARNING
-                    });
-                }
-            }
-        });
-    },
-
-    onClickCreateCutout: function () {
-        // jscs:disable requireCamelCaseOrUpperCaseIdentifiers
-        var me = this,
-            view = me.getView(),
-            vm = view.getViewModel(),
-            catalog = vm.get('currentCatalog'),
-            process_id = ((catalog.get('process_id') > 0) ? catalog.get('process_id') : '---'),
-            numberObjects = ((catalog.get('num_objects') > 0) ? catalog.get('num_objects') : '---'),
-            baseParams = {};
-
-        baseParams = {
-            summary:{
-                type:[{
-                    name: 'Input target catalog',
-                    value: catalog.get('catalog_name')
-                },{
-                    name: 'Parent Process',
-                    value: process_id
-                },{
-                    name: 'Number of Objects',
-                    value: '' + numberObjects
-                },{
-                    name: 'Colors used in RGB',
-                    value: 'irg'
-                }]
-            },
-            inputdata:{
-                type:'table',
-                schema:catalog.get('schema_name'),
-                table:catalog.get('table_name')
-            }
-            // release:{
-            //     tag_id: tag_id,
-            //     field_id: field_id
-            // }
-        };
-
-        var w = Ext.create('Target.view.catalog.SubmitCutout', {});
-
-        w.on('submitcutout', function (customParams) {
-
-            if (customParams.image.size > 0) {
-                baseParams.summary.type.push({
-                    name: 'Cutout size',
-                    value: customParams.image.size
-                });
-            }
-
-            var params = Ext.Object.merge(baseParams, customParams);
-
-            me.submitCutoutPypeline(params);
-
-        }, this);
-
-        w.show();
-
-        // jscs:enable requireCamelCaseOrUpperCaseIdentifiers
-    },
-
-    submitCutoutPypeline: function (params) {
-        Ext.Ajax.request({
-            url: '/PRJSUB/TileViewer/submitCutoutPypeline',
-            params: {
-                data: JSON.stringify(params)
-            },
-            success: function (response) {
-                // Recuperar a resposta e fazer o decode no json.
-                var obj = Ext.decode(response.responseText);
-
-                if (obj.success === true) {
-                    msg = 'The cutout process is running in background. You will receive an e-mail  notification  when it is done.  If needed clean the browser cache to load the most recent images.';
-                    Ext.Msg.alert('Process Id: ' + obj.process_id, msg);
-
-                } else {
-                    Ext.Msg.alert('Sorry!', obj.msg);
-                }
-
-            },
-            failure: function (response, opts) {
-                Ext.MessageBox.show({
-                    title: 'Server Side Failure',
-                    msg: response.status + ' ' + response.statusText,
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
-                });
-            }
-        });
-    },
-
     onChangeInObjects: function (argument) {
         // toda vez que houver uma modificacao no objeto ex. comentarios
         // atualiza a store de objetos
@@ -578,7 +426,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             catalog = vm.get('catalog'),
             currentSetting = vm.get('currentSetting');
 
-        this.wizard = Ext.create('Ext.window.Window', {
+        me.wizard = Ext.create('Ext.window.Window', {
             title: 'Settings Wizard',
             layout: 'fit',
             closable: false,
@@ -597,10 +445,10 @@ Ext.define('Target.view.objects.ObjectsController', {
         });
 
         if (currentSetting.get('id') > 0) {
-            this.wizard.down('targets-wizard').setCurrentSetting(currentSetting);
+            me.wizard.down('targets-wizard').setCurrentSetting(currentSetting);
         }
 
-        this.wizard.show();
+        me.wizard.show();
 
     },
 
@@ -609,6 +457,20 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         this.loadCurrentSetting();
 
+    },
+
+    onBeforeDeactivate: function () {
+        var me = this;
+        // Fix AlertSetting quando usa funcao voltar do navegador
+        if (me.winAlertSetting !== null) {
+            me.winAlertSetting.close();
+            me.winAlertSetting = null;
+        }
+
+        if (me.wizard !== null) {
+            me.wizard.close();
+            me.wizard = null;
+        }
     }
 
 });
