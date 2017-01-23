@@ -109,6 +109,7 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
     epr_comment = serializers.SerializerMethodField()
 
     # epr_site = models.CharField(max_length=128)
+    release_id = serializers.SerializerMethodField()
     release_display_name = serializers.SerializerMethodField()
 
     class Meta:
@@ -138,6 +139,7 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'epr_comment',
             'tbl_schema',
             'tbl_name',
+            'release_id',
             'release_display_name'
         )
 
@@ -179,6 +181,13 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_epr_comment(self, obj):
         return obj.prd_process_id.epr_comment
+
+    def get_release_id(self, obj):
+        try:
+           r = obj.productrelease_set.first()
+           return r.release.id
+        except:
+            return None
 
     def get_release_display_name(self, obj):
         try:

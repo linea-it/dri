@@ -292,10 +292,11 @@ Ext.define('Target.view.objects.ObjectsController', {
             view = me.getView(),
             vm = view.getViewModel(),
             refs = me.getReferences(),
-            preview = refs.targetsPreviewPanel;
+            preview = refs.targetsPreviewPanel,
+            catalog = vm.get('currentCatalog');
 
         // Setar o Objeto Selecionado
-        preview.setCurrentRecord(record);
+        preview.setCurrentRecord(record, catalog);
 
     },
 
