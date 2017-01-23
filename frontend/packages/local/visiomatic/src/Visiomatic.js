@@ -392,10 +392,18 @@ Ext.define('visiomatic.Visiomatic', {
 
     removeImageLayer: function () {
         var me = this,
-            map = me.getMap(),
-            imageLayer = me.getImageLayer();
+            map = me.getMap();
+        // imageLayer = me.getImageLayer();
 
-        map.removeLayer(imageLayer);
+        if (map !== null) {
+            // map.removeLayer(imageLayer);
+
+            // remover todas as layer
+            map.eachLayer(function (layer) {
+                    map.removeLayer(layer);
+                }
+            );
+        }
 
     },
 

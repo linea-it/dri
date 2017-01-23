@@ -57,7 +57,10 @@ Ext.define('Target.view.preview.PreviewController', {
         var me = this,
             view = me.getView(),
             refs = me.getReferences(),
-            cmb = refs.currentDataset;
+            cmb = refs.currentDataset,
+            vm = me.getViewModel(),
+            catalog = vm.get('currentCatalog'),
+            dataset;
 
         // Apenas uma tile na coordenada do objeto,
         if (store.count() == 1) {
@@ -70,16 +73,39 @@ Ext.define('Target.view.preview.PreviewController', {
             cmb.setReadOnly(true);
 
         } else if (store.count() > 1) {
-            me.changeImage(store.first());
+            // Se o catalogo tiver um release seleciona por default o release do catalogo.
+            if (catalog.get('release_id') > 0) {
 
-            // Seleciona a primeira tile disponivel
-            cmb.select(store.first());
+                store.each(function (record) {
+                    if (record.get('release') == catalog.get('release_id')) {
+                        dataset = record;
+                        return false;
+                    }
+
+                }, this);
+
+                if (dataset) {
+                    me.changeImage(dataset);
+
+                    cmb.select(dataset);
+
+                } else {
+                    me.changeImage(null);
+                }
+
+            } else {
+                // Seleciona a primeira tile disponivel
+                me.changeImage(store.first());
+
+                cmb.select(store.first());
+            }
 
             // Habilitar a combobox Image
             cmb.setReadOnly(false);
 
         } else {
-            console.log('Nenhuma tile encontrada para o objeto');
+            // Nenhuma tile encontrada para o objeto
+            me.changeImage(null);
         }
 
     },
@@ -94,9 +120,10 @@ Ext.define('Target.view.preview.PreviewController', {
     changeImage: function (dataset) {
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
-            url = dataset.get('image_src_ptif');
+            url;
 
         if (dataset) {
+            url = dataset.get('image_src_ptif');
             if (url !== '') {
                 visiomatic.setImage(url);
 
@@ -106,7 +133,7 @@ Ext.define('Target.view.preview.PreviewController', {
             }
 
         } else {
-            console.log('dataset nao encontrado');
+            visiomatic.removeImageLayer();
         }
     },
 

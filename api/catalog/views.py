@@ -76,6 +76,8 @@ class TargetViewSet(ViewSet):
         # model table.
         schema = catalog.tbl_schema
         table = catalog.tbl_name
+        if schema is not None:
+            table = "%s.%s" %(schema, table)
 
         # colunas associadas ao produto
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
