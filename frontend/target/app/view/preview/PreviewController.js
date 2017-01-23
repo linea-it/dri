@@ -79,7 +79,8 @@ Ext.define('Target.view.preview.PreviewController', {
             cmb.setReadOnly(false);
 
         } else {
-            console.log('Nenhuma tile encontrada para o objeto');
+            // Nenhuma tile encontrada para o objeto
+            me.changeImage(null);
         }
 
     },
@@ -94,9 +95,10 @@ Ext.define('Target.view.preview.PreviewController', {
     changeImage: function (dataset) {
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
-            url = dataset.get('image_src_ptif');
+            url;
 
         if (dataset) {
+            url = dataset.get('image_src_ptif');
             if (url !== '') {
                 visiomatic.setImage(url);
 
@@ -106,7 +108,7 @@ Ext.define('Target.view.preview.PreviewController', {
             }
 
         } else {
-            console.log('dataset nao encontrado');
+            visiomatic.removeImageLayer();
         }
     },
 
