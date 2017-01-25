@@ -130,10 +130,10 @@ Ext.define('common.header.Toolbar', {
         host = href.split('#')[0];
         me.getViewModel().set('home', host);
 
-        if (window.sessionStorage.dri_username != 'undefined') {
-            me.getViewModel().set('username', window.sessionStorage.dri_username);
-            // me.down('#btnusername').setText(window.sessionStorage.dri_username);
-        }
+        // if (window.sessionStorage.dri_username != 'undefined') {
+        //     me.getViewModel().set('username', window.sessionStorage.dri_username);
+        //     // me.down('#btnusername').setText(window.sessionStorage.dri_username);
+        // }
 
         me.callParent(arguments);
     }

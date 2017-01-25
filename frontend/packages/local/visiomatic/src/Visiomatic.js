@@ -126,7 +126,7 @@ Ext.define('visiomatic.Visiomatic', {
             me.libL  = window.L;
 
             // Registro do Catalogo
-            me.libL.Catalog.Y3A1 = L.extend({}, L.Catalog, {
+            me.libL.Catalog.Y3A1 = me.libL.extend({}, me.libL.Catalog, {
                 name: 'Y3A1',
                 attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
                 color: 'blue',
@@ -146,10 +146,14 @@ Ext.define('visiomatic.Visiomatic', {
                 units: [],
                 objurl: 'http://' + host + '/dri/apps/explorer/#coadd/Y3A1_COADD_OBJECT_SUMMARY/{id}',
                 draw: function (feature, latlng) {
-                    return L.ellipse(latlng, {
+                    return me.libL.ellipse(latlng, {
                         majAxis: feature.properties.items[5] / 3600.0,
                         minAxis: feature.properties.items[6] / 3600.0,
-                        posAngle: 90 - feature.properties.items[7]
+                        posAngle: 90 - feature.properties.items[7],
+                        // Path Options http://leafletjs.com/reference-1.0.3.html#path
+                        weight: 2, //largura da borda em pixel
+                        opacity: 0.5, // transparencia da borda
+                        fillOpacity: 0.01 // Transparencia nos marcadores.
                     });
                 }
             });
@@ -392,10 +396,18 @@ Ext.define('visiomatic.Visiomatic', {
 
     removeImageLayer: function () {
         var me = this,
-            map = me.getMap(),
-            imageLayer = me.getImageLayer();
+            map = me.getMap();
+        // imageLayer = me.getImageLayer();
 
-        map.removeLayer(imageLayer);
+        if (map !== null) {
+            // map.removeLayer(imageLayer);
+
+            // remover todas as layer
+            map.eachLayer(function (layer) {
+                    map.removeLayer(layer);
+                }
+            );
+        }
 
     },
 

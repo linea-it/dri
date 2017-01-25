@@ -40,13 +40,10 @@ Ext.define('Target.view.objects.Panel', {
                     xtype: 'targets-objects-grid',
                     region: 'center',
                     reference: 'targetsObjectsGrid',
-                    // title: 'Catalog Properties',
-                    //itemId: 'CatalogPropertiesGrid',
                     bind: {
                         store: '{objects}'
                     },
                     listeners: {
-                        // scope: this
                         ready: 'onGridObjectsReady',
                         select: 'onSelectObject'
                     },
@@ -57,33 +54,29 @@ Ext.define('Target.view.objects.Panel', {
                             callback: 'onClickSettings'
                         }
                     ],
-                    bbar: Ext.create('Ext.PagingToolbar', {
-                        reference: 'pagingtoolbar',
-                        bind: {
-                            store: '{objects}'
-                        },
-                        displayInfo: true,
-                        displayMsg: 'Displaying {0} - {1} of {2}',
-                        emptyMsg: 'No data to display'
-                    })
-                }
+                    bbar: [
+                        {
+                            xtype: 'pagingtoolbar',
+                            reference: 'pagingtoolbar',
+                            bind: {
+                                store: '{objects}'
+                            },
+                            displayInfo: true,
+                            displayMsg: 'Displaying {0} - {1} of {2}',
+                            emptyMsg: 'No data to display'
 
-                // {
-                //     xtype: 'targets-objects-tabpanel',
-                //     region: 'center',
-                //     reference: 'targetsObjectsTabpanel',
-                //     listeners: {
-                //         ready: 'onObjectPanelReady'
-                //         // rowdblclick: 'onDbClickTarget'
-                //     },
-                //     tools:[
-                //         {
-                //             type: 'gear',
-                //             tooltip: 'Settings',
-                //             callback: 'onClickSettings'
-                //         }
-                //     ]
-                // }
+                        }
+                        // Ext.create('Ext.PagingToolbar', {
+                        //     reference: 'pagingtoolbar',
+                        //     bind: {
+                        //         store: '{objects}'
+                        //     },
+                        //     displayInfo: true,
+                        //     displayMsg: 'Displaying {0} - {1} of {2}',
+                        //     emptyMsg: 'No data to display'
+                        // })
+                    ]
+                }
             ]
         },
         {
@@ -100,21 +93,14 @@ Ext.define('Target.view.objects.Panel', {
     ],
 
     loadPanel: function (arguments) {
-        // console.log('loadPanel(%o)', arguments);
-
         var me = this,
             vm = this.getViewModel(),
-        //     release = me.getRelease(),
-        //     field = me.getField(),
             catalog = me.getCatalog();
 
         if (!catalog) {
             console.log('Necessario um catalog id.');
             return false;
         }
-
-        // Limpar o painel e as stores antes de carregar um catalogo novo
-        me.clearPanel();
 
         vm.set('catalog', catalog);
 
@@ -123,9 +109,37 @@ Ext.define('Target.view.objects.Panel', {
     },
 
     updatePanel: function (arguments) {
+        var me = this,
+            vm = this.getViewModel(),
+            // catalog = me.getCatalog(),
+            catalog = vm.get('catalog'),
+            currentSetting = vm.get('currentSetting'),
+            currentCatalog = vm.get('currentCatalog'),
+            catalog_id;
 
-        this.loadPanel(arguments);
+        if (arguments.length >= 2) {
+            catalog_id = arguments[1];
 
+            if (catalog != catalog_id) {
+                // Limpar o painel e as stores antes de carregar um catalogo novo
+                me.clearPanel();
+
+                vm.set('catalog', catalog_id);
+
+                me.fireEvent('beforeLoadPanel', catalog_id, me);
+
+            } else {
+                // O mesmo catalogo foi aberto
+                // nao fazer nada deixar como estava,
+                // mas verificar se tem alguma setting selecionada caso nao tenha tratar como um catalogo novo
+                if (currentSetting.get('cst_product') != currentCatalog.get('id')) {
+
+                    vm.set('catalog', catalog_id);
+
+                    me.fireEvent('beforeLoadPanel', catalog_id, me);
+                }
+            }
+        }
     },
 
     setCurrentCatalog: function (catalog) {
@@ -137,36 +151,36 @@ Ext.define('Target.view.objects.Panel', {
             title = Ext.String.format('{0} - {1}', catalog.get('pcl_display_name'), catalog.get('prd_display_name'));
 
             gridPanel.setTitle(title);
+
         }
     },
 
     clearPanel: function () {
-        // console.log('clearPanel');
-        //     var me = this,
-        //         vm = me.getViewModel(),
+        var me = this,
+            vm = me.getViewModel(),
+            gridPanel = me.down('targets-objects-grid');
         //         refs = me.getReferences(),
         //         grids = refs.targetsGrid,
-        //         preview = refs.targetsPreviewPanel,
-        //         tbars = grids.getDockedItems('toolbar[dock="top"]'),
-        //         btns = tbars[0].items;
+        //         preview = refs.targetsPreviewPanel;
 
-        //     // TODO Limpar as Stores
-        //     vm.getStore('objects').removeAll();
-        //     // vm.getStore('objects').clearFilter(true);
+        gridPanel.setTitle('loading...');
 
-        //     vm.getStore('tiles').removeAll();
-        //     // vm.getStore('tiles').clearFilter(true);
+        vm.getStore('catalogs').removeAll();
+        vm.getStore('catalogs').clearFilter(true);
 
-        //     vm.getStore('catalogColumns').removeAll();
-        //     // vm.getStore('catalogColumns').clearFilter(true);
+        vm.getStore('objects').removeAll();
+        vm.getStore('objects').clearFilter(true);
 
-        //     vm.getStore('catalogClassColumns').removeAll();
-        //     // vm.getStore('catalogClassColumns').clearFilter(true);
+        vm.getStore('currentSettings').removeAll();
+        vm.getStore('currentSettings').clearFilter(true);
 
-        //     // Desabilitar os botoes
-        //     btns.each(function (button) {
-        //         button.disable();
-        //     }, this);
+        vm.getStore('displayContents').removeAll();
+        vm.getStore('displayContents').clearFilter(true);
+
+        // // Desabilitar os botoes
+        // btns.each(function (button) {
+        //     button.disable();
+        // }, this);
 
         //     // Limpar o painel de preview
         //     preview.clearPanel();

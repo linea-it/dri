@@ -63,7 +63,7 @@ Ext.define('Target.view.preview.Preview', {
         }
     ],
 
-    setCurrentRecord: function (record) {
+    setCurrentRecord: function (record, catalog) {
         var me = this,
             vm = me.getViewModel();
 
@@ -72,6 +72,9 @@ Ext.define('Target.view.preview.Preview', {
 
         // Setar o currentRecord no viewModel
         vm.set('currentRecord', record);
+
+        // Setar o catalogo
+        vm.set('currentCatalog', catalog);
 
         // disparar evento before load
         me.fireEvent('changerecord', record, me);

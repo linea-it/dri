@@ -23,7 +23,7 @@ Ext.define('Home.view.main.Main', {
     controller: 'main',
     viewModel: 'main',
     ui: 'navigation',
-
+    id: 'tab_panel_id',
     tabBarHeaderPosition: 1,
     titleRotation: 0,
     tabRotation: 0,

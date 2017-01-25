@@ -23,6 +23,10 @@ Ext.define('Target.view.preview.PreviewModel', {
         currentDataset: {
             type: 'common.model.Dataset',
             create: true
+        },
+        currentCatalog: {
+            type: 'Target.model.Catalog',
+            create: true
         }
     },
     stores: {

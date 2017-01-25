@@ -45,10 +45,11 @@ Ext.define('common.ToolbarController', {
     onAfterRender: function () {
         var me = this;
 
+        // Carregar o username
+        me.loadUsername();
+
         // Carregar a lista de tutoriais
         me.loaddTutorials();
-
-        // console.log(Sky.app.username);
 
     },
 
@@ -102,6 +103,19 @@ Ext.define('common.ToolbarController', {
 
         this.wintutorials.show();
 
+    },
+
+    loadUsername: function () {
+        var me = this,
+            vm = me.getViewModel();
+
+        Ext.Ajax.request({
+            url: '/dri/api/logged/get_logged/?format=json',
+            success: function (response) {
+                var data = JSON.parse(response.responseText);
+                vm.set('username', data.username);
+            }
+        });
     }
 
 });
