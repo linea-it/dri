@@ -38,6 +38,15 @@ Ext.define('Home.view.pages.Home', {
                     ]
                 },{
                     xtype: 'button',
+                    text : 'Tutorial',
+                    margin: '0 3 3 190',                    
+                    disabled : record.get('app_disabled'),
+                    handler: function() {
+                        Ext.getCmp('tab_panel_id').setActiveTab(record.get('id'));  
+                    },
+                    
+                },{
+                    xtype: 'button',                    
                     text    : record.get('app_display_name'),
                     width: 260,
                     scale: 'large',
