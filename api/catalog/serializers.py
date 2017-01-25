@@ -13,6 +13,7 @@ class RatingSerializer(serializers.HyperlinkedModelSerializer):
         model = Rating
 
         fields = (
+            'id',
             'catalog_id',
             'object_id',
             'rating'

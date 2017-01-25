@@ -6,6 +6,32 @@ Ext.define('Target.view.catalog.CatalogController', {
 
     alias: 'controller.catalog',
 
+    winAddCatalog: null,
+
+    onAddCatalog: function () {
+        console.log('onAddCatalog');
+        var me = this;
+
+        me.winAddCatalog = Ext.create('Target.view.catalog.RegisterForm', {
+            width: 300,
+            controller: 'catalog'
+        });
+
+        me.winAddCatalog.show();
+
+    },
+
+    addCatalog: function () {
+        console.log('addCatalog');
+        console.log(this);
+        var me = this,
+            winAddCatalog = me.winAddCatalog,
+            form = winAddCatalog.down('form').getForm();
+
+        console.log(form);
+
+    },
+
     onRemoveCatalog: function (btn) {
 
         Ext.MessageBox.confirm('', 'The catalog will be removed. Do you want continue?', this.removeCatalog, this);

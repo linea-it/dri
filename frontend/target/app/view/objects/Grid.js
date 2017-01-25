@@ -140,18 +140,19 @@ Ext.define('Target.view.objects.Grid', {
                     tooltip: 'Rating',
                     widget: {
                         xtype: 'rating',
+                        minimum: 0,
                         // overStyle: 'color: orange;'
                         selectedStyle: 'color: rgb(96, 169, 23);',
                         style: {
                             'color': '#777777'
                         }
                         // listeners: {
-                        //     change: function (picker, value, oldvalue) {
-                        //         console.log('picker ', value);
-                        //         console.log('oldvalue ', oldvalue);
-                        //         var record = picker.getWidgetRecord();
-                        //         me.fireEvent('changerating', record, value, oldvalue);
-                        //     }
+                        // change: function (picker, value, oldvalue) {
+                        //     console.log('picker ', value);
+                        // console.log('oldvalue ', oldvalue);
+                        // var record = picker.getWidgetRecord();
+                        // me.fireEvent('changerating', record, value, oldvalue);
+                        // }
                         // }
                     }
                 });
