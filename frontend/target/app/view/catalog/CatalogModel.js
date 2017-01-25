@@ -9,12 +9,14 @@ Ext.define('Target.view.catalog.CatalogModel', {
     requires: [
         'Target.model.Catalog',
         'Target.store.CatalogsTree'
+
     ],
 
     stores: {
         catalogs: {
             type: 'catalogs-tree'
         }
+
     },
 
     links: {

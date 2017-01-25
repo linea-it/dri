@@ -9,7 +9,7 @@ Ext.define('Target.view.catalog.Tree', {
     requires: [
         'Target.view.catalog.CatalogController',
         'Target.view.catalog.CatalogModel',
-        // 'common.process.ViewProcessButton',
+        'Target.view.catalog.RegisterForm',
         'Ext.grid.filters.Filters'
     ],
 
@@ -100,14 +100,6 @@ Ext.define('Target.view.catalog.Tree', {
                         type: 'number'
                     }
                 }
-                // {
-                //     text: 'Release',
-                //     dataIndex: 'release_display_name',
-                //     sortable: true,
-                //     filter: {
-                //         type: 'string'
-                //     }
-                // }
             ],
             listeners: {
                 load: function (treeStore) {
@@ -157,14 +149,26 @@ Ext.define('Target.view.catalog.Tree', {
                         handler: 'filterByStarred'
                     }]
                 },
+
+                // Add a New catalog
+                {
+                    xtype: 'button',
+                    iconCls: 'x-fa fa-plus',
+                    ui: 'soft-green',
+                    tooltip: 'Add a new list of targets.',
+                    handler: 'onAddCatalog',
+                    disabled: true
+                },
+
                 // Button Remove Catalog
                 {
-                    tooltip:'Remove Catalog',
+                    tooltip:'Remove Target List',
                     iconCls: 'x-fa fa-trash',
                     handler: 'onRemoveCatalog',
                     width: 60,
+                    disabled: true,
                     bind: {
-                        // disabled: '{!selectedCatalog.editable}'
+                        //disabled: '{!selectedCatalog.editable}'
                     }
                 },
                 {
