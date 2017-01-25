@@ -7,17 +7,21 @@ logger = logging.getLogger(__name__)
 
 
 class ProductClassSerializer(serializers.HyperlinkedModelSerializer):
+    pgr_name = serializers.SerializerMethodField()
 
     class Meta:
-
         model = ProductClass
 
         fields = (
             'id',
             'pcl_name',
             'pcl_display_name',
-            'pcl_is_system'
+            'pcl_is_system',
+            'pgr_name'
         )
+
+    def get_pgr_name(self, obj):
+        return obj.pcl_group.pgr_name
 
 
 class ProductGroupSerializer(serializers.HyperlinkedModelSerializer):
