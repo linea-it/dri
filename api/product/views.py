@@ -143,7 +143,8 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 "leaf": True,
                 "iconCls": "no-icon",
                 "starred": False,
-                "markable": True
+                "markable": True,
+                "editable": False
             })
 
             # pega o no da classe e adiciona este no como filho.

@@ -114,6 +114,7 @@ Ext.define('common.ToolbarController', {
             success: function (response) {
                 var data = JSON.parse(response.responseText);
                 vm.set('username', data.username);
+                window.dri_username = data.username;
             }
         });
     }

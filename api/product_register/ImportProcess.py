@@ -23,11 +23,19 @@ class Import():
             'request': request
         }
 
+        # Ticket server para identificar o owner do processo quando
+        # o processo esta sendo importado por outro sistema, nesse caso o user logado
+        # sera o sistema externo autenticado pelo token, e o owner sera recuperado pelo ticket.
         if 'ticket' in self.data:
             self.owner = self.get_owner(self.data.get('ticket'))
-
         else:
-            raise Exception('the ticket parameter is required.')
+            # Caso a requisicao seja feita pelo proprio portal
+            # havera um usuario logado mas nao havera um site
+            # o owner do processo sera o usuario logado
+            if self.user and (self.site is None):
+                self.owner = self.user
+            else:
+                raise Exception('the ticket parameter is required.')
 
         if 'process' in self.data:
             return self.import_process(self.data.get('process'))
@@ -48,16 +56,14 @@ class Import():
             raise Exception('This ticket %s is not valid.' % ticket)
 
     def get_site(self, user):
-
         if not user:
             raise Exception('%s is not a valid user instance.' % user)
 
-        site = Site.objects.get(sti_user=user.pk)
+        try:
+            return Site.objects.get(sti_user=user.pk)
+        except Site.DoesNotExist:
+            return None
 
-        if not site:
-            raise Exception('There is no site associated with this user.')
-
-        return site
 
     # =============================< PROCESS >=============================
     def import_process(self, data):
