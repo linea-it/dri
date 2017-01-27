@@ -7,10 +7,12 @@ Ext.define('Target.model.Catalog', {
 
     fields: [
         {name:'id'},
+        {name:'owner', type:'string'},
         {name:'prd_name', type:'string'},
         {name:'prd_display_name', type:'string'},
         {name:'prd_flag_removed', type:'boolean'},
         {name:'prd_class', type:'int'},
+        {name:'prd_date', type:'date'},
         {name:'pcl_display_name', type:'string'},
         {name:'pcl_is_system', type:'boolean'},
         {name:'pgr_group', type:'int'},

@@ -55,7 +55,7 @@ Ext.define('Target.view.catalog.Tree', {
                 {
                     text: 'Owner',
                     flex: 1,
-                    dataIndex: 'epr_username',
+                    dataIndex: 'owner',
                     sortable: true,
                     filter: {
                         type: 'string'
@@ -73,7 +73,7 @@ Ext.define('Target.view.catalog.Tree', {
                 {
                     xtype: 'datecolumn',
                     text: 'Date',
-                    dataIndex: 'epr_end_date',
+                    dataIndex: 'prd_date',
                     sortable: true,
                     filter: {
                         type: 'date'
@@ -164,11 +164,11 @@ Ext.define('Target.view.catalog.Tree', {
                 {
                     tooltip:'Remove Target List',
                     iconCls: 'x-fa fa-trash',
+                    ui: 'soft-red',
                     handler: 'onRemoveCatalog',
-                    width: 60,
                     disabled: true,
                     bind: {
-                        //disabled: '{!selectedCatalog.editable}'
+                        disabled: '{!selectedCatalog.editable}'
                     }
                 },
                 {

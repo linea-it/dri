@@ -64,6 +64,8 @@ class ExternalProcessImportViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows External Processes to be imported
     """
+    http_method_names = ['post',]
+
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
 
     permission_classes = (IsAuthenticated,)
