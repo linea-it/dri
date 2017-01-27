@@ -12,7 +12,7 @@ Ext.define('Target.view.catalog.RegisterController', {
         var me = this,
             view = me.getView(),
             form = view.down('form').getForm(),
-            values, data, name, release;
+            values, data, name, release, is_public;
 
         if (form.isValid()) {
 
@@ -20,10 +20,8 @@ Ext.define('Target.view.catalog.RegisterController', {
 
             name = values.display_name.split(' ').join('_');
             release = values.release !== '' ? [values.release] : [];
-
+            is_public = values.is_public === 'on' ? true : false;
             data = {
-                // process: {
-                //     owner_username: window.dri_username,
                 products: [{
                     type: 'catalog',
                     class: values.classname,
@@ -33,9 +31,9 @@ Ext.define('Target.view.catalog.RegisterController', {
                     schema: values.schema,
                     table: values.table,
                     releases: release,
+                    is_public: is_public,
                     description: values.description
                 }]
-                // }
             };
 
             // Submit Catalog

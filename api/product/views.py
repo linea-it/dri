@@ -17,6 +17,7 @@ from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, Ma
     ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer, ProductSettingSerializer, \
     CurrentSettingSerializer, ProductContentSettingSerializer, CutOutJobSerializer
 
+from .filters import ProductPermissionFilterBackend
 import operator
 
 logger = logging.getLogger(__name__)
@@ -82,7 +83,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
 
     search_fields = ('prd_name', 'prd_display_name', 'prd_class')
 
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (filters.DjangoFilterBackend, ProductPermissionFilterBackend,)
 
     filter_class = CatalogFilter
 
@@ -105,10 +106,9 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 'msg': 'Necessário passar o parametro group.'
             })
 
-        queryset = self.queryset.filter(
-            prd_class__pcl_group__pgr_name=str(group),
-            prd_flag_removed=False
-        )
+        # Usando Filter_Queryset e aplicado os filtros listados no filterbackend
+        queryset = self.filter_queryset(self.get_queryset())
+
 
         # Search
         prd_display_name = request.query_params.get('search', None)

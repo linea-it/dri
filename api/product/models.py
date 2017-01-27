@@ -11,7 +11,7 @@ class Product(models.Model):
     prd_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        verbose_name='Owner', null=True, blank=True, default=None)
+        verbose_name='Owner', default=None)
     prd_process_id = models.ForeignKey(
         ExternalProcess, on_delete=models.CASCADE, verbose_name='External Process', null=True, blank=True, default=None)
     prd_class = models.ForeignKey(
@@ -33,7 +33,9 @@ class Product(models.Model):
     prd_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
     prd_date = models.DateTimeField(
-        auto_now_add=True, null=True, blank=True, verbose_name='Date')
+        auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Date of registration.')
+    prd_is_public = models.BooleanField(
+        default=True, verbose_name='Is Public', help_text='Is Public default True')
 
     releases = models.ManyToManyField(
         Release,
