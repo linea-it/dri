@@ -56,7 +56,7 @@ Ext.define('Target.view.catalog.RegisterForm', {
                 },
                 {
                     xtype: 'combobox',
-                    name: 'class',
+                    name: 'classname',
                     fieldLabel: 'Class',
                     valueField: 'pcl_name',
                     displayField: 'pcl_display_name',

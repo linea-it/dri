@@ -41,10 +41,20 @@ class Import():
             return self.import_process(self.data.get('process'))
 
         else:
-            return Response(
-                data={"It is still not possible to import a product without being associated with a process."},
-                status=status.HTTP_501_NOT_IMPLEMENTED
-            )
+            if 'products' in self.data and len(self.data.get('products')) > 0:
+                self.process = None
+
+                self.import_products(self.data.get('products'))
+
+                return Response(
+                    status=status.HTTP_201_CREATED
+                )
+
+            else:
+                return Response(
+                    data={"It is still not possible to import a product without being associated with a process."},
+                    status=status.HTTP_501_NOT_IMPLEMENTED
+                )
 
     def get_owner(self, ticket):
 
@@ -213,7 +223,13 @@ class Import():
             tbl_num_columns = tbl_info.get('n_imported_columns', None)
             tbl_size = tbl_info.get('table_size_in_bytes', None)
 
+        # Data do produto caso o produto tenha processo a data do produto = data de start do processo
+        date = None
+        if self.process is not None:
+            date = self.process.epr_start_date
+
         product, created = Catalog.objects.update_or_create(
+            prd_owner=self.owner,
             prd_name=data.get('name'),
             tbl_database=data.get('database', None),
             tbl_schema=data.get('schema', None),
@@ -226,6 +242,7 @@ class Import():
                 "prd_version": data.get('version', None),
                 "prd_flag_removed": False,
                 "prd_description": data.get('description', None),
+                "prd_date": date,
                 "tbl_rows": tbl_rows,
                 "tbl_num_columns": tbl_num_columns,
                 "tbl_size": tbl_size,
@@ -399,7 +416,13 @@ class Import():
             tbl_num_columns = tbl_info.get('n_imported_columns', None)
             tbl_size = tbl_info.get('table_size_in_bytes', None)
 
+        # Data do produto caso o produto tenha processo a data do produto = data de start do processo
+        date = None
+        if self.process is not None:
+            date = self.process.epr_start_date
+
         product, created = Map.objects.update_or_create(
+            prd_owner=self.owner,
             prd_name=data.get('name'),
             tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
@@ -413,6 +436,7 @@ class Import():
                 "prd_flag_removed": False,
                 "prd_description": data.get('description', None),
                 "prd_filter": filter,
+                "prd_date": date,
                 "mpa_nside": self.check_nside(data.get('nside')),
                 "mpa_ordering": self.check_ordering(data.get('ordering')),
                 "tbl_rows": tbl_rows,
@@ -495,7 +519,13 @@ class Import():
             tbl_num_columns = tbl_info.get('n_imported_columns', None)
             tbl_size = tbl_info.get('table_size_in_bytes', None)
 
+        # Data do produto caso o produto tenha processo a data do produto = data de start do processo
+        date = None
+        if self.process is not None:
+            date = self.process.epr_start_date
+
         product, created = Mask.objects.update_or_create(
+            prd_owner=self.owner,
             prd_name=data.get('name'),
             tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
@@ -507,6 +537,7 @@ class Import():
                 "prd_version": data.get('version', None),
                 "prd_flag_removed": False,
                 "prd_description": data.get('description', None),
+                "prd_date": date,
                 "msk_filter": filter,
                 "tbl_rows": tbl_rows,
                 "tbl_num_columns": tbl_num_columns,

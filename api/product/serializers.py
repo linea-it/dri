@@ -83,6 +83,7 @@ class TableSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class CatalogSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.SerializerMethodField()
     prd_process_id = serializers.PrimaryKeyRelatedField(
         queryset=ExternalProcess.objects.all(), many=False)
 
@@ -117,19 +118,23 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
 
         fields = (
             'id',
+            'owner',
             'prd_process_id',
             'prd_name',
             'prd_display_name',
             'prd_user_display_name',
             'prd_flag_removed',
             'prd_class',
-            # 'pcl_name',
+            'prd_date',
+
             'pcl_display_name',
             'pcl_is_system',
+
             'pgr_group',
-            # 'pgr_name',
             'pgr_display_name',
+
             'ctl_num_objects',
+
             'epr_original_id',
             'epr_name',
             'epr_username',
@@ -137,11 +142,19 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'epr_end_date',
             'epr_readme',
             'epr_comment',
+
             'tbl_schema',
             'tbl_name',
+
             'release_id',
             'release_display_name'
         )
+
+    def get_owner(self, obj):
+        try:
+            return obj.prd_owner.username
+        except:
+            return None
 
     def get_pcl_name(self, obj):
         return obj.prd_class.pcl_name
@@ -162,25 +175,46 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
         return obj.prd_class.pcl_group.pgr_display_name
 
     def get_epr_original_id(self, obj):
-        return obj.prd_process_id.epr_original_id
+        try:
+            return obj.prd_process_id.epr_original_id
+        except:
+            return None
 
     def get_epr_name(self, obj):
-        return obj.prd_process_id.epr_name
+        try:
+            return obj.prd_process_id.epr_name
+        except:
+            return None
 
     def get_epr_username(self, obj):
-        return obj.prd_process_id.epr_username
+        try:
+            return obj.prd_process_id.epr_username
+        except:
+            return None
 
     def get_epr_start_date(self, obj):
-        return obj.prd_process_id.epr_start_date
+        try:
+            return obj.prd_process_id.epr_start_date
+        except:
+            return None
 
     def get_epr_end_date(self, obj):
-        return obj.prd_process_id.epr_end_date
+        try:
+            return obj.prd_process_id.epr_end_date
+        except:
+            return None
 
     def get_epr_readme(self, obj):
-        return obj.prd_process_id.epr_readme
+        try:
+            return obj.prd_process_id.epr_readme
+        except:
+            return None
 
     def get_epr_comment(self, obj):
-        return obj.prd_process_id.epr_comment
+        try:
+            return obj.prd_process_id.epr_comment
+        except:
+            return None
 
     def get_release_id(self, obj):
         try:

@@ -136,6 +136,12 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             # Cria um dict usando o Serializer setado neste Viewset
             catalog = self.get_serializer(row).data
 
+            # O Catalogo e editavel se o usuario logado for = o owner do produto
+            editable = False
+            if row.prd_owner and request.user.pk == row.prd_owner.pk:
+                editable = True
+
+
             # Adiciono os atributos que serao usados pela interface
             # esse dict vai ser um no filho de um dos nos de classe.
             catalog.update({
@@ -144,7 +150,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 "iconCls": "no-icon",
                 "starred": False,
                 "markable": True,
-                "editable": False
+                "editable": editable
             })
 
             # pega o no da classe e adiciona este no como filho.
