@@ -156,8 +156,7 @@ Ext.define('Target.view.catalog.Tree', {
                     iconCls: 'x-fa fa-plus',
                     ui: 'soft-green',
                     tooltip: 'Add a new list of targets.',
-                    handler: 'onAddCatalog',
-                    disabled: true
+                    handler: 'onAddCatalog'
                 },
 
                 // Button Remove Catalog

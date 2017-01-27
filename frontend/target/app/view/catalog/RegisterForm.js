@@ -93,6 +93,13 @@ Ext.define('Target.view.catalog.RegisterForm', {
                     // value: 'Y3'
                 },
                 {
+                    xtype: 'checkbox',
+                    boxLabel: 'Public',
+                    name: 'is_public',
+                    checked: true
+                    // uncheckedValue: 'false'
+                },
+                {
                     xtype: 'textareafield',
                     name: 'description',
                     fieldLabel: 'Description'
