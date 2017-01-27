@@ -7,7 +7,7 @@ from .models import Product, ProductRelease, ProductTag, File, Table, Catalog, M
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'prd_process_id', 'prd_name',
-                    'prd_display_name', 'prd_product_id', 'prd_version', 'prd_description', 'prd_class', 'prd_filter',
+                    'prd_display_name', 'prd_owner', 'prd_product_id', 'prd_version', 'prd_description', 'prd_class', 'prd_filter',
                     'prd_flag_removed',)
     list_display_links = ('id', 'prd_process_id', 'prd_name',
                           'prd_display_name', 'prd_product_id', 'prd_version', 'prd_description', 'prd_class',

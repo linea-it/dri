@@ -7,6 +7,7 @@ Ext.define('Target.view.catalog.RegisterForm', {
     xtype: 'targets-catalog-register-form',
 
     requires: [
+        'Target.view.catalog.RegisterController',
         'Target.store.ProductClass',
         'common.store.Releases'
     ],
@@ -18,6 +19,8 @@ Ext.define('Target.view.catalog.RegisterForm', {
     modal: true,
 
     closeAction: 'destroy',
+
+    controller: 'register',
 
     viewModel: {
         stores: {
@@ -45,36 +48,54 @@ Ext.define('Target.view.catalog.RegisterForm', {
             items: [
                 {
                     xtype: 'textfield',
-                    name: 'name',
-                    fieldLabel: 'Name'
+                    name: 'display_name',
+                    fieldLabel: 'Name',
+                    regex: /^[a-z0-9-_\s]+$/i,
+                    regexText: 'Please use only letters and numbers separated by spaces \' \', minus sign \'-\' or underscore \'_\'.',
+                    value: 'Catalogo de Testes'
                 },
                 {
                     xtype: 'combobox',
-                    publishes: 'pcl_name',
+                    name: 'classname',
                     fieldLabel: 'Class',
+                    valueField: 'pcl_name',
                     displayField: 'pcl_display_name',
+                    allowBlank: false,
+                    editable: false,
                     bind: {
                         store: '{productclass}'
                     }
+                    // value: 'Strong Lensing'
                 },
                 {
                     xtype: 'textfield',
                     name: 'schema',
-                    fieldLabel: 'Schema'
+                    fieldLabel: 'Schema',
+                    maxLength: 30,
+                    value: 'hlin'
                 },
                 {
                     xtype: 'textfield',
-                    name: 'schema',
-                    fieldLabel: 'Tablename'
+                    name: 'table',
+                    fieldLabel: 'Tablename',
+                    maxLength: 30,
+                    value: 'Y3A1_LRGS_NOTY1_NBLUE3R21'
                 },
                 {
                     xtype: 'combobox',
-                    publishes: 'rls_name',
+                    name: 'release',
                     fieldLabel: 'Release',
                     displayField: 'rls_display_name',
+                    valueField: 'rls_name',
                     bind: {
                         store: '{releases}'
                     }
+                    // value: 'Y3'
+                },
+                {
+                    xtype: 'textareafield',
+                    name: 'description',
+                    fieldLabel: 'Description'
                 }
             ],
             defaults: {
