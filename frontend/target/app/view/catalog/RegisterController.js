@@ -27,7 +27,7 @@ Ext.define('Target.view.catalog.RegisterController', {
                     class: values.classname,
                     name: name.toLowerCase().trim(),
                     display_name: values.display_name,
-                    database: 'dessci',
+                    database: values.database,
                     schema: values.schema,
                     table: values.table,
                     releases: release,
