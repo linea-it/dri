@@ -9,26 +9,30 @@ Ext.define('Target.view.catalog.CatalogController', {
     winAddCatalog: null,
 
     onAddCatalog: function () {
-        console.log('onAddCatalog');
         var me = this;
 
+        if (me.winAddCatalog !== null) {
+            me.winAddCatalog.destroy();
+            me.winAddCatalog = null;
+        }
         me.winAddCatalog = Ext.create('Target.view.catalog.RegisterForm', {
             width: 300,
-            controller: 'catalog'
+            listeners: {
+                scope: this,
+                close: me.reloadCatalogs
+            }
         });
 
         me.winAddCatalog.show();
 
     },
 
-    addCatalog: function () {
-        console.log('addCatalog');
-        console.log(this);
+    reloadCatalogs: function () {
         var me = this,
-            winAddCatalog = me.winAddCatalog,
-            form = winAddCatalog.down('form').getForm();
+            vm = me.getViewModel(),
+            catalogs = vm.getStore('catalogs');
 
-        console.log(form);
+        catalogs.load();
 
     },
 
@@ -82,9 +86,7 @@ Ext.define('Target.view.catalog.CatalogController', {
                     // Recuperar a resposta e fazer o decode no json.
                     var obj = Ext.decode(response.responseText);
 
-                    console.log('obj', '=', obj);
                     if (obj.success) {
-                        console.log('node', '=', node);
                         // Alterar o Icone no node da tree desta forma evita o reload
                         // da interface
                         if (node.get('starred') == false) {

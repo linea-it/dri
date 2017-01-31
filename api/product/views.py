@@ -17,6 +17,7 @@ from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, Ma
     ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer, ProductSettingSerializer, \
     CurrentSettingSerializer, ProductContentSettingSerializer, CutOutJobSerializer
 
+from .filters import ProductPermissionFilterBackend
 import operator
 
 logger = logging.getLogger(__name__)
@@ -82,7 +83,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
 
     search_fields = ('prd_name', 'prd_display_name', 'prd_class')
 
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (filters.DjangoFilterBackend, ProductPermissionFilterBackend,)
 
     filter_class = CatalogFilter
 
@@ -105,10 +106,9 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 'msg': 'Necessário passar o parametro group.'
             })
 
-        queryset = self.queryset.filter(
-            prd_class__pcl_group__pgr_name=str(group),
-            prd_flag_removed=False
-        )
+        # Usando Filter_Queryset e aplicado os filtros listados no filterbackend
+        queryset = self.filter_queryset(self.get_queryset())
+
 
         # Search
         prd_display_name = request.query_params.get('search', None)
@@ -136,6 +136,12 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             # Cria um dict usando o Serializer setado neste Viewset
             catalog = self.get_serializer(row).data
 
+            # O Catalogo e editavel se o usuario logado for = o owner do produto
+            editable = False
+            if row.prd_owner and request.user.pk == row.prd_owner.pk:
+                editable = True
+
+
             # Adiciono os atributos que serao usados pela interface
             # esse dict vai ser um no filho de um dos nos de classe.
             catalog.update({
@@ -143,7 +149,8 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 "leaf": True,
                 "iconCls": "no-icon",
                 "starred": False,
-                "markable": True
+                "markable": True,
+                "editable": editable
             })
 
             # pega o no da classe e adiciona este no como filho.
