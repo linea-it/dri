@@ -333,7 +333,7 @@ class AllProductViewSet(viewsets.ModelViewSet):
     """
     
     """
-    queryset = Product.objects.select_related().all()
+    queryset = Product.objects.select_related().filter(prd_process_id__isnull = False)
 
     serializer_class = AllProductsSerializer
 
