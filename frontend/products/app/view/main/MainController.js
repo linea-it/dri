@@ -22,12 +22,11 @@ Ext.define('Products.view.main.MainController', {
         var refs = this.getReferences(),
             gridcatalogs = refs.catalogs,
             source = gridcatalogs.getStore().getAt(index);
-            
+        console.log(source)
         source = source.data
         if(source.exp_date){
             exp_date = source.exp_date.substring(0, 10)
         }
-        alert(exp_date)
         Ext.create('Ext.window.Window', {
             height: 500,
             title: 'Product Information',
@@ -60,7 +59,7 @@ Ext.define('Products.view.main.MainController', {
                     "Band": source.prd_filter,
                     "Name of exporting user": source.exp_username,
                     "Tablename": source.prd_table_ptr,
-                    "Export Date": exp_date
+                    "Export Date": source.exp_date
                 }
             }
         }).show();
