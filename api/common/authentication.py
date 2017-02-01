@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import authentication
 from rest_framework import exceptions
-import cx_Oracle
+# import cx_Oracle
 from django.conf import settings
 
 class NcsaBackend(object):
@@ -34,15 +34,15 @@ class NcsaBackend(object):
     def check_user(self, username, password):
 
         db = settings.DATABASES.get('dessci')
-        host, name = db.get('NAME').split('/')
-        host, port = host.split(':')
+        # host, name = db.get('NAME').split('/')
+        # host, port = host.split(':')
 
         kwargs = {
-            'host': host,
-            'port': port,
-            'service_name': name
+            # 'host': host,
+            # 'port': port,
+            # 'service_name': name
         }
-        dsn = cx_Oracle.makedsn(**kwargs)
+        # dsn = cx_Oracle.makedsn(**kwargs)
         try:
             dbh = cx_Oracle.connect(username, password, dsn=dsn)
             dbh.close()

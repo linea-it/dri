@@ -1,4 +1,4 @@
-import cx_Oracle
+# import cx_Oracle
 from coadd.models import Release, Dataset, Tile, Tag
 from django.conf import settings
 from pprint import pprint
@@ -18,8 +18,8 @@ class DataDiscovery:
                 'service_name': kwargs.get('service_name')
             }
 
-            dsn = cx_Oracle.makedsn(**args)
-            self.db = cx_Oracle.connect(kwargs.get('user'), kwargs.get('password'), dsn=dsn)
+            # dsn = cx_Oracle.makedsn(**args)
+            # self.db = cx_Oracle.connect(kwargs.get('user'), kwargs.get('password'), dsn=dsn)
             self.cursor = self.db.cursor()
 
             print ("Connected")

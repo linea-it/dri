@@ -12,6 +12,9 @@ Ext.define('Products.view.main.Main', {
     requires: [
         'Products.view.main.ComboType',
         'Products.view.main.MainController',
+        'Ext.window.MessageBox',
+        'Ext.layout.container.Card',
+        'Ext.layout.container.Border',
         'Products.view.main.MainModel',
         'Products.view.main.Products',
         'Products.view.main.ComboRelease',
