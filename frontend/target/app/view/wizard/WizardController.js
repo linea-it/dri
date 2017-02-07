@@ -24,6 +24,9 @@ Ext.define('Target.view.wizard.WizardController', {
                 previous: 'showPrevious',
                 //next: 'showNext'
                 finish: 'finishWizard'
+            },
+            'targets-permission': {
+                activate: 'onActivePermission'
             }
         }
     },
@@ -85,6 +88,17 @@ Ext.define('Target.view.wizard.WizardController', {
             columns = view.down('targets-columns');
 
         columns.setCurrentSetting(currentSetting);
+
+    },
+
+    onActivePermission: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog'),
+            view = me.getView(),
+            permission = view.down('targets-permission');
+
+        permission.setCurrentCatalog(currentCatalog);
 
     }
 

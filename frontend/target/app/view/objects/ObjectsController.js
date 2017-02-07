@@ -465,6 +465,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             catalog = vm.get('catalog'),
+            currentCatalog = vm.get('currentCatalog'),
             currentSetting = vm.get('currentSetting');
 
         me.wizard = Ext.create('Ext.window.Window', {
@@ -478,6 +479,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             items: [{
                 xtype: 'targets-wizard',
                 product: catalog,
+                currentCatalog: currentCatalog,
                 listeners: {
                     scope: me,
                     finish: 'onFinishWizard'
