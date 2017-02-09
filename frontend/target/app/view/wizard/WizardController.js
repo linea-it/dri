@@ -22,11 +22,14 @@ Ext.define('Target.view.wizard.WizardController', {
             'targets-columns': {
                 activate: 'onActiveColumns',
                 previous: 'showPrevious',
-                //next: 'showNext'
+                next: 'showNext',
                 finish: 'finishWizard'
             },
             'targets-permission': {
-                activate: 'onActivePermission'
+                activate: 'onActivePermission',
+                previous: 'showPrevious',
+                //next: 'showNext'
+                finish: 'finishWizard'
             }
         }
     },

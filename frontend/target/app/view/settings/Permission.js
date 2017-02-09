@@ -5,6 +5,8 @@ Ext.define('Target.view.settings.Permission', {
         'Target.view.settings.PermissionController',
         'Target.view.settings.PermissionModel',
         'Target.view.settings.PermissionUserWindow',
+        'Target.view.settings.PermissionWorkgroupWindow',
+        'Target.view.settings.AddWorkgroupWindow',
         'Ext.grid.feature.Grouping'
     ],
 
@@ -32,7 +34,9 @@ Ext.define('Target.view.settings.Permission', {
                     height: 80,
                     bodyPadding: 10,
                     html: [
-                        'EXPLICAÇÃO SOBRE PERMISÃO'
+                        'You can choose which users or workgroups can access this list.' +
+                        '</br>' + 'The list can be public or private in this case only the users selected or who are part of a group can access it.' +
+                        '</br>' + 'You can create workgroups.'
                     ]
                 },
                 {
@@ -46,10 +50,11 @@ Ext.define('Target.view.settings.Permission', {
                         {
                             xtype: 'checkbox',
                             boxLabel: 'Public',
-                            name: 'is_public'
-                            // bind: {
-                            //     checked: true
-                            // }
+                            name: 'is_public',
+                            reference: 'chkIsPlublic',
+                            listeners: {
+                                change: 'onChangeIsPublic'
+                            }
                         },
                         {
                             xtype: 'panel',
@@ -95,6 +100,7 @@ Ext.define('Target.view.settings.Permission', {
                                 {
                                     xtype: 'grid',
                                     title: 'Workgroups',
+                                    reference: 'permissionWorkgroupsGrid',
                                     flex: 1,
                                     split: true,
                                     frame: true,
@@ -117,12 +123,51 @@ Ext.define('Target.view.settings.Permission', {
                                         ftype: 'grouping',
                                         startCollapsed: true,
                                         groupHeaderTpl: '{name} ({rows.length} User{[values.rows.length > 1 ? "s" : ""]})'
-                                    }]
+                                    }],
+                                    tools: [
+                                        {
+                                            type: 'plus',
+                                            handler: 'onAddWorkgroup',
+                                            tooltip: 'Add Workgroup'
+                                        },
+                                        {
+                                            type: 'minus',
+                                            handler: 'onRemoveWorkgroup',
+                                            tooltip: 'Remove Workgroup',
+                                            bind: {
+                                                hidden: '{!permissionWorkgroupsGrid.selection}'
+                                            }
+                                        }
+                                    ]
                                 }
                             ]
                         }
                     ]
                 }
+            ],
+            buttons: [
+                {
+                    text: 'Previous',
+                    scope: me,
+                    handler: function () {
+                        this.fireEvent('previous');
+                    }
+                },
+                {
+                    text: 'Finish',
+                    ui: 'soft-green',
+                    scope: me,
+                    handler: function () {
+                        this.fireEvent('finish', this);
+                    }
+                }
+                // {
+                //     text: 'Next',
+                //     scope: me,
+                //     handler: function () {
+                //         this.fireEvent('next');
+                //     }
+                // }
             ]
         });
 

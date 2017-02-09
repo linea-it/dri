@@ -35,6 +35,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             'prd_user_display_name',
             'prd_flag_removed',
             'prd_class',
+            'prd_is_public',
             # 'pcl_name',
             'pcl_display_name',
             'pcl_is_system',
@@ -128,6 +129,7 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'prd_flag_removed',
             'prd_class',
             'prd_date',
+            'prd_is_public',
 
             'pcl_display_name',
             'pcl_is_system',
@@ -623,7 +625,7 @@ class PermissionUserSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
 
     class Meta:
-        model = ProductSetting
+        model = Permission
 
         fields = (
             'id',
@@ -645,7 +647,7 @@ class PermissionWorkgroupUserSerializer(serializers.ModelSerializer):
     username = serializers.SerializerMethodField()
 
     class Meta:
-        model = ProductSetting
+        model = Permission
 
         fields = (
             'id',
@@ -677,3 +679,32 @@ class PermissionSerializer(serializers.ModelSerializer):
             'prm_user',
             'prm_workgroup',
         )
+
+class WorkgroupSerializer(serializers.ModelSerializer):
+    owner = serializers.PrimaryKeyRelatedField(read_only=True)
+    class Meta:
+        model = Workgroup
+
+        fields = (
+            'id',
+            'wgp_workgroup',
+            'owner',
+        )
+
+class WorkgroupUserSerializer(serializers.ModelSerializer):
+    wgu_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False, allow_null=True)
+    wgu_workgroup = serializers.PrimaryKeyRelatedField(queryset=Workgroup.objects.all(), many=False, allow_null=True)
+    username = serializers.SerializerMethodField()
+
+    class Meta:
+        model = WorkgroupUser
+
+        fields = (
+            'id',
+            'wgu_workgroup',
+            'wgu_user',
+            'username'
+        )
+
+    def get_username(self, obj):
+        return obj.wgu_user.username

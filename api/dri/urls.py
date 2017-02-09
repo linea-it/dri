@@ -51,13 +51,16 @@ router.register(r'mask', product_views.MaskViewSet)
 router.register(r'productcontent', product_views.ProductContentViewSet)
 router.register(r'productassociation', product_views.ProductContentAssociationViewSet)
 router.register(r'association', product_views.ProductAssociationViewSet)
-router.register(r'AllProducts', product_views.AllProductViewSet)
+router.register(r'AllProducts', product_views.AllProductViewSet, base_name='allproducts')
 router.register(r'productsetting', product_views.ProductSettingViewSet)
 router.register(r'currentsetting', product_views.CurrentSettingViewSet)
 router.register(r'contentsetting', product_views.ProductContentSettingViewSet)
 router.register(r'product_permission_user', product_views.PermissionUserViewSet)
 router.register(r'product_permission_workgroup_user', product_views.PermissionWorkgroupUserViewSet)
 router.register(r'product_permission', product_views.PermissionViewSet)
+router.register(r'workgroup', product_views.WorkgroupViewSet)
+router.register(r'workgroup_users', product_views.WorkgroupUserViewSet)
+
 
 
 

@@ -8,15 +8,23 @@ Ext.define('Target.view.settings.PermissionModel', {
         'Target.model.PermissionUser',
         'Target.model.PermissionWorkgroup',
         'Target.model.Permission',
+        'Target.model.Workgroup',
+        'Target.model.WorkgroupUser',
         'Target.store.PermissionUsers',
         'Target.store.PermissionWorkgroups',
         'Target.store.Permissions',
+        'Target.store.Workgroups',
+        'Target.store.WorkgroupUsers',
         'common.store.UsersSameGroup'
     ],
 
     links: {
         currentCatalog: {
             type: 'Target.model.Catalog',
+            create: true
+        },
+        newWorkgroup: {
+            type: 'Target.model.Workgroup',
             create: true
         }
     },
@@ -33,8 +41,21 @@ Ext.define('Target.view.settings.PermissionModel', {
         },
         users: {
             type: 'users_same_group',
-            autoLoad: true,
             storeId: 'Users'
+        },
+        workgroups: {
+            type: 'workgroups',
+            storeId: 'Workgroups',
+            autoLoad: true
+        },
+        workgroupUsers: {
+            type: 'workgroup_users',
+            storeId: 'WorkgroupUsers'
+        },
+        users2: {
+            type: 'users_same_group',
+            storeId: 'Users2'
         }
+
     }
 });

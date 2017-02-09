@@ -4,11 +4,11 @@ Ext.define('Target.view.settings.PermissionUserWindow', {
     title: 'Add a User',
     reference: 'winPermissionUser',
     width: 300,
-    height: 250,
+    height: 150,
     layout: 'fit',
     modal: true,
 
-    closeAction: 'destroy',
+    closeAction: 'hide',
 
     items: [
         {
@@ -51,7 +51,10 @@ Ext.define('Target.view.settings.PermissionUserWindow', {
         }, {
             text: 'Add',
             ui: 'soft-green',
-            handler: 'onAddPermissionUser'
+            handler: 'onAddPermissionUser',
+            bind: {
+                disabled: '{!cmbPermissionUser.selection}'
+            }
         }
     ]
 

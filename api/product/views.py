@@ -455,3 +455,22 @@ class PermissionViewSet(viewsets.ModelViewSet):
     serializer_class = PermissionSerializer
 
     filter_fields = ('prm_product', 'prm_user', 'prm_workgroup')
+
+
+class WorkgroupViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = Workgroup.objects.select_related().all()
+
+    serializer_class = WorkgroupSerializer
+
+class WorkgroupUserViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = WorkgroupUser.objects.select_related().all()
+
+    serializer_class = WorkgroupUserSerializer
+
+    filter_fields = ('wgu_workgroup',)

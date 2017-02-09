@@ -32,6 +32,7 @@ Ext.define('Target.model.Catalog', {
         {name:'release_id', type:'int'},
         {name:'release_display_name', type:'string'},
 
+        {name:'prd_is_public', type:'boolean', defaultValue: false},
         {name:'editable', type:'boolean', defaultValue: false},
         {name:'markable', type:'boolean', defaultValue: false}
 
