@@ -15,6 +15,9 @@ Ext.define('Target.view.settings.PermissionController', {
             },
             '#Workgroups': {
                 load: 'onLoadWorkgroups'
+            },
+            '#Users2': {
+                load: 'onLoadUsers2'
             }
         }
     },
@@ -475,13 +478,22 @@ Ext.define('Target.view.settings.PermissionController', {
         var me = this,
             vm = me.getViewModel(),
             workgroup = vm.get('newWorkgroup'),
-            workgroupUsers = vm.getStore('workgroupUsers');
+            workgroupUsers = vm.getStore('workgroupUsers'),
+            refs = me.getReferences(),
+            cmbAddWorkgroupUser = refs.cmbAddWorkgroupUser,
+            btnCreateWorkgroup = refs.btnCreateWorkgroup;
 
         workgroupUsers.addFilter([
             {'property': 'wgu_workgroup', value: created.get('id')}
         ]);
 
         workgroupUsers.load();
+
+        // Enable add User
+        cmbAddWorkgroupUser.enable();
+
+        // Disable create button
+        btnCreateWorkgroup.disable();
 
     },
 
@@ -553,6 +565,21 @@ Ext.define('Target.view.settings.PermissionController', {
             });
 
         }
+
+    },
+
+    onLoadUsers2: function (user2) {
+        var me = this,
+            vm = me.getViewModel(),
+            workgroupUsers = vm.getStore('workgroupUsers');
+
+        // toda vez que store de usuarios do mesmo grupo que o usuario logado, carregar
+        // remover os usuarios que ja estao na store de workgroupUsers
+        workgroupUsers.each(function (user) {
+
+            user2.remove(user2.getById(user.get('wgu_user')));
+
+        }, this);
 
     }
 
