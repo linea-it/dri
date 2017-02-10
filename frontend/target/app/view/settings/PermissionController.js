@@ -99,8 +99,6 @@ Ext.define('Target.view.settings.PermissionController', {
             url: '/dri/api/product/' + currentCatalog.get('id') + '/',
             success: function () {
 
-                Ext.toast('Data saved');
-
                 currentCatalog.set('prd_is_public', is_public);
 
                 me.enableDisablePermissions();
