@@ -51,8 +51,7 @@ Ext.define('Target.view.catalog.RegisterForm', {
                     name: 'display_name',
                     fieldLabel: 'Name',
                     regex: /^[a-z0-9-_\s]+$/i,
-                    regexText: 'Please use only letters and numbers separated by spaces \' \', minus sign \'-\' or underscore \'_\'.',
-                    value: 'Catalogo de Testes'
+                    regexText: 'Please use only letters and numbers separated by spaces \' \', minus sign \'-\' or underscore \'_\'.'
                 },
                 {
                     xtype: 'combobox',
@@ -65,21 +64,26 @@ Ext.define('Target.view.catalog.RegisterForm', {
                     bind: {
                         store: '{productclass}'
                     }
-                    // value: 'Strong Lensing'
+                },
+                {
+                    xtype: 'textfield',
+                    name: 'database',
+                    fieldLabel: 'Database',
+                    maxLength: 30,
+                    value: 'dessci',
+                    readOnly: true
                 },
                 {
                     xtype: 'textfield',
                     name: 'schema',
                     fieldLabel: 'Schema',
-                    maxLength: 30,
-                    value: 'hlin'
+                    maxLength: 30
                 },
                 {
                     xtype: 'textfield',
                     name: 'table',
                     fieldLabel: 'Tablename',
-                    maxLength: 30,
-                    value: 'Y3A1_LRGS_NOTY1_NBLUE3R21'
+                    maxLength: 30
                 },
                 {
                     xtype: 'combobox',
@@ -90,14 +94,12 @@ Ext.define('Target.view.catalog.RegisterForm', {
                     bind: {
                         store: '{releases}'
                     }
-                    // value: 'Y3'
                 },
                 {
                     xtype: 'checkbox',
                     boxLabel: 'Public',
                     name: 'is_public',
                     checked: true
-                    // uncheckedValue: 'false'
                 },
                 {
                     xtype: 'textareafield',

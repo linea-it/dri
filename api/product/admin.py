@@ -1,8 +1,7 @@
 from django.contrib import admin
 
 
-from .models import Product, ProductRelease, ProductTag, File, Table, Catalog, Map, Mask, ProductContent, \
-    ProductContentAssociation, ProductContentSetting, ProductSetting, CurrentSetting, CutOutJob, CutOut
+from .models import *
 
 
 class ProductAdmin(admin.ModelAdmin):
@@ -103,6 +102,16 @@ class CurrentSettingAdmin(admin.ModelAdmin):
     list_display = ('id', 'cst_product', 'cst_setting', 'owner',)
 
 
+class WorkgroupAdmin(admin.ModelAdmin):
+    list_display = ('id', 'wgp_workgroup', 'owner', )
+
+class WorkgroupUserAdmin(admin.ModelAdmin):
+    list_display = ('id', 'wgu_workgroup', 'wgu_user',)
+
+class PermissionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'prm_product', 'prm_user', 'prm_workgroup',)
+
+
 admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductRelease, ProductReleaseAdmin)
 admin.site.register(ProductTag, ProductTagAdmin)
@@ -118,3 +127,7 @@ admin.site.register(ProductContentAssociation, ProductContentAssociationAdmin)
 admin.site.register(ProductContentSetting, ProductContentSettingAdmin)
 admin.site.register(ProductSetting, ProductSettingAdmin)
 admin.site.register(CurrentSetting, CurrentSettingAdmin)
+admin.site.register(Permission, PermissionAdmin)
+
+admin.site.register(Workgroup, WorkgroupAdmin)
+admin.site.register(WorkgroupUser, WorkgroupUserAdmin)

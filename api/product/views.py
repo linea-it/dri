@@ -8,14 +8,11 @@ from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
-from rest_framework import filters
 from django.db.models import Q
 from common.filters import IsOwnerFilterBackend
 from .models import Product, Catalog, Map, Mask, CutOutJob, ProductContent, ProductContentAssociation, ProductSetting, \
-    CurrentSetting, ProductContentSetting
-from .serializers import ProductSerializer, CatalogSerializer, MapSerializer, MaskSerializer, ProductContentSerializer, \
-    ProductContentAssociationSerializer, ProductAssociationSerializer, AllProductsSerializer, ProductSettingSerializer, \
-    CurrentSettingSerializer, ProductContentSettingSerializer, CutOutJobSerializer
+    CurrentSetting, ProductContentSetting, Permission, WorkgroupUser
+from .serializers import *
 
 from .filters import ProductPermissionFilterBackend
 import operator
@@ -400,10 +397,80 @@ class ProductContentSettingViewSet(viewsets.ModelViewSet):
 
 class CutOutJobViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows Map to be viewed or edited
+
     """
     queryset = CutOutJob.objects.select_related().all()
 
     serializer_class = CutOutJobSerializer
 
     ordering_fields = ('id',)
+
+
+class PermissionUserViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = Permission.objects.select_related().filter(prm_user__isnull=False)
+
+    serializer_class = PermissionUserSerializer
+
+    filter_fields = ('prm_product',)
+
+    ordering_fields = ('prm_user__username',)
+
+
+class PermissionWorkgroupUserFilter(django_filters.FilterSet):
+    product = django_filters.MethodFilter()
+
+    class Meta:
+        model = WorkgroupUser
+        fields = ['id', 'wgu_workgroup', 'wgu_user', 'product',]
+
+    def filter_product(self, queryset, value):
+        workgroups = Workgroup.objects.filter(permission__prm_product=int(value))
+        return queryset.filter(wgu_workgroup__in=workgroups)
+
+
+class PermissionWorkgroupUserViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = WorkgroupUser.objects.select_related().all()
+
+    serializer_class = PermissionWorkgroupUserSerializer
+
+    filter_backends = (filters.DjangoFilterBackend,)
+
+    filter_class = PermissionWorkgroupUserFilter
+
+    ordering_fields = ('wgu_workgroup__wgp_workgroup', 'wgu_user__username',)
+
+
+class PermissionViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = Permission.objects.select_related().all()
+
+    serializer_class = PermissionSerializer
+
+    filter_fields = ('prm_product', 'prm_user', 'prm_workgroup')
+
+
+class WorkgroupViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = Workgroup.objects.select_related().all()
+
+    serializer_class = WorkgroupSerializer
+
+class WorkgroupUserViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = WorkgroupUser.objects.select_related().all()
+
+    serializer_class = WorkgroupUserSerializer
+
+    filter_fields = ('wgu_workgroup',)

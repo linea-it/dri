@@ -254,3 +254,34 @@ class CutOut(models.Model):
 
     ctt_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
+
+
+# ------------------------------ Permissoes por Produtos ------------------------------
+class Workgroup(models.Model):
+    wgp_workgroup = models.CharField(
+        max_length=60, verbose_name='Workgroup', help_text='group\'s name')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+
+    def __str__(self):
+        return str(self.wgp_workgroup)
+
+class WorkgroupUser(models.Model):
+    wgu_workgroup = models.ForeignKey(
+        Workgroup, on_delete=models.CASCADE, verbose_name='Workgroup')
+    wgu_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, verbose_name='User')
+
+class Permission(models.Model):
+    prm_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product')
+    prm_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, verbose_name='User', null=True, blank=True)
+    prm_workgroup = models.ForeignKey(
+        Workgroup,
+        on_delete=models.CASCADE, verbose_name='Workgroup', null=True, blank=True)
+
+

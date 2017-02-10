@@ -8,11 +8,18 @@ class ProductPermissionFilterBackend(filters.BaseFilterBackend):
 
     def filter_queryset(self, request, queryset, view):
         return queryset.filter(
-            # Apenas do mesmo usuario ou publico
-            Q(prd_owner=request.user) | Q(prd_is_public=True),
+            # Apenas do mesmo usuario
+            Q(prd_owner=request.user)
 
-            # TODO aplicar as permissoes por grupos ou por usuarios
+            # Ou publico
+            | Q(prd_is_public=True)
+
+            # OU por usuario. usuario logado esta na tabela de permissao usuario produto.
+            | Q(permission__prm_user=request.user)
+
+            # OU por grupo. o usuario logado esta em um dos workgroups permitidos para o produto
+            | Q(permission__prm_workgroup__workgroupuser__wgu_user=request.user)
 
             # Nao marcados como removidos
-            prd_flag_removed=False
+            & Q(prd_flag_removed=False)
         )

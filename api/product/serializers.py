@@ -4,7 +4,9 @@ from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ExternalProcess
 from rest_framework import serializers
 
-from .models import Product, Map, Mask, Table, ProductSetting, CurrentSetting, ProductContentSetting, CutOutJob, File, Catalog, ProductContent, ProductContentAssociation
+from .models import *
+
+from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +35,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             'prd_user_display_name',
             'prd_flag_removed',
             'prd_class',
+            'prd_is_public',
             # 'pcl_name',
             'pcl_display_name',
             'pcl_is_system',
@@ -126,6 +129,7 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'prd_flag_removed',
             'prd_class',
             'prd_date',
+            'prd_is_public',
 
             'pcl_display_name',
             'pcl_is_system',
@@ -612,3 +616,95 @@ class ProductContentSettingSerializer(serializers.ModelSerializer):
             return association.pca_class_content.pcc_display_name
         else:
             return obj.pcs_content.pcn_column_name
+
+
+class PermissionUserSerializer(serializers.ModelSerializer):
+    prm_product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=False)
+    prm_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False)
+    username = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Permission
+
+        fields = (
+            'id',
+            'prm_product',
+            'prm_user',
+            'username',
+        )
+
+    def get_username(self, obj):
+            return obj.prm_user.username
+
+
+class PermissionWorkgroupUserSerializer(serializers.ModelSerializer):
+    wgu_workgroup = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=False)
+    wgu_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False)
+
+    workgroup = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Permission
+
+        fields = (
+            'id',
+            'wgu_workgroup',
+            'wgu_user',
+            'workgroup',
+            'username'
+        )
+
+    def get_workgroup(self, obj):
+        return obj.wgu_workgroup.wgp_workgroup
+
+    def get_username(self, obj):
+        return obj.wgu_user.username
+
+
+class PermissionSerializer(serializers.ModelSerializer):
+    prm_product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=False)
+    prm_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False, allow_null=True)
+    prm_workgroup = serializers.PrimaryKeyRelatedField(queryset=Workgroup.objects.all(), many=False, allow_null=True)
+
+    class Meta:
+        model = Permission
+
+        fields = (
+            'id',
+            'prm_product',
+            'prm_user',
+            'prm_workgroup',
+        )
+
+class WorkgroupSerializer(serializers.ModelSerializer):
+    owner = serializers.PrimaryKeyRelatedField(read_only=True)
+    class Meta:
+        model = Workgroup
+
+        fields = (
+            'id',
+            'wgp_workgroup',
+            'owner',
+        )
+
+class WorkgroupUserSerializer(serializers.ModelSerializer):
+    wgu_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False, allow_null=True)
+    wgu_workgroup = serializers.PrimaryKeyRelatedField(queryset=Workgroup.objects.all(), many=False, allow_null=True)
+    username = serializers.SerializerMethodField()
+
+    class Meta:
+        model = WorkgroupUser
+
+        fields = (
+            'id',
+            'wgu_workgroup',
+            'wgu_user',
+            'username'
+        )
+
+    def get_username(self, obj):
+        return obj.wgu_user.username
