@@ -45,7 +45,8 @@ Ext.define('Target.view.settings.AddWorkgroupWindow', {
                             xtype: 'button',
                             text: 'Create',
                             ui: 'soft-green',
-                            handler: 'onInsertWorkgroup'
+                            handler: 'onInsertWorkgroup',
+                            reference: 'btnCreateWorkgroup'
                         }
                     ]
                 },
@@ -66,13 +67,17 @@ Ext.define('Target.view.settings.AddWorkgroupWindow', {
                             bind: {
                                 store: '{users2}'
                             },
+                            disabled: true,
                             flex: 1
                         },
                         {
                             xtype: 'button',
                             iconCls: 'x-fa fa-plus',
                             ui: 'soft-green',
-                            handler: 'onAddUserInWorkgroup'
+                            handler: 'onAddUserInWorkgroup',
+                            bind: {
+                                disabled: '{!cmbAddWorkgroupUser.selection}'
+                            }
                         },
                         {
                             xtype: 'button',
