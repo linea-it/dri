@@ -65,7 +65,8 @@ Ext.define('Target.view.settings.AddWorkgroupWindow', {
                             editable: false,
                             bind: {
                                 store: '{users2}'
-                            }
+                            },
+                            flex: 1
                         },
                         {
                             xtype: 'button',

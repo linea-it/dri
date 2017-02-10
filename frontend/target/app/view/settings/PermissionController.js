@@ -82,14 +82,14 @@ Ext.define('Target.view.settings.PermissionController', {
 
     },
 
-    changePublic: function (public) {
+    changePublic: function (is_public) {
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
             data;
 
         data = {
-            prd_is_public: public
+            prd_is_public: is_public
         };
 
         // Submit Catalog
@@ -101,7 +101,7 @@ Ext.define('Target.view.settings.PermissionController', {
 
                 Ext.toast('Data saved');
 
-                currentCatalog.set('prd_is_public', public);
+                currentCatalog.set('prd_is_public', is_public);
 
                 me.enableDisablePermissions();
 
