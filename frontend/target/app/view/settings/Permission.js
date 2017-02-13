@@ -178,8 +178,8 @@ Ext.define('Target.view.settings.Permission', {
         var me = this;
 
         me.currentCatalog = catalog;
+
         me.fireEvent('changecatalog', catalog, me);
 
     }
-
 });

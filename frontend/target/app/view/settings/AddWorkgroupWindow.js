@@ -113,12 +113,14 @@ Ext.define('Target.view.settings.AddWorkgroupWindow', {
         {
             text: 'Cancel',
             handler: 'onCancelCreateWorkgroup'
+        },
+        {
+            text: 'OK',
+            ui: 'soft-green',
+            handler: 'onCompleteInsertWorkgroup',
+            reference: 'btnCompleteInsertWorkgroup',
+            disabled: true
         }
-        //  {
-        //     text: 'Add',
-        //     ui: 'soft-green',
-        //     handler: 'onInsertWorkgroup'
-        // }
     ]
 
 });
