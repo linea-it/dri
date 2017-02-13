@@ -18,6 +18,9 @@ Ext.define('Target.view.settings.PermissionController', {
             },
             '#Users2': {
                 load: 'onLoadUsers2'
+            },
+            '#WorkgroupUsers': {
+                load: 'onLoadWorkgroupsUsers'
             }
         }
     },
@@ -32,24 +35,49 @@ Ext.define('Target.view.settings.PermissionController', {
 
         vm.set('currentCatalog', currentCatalog);
 
-        permissionUsers.addFilter([
-            {'property': 'prm_product', value: currentCatalog.get('id')}
-        ]);
+        if (currentCatalog.get('is_owner')) {
 
-        permissionUsers.load();
+            permissionUsers.addFilter([
+                {'property': 'prm_product', value: currentCatalog.get('id')}
+            ]);
 
-        permissionWorkgroups.addFilter([
-            {'property': 'product', value: currentCatalog.get('id')}
-        ]);
+            permissionUsers.load();
 
-        permissionWorkgroups.load();
+            permissionWorkgroups.addFilter([
+                {'property': 'product', value: currentCatalog.get('id')}
+            ]);
 
-        // marcar se o catalogo e publico
-        if (currentCatalog.get('prd_is_public') === true) {
-            chk_is_plublic.setValue(true);
+            permissionWorkgroups.load();
+
+            // marcar se o catalogo e publico
+            if (currentCatalog.get('prd_is_public') === true) {
+                chk_is_plublic.setValue(true);
+
+            } else {
+                chk_is_plublic.setValue(false);
+            }
+        }
+
+        me.disablePermissions();
+    },
+
+    disablePermissions: function () {
+        var me = this,
+            currentCatalog = me.getViewModel().get('currentCatalog'),
+            usersgrid = me.lookupReference('permissionUsersGrid'),
+            workgroupsgrid = me.lookupReference('permissionWorkgroupsGrid'),
+            chkIsPlublic = me.lookupReference('chkIsPlublic');
+
+        if (currentCatalog.get('is_owner')) {
+
+            chkIsPlublic.enable();
+            usersgrid.enable();
+            workgroupsgrid.enable();
 
         } else {
-            chk_is_plublic.setValue(false);
+            chkIsPlublic.disable();
+            usersgrid.disable();
+            workgroupsgrid.disable();
         }
 
     },
@@ -412,6 +440,30 @@ Ext.define('Target.view.settings.PermissionController', {
     },
 
     onCancelCreateWorkgroup: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            workgroupUser = vm.getStore('workgroupUsers'),
+            workgroups = vm.getStore('workgroups'),
+            workgroup = vm.get('newWorkgroup');
+
+        if ((workgroup.get('id') > 0) && (workgroupUser.count() === 0)) {
+
+            Ext.MessageBox.alert('', 'This workgroup has no associated users, it will be removed.', function () {
+
+                workgroups.remove(workgroup);
+                workgroups.sync({
+                    callback: function () {
+                        me.closeWindowAddWorkgroup();
+                    }
+                });
+
+            }, this);
+        } else {
+            me.closeWindowAddWorkgroup();
+        }
+    },
+
+    closeWindowAddWorkgroup: function () {
         var me = this;
 
         me.lookupReference('createWorkgroupForm').getForm().reset();
@@ -419,7 +471,6 @@ Ext.define('Target.view.settings.PermissionController', {
     },
 
     onInsertWorkgroup: function () {
-        console.log('onInsertWorkgroup');
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
@@ -498,7 +549,6 @@ Ext.define('Target.view.settings.PermissionController', {
     },
 
     onAddUserInWorkgroup: function () {
-        console.log('onAddUserInWorkgroup');
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
@@ -511,8 +561,6 @@ Ext.define('Target.view.settings.PermissionController', {
             record;
 
         view.setLoading(true);
-
-        console.log('workgroup', '=', workgroup);
 
         if (user) {
 
@@ -581,6 +629,32 @@ Ext.define('Target.view.settings.PermissionController', {
 
         }, this);
 
+    },
+
+    onLoadWorkgroupsUsers: function (store) {
+        var me = this,
+            btn = me.lookupReference('btnCompleteInsertWorkgroup');
+
+        if (store.count() === 0) {
+            btn.disable();
+        } else {
+            btn.enable();
+        }
+    },
+
+    onCompleteInsertWorkgroup: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            workgroupUser = vm.getStore('workgroupUsers'),
+            workgroup = vm.get('newWorkgroup');
+
+        if ((workgroup.get('id') > 0) && (workgroupUser.count() === 0)) {
+
+            Ext.MessageBox.alert('', 'No users added to workgroup');
+
+        } else {
+            me.closeWindowAddWorkgroup();
+        }
     }
 
 });

@@ -116,6 +116,8 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
     release_id = serializers.SerializerMethodField()
     release_display_name = serializers.SerializerMethodField()
 
+    is_owner = serializers.SerializerMethodField()
+
     class Meta:
         model = Catalog
 
@@ -151,7 +153,9 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'tbl_name',
 
             'release_id',
-            'release_display_name'
+            'release_display_name',
+
+            'is_owner'
         )
 
     def get_owner(self, obj):
@@ -233,6 +237,14 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
            return r.release.rls_display_name
         except:
             return None
+
+    def get_is_owner(self, obj):
+        current_user = self.context['request'].user
+        if obj.prd_owner.pk == current_user.pk:
+            return True
+        else:
+            return False
+
 
 
 
