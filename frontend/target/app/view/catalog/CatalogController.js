@@ -44,22 +44,30 @@ Ext.define('Target.view.catalog.CatalogController', {
     removeCatalog: function () {
 
         var me = this,
+            view = me.getView(),
             vm = this.getViewModel(),
-            store = vm.getStore('catalogs'),
+            store = vm.getStore('products'),
+            catalogs = vm.getStore('catalogs'),
             selected = vm.get('selectedCatalog');
 
         if (selected.get('id')) {
+            view.setLoading(true);
 
-            selected.set('prd_flag_removed', true);
+            store.addFilter([{property: 'id', value: selected.get('id')}]);
 
-            store.sync({
-                callback: function (record, operation, success) {
-                    Ext.toast({
-                        html: 'Data saved',
-                        align: 't'
-                    });
+            store.load({
+                callback: function () {
+                    var record = this.first();
+                    if ((record) && (record.get('id') == selected.get('id'))) {
+                        this.remove(record);
 
-                    store.load();
+                        this.sync({
+                            callback: function () {
+                                catalogs.load();
+                                view.setLoading(false);
+                            }
+                        });
+                    }
                 }
             });
         }

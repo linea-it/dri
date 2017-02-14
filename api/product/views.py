@@ -27,7 +27,7 @@ class ProductFilter(django_filters.FilterSet):
 
     class Meta:
         model = Product
-        fields = ['prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id', 'releases',
+        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id', 'releases',
                   'tags', ]
 
     def filter_group(self, queryset, value):

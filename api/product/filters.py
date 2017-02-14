@@ -20,6 +20,4 @@ class ProductPermissionFilterBackend(filters.BaseFilterBackend):
             # OU por grupo. o usuario logado esta em um dos workgroups permitidos para o produto
             | Q(permission__prm_workgroup__workgroupuser__wgu_user=request.user)
 
-            # Nao marcados como removidos
-            & Q(prd_flag_removed=False)
         )
