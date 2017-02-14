@@ -7,10 +7,9 @@ from .models import *
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'prd_process_id', 'prd_name',
                     'prd_display_name', 'prd_owner', 'prd_product_id', 'prd_version', 'prd_date', 'prd_description',
-                    'prd_class', 'prd_filter', 'prd_is_public', 'prd_flag_removed',)
+                    'prd_class', 'prd_filter', 'prd_is_public',)
     list_display_links = ('id', 'prd_process_id', 'prd_name',
-                          'prd_display_name', 'prd_product_id', 'prd_version', 'prd_description', 'prd_class',
-                          'prd_flag_removed',)
+                          'prd_display_name', 'prd_product_id', 'prd_version', 'prd_description', 'prd_class',)
     search_fields = ('prd_process_id', 'prd_name', 'prd_display_name', 'prd_product_id',)
 
 
@@ -44,13 +43,12 @@ class TableAdmin(admin.ModelAdmin):
 class CatalogAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'prd_name', 'prd_display_name', 'prd_class', 'ctl_num_objects',
-        'prd_flag_removed',
     )
 
 
 class MapAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'prd_name', 'prd_display_name', 'prd_class', 'mpa_nside', 'mpa_ordering', 'prd_flag_removed',
+        'id', 'prd_name', 'prd_display_name', 'prd_class', 'mpa_nside', 'mpa_ordering',
     )
     list_display_links = ('id', 'prd_name')
     search_fields = ('prd_name',)
@@ -71,7 +69,7 @@ class CutOutAdmin(admin.ModelAdmin):
 
 class MaskAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'prd_name', 'prd_display_name', 'prd_class', 'prd_flag_removed', 'msk_filter',
+        'id', 'prd_name', 'prd_display_name', 'prd_class', 'msk_filter',
     )
     list_display_links = ('id', 'prd_name')
     search_fields = ('prd_name',)
