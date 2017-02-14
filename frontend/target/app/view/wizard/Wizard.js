@@ -13,6 +13,7 @@ Ext.define('Target.view.wizard.Wizard', {
         'Target.view.settings.Settings',
         'Target.view.association.Panel',
         'Target.view.settings.Columns',
+        'Target.view.settings.Permission',
         'Ext.layout.container.Card'
     ],
 
@@ -26,7 +27,8 @@ Ext.define('Target.view.wizard.Wizard', {
 
     config: {
         product: null,
-        currentSetting: null
+        currentSetting: null,
+        currentCatalog: null
     },
 
     ui: 'navigation',
@@ -53,6 +55,12 @@ Ext.define('Target.view.wizard.Wizard', {
             xtype: 'targets-columns',
             title: 'Columns',
             disabled: true
+        },
+        {
+            id: 'card-3',
+            xtype: 'targets-permission',
+            title: 'Permission',
+            disabled: true
         }
     ],
 
@@ -75,6 +83,15 @@ Ext.define('Target.view.wizard.Wizard', {
         me.down('targets-settings').setCurrentSetting(currentSetting);
 
         me.enableTabs();
+
+    },
+
+    setCurrentCatalog: function (currentCatalog) {
+        var me = this;
+
+        me.currentCatalog = currentCatalog;
+
+        me.getViewModel().set('currentCatalog', currentCatalog);
 
     },
 
@@ -106,10 +123,12 @@ Ext.define('Target.view.wizard.Wizard', {
         if ((currentSetting.get('id') > 0) && (currentSetting.get('editable'))) {
             me.down('targets-association').enable();
             me.down('targets-columns').enable();
+            me.down('targets-permission').enable();
 
         } else {
             me.down('targets-association').disable();
             me.down('targets-columns').disable();
+            me.down('targets-permission').disable();
         }
 
     }

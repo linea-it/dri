@@ -11,7 +11,7 @@ class Product(models.Model):
     prd_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        verbose_name='Owner', null=True, blank=True, default=None)
+        verbose_name='Owner', default=None)
     prd_process_id = models.ForeignKey(
         ExternalProcess, on_delete=models.CASCADE, verbose_name='External Process', null=True, blank=True, default=None)
     prd_class = models.ForeignKey(
@@ -28,12 +28,12 @@ class Product(models.Model):
         max_length=128, null=True, blank=True, verbose_name='Version')
     prd_description = models.CharField(
         max_length=1024, null=True, blank=True, verbose_name='Description')
-    prd_flag_removed = models.BooleanField(
-        default=False, verbose_name='Is Removed', help_text='True to mark a product as removed.')
     prd_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
     prd_date = models.DateTimeField(
-        auto_now_add=True, null=True, blank=True, verbose_name='Date')
+        auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Date of registration.')
+    prd_is_public = models.BooleanField(
+        default=True, verbose_name='Is Public', help_text='Is Public default True')
 
     releases = models.ManyToManyField(
         Release,
@@ -252,3 +252,34 @@ class CutOut(models.Model):
 
     ctt_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
+
+
+# ------------------------------ Permissoes por Produtos ------------------------------
+class Workgroup(models.Model):
+    wgp_workgroup = models.CharField(
+        max_length=60, verbose_name='Workgroup', help_text='group\'s name')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+
+    def __str__(self):
+        return str(self.wgp_workgroup)
+
+class WorkgroupUser(models.Model):
+    wgu_workgroup = models.ForeignKey(
+        Workgroup, on_delete=models.CASCADE, verbose_name='Workgroup')
+    wgu_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, verbose_name='User')
+
+class Permission(models.Model):
+    prm_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product')
+    prm_user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, verbose_name='User', null=True, blank=True)
+    prm_workgroup = models.ForeignKey(
+        Workgroup,
+        on_delete=models.CASCADE, verbose_name='Workgroup', null=True, blank=True)
+
+

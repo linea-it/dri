@@ -14,6 +14,8 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.conf import settings
 from rest_framework import status
+import django_filters
+from rest_framework import filters
 
 class FilterViewSet(viewsets.ModelViewSet):
     """
@@ -46,6 +48,38 @@ class LoggedUserViewSet(viewsets.ModelViewSet):
 
     def get_logged(self):
         return self.request.user
+
+
+
+
+# class UsersFilter(django_filters.FilterSet):
+#     group = django_filters.MethodFilter()
+#
+#     class Meta:
+#         model = User
+#         fields = ['group',]
+#
+#     def filter_group(self, queryset, value):
+#         if value:
+#             groups = self.request.user.groups.all()
+#             return queryset.filter(groups__in=groups)
+
+class UsersSameGroupFilterBackend(filters.BaseFilterBackend):
+    """
+        Retornar os Usuarios que estao no mesmo User Group que o usuario logado.
+    """
+    def filter_queryset(self, request, queryset, view):
+        groups = request.user.groups.all()
+        return queryset.filter(groups__in=groups).exclude(pk=request.user.pk)
+
+class UsersInSameGroupViewSet(viewsets.ModelViewSet):
+    """
+    Retorna a lista de usuarios do mesmo grupo
+    """
+    queryset = User.objects.filter()
+    model = User
+    serializer_class = UserSerializer
+    filter_backends = (filters.DjangoFilterBackend, UsersSameGroupFilterBackend)
 
 
 

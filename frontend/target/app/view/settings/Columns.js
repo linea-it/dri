@@ -137,6 +137,13 @@ Ext.define('Target.view.settings.Columns', {
                     }
                 },
                 {
+                    text: 'Next',
+                    scope: me,
+                    handler: function () {
+                        this.fireEvent('next');
+                    }
+                },
+                {
                     text: 'Finish',
                     ui: 'soft-green',
                     scope: me,
@@ -144,13 +151,6 @@ Ext.define('Target.view.settings.Columns', {
                         this.fireEvent('finish', this);
                     }
                 }
-                // {
-                //     text: 'Next',
-                //     scope: me,
-                //     handler: function () {
-                //         this.fireEvent('next');
-                //     }
-                // }
             ]
         });
 

@@ -5,7 +5,6 @@ Ext.define('Target.model.CatalogTree', {
         {name:'id'},
         {name:'prd_name', type:'string'},
         {name:'prd_display_name', type:'string'},
-        {name:'prd_flag_removed', type:'boolean'},
         {name:'prd_class', type:'int'},
         {name:'pcl_display_name', type:'string'},
         {name:'pcl_is_system', type:'boolean'},

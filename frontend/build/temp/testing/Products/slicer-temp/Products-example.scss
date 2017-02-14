@@ -1,6 +1,6 @@
 $app-name:  dynamic( 'Products' );
 $image-search-path: '/home/rafael/dri/frontend/build/testing/Products/resources';
-$theme-name:  dynamic( 'theme-triton' );
+$theme-name:  dynamic( 'theme-crisp' );
 $include-ext-abstractcomponent: dynamic(true);;
 $include-ext-abstractcontainer: dynamic(true);;
 $include-ext-abstractmanager: dynamic(true);;
@@ -740,6 +740,8 @@ $include-ext-state-stateful: dynamic(true);;
 $include-ext-tab-bar: dynamic(true);;
 $include-ext-tab-panel: dynamic(true);;
 $include-ext-tab-tab: dynamic(true);;
+$include-ext-theme-crisp-component: dynamic(true);;
+$include-ext-theme-crisp-view-table: dynamic(true);;
 $include-ext-theme-neptune-component: dynamic(true);;
 $include-ext-theme-neptune-container-buttongroup: dynamic(true);;
 $include-ext-theme-neptune-form-field-htmleditor: dynamic(true);;
@@ -754,20 +756,6 @@ $include-ext-theme-neptune-picker-month: dynamic(true);;
 $include-ext-theme-neptune-resizer-splitter: dynamic(true);;
 $include-ext-theme-neptune-toolbar-paging: dynamic(true);;
 $include-ext-theme-neptune-toolbar-toolbar: dynamic(true);;
-$include-ext-theme-triton-component: dynamic(true);;
-$include-ext-theme-triton-form-field-checkbox: dynamic(true);;
-$include-ext-theme-triton-grid-column-column: dynamic(true);;
-$include-ext-theme-triton-grid-column-rownumberer: dynamic(true);;
-$include-ext-theme-triton-grid-plugin-rowexpander: dynamic(true);;
-$include-ext-theme-triton-grid-selection-spreadsheetmodel: dynamic(true);;
-$include-ext-theme-triton-list-treeitem: dynamic(true);;
-$include-ext-theme-triton-menu-item: dynamic(true);;
-$include-ext-theme-triton-menu-menu: dynamic(true);;
-$include-ext-theme-triton-picker-date: dynamic(true);;
-$include-ext-theme-triton-picker-month: dynamic(true);;
-$include-ext-theme-triton-resizer-splitter: dynamic(true);;
-$include-ext-theme-triton-selection-checkboxmodel: dynamic(true);;
-$include-ext-theme-triton-toolbar-paging: dynamic(true);;
 $include-ext-tip-quicktip: dynamic(true);;
 $include-ext-tip-quicktipmanager: dynamic(true);;
 $include-ext-tip-tip: dynamic(true);;
@@ -975,9 +963,16 @@ $include-products-view-main-products: dynamic(true);;
 $include-common-bandfilter: dynamic(true);;
 $include-common-searchfield: dynamic(true);;
 $include-common-toolbarcontroller: dynamic(true);;
+$include-common-contact-contact: dynamic(true);;
+$include-common-contact-contactcontroller: dynamic(true);;
 $include-common-data-proxy-crsftoken: dynamic(true);;
 $include-common-data-proxy-django: dynamic(true);;
+$include-common-footer-footer: dynamic(true);;
+$include-common-footer-footercontroller: dynamic(true);;
 $include-common-header-toolbar: dynamic(true);;
+$include-common-help-tutorials: dynamic(true);;
+$include-common-help-tutorialscontroller: dynamic(true);;
+$include-common-link-linkprompt: dynamic(true);;
 $include-common-model-dataset: dynamic(true);;
 $include-common-model-filter: dynamic(true);;
 $include-common-model-footprint: dynamic(true);;
@@ -996,6 +991,7 @@ $include-common-store-releases: dynamic(true);;
 $include-common-store-surveys: dynamic(true);;
 $include-common-store-tags: dynamic(true);;
 $include-common-store-tiles: dynamic(true);;
+$include-common-store-tutorials: dynamic(true);;
 
 
 /* ======================== ETC ======================== */
@@ -1040,6 +1036,14 @@ $current-resource-root: $theme-neptune-resource-root;
 $relative-image-path-for-uis: $theme-neptune-resource-path;
 @import '../../../../../ext/classic/theme-neptune/sass/etc/all';
 
+/* including package theme-crisp */
+$theme-crisp-resource-root: '' !default;
+$theme-crisp-resource-path: 'images' !default;
+$current-package: 'theme-crisp';
+$current-resource-root: $theme-crisp-resource-root;
+$relative-image-path-for-uis: $theme-crisp-resource-path;
+@import '../../../../../ext/classic/theme-crisp/sass/etc/all';
+
 /* including package font-awesome */
 $font-awesome-resource-root: 'font-awesome' !default;
 $font-awesome-resource-path: 'font-awesome/images' !default;
@@ -1047,14 +1051,6 @@ $current-package: 'font-awesome';
 $current-resource-root: $font-awesome-resource-root;
 $relative-image-path-for-uis: $font-awesome-resource-path;
 @import '../../../../../ext/packages/font-awesome/sass/etc/all';
-
-/* including package theme-triton */
-$theme-triton-resource-root: '' !default;
-$theme-triton-resource-path: 'images' !default;
-$current-package: 'theme-triton';
-$current-resource-root: $theme-triton-resource-root;
-$relative-image-path-for-uis: $theme-triton-resource-path;
-@import '../../../../../ext/classic/theme-triton/sass/etc/all';
 
 /* including package common */
 $common-resource-root: 'common' !default;
@@ -1205,48 +1201,36 @@ $relative-image-path-for-uis: $theme-neptune-resource-path;
 @import '../../../../../ext/classic/theme-neptune/sass/var/tree/View';
 @import '../../../../../ext/classic/theme-neptune/sass/var/window/Toast';
 
-/* including package theme-triton */
-$theme-triton-resource-root: '' !default;
-$theme-triton-resource-path: 'images' !default;
-$current-package: 'theme-triton';
-$current-resource-root: $theme-triton-resource-root;
-$relative-image-path-for-uis: $theme-triton-resource-path;
-@import '../../../../../ext/classic/theme-triton/sass/var/Component';
-@import '../../../../../ext/classic/theme-triton/sass/var/LoadMask';
-@import '../../../../../ext/classic/theme-triton/sass/var/ProgressBar';
-@import '../../../../../ext/classic/theme-triton/sass/var/button/Button';
-@import '../../../../../ext/classic/theme-triton/sass/var/panel/Tool';
-@import '../../../../../ext/classic/theme-triton/sass/var/resizer/Splitter';
-@import '../../../../../ext/classic/theme-triton/sass/var/toolbar/Toolbar';
-@import '../../../../../ext/classic/theme-triton/sass/var/panel/Panel';
-@import '../../../../../ext/classic/theme-triton/sass/var/container/ButtonGroup';
-@import '../../../../../ext/classic/theme-triton/sass/var/window/Window';
-@import '../../../../../ext/classic/theme-triton/sass/var/form/field/Base';
-@import '../../../../../ext/classic/theme-triton/sass/var/window/MessageBox';
-@import '../../../../../ext/classic/theme-triton/sass/var/form/field/Checkbox';
-@import '../../../../../ext/classic/theme-triton/sass/var/form/FieldSet';
-@import '../../../../../ext/classic/theme-triton/sass/var/view/BoundList';
-@import '../../../../../ext/classic/theme-triton/sass/var/picker/Date';
-@import '../../../../../ext/classic/theme-triton/sass/var/tip/Tip';
-@import '../../../../../ext/classic/theme-triton/sass/var/form/field/HtmlEditor';
-@import '../../../../../ext/classic/theme-triton/sass/var/form/field/Tag';
-@import '../../../../../ext/classic/theme-triton/sass/var/view/Table';
-@import '../../../../../ext/classic/theme-triton/sass/var/grid/header/Container';
-@import '../../../../../ext/classic/theme-triton/sass/var/grid/column/Column';
-@import '../../../../../ext/classic/theme-triton/sass/var/grid/column/Action';
-@import '../../../../../ext/classic/theme-triton/sass/var/grid/feature/Grouping';
-@import '../../../../../ext/classic/theme-triton/sass/var/menu/Menu';
-@import '../../../../../ext/classic/theme-triton/sass/var/grid/filters/Filters';
-@import '../../../../../ext/classic/theme-triton/sass/var/grid/locking/Lockable';
-@import '../../../../../ext/classic/theme-triton/sass/var/grid/plugin/RowExpander';
-@import '../../../../../ext/classic/theme-triton/sass/var/layout/container/Accordion';
-@import '../../../../../ext/classic/theme-triton/sass/var/layout/container/Border';
-@import '../../../../../ext/classic/theme-triton/sass/var/resizer/Resizer';
-@import '../../../../../ext/classic/theme-triton/sass/var/selection/CheckboxModel';
-@import '../../../../../ext/classic/theme-triton/sass/var/slider/Multi';
-@import '../../../../../ext/classic/theme-triton/sass/var/tab/Tab';
-@import '../../../../../ext/classic/theme-triton/sass/var/tab/Bar';
-@import '../../../../../ext/classic/theme-triton/sass/var/tree/View';
+/* including package theme-crisp */
+$theme-crisp-resource-root: '' !default;
+$theme-crisp-resource-path: 'images' !default;
+$current-package: 'theme-crisp';
+$current-resource-root: $theme-crisp-resource-root;
+$relative-image-path-for-uis: $theme-crisp-resource-path;
+@import '../../../../../ext/classic/theme-crisp/sass/var/Component';
+@import '../../../../../ext/classic/theme-crisp/sass/var/button/Button';
+@import '../../../../../ext/classic/theme-crisp/sass/var/panel/Tool';
+@import '../../../../../ext/classic/theme-crisp/sass/var/resizer/Splitter';
+@import '../../../../../ext/classic/theme-crisp/sass/var/toolbar/Toolbar';
+@import '../../../../../ext/classic/theme-crisp/sass/var/panel/Panel';
+@import '../../../../../ext/classic/theme-crisp/sass/var/window/Window';
+@import '../../../../../ext/classic/theme-crisp/sass/var/form/Labelable';
+@import '../../../../../ext/classic/theme-crisp/sass/var/form/field/Base';
+@import '../../../../../ext/classic/theme-crisp/sass/var/picker/Date';
+@import '../../../../../ext/classic/theme-crisp/sass/var/tip/Tip';
+@import '../../../../../ext/classic/theme-crisp/sass/var/form/field/Tag';
+@import '../../../../../ext/classic/theme-crisp/sass/var/view/Table';
+@import '../../../../../ext/classic/theme-crisp/sass/var/grid/header/Container';
+@import '../../../../../ext/classic/theme-crisp/sass/var/grid/column/Column';
+@import '../../../../../ext/classic/theme-crisp/sass/var/grid/feature/Grouping';
+@import '../../../../../ext/classic/theme-crisp/sass/var/grid/filters/Filters';
+@import '../../../../../ext/classic/theme-crisp/sass/var/grid/locking/Lockable';
+@import '../../../../../ext/classic/theme-crisp/sass/var/layout/container/Accordion';
+@import '../../../../../ext/classic/theme-crisp/sass/var/layout/container/Border';
+@import '../../../../../ext/classic/theme-crisp/sass/var/resizer/Resizer';
+@import '../../../../../ext/classic/theme-crisp/sass/var/tab/Tab';
+@import '../../../../../ext/classic/theme-crisp/sass/var/tab/Bar';
+@import '../../../../../ext/classic/theme-crisp/sass/var/window/Toast';
 
 /* including package ux */
 $ux-resource-root: 'ux' !default;
@@ -1264,6 +1248,7 @@ $common-resource-path: 'common/images' !default;
 $current-package: 'common';
 $current-resource-root: $common-resource-root;
 $relative-image-path-for-uis: $common-resource-path;
+@import '../../../../../packages/local/common/sass/var/footer/Footer';
 @import '../../../../../packages/local/common/sass/var/header/Toolbar';
 
 /* including package Products */
@@ -1460,28 +1445,6 @@ $current-resource-root: $font-awesome-resource-root;
 $relative-image-path-for-uis: $font-awesome-resource-path;
 @import '../../../../../ext/packages/font-awesome/sass/src/all';
 
-/* including package font-ext */
-$font-ext-resource-root: 'font-ext' !default;
-$font-ext-resource-path: 'font-ext/images' !default;
-$current-package: 'font-ext';
-$current-resource-root: $font-ext-resource-root;
-$relative-image-path-for-uis: $font-ext-resource-path;
-@import '../../../../../ext/packages/font-ext/sass/src/all';
-
-/* including package theme-triton */
-$theme-triton-resource-root: '' !default;
-$theme-triton-resource-path: 'images' !default;
-$current-package: 'theme-triton';
-$current-resource-root: $theme-triton-resource-root;
-$relative-image-path-for-uis: $theme-triton-resource-path;
-@import '../../../../../ext/classic/theme-triton/sass/src/Component';
-@import '../../../../../ext/classic/theme-triton/sass/src/form/FieldSet';
-@import '../../../../../ext/classic/theme-triton/sass/src/form/field/Tag';
-@import '../../../../../ext/classic/theme-triton/sass/src/menu/Menu';
-@import '../../../../../ext/classic/theme-triton/sass/src/tab/Tab';
-@import '../../../../../ext/classic/theme-triton/sass/src/tree/View';
-@import '../../../../../ext/classic/theme-triton/sass/src/window/Toast';
-
 /* including package ux */
 $ux-resource-root: 'ux' !default;
 $ux-resource-path: 'ux/images' !default;
@@ -1508,7 +1471,9 @@ $common-resource-path: 'common/images' !default;
 $current-package: 'common';
 $current-resource-root: $common-resource-root;
 $relative-image-path-for-uis: $common-resource-path;
+@import '../../../../../packages/local/common/sass/src/footer/Footer';
 @import '../../../../../packages/local/common/sass/src/header/Toolbar';
+@import '../../../../../packages/local/common/sass/src/link/LinkPrompt';
 
 /* including package Products */
 $Products-resource-root: '' !default;

@@ -45,19 +45,19 @@ Ext.define('Target.view.catalog.RegisterForm', {
         {
             xtype: 'form',
             bodyPadding: 10,
+            submitEmptyText: false,
             items: [
                 {
                     xtype: 'textfield',
                     name: 'display_name',
                     fieldLabel: 'Name',
                     regex: /^[a-z0-9-_\s]+$/i,
-                    regexText: 'Please use only letters and numbers separated by spaces \' \', minus sign \'-\' or underscore \'_\'.',
-                    value: 'Catalogo de Testes'
+                    regexText: 'Please use only letters and numbers separated by spaces \' \', minus sign \'-\' or underscore \'_\'.'
                 },
                 {
                     xtype: 'combobox',
                     name: 'classname',
-                    fieldLabel: 'Class',
+                    fieldLabel: 'Folder',
                     valueField: 'pcl_name',
                     displayField: 'pcl_display_name',
                     allowBlank: false,
@@ -65,22 +65,37 @@ Ext.define('Target.view.catalog.RegisterForm', {
                     bind: {
                         store: '{productclass}'
                     }
-                    // value: 'Strong Lensing'
                 },
                 {
                     xtype: 'textfield',
-                    name: 'schema',
-                    fieldLabel: 'Schema',
+                    name: 'database',
+                    fieldLabel: 'Database',
                     maxLength: 30,
-                    value: 'hlin'
+                    value: 'dessci',
+                    readOnly: true
                 },
                 {
                     xtype: 'textfield',
-                    name: 'table',
-                    fieldLabel: 'Tablename',
-                    maxLength: 30,
-                    value: 'Y3A1_LRGS_NOTY1_NBLUE3R21'
+                    name: 'tablename',
+                    fieldLabel: 'Table name',
+                    maxLength: 61,
+                    emptyText: 'schema.table',
+                    regex: /[/\S+/]+[\\.][/\S+/]+/gi,
+                    regexText: 'Please use schema.table',
+                    allowBlank: false
                 },
+                // {
+                //     xtype: 'textfield',
+                //     name: 'schema',
+                //     fieldLabel: 'Schema',
+                //     maxLength: 30
+                // },
+                // {
+                //     xtype: 'textfield',
+                //     name: 'table',
+                //     fieldLabel: 'Tablename',
+                //     maxLength: 30
+                // },
                 {
                     xtype: 'combobox',
                     name: 'release',
@@ -90,7 +105,12 @@ Ext.define('Target.view.catalog.RegisterForm', {
                     bind: {
                         store: '{releases}'
                     }
-                    // value: 'Y3'
+                },
+                {
+                    xtype: 'checkbox',
+                    boxLabel: 'Public',
+                    name: 'is_public',
+                    checked: true
                 },
                 {
                     xtype: 'textareafield',
@@ -119,7 +139,7 @@ Ext.define('Target.view.catalog.RegisterForm', {
             xtype: 'button',
             text: 'Cancel',
             iconCls: 'x-fa fa-close',
-            handler: 'cancelUpdate'
+            handler: 'onCancelAddCatalog'
         }
     ]
 
