@@ -12,7 +12,7 @@ Ext.define('Target.view.catalog.RegisterController', {
         var me = this,
             view = me.getView(),
             form = view.down('form').getForm(),
-            values, data, name, release, is_public;
+            values, data, name, release, is_public, tablename, schema, table;
 
         if (form.isValid()) {
 
@@ -21,6 +21,11 @@ Ext.define('Target.view.catalog.RegisterController', {
             name = values.display_name.split(' ').join('_');
             release = values.release !== '' ? [values.release] : [];
             is_public = values.is_public === 'on' ? true : false;
+
+            tablename = values.tablename.split('.');
+            schema = tablename[0];
+            table = tablename[1];
+
             data = {
                 products: [{
                     type: 'catalog',
@@ -28,8 +33,8 @@ Ext.define('Target.view.catalog.RegisterController', {
                     name: name.toLowerCase().trim(),
                     display_name: values.display_name,
                     database: values.database,
-                    schema: values.schema,
-                    table: values.table,
+                    schema: schema,
+                    table: table,
                     releases: release,
                     is_public: is_public,
                     description: values.description
@@ -67,6 +72,16 @@ Ext.define('Target.view.catalog.RegisterController', {
                 params: Ext.util.JSON.encode(data)
             });
         }
+    },
+
+    onCancelAddCatalog: function () {
+        var me = this,
+            view = me.getView(),
+            form = view.down('form').getForm();
+
+        form.reset();
+        view.close();
+
     }
 
 });

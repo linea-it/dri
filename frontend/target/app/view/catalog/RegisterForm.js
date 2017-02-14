@@ -45,6 +45,7 @@ Ext.define('Target.view.catalog.RegisterForm', {
         {
             xtype: 'form',
             bodyPadding: 10,
+            submitEmptyText: false,
             items: [
                 {
                     xtype: 'textfield',
@@ -56,7 +57,7 @@ Ext.define('Target.view.catalog.RegisterForm', {
                 {
                     xtype: 'combobox',
                     name: 'classname',
-                    fieldLabel: 'Class',
+                    fieldLabel: 'Folder',
                     valueField: 'pcl_name',
                     displayField: 'pcl_display_name',
                     allowBlank: false,
@@ -75,16 +76,26 @@ Ext.define('Target.view.catalog.RegisterForm', {
                 },
                 {
                     xtype: 'textfield',
-                    name: 'schema',
-                    fieldLabel: 'Schema',
-                    maxLength: 30
+                    name: 'tablename',
+                    fieldLabel: 'Table name',
+                    maxLength: 61,
+                    emptyText: 'schema.table',
+                    regex: /[/\S+/]+[\\.][/\S+/]+/gi,
+                    regexText: 'Please use schema.table',
+                    allowBlank: false
                 },
-                {
-                    xtype: 'textfield',
-                    name: 'table',
-                    fieldLabel: 'Tablename',
-                    maxLength: 30
-                },
+                // {
+                //     xtype: 'textfield',
+                //     name: 'schema',
+                //     fieldLabel: 'Schema',
+                //     maxLength: 30
+                // },
+                // {
+                //     xtype: 'textfield',
+                //     name: 'table',
+                //     fieldLabel: 'Tablename',
+                //     maxLength: 30
+                // },
                 {
                     xtype: 'combobox',
                     name: 'release',
@@ -128,7 +139,7 @@ Ext.define('Target.view.catalog.RegisterForm', {
             xtype: 'button',
             text: 'Cancel',
             iconCls: 'x-fa fa-close',
-            handler: 'cancelUpdate'
+            handler: 'onCancelAddCatalog'
         }
     ]
 
