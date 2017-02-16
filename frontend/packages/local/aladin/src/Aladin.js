@@ -903,13 +903,17 @@ Ext.define('aladin.Aladin', {
 
     goToPosition: function (position) {
         var me = this,
-            aladin = me.getAladin();
+            aladin = me.getAladin(),
+            ra, dec, newposition;
 
         if (position) {
             // Fix if value in degrees need a space between values
             if (position.indexOf(',')) {
                 position = position.split(',');
-                position = position.join(', ');
+                ra = position[0].trim();
+                dec = position[1].trim();
+                newposition = [ra, dec];
+                position = newposition.join(', ');
             }
 
             aladin.gotoObject(position);
