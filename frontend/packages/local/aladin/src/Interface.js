@@ -168,12 +168,13 @@ Ext.define('aladin.Interfaces', {
                 menu: [
                     {
                         xtype: 'textfield',
-                        emptyText: '356.0085, 0.5168 or 23 44 2.040 +00 31 0.48',
+                        emptyText: 'RA (deg), Dec (deg)',
                         triggers: {
                             goto: {
                                 cls: 'x-form-search-trigger',
                                 scope: this,
-                                handler: me.submitGoToPosition
+                                handler: me.submitGoToPosition,
+                                tooltip: 'Go To position. 356.0085, 0.5168 or 23 44 2.040 +00 31 0.48'
                             }
                         },
                         listeners: {
