@@ -185,18 +185,20 @@ class ProductContentSetting(models.Model):
         null=True, blank=True, verbose_name='Order'
     )
 
+# ------------------------------ Cutouts ------------------------------
+
 class CutOutJob(models.Model):
 
     status_job = (
-        ('st', 'start'),
-        ('bs', 'beforeSubmit'),
-        ('rn', 'running'),
-        ('ok', 'done'),
+        ('st', 'Start'),
+        ('bs', 'Submit'),
+        ('rn', 'Running'),
+        ('ok', 'Done'),
+        ('er', 'Error'),
     )
 
     cjb_product = models.ForeignKey(
-        Product, on_delete=models.CASCADE, verbose_name='Product', default=None
-    )
+        Product, on_delete=models.CASCADE, verbose_name='Product')
     
     owner = models.ForeignKey(
        settings.AUTH_USER_MODEL,
@@ -215,10 +217,10 @@ class CutOutJob(models.Model):
         max_length=10, verbose_name='JobType')
 
     cjb_band = models.CharField(
-        max_length=10, verbose_name='band', null=True)
+        max_length=10, verbose_name='band', null=True, blank=True)
 
     cjb_Blacklist = models.CharField(
-        max_length=10, verbose_name='Blacklist', null=True)
+        max_length=10, verbose_name='Blacklist', null=True, blank=True)
     
     cjb_status = models.CharField(
         max_length=2,
@@ -230,28 +232,28 @@ class CutOutJob(models.Model):
     cjb_job_id = models.CharField(
         max_length=1024, verbose_name='Job ID')
 
+
+    def __str__(self):
+        return str(self.cjb_display_name)
+
 class CutOut(models.Model):
     cjb_cutout_job = models.ForeignKey(
-        CutOutJob, on_delete=models.CASCADE, verbose_name='CutOutJob', default=None
-    )
-
-    ctt_url = models.CharField(
-        max_length=20, verbose_name='url')
-
+        CutOutJob, on_delete=models.CASCADE, verbose_name='CutOutJob', default=None)
     ctt_object_id = models.CharField(
-        max_length=5, verbose_name='Object ID')
-
+        max_length=5, verbose_name='Object ID', null=True, blank=True, help_text='The association is used to know which column will be considered as id.')
     ctt_ra = models.CharField(
-        max_length=5, verbose_name='ra')
-
+        max_length=5, verbose_name='RA', null=True, blank=True, help_text='RA in degrees, the association will be used to identify the column')
     ctt_dec = models.CharField(
-        max_length=5, verbose_name='Dec')
-
-    ctt_tipo = models.CharField(
-        max_length=5, verbose_name='Tipo')
-
+        max_length=5, verbose_name='Dec', null=True, blank=True, help_text='Dec in degrees, the association will be used to identify the column')
     ctt_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
+    ctt_file_path = models.CharField(
+        max_length=20, verbose_name='File Path')
+    ctt_file_type = models.CharField(
+        max_length=5, verbose_name='File Extension')
+
+    def __str__(self):
+        return str(self.pk)
 
 
 # ------------------------------ Permissoes por Produtos ------------------------------

@@ -62,7 +62,7 @@ class CutOutJobAdmin(admin.ModelAdmin):
 
 class CutOutAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'ctt_url',
+        'id', 'cjb_cutout_job', 'ctt_file_path', 'ctt_file_type'
     )
     list_display_links = ('id',)
     search_fields = ('id',)

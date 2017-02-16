@@ -256,7 +256,10 @@ class MapSerializer(serializers.HyperlinkedModelSerializer):
             'mpa_ordering',
         )
 
-class CutOutJobSerializer(serializers.ModelSerializer):
+class CutOutJobSerializer(serializers.HyperlinkedModelSerializer):
+    cjb_product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=False)
+
     class Meta:
         model = CutOutJob
 

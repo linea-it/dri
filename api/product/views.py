@@ -399,7 +399,7 @@ class CutOutJobViewSet(viewsets.ModelViewSet):
     """
 
     """
-    queryset = CutOutJob.objects.select_related().all()
+    queryset = CutOutJob.objects.all()
 
     serializer_class = CutOutJobSerializer
 
