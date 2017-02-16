@@ -151,7 +151,7 @@ Ext.define('visiomatic.Visiomatic', {
                         minAxis: feature.properties.items[6] / 3600.0,
                         posAngle: 90 - feature.properties.items[7],
                         // Path Options http://leafletjs.com/reference-1.0.3.html#path
-                        weight: 2, //largura da borda em pixel
+                        weight: 1, //largura da borda em pixel
                         opacity: 0.5, // transparencia da borda
                         fillOpacity: 0.01 // Transparencia nos marcadores.
                     });
