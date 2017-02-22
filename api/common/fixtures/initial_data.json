@@ -64,5 +64,16 @@
       "lambda_max": 1090.0,
       "lambda_mean": 1008.0
     }
+  },
+  {
+    "model": "common.filter",
+    "pk": 7,
+    "fields": {
+      "project": "DES",
+      "filter": "det",
+      "lambda_min": null,
+      "lambda_max": null,
+      "lambda_mean": null
+    }
   }
 ]

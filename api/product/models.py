@@ -190,11 +190,18 @@ class ProductContentSetting(models.Model):
 class CutOutJob(models.Model):
 
     status_job = (
+        # Jobs que ainda nao foram enviados
         ('st', 'Start'),
-        ('bs', 'Submit'),
+        # Envio do job para API
+        ('bs', 'Submit Job'),
+        # Cutout Job enviado e aguardando termino na API
         ('rn', 'Running'),
+        # Cutout Job Concluido
         ('ok', 'Done'),
+        # Erro no nosso lado
         ('er', 'Error'),
+        # Erro com o job no lado da Api.
+        ('job_error', 'Job Error'),
     )
 
     cjb_product = models.ForeignKey(
@@ -236,26 +243,40 @@ class CutOutJob(models.Model):
     def __str__(self):
         return str(self.cjb_display_name)
 
-class CutOut(models.Model):
+class Cutout(models.Model):
     cjb_cutout_job = models.ForeignKey(
-        CutOutJob, on_delete=models.CASCADE, verbose_name='CutOutJob', default=None)
+        CutOutJob, on_delete=models.CASCADE, verbose_name='Cutout Job', default=None)
     ctt_object_id = models.CharField(
         max_length=5, verbose_name='Object ID', null=True, blank=True, help_text='The association is used to know which column will be considered as id.')
-    ctt_ra = models.CharField(
+    ctt_object_ra = models.CharField(
         max_length=5, verbose_name='RA', null=True, blank=True, help_text='RA in degrees, the association will be used to identify the column')
-    ctt_dec = models.CharField(
+    ctt_object_dec = models.CharField(
         max_length=5, verbose_name='Dec', null=True, blank=True, help_text='Dec in degrees, the association will be used to identify the column')
     ctt_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
+    ctt_thumbname = models.CharField(
+        max_length=255, verbose_name='Thumbname', null=True, blank=True, default=None)
     ctt_file_path = models.CharField(
-        max_length=20, verbose_name='File Path')
+        max_length=4096, verbose_name='File Path', null=True, blank=True, default=None)
+    ctt_file_name = models.CharField(
+        max_length=255, verbose_name='Filename ', null=True, blank=True, default=None)
     ctt_file_type = models.CharField(
-        max_length=5, verbose_name='File Extension')
+        max_length=5, verbose_name='File Extension', null=True, blank=True, default=None)
+    ctt_file_size = models.PositiveIntegerField(
+        verbose_name='File Size', null=True, blank=True, default=None, help_text='File Size in bytes')
+    ctt_download_start_time = models.DateTimeField(
+        auto_now_add=True, null=True, blank=True, verbose_name='Download Start')
+    ctt_download_finish_time = models.DateTimeField(
+        auto_now_add=False, null=True, blank=True, verbose_name='Download finish')
+
+    class Meta:
+        unique_together = ('cjb_cutout_job', 'ctt_file_name')
 
     def __str__(self):
         return str(self.pk)
 
-
+    # ctt_original_url = models.CharField(
+    #     max_length=5, verbose_name='Url to download the file on the cutouts server')
 # ------------------------------ Permissoes por Produtos ------------------------------
 class Workgroup(models.Model):
     wgp_workgroup = models.CharField(

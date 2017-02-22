@@ -1,6 +1,10 @@
 import os
 
 import shutil
+import urllib
+from django.utils import timezone
+from pprint import pprint
+
 from coadd.models import Release, Tag
 from common.models import Filter
 from lib.CatalogDB import CatalogDB
@@ -13,17 +17,18 @@ from django.db.models import Q
 from django.conf import settings
 import requests
 from .models import CutOutJob
-from .models import CutOut
+from .models import Cutout
 from common.models import Filter
 from product.serializers import AssociationSerializer
 from os import mkdir, path
-
+import csv
 
 class CutoutJobs:
     db = None
 
     def __init__(self):
-        print("--------- Init ----------")
+        # TODO substituir os prints por LOG
+        # print("--------- Init ----------")
         self.host = settings.CUTOUT_HOST
         self.user = settings.CUTOUT_USER
         self.password = settings.CUTOUT_PASSWORD
@@ -40,12 +45,15 @@ class CutoutJobs:
         self.host_token = self.host + '/api/token/'
         self.host_jobs = self.host + '/api/jobs/'
 
+        # Tipos de arquivos recebidos que nao sao imagens
+        self.not_images = ['log', 'csv', 'stifflog']
+
     def generate_token(self):
         """
         Returns a token to create other requests
         Returns: str(token)
         """
-        print("Create Authetication Token")
+        # print("Create Authetication Token")
         # Create Authetication Token
         req = requests.post(
             self.host_token,
@@ -61,12 +69,11 @@ class CutoutJobs:
         Check Token status: Check the expiration time for a token
         Returns: bool()
         """
-        print("Check the expiration time for a token")
-
+        # print("Check the expiration time for a token")
         req = requests.get(
             self.host_token + '?token=' + token)
 
-        print(req.json()['message'])
+        # print(req.json()['message'])
 
         if req.json()['status'].lower() == 'ok':
             return True
@@ -81,15 +88,35 @@ class CutoutJobs:
         req = requests.get(
             self.host_jobs + "?token=" + token + '&jobid=' + jobid)
 
+        # print(req.text)
         data = req.json()
 
         if data['status'] != 'error' and data['job_status'] == 'SUCCESS':
 
             return data['links']
-
+        elif data['status'] != 'error' and data['job_status'] == 'PENDING':
+            # O job ainda nao terminou no servidor
+            pass
         else:
-            # TODO Tratar job com error no lado do servico
-            print('Job Com ERROR')
+            return False
+
+
+    def delete_job_results(self, token, jobid):
+        """
+        Delete Jobs: Delete Job by its Id
+
+        """
+        req = requests.delete(
+            self.host_jobs + "?token=" + token + '&jobid=' + jobid)
+
+        # print(req.text)
+        data = req.json()
+
+        if data['status'] != 'error' and data['status'] == 'ok':
+            # print(data['message'])
+            return True
+        else:
+            return False
 
 
     def parse_result_url(self, url):
@@ -101,16 +128,16 @@ class CutoutJobs:
         Returns:
 
         """
-        # Tipos de arquivos que nao sao imagens
-        not_images = ['log', 'csv', 'stifflog']
-
         arq = dict({
+            "thumbname": None,
             "filename": None,
             "file_type": None,
             "ra_sex": None,
             "dec_sex": None,
             "ra": None,
             "dec": None,
+            "filter": None,
+            "url": url
         })
 
         # filename = ultima parte da url
@@ -122,8 +149,7 @@ class CutoutJobs:
         file_type = filename.split('.')[len(filename.split('.')) - 1]
         arq.update({"file_type": file_type})
 
-
-        if file_type not in not_images:
+        if file_type not in self.not_images:
             # recuperar a coordenada no nome do arquivo em sexagenal
             raDecList = filename[+4:].split('.')
             raDecList[0] = raDecList[0] + '.' + raDecList[1][-1:]
@@ -139,49 +165,53 @@ class CutoutJobs:
             ra = sextodec(ra_sex) * 15
             dec = sextodec(dec_sex)
             arq.update({
-                "ra": ra,
-                "dec": dec,
+                "ra": float("{:6.3f}".format(ra)),
+                "dec": float("{:6.3f}".format(dec)),
             })
 
-        # tipo = a.split('.')[len(a.split('.')) - 1]
-        # for row in rows:
-        #     originalRa = float(row['_meta_ra'])
-        #     originalDec = float(row['_meta_dec'])
-        #     ra = float(ra)
-        #     dec = float(dec)
-        #     if int(originalRa) == int(ra) and round(originalDec, 4) == round(dec, 4):
-        #         object_id = row['_meta_id']
-        # r = requests.get(url)
-        # urlF = "/home/glauber/teste/" + cutname + "/" + a
-        # with open(urlF, "wb") as code:
-        #     code.write(r.content)
+            # Filtro da Imagem.
+            try:
+                filter = filename.split('_')[1].split('.')[0]
+                arq.update({"filter": filter})
+
+                # thumbname = filename split _
+                thumbname = filename.split('_')[0]
+                arq.update({"thumbname": thumbname})
+
+            except:
+                # NAO TEM BANDA
+                # TODO descobrir um jeito de saber quais as bandas usadas para imagem colorida
+
+                thumbname = filename[0:21]
+                arq.update({"thumbname": thumbname})
+
 
         return arq
 
     def start_job(self):
-        print ("Start Job")
+        # print ("Start Job")
 
-        print(self.host)
+        # print(self.host)
         # Pegar todos os CutoutJobs com status = st (Start)
         cutoutjobs = CutOutJob.objects.filter(cjb_status='st')
 
-        print("Jobs: %s" % cutoutjobs.count())
+        # print("Jobs: %s" % cutoutjobs.count())
 
         # Faz um for para cara job
         for job in cutoutjobs:
-            print(job.cjb_status)
+            # print(job.cjb_status)
 
             product_id = job.cjb_product_id
 
             token = self.generate_token()
 
-            # muda Status para 2 status (antes de submeter)
-            # if job.cjb_status == 'st':
-            #     CutOutJob.objects.filter(pk = job.pk).update(cjb_status = 'bs')
+            # muda Status para Before Submit status
+            if job.cjb_status == 'st':
+                CutOutJob.objects.filter(pk=job.pk).update(cjb_status='bs')
 
 
-            # Recupera o model Catalog pelo product id
-            rows = self.get_ra_dec(product_id)
+            # Recupera os objetos do catalogo
+            rows = self.get_catalog_objects(product_id)
 
             ra = list()
             dec = list()
@@ -214,14 +244,13 @@ class CutoutJobs:
                 self.host_jobs, data=body)
 
             # muda o status pra enviado e inclui o retorno do submit
-            print(req.text)
             if req.json()['status'] == 'ok':
                 CutOutJob.objects.filter(pk=job.pk).update(cjb_job_id=req.json()['job'])
 
-                # CutOutJob.objects.filter(pk=job.pk).update(cjb_status='rn')
+                CutOutJob.objects.filter(pk=job.pk).update(cjb_status='rn')
+
             else:
-                # TODO ACHO QUE AQUI O STATUS DEVERIA SER ERROR
-                CutOutJob.objects.filter(pk=job.pk).update(cjb_status='st')
+                CutOutJob.objects.filter(pk=job.pk).update(cjb_status='er')
 
         return ({"status": "ok"})
 
@@ -229,16 +258,16 @@ class CutoutJobs:
         """
         Verifica todos os jobs com status running
         """
-        print("---------- check_job ----------------")
+        # print("---------- check_job ----------------")
 
         # Pegar todos os CutoutJobs com status running
         jobs = CutOutJob.objects.filter(cjb_status='rn')
 
-        print('Count: %s' % jobs.count())
+        # print('Count: %s' % jobs.count())
 
         # Faz um for para cara job
         for job in jobs:
-            print("Job: %s" % job.cjb_job_id)
+            # print("Job: %s" % job.cjb_job_id)
 
             # Cria um Token
             token = self.generate_token()
@@ -246,56 +275,19 @@ class CutoutJobs:
             # Consulta o Job no servico
             list_files = self.get_job_results(token, job.cjb_job_id)
 
+            if list_files is None:
+                break
+            elif list_files is False:
+                # job com error no lado do servidor
+                job.cjb_status = 'job_error'
+                job.save()
+                break
+
             # Download Files
             self.download_cutouts(job, list_files)
 
-                # # Criar o Diretorio para as imagens
-                # cutname = job.cjb_display_name.replace(' ', '_') + '_' + str(job.pk)
-                #
-                # mkdir('/home/glauber/teste/' + cutname)
-                #
-                # # Pegar a lista com todos os objetos do target
-                # rows = self.get_ra_dec(product_id)
-                #
-                # # Cria uma função que
-                # for url in links:
-                #     a = url.split('/')
-                #     a = a[len(a) - 1]
-                #     raDecList = a[+4:].split('.')
-                #     raDecList[0] = raDecList[0] + '.' + raDecList[1][-1:]
-                #     raDecList[1] = raDecList[1][+1:] + '.' + raDecList[2]
-                #     ra = raDecList[0][:+2] + ' ' + raDecList[0][+2:][:+2] + ' ' + raDecList[0][+4:]
-                #     dec = raDecList[1][:+3] + ' ' + raDecList[1][+3:][:+2] + ' ' + raDecList[1][+5:].split("_")[0]
-                #     object_id = '-'
-                #     ra = sextodec(ra) * 15
-                #     dec = sextodec(dec)
-                #     tipo = a.split('.')[len(a.split('.')) - 1]
-                #     for row in rows:
-                #         originalRa = float(row['_meta_ra'])
-                #         originalDec = float(row['_meta_dec'])
-                #         ra = float(ra)
-                #         dec = float(dec)
-                #         if int(originalRa) == int(ra) and round(originalDec, 4) == round(dec, 4):
-                #             object_id = row['_meta_id']
-                #     r = requests.get(url)
-                #     urlF = "/home/glauber/teste/" + cutname + "/" + a
-                #     with open(urlF, "wb") as code:
-                #         code.write(r.content)
-                #
-                #     # TODO HARDCODED FILTER IN g
-                #     f = Filter.objects.get(filter__iexact='g')
-                #
-                #     CutOut(
-                #         cjb_cutout_job=job,
-                #         ctt_object_id=object_id,
-                #         ctt_ra=ra,
-                #         ctt_dec=dec,
-                #         ctt_filter=f,
-                #         ctt_file_path=urlF,
-                #         ctt_file_type=tipo
-                #     ).save()
-                #
-                # CutOutJob.objects.filter(pk=job.pk).update(cjb_status='ok')
+            # Apagar na API descut o job que já foi baixado
+            # self.delete_job_results(token, job.cjb_job_id)
 
         return ({"status": "ok"})
 
@@ -314,37 +306,115 @@ class CutoutJobs:
         cutout_dir = os.path.join(
             self.cutout_root, str(cutout_job.cjb_product_id), str(cutout_job.id))
 
-        # TODO esse remove deve ser retirado esta aqui so para teste
-        shutil.rmtree(cutout_dir, ignore_errors=True)
-
         try:
             os.makedirs(cutout_dir)
             return cutout_dir
 
         except OSError:
-            print("Cutout path already exists: %s" % cutout_dir)
-            raise
+            return cutout_dir
+          # print("Cutout path already exists: %s" % cutout_dir)
+            # raise
 
     def download_cutouts(self, cutout_job, list_files):
-        print("----------- download_cutouts -------------------")
+        # print("----------- download_cutouts -------------------")
 
         cutout_dir = self.get_cutout_dir(cutout_job)
 
         # Verificar se tem um csv com o nome dos arquivos e as coordenadas
+        # print('Cutout_Dir: %s' % cutout_dir)
 
-        print('Cutout_Dir: %s' % cutout_dir)
+        matched_csv = None
+
         for url in list_files:
             arq = self.parse_result_url(url)
 
-            print(arq)
+            # Se os arquivos sao imagens
+            if arq.get('file_type') not in self.not_images:
+
+                # Criar uma instancia cutout
+
+                image_filter = None
+                if arq.get('filter') is not None:
+                    image_filter = Filter.objects.get(filter__iexact=arq.get('filter'))
+
+                cutout, created = Cutout.objects.update_or_create(
+                    cjb_cutout_job=cutout_job,
+                    ctt_filter=image_filter,
+                    ctt_file_name=arq.get('filename'),
+                    ctt_file_type=arq.get('file_type'),
+                    defaults={
+                        "ctt_thumbname": arq.get('thumbname'),
+                        "ctt_download_start_time": timezone.now()
+                    }
+                )
+
+                # Download do arquivo
+                file_path = self.download_file(arq.get('url'), cutout_dir, arq.get('filename'))
+
+                # Tamanho do arquivo baixado
+                file_size = os.path.getsize(file_path)
+
+                # Atualizar o registro de cutout
+                cutout.ctt_file_path = file_path
+                cutout.ctt_file_size = file_size
+                cutout.ctt_download_finish_time = timezone.now()
+
+                cutout.save()
+
+            elif arq.get('file_type') == "csv":
+                # Se o arquivo for csv
+                matched_csv = self.download_file(arq.get('url'), cutout_dir, arq.get('filename'))
+
+                # print("Matched: %s" % matched_csv)
+
+            else:
+                self.download_file(arq.get('url'), cutout_dir, arq.get('filename'))
+
+        #  Associar o arquivo com o objeto no catalogo
+
+        # Recupera os objetos do catalogo e cria um dict onde a chave e o ra+dec
+        catalog = dict()
+        rows = self.get_catalog_objects(cutout_job.cjb_product_id)
+        for row in rows:
+            catalog[row.get('_meta_key')] = row
+
+        # Se tiver o arquivo matched fazer a associacao dos objetos pelo csv
+        if matched_csv is not None:
+            with open(matched_csv) as csvfile:
+                spamreader = csv.DictReader(csvfile, delimiter=',')
+                for row in spamreader:
+                    key = self.get_object_position_key(row.get('RA'), row.get('DEC'))
+
+                    if key in catalog:
+                        obj = catalog[key]
+
+                        cutouts = Cutout.objects.filter(cjb_cutout_job=cutout_job, ctt_thumbname=row.get('THUMBNAME'))
+
+                        for cutout in cutouts:
+                            cutout.ctt_object_id = obj.get('_meta_id')
+                            cutout.ctt_object_ra = obj.get('_meta_ra')
+                            cutout.ctt_object_dec = obj.get('_meta_dec')
+                            cutout.save()
+                    else:
+                        # TODO nao consegue associar o arquivo com um objeto do catalogo
+                        pass
 
 
-    # def download_file(self, cutout_dir, url):
-    #
-    #     urllib.request.urlretrieve()
+    def download_file(self, url, cutout_dir, filename):
+        # print("------------- download_file -------------")
+        # print("URL: %s" % url)
+        # print("Filename: %s" % filename)
+        file_path = os.path.join(cutout_dir, filename)
 
-    def get_ra_dec(self, product_id):
-        print("get_ra_dec(%s)" % product_id)
+        if not os.path.exists(file_path):
+            urllib.request.urlretrieve(url, file_path)
+
+
+        return file_path
+
+
+    def get_catalog_objects(self, product_id):
+        # print("get_catalog_objects(product_id=%s)" % product_id)
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
         serializer = AssociationSerializer(queryset, many=True)
@@ -361,7 +431,6 @@ class CutoutJobs:
         else:
             db = CatalogDB()
 
-        # TODO TESTE COM LIMIT
         rows, count = db.wrapper.query(
             schema=catalog.tbl_schema,
             table=catalog.tbl_name,
@@ -369,19 +438,47 @@ class CutoutJobs:
                 properties.get("meta.id;meta.main"),
                 properties.get("pos.eq.ra;meta.main"),
                 properties.get("pos.eq.dec;meta.main")
-            ],
-            limit=1
-        )
+            ]
+         )
 
         raDec = list()
         for row in rows:
+
+            key = self.get_object_position_key(
+                row.get(properties.get("pos.eq.ra;meta.main")), row.get(properties.get("pos.eq.dec;meta.main")))
+
             raDec.append(dict({
                 "_meta_id": row.get(properties.get("meta.id;meta.main")),
                 "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main")),
-                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main"))
+                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main")),
+                "_meta_key": key
             }))
 
+        # print("Catalog Objects: %s" % len(raDec))
+
         return raDec
+
+    def get_object_position_key(self, ra, dec):
+        """
+        Monta uma chave usando ra e dec do objeto
+        Args:
+            ra: float() com 3 casas decimais
+            dec: float() com 3 casas decimais
+
+        Returns: string() ra+dec ou ra-dec
+        """
+        ra = float("{:6.3f}".format(float(ra)))
+        dec = float("{:6.3f}".format(float(dec)))
+
+        # montar uma chave usando ra dec
+        key = str(ra)
+        if float(dec) > 0:
+            key += "+" + str(dec)
+        else:
+            key += str(dec)
+
+        return key
+
 
 
     def test_api_help(self):
@@ -402,7 +499,8 @@ class CutoutJobs:
             'xsize': str(xs),  # optional (default : 1.0)
             'ysize': str(ys),  # optional (default : 1.0)
             'band': 'g,r,i',  # optional for 'single' epochs jobs (default: all bands)
-            'no_blacklist': 'false', # optional for 'single' epochs jobs (default: 'false'). return or not blacklisted exposures
+            'no_blacklist': 'false',
+        # optional for 'single' epochs jobs (default: 'false'). return or not blacklisted exposures
             'list_only': 'false',  # optional (default : 'false') 'true': will not generate pngs (faster)
             'email': 'false'  # optional will send email when job is finished
         }

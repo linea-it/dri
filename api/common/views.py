@@ -134,7 +134,8 @@ def teste(request):
         cutoutjobs = CutoutJobs()
         a = cutoutjobs.check_job()
         # a = cutoutjobs.start_job()
+        # a = cutoutjobs.test_api_help()
         # a = CutoutJobs.sextodec('00 06 09.4')
         # print(a * 15)
-        # a = cutoutjobs.test_api_help()
+
         return Response(dict({'teste':''}))
