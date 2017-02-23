@@ -25,6 +25,12 @@ Ext.define('Target.view.wizard.WizardController', {
                 next: 'showNext',
                 finish: 'finishWizard'
             },
+            'targets-cutoutjob': {
+                activate: 'onActiveCutout',
+                previous: 'showPrevious',
+                next: 'showNext',
+                finish: 'finishWizard'
+            },
             'targets-permission': {
                 activate: 'onActivePermission',
                 previous: 'showPrevious',
@@ -91,6 +97,17 @@ Ext.define('Target.view.wizard.WizardController', {
             columns = view.down('targets-columns');
 
         columns.setCurrentSetting(currentSetting);
+
+    },
+
+    onActiveCutout: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog'),
+            view = me.getView(),
+            cutouts = view.down('targets-cutoutjob');
+
+        cutouts.setCurrentCatalog(currentCatalog);
 
     },
 

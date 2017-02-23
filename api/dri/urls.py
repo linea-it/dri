@@ -46,7 +46,7 @@ router.register(r'productclasscontent', product_classifier_views.ProductClassCon
 router.register(r'product', product_views.ProductViewSet)
 router.register(r'catalog', product_views.CatalogViewSet)
 router.register(r'map', product_views.MapViewSet)
-router.register(r'CutOutJob', product_views.CutOutJobViewSet)
+router.register(r'cutoutjob', product_views.CutoutJobViewSet)
 router.register(r'mask', product_views.MaskViewSet)
 router.register(r'productcontent', product_views.ProductContentViewSet)
 router.register(r'productassociation', product_views.ProductContentAssociationViewSet)

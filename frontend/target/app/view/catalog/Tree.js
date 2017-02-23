@@ -196,8 +196,8 @@ Ext.define('Target.view.catalog.Tree', {
                 },{
                     tooltip: 'Cutout',
                     iconCls: 'x-fa fa-cut',
-                    handler: me.cutout
-                    // hidden: true
+                    handler: me.cutout,
+                    hidden: true
                 }
             ]
         });
