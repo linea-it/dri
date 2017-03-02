@@ -8,8 +8,6 @@ class UserQuery(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name='Owner', default=None)
-#    owner = models.CharField(
-#            max_length=128, verbose_name='Owner')
     name = models.CharField(
         max_length=128, verbose_name='Name')
     description = models.CharField(
