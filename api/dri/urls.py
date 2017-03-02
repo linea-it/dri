@@ -24,6 +24,7 @@ from product_classifier import views as product_classifier_views
 from product_register import views as product_register_views
 from rest_framework import routers
 from validation import views as validation_views
+from userquery import views as userquery_views
 
 router = routers.DefaultRouter()
 
@@ -61,9 +62,6 @@ router.register(r'product_permission', product_views.PermissionViewSet)
 router.register(r'workgroup', product_views.WorkgroupViewSet)
 router.register(r'workgroup_users', product_views.WorkgroupUserViewSet)
 
-
-
-
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
 router.register(r'defect', validation_views.DefectViewSet)
@@ -86,6 +84,8 @@ router.register(r'coadd_objects', catalog_views.CoaddObjects, base_name='coadd_o
 # API Catalogos para o Visiomatic
 router.register(r'visiomatic/coadd_objects', catalog_views.VisiomaticCoaddObjects, base_name='visiomatic_coadd_objects')
 
+# UserQuery API 
+router.register(r'userquery', userquery_views.UserQueryViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

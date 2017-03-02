@@ -18,6 +18,8 @@ class UserQuery(models.Model):
         auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Creation Date')
     tablename = models.CharField(
         max_length=128, null=False, blank=True, verbose_name='Table Name')
+    is_public = models.BooleanField(
+        default=False, verbose_name='Is Public', help_text='Is Public default True')
 
     def __str__(self):
         return self.name
