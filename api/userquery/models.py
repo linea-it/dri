@@ -1,14 +1,15 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from django.conf import settings
 
 class UserQuery(models.Model):
-#    owner = models.ForeignKey(
-#        settings.AUTH_USER_MODEL,
-#        on_delete=models.CASCADE,
-#        verbose_name='Owner', default=None)
-    owner = models.CharField(
-            max_length=128, verbose_name='Owner')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Owner', default=None)
+#    owner = models.CharField(
+#            max_length=128, verbose_name='Owner')
     name = models.CharField(
         max_length=128, verbose_name='Name')
     description = models.CharField(
