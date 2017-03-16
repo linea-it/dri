@@ -130,7 +130,7 @@ Ext.define('visiomatic.Visiomatic', {
                 name: 'Y3A1',
                 attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
                 color: 'blue',
-                maglim: 26.0,
+                maglim: 24.0,
                 service: 'ScienceServer',
                 regionType: 'box',
                 authenticate: 'csrftoken',
