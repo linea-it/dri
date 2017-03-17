@@ -292,15 +292,14 @@ class VisiomaticCoaddObjects(ViewSet):
 
         if maglim is not None:
             maglim = float(maglim)
-            mags = ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y']
-            for mag in mags:
-                filters.append(
-                    dict({
-                        "property": mag,
-                        "operator": "<=",
-                        "value": maglim
-                    })
-                )
+            mag = 'MAG_AUTO_I'
+            filters.append(
+                dict({
+                    "property": mag,
+                    "operator": "<=",
+                    "value": maglim
+                })
+            )
 
         # retornar uma lista com os objetos da tabela
         rows = list()
@@ -428,15 +427,15 @@ class CoaddObjects(ViewSet):
 
         if maglim is not None:
             maglim = float(maglim)
-            mags = ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y']
-            for mag in mags:
-                filters.append(
-                    dict({
-                        "property": mag,
-                        "operator": "<=",
-                        "value": maglim
-                    })
-                )
+            mag = 'MAG_AUTO_I'
+            filters.append(
+                dict({
+                    "property": mag,
+                    "operator": "<=",
+                    "value": maglim
+                })
+            )
+
         if coadd_object_id is not None:
             filters.append(
                 dict({
@@ -465,4 +464,3 @@ class CoaddObjects(ViewSet):
         )
 
         return Response(rows)
-
