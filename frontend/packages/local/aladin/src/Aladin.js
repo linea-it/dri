@@ -908,7 +908,7 @@ Ext.define('aladin.Aladin', {
 
         if (position) {
             // Fix if value in degrees need a space between values
-            if (position.indexOf(',')) {
+            if (position.indexOf(',') != -1) {
                 position = position.split(',');
                 ra = position[0].trim();
                 dec = position[1].trim();
