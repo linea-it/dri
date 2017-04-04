@@ -125,14 +125,44 @@ def contact_us(request):
                 return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+# @api_view(['GET'])
+# def teste(request):
+#
+#     if request.method == 'GET':
+#         print('Teste---------------------')
+#         from product.CutoutJobs import CutoutJobs
+#         a = CutoutJobs.check_job()
+#         # a = CutoutJobs.start_job()
+#         # a = CutoutJobs.sextodec('00 06 09.4')
+#         # print(a * 15)
+#         return Response(dict({'teste':''}))
+
+
 @api_view(['GET'])
 def teste(request):
 
     if request.method == 'GET':
-        print('Teste---------------------')
-        from product.CutoutJobs import CutoutJobs
-        a = CutoutJobs.check_job()
-        # a = CutoutJobs.start_job()
-        # a = CutoutJobs.sextodec('00 06 09.4')
-        # print(a * 15)
-        return Response(dict({'teste':''}))
+        from coadd.models import Tile
+        from django.db.models import Q
+
+        # tiles = Tile.objects.filter(Q(tli_urall__gt=180) | Q(tli_uraur__gt=180))
+        tiles = Tile.objects.all()
+        count = 0
+        for tile in tiles:
+            print(tile.tli_tilename)
+
+            if tile.tli_urall > 180:
+                tile.tli_urall_180 = tile.tli_urall - 360
+            else:
+                tile.tli_urall_180 = tile.tli_urall
+
+            if tile.tli_uraur > 180:
+                tile.tli_uraur_180 = tile.tli_uraur - 360
+            else:
+                tile.tli_uraur_180 = tile.tli_uraur
+
+            tile.save()
+
+            count += 1
+
+        return Response(dict({'updated':count}))

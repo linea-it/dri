@@ -68,6 +68,10 @@ class Tile(models.Model):
         null=True, blank=True, default=0, verbose_name='uraur')
     tli_udecur = models.FloatField(
         null=True, blank=True, default=0, verbose_name='udecur')
+    tli_urall_180 = models.FloatField(
+        null=True, blank=True, default=0, verbose_name='urall 180', help_text='urall in -180 a 180 degrees')
+    tli_uraur_180 = models.FloatField(
+        null=True, blank=True, default=0, verbose_name='uraur 180', help_text='uraur in -180 a 180 degrees')
 
     def __str__(self):
         return self.tli_tilename
