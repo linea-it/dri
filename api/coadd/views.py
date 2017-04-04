@@ -1,6 +1,7 @@
 import logging
 
 import django_filters
+from django.db.models import Q
 from rest_framework import filters
 from rest_framework import viewsets
 from .models import Release, Tag, Tile, Dataset, Survey
@@ -85,12 +86,19 @@ class DatasetFilter(django_filters.FilterSet):
             raise Exception(
                 'Invalid format to coordinate. RA must be between 0 and 360 and Dec must be between -90 to 90.')
 
+        # Normalizar o ra para -180 e 180 usar as colunas auxiliares urall_180 e uraur_180 para evitar problema
+        # com objetos de ra entre 0 e 1
+        if ra > 180:
+            ra = (ra - 360)
+
         return queryset.filter(
-            tile__tli_urall__lt=ra,
+            tile__tli_urall_180__lt=ra,
             tile__tli_udecll__lt=dec,
-            tile__tli_uraur__gt=ra,
+            tile__tli_uraur_180__gt=ra,
             tile__tli_udecur__gt=dec
         )
+
+
 
 
 class DatasetViewSet(viewsets.ModelViewSet):
