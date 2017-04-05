@@ -132,7 +132,8 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     onDblClickVisiomatic: function () {
-        this.toAladin();
+        console.log('onDblClickVisiomatic()');
+
     },
 
     onShift: function () {
