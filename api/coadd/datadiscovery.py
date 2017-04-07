@@ -1,4 +1,4 @@
-# import cx_Oracle
+import cx_Oracle
 from coadd.models import Release, Dataset, Tile, Tag
 from django.conf import settings
 from pprint import pprint
@@ -18,8 +18,8 @@ class DataDiscovery:
                 'service_name': kwargs.get('service_name')
             }
 
-            # dsn = cx_Oracle.makedsn(**args)
-            # self.db = cx_Oracle.connect(kwargs.get('user'), kwargs.get('password'), dsn=dsn)
+            dsn = cx_Oracle.makedsn(**args)
+            self.db = cx_Oracle.connect(kwargs.get('user'), kwargs.get('password'), dsn=dsn)
             self.cursor = self.db.cursor()
 
             print ("Connected")
@@ -139,9 +139,11 @@ class DataDiscovery:
 
         last_tile = Dataset.objects.filter(tag=field).order_by('-date').first()
 
-        last_date = last_tile.date
+        last_date = None
+        if last_tile:
+            last_date = last_tile.date
 
-        print("Tiles Installed [ %s ] Recent Date [ %s ]" % (dri_count, last_date))
+            print("Tiles Installed [ %s ] Recent Date [ %s ]" % (dri_count, last_date))
 
         if original_count != dri_count:
             print ('Tiles to be installed [ %s ]' % (original_count - dri_count))
@@ -217,7 +219,54 @@ class DataDiscovery:
             return None
 
 
+    # def assocition_tag_tile(self):
+    #         """
+    #         Usadado para importar um csv com as tiles que fazem parte do release Y1A1 essa funcao faz a assiciacao da
+    #         tile com o tag usando o tilename e tag_id
+    #         """
+    #     print('assocition_tag_tile')
+    #
+    #     count_created = 0
+    #     count_updated = 0
+    #     count_fail = 0
+    #
+    #     import csv
+    #     with open("/tmp/test.csv") as csvfile:
+    #         reader = csv.DictReader(csvfile, fieldnames=['tag', 'tilename', 'run', 'image_src_ptif'])
+    #
+    #         for row in reader:
+    #             print("%s - %s" % (row['tag'], row['tilename']))
+    #             tag = None
+    #             if tag != row['tag']:
+    #                 tag = Tag.objects.select_related().get(pk=row['tag'])
+    #
+    #             try:
+    #                 tile = Tile.objects.select_related().get(tli_tilename__icontains=row['tilename'])
+    #
+    #                 dataset, created = Dataset.objects.update_or_create(
+    #                     tag=tag,
+    #                     tile=tile,
+    #                     defaults={
+    #                         'image_src_ptif': row['image_src_ptif']
+    #                     }
+    #                 )
+    #
+    #                 if created:
+    #                     count_created = count_created + 1
+    #                 else:
+    #                     count_updated = count_updated + 1
+    #
+    #             except Tile.DoesNotExist:
+    #                 count_fail = count_fail + 1
+
+
+
 if __name__ == '__main__':
     print ("---------- stand alone -------------")
 
     DataDiscovery().start()
+
+    # from coadd.datadiscovery import DataDiscovery
+    # DataDiscovery().assocition_tag_tile()
+
+
