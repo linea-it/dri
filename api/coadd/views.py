@@ -82,21 +82,19 @@ class DatasetFilter(django_filters.FilterSet):
         ra = float(radec[0].strip())
         dec = float(radec[1].strip())
 
-        if (not ra > 0) or (not ra < 360):
-            raise Exception(
-                'Invalid format to coordinate. RA must be between 0 and 360 and Dec must be between -90 to 90.')
-
         # Normalizar o ra para -180 e 180 usar as colunas auxiliares urall_180 e uraur_180 para evitar problema
         # com objetos de ra entre 0 e 1
         if ra > 180:
             ra = (ra - 360)
 
-        return queryset.filter(
+        q = queryset.filter(
             tile__tli_urall_180__lt=ra,
             tile__tli_udecll__lt=dec,
             tile__tli_uraur_180__gt=ra,
             tile__tli_udecur__gt=dec
         )
+
+        return q
 
 
 

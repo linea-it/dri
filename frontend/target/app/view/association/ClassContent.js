@@ -3,21 +3,27 @@ Ext.define('Target.view.association.ClassContent', {
 
     xtype: 'targets-association-class-content',
 
-    columns: [
-        {
-            text     : 'Properties available in this class',
-            dataIndex: 'pcc_display_name',
-            flex: 1
-        }
-    ],
-
     initComponent: function () {
         var me = this;
 
         Ext.apply(this, {
+            columns: [
+                {
+                    text     : 'Properties available in this class',
+                    dataIndex: 'pcc_display_name',
+                    flex: 1,
+                    renderer: function (value, meta, record) {
+                        if (record.get('pcc_unit') != '') {
+                            return value + ' (' + record.get('pcc_unit') + ')' ;
+                        } else {
+                            return value;
+                        }
+
+                    }
+                }
+            ]
         });
 
         me.callParent(arguments);
     }
-
 });
