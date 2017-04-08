@@ -5,10 +5,12 @@ from django.contrib.auth.models import User
 
 class UserQuerySerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
+    id = serializers.ReadOnlyField()
 
     class Meta:
         model = UserQuery
         fields = (
+            'id',
             'owner',
             'name',
             'query',
