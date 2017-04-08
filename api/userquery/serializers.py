@@ -1,16 +1,15 @@
-import logging
-
-from .models import *
-from django.contrib.auth.models import User
 from rest_framework import serializers
+from .models import UserQuery
+from django.contrib.auth.models import User
 
-logger = logging.getLogger(__name__)
 
 class UserQuerySerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
     class Meta:
         model = UserQuery
-
         fields = (
+            'owner',
             'name',
             'query',
             'tablename',
@@ -18,5 +17,6 @@ class UserQuerySerializer(serializers.HyperlinkedModelSerializer):
             'is_public',
             'description'
         )
+        
 
 
