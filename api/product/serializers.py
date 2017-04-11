@@ -605,7 +605,8 @@ class CurrentSettingSerializer(serializers.ModelSerializer):
 
 class ProductContentSettingSerializer(serializers.ModelSerializer):
     display_name = serializers.SerializerMethodField()
-
+    unit = serializers.SerializerMethodField()
+    
     class Meta:
         model = ProductContentSetting
 
@@ -615,7 +616,8 @@ class ProductContentSettingSerializer(serializers.ModelSerializer):
             'pcs_setting',
             'pcs_is_visible',
             'pcs_order',
-            'display_name'
+            'display_name',
+            'unit'
         )
 
     def get_display_name(self, obj):
@@ -625,6 +627,14 @@ class ProductContentSettingSerializer(serializers.ModelSerializer):
             return association.pca_class_content.pcc_display_name
         else:
             return obj.pcs_content.pcn_column_name
+
+    def get_unit(self, obj):
+
+        association = obj.pcs_content.productcontentassociation_set.filter(pca_setting=obj.pcs_setting).first()
+        if association is not None:
+            return association.pca_class_content.pcc_unit
+        else:
+            return None
 
 
 class PermissionUserSerializer(serializers.ModelSerializer):

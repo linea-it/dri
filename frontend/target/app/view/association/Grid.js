@@ -12,7 +12,15 @@ Ext.define('Target.view.association.Grid', {
         {
             text     : 'Class Properties',
             dataIndex: 'pcc_display_name',
-            flex: 1
+            flex: 1,
+            renderer: function (value, meta, record) {
+                if (record.get('pcc_unit') != '') {
+                    return value + ' (' + record.get('pcc_unit') + ')' ;
+                } else {
+                    return value;
+                }
+
+            }
         }
     ],
 
