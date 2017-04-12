@@ -14,11 +14,9 @@ Ext.define('Target.view.preview.PreviewController', {
         component: {
             'targets-preview': {
                 changerecord: 'onChangeRecord'
-                // compareimages: 'onCompareImages',
-                // changeimages: 'onChangeImages'
             },
             'targets-visiomatic': {
-                changeimage: 'onChangeImage'
+                changeimage: 'showTarget'
             }
         },
         store: {
@@ -137,17 +135,48 @@ Ext.define('Target.view.preview.PreviewController', {
         }
     },
 
-    onChangeImage: function () {
+    showTarget: function () {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
             visiomatic = me.lookupReference('visiomatic'),
             fov = 0.05;
 
+        // Centraliza a imagem no target
         visiomatic.setView(
             object.get('_meta_ra'),
             object.get('_meta_dec'),
             fov);
+
+        // Checar se o catalogo representa single objects ou sistemas
+        if (vm.get('is_system')) {
+            me.targetIsSystem();
+        } else {
+            me.targetIsSingleObject();
+        }
+
+    },
+
+    targetIsSingleObject: function () {
+        // console.log('targetIsSingleObject');
+        //
+    },
+
+    targetIsSystem: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('currentRecord'),
+            visiomatic = me.lookupReference('visiomatic');
+
+        // TODO Descobrir a unidade do raio
+        var unit = 'arcmin';
+
+        // Desenhar Raio
+        visiomatic.drawRadius(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
+            object.get('_meta_radius'),
+            unit);
 
     },
 
@@ -157,59 +186,9 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = me.getViewModel(),
             object = vm.get('currentRecord');
 
-        visiomatic.setView(object.get('_meta_ra'), object.get('_meta_dec'), 0.05);
+        visiomatic.setView(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'), 0.05);
     }
-
-    // onComment: function (btn) {
-    //     // console.log('onComment(%o)', btn);
-
-    //     var me = this,
-    //         view = me.getView(),
-    //         vm = view.getViewModel(),
-    //         record = vm.get('currentRecord'),
-    //         catalog,
-    //         id;
-
-    //     if ((!record) || (!record.get('_meta_id'))) {
-    //         console.log('nenhum objeto selecionado');
-    //         return false;
-
-    //     }
-
-    //     catalog = record.get('_meta_catalog_id'),
-    //     id = record.get('_meta_id');
-
-    //     var comment = Ext.create('Ext.window.Window', {
-    //         title: 'Comments',
-    //         iconCls: 'x-fa fa-comments',
-    //         layout: 'fit',
-    //         closeAction: 'destroy',
-    //         constrainHeader:true,
-    //         width: 500,
-    //         height: 500,
-    //         items: [
-    //             {
-    //                 xtype: 'comments-object',
-    //                 listeners: {
-    //                     scope: this,
-    //                     changecomments: 'onChangeComments'
-    //                 }
-    //             }
-    //         ]
-    //     });
-
-    //     comment.down('comments-object').getController().loadComments(catalog, id);
-
-    //     comment.show();
-    // },
-
-    // onChangeComments: function (argument) {
-    //     // console.log('onChangeComments');
-
-    //     var me = this,
-    //         view = me.getView();
-
-    //     view.fireEvent('changeinobject');
-    // }
 
 });

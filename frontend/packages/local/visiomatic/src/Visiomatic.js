@@ -93,6 +93,16 @@ Ext.define('visiomatic.Visiomatic', {
             channelLabelMatch: '[ugrizY]'
         },
 
+        // Draw Radius Path Options http://leafletjs.com/reference-1.0.3.html#path
+        radiusOptions: {
+            weight: 2, //largura da borda em pixel
+            opacity: 0.8, // transparencia da borda
+            fillOpacity: 0.01, // Transparencia nos marcadores.
+            color: '#2db92d', //Stroke color
+            dashArray: '5, 5, 1, 5', //A string that defines the stroke dash pattern.
+            interactive: false
+        },
+
         release: null,
         tag: null,
         dataset: null,
@@ -473,6 +483,78 @@ Ext.define('visiomatic.Visiomatic', {
     isReady: function () {
         return this.getReady();
 
+    },
+
+
+    /**
+     * Essa funcao e usada para densenhar o raio de um cluster
+     * ela esta separa para que o raio possa ser manipulado
+     * independente dos demais overlays
+     *
+     */
+    drawRadius: function (ra, dec, radius, unit, options) {
+
+        var me = this,
+            l = me.libL,
+            map = me.getMap(),
+            wcs = map.options.crs,
+            radiusOptions = me.getRadiusOptions(),
+            id = ra + '_' + dec,
+            path_options;
+
+        args = Ext.Object.merge(radiusOptions, options);
+
+        // Conversao de unidades
+        if (unit === 'arcmin') {
+            // Se estiver em minutos de arco dividir por 60
+            radius = radius / 60;
+        }
+        // TODO adicionar outras unidades
+
+        var features = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    id: id,
+                    properties: {},
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [ra, dec]
+                    }
+                }
+            ]
+        };
+
+        l.geoJson(features, {
+            coordsToLatLng: function (coords) {
+                if (wcs.forceNativeCelsys) {
+                    var latLng = wcs.eqToCelsys(l.latLng(coords[1], coords[0]));
+                    return new l.LatLng(latLng.lat, latLng.lng, coords[2]);
+                } else {
+                    return new l.LatLng(coords[1], coords[0], coords[2]);
+                }
+            },
+            pointToLayer: function (feature, latlng) {
+
+                path_options = Ext.Object.merge(radiusOptions, {
+                    majAxis: radius,
+                    minAxis: radius,
+                    posAngle: 90
+                });
+
+                // Usei ellipse por ja estar em degrees a funcao circulo
+                // estava em pixels
+                // usei o mesmo valor de raio para os lados da ellipse para
+                // gerar um circulo por ser um circulo o angulo tanto faz.
+                l.ellipse(
+                    l.latLng(dec, ra),
+                    path_options).addTo(map);
+
+            }
+        }).addTo(map);
+
+        // TODO adicionar um return com a layer para que possa ser gerenciada fora do visiomatic.
     }
 
 });
