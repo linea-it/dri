@@ -156,28 +156,20 @@ Ext.define('Target.view.preview.PreviewController', {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
-            visiomatic = me.lookupReference('visiomatic'),
-            fov = 0.05;
+            visiomatic = me.lookupReference('visiomatic');
 
         // Centraliza a imagem no target
-        visiomatic.setView(
-            object.get('_meta_ra'),
-            object.get('_meta_dec'),
-            fov);
+        me.onCenterTarget();
     },
 
     targetIsSystem: function () {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
-            visiomatic = me.lookupReference('visiomatic'),
-            fov = 0.10;
+            visiomatic = me.lookupReference('visiomatic');
 
         // Centraliza a imagem no target
-        visiomatic.setView(
-            object.get('_meta_ra'),
-            object.get('_meta_dec'),
-            fov);
+        me.onCenterTarget();
 
         // TODO Descobrir a unidade do raio
         var unit = 'arcmin';
@@ -191,15 +183,21 @@ Ext.define('Target.view.preview.PreviewController', {
 
     },
 
-    onCenterTarget: function (visiomatic) {
+    onCenterTarget: function () {
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
             vm = me.getViewModel(),
-            object = vm.get('currentRecord');
+            object = vm.get('currentRecord'),
+            fov = 0.05;
+
+        if (vm.get('is_system')) {
+            fov = 0.10;
+        }
 
         visiomatic.setView(
             object.get('_meta_ra'),
-            object.get('_meta_dec'), 0.05);
+            object.get('_meta_dec'),
+            fov);
     }
 
 });
