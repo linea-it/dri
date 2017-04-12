@@ -139,14 +139,8 @@ Ext.define('Target.view.preview.PreviewController', {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
-            visiomatic = me.lookupReference('visiomatic'),
-            fov = 0.05;
+            visiomatic = me.lookupReference('visiomatic');
 
-        // Centraliza a imagem no target
-        visiomatic.setView(
-            object.get('_meta_ra'),
-            object.get('_meta_dec'),
-            fov);
 
         // Checar se o catalogo representa single objects ou sistemas
         if (vm.get('is_system')) {
@@ -159,14 +153,31 @@ Ext.define('Target.view.preview.PreviewController', {
 
     targetIsSingleObject: function () {
         // console.log('targetIsSingleObject');
-        //
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('currentRecord'),
+            visiomatic = me.lookupReference('visiomatic'),
+            fov = 0.05;
+
+        // Centraliza a imagem no target
+        visiomatic.setView(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
+            fov);
     },
 
     targetIsSystem: function () {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
-            visiomatic = me.lookupReference('visiomatic');
+            visiomatic = me.lookupReference('visiomatic'),
+            fov = 0.10;
+
+        // Centraliza a imagem no target
+        visiomatic.setView(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
+            fov);
 
         // TODO Descobrir a unidade do raio
         var unit = 'arcmin';
