@@ -55,11 +55,11 @@ class BaseWrapper():
         return count
 
     def get_tablename(self, schema, table):
-
-        if schema is not None or schema is not '':
-            tablename = '%s.%s' % (schema, table)
-        else:
+        if not schema or schema == '':
             tablename = table
+        else:
+            tablename = '%s.%s' % (schema, table)
+
 
         return tablename
 
