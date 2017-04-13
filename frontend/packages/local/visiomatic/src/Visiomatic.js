@@ -44,6 +44,7 @@ Ext.define('visiomatic.Visiomatic', {
         enableCatalogs: true,
         availableCatalogs: [
             'Y3A1',
+            'Y1A1',
             'GALEX_AIS',
             '2MASS',
             'AllWISE',
@@ -155,6 +156,38 @@ Ext.define('visiomatic.Visiomatic', {
                 properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
                 units: [],
                 objurl: 'http://' + host + '/dri/apps/explorer/#coadd/Y3A1_COADD_OBJECT_SUMMARY/{id}',
+                draw: function (feature, latlng) {
+                    return me.libL.ellipse(latlng, {
+                        majAxis: feature.properties.items[5] / 3600.0,
+                        minAxis: feature.properties.items[6] / 3600.0,
+                        posAngle: 90 - feature.properties.items[7],
+                        // Path Options http://leafletjs.com/reference-1.0.3.html#path
+                        weight: 1, //largura da borda em pixel
+                        opacity: 0.5, // transparencia da borda
+                        fillOpacity: 0.01 // Transparencia nos marcadores.
+                    });
+                }
+            });
+
+            me.libL.Catalog.Y1A1 = me.libL.extend({}, me.libL.Catalog, {
+                name: 'Y1A1',
+                attribution: 'Des Y1A1 COADD OBJECT',
+                color: 'blue',
+                maglim: 23.0,
+                service: 'ScienceServer',
+                regionType: 'box',
+                authenticate: 'csrftoken',
+                url: 'http://' + host + '/dri/api/visiomatic/coadd_objects/' +
+                '?mime=csv' +
+                '&source=y1a1_coadd_objects' +
+                '&columns=COADD_OBJECTS_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y,A_IMAGE,B_IMAGE,THETA_IMAGE' +
+                '&coordinate={lng},{lat}' +
+                '&bounding={dlng},{dlat}' +
+                '&maglim={maglim}' +
+                '&limit=2000',
+                properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
+                units: [],
+                objurl: 'http://' + host + '/dri/apps/explorer/#coadd/y1a1_coadd_objects/{id}',
                 draw: function (feature, latlng) {
                     return me.libL.ellipse(latlng, {
                         majAxis: feature.properties.items[5] / 3600.0,

@@ -243,7 +243,7 @@ class VisiomaticCoaddObjects(ViewSet):
         # tablename
         # Verifica se a tabela existe
         if not db.table_exists(catalog.tbl_schema, catalog.tbl_name):
-            raise Exception("Table or view  %.%s does not exist" % (catalog.tbl_schema, catalog.tbl_name))
+            raise Exception("Table or view  %s.%s does not exist" % (catalog.tbl_schema, catalog.tbl_name))
 
         # Parametros de Paginacao
         limit = request.query_params.get('limit', 1000)
