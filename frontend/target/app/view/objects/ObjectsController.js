@@ -471,7 +471,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.wizard = Ext.create('Ext.window.Window', {
             title: 'Settings Wizard',
             layout: 'fit',
-            closable: false,
+            closable: true,
             closeAction: 'destroy',
             width: 880,
             height: 620,
@@ -482,7 +482,8 @@ Ext.define('Target.view.objects.ObjectsController', {
                 currentCatalog: currentCatalog,
                 listeners: {
                     scope: me,
-                    finish: 'onFinishWizard'
+                    finish: 'onFinishWizard',
+                    close: 'onFinishWizard'
                 }
             }]
         });

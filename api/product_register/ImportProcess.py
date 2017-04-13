@@ -201,6 +201,7 @@ class Import():
             con = CatalogDB(db=database)
             self.db = con.wrapper
 
+
         # Verifica se a tabela existe
         if not self.db.table_exists(data.get('schema', None), data.get('table')):
             raise Exception("Table or view  %s does not exist" % data.get('table'))
@@ -262,7 +263,9 @@ class Import():
                 self.product_tag(product, data.get('fields'), add_release)
 
             # Registar as colunas do catalogo
-            self.register_catalog_content(product, created)
+            self.register_catalog_content(product, data, created)
+
+
 
             return True
         else:
@@ -280,7 +283,7 @@ class Import():
                 acls.append(cls.pcl_name)
             raise Exception('It is class is not available. these are available: %s' % (', '.join(acls)))
 
-    def register_catalog_content(self, catalog, created):
+    def register_catalog_content(self, catalog, data, created):
         """
         Registra todas as colunas de um catalogo,
         em caso de update remove todas as colunas do catalogo e adiciona novamente.
@@ -306,49 +309,57 @@ class Import():
                     pcn_column_name=column
                 )
 
-        self.product_content_association(catalog, created)
+        self.product_content_association(catalog, data, created)
 
-    def product_content_association(self, product, created):
-        # Se o produto for da classe coadd_objects fazer a associacao de colunas
-        if product.prd_class.pcl_name == 'coadd_objects':
+    def product_content_association(self, product, data, created):
 
-            if not created:
-                # Apaga todas as associacoes para inserir novamente.
-                ProductContentAssociation.objects.filter(pca_product=product).delete()
+        meta = list()
 
-            # propriedades a serem associadas
-            meta = list([
-                dict({'property': 'coadd_object_id', 'ucd': 'meta.id;meta.main'}),
-                dict({'property': 'ra', 'ucd': 'pos.eq.ra;meta.main'}),
-                dict({'property': 'dec', 'ucd': 'pos.eq.dec;meta.main'}),
-                dict({'property': 'a_image', 'ucd': 'phys.size.smajAxis;instr.det;meta.main'}),
-                dict({'property': 'b_image', 'ucd': 'phys.size.sminAxis;instr.det;meta.main'}),
-                # dict({'property': 'theta_image', 'ucd': 'pos.posAng;instr.det;meta.main'}),
-            ])
+        if 'association' in data:
+            for p in data.get("association"):
+                if ('property' in p and p.get('property') is not None) and ('ucd' in p and p.get('ucd') is not None):
+                    meta.append(p)
+        else:
+            # Se o produto for da classe coadd_objects fazer a associacao de colunas
+            #  Tem um diferenca que o Y1A1 a coluna coadd_object tem outro nome
+            if product.prd_class.pcl_name == 'coadd_objects':
+                # propriedades a serem associadas
+                meta = list([
+                    dict({'property': 'coadd_object_id', 'ucd': 'meta.id;meta.main'}),
+                    dict({'property': 'ra', 'ucd': 'pos.eq.ra;meta.main'}),
+                    dict({'property': 'dec', 'ucd': 'pos.eq.dec;meta.main'}),
+                    dict({'property': 'a_image', 'ucd': 'phys.size.smajAxis;instr.det;meta.main'}),
+                    dict({'property': 'b_image', 'ucd': 'phys.size.sminAxis;instr.det;meta.main'}),
+                    dict({'property': 'theta_j2000', 'ucd': 'pos.posAng;instr.det;meta.main'}),
+                ])
 
-            for p in meta:
-                # para cada propriedade a ser associada
-                property = p.get('property')
+        # Se for um update do produto
+        if not created:
+            # Apaga todas as associacoes para inserir novamente.
+            ProductContentAssociation.objects.filter(pca_product=product).delete()
 
-                try:
-                    # recuperar content do produto
+        for p in meta:
+            # para cada propriedade a ser associada
+            property = p.get('property')
 
-                    pc = ProductContent.objects.get(pcn_product_id=product, pcn_column_name__iexact=property)
+            try:
+                # recuperar content do produto
+                pc = ProductContent.objects.get(pcn_product_id=product, pcn_column_name__iexact=property)
 
-                    # recuperar class content
-                    # Todas as propriedades que comuns a todas as classes + as propriedades expecificas da classe.
-                    cc = ProductClassContent.objects.filter(
-                        Q(pcc_ucd__iexact=p.get('ucd')),
-                        Q(pcc_class=product.prd_class) | Q(pcc_class__isnull=True)).get()
+                # recuperar class content
+                # Todas as propriedades que comuns a todas as classes + as propriedades expecificas da classe.
+                cc = ProductClassContent.objects.filter(
+                    Q(pcc_ucd__iexact=p.get('ucd')),
+                    Q(pcc_class=product.prd_class) | Q(pcc_class__isnull=True)).get()
 
-                    association = ProductContentAssociation.objects.create(
-                        pca_product=product,
-                        pca_class_content=cc,
-                        pca_product_content=pc
-                    )
+                association = ProductContentAssociation.objects.create(
+                    pca_product=product,
+                    pca_class_content=cc,
+                    pca_product_content=pc
+                )
 
-                except:
-                    raise Exception("it was not possible to create association for this column: %s" % property)
+            except:
+                raise Exception("it was not possible to create association for this column: %s" % property)
 
     def product_release(self, product, releases):
         for r in releases:
