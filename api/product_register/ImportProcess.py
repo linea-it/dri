@@ -330,7 +330,7 @@ class Import():
                     dict({'property': 'dec', 'ucd': 'pos.eq.dec;meta.main'}),
                     dict({'property': 'a_image', 'ucd': 'phys.size.smajAxis;instr.det;meta.main'}),
                     dict({'property': 'b_image', 'ucd': 'phys.size.sminAxis;instr.det;meta.main'}),
-                    # dict({'property': 'theta_image', 'ucd': 'pos.posAng;instr.det;meta.main'}),
+                    dict({'property': 'theta_j2000', 'ucd': 'pos.posAng;instr.det;meta.main'}),
                 ])
 
         # Se for um update do produto
