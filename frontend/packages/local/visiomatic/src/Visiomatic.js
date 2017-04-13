@@ -192,7 +192,7 @@ Ext.define('visiomatic.Visiomatic', {
                     return me.libL.ellipse(latlng, {
                         majAxis: feature.properties.items[5] / 3600.0,
                         minAxis: feature.properties.items[6] / 3600.0,
-                        posAngle: 90 - feature.properties.items[7],
+                        posAngle: feature.properties.items[7],
                         // Path Options http://leafletjs.com/reference-1.0.3.html#path
                         weight: 1, //largura da borda em pixel
                         opacity: 0.5, // transparencia da borda
