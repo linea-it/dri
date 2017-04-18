@@ -393,7 +393,6 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
             'pca_product',
             'pca_class_content',
             'pca_product_content',
-            'pca_setting',
         )
 
         read_only_fields = ('id')

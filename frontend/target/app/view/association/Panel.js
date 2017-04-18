@@ -20,9 +20,7 @@ Ext.define('Target.view.association.Panel', {
     viewModel: 'association',
 
     config: {
-        product: null,
-        setting: null,
-        currentSetting: null
+        product: null
     },
 
     layout: 'border',
@@ -71,7 +69,6 @@ Ext.define('Target.view.association.Panel', {
                         {
                             xtype: 'common-searchfield',
                             minSearch: 1,
-                            // disabled: true,
                             listeners: {
                                 'search': 'onSearchAssociation',
                                 'cancel': 'onCancelAssociation'
@@ -180,11 +177,11 @@ Ext.define('Target.view.association.Panel', {
     },
 
     setProduct: function (product) {
-
         this.product = product;
 
         if (product) {
             this.fireEvent('changeproduct', product, this);
+
         }
     },
 
@@ -201,30 +198,14 @@ Ext.define('Target.view.association.Panel', {
 
     },
 
-    setCurrentSetting: function (currentSetting) {
-
-        this.currentSetting = currentSetting;
-
-        this.getViewModel().set('currentSetting', currentSetting);
-
-        this.setSetting(currentSetting.get('cst_setting'));
-
-        this.setProduct(currentSetting.get('cst_product'));
-
-        this.fireEvent('changesetting', currentSetting);
-
-        this.checkFinish();
-    },
-
     checkFinish: function () {
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('displayContents'),
-            currentSetting = vm.get('currentSetting');
+            product = me.getProduct();
 
         store.addFilter([
-            {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
-            {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
+            {'property': 'pcn_product_id', value: product}
         ]);
         store.load({
             callback: function () {

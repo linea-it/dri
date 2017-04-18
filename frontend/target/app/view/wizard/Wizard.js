@@ -38,17 +38,17 @@ Ext.define('Target.view.wizard.Wizard', {
     items: [
         {
             id: 'card-0',
+            xtype: 'targets-association',
+            title: 'Association',
+            disabled: true
+        },
+        {
+            id: 'card-1',
             xtype: 'targets-settings',
             title: 'Setting',
             bind: {
                 product: '{product}'
             }
-        },
-        {
-            id: 'card-1',
-            xtype: 'targets-association',
-            title: 'Association',
-            disabled: true
         },
         {
             id: 'card-2',

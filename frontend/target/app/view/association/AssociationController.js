@@ -131,7 +131,6 @@ Ext.define('Target.view.association.AssociationController', {
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
-            setting = vm.get('setting'),
             productAssociations = vm.getStore('productassociation');
 
         // Carregar as propriedades associadas.
@@ -139,16 +138,13 @@ Ext.define('Target.view.association.AssociationController', {
             {
                 property: 'pca_product',
                 value: currentCatalog.get('id')
-            },
-            {
-                property: 'pca_setting',
-                value: setting
             }
         ]);
     },
 
     onLoadProductAssociation: function () {
         var me = this,
+            view = me.getView(),
             refs = me.getReferences(),
             grid = refs.productcontentgrid,
             vm = me.getViewModel(),
@@ -178,6 +174,8 @@ Ext.define('Target.view.association.AssociationController', {
         },this);
 
         grid.setLoading(false);
+
+        view.checkFinish();
 
     },
 
@@ -242,7 +240,6 @@ Ext.define('Target.view.association.AssociationController', {
 
     onCellDrop: function (target, dragData) {
         var me = this,
-            vm = me.getViewModel(),
             tRecord = target.record,
             previousValues = tRecord.previousValues.pcc_display_name,
             record;
@@ -253,8 +250,7 @@ Ext.define('Target.view.association.AssociationController', {
             record = Ext.create('Target.model.Association', {
                 pca_product: tRecord.get('pca_product'),
                 pca_class_content: dragData.record.get('id'),
-                pca_product_content: tRecord.get('pca_product_content'),
-                pca_setting: vm.get('setting')
+                pca_product_content: tRecord.get('pca_product_content')
             });
 
             this.addAssociation(record, tRecord);

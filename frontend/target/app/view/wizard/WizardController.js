@@ -79,7 +79,7 @@ Ext.define('Target.view.wizard.WizardController', {
             view = me.getView(),
             association = view.down('targets-association');
 
-        association.setCurrentSetting(currentSetting);
+        association.setProduct(currentSetting.get('cst_product'));
 
     },
 
