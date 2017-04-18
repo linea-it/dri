@@ -148,22 +148,27 @@ Ext.define('Target.view.association.Panel', {
                 }
             ],
             buttons: [
+                // {
+                //     text: 'Previous',
+                //     scope: me,
+                //     handler: function () {
+                //         this.fireEvent('previous');
+                //     }
+                // },
+                // {
+                //     text: 'Next',
+                //     scope: me,
+                //     handler: function () {
+                //         this.fireEvent('next');
+                //     }
+                // },
                 {
-                    text: 'Previous',
+                    text: 'Cancel',
                     scope: me,
-                    handler: function () {
-                        this.fireEvent('previous');
-                    }
+                    handler: 'onFinish'
                 },
                 {
-                    text: 'Next',
-                    scope: me,
-                    handler: function () {
-                        this.fireEvent('next');
-                    }
-                },
-                {
-                    text: 'Finish',
+                    text: 'OK',
                     itemId: 'AssociationBtnFinish',
                     ui: 'soft-green',
                     scope: me,
@@ -177,19 +182,18 @@ Ext.define('Target.view.association.Panel', {
     },
 
     setProduct: function (product) {
-        this.product = product;
-
         if (product) {
+            this.product = product;
             this.fireEvent('changeproduct', product, this);
 
         }
     },
 
-    setSetting: function (setting) {
-        this.setting = setting;
-
-        this.getViewModel().set('setting', setting);
-
+    setCatalog: function (catalog) {
+        if (catalog) {
+            this.product = catalog.get('id');
+            this.fireEvent('changeCatalog', catalog, this);
+        }
     },
 
     onFinish: function () {

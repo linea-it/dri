@@ -11,7 +11,8 @@ Ext.define('Target.view.association.AssociationController', {
     listen: {
         component: {
             'targets-association': {
-                changeproduct: 'onChangeProduct'
+                changeproduct: 'onChangeProduct',
+                changeCatalog: 'onChangeCatalog'
             }
         },
         store: {
@@ -64,6 +65,15 @@ Ext.define('Target.view.association.AssociationController', {
             me.loadClassContents();
         }
 
+    },
+
+    onChangeCatalog: function (catalog) {
+        var me = this,
+            vm = me.getViewModel();
+
+        vm.set('currentCatalog', catalog);
+
+        me.loadClassContents();
     },
 
     loadClassContents: function () {
