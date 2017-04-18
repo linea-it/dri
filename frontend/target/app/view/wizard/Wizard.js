@@ -110,9 +110,6 @@ Ext.define('Target.view.wizard.Wizard', {
             next = parseInt(i, 10) + incr;
 
         l.setActiveItem(next);
-
-        // me.down('#card-prev').setDisabled(next === 0);
-        // me.down('#card-next').setDisabled(next === 2);
     },
 
     enableTabs: function () {
@@ -120,13 +117,15 @@ Ext.define('Target.view.wizard.Wizard', {
             vm = me.getViewModel(),
             currentSetting = vm.get('currentSetting');
 
+        console.log('association deve ser habilitado pela permissao do usuario');
+
         if ((currentSetting.get('id') > 0) && (currentSetting.get('editable'))) {
-            me.down('targets-association').enable();
+            // me.down('targets-association').enable();
             me.down('targets-columns').enable();
             me.down('targets-permission').enable();
 
         } else {
-            me.down('targets-association').disable();
+            // me.down('targets-association').disable();
             me.down('targets-columns').disable();
             me.down('targets-permission').disable();
         }

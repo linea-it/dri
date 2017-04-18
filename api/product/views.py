@@ -195,13 +195,19 @@ class ProductContentViewSet(viewsets.ModelViewSet):
                 flag_content_settings = True
 
 
-        print("flag_content_settings", flag_content_settings)
-
         qdisplay_name = request.query_params.get('display_name', None)
 
         queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id)
 
         contents = list()
+
+        # Esse array define uma ordem padrao para as propriedades que podem ser associadas, sera usado caso nao tenha
+        # uma configuracao para a coluna
+        # ID, RA, Dec, Radius(Arcmin)
+        ucds = list(["meta.id;meta.main", "pos.eq.ra;meta.main", "pos.eq.dec;meta.main", "phys.angSize;src"])
+
+        default_order = 99999
+
         for row in queryset:
 
             contentSetting = None
@@ -228,24 +234,37 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
                 'content_setting': None,
                 'is_visible': True,
-                'order': 999999
+                'order': default_order
             })
 
-            if flag_content_settings > 0:
+            if flag_content_settings:
                 content.update({'is_visible': False})
 
 
             if association is not None:
+
+                # Adicionar ordem a uma propriedade associada caso nao tenha settings
+                ucd = association.pca_class_content.pcc_ucd
+                if ucd is not None:
+                    if ucd not in ucds:
+                        ucds.append(ucd)
+
+                    order = ucds.index(ucd)
+
+                else:
+                    order = default_order
+
                 content.update({
                     'class_id': association.pca_class_content.pk,
                     'display_name': association.pca_class_content.pcc_display_name,
-                    'ucd': association.pca_class_content.pcc_ucd,
+                    'ucd': ucd,
                     'unit': association.pca_class_content.pcc_unit,
                     'reference': association.pca_class_content.pcc_reference,
                     'mandatory': association.pca_class_content.pcc_mandatory,
 
                     # Substitui o display name pelo nome da associacao
-                    'display_name': association.pca_class_content.pcc_display_name
+                    'display_name': association.pca_class_content.pcc_display_name,
+                    'order': order
                 })
 
                 try:

@@ -112,7 +112,9 @@ Ext.define('Target.view.objects.ObjectsController', {
                     me.configurePanelBySettings();
 
                 } else {
-                    me.showAlertSetting();
+                    console.log('Carregar as propriedades default do catalogo');
+                    // me.showAlertSetting();
+                    me.configurePanelWithoutSettings();
                 }
             }
         });
@@ -127,6 +129,26 @@ Ext.define('Target.view.objects.ObjectsController', {
         store.addFilter([
             {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
             {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
+        ]);
+
+        store.load({
+            callback: function () {
+                me.onLoadProductContent(store);
+
+            }
+        });
+    },
+
+    configurePanelWithoutSettings: function () {
+        console.log('configurePanelWithoutSettings');
+
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog'),
+            store = vm.getStore('displayContents');
+
+        store.addFilter([
+            {'property': 'pcn_product_id', value: currentCatalog.get('id')}
         ]);
 
         store.load({
