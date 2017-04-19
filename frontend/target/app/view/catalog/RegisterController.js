@@ -133,6 +133,7 @@ Ext.define('Target.view.catalog.RegisterController', {
                 xtype: 'targets-association',
                 listeners: {
                     scope: me,
+                    cancel: 'onCloseAssociation',
                     finish: 'onFinishAssociation',
                     close: 'onCloseAssociation'
                 }
@@ -145,10 +146,15 @@ Ext.define('Target.view.catalog.RegisterController', {
 
     },
 
-    onFinishAssociation: function () {
-        var me = this;
+    onFinishAssociation: function (panel) {
+        var me = this,
+            catalog = panel.getProduct(),
+            hash;
 
         me.onCloseAssociation();
+
+        hash = 'cv/' + catalog;
+        me.redirectTo(hash);
 
     },
 

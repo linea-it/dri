@@ -165,7 +165,7 @@ Ext.define('Target.view.association.Panel', {
                 {
                     text: 'Cancel',
                     scope: me,
-                    handler: 'onFinish'
+                    handler: 'onCancel'
                 },
                 {
                     text: 'OK',
@@ -196,9 +196,21 @@ Ext.define('Target.view.association.Panel', {
         }
     },
 
-    onFinish: function () {
+    getCatalog: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
 
+        return currentCatalog;
+    },
+
+    onFinish: function () {
         this.fireEvent('finish', this);
+
+    },
+
+    onCancel: function () {
+        this.fireEvent('cancel', this);
 
     },
 
