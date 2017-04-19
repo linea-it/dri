@@ -401,6 +401,21 @@ class CoaddObjects(ViewSet):
 
         coadd_object_id = request.query_params.get('coadd_object_id', None)
 
+
+        # Antes de criar os filtros para a query verificar se o catalogo tem associacao e descobrir as
+        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=catalog.pk)
+        serializer = AssociationSerializer(queryset, many=True)
+        associations = serializer.data
+        properties = dict()
+        # propriedades corretas
+        for property in associations:
+            if property.get('pcc_ucd'):
+                properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
+
+        property_id = properties.get("meta.id;meta.main", None)
+        property_ra = properties.get("pos.eq.ra;meta.main", None)
+        property_dec = properties.get("pos.eq.dec;meta.main", None)
+
         filters = list()
         if coordinate and bounding:
             ra = float(coordinate[0])
@@ -412,12 +427,12 @@ class CoaddObjects(ViewSet):
                     "operator": "AND",
                     "conditions": list([
                         dict({
-                            "property": "RA",
+                            "property": property_ra,
                             "operator": "between",
                             "value": list([ra - bra, ra + bra])
                         }),
                         dict({
-                            "property": "DEC",
+                            "property": property_dec,
                             "operator": "between",
                             "value": list([dec - bdec, dec + bdec])
                         })
@@ -426,6 +441,7 @@ class CoaddObjects(ViewSet):
             )
 
         if maglim is not None:
+            # TODO a magnitude continua com a propriedade hardcoded
             maglim = float(maglim)
             mag = 'MAG_AUTO_I'
             filters.append(
@@ -439,7 +455,7 @@ class CoaddObjects(ViewSet):
         if coadd_object_id is not None:
             filters.append(
                 dict({
-                    "property": 'COADD_OBJECT_ID',
+                    "property": property_id,
                     "operator": '=',
                     "value": int(coadd_object_id)
                 })
