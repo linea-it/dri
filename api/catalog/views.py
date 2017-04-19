@@ -479,4 +479,16 @@ class CoaddObjects(ViewSet):
             order_by=ordering
         )
 
+        for row in rows:
+            row.update({
+                "_meta_id": row.get(properties.get("meta.id;meta.main"))
+            })
+            row.update({
+                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main"))
+            })
+            row.update({
+                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main"))
+            })
+
+
         return Response(rows)
