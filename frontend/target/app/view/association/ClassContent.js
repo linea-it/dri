@@ -23,12 +23,12 @@ Ext.define('Target.view.association.ClassContent', {
 
                     }
                 }
-            ],
-            viewConfig: {
-                getRowClass: function (record) {
-                    return record.get('pcc_mandatory') === true ? 'row-bold-unit-mandatory' : '';
-                }
-            }
+            ]
+            // viewConfig: {
+            //     getRowClass: function (record) {
+            //         return record.get('pcc_mandatory') === true ? 'row-bold-unit-mandatory' : '';
+            //     }
+            // }
         });
 
         me.callParent(arguments);

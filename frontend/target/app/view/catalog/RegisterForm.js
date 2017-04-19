@@ -52,8 +52,8 @@ Ext.define('Target.view.catalog.RegisterForm', {
                     name: 'display_name',
                     fieldLabel: 'Name',
                     regex: /^[a-z0-9-_\s]+$/i,
-                    regexText: 'Please use only letters and numbers separated by spaces \' \', minus sign \'-\' or underscore \'_\'.',
-                    value: 'TESTE REGISTRO'
+                    regexText: 'Please use only letters and numbers separated by spaces \' \', minus sign \'-\' or underscore \'_\'.'
+                    // value: 'TESTE REGISTRO'
                 },
                 {
                     xtype: 'combobox',
@@ -65,8 +65,8 @@ Ext.define('Target.view.catalog.RegisterForm', {
                     editable: false,
                     bind: {
                         store: '{productclass}'
-                    },
-                    value: 'galaxy_clusters'
+                    }
+                    // value: 'galaxy_clusters'
                 },
                 {
                     xtype: 'textfield',
@@ -84,8 +84,8 @@ Ext.define('Target.view.catalog.RegisterForm', {
                     emptyText: 'schema.table',
                     regex: /[/\S+/]+[\\.][/\S+/]+/gi,
                     regexText: 'Please use schema.table',
-                    allowBlank: false,
-                    value: 'brportal.e_1484_2718'
+                    allowBlank: false
+                    // value: 'brportal.e_1484_2718'
                 },
                 // {
                 //     xtype: 'textfield',
