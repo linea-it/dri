@@ -283,7 +283,7 @@ Ext.define('Target.view.objects.Grid', {
 
         if (typeof(value) === 'number') {
 
-            if (value > 10.000) {
+            if (value > 10000) {
                 // Se for maior que 10.000 usar notacao exponencial
                 value = value.toExponential(1);
 
