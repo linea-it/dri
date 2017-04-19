@@ -105,26 +105,19 @@ Ext.define('Target.view.settings.Settings', {
             ],
             buttons: [
                 {
-                    itemId: 'card-next',
-                    text: 'Next',
+                    text: 'Cancel',
                     scope: me,
                     handler: function () {
-                        this.fireEvent('next');
-                    },
-                    bind: {
-                        disabled: '{!selectedSetting}',
-                        hidden: '{!selectedSetting.editable}'
+                        this.fireEvent('finish', this);
                     }
                 },
                 {
-                    text: 'Finish',
-                    itemId: 'SettingBtnFinish',
+                    text: 'OK',
                     scope: me,
                     ui: 'soft-green',
                     handler: function () {
                         this.fireEvent('finish', this);
-                    },
-                    hidden: true
+                    }
                 }
             ]
         });
@@ -145,8 +138,6 @@ Ext.define('Target.view.settings.Settings', {
 
         this.getViewModel().set('currentSetting', currentSetting);
 
-        this.checkFinish();
-
     },
 
     onLoadComboSetting: function (store) {
@@ -166,29 +157,6 @@ Ext.define('Target.view.settings.Settings', {
     selectSetting: function (currentSetting) {
         this.setCurrentSetting(currentSetting);
         this.fireEvent('selectsetting', currentSetting);
-
-    },
-
-    checkFinish: function () {
-        var me = this,
-            vm = me.getViewModel(),
-            store = vm.getStore('displayContents'),
-            currentSetting = vm.get('currentSetting');
-
-        store.addFilter([
-            {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
-            {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
-        ]);
-        store.load({
-            callback: function () {
-
-                if (this.check_ucds()) {
-                    me.down('#SettingBtnFinish').setVisible(true);
-                } else {
-                    me.down('#SettingBtnFinish').setVisible(false);
-                }
-            }
-        });
 
     }
 

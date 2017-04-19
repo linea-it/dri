@@ -109,6 +109,7 @@ class Map(Table):
     mpa_ordering = models.CharField(
         max_length=8, verbose_name='Ordering')
 
+
 class Mask(Table):
     msk_filter = models.CharField(
         max_length=1, verbose_name='Filter')
@@ -122,7 +123,6 @@ class ProductContent(models.Model):
 
     def __str__(self):
         return self.pcn_column_name
-
 
 
 class ProductSetting(models.Model):
@@ -143,6 +143,7 @@ class ProductSetting(models.Model):
     def __str__(self):
         return self.cst_display_name
 
+
 class CurrentSetting(models.Model):
     cst_product = models.ForeignKey(
         Product, on_delete=models.CASCADE, verbose_name='Product')
@@ -152,9 +153,9 @@ class CurrentSetting(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
 
-
     def __str__(self):
         return str(self.pk)
+
 
 class ProductContentAssociation(models.Model):
     pca_product = models.ForeignKey(
@@ -167,9 +168,6 @@ class ProductContentAssociation(models.Model):
         ProductContent, on_delete=models.CASCADE, verbose_name='Product Content', default=None
     )
 
-    pca_setting = models.ForeignKey(
-        ProductSetting, on_delete=models.CASCADE, verbose_name='Setting', default=None, null=True, blank=True
-    )
 
 class ProductContentSetting(models.Model):
     pcs_content = models.ForeignKey(
@@ -185,8 +183,8 @@ class ProductContentSetting(models.Model):
         null=True, blank=True, verbose_name='Order'
     )
 
-class CutOutJob(models.Model):
 
+class CutOutJob(models.Model):
     status_job = (
         ('st', 'start'),
         ('bs', 'beforeSubmit'),
@@ -197,11 +195,11 @@ class CutOutJob(models.Model):
     cjb_product = models.ForeignKey(
         Product, on_delete=models.CASCADE, verbose_name='Product', default=None
     )
-    
+
     owner = models.ForeignKey(
-       settings.AUTH_USER_MODEL,
-       on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
-    
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+
     cjb_display_name = models.CharField(
         max_length=20, verbose_name='Name')
 
@@ -219,16 +217,17 @@ class CutOutJob(models.Model):
 
     cjb_Blacklist = models.CharField(
         max_length=10, verbose_name='Blacklist', null=True)
-    
+
     cjb_status = models.CharField(
         max_length=2,
         choices=status_job,
-        default='st', 
+        default='st',
         verbose_name='Status'
-        )
-    
+    )
+
     cjb_job_id = models.CharField(
         max_length=1024, verbose_name='Job ID')
+
 
 class CutOut(models.Model):
     cjb_cutout_job = models.ForeignKey(
@@ -265,12 +264,14 @@ class Workgroup(models.Model):
     def __str__(self):
         return str(self.wgp_workgroup)
 
+
 class WorkgroupUser(models.Model):
     wgu_workgroup = models.ForeignKey(
         Workgroup, on_delete=models.CASCADE, verbose_name='Workgroup')
     wgu_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE, verbose_name='User')
+
 
 class Permission(models.Model):
     prm_product = models.ForeignKey(
@@ -281,5 +282,3 @@ class Permission(models.Model):
     prm_workgroup = models.ForeignKey(
         Workgroup,
         on_delete=models.CASCADE, verbose_name='Workgroup', null=True, blank=True)
-
-

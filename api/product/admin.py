@@ -82,7 +82,7 @@ class ProductContentAdmin(admin.ModelAdmin):
 
 
 class ProductContentAssociationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'pca_product', 'pca_class_content', 'pca_product_content', 'pca_setting')
+    list_display = ('id', 'pca_product', 'pca_class_content', 'pca_product_content',)
     search_fields = ('pca_product__prd_display_name', 'pca_product__prd_name')
 
 

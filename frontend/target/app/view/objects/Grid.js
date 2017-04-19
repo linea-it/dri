@@ -282,16 +282,21 @@ Ext.define('Target.view.objects.Grid', {
             aValue, decimal;
 
         if (typeof(value) === 'number') {
-            if (!isNaN(value) && value.toString().indexOf('.') != -1) {
 
-                aValue = value.toString().split('.');
-                decimal = aValue[1];
+            if (value > 10.000) {
+                // Se for maior que 10.000 usar notacao exponencial
+                value = value.toExponential(1);
 
-                if (decimal.length <= precision) {
-                    value =  value.toFixed(precision);
+            } else {
+                // Se for float
+                if (value.toString().indexOf('.') != -1) {
+                    aValue = value.toString().split('.');
+                    decimal = aValue[1];
+                    // se tiver mais casas decimais
+                    if (decimal.length > precision) {
+                        value =  value.toFixed(precision);
 
-                } else {
-                    value = value.toExponential(1);
+                    }
                 }
             }
         }
