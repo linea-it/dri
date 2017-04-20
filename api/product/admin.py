@@ -76,7 +76,7 @@ class MaskAdmin(admin.ModelAdmin):
 
 
 class ProductContentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'pcn_product_id', 'pcn_column_name',)
+    list_display = ('id', 'pcn_product_id', 'pcn_column_name', 'pcn_ucd')
     list_display_links = ('pcn_column_name',)
     search_fields = ('pcn_column_name',)
 

@@ -120,6 +120,9 @@ class ProductContent(models.Model):
         Product, on_delete=models.CASCADE, verbose_name='Product')
     pcn_column_name = models.CharField(
         max_length=256, verbose_name='Column Name')
+    pcn_ucd = models.CharField(
+        max_length=128, verbose_name='UCD', help_text='The standard unified content descriptor.', null=True, blank=True
+    )
 
     def __str__(self):
         return self.pcn_column_name
