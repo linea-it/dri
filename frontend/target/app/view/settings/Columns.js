@@ -68,7 +68,14 @@ Ext.define('Target.view.settings.Columns', {
                                 {
                                     text: 'Available Properties',
                                     dataIndex: 'display_name',
-                                    flex: 1
+                                    flex: 1,
+                                    renderer: function (value, meta, record) {
+                                        if ((record.get('unit') !== null)  && (record.get('unit') !== '')) {
+                                            return value + ' (' + record.get('unit') + ')' ;
+                                        } else {
+                                            return value;
+                                        }
+                                    }
                                 }
                             ],
                             tbar: [
@@ -96,7 +103,14 @@ Ext.define('Target.view.settings.Columns', {
                                 {
                                     text: 'Displayed Properties',
                                     dataIndex: 'display_name',
-                                    flex: 1
+                                    flex: 1,
+                                    renderer: function (value, meta, record) {
+                                        if ((record.get('unit') !== null)  && (record.get('unit') !== '')) {
+                                            return value + ' (' + record.get('unit') + ')' ;
+                                        } else {
+                                            return value;
+                                        }
+                                    }
                                 }
                             ],
                             viewConfig: {
@@ -130,21 +144,14 @@ Ext.define('Target.view.settings.Columns', {
             ],
             buttons: [
                 {
-                    text: 'Previous',
+                    text: 'Cancel',
                     scope: me,
                     handler: function () {
-                        this.fireEvent('previous');
+                        this.fireEvent('finish', this);
                     }
                 },
                 {
-                    text: 'Next',
-                    scope: me,
-                    handler: function () {
-                        this.fireEvent('next');
-                    }
-                },
-                {
-                    text: 'Finish',
+                    text: 'Ok',
                     ui: 'soft-green',
                     scope: me,
                     handler: function () {

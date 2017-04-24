@@ -1015,6 +1015,7 @@ $include-common-store-surveys: dynamic(true);;
 $include-common-store-tags: dynamic(true);;
 $include-common-store-tiles: dynamic(true);;
 $include-common-store-tutorials: dynamic(true);;
+$include-common-store-userssamegroup: dynamic(true);;
 $include-visiomatic-interface: dynamic(true);;
 $include-visiomatic-visiomatic: dynamic(true);;
 $include-visiomatic-visiomaticcontroller: dynamic(true);;

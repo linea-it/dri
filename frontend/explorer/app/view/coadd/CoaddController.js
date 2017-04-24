@@ -71,20 +71,25 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             data = coaddObject.data;
 
             for (var property in data) {
+                var prop = property.toLowerCase();
 
-                properties.add([
-                    [property.toLowerCase(), data[property]]
-                ]);
+                // nao incluir as propriedades _meta
+                if (prop.indexOf('_meta_') === -1) {
+                    properties.add([
+                        [property.toLowerCase(), data[property]]
+                    ]);
+                }
             }
 
             vm.set('coaddObject', data);
+
         }
 
         grid.setStore(properties);
 
 
         // descobrir as tiles do objeto usando as coordenadas do objeto
-        position = String(data.RA) + ',' + String(data.DEC);
+        position = String(data._meta_ra) + ',' + String(data._meta_dec);
 
         datasets.addFilter([{
             property: 'position',
@@ -162,8 +167,8 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             fov = 0.05;
 
         visiomatic.setView(
-            object.RA,
-            object.DEC,
+            object._meta_ra,
+            object._meta_dec,
             fov);
 
         // map = visiomatic.getMap();
