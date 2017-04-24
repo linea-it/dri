@@ -10,4 +10,5 @@ enum34==1.1.2
 requests==2.10.0
 six==1.10.0
 sqlparse==0.1.19
-oauthlib==2.0.2
+django-allauth==0.31.0
+
