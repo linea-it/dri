@@ -19,10 +19,14 @@ Ext.define('common.footer.Footer', {
 
     cls: 'des-portal-footer',
 
-    height: 6,
+    height: 24,
 
-    layout: {
-        type: 'hbox',
+    // layout: {
+    //     type: 'hbox',
+    //     align: 'middle'
+    // },
+    layout:{
+        pack: 'center',
         align: 'middle'
     },
 
@@ -38,11 +42,11 @@ Ext.define('common.footer.Footer', {
         //     html: 'Science Server',
         //     cls: 'des-portal-footer-text'
         // },
-        // {
-        //     xtype: 'tbtext',
-        //     html: 'LIneA - Laboratório Interinstitucional de e-Astronomia',
-        //     cls: 'des-portal-footer-text'
-        // },
+        {
+            xtype: 'tbtext',
+            html: 'LIneA - Laboratório Interinstitucional de e-Astronomia',
+            cls: 'des-portal-footer-text'
+        }
         // '->',
         // {
         //     xtype: 'button',
@@ -52,7 +56,7 @@ Ext.define('common.footer.Footer', {
         //     bind: {
         //         href: '{about}'
         //     }
-        // },
+        // }
         // {
         //     xtype: 'button',
         //     text: 'Contact',

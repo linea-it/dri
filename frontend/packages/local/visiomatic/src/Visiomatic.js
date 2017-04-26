@@ -44,6 +44,7 @@ Ext.define('visiomatic.Visiomatic', {
         enableCatalogs: true,
         availableCatalogs: [
             'Y3A1',
+            'Y1A1',
             'GALEX_AIS',
             '2MASS',
             'AllWISE',
@@ -93,6 +94,16 @@ Ext.define('visiomatic.Visiomatic', {
             channelLabelMatch: '[ugrizY]'
         },
 
+        // Draw Radius Path Options http://leafletjs.com/reference-1.0.3.html#path
+        radiusOptions: {
+            weight: 2, //largura da borda em pixel
+            opacity: 0.8, // transparencia da borda
+            fillOpacity: 0.01, // Transparencia nos marcadores.
+            color: '#2db92d', //Stroke color
+            dashArray: '5, 5, 1, 5', //A string that defines the stroke dash pattern.
+            interactive: false
+        },
+
         release: null,
         tag: null,
         dataset: null,
@@ -108,7 +119,10 @@ Ext.define('visiomatic.Visiomatic', {
         // Shift Visiomatic/Aladin
         enableShift: true,
 
-        ready: false
+        ready: false,
+
+        // Layer usada para exibir ou ocultar o raio de um cluster
+        lradius: null
     },
 
     bind: {
@@ -150,6 +164,38 @@ Ext.define('visiomatic.Visiomatic', {
                         majAxis: feature.properties.items[5] / 3600.0,
                         minAxis: feature.properties.items[6] / 3600.0,
                         posAngle: 90 - feature.properties.items[7],
+                        // Path Options http://leafletjs.com/reference-1.0.3.html#path
+                        weight: 1, //largura da borda em pixel
+                        opacity: 0.5, // transparencia da borda
+                        fillOpacity: 0.01 // Transparencia nos marcadores.
+                    });
+                }
+            });
+
+            me.libL.Catalog.Y1A1 = me.libL.extend({}, me.libL.Catalog, {
+                name: 'Y1A1',
+                attribution: 'Des Y1A1 COADD OBJECT',
+                color: 'blue',
+                maglim: 23.0,
+                service: 'ScienceServer',
+                regionType: 'box',
+                authenticate: 'csrftoken',
+                url: 'http://' + host + '/dri/api/visiomatic/coadd_objects/' +
+                '?mime=csv' +
+                '&source=y1a1_coadd_objects' +
+                '&columns=COADD_OBJECTS_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y,A_IMAGE,B_IMAGE,THETA_IMAGE' +
+                '&coordinate={lng},{lat}' +
+                '&bounding={dlng},{dlat}' +
+                '&maglim={maglim}' +
+                '&limit=2000',
+                properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
+                units: [],
+                objurl: 'http://' + host + '/dri/apps/explorer/#coadd/y1a1_coadd_objects/{id}',
+                draw: function (feature, latlng) {
+                    return me.libL.ellipse(latlng, {
+                        majAxis: feature.properties.items[5] / 3600.0,
+                        minAxis: feature.properties.items[6] / 3600.0,
+                        posAngle: feature.properties.items[7],
                         // Path Options http://leafletjs.com/reference-1.0.3.html#path
                         weight: 1, //largura da borda em pixel
                         opacity: 0.5, // transparencia da borda
@@ -473,6 +519,102 @@ Ext.define('visiomatic.Visiomatic', {
     isReady: function () {
         return this.getReady();
 
+    },
+
+
+    /**
+     * Essa funcao e usada para densenhar o raio de um cluster
+     * ela esta separa para que o raio possa ser manipulado
+     * independente dos demais overlays
+     *
+     */
+    drawRadius: function (ra, dec, radius, unit, options) {
+        var me = this,
+            l = me.libL,
+            map = me.getMap(),
+            wcs = map.options.crs,
+            radiusOptions = me.getRadiusOptions(),
+            id = ra + '_' + dec,
+            path_options,
+            lradius, args;
+
+        if (me.getLradius()) {
+            map.removeLayer(me.getLradius());
+            me.setLradius(null);
+        }
+
+        args = Ext.Object.merge(radiusOptions, options);
+
+        // Conversao de unidades
+        if (unit === 'arcmin') {
+            // Se estiver em minutos de arco dividir por 60
+            radius = radius / 60;
+        }
+        // TODO adicionar outras unidades
+
+        var features = {
+            type: 'FeatureCollection',
+            features: [
+                {
+                    type: 'Feature',
+                    id: id,
+                    properties: {},
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [ra, dec]
+                    }
+                }
+            ]
+        };
+
+        lradius = l.geoJson(features, {
+            coordsToLatLng: function (coords) {
+                if (wcs.forceNativeCelsys) {
+                    var latLng = wcs.eqToCelsys(l.latLng(coords[1], coords[0]));
+                    return new l.LatLng(latLng.lat, latLng.lng, coords[2]);
+                } else {
+                    return new l.LatLng(coords[1], coords[0], coords[2]);
+                }
+            },
+            pointToLayer: function (feature, latlng) {
+
+                path_options = Ext.Object.merge(radiusOptions, {
+                    majAxis: radius,
+                    minAxis: radius,
+                    posAngle: 90
+                });
+
+                // Usei ellipse por ja estar em degrees a funcao circulo
+                // estava em pixels
+                // usei o mesmo valor de raio para os lados da ellipse para
+                // gerar um circulo por ser um circulo o angulo tanto faz.
+                return l.ellipse(
+                    l.latLng(dec, ra),
+                    path_options);
+
+            }
+        });
+
+        me.setLradius(lradius);
+
+        map.addLayer(lradius);
+
+        return lradius;
+    },
+
+    showHideRadius: function (state) {
+        var me = this,
+            map = me.getMap(),
+            lradius = me.getLradius();
+
+        if (lradius !== null) {
+            if (state) {
+                map.addLayer(lradius);
+
+            } else {
+                map.removeLayer(lradius);
+            }
+        }
     }
 
 });

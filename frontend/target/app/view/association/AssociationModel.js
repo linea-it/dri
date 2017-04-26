@@ -18,15 +18,7 @@ Ext.define('Target.view.association.AssociationModel', {
         currentCatalog: {
             type: 'Target.model.Catalog',
             create: true
-        },
-        currentSetting: {
-            type: 'Target.model.CurrentSetting',
-            create: true
         }
-    },
-
-    data: {
-        setting: null
     },
 
     stores: {

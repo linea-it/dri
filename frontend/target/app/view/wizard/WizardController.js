@@ -10,19 +10,15 @@ Ext.define('Target.view.wizard.WizardController', {
         component: {
             'targets-settings': {
                 selectsetting: 'onSelectSetting',
-                next: 'showNext',
                 finish: 'finishWizard'
             },
             'targets-association': {
                 activate: 'onActiveAssociation',
-                previous: 'showPrevious',
-                next: 'showNext',
-                finish: 'finishWizard'
+                finish: 'finishWizard',
+                cancel: 'finishWizard'
             },
             'targets-columns': {
                 activate: 'onActiveColumns',
-                previous: 'showPrevious',
-                next: 'showNext',
                 finish: 'finishWizard'
             },
             'targets-cutoutjob': {
@@ -33,39 +29,15 @@ Ext.define('Target.view.wizard.WizardController', {
             },
             'targets-permission': {
                 activate: 'onActivePermission',
-                previous: 'showPrevious',
-                //next: 'showNext'
                 finish: 'finishWizard'
             }
         }
     },
 
-    showNext: function () {
-        this.doCardNavigation(1);
-    },
-
-    showPrevious: function () {
-        this.doCardNavigation(-1);
-    },
-
-    doCardNavigation: function (incr) {
-        var me = this,
-            view = me.getView(),
-            l = view.getLayout(),
-            i = l.activeItem.id.split('card-')[1],
-            next = parseInt(i, 10) + incr;
-
-        l.setActiveItem(next);
-
-    },
-
     onSelectSetting: function (setting) {
         var me = this,
             vm = me.getViewModel(),
-            view = me.getView(),
-            l = view.getLayout(),
-            association = view.down('targets-association'),
-            oldCurrentSetting = vm.get('currentSetting');
+            view = me.getView();
 
         vm.set('currentSetting', setting);
 
@@ -78,17 +50,6 @@ Ext.define('Target.view.wizard.WizardController', {
 
     },
 
-    onActiveAssociation: function () {
-        var me = this,
-            vm = me.getViewModel(),
-            currentSetting = vm.get('currentSetting'),
-            view = me.getView(),
-            association = view.down('targets-association');
-
-        association.setCurrentSetting(currentSetting);
-
-    },
-
     onActiveColumns: function () {
         var me = this,
             vm = me.getViewModel(),
@@ -97,6 +58,17 @@ Ext.define('Target.view.wizard.WizardController', {
             columns = view.down('targets-columns');
 
         columns.setCurrentSetting(currentSetting);
+
+    },
+
+    onActiveAssociation: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog'),
+            view = me.getView(),
+            association = view.down('targets-association');
+
+        association.setCatalog(currentCatalog);
 
     },
 

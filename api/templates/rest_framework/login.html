@@ -4,4 +4,11 @@
 
 {% block branding %}
 <h3 style="margin: 0 0 20px;">Science Server</h3>
+
+{% load socialaccount %}
+{% providers_media_js %}
+
+<a href="{% provider_login_url "facebook" method="js_sdk" %}" class="btn btn-primary btn-block">Facebook Connect</a>
+<br/>
+
 {% endblock %}

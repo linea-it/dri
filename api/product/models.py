@@ -109,6 +109,7 @@ class Map(Table):
     mpa_ordering = models.CharField(
         max_length=8, verbose_name='Ordering')
 
+
 class Mask(Table):
     msk_filter = models.CharField(
         max_length=1, verbose_name='Filter')
@@ -119,10 +120,12 @@ class ProductContent(models.Model):
         Product, on_delete=models.CASCADE, verbose_name='Product')
     pcn_column_name = models.CharField(
         max_length=256, verbose_name='Column Name')
+    pcn_ucd = models.CharField(
+        max_length=128, verbose_name='UCD', help_text='The standard unified content descriptor.', null=True, blank=True
+    )
 
     def __str__(self):
         return self.pcn_column_name
-
 
 
 class ProductSetting(models.Model):
@@ -143,6 +146,7 @@ class ProductSetting(models.Model):
     def __str__(self):
         return self.cst_display_name
 
+
 class CurrentSetting(models.Model):
     cst_product = models.ForeignKey(
         Product, on_delete=models.CASCADE, verbose_name='Product')
@@ -152,9 +156,9 @@ class CurrentSetting(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
 
-
     def __str__(self):
         return str(self.pk)
+
 
 class ProductContentAssociation(models.Model):
     pca_product = models.ForeignKey(
@@ -167,9 +171,6 @@ class ProductContentAssociation(models.Model):
         ProductContent, on_delete=models.CASCADE, verbose_name='Product Content', default=None
     )
 
-    pca_setting = models.ForeignKey(
-        ProductSetting, on_delete=models.CASCADE, verbose_name='Setting', default=None, null=True, blank=True
-    )
 
 class ProductContentSetting(models.Model):
     pcs_content = models.ForeignKey(
@@ -185,10 +186,9 @@ class ProductContentSetting(models.Model):
         null=True, blank=True, verbose_name='Order'
     )
 
+
 # ------------------------------ Cutouts ------------------------------
-
 class CutOutJob(models.Model):
-
     status_job = (
         # Jobs que ainda nao foram enviados
         ('st', 'Start'),
@@ -206,11 +206,11 @@ class CutOutJob(models.Model):
 
     cjb_product = models.ForeignKey(
         Product, on_delete=models.CASCADE, verbose_name='Product')
-    
+
     owner = models.ForeignKey(
-       settings.AUTH_USER_MODEL,
-       on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
-    
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+
     cjb_display_name = models.CharField(
         max_length=20, verbose_name='Name')
 
@@ -228,30 +228,33 @@ class CutOutJob(models.Model):
 
     cjb_Blacklist = models.CharField(
         max_length=10, verbose_name='Blacklist', null=True, blank=True)
-    
+
     cjb_status = models.CharField(
         max_length=2,
         choices=status_job,
-        default='st', 
+        default='st',
         verbose_name='Status'
-        )
-    
+    )
+
     cjb_job_id = models.CharField(
         max_length=1024, verbose_name='Job ID')
 
-
     def __str__(self):
         return str(self.cjb_display_name)
+
 
 class Cutout(models.Model):
     cjb_cutout_job = models.ForeignKey(
         CutOutJob, on_delete=models.CASCADE, verbose_name='Cutout Job', default=None)
     ctt_object_id = models.CharField(
-        max_length=5, verbose_name='Object ID', null=True, blank=True, help_text='The association is used to know which column will be considered as id.')
+        max_length=5, verbose_name='Object ID', null=True, blank=True,
+        help_text='The association is used to know which column will be considered as id.')
     ctt_object_ra = models.CharField(
-        max_length=5, verbose_name='RA', null=True, blank=True, help_text='RA in degrees, the association will be used to identify the column')
+        max_length=5, verbose_name='RA', null=True, blank=True,
+        help_text='RA in degrees, the association will be used to identify the column')
     ctt_object_dec = models.CharField(
-        max_length=5, verbose_name='Dec', null=True, blank=True, help_text='Dec in degrees, the association will be used to identify the column')
+        max_length=5, verbose_name='Dec', null=True, blank=True,
+        help_text='Dec in degrees, the association will be used to identify the column')
     ctt_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
     ctt_thumbname = models.CharField(
@@ -275,8 +278,10 @@ class Cutout(models.Model):
     def __str__(self):
         return str(self.pk)
 
-    # ctt_original_url = models.CharField(
-    #     max_length=5, verbose_name='Url to download the file on the cutouts server')
+        # ctt_original_url = models.CharField(
+        #     max_length=5, verbose_name='Url to download the file on the cutouts server')
+
+
 # ------------------------------ Permissoes por Produtos ------------------------------
 class Workgroup(models.Model):
     wgp_workgroup = models.CharField(
@@ -288,12 +293,14 @@ class Workgroup(models.Model):
     def __str__(self):
         return str(self.wgp_workgroup)
 
+
 class WorkgroupUser(models.Model):
     wgu_workgroup = models.ForeignKey(
         Workgroup, on_delete=models.CASCADE, verbose_name='Workgroup')
     wgu_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE, verbose_name='User')
+
 
 class Permission(models.Model):
     prm_product = models.ForeignKey(
@@ -304,5 +311,3 @@ class Permission(models.Model):
     prm_workgroup = models.ForeignKey(
         Workgroup,
         on_delete=models.CASCADE, verbose_name='Workgroup', null=True, blank=True)
-
-

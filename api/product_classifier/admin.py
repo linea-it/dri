@@ -22,7 +22,7 @@ class ContentCategoryAdmin(admin.ModelAdmin):
 
 
 class ProductClassContentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'pcc_name', 'pcc_display_name', 'pcc_category', 'pcc_ucd', 'pcc_unit', 'pcc_reference',
+    list_display = ('id', 'pcc_name', 'pcc_display_name', 'pcc_unit', 'pcc_category', 'pcc_ucd', 'pcc_reference',
                     'pcc_mandatory', 'pcc_class',)
     list_display_links = ('pcc_name', 'pcc_display_name')
     search_fields = ('pcc_name', 'pcc_display_name', 'pcc_ucd')

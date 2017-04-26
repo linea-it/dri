@@ -14,11 +14,9 @@ Ext.define('Target.view.preview.PreviewController', {
         component: {
             'targets-preview': {
                 changerecord: 'onChangeRecord'
-                // compareimages: 'onCompareImages',
-                // changeimages: 'onChangeImages'
             },
             'targets-visiomatic': {
-                changeimage: 'onChangeImage'
+                changeimage: 'showTarget'
             }
         },
         store: {
@@ -108,6 +106,15 @@ Ext.define('Target.view.preview.PreviewController', {
             me.changeImage(null);
         }
 
+
+        // Configurar a barra de botoes
+        if (vm.get('is_system')) {
+            refs.btnRadius.setVisible(true);
+
+        } else {
+            refs.btnRadius.setVisible(false);
+        }
+
     },
 
     onChangeDataset: function (combo) {
@@ -137,79 +144,83 @@ Ext.define('Target.view.preview.PreviewController', {
         }
     },
 
-    onChangeImage: function () {
+    showTarget: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('currentRecord'),
+            visiomatic = me.lookupReference('visiomatic');
+
+
+        // Checar se o catalogo representa single objects ou sistemas
+        if (vm.get('is_system')) {
+            me.targetIsSystem();
+        } else {
+            me.targetIsSingleObject();
+        }
+
+    },
+
+    targetIsSingleObject: function () {
+        // console.log('targetIsSingleObject');
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('currentRecord'),
+            visiomatic = me.lookupReference('visiomatic');
+
+        // Centraliza a imagem no target
+        me.onCenterTarget();
+    },
+
+    targetIsSystem: function () {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
             visiomatic = me.lookupReference('visiomatic'),
+            refs = me.getReferences(),
+            btnRadius = refs.btnRadius;
+
+        // Centraliza a imagem no target
+        me.onCenterTarget();
+
+        // TODO Descobrir a unidade do raio
+        var unit = 'arcmin';
+
+        // Desenhar Raio
+        visiomatic.drawRadius(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
+            object.get('_meta_radius'),
+            unit);
+
+        visiomatic.showHideRadius(btnRadius.pressed);
+
+    },
+
+    onCenterTarget: function () {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic'),
+            vm = me.getViewModel(),
+            object = vm.get('currentRecord'),
             fov = 0.05;
+
+        if (vm.get('is_system')) {
+            fov = 0.10;
+        }
 
         visiomatic.setView(
             object.get('_meta_ra'),
             object.get('_meta_dec'),
             fov);
-
     },
 
-    onCenterTarget: function (visiomatic) {
+    showHideRadius: function (btn, state) {
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
             vm = me.getViewModel(),
-            object = vm.get('currentRecord');
+            object = vm.get('currentRecord'),
+            fov = 0.05;
 
-        visiomatic.setView(object.get('_meta_ra'), object.get('_meta_dec'), 0.05);
+        visiomatic.showHideRadius(state);
     }
-
-    // onComment: function (btn) {
-    //     // console.log('onComment(%o)', btn);
-
-    //     var me = this,
-    //         view = me.getView(),
-    //         vm = view.getViewModel(),
-    //         record = vm.get('currentRecord'),
-    //         catalog,
-    //         id;
-
-    //     if ((!record) || (!record.get('_meta_id'))) {
-    //         console.log('nenhum objeto selecionado');
-    //         return false;
-
-    //     }
-
-    //     catalog = record.get('_meta_catalog_id'),
-    //     id = record.get('_meta_id');
-
-    //     var comment = Ext.create('Ext.window.Window', {
-    //         title: 'Comments',
-    //         iconCls: 'x-fa fa-comments',
-    //         layout: 'fit',
-    //         closeAction: 'destroy',
-    //         constrainHeader:true,
-    //         width: 500,
-    //         height: 500,
-    //         items: [
-    //             {
-    //                 xtype: 'comments-object',
-    //                 listeners: {
-    //                     scope: this,
-    //                     changecomments: 'onChangeComments'
-    //                 }
-    //             }
-    //         ]
-    //     });
-
-    //     comment.down('comments-object').getController().loadComments(catalog, id);
-
-    //     comment.show();
-    // },
-
-    // onChangeComments: function (argument) {
-    //     // console.log('onChangeComments');
-
-    //     var me = this,
-    //         view = me.getView();
-
-    //     view.fireEvent('changeinobject');
-    // }
 
 });

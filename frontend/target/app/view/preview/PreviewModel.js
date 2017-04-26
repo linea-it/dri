@@ -15,6 +15,10 @@ Ext.define('Target.view.preview.PreviewModel', {
 
     ],
 
+    data: {
+        is_system: false
+    },
+
     links: {
         currentRecord: {
             type: 'Target.model.Object',

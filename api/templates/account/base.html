@@ -1,0 +1,45 @@
+{% load staticfiles %}
+{% load i18n %}
+{% load rest_framework %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block head_title %}{% endblock %}</title>
+    {% block style %}
+      {% block bootstrap_theme %}
+        <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap.min.css" %}"/>
+        <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/bootstrap-tweaks.css" %}"/>
+      {% endblock %}
+
+      <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/prettify.css" %}"/>
+      <link rel="stylesheet" type="text/css" href="{% static "rest_framework/css/default.css" %}"/>
+    {% endblock %}
+
+    {% block extra_head %}
+    {% endblock %}
+  </head>
+  <body class="container">
+
+    {% block body %}
+    {% if messages %}
+	{% for message in messages %}
+	<div class="alert alert-info">{{message}}</div>
+	{% endfor %}   
+    {% endif %}
+
+  <div class="container-fluid" style="margin-top: 30px">
+    <div class="row-fluid">
+      <div class="well" style="width: 800px; margin-left: auto; margin-right: auto">    
+    {% block content %}
+    {% endblock %}
+      </div>
+    </div>
+  </div>
+
+    {% endblock %}
+
+    {% block extra_body %}
+    {% endblock %}
+  </body>
+</html>

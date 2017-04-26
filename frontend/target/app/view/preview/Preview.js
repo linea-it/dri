@@ -47,19 +47,30 @@ Ext.define('Target.view.preview.Preview', {
             listeners: {
                 change: 'onChangeDataset'
             }
-        }, {
+        },
+        {
             xtype: 'textfield',
             width: 120,
             readOnly: true,
             bind: {
                 value: '{currentDataset.tli_tilename}'
             }
-        }
-        ,{
+        },
+        {
             xtype: 'button',
             iconCls: 'x-fa fa-crosshairs',
             tooltip: 'Center',
             handler: 'onCenterTarget'
+        },
+        {
+            xtype: 'button',
+            reference: 'btnRadius',
+            iconCls: 'x-fa fa-circle-o',
+            tooltip: 'Show System Radius',
+            enableToggle: true,
+            toggleHandler: 'showHideRadius',
+            pressed: true,
+            hidden: true
         }
     ],
 
@@ -75,6 +86,9 @@ Ext.define('Target.view.preview.Preview', {
 
         // Setar o catalogo
         vm.set('currentCatalog', catalog);
+
+        // Declarando se o Catalogo exibe single objects ou sistemas.
+        vm.set('is_system', catalog.get('pcl_is_system'));
 
         // disparar evento before load
         me.fireEvent('changerecord', record, me);

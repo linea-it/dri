@@ -110,13 +110,23 @@ Ext.define('Target.view.objects.Grid', {
 
                     // Tratamento Ra e Dec caso possua colunas com estes ucds
                     // Formata a coluna para decimal com 4 casas.
-                    if ((record.get('ucd') == 'pos.eq.ra;meta.main') ||
-                        (record.get('ucd') == 'pos.eq.dec;meta.main')) {
+                    if ((record.get('ucd') === 'pos.eq.ra;meta.main') ||
+                        (record.get('ucd') === 'pos.eq.dec;meta.main')) {
 
                         column.width = 90;
                         column.xtype = 'numbercolumn';
                         column.format = '0.000';
+                        column.renderer = null;
                     }
+
+                    // Coluna Radius
+                    if (record.get('ucd') === 'phys.angSize;src') {
+                        column.width = 80;
+                        column.xtype = 'numbercolumn';
+                        column.format = '0.000';
+                        column.renderer = null;
+                    }
+
 
                     // Se tiver a coluna id habilita as colunas de rating e reject
                     if (record.get('ucd') == 'meta.id;meta.main') {
@@ -267,10 +277,27 @@ Ext.define('Target.view.objects.Grid', {
     },
 
     formatNumber: function (value) {
-        if (typeof(value) === 'number') {
-            if (!isNaN(value) && value.toString().indexOf('.') != -1) {
 
-                value =  value.toFixed(3);
+        var precision = 3,
+            aValue, decimal;
+
+        if (typeof(value) === 'number') {
+
+            if (value > 10000) {
+                // Se for maior que 10.000 usar notacao exponencial
+                value = value.toExponential(1);
+
+            } else {
+                // Se for float
+                if (value.toString().indexOf('.') != -1) {
+                    aValue = value.toString().split('.');
+                    decimal = aValue[1];
+                    // se tiver mais casas decimais
+                    if (decimal.length > precision) {
+                        value =  value.toFixed(precision);
+
+                    }
+                }
             }
         }
 

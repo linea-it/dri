@@ -112,7 +112,8 @@ Ext.define('Target.view.objects.ObjectsController', {
                     me.configurePanelBySettings();
 
                 } else {
-                    me.showAlertSetting();
+                    me.configurePanelWithoutSettings();
+
                 }
             }
         });
@@ -137,6 +138,24 @@ Ext.define('Target.view.objects.ObjectsController', {
         });
     },
 
+    configurePanelWithoutSettings: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog'),
+            store = vm.getStore('displayContents');
+
+        store.addFilter([
+            {'property': 'pcn_product_id', value: currentCatalog.get('id')}
+        ]);
+
+        store.load({
+            callback: function () {
+                me.onLoadProductContent(store);
+
+            }
+        });
+    },
+
     onLoadProductContent: function (productContent) {
         var me = this,
             vm = me.getViewModel(),
@@ -149,69 +168,22 @@ Ext.define('Target.view.objects.ObjectsController', {
             objectsGrid.reconfigureGrid(productContent);
 
         } else {
-            if (currentSetting.get('id') > 0) {
+            if (!productContent.check_ucds()) {
                 Ext.MessageBox.show({
                     header: false,
                     closable: false,
                     msg: 'It is necessary to make association for property ID, RA and Dec.',
-                    buttons: Ext.MessageBox.OK,
-                    fn: function () {
-                        me.showWizard();
+                    buttons: Ext.MessageBox.OKCANCEL ,
+                    fn: function (btn) {
+                        if (btn === 'ok') {
+                            me.showAssociation();
+                        } else {
+                            me.redirectTo('home');
+                        }
                     }
                 });
-            } else {
-                me.showAlertSetting();
             }
-
         }
-    },
-
-    showAlertSetting: function () {
-        var me = this,
-            msg;
-
-        msg = '<p>' +
-            'This catalog needs to have its columns associated to a default set of properties.' +
-            '</br></br>' +
-            'When clicking OK, a Wizard will assist you on the process of associating columns and selecting the ones you want to display.' +
-            '</br></br>' +
-            'Association of ID, RA, and Dec is mandatory in order to display the targets.' + '</br>' +
-            'You will not be able to visualize your catalog without choosing a configuration.'  + '</br>' +
-            'You can create different configurations.'  + '</br>' +
-            'Configurations are specific to a given catalog.'  + '</br>' +
-            'But each catalog can have more than one configuration.'  + '</br>' +
-            'Configurations are set by a user, but you can also pick from a public configuration (if a colleague is also working with same catalog).' + '</p>';
-
-        // msg = '<p>' +
-        //     'É Necessario fazer uma configuração para visualizar este catalogo.' +
-        //     '</br></br>' +
-        //     'ao Clicar em Ok, sera exibido um Wizard que lhe ajudara ' +
-        //     'a fazer as configurações necessárias como associar as propriedades do seu catalogo com ' +
-        //     'propriedades comumente usadas para a mesma classe ou escolher as propriedades que deseja visualizar.' +
-        //     '</br></br>' +
-        //     'Neste Wizard você poderá escolher ou criar um conjunto de configurações.' + '</br>' +
-        //     'Dicas:' + '</br>' +
-        //     'As configurações são especificas por catalogos.' + '</br>' +
-        //     'Podem ser criadas mais de uma configuração para o mesmo catalogo.' + '</br>' +
-        //     'As configurações são por usuario mais é possivel escolher configurações que foram marcadas como publicas.' + '</br>' +
-        //     'Não é possivel visualizar o catalogo sem escolher uma configuração.' + '</br>' +
-        //     'É obrigatorio fazer associação para as propriedades ID, RA, Dec. </p>';
-
-        me.winAlertSetting = Ext.MessageBox.show({
-            header: false,
-            closable: false,
-            modal: true,
-            msg: msg,
-            buttons: Ext.MessageBox.OKCANCEL,
-            fn: function (btn) {
-                if (btn === 'ok') {
-                    me.showWizard();
-                } else {
-                    // Redirecionar para o home
-                    me.redirectTo('home');
-                }
-            }
-        });
     },
 
     reloadAssociation: function () {
@@ -229,8 +201,8 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             objectsGrid.setCatalogClassColumns(productAssociation);
         } else {
-            if (!this.wizard) {
-                me.showWizard();
+            if (!this.winAssociation) {
+                me.showAssociation();
             }
         }
     },
@@ -469,9 +441,9 @@ Ext.define('Target.view.objects.ObjectsController', {
             currentSetting = vm.get('currentSetting');
 
         me.wizard = Ext.create('Ext.window.Window', {
-            title: 'Settings Wizard',
+            title: 'Settings',
             layout: 'fit',
-            closable: false,
+            closable: true,
             closeAction: 'destroy',
             width: 880,
             height: 620,
@@ -479,10 +451,10 @@ Ext.define('Target.view.objects.ObjectsController', {
             items: [{
                 xtype: 'targets-wizard',
                 product: catalog,
-                currentCatalog: currentCatalog,
                 listeners: {
                     scope: me,
-                    finish: 'onFinishWizard'
+                    finish: 'onFinishWizard',
+                    close: 'onFinishWizard'
                 }
             }]
         });
@@ -490,6 +462,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         if (currentSetting.get('id') > 0) {
             me.wizard.down('targets-wizard').setCurrentSetting(currentSetting);
         }
+
+        me.wizard.down('targets-wizard').setCurrentCatalog(currentCatalog);
 
         me.wizard.show();
 
@@ -500,6 +474,52 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         this.loadCurrentSetting();
 
+    },
+
+    showAssociation: function () {
+        var me = this,
+            currentCatalog = me.getViewModel().get('currentCatalog');
+
+        me.winAssociation = Ext.create('Ext.window.Window', {
+            title: 'Association',
+            layout: 'fit',
+            closable: true,
+            closeAction: 'destroy',
+            width: 800,
+            height: 620,
+            modal:true,
+            items: [{
+                xtype: 'targets-association',
+                listeners: {
+                    scope: me,
+                    finish: 'onFinishAssociation',
+                    close: 'onFinishAssociation',
+                    cancel: 'onFinishAssociation'
+
+                }
+            }]
+        });
+
+        me.winAssociation.down('targets-association').setCatalog(currentCatalog);
+
+        me.winAssociation.show();
+
+    },
+
+    onFinishAssociation: function () {
+        var me = this;
+
+        me.onCloseAssociation();
+
+        me.loadCurrentSetting();
+    },
+
+    onCloseAssociation: function () {
+        var me = this;
+
+        if (me.winAssociation) {
+            me.winAssociation.close();
+        }
     },
 
     onBeforeDeactivate: function () {

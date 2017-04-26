@@ -6,7 +6,13 @@ Ext.define('Target.view.catalog.RegisterController', {
 
     alias: 'controller.register',
 
+    requires: [
+        'Target.store.Catalogs',
+        'Target.view.association.Panel'
+    ],
+
     winAddCatalog: null,
+    winAssociation: null,
 
     addCatalog: function () {
         var me = this,
@@ -19,6 +25,7 @@ Ext.define('Target.view.catalog.RegisterController', {
             values = form.getValues();
 
             name = values.display_name.split(' ').join('_');
+            name = name.toLowerCase().trim();
             release = values.release !== '' ? [values.release] : [];
             is_public = values.is_public === 'on' ? true : false;
 
@@ -30,7 +37,7 @@ Ext.define('Target.view.catalog.RegisterController', {
                 products: [{
                     type: 'catalog',
                     class: values.classname,
-                    name: name.toLowerCase().trim(),
+                    name: name,
                     display_name: values.display_name,
                     database: values.database,
                     schema: schema,
@@ -41,6 +48,8 @@ Ext.define('Target.view.catalog.RegisterController', {
                 }]
             };
 
+            view.setLoading(true);
+
             // Submit Catalog
             Ext.Ajax.request({
                 cors: true,
@@ -48,11 +57,15 @@ Ext.define('Target.view.catalog.RegisterController', {
                 url: '/dri/api/importexternalprocess/',
                 success: function () {
                     // Fechar a janela de registro
+                    view.setLoading(false);
                     view.close();
-                    Ext.toast('Data saved');
+
+                    // Exibir janela de associacao
+                    me.getAddedCatalog(name);
 
                 },
                 failure: function (response, opts) {
+                    view.setLoading(false);
                     // TODO MENSAGEM DE ERRO E FECHAR A JANELA
                     view.close();
                     Ext.MessageBox.show({
@@ -82,6 +95,75 @@ Ext.define('Target.view.catalog.RegisterController', {
         form.reset();
         view.close();
 
-    }
+    },
 
+    getAddedCatalog: function (name) {
+        var me = this,
+            store = Ext.create('Target.store.Catalogs',{}),
+            catalog;
+
+        store.filter({
+            property: 'prd_name',
+            value: name
+        });
+
+        store.load({
+            callback: function (records, operations, success) {
+                if ((success) && (records.length == 1)) {
+                    catalog = store.first();
+
+                    me.showAssociation(catalog);
+                }
+            }
+        });
+    },
+
+    showAssociation: function (catalog) {
+        var me = this;
+
+        me.winAssociation = Ext.create('Ext.window.Window', {
+            title: 'Association',
+            layout: 'fit',
+            closable: true,
+            closeAction: 'destroy',
+            width: 800,
+            height: 620,
+            modal:true,
+            items: [{
+                xtype: 'targets-association',
+                listeners: {
+                    scope: me,
+                    cancel: 'onCloseAssociation',
+                    finish: 'onFinishAssociation',
+                    close: 'onCloseAssociation'
+                }
+            }]
+        });
+
+        me.winAssociation.down('targets-association').setCatalog(catalog);
+
+        me.winAssociation.show();
+
+    },
+
+    onFinishAssociation: function (panel) {
+        var me = this,
+            catalog = panel.getProduct(),
+            hash;
+
+        me.onCloseAssociation();
+
+        hash = 'cv/' + catalog;
+        me.redirectTo(hash);
+
+    },
+
+    onCloseAssociation: function () {
+        var me = this;
+
+        if (me.winAssociation) {
+            me.winAssociation.close();
+        }
+
+    }
 });
