@@ -66,6 +66,17 @@
     }
   },
   {
+    "model": "common.filter",
+    "pk": 7,
+    "fields": {
+      "project": "DES",
+      "filter": "det",
+      "lambda_min": null,
+      "lambda_max": null,
+      "lambda_mean": null
+    }
+  },
+  {
     "model": "socialaccount.socialapp",
     "pk": 1,
     "fields": {

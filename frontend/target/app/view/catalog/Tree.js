@@ -459,14 +459,14 @@ Ext.define('Target.view.catalog.Tree', {
                                 console.log(me);
                                 values = Ext.getCmp('formcut').getValues();
                                 console.log(values);
-
                                 balacklist = null;
                                 band = null;
 
                                 if (values.jobType == 'single') {
-                                    blacklist = values.blacklist;
+                                    balacklist = values.blacklist;
                                     band = values.band;
                                 }
+
                                 var myStore = Ext.create('Ext.data.Store', {
                                     // model: 'User',
                                     proxy: {
@@ -481,16 +481,15 @@ Ext.define('Target.view.catalog.Tree', {
                                 });
 
                                 myStore.add ({
-                                    'cjb_product': 20,
+                                    'cjb_product': 48,
                                     'cjb_display_name': values.name,
                                     'cjb_status': 'st',
                                     'cjb_job_id': '---',
                                     'cjb_xsize': values.xsize,
                                     'cjb_ysize': values.ysize,
                                     'cjb_job_type': values.jobType,
-                                    'cjb_band': band,
-                                    'cjb_Blacklist': blacklist
-                                    // 'cjb_status': 'st'
+                                    'cjb_band': band
+                                    // 'cjb_Blacklist': blacklist
                                 });
                                 console.log(myStore);
                                 myStore.sync();
