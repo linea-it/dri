@@ -420,13 +420,13 @@ class ProductContentSettingViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id', 'order',)
 
-class CutOutJobViewSet(viewsets.ModelViewSet):
+class CutoutJobViewSet(viewsets.ModelViewSet):
     """
 
     """
-    queryset = CutOutJob.objects.select_related().all()
+    queryset = CutOutJob.objects.all()
 
-    serializer_class = CutOutJobSerializer
+    serializer_class = CutoutJobSerializer
 
     ordering_fields = ('id',)
 

@@ -31,11 +31,18 @@ ALLOWED_HOSTS = []
 
 BASE_APPS = [
     'django.contrib.admin',
+    'django.contrib.sites',
+
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.facebook',
 ]
 
 THIRD_PARTY_APPS = [
@@ -147,7 +154,8 @@ STATIC_URL = '/static/'
 
 AUTHENTICATION_BACKENDS = (
     'common.authentication.NcsaBackend',
-    'django.contrib.auth.backends.ModelBackend'
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
 
@@ -170,3 +178,5 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
     ),
 }
+
+SITE_ID = 1

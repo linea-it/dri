@@ -61,6 +61,16 @@ Ext.define('Target.view.preview.Preview', {
             iconCls: 'x-fa fa-crosshairs',
             tooltip: 'Center',
             handler: 'onCenterTarget'
+        },
+        {
+            xtype: 'button',
+            reference: 'btnRadius',
+            iconCls: 'x-fa fa-circle-o',
+            tooltip: 'Show System Radius',
+            enableToggle: true,
+            toggleHandler: 'showHideRadius',
+            pressed: true,
+            hidden: true
         }
     ],
 

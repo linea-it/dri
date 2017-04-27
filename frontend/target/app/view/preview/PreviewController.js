@@ -106,6 +106,15 @@ Ext.define('Target.view.preview.PreviewController', {
             me.changeImage(null);
         }
 
+
+        // Configurar a barra de botoes
+        if (vm.get('is_system')) {
+            refs.btnRadius.setVisible(true);
+
+        } else {
+            refs.btnRadius.setVisible(false);
+        }
+
     },
 
     onChangeDataset: function (combo) {
@@ -166,7 +175,9 @@ Ext.define('Target.view.preview.PreviewController', {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
-            visiomatic = me.lookupReference('visiomatic');
+            visiomatic = me.lookupReference('visiomatic'),
+            refs = me.getReferences(),
+            btnRadius = refs.btnRadius;
 
         // Centraliza a imagem no target
         me.onCenterTarget();
@@ -180,6 +191,8 @@ Ext.define('Target.view.preview.PreviewController', {
             object.get('_meta_dec'),
             object.get('_meta_radius'),
             unit);
+
+        visiomatic.showHideRadius(btnRadius.pressed);
 
     },
 
@@ -198,6 +211,16 @@ Ext.define('Target.view.preview.PreviewController', {
             object.get('_meta_ra'),
             object.get('_meta_dec'),
             fov);
+    },
+
+    showHideRadius: function (btn, state) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic'),
+            vm = me.getViewModel(),
+            object = vm.get('currentRecord'),
+            fov = 0.05;
+
+        visiomatic.showHideRadius(state);
     }
 
 });

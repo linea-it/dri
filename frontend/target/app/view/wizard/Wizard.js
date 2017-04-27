@@ -14,6 +14,7 @@ Ext.define('Target.view.wizard.Wizard', {
         'Target.view.association.Panel',
         'Target.view.settings.Columns',
         'Target.view.settings.Permission',
+        'Target.view.cutout.CutoutJob',
         'Ext.layout.container.Card'
     ],
 
@@ -64,6 +65,12 @@ Ext.define('Target.view.wizard.Wizard', {
         },
         {
             id: 'card-3',
+            xtype: 'targets-cutoutjob',
+            title: 'Cutouts',
+            disabled: true
+        },
+        {
+            id: 'card-4',
             xtype: 'targets-permission',
             title: 'Permission',
             iconCls: 'x-fa fa-lock',

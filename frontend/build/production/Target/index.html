@@ -49,7 +49,7 @@
     <!-- Loading -->
     <script>
         function hideLoading(){
-            loading.style.display='none';
+            linea_logo.style.display='none';
         }
     </script>
 
@@ -122,9 +122,14 @@ c.appCacheState&&c.updatedAssetsReady&&("updated"===c.appCacheState||c.updatedMa
 c&&(b=!1):"."==f&&a.substring(1,e+1)!==c&&(b=!1);return b},parseResult:function(a){var c={};!a.exception&&0!==a.status||f.env.phantom?200<=a.status&&300>a.status||304===a.status||f.env.phantom||0===a.status&&0<a.content.length?c.content=a.content:c.error=!0:c.error=!0;return c}};return c}();Ext.manifest=Ext.manifest||"bootstrap";Ext.Microloader.run();</script>
 
 </head>
-<body onload="hideLoading()">
-    <div id='loading' style="width: 100;height: 100;position: absolute; top: 50%;left: 50%;margin-top: -50px; margin-left: -50px">
-        <i class="fa fa-circle-o-notch fa-spin fa-3x fa-fw margin-bottom" style="color: #DCDCDC;"></i>
+<body onload="hideLoading()" style="background: #24292E;">
+    <div id='linea_logo' style="position: absolute;top: 50%;left: 50%;width: 522px;height: 500px;margin-top: -250px;margin-left: -261px;">
+        <img src="resources/linea_logo_transparent.png">
+
+        <div id='loading' style="width: 100%;height: 100;display: flex;justify-content: center;">
+            <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw margin-bottom" style="color: #DCDCDC;"></i>
+        </div>
+
     </div>
 </body>
 </html>
