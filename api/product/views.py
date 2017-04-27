@@ -24,11 +24,12 @@ class ProductFilter(django_filters.FilterSet):
     group = django_filters.MethodFilter()
     group_id = django_filters.MethodFilter()
     band = django_filters.MethodFilter()
+    class_name = django_filters.MethodFilter()
 
     class Meta:
         model = Product
         fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id', 'releases',
-                  'tags', ]
+                  'tags', 'class_name']
 
     def filter_group(self, queryset, value):
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
@@ -38,6 +39,9 @@ class ProductFilter(django_filters.FilterSet):
 
     def filter_band(self, queryset, value):
         return queryset.filter(prd_filter__filter=str(value))
+
+    def filter_class_name(self, queryset, value):
+        return queryset.filter(prd_class__pcl_name=str(value))
 
 
 class ProductViewSet(viewsets.ModelViewSet):

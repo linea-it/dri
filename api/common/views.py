@@ -131,9 +131,9 @@ def teste(request):
     if request.method == 'GET':
         print('Teste---------------------')
 
-        from product.CutoutJobs import CutoutJobs
-        cutoutjobs = CutoutJobs()
-        a = cutoutjobs.check_job()
+        # from product.CutoutJobs import CutoutJobs
+        # cutoutjobs = CutoutJobs()
+        # a = cutoutjobs.check_job()
         # a = cutoutjobs.start_job()
         # a = cutoutjobs.test_api_help()
 

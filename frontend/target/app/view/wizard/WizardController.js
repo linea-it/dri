@@ -23,8 +23,10 @@ Ext.define('Target.view.wizard.WizardController', {
             },
             'targets-cutoutjob': {
                 activate: 'onActiveCutout',
-                previous: 'showPrevious',
-                next: 'showNext',
+                finish: 'finishWizard'
+            },
+            'targets-system-members': {
+                activate: 'onActiveSystemMembers',
                 finish: 'finishWizard'
             },
             'targets-permission': {
@@ -80,6 +82,17 @@ Ext.define('Target.view.wizard.WizardController', {
             cutouts = view.down('targets-cutoutjob');
 
         cutouts.setCurrentCatalog(currentCatalog);
+
+    },
+
+    onActiveSystemMembers: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog'),
+            view = me.getView(),
+            system = view.down('targets-system-members');
+
+        system.setCurrentCatalog(currentCatalog);
 
     },
 
