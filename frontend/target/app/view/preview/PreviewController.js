@@ -7,7 +7,7 @@ Ext.define('Target.view.preview.PreviewController', {
     alias: 'controller.preview',
 
     requires: [
-        //'common.comment.CommentsObject'
+        'common.comment.CommentsObject'
     ],
 
     listen: {
@@ -23,9 +23,6 @@ Ext.define('Target.view.preview.PreviewController', {
             '#datasets': {
                 load: 'onLoadDatasets'
             }
-            // '#coaddObjects': {
-            //     load: 'onLoadCoaddObjects'
-            // }
         }
     },
 
@@ -221,6 +218,60 @@ Ext.define('Target.view.preview.PreviewController', {
             fov = 0.05;
 
         visiomatic.showHideRadius(state);
+    },
+
+    onComment: function (btn) {
+        console.log('onComment(%o)', btn);
+
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            object = vm.get('currentRecord'),
+            catalog = vm.get('currentCatalog'),
+            id;
+
+        if ((!object) || (!object.get('_meta_id'))) {
+            console.log('nenhum objeto selecionado');
+            return false;
+
+        }
+
+        console.log(object);
+
+        catalog = catalog.get('id');
+        id = object.get('_meta_id');
+
+        var comment = Ext.create('Ext.window.Window', {
+            title: 'Comments',
+            iconCls: 'x-fa fa-comments',
+            layout: 'fit',
+            closeAction: 'destroy',
+            constrainHeader:true,
+            width: 500,
+            height: 500,
+            autoShow:true,
+            items: [
+                {
+                    xtype: 'comments-object',
+                    listeners: {
+                        scope: this,
+                        changecomments: 'onChangeComments'
+                    }
+                }
+            ]
+        });
+
+        comment.down('comments-object').getController().loadComments(catalog, id);
+
+    },
+
+    onChangeComments: function (argument) {
+        console.log('onChangeComments');
+
+        var me = this,
+            view = me.getView();
+
+        view.fireEvent('changeinobject');
     }
 
 });

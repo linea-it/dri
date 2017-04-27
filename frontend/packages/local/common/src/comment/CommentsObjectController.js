@@ -1,0 +1,148 @@
+Ext.define('common.comment.CommentsObjectController', {
+    extend: 'Ext.app.ViewController',
+
+    alias: 'controller.comment-object',
+
+    loadComments: function (catalog_id, object_id) {
+        var me = this,
+            // refs = me.getReferences(),
+            // catalogPanel = refs.targetsCatalogPanel,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            store = vm.getStore('comments');
+
+        vm.set('catalog_id', catalog_id);
+        vm.set('object_id', object_id);
+
+        store.filter([
+            {
+                property:'catalog_id',
+                value: catalog_id
+            },
+            {
+                property: 'object_id',
+                value: object_id
+            }
+        ]);
+    },
+
+    onDeleteComment: function (btn) {
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            comment = vm.get('currentcomment');
+
+        Ext.MessageBox.confirm(
+            'Confirm',
+            'Are you sure you want to do that?',
+            function (btn) {
+                if (btn === 'yes') {
+                    me.deleteComment(comment);
+                }
+            },
+            this
+        );
+    },
+
+    deleteComment: function (comment) {
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            store = vm.getStore('comments');
+
+        // Remover da store
+        store.remove(comment);
+
+        // Faz com que a store envie as alteracoes no caso um delete
+        store.sync({
+            success: function () {
+
+                // Disparar evento de que houve mudanca nos comentarios
+                view.fireEvent('changecomments');
+
+                // Exibir uma mensagem de sucesso
+                Ext.toast({
+                    html: 'Changes saved.',
+                    align: 't'
+                });
+            },
+            failure: function (r, operation) {
+                // Recuperar a resposta e fazer o decode no json.
+                var response = operation.request.proxy.reader.jsonData;
+                if (response) {
+                    // Exibe a msgBox de erro
+                    Ext.Msg.alert('Status', response.msg);
+                } else {
+                    // Se nao tiver mensagem de erro ou retorno e
+                    // por que e um erro do servidor.
+                    Ext.MessageBox.show({
+                        title: 'Server Side Failure',
+                        msg: response.status + ' ' + response.statusText,
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING
+                    });
+                }
+            }
+        });
+    },
+
+    onSaveComment: function (btn) {
+
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            store = vm.getStore('comments');
+
+        var currentcomment = vm.get('currentcomment');
+
+        if (currentcomment.get('comments') != '') {
+            store.sync({
+                success: function () {
+
+                    // Disparar evento de que houve mudanca nos comentarios
+                    view.fireEvent('changecomments');
+
+                    // Exibir uma mensagem de sucesso
+                    Ext.toast({
+                        html: 'Changes saved.',
+                        align: 't'
+                    });
+                },
+                failure: function (response, opts) {
+                    Ext.Msg.show({
+                        title: 'Sorry',
+                        msg: 'Was not possible to change the comment.',
+                        icon: Ext.Msg.ERROR,
+                        buttons: Ext.Msg.OK
+                    });
+                    // Cancela as modificacoes na store
+                    store.rejectChanges();
+                }
+            });
+
+            store.load();
+
+            var model = Ext.create('common.model.CommentObject');
+            vm.set('currentcomment', model);
+        }
+    },
+
+    onNewComment: function (btn) {
+
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            store = vm.getStore('comments');
+
+        var model = Ext.create('common.model.CommentObject', {
+            catalog_id: vm.get('catalog_id'),
+            id_auto: vm.get('object_id'),
+            editable: true
+        });
+
+        store.insert(0, model);
+        vm.set('currentcomment', model);
+
+    }
+
+});
