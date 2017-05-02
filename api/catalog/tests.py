@@ -9,7 +9,7 @@ from rest_framework.test import force_authenticate
 from catalog.models import Comments
 from catalog.serializers import CommentsSerializer
 
-class UserQueryAPITestCase(APITestCase):
+class CommentsAPITestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user("dri", "dri@linea.org", "dri")        
         self.client.login(username='dri', password='dri')
@@ -19,17 +19,17 @@ class UserQueryAPITestCase(APITestCase):
         self.assertEqual(route.func.__name__, 'CommentsViewSet')
 
     def test_list_comments(self):
-        response = self.client.get('/userquery/')
+        response = self.client.get('/objectscomments/')
         self.assertEqual(response.status_code, 200)
         
-'''    def test_create_comments(self):
-        #put new userquery
-        queryName = 'comments1'
+    def test_create_comments(self):
+        #put new comments
+        comments = 'comment 1'
         post_data = {
             'catalog_id': 1,
             'object_id' : 1,
             'owner' : self.user.id,
-            'comments' : 'comment 1',
+            'comments' : comments,
         }
         response = self.client.post('/objectscomments/', post_data,format='json')
         self.assertEqual(response.status_code, 201)
@@ -38,4 +38,26 @@ class UserQueryAPITestCase(APITestCase):
         response = self.client.get('/objectscomments/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-'''
+        self.assertEqual(response.data[0]['comments'], comments)
+
+        #change comments
+        comments = 'comments 1 changed'
+        put_data = {'comments' : comments }
+        response = self.client.put('/objectscomments/1/', put_data,format='json')
+        self.assertEqual(response.status_code, 200)
+
+        #return new comments list
+        response = self.client.get('/objectscomments/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['comments'], comments)
+
+        #delete comments
+        response = self.client.delete('/objectscomments/1/')
+        self.assertEqual(response.status_code, 204)
+        
+        #return new comments list - (return 0 comments)
+        response = self.client.get('/objectscomments/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 0)
+
