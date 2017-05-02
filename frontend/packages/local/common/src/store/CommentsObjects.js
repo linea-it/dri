@@ -11,7 +11,7 @@ Ext.define('common.store.CommentsObjects', {
 
     proxy: {
         type: 'django',
-        url: '/dri/api/target/objectscomment'
+        url: '/dri/api/objectscomments/'
     },
 
     sorters: [{

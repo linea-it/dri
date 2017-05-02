@@ -50,6 +50,7 @@ Ext.define('common.comment.CommentsObjectController', {
             vm = view.getViewModel(),
             store = vm.getStore('comments');
 
+        view.setLoading(true);
         // Remover da store
         store.remove(comment);
 
@@ -59,14 +60,10 @@ Ext.define('common.comment.CommentsObjectController', {
 
                 // Disparar evento de que houve mudanca nos comentarios
                 view.fireEvent('changecomments');
-
-                // Exibir uma mensagem de sucesso
-                Ext.toast({
-                    html: 'Changes saved.',
-                    align: 't'
-                });
+                view.setLoading(false);
             },
             failure: function (r, operation) {
+                view.setLoading(false);
                 // Recuperar a resposta e fazer o decode no json.
                 var response = operation.request.proxy.reader.jsonData;
                 if (response) {
@@ -99,14 +96,19 @@ Ext.define('common.comment.CommentsObjectController', {
             store.sync({
                 success: function () {
 
-                    // Disparar evento de que houve mudanca nos comentarios
-                    view.fireEvent('changecomments');
+                    store.commitChanges();
 
-                    // Exibir uma mensagem de sucesso
-                    Ext.toast({
-                        html: 'Changes saved.',
-                        align: 't'
+                    store.load({
+                        callback: function () {
+
+                            // Disparar evento de que houve mudanca nos comentarios
+                            view.fireEvent('changecomments');
+
+                        }
                     });
+
+                    var model = Ext.create('common.model.CommentObject');
+                    vm.set('currentcomment', model);
                 },
                 failure: function (response, opts) {
                     Ext.Msg.show({
@@ -119,11 +121,6 @@ Ext.define('common.comment.CommentsObjectController', {
                     store.rejectChanges();
                 }
             });
-
-            store.load();
-
-            var model = Ext.create('common.model.CommentObject');
-            vm.set('currentcomment', model);
         }
     },
 
@@ -136,8 +133,8 @@ Ext.define('common.comment.CommentsObjectController', {
 
         var model = Ext.create('common.model.CommentObject', {
             catalog_id: vm.get('catalog_id'),
-            id_auto: vm.get('object_id'),
-            editable: true
+            object_id: vm.get('object_id'),
+            is_owner: true
         });
 
         store.insert(0, model);

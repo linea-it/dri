@@ -53,6 +53,7 @@ Ext.define('common.comment.CommentsObject',{
                             menuDisabled: true
                         },
                         {
+                            xtype: 'datecolumn',
                             text: 'Date',
                             dataIndex: 'date',
                             hidden: true
@@ -71,7 +72,7 @@ Ext.define('common.comment.CommentsObject',{
                         name: 'comments',
                         bind: {
                             value: '{currentcomment.comments}',
-                            disabled: '{!currentcomment.editable}'
+                            disabled: '{!currentcomment.is_owner}'
                         }
                     }
                 }
@@ -91,7 +92,7 @@ Ext.define('common.comment.CommentsObject',{
                     handler: 'onDeleteComment',
                     iconCls:'x-fa fa-minus',
                     bind: {
-                        disabled: '{!currentcomment.editable}'
+                        disabled: '{!currentcomment.is_owner}'
                     }
                 }
             ],
@@ -105,7 +106,7 @@ Ext.define('common.comment.CommentsObject',{
                     handler: 'onSaveComment',
                     iconCls:'x-fa fa-floppy-o',
                     bind: {
-                        disabled: '{!currentcomment.editable}'
+                        disabled: '{!currentcomment.is_owner}'
                     }
                 }
             ]
@@ -120,7 +121,7 @@ Ext.define('common.comment.CommentsObject',{
      */
     formatUser: function (value, p, record) {
         return Ext.String.format(
-            '<div class="user"><b>{0}</b> comments on <span class="date">' +
+            '<div class="user"><spam style="font-weight: bold;">{0}</spam> comments on <span class="date">' +
             '{1}</span></div>', value,
              record.get('date') || 'Unknown');
     }
