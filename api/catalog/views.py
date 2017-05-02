@@ -6,9 +6,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from django.http import HttpResponse
 from rest_framework.viewsets import ViewSet
-from .models import Rating, Reject
-from .models import Reject
-from .serializers import RatingSerializer, RejectSerializer
+from .models import Rating, Reject, Comments
+from .serializers import RatingSerializer, RejectSerializer, CommentsSerializer
 from rest_framework.permissions import AllowAny
 import csv
 
@@ -38,6 +37,23 @@ class RejectViewSet(viewsets.ModelViewSet):
     serializer_class = RejectSerializer
 
     filter_fields = ('id', 'catalog_id', 'owner', 'object_id', 'reject')
+
+    ordering_fields = ('id',)
+
+    def perform_create(self, serializer):
+        if not self.request.user.pk:
+            raise Exception('It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user.pk)
+
+class CommentsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Comments to be viewed or edited
+    """
+    queryset = Comments.objects.all()
+
+    serializer_class = CommentsSerializer
+
+    filter_fields = ('id', 'catalog_id', 'owner', 'object_id', 'comments')
 
     ordering_fields = ('id',)
 

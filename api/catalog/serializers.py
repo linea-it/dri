@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import IntegerField, BooleanField, ReadOnlyField
 
-from .models import Rating, Reject
+from .models import Rating, Reject, Comments
 
 class RatingSerializer(serializers.HyperlinkedModelSerializer):
     catalog_id = IntegerField(allow_null=False)
@@ -33,4 +33,19 @@ class RejectSerializer(serializers.HyperlinkedModelSerializer):
             'catalog_id',
             'object_id',
             'reject'
+        )
+
+class CommentsSerializer(serializers.HyperlinkedModelSerializer):
+    catalog_id = IntegerField(allow_null=False)
+    object_id = IntegerField(min_value=0, allow_null=False, required=True)    
+
+    class Meta:
+        model = Comments
+
+        fields = (
+            'id',
+            'date',
+            'catalog_id',
+            'object_id',
+            'comments',
         )

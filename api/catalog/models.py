@@ -47,7 +47,7 @@ class Comments(models.Model):
         verbose_name='Object Id', null=False, blank=False)
 
     date = models.DateTimeField(
-        verbose_name='Date', null=False, blank=False)
+        auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Creation Date')
 
     comments = models.TextField(
         verbose_name='Comments', null=False, blank=False)
