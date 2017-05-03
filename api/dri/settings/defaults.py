@@ -43,6 +43,7 @@ BASE_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
 ]
 
 THIRD_PARTY_APPS = [
