@@ -32,7 +32,7 @@ class DataDiscovery:
         excludes = ["Y3A1_COADD_TEST_123", "Y3A1_COADD_TEST_123_t025", "Y3A1_COADD_TEST_123_t050",
                     "Y3A1_COADD_TEST_123_t100", "Y3A1_COADD_TEST_DEEP", "Y3A1_COADD_TEST_11"]
 
-        patterns = ["tag like 'Y3A1_COADD_TEST%'", "tag='Y3A1_COADD'"]
+        patterns = ["tag like 'Y3A1_COADD_TEST%'", "tag='Y3A1_COADD'", "tag='Y3A1_COADD_DEEP'"]
 
         for pattern in patterns:
             print ("--------------------------------------")
