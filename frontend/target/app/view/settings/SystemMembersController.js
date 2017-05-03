@@ -19,6 +19,8 @@ Ext.define('Target.view.settings.SystemMembersController', {
 
         if (currentCatalog.get('pcl_is_system')) {
 
+            console.log('currentCatalog', currentCatalog);
+
             products.addFilter({
                 property: 'class_name',
                 value: 'cluster_members'

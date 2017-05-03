@@ -25,6 +25,9 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     # pgr_name = serializers.SerializerMethodField()
     pgr_display_name = serializers.SerializerMethodField()
 
+    # epr_original_id = Original Process ID
+    epr_original_id = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
 
@@ -40,7 +43,8 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             'pcl_is_system',
             'pgr_group',
             # 'pgr_name',
-            'pgr_display_name'
+            'pgr_display_name',
+            'epr_original_id'
         )
 
     def get_pcl_name(self, obj):
@@ -60,6 +64,12 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_pgr_display_name(self, obj):
         return obj.prd_class.pcl_group.pgr_display_name
+
+    def get_epr_original_id(self, obj):
+        try:
+            return obj.prd_process_id.epr_original_id
+        except:
+            return None
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):

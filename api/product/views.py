@@ -25,6 +25,7 @@ class ProductFilter(django_filters.FilterSet):
     group_id = django_filters.MethodFilter()
     band = django_filters.MethodFilter()
     class_name = django_filters.MethodFilter()
+    process = django_filters.MethodFilter()
 
     class Meta:
         model = Product
@@ -42,6 +43,9 @@ class ProductFilter(django_filters.FilterSet):
 
     def filter_class_name(self, queryset, value):
         return queryset.filter(prd_class__pcl_name=str(value))
+
+    def filter_process(self, queryset, value):
+        return queryset.filter(prd_process_id__epr_original_id=str(value))
 
 
 class ProductViewSet(viewsets.ModelViewSet):
