@@ -7,7 +7,7 @@ Ext.define('Target.view.preview.PreviewController', {
     alias: 'controller.preview',
 
     requires: [
-        //'common.comment.CommentsObject'
+        'common.comment.CommentsObject'
     ],
 
     listen: {
@@ -23,9 +23,6 @@ Ext.define('Target.view.preview.PreviewController', {
             '#datasets': {
                 load: 'onLoadDatasets'
             }
-            // '#coaddObjects': {
-            //     load: 'onLoadCoaddObjects'
-            // }
         }
     },
 
@@ -221,6 +218,56 @@ Ext.define('Target.view.preview.PreviewController', {
             fov = 0.05;
 
         visiomatic.showHideRadius(state);
+    },
+
+    onComment: function () {
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            object = vm.get('currentRecord'),
+            catalog = vm.get('currentCatalog'),
+            id;
+
+        if ((!object) || (!object.get('_meta_id'))) {
+            return false;
+
+        }
+
+        catalog = catalog.get('id');
+        id = object.get('_meta_id');
+
+        if (id > 0) {
+
+            var comment = Ext.create('Ext.window.Window', {
+                title: 'Comments',
+                iconCls: 'x-fa fa-comments',
+                layout: 'fit',
+                closeAction: 'destroy',
+                constrainHeader:true,
+                width: 500,
+                height: 500,
+                autoShow:true,
+                items: [
+                    {
+                        xtype: 'comments-object',
+                        listeners: {
+                            scope: this,
+                            changecomments: 'onChangeComments'
+                        }
+                    }
+                ]
+            });
+
+            comment.down('comments-object').getController().loadComments(catalog, id);
+        }
+
+    },
+
+    onChangeComments: function () {
+        var me = this,
+           view = me.getView();
+
+        view.fireEvent('changeinobject');
     }
 
 });
