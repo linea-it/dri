@@ -50,26 +50,12 @@ Ext.define('Target.view.objects.Grid', {
         me.callParent(arguments);
     },
 
-    showHideTilename: function (visible) {
-
-        var me = this,
-            headerCt = me.headerCt,
-            columns = headerCt ? headerCt.items.getRange() : objectsGrid.columns;
-
-        for (var i in columns) {
-            if (columns[i].dataIndex == 'tilename') {
-
-                columns[i].setVisible(visible);
-            }
-        }
-
-    },
-
     reconfigureGrid: function (storeColumns) {
         // console.log('Targets Objects - reconfigureGrid(%o)', storeColumns);
 
         var me = this,
-            columns = [];
+            columns = [],
+            flag;
 
         // Coluna RowNunber
         columns.push(Ext.create('Ext.grid.RowNumberer', {
@@ -139,7 +125,7 @@ Ext.define('Target.view.objects.Grid', {
             },this);
 
             // Coluna Rating
-            if ((me.getColumnRating()) && (flag == true)) {
+            if ((me.getColumnRating()) && (flag === true)) {
 
                 columns.push({
                     xtype: 'widgetcolumn',
@@ -168,7 +154,7 @@ Ext.define('Target.view.objects.Grid', {
                 });
             }
             // Coluna Reject
-            if ((me.getColumnAccept()) && (flag == true)) {
+            if ((me.getColumnAccept()) && (flag === true)) {
                 columns.push({
                     xtype: 'checkcolumn',
                     text: 'Reject',
@@ -179,10 +165,10 @@ Ext.define('Target.view.objects.Grid', {
                 });
             }
             // Coluna Comments
-            if ((me.getColumnComments()) && (flag == true)) {
+            if ((me.getColumnComments()) && (flag === true)) {
                 columns.push({
-                    text: '',
-                    dataIndex: 'comments',
+                    // text: 'Comments',
+                    dataIndex: '_meta_comments',
                     tooltip: 'Comments',
                     align: 'center',
                     flex: 1,
