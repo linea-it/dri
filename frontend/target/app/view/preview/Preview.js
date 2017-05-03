@@ -105,9 +105,9 @@ Ext.define('Target.view.preview.Preview', {
         {
             xtype: 'button',
             iconCls: 'x-fa fa-comments',
-            // bind: {
-            //     disabled: '{!currentRecord._meta_id}'
-            // },
+            bind: {
+                disabled: '{!currentRecord._meta_id}'
+            },
             handler: 'onComment'
         }
     ],

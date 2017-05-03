@@ -220,9 +220,7 @@ Ext.define('Target.view.preview.PreviewController', {
         visiomatic.showHideRadius(state);
     },
 
-    onComment: function (btn) {
-        console.log('onComment(%o)', btn);
-
+    onComment: function () {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -231,45 +229,43 @@ Ext.define('Target.view.preview.PreviewController', {
             id;
 
         if ((!object) || (!object.get('_meta_id'))) {
-            console.log('nenhum objeto selecionado');
             return false;
 
         }
 
-        console.log(object);
-
         catalog = catalog.get('id');
         id = object.get('_meta_id');
 
-        var comment = Ext.create('Ext.window.Window', {
-            title: 'Comments',
-            iconCls: 'x-fa fa-comments',
-            layout: 'fit',
-            closeAction: 'destroy',
-            constrainHeader:true,
-            width: 500,
-            height: 500,
-            autoShow:true,
-            items: [
-                {
-                    xtype: 'comments-object',
-                    listeners: {
-                        scope: this,
-                        changecomments: 'onChangeComments'
-                    }
-                }
-            ]
-        });
+        if (id > 0) {
 
-        comment.down('comments-object').getController().loadComments(catalog, id);
+            var comment = Ext.create('Ext.window.Window', {
+                title: 'Comments',
+                iconCls: 'x-fa fa-comments',
+                layout: 'fit',
+                closeAction: 'destroy',
+                constrainHeader:true,
+                width: 500,
+                height: 500,
+                autoShow:true,
+                items: [
+                    {
+                        xtype: 'comments-object',
+                        listeners: {
+                            scope: this,
+                            changecomments: 'onChangeComments'
+                        }
+                    }
+                ]
+            });
+
+            comment.down('comments-object').getController().loadComments(catalog, id);
+        }
 
     },
 
-    onChangeComments: function (argument) {
-        console.log('onChangeComments');
-
+    onChangeComments: function () {
         var me = this,
-            view = me.getView();
+           view = me.getView();
 
         view.fireEvent('changeinobject');
     }

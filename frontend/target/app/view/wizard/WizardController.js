@@ -23,8 +23,6 @@ Ext.define('Target.view.wizard.WizardController', {
             },
             'targets-cutoutjob': {
                 activate: 'onActiveCutout',
-                previous: 'showPrevious',
-                next: 'showNext',
                 finish: 'finishWizard'
             },
             'targets-permission': {

@@ -167,8 +167,8 @@ Ext.define('Target.view.objects.Grid', {
             // Coluna Comments
             if ((me.getColumnComments()) && (flag === true)) {
                 columns.push({
-                    text: 'Comments',
-                    dataIndex: 'comments',
+                    // text: 'Comments',
+                    dataIndex: '_meta_comments',
                     tooltip: 'Comments',
                     align: 'center',
                     flex: 1,

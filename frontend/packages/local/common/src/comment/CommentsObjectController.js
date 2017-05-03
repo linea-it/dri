@@ -90,6 +90,8 @@ Ext.define('common.comment.CommentsObjectController', {
             vm = view.getViewModel(),
             store = vm.getStore('comments');
 
+        view.setLoading(true);
+
         var currentcomment = vm.get('currentcomment');
 
         if (currentcomment.get('comments') != '') {
@@ -109,8 +111,11 @@ Ext.define('common.comment.CommentsObjectController', {
 
                     var model = Ext.create('common.model.CommentObject');
                     vm.set('currentcomment', model);
+
+                    view.setLoading(false);
                 },
                 failure: function (response, opts) {
+                    view.setLoading(false);
                     Ext.Msg.show({
                         title: 'Sorry',
                         msg: 'Was not possible to change the comment.',
