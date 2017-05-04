@@ -26,6 +26,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
+USE_OAUTH = False
 
 # Application definition
 
@@ -38,7 +39,9 @@ BASE_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+]
 
+AUTH_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -65,7 +68,10 @@ PROJECT_APPS = [
     'interfaces'
 ]
 
-INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
+if USE_OAUTH:
+    INSTALLED_APPS = BASE_APPS + AUTH_APPS + THIRD_PARTY_APPS + PROJECT_APPS
+else:
+    INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
@@ -155,9 +161,10 @@ STATIC_URL = '/static/'
 AUTHENTICATION_BACKENDS = (
     'common.authentication.NcsaBackend',
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
 )
 
+if USE_OAUTH:
+    AUTHENTICATION_BACKENDS += ('allauth.account.auth_backends.AuthenticationBackend',)
 
 REST_FRAMEWORK = {
 
