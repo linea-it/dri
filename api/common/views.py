@@ -131,10 +131,24 @@ def teste(request):
     if request.method == 'GET':
         print('Teste---------------------')
 
-        from product.CutoutJobs import CutoutJobs
-        cutoutjobs = CutoutJobs()
-        a = cutoutjobs.check_job()
-        # a = cutoutjobs.start_job()
-        # a = cutoutjobs.test_api_help()
+        db = settings.DATABASES.get('catalog')
+        print(db)
 
+        # from sqlalchemy import create_engine, Table, MetaData, inspect
+        # from sqlalchemy.sql import select, and_
+        # str_con = "oracle://brportal:brp70chips@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=leovip148.ncsa.uiuc.edu)(PORT=1521)))(CONNECT_DATA=(SERVER=dedicated)(SERVICE_NAME=dessci)))"
+        # eng = create_engine(str_con)
+        # eng = create_engine('sqlite:////home/lucasd/git_repos/dri/db/catalog.db')
+
+        # insp = inspect(eng)
+        # print('00000')
+        # print(insp.get_table_names())
+        # print('11111')
+        # print(insp.get_schema_names())
+        # print('22222')
+
+        from lib.CatalogDB import CatalogDB
+        db = CatalogDB()
+
+        print('Teste---------------------')
         return Response(dict({'teste':''}))
