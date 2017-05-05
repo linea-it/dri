@@ -187,6 +187,21 @@ class ProductContentSetting(models.Model):
     )
 
 
+class ProductRelated(models.Model):
+    prl_product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product'
+    )
+    prl_related = models.ForeignKey(
+        Product, related_name="relateds", on_delete=models.CASCADE, verbose_name='Related Product'
+    )
+    prl_cross_identification = models.ForeignKey(
+        ProductContent, on_delete=models.CASCADE, verbose_name='Cross Identification', default=None,
+        null=True, blank=True, help_text="Foreign key between the product and the related product",
+    )
+
+    def __str__(self):
+        return str(self.pk)
+
 # ------------------------------ Cutouts ------------------------------
 class CutOutJob(models.Model):
     status_job = (

@@ -115,6 +115,10 @@ class PermissionAdmin(admin.ModelAdmin):
     list_display = ('id', 'prm_product', 'prm_user', 'prm_workgroup',)
 
 
+class ProductRelatedAdmin(admin.ModelAdmin):
+    list_display = ('id', 'prl_product', 'prl_related', 'prl_cross_identification',)
+
+
 admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductRelease, ProductReleaseAdmin)
 admin.site.register(ProductTag, ProductTagAdmin)
@@ -131,6 +135,8 @@ admin.site.register(ProductContentSetting, ProductContentSettingAdmin)
 admin.site.register(ProductSetting, ProductSettingAdmin)
 admin.site.register(CurrentSetting, CurrentSettingAdmin)
 admin.site.register(Permission, PermissionAdmin)
+admin.site.register(ProductRelated, ProductRelatedAdmin)
+
 
 admin.site.register(Workgroup, WorkgroupAdmin)
 admin.site.register(WorkgroupUser, WorkgroupUserAdmin)
