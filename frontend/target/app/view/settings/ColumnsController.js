@@ -121,10 +121,11 @@ Ext.define('Target.view.settings.ColumnsController', {
     onDropGrid2: function (node, data) {
         var me = this,
             vm = me.getViewModel(),
+            currentSetting = vm.get('currentSetting'),
             grid = me.lookupReference('grid2'),
             auxStore = vm.getStore('auxContentSettings'),
             storeContentSetting = vm.getStore('contentSettings'),
-            contentSetting, index;
+            contentSetting, index, setting_id;
 
         grid.setLoading(true);
 
@@ -143,10 +144,12 @@ Ext.define('Target.view.settings.ColumnsController', {
                 contentSetting = Ext.create('Target.model.ContentSetting', {
                     'display_name': item.get('display_name'),
                     'pcs_content': item.get('id'),
-                    'pcs_setting': item.get('setting_id'),
+                    'pcs_setting': currentSetting.get('cst_setting'),
                     'pcs_is_visible': true,
                     'pcs_order': key
                 });
+
+                console.log('contentSetting', contentSetting);
             }
 
             auxStore.add(contentSetting);

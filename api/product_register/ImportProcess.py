@@ -346,20 +346,33 @@ class Import():
                 # recuperar content do produto
                 pc = ProductContent.objects.get(pcn_product_id=product, pcn_column_name__iexact=property)
 
-                # recuperar class content
-                # Todas as propriedades que comuns a todas as classes + as propriedades expecificas da classe.
-                cc = ProductClassContent.objects.filter(
-                    Q(pcc_ucd__iexact=p.get('ucd')),
-                    Q(pcc_class=product.prd_class) | Q(pcc_class__isnull=True)).get()
+                try:
+                    # recuperar class content
+                    # Todas as propriedades que comuns a todas as classes + as propriedades expecificas da classe.
+                    cc = ProductClassContent.objects.filter(
+                        Q(pcc_ucd__iexact=p.get('ucd')),
+                        Q(pcc_class=product.prd_class) | Q(pcc_class__isnull=True)).get()
 
-                association = ProductContentAssociation.objects.create(
-                    pca_product=product,
-                    pca_class_content=cc,
-                    pca_product_content=pc
-                )
+                    association = ProductContentAssociation.objects.create(
+                        pca_product=product,
+                        pca_class_content=cc,
+                        pca_product_content=pc
+                    )
+
+                except ProductClassContent.DoesNotExist:
+                    # se nao tiver o ucd na classe nao faz nada
+                    pass
+
+                # Guardar o UCD que foi enviado mesmo que ele nao pertenca a uma classe
+                if p.get('ucd') is not '':
+                    pc.pcn_ucd = p.get('ucd')
+                    pc.save()
 
             except:
                 raise Exception("it was not possible to create association for this column: %s" % property)
+
+
+
 
     def product_release(self, product, releases):
         for r in releases:

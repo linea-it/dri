@@ -119,7 +119,10 @@ Ext.define('visiomatic.Visiomatic', {
         // Shift Visiomatic/Aladin
         enableShift: true,
 
-        ready: false
+        ready: false,
+
+        // Layer usada para exibir ou ocultar o raio de um cluster
+        lradius: null
     },
 
     bind: {
@@ -526,14 +529,19 @@ Ext.define('visiomatic.Visiomatic', {
      *
      */
     drawRadius: function (ra, dec, radius, unit, options) {
-
         var me = this,
             l = me.libL,
             map = me.getMap(),
             wcs = map.options.crs,
             radiusOptions = me.getRadiusOptions(),
             id = ra + '_' + dec,
-            path_options;
+            path_options,
+            lradius, args;
+
+        if (me.getLradius()) {
+            map.removeLayer(me.getLradius());
+            me.setLradius(null);
+        }
 
         args = Ext.Object.merge(radiusOptions, options);
 
@@ -559,7 +567,7 @@ Ext.define('visiomatic.Visiomatic', {
             ]
         };
 
-        l.geoJson(features, {
+        lradius = l.geoJson(features, {
             coordsToLatLng: function (coords) {
                 if (wcs.forceNativeCelsys) {
                     var latLng = wcs.eqToCelsys(l.latLng(coords[1], coords[0]));
@@ -580,14 +588,33 @@ Ext.define('visiomatic.Visiomatic', {
                 // estava em pixels
                 // usei o mesmo valor de raio para os lados da ellipse para
                 // gerar um circulo por ser um circulo o angulo tanto faz.
-                l.ellipse(
+                return l.ellipse(
                     l.latLng(dec, ra),
-                    path_options).addTo(map);
+                    path_options);
 
             }
-        }).addTo(map);
+        });
 
-        // TODO adicionar um return com a layer para que possa ser gerenciada fora do visiomatic.
+        me.setLradius(lradius);
+
+        map.addLayer(lradius);
+
+        return lradius;
+    },
+
+    showHideRadius: function (state) {
+        var me = this,
+            map = me.getMap(),
+            lradius = me.getLradius();
+
+        if (lradius !== null) {
+            if (state) {
+                map.addLayer(lradius);
+
+            } else {
+                map.removeLayer(lradius);
+            }
+        }
     }
 
 });

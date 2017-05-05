@@ -224,6 +224,8 @@ class OracleWrapper(BaseWrapper):
         sql_where = ''
         clauses = list()
 
+        print(columns)
+
         for filter in filters:
             if 'property' in filter:
                 property = filter.get('property')

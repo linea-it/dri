@@ -187,29 +187,40 @@ class ProductContentViewSet(viewsets.ModelViewSet):
             raise Exception('pcn_product_id is required.')
 
         pca_setting = request.query_params.get('pca_setting', None)
-        if pca_setting is None:
-            raise Exception('pca_setting is required.')
+        flag_content_settings = False
+
+        if pca_setting is not None:
+            # Se tiver alguma configuracao de setting
+            if ProductContentSetting.objects.filter(pcs_setting=pca_setting).count():
+                flag_content_settings = True
+
 
         qdisplay_name = request.query_params.get('display_name', None)
 
-
-        # queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id, pk=1360)
         queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id)
 
-        # Se tiver alguma configuracao de setting visible default False
-        flag_content_settings = ProductContentSetting.objects.filter(pcs_setting=pca_setting).count()
-
         contents = list()
+
+        # Esse array define uma ordem padrao para as propriedades que podem ser associadas, sera usado caso nao tenha
+        # uma configuracao para a coluna
+        # ID, RA, Dec, Radius(Arcmin)
+        ucds = list(["meta.id;meta.main", "pos.eq.ra;meta.main", "pos.eq.dec;meta.main", "phys.angSize;src"])
+
+        default_order = 99999
+
         for row in queryset:
 
-            # Recupera a associacao feita para uma coluna em usando como filtro uma configuracao.
-            association = row.productcontentassociation_set.all().filter(pca_setting=pca_setting).first()
-            contentSetting = row.productcontentsetting_set.all().filter(pcs_setting=pca_setting).first()
+            contentSetting = None
+            if flag_content_settings:
+                # Recupera a configuracao feita para uma coluna em usando como filtro uma configuracao.
+                contentSetting = row.productcontentsetting_set.all().filter(pcs_setting=pca_setting).first()
+
+
+            association = row.productcontentassociation_set.first()
 
             content = dict({
                 'id': row.pk,
                 'product_id': row.pcn_product_id.pk,
-                'setting_id': pca_setting,
                 'column_name': row.pcn_column_name,
 
                 'class_id': None,
@@ -223,24 +234,37 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
                 'content_setting': None,
                 'is_visible': True,
-                'order': 999999
+                'order': default_order
             })
 
-            if flag_content_settings > 0:
+            if flag_content_settings:
                 content.update({'is_visible': False})
 
 
             if association is not None:
+
+                # Adicionar ordem a uma propriedade associada caso nao tenha settings
+                ucd = association.pca_class_content.pcc_ucd
+                if ucd is not None:
+                    if ucd not in ucds:
+                        ucds.append(ucd)
+
+                    order = ucds.index(ucd)
+
+                else:
+                    order = default_order
+
                 content.update({
                     'class_id': association.pca_class_content.pk,
                     'display_name': association.pca_class_content.pcc_display_name,
-                    'ucd': association.pca_class_content.pcc_ucd,
+                    'ucd': ucd,
                     'unit': association.pca_class_content.pcc_unit,
                     'reference': association.pca_class_content.pcc_reference,
                     'mandatory': association.pca_class_content.pcc_mandatory,
 
                     # Substitui o display name pelo nome da associacao
-                    'display_name': association.pca_class_content.pcc_display_name
+                    'display_name': association.pca_class_content.pcc_display_name,
+                    'order': order
                 })
 
                 try:
@@ -252,6 +276,7 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
             if contentSetting is not None:
                 content.update({
+                    'setting_id': pca_setting,
                     'content_setting': contentSetting.pk,
                     'is_visible': contentSetting.pcs_is_visible,
                     'order': contentSetting.pcs_order,
@@ -278,7 +303,7 @@ class ProductContentAssociationViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductContentAssociationSerializer
 
-    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content', 'pca_setting')
+    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content')
 
     ordering_fields = ('id',)
 
@@ -291,7 +316,7 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductAssociationSerializer
 
-    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content', 'pca_setting')
+    filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content',)
 
     ordering_fields = ('id',)
 
@@ -395,13 +420,13 @@ class ProductContentSettingViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id', 'order',)
 
-class CutOutJobViewSet(viewsets.ModelViewSet):
+class CutoutJobViewSet(viewsets.ModelViewSet):
     """
 
     """
-    queryset = CutOutJob.objects.select_related().all()
+    queryset = CutOutJob.objects.all()
 
-    serializer_class = CutOutJobSerializer
+    serializer_class = CutoutJobSerializer
 
     ordering_fields = ('id',)
 

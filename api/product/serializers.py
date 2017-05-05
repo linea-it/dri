@@ -256,7 +256,12 @@ class MapSerializer(serializers.HyperlinkedModelSerializer):
             'mpa_ordering',
         )
 
-class CutOutJobSerializer(serializers.ModelSerializer):
+class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
+    cjb_product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=False)
+
+    owner = serializers.SerializerMethodField()
+
     class Meta:
         model = CutOutJob
 
@@ -270,8 +275,11 @@ class CutOutJobSerializer(serializers.ModelSerializer):
             'cjb_job_type',
             'cjb_band',
             'cjb_Blacklist',
+            'owner'
         )
 
+    def get_owner(self, obj):
+        return obj.owner.username
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -393,7 +401,6 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
             'pca_product',
             'pca_class_content',
             'pca_product_content',
-            'pca_setting',
         )
 
         read_only_fields = ('id')
@@ -621,19 +628,17 @@ class ProductContentSettingSerializer(serializers.ModelSerializer):
         )
 
     def get_display_name(self, obj):
-
-        association = obj.pcs_content.productcontentassociation_set.filter(pca_setting=obj.pcs_setting).first()
-        if association is not None:
+        try:
+            association = obj.pcs_content.productcontentassociation_set.first()
             return association.pca_class_content.pcc_display_name
-        else:
+        except:
             return obj.pcs_content.pcn_column_name
 
     def get_unit(self, obj):
-
-        association = obj.pcs_content.productcontentassociation_set.filter(pca_setting=obj.pcs_setting).first()
-        if association is not None:
+        try:
+            association = obj.pcs_content.productcontentassociation_set.first()
             return association.pca_class_content.pcc_unit
-        else:
+        except:
             return None
 
 

@@ -50,26 +50,12 @@ Ext.define('Target.view.objects.Grid', {
         me.callParent(arguments);
     },
 
-    showHideTilename: function (visible) {
-
-        var me = this,
-            headerCt = me.headerCt,
-            columns = headerCt ? headerCt.items.getRange() : objectsGrid.columns;
-
-        for (var i in columns) {
-            if (columns[i].dataIndex == 'tilename') {
-
-                columns[i].setVisible(visible);
-            }
-        }
-
-    },
-
     reconfigureGrid: function (storeColumns) {
         // console.log('Targets Objects - reconfigureGrid(%o)', storeColumns);
 
         var me = this,
-            columns = [];
+            columns = [],
+            flag;
 
         // Coluna RowNunber
         columns.push(Ext.create('Ext.grid.RowNumberer', {
@@ -139,7 +125,7 @@ Ext.define('Target.view.objects.Grid', {
             },this);
 
             // Coluna Rating
-            if ((me.getColumnRating()) && (flag == true)) {
+            if ((me.getColumnRating()) && (flag === true)) {
 
                 columns.push({
                     xtype: 'widgetcolumn',
@@ -168,7 +154,7 @@ Ext.define('Target.view.objects.Grid', {
                 });
             }
             // Coluna Reject
-            if ((me.getColumnAccept()) && (flag == true)) {
+            if ((me.getColumnAccept()) && (flag === true)) {
                 columns.push({
                     xtype: 'checkcolumn',
                     text: 'Reject',
@@ -179,10 +165,10 @@ Ext.define('Target.view.objects.Grid', {
                 });
             }
             // Coluna Comments
-            if ((me.getColumnComments()) && (flag == true)) {
+            if ((me.getColumnComments()) && (flag === true)) {
                 columns.push({
-                    text: '',
-                    dataIndex: 'comments',
+                    // text: 'Comments',
+                    dataIndex: '_meta_comments',
                     tooltip: 'Comments',
                     align: 'center',
                     flex: 1,
@@ -282,16 +268,21 @@ Ext.define('Target.view.objects.Grid', {
             aValue, decimal;
 
         if (typeof(value) === 'number') {
-            if (!isNaN(value) && value.toString().indexOf('.') != -1) {
 
-                aValue = value.toString().split('.');
-                decimal = aValue[1];
+            if (value > 10000) {
+                // Se for maior que 10.000 usar notacao exponencial
+                value = value.toExponential(1);
 
-                if (decimal.length <= precision) {
-                    value =  value.toFixed(precision);
+            } else {
+                // Se for float
+                if (value.toString().indexOf('.') != -1) {
+                    aValue = value.toString().split('.');
+                    decimal = aValue[1];
+                    // se tiver mais casas decimais
+                    if (decimal.length > precision) {
+                        value =  value.toFixed(precision);
 
-                } else {
-                    value = value.toExponential(1);
+                    }
                 }
             }
         }

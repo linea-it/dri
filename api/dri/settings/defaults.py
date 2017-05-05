@@ -65,7 +65,8 @@ PROJECT_APPS = [
     'product',
     'validation',
     'catalog',
-    'interfaces'
+    'interfaces',
+    'userquery'
 ]
 
 if USE_OAUTH:

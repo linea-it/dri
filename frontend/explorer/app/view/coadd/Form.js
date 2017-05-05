@@ -28,19 +28,19 @@ Ext.define('Explorer.view.coadd.Form', {
                         {
                             fieldLabel: 'Coadd Object ID',
                             bind: {
-                                value: '{coaddObject.COADD_OBJECT_ID}'
+                                value: '{coaddObject._meta_id}'
                             }
                         },
                         {
                             fieldLabel: 'RA (deg)',
                             bind: {
-                                value: '{coaddObject.RA}'
+                                value: '{coaddObject._meta_ra}'
                             }
                         },
                         {
                             fieldLabel: 'Dec (deg)',
                             bind: {
-                                value: '{coaddObject.DEC}'
+                                value: '{coaddObject._meta_dec}'
                             }
                         }
                     ]

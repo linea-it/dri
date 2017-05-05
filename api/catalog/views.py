@@ -6,9 +6,8 @@ from rest_framework import viewsets
 from rest_framework.response import Response
 from django.http import HttpResponse
 from rest_framework.viewsets import ViewSet
-from .models import Rating, Reject
-from .models import Reject
-from .serializers import RatingSerializer, RejectSerializer
+from .models import Rating, Reject, Comments
+from .serializers import RatingSerializer, RejectSerializer, CommentsSerializer
 from rest_framework.permissions import AllowAny
 import csv
 
@@ -38,6 +37,23 @@ class RejectViewSet(viewsets.ModelViewSet):
     serializer_class = RejectSerializer
 
     filter_fields = ('id', 'catalog_id', 'owner', 'object_id', 'reject')
+
+    ordering_fields = ('id',)
+
+    def perform_create(self, serializer):
+        if not self.request.user.pk:
+            raise Exception('It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user.pk)
+
+class CommentsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Comments to be viewed or edited
+    """
+    queryset = Comments.objects.all()
+
+    serializer_class = CommentsSerializer
+
+    filter_fields = ('id', 'catalog_id', 'owner', 'object_id', 'comments')
 
     ordering_fields = ('id',)
 
@@ -202,6 +218,35 @@ class TargetViewSet(ViewSet):
             row.update({
                 "_meta_radius": row.get(properties.get("phys.angSize;src"))
             })
+            row.update({
+                "_meta_comments": None
+            })
+
+            # Count de Comentarios por objetos.
+            # TODO: utlizar um join com having count ao inves de uma query para cada linha
+
+            count2 = db.wrapper.fetchone("SELECT COUNT(*) FROM catalog_comments WHERE CATALOG_ID=%s AND OBJECT_ID=%s", [catalog.pk, row.get("_meta_id")])[0]
+            count2 = int(count2)
+
+            print(count2)
+            # rows2, count2 = db.wrapper.query(
+            #     table="catalog_comments",
+            #     filters=list([
+            #         dict({
+            #             "property": "CATALOG_ID",
+            #             "operator": "=",
+            #             "value": catalog.pk
+            #         }),
+            #         dict({
+            #             "property": "OBJECT_ID",
+            #             "operator": "=",
+            #             "value": row.get("_meta_id")
+            #         })
+            #     ]))
+            if count2 is not 0:
+                row.update({
+                    "_meta_comments": count2
+                })
 
         return Response(dict({
             'count': count,
@@ -401,6 +446,21 @@ class CoaddObjects(ViewSet):
 
         coadd_object_id = request.query_params.get('coadd_object_id', None)
 
+
+        # Antes de criar os filtros para a query verificar se o catalogo tem associacao e descobrir as
+        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=catalog.pk)
+        serializer = AssociationSerializer(queryset, many=True)
+        associations = serializer.data
+        properties = dict()
+        # propriedades corretas
+        for property in associations:
+            if property.get('pcc_ucd'):
+                properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
+
+        property_id = properties.get("meta.id;meta.main", None)
+        property_ra = properties.get("pos.eq.ra;meta.main", None)
+        property_dec = properties.get("pos.eq.dec;meta.main", None)
+
         filters = list()
         if coordinate and bounding:
             ra = float(coordinate[0])
@@ -412,12 +472,12 @@ class CoaddObjects(ViewSet):
                     "operator": "AND",
                     "conditions": list([
                         dict({
-                            "property": "RA",
+                            "property": property_ra,
                             "operator": "between",
                             "value": list([ra - bra, ra + bra])
                         }),
                         dict({
-                            "property": "DEC",
+                            "property": property_dec,
                             "operator": "between",
                             "value": list([dec - bdec, dec + bdec])
                         })
@@ -426,6 +486,7 @@ class CoaddObjects(ViewSet):
             )
 
         if maglim is not None:
+            # TODO a magnitude continua com a propriedade hardcoded
             maglim = float(maglim)
             mag = 'MAG_AUTO_I'
             filters.append(
@@ -439,7 +500,7 @@ class CoaddObjects(ViewSet):
         if coadd_object_id is not None:
             filters.append(
                 dict({
-                    "property": 'COADD_OBJECT_ID',
+                    "property": property_id,
                     "operator": '=',
                     "value": int(coadd_object_id)
                 })
@@ -462,5 +523,17 @@ class CoaddObjects(ViewSet):
             offset=start,
             order_by=ordering
         )
+
+        for row in rows:
+            row.update({
+                "_meta_id": row.get(properties.get("meta.id;meta.main"))
+            })
+            row.update({
+                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main"))
+            })
+            row.update({
+                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main"))
+            })
+
 
         return Response(rows)

@@ -64,5 +64,28 @@
       "lambda_max": 1090.0,
       "lambda_mean": 1008.0
     }
+  },
+  {
+    "model": "common.filter",
+    "pk": 7,
+    "fields": {
+      "project": "DES",
+      "filter": "det",
+      "lambda_min": null,
+      "lambda_max": null,
+      "lambda_mean": null
+    }
+  },
+  {
+    "model": "socialaccount.socialapp",
+    "pk": 1,
+    "fields": {
+      "provider": "facebook",
+      "name": "Facebook",
+      "client_id": "1",
+      "secret": "1",
+      "key": "",
+      "sites": [1]
+    }
   }
 ]

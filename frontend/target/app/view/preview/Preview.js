@@ -61,6 +61,54 @@ Ext.define('Target.view.preview.Preview', {
             iconCls: 'x-fa fa-crosshairs',
             tooltip: 'Center',
             handler: 'onCenterTarget'
+        },
+        {
+            xtype: 'button',
+            reference: 'btnRadius',
+            iconCls: 'x-fa fa-circle-o',
+            tooltip: 'Show System Radius',
+            enableToggle: true,
+            toggleHandler: 'showHideRadius',
+            pressed: true,
+            hidden: true
+        }
+    ],
+    bbar: [
+    //     {
+    //         xtype: 'checkboxfield',
+    //         // name: 'acceptTerms',
+    //         reference: 'reject',
+    //         hideLabel: true,
+    //         boxLabel: 'Reject',
+    //         bind: {
+    //             // value: '{currentRecord.reject}',
+    //             // disabled: '{!currentRecord._meta_id}'
+    //         }
+    //     },
+    //     {
+    //         xtype: 'tbtext',
+    //         html: 'Rating'
+    //     },
+    //     {
+    //         xtype: 'rating',
+    //         scale: '200%',
+    //         rounding: 1,
+    //         minimum: 0,
+    //         selectedStyle: 'color: rgb(96, 169, 23);',
+    //         style: {
+    //             'color': '#777777'
+    //         },
+    //         bind: {
+    //             // value: '{currentRecord.rating}'
+    //         }
+    //     },
+        {
+            xtype: 'button',
+            iconCls: 'x-fa fa-comments',
+            bind: {
+                disabled: '{!currentRecord._meta_id}'
+            },
+            handler: 'onComment'
         }
     ],
 

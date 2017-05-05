@@ -14,7 +14,7 @@ Ext.define('Target.model.CatalogColumn', {
         {name:'pcc_ucd', type:'string'},
         {name:'pcc_unit', type:'string'},
         {name:'pcc_reference', type:'string'},
-        {name:'pcc_mandatory', type:'string'},
+        {name:'pcc_mandatory', type:'boolean'},
 
         // Campos genericos para ser usado pela grid de objetos.
         {
