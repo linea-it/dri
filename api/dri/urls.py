@@ -24,6 +24,7 @@ from product_classifier import views as product_classifier_views
 from product_register import views as product_register_views
 from rest_framework import routers
 from validation import views as validation_views
+from dri.settings.defaults import *
 from userquery import views as userquery_views
 
 router = routers.DefaultRouter()
@@ -97,5 +98,7 @@ urlpatterns = [
    
     url(r'^teste/', common_views.teste), 
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^accounts/', include('allauth.urls')),
 ]
+
+if USE_OAUTH:
+    urlpatterns += (url(r'^accounts/', include('allauth.urls')),)
