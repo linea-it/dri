@@ -72,8 +72,6 @@ class TargetViewSet(ViewSet):
         """
         Return a list of targets in catalog.
         """
-
-        print("0 #################################################")
         # Recuperar o parametro product id que e obrigatorio
         product_id = request.query_params.get('product', None)
         if not product_id:
@@ -97,7 +95,6 @@ class TargetViewSet(ViewSet):
         if schema is not None:
             table = "%s.%s" %(schema, table)
 
-        print("1 #################################################")
         # colunas associadas ao produto
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
         serializer = AssociationSerializer(queryset, many=True)
