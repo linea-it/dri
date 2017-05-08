@@ -25,8 +25,46 @@ Ext.define('Target.view.preview.Preview', {
             reference: 'visiomatic'
         }
     ],
-
     tbar: [
+    //     {
+    //         xtype: 'checkboxfield',
+    //         // name: 'acceptTerms',
+    //         reference: 'reject',
+    //         hideLabel: true,
+    //         boxLabel: 'Reject',
+    //         bind: {
+    //             // value: '{currentRecord.reject}',
+    //             // disabled: '{!currentRecord._meta_id}'
+    //         }
+    //     },
+    //     {
+    //         xtype: 'tbtext',
+    //         html: 'Rating'
+    //     },
+    //     {
+    //         xtype: 'rating',
+    //         scale: '200%',
+    //         rounding: 1,
+    //         minimum: 0,
+    //         selectedStyle: 'color: rgb(96, 169, 23);',
+    //         style: {
+    //             'color': '#777777'
+    //         },
+    //         bind: {
+    //             // value: '{currentRecord.rating}'
+    //         }
+    //     },
+        {
+            xtype: 'button',
+            iconCls: 'x-fa fa-comments',
+            bind: {
+                disabled: '{!currentRecord._meta_id}'
+            },
+            handler: 'onComment'
+        }
+    ],
+
+    bbar: [
         {
             xtype: 'combobox',
             reference: 'currentDataset',
@@ -81,44 +119,6 @@ Ext.define('Target.view.preview.Preview', {
             toggleHandler: 'showHideMembers',
             pressed: true,
             hidden: true
-        }
-    ],
-    bbar: [
-    //     {
-    //         xtype: 'checkboxfield',
-    //         // name: 'acceptTerms',
-    //         reference: 'reject',
-    //         hideLabel: true,
-    //         boxLabel: 'Reject',
-    //         bind: {
-    //             // value: '{currentRecord.reject}',
-    //             // disabled: '{!currentRecord._meta_id}'
-    //         }
-    //     },
-    //     {
-    //         xtype: 'tbtext',
-    //         html: 'Rating'
-    //     },
-    //     {
-    //         xtype: 'rating',
-    //         scale: '200%',
-    //         rounding: 1,
-    //         minimum: 0,
-    //         selectedStyle: 'color: rgb(96, 169, 23);',
-    //         style: {
-    //             'color': '#777777'
-    //         },
-    //         bind: {
-    //             // value: '{currentRecord.rating}'
-    //         }
-    //     },
-        {
-            xtype: 'button',
-            iconCls: 'x-fa fa-comments',
-            bind: {
-                disabled: '{!currentRecord._meta_id}'
-            },
-            handler: 'onComment'
         }
     ],
 
