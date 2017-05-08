@@ -55,15 +55,15 @@ Ext.define('common.store.MyStore', {
 
                             break;
 
-                        default:
-                            Ext.MessageBox.show({
-                                header: false,
-                                closable: false,
-                                msg: 'Error ' + error.status + ' - ' + error.statusText,
-                                buttons: Ext.MessageBox.OK,
-                                icon: Ext.MessageBox.WARNING,
-                                scope: this
-                            });
+                        // default:
+                        //     Ext.MessageBox.show({
+                        //         header: false,
+                        //         closable: false,
+                        //         msg: 'Error ' + error.status + ' - ' + error.statusText,
+                        //         buttons: Ext.MessageBox.OK,
+                        //         icon: Ext.MessageBox.WARNING,
+                        //         scope: this
+                        //     });
                     }
                 }
             }

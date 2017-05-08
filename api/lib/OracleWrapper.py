@@ -251,12 +251,12 @@ class OracleWrapper(BaseWrapper):
         else:
             sql_where = ''.join(clauses)
 
-        return sql_where
+        return "WHERE %s " % sql_where
 
     def get_clauses(self, filter):
 
         property = filter.get('property')
-        operator = filter.get('operator')
+        operator = filter.get('operator', "=")
         value = filter.get('value')
         clause = None
         if operator.lower() == 'between':

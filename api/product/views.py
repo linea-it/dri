@@ -24,11 +24,14 @@ class ProductFilter(django_filters.FilterSet):
     group = django_filters.MethodFilter()
     group_id = django_filters.MethodFilter()
     band = django_filters.MethodFilter()
+    class_name = django_filters.MethodFilter()
+    process = django_filters.MethodFilter()
 
     class Meta:
         model = Product
-        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id', 'releases',
-                  'tags', ]
+        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id',
+                  'releases',
+                  'tags', 'class_name']
 
     def filter_group(self, queryset, value):
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
@@ -38,6 +41,12 @@ class ProductFilter(django_filters.FilterSet):
 
     def filter_band(self, queryset, value):
         return queryset.filter(prd_filter__filter=str(value))
+
+    def filter_class_name(self, queryset, value):
+        return queryset.filter(prd_class__pcl_name=str(value))
+
+    def filter_process(self, queryset, value):
+        return queryset.filter(prd_process_id__epr_original_id=str(value))
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -106,7 +115,6 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
         # Usando Filter_Queryset e aplicado os filtros listados no filterbackend
         queryset = self.filter_queryset(self.get_queryset())
 
-
         # Search
         prd_display_name = request.query_params.get('search', None)
         if prd_display_name:
@@ -137,7 +145,6 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             editable = False
             if row.prd_owner and request.user.pk == row.prd_owner.pk:
                 editable = True
-
 
             # Adiciono os atributos que serao usados pela interface
             # esse dict vai ser um no filho de um dos nos de classe.
@@ -194,7 +201,6 @@ class ProductContentViewSet(viewsets.ModelViewSet):
             if ProductContentSetting.objects.filter(pcs_setting=pca_setting).count():
                 flag_content_settings = True
 
-
         qdisplay_name = request.query_params.get('display_name', None)
 
         queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id)
@@ -214,7 +220,6 @@ class ProductContentViewSet(viewsets.ModelViewSet):
             if flag_content_settings:
                 # Recupera a configuracao feita para uma coluna em usando como filtro uma configuracao.
                 contentSetting = row.productcontentsetting_set.all().filter(pcs_setting=pca_setting).first()
-
 
             association = row.productcontentassociation_set.first()
 
@@ -239,7 +244,6 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
             if flag_content_settings:
                 content.update({'is_visible': False})
-
 
             if association is not None:
 
@@ -293,6 +297,15 @@ class ProductContentViewSet(viewsets.ModelViewSet):
         return Response(ordered)
 
 
+class ProductRelatedViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = ProductRelated.objects.select_related().all()
+
+    serializer_class = ProductRelatedSerializer
+
+    filter_fields = ('prl_product', 'prl_related', 'prl_cross_identification')
 
 
 class ProductContentAssociationViewSet(viewsets.ModelViewSet):
@@ -321,7 +334,6 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
     ordering_fields = ('id',)
 
 
-
 class MapViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Map to be viewed or edited
@@ -335,6 +347,7 @@ class MapViewSet(viewsets.ModelViewSet):
     search_fields = ('prd_name', 'prd_display_name', 'prd_class')
 
     ordering_fields = ('id',)
+
 
 class MaskViewSet(viewsets.ModelViewSet):
     """
@@ -355,7 +368,7 @@ class AllProductViewSet(viewsets.ModelViewSet):
     """
     
     """
-    queryset = Product.objects.select_related().filter(prd_process_id__isnull = False)
+    queryset = Product.objects.select_related().filter(prd_process_id__isnull=False)
 
     serializer_class = AllProductsSerializer
 
@@ -407,7 +420,6 @@ class CurrentSettingViewSet(viewsets.ModelViewSet):
     ordering_fields = ('id', 'cst_display_name',)
 
 
-
 class ProductContentSettingViewSet(viewsets.ModelViewSet):
     """
 
@@ -419,6 +431,7 @@ class ProductContentSettingViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'pcs_content', 'pcs_setting',)
 
     ordering_fields = ('id', 'order',)
+
 
 class CutoutJobViewSet(viewsets.ModelViewSet):
     """
@@ -449,7 +462,7 @@ class PermissionWorkgroupUserFilter(django_filters.FilterSet):
 
     class Meta:
         model = WorkgroupUser
-        fields = ['id', 'wgu_workgroup', 'wgu_user', 'product',]
+        fields = ['id', 'wgu_workgroup', 'wgu_user', 'product', ]
 
     def filter_product(self, queryset, value):
         workgroups = Workgroup.objects.filter(permission__prm_product=int(value))
@@ -489,6 +502,7 @@ class WorkgroupViewSet(viewsets.ModelViewSet):
     queryset = Workgroup.objects.select_related().all()
 
     serializer_class = WorkgroupSerializer
+
 
 class WorkgroupUserViewSet(viewsets.ModelViewSet):
     """

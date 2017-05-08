@@ -14,11 +14,43 @@ Ext.define('Target.Application', {
         // TODO: add global / shared stores here
     ],
 
-    launch: function () {
-        // TODO - Launch the application
+    init:function () {
+        // console.log('init');
+        // Desabilitar os erros de Aria
+        // Ext.enableAriaButtons = false;
+
+        // // Checar se o usuario esta logado
+        // Ext.Ajax.request({
+        //     url: '/dri/api/logged/get_logged/?format=json',
+        //     success: function (response) {
+        //         var data = JSON.parse(response.responseText);
+
+        //         // Identificar o usuario no Google Analitics
+        //         ga('set', 'userId', data.id);
+
+        //         Ext.create({
+        //             xtype: 'app-main'
+        //         });
+
+        //     },
+        //     failure: function (response, opts) {
+        //         var pathname = window.location.pathname,
+        //             hostname = window.location.host,
+        //             location;
+
+        //         location = Ext.String.format('http://{0}/dri/api/api-auth/login/?next={1}', hostname, pathname);
+
+        //         window.location.assign(location);
+
+        //     }
+        // });
+
     },
 
-    init:function () {
+    launch: function () {
+        // TODO - Launch the application
+        // console.log('lauch');
+
         // Desabilitar os erros de Aria
         Ext.enableAriaButtons = false;
 
@@ -30,6 +62,7 @@ Ext.define('Target.Application', {
 
                 // Identificar o usuario no Google Analitics
                 ga('set', 'userId', data.id);
+
             },
             failure: function (response, opts) {
                 var pathname = window.location.pathname,
@@ -43,10 +76,6 @@ Ext.define('Target.Application', {
             }
         });
 
-    },
-
-    launch: function () {
-        // TODO - Launch the application
     },
 
     onAppUpdate: function () {
