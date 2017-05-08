@@ -104,6 +104,16 @@ Ext.define('visiomatic.Visiomatic', {
             interactive: false
         },
 
+        // Draw Catalog Path Options http://leafletjs.com/reference-1.0.3.html#path
+        catalogOptions: {
+            weight: 2, //largura da borda em pixel
+            opacity: 0.8, // transparencia da borda
+            fillOpacity: 0.01, // Transparencia nos marcadores.
+            color: '#2db92d', //Stroke color
+            interactive: true,
+            radius: 0.001 // radius do marker circulo em graus
+        },
+
         release: null,
         tag: null,
         dataset: null,
@@ -613,6 +623,95 @@ Ext.define('visiomatic.Visiomatic', {
 
             } else {
                 map.removeLayer(lradius);
+            }
+        }
+    },
+
+    overlayCatalog: function (id, store, options) {
+        var me = this,
+            l = me.libL,
+            map = me.getMap(),
+            wcs = map.options.crs,
+            catalogOptions = me.getCatalogOptions(),
+            pathOptions, collection, feature, lCatalog;
+
+        pathOptions = Ext.Object.merge(catalogOptions, options);
+
+        collection = {
+            type: 'FeatureCollection',
+            features: []
+        };
+
+        store.each(function (record) {
+
+            feature = {
+                type: 'Feature',
+                id: record.get('_meta_id'),
+                properties: record.data,
+                geometry: {
+                    type: 'Point',
+                    coordinates: [record.get('_meta_ra'), record.get('_meta_dec')]
+                }
+            };
+
+            collection.features.push(feature);
+
+        }, me);
+
+        lCatalog = l.geoJson(collection, {
+            coordsToLatLng: function (coords) {
+                if (wcs.forceNativeCelsys) {
+                    var latLng = wcs.eqToCelsys(l.latLng(coords[1], coords[0]));
+                    return new l.LatLng(latLng.lat, latLng.lng, coords[2]);
+                } else {
+                    return new l.LatLng(coords[1], coords[0], coords[2]);
+                }
+            },
+            pointToLayer: function (feature, latlng) {
+                path_options = Ext.Object.merge(pathOptions, {
+                    majAxis: pathOptions.radius,
+                    minAxis: pathOptions.radius,
+                    posAngle: 90
+                });
+
+                // Usei ellipse por ja estar em degrees a funcao circulo
+                // estava em pixels
+                // usei o mesmo valor de raio para os lados da ellipse para
+                // gerar um circulo por ser um circulo o angulo tanto faz.
+                return l.ellipse(
+                    latlng,
+                    path_options);
+
+            }
+        }).bindPopup(function (layer) {
+            var feature = layer.feature,
+                popup = '<TABLE style="margin:auto;">' +
+                   '<TBODY style="vertical-align:top;text-align:left;">' +
+                        '<TR><TD><spam style="font-weight: bold;">ID </spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
+                        '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
+                        '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
+                    '</TBODY></TABLE>';
+
+            return popup;
+
+        }).on('dblclick', function () { alert('TODO: OPEN IN EXPLORER!'); });
+
+        map.addLayer(lCatalog);
+
+        return lCatalog;
+
+    },
+
+    showHideLayer: function (layer, state) {
+        var me = this,
+            map = me.getMap();
+
+        if (layer !== null) {
+            if (state) {
+                map.addLayer(layer);
+
+            } else {
+                map.removeLayer(layer);
             }
         }
     }

@@ -10,13 +10,15 @@ Ext.define('Target.view.preview.PreviewModel', {
         'Target.model.Object',
         'common.store.Releases',
         'common.store.Tags',
-        'common.store.Datasets'
-        // 'Target.store.CoaddObjects',
-
+        'common.store.Datasets',
+        'Target.store.Objects',
+        'Target.store.ProductRelateds',
+        'Target.model.ProductRelated'
     ],
 
     data: {
-        is_system: false
+        is_system: false,
+        overlayMembers: null
     },
 
     links: {
@@ -30,6 +32,10 @@ Ext.define('Target.view.preview.PreviewModel', {
         },
         currentCatalog: {
             type: 'Target.model.Catalog',
+            create: true
+        },
+        productRelated: {
+            type: 'Target.model.ProductRelated',
             create: true
         }
     },
@@ -47,6 +53,15 @@ Ext.define('Target.view.preview.PreviewModel', {
         datasets: {
             type: 'datasets',
             storeId: 'datasets'
+        },
+        members: {
+            type: 'targets-objects',
+            autoLoad: false,
+            pageSize: 0
+        },
+        productRelateds: {
+            type: 'product_relateds',
+            autoLoad: false
         }
     }
 });

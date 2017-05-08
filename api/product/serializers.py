@@ -437,6 +437,8 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
 
 
 class ProductRelatedSerializer(serializers.ModelSerializer):
+    prl_cross_name = serializers.SerializerMethodField()
+
     class Meta:
         model = ProductRelated
 
@@ -444,8 +446,16 @@ class ProductRelatedSerializer(serializers.ModelSerializer):
             'id',
             'prl_product',
             'prl_related',
-            'prl_cross_identification'
+            'prl_cross_identification',
+            'prl_cross_name'
         )
+
+    def get_prl_cross_name(self, obj):
+        try:
+            return obj.prl_cross_identification.pcn_column_name
+
+        except:
+            return None
 
 
 class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
@@ -777,5 +787,3 @@ class WorkgroupUserSerializer(serializers.ModelSerializer):
 
     def get_username(self, obj):
         return obj.wgu_user.username
-
-

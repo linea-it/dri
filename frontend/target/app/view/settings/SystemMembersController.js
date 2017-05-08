@@ -80,8 +80,6 @@ Ext.define('Target.view.settings.SystemMembersController', {
             related = vm.get('productRelated'),
             memberCatalog;
 
-        console.log(related);
-
         // Se ja existir uma relacao entre os produtos
         if ((related) && (related.get('id') > 0)) {
             memberCatalog = products.getById(related.get('prl_related'));
@@ -114,7 +112,6 @@ Ext.define('Target.view.settings.SystemMembersController', {
     },
 
     onSelectMembersCatalog: function (combo, memberCatalog) {
-        console.log('onSelectMembersCatalog');
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
@@ -125,18 +122,18 @@ Ext.define('Target.view.settings.SystemMembersController', {
 
             vm.set('memberCatalog', memberCatalog);
 
-            // TODO Checar se existe um relate se nao existir criar um
-
+            // Checar se existe um relate se nao existir criar um
             if (related.get('id') > 0) {
                 // Ja existe related
                 if (related.get('prl_related') != memberCatalog.get('id')) {
                     // O related e diferente do selecionado na combo
-                    // TODO fazer o Update do related
-                    console.log('TODO: UPDATE UM NOVO RELATED');
-
                     related.set('prl_related', memberCatalog.get('id'));
                     relateds.add(related);
-                    relateds.sync();
+                    relateds.sync({
+                        callback: function () {
+                            me.loadContents();
+                        }
+                    });
 
                 } else {
                     // related selecioando e igual ao que esta no banco
@@ -146,19 +143,22 @@ Ext.define('Target.view.settings.SystemMembersController', {
 
             } else {
                 // Criar um novo related
-                console.log('TODO: CRIAR UM NOVO RELATED');
                 related.set('prl_product', currentCatalog.get('id'));
                 related.set('prl_related', memberCatalog.get('id'));
                 related.set('prl_cross_identification', null);
+
                 relateds.add(related);
-                relateds.sync();
+                relateds.sync({
+                    callback: function () {
+                        me.loadContents();
+                    }
+                });
 
             }
         }
     },
 
     loadContents: function () {
-        console.log('loadContents');
         var me = this,
             vm = me.getViewModel(),
             contents = vm.getStore('availableContents'),
@@ -181,8 +181,6 @@ Ext.define('Target.view.settings.SystemMembersController', {
     },
 
     preSelectCrossIdentification: function (contents) {
-        console.log('preSelectCrossIdentification');
-
         var me = this,
             refs = me.getReferences(),
             cmb = refs.cmbMembersProperties,
@@ -190,6 +188,7 @@ Ext.define('Target.view.settings.SystemMembersController', {
             related = vm.get('productRelated'),
             content;
 
+        // Seleciona a propriedade baseada no UCD
         contents.each(function (c) {
             if (c.get('ucd') === 'meta.id.cross') {
                 content = c;
@@ -198,9 +197,8 @@ Ext.define('Target.view.settings.SystemMembersController', {
         }, me);
 
 
-        // TODO SELECIONAR A PROPRIEDADE QUE JA ESTIVER NO RELATED
+        // SELECIONAR A PROPRIEDADE QUE JA ESTIVER NO RELATED
         if (related.get('id') > 0) {
-            console.log('TESTE 1');
             if (related.get('prl_cross_identification') > 0) {
                 // Ja tem uma propriedade setada
                 content = contents.getById(related.get('prl_cross_identification'));
@@ -216,18 +214,27 @@ Ext.define('Target.view.settings.SystemMembersController', {
     },
 
     onSelectCrossIdentification: function (combo, crossIdentification) {
-        console.log('onSelectCrossIdentification(%o, %o)', combo, crossIdentification);
-
         var me = this,
-            vm = me.getViewModel();
+            vm = me.getViewModel(),
+            related = vm.get('productRelated'),
+            relateds = vm.getStore('productRelateds');
 
         if ((crossIdentification) && (crossIdentification.get('id') > 0)) {
-
             vm.set('crossIdentification', crossIdentification);
 
-
             // TODO verificar se precisa atualizar o related
+            if (related.get('id') > 0) {
+                // Ja existe cross_identification diferente da selecionada
+                // Se for igual nao faz nada
+                if (related.get('prl_cross_identification') !== crossIdentification.get('id')) {
 
+                    console.log('TODO: UPDATE UM NOVO RELATED');
+
+                    related.set('prl_cross_identification', crossIdentification.get('id'));
+                    relateds.add(related);
+                    relateds.sync();
+                }
+            }
         }
     }
 

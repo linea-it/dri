@@ -71,6 +71,16 @@ Ext.define('Target.view.preview.Preview', {
             toggleHandler: 'showHideRadius',
             pressed: true,
             hidden: true
+        },
+        {
+            xtype: 'button',
+            reference: 'btnMembers',
+            iconCls: 'x-fa fa-dot-circle-o',
+            tooltip: 'Show System Members',
+            enableToggle: true,
+            toggleHandler: 'showHideMembers',
+            pressed: true,
+            hidden: true
         }
     ],
     bbar: [
