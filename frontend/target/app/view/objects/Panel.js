@@ -37,6 +37,8 @@ Ext.define('Target.view.objects.Panel', {
     items: [
         {
             reference: 'targetsGrid',
+            border: true,
+            frame: true,
             flex: 1,
             layout: 'border',
             items: [
@@ -87,9 +89,11 @@ Ext.define('Target.view.objects.Panel', {
             xtype: 'targets-preview',
             reference: 'targetsPreviewPanel',
             flex: 1,
-            // width: 500,
+            border: true,
+            frame: true,
             split: true,
-            resizable: true,
+            // width: 500,
+            // resizable: true,
             listeners: {
                 changeinobject: 'onChangeInObjects'
             }

@@ -36,7 +36,7 @@ Ext.define('visiomatic.Visiomatic', {
             zoom: 1
         },
 
-        prefix: 'Dark Energy Survey @ 2016 NCSA/LIneA',
+        prefix: '',
 
         enableSidebar: true,
 
@@ -280,6 +280,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         // Wcs Control
         if (me.getEnableWcs()) {
+            // OBS: O controle de Copy Clipboard esta escondigo pelo css
             me.addWcsController();
         }
 

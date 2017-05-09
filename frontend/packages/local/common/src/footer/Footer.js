@@ -19,7 +19,7 @@ Ext.define('common.footer.Footer', {
 
     cls: 'des-portal-footer',
 
-    height: 24,
+    height: 28,
 
     // layout: {
     //     type: 'hbox',
@@ -44,7 +44,7 @@ Ext.define('common.footer.Footer', {
         // },
         {
             xtype: 'tbtext',
-            html: 'LIneA - Laboratório Interinstitucional de e-Astronomia',
+            html: 'Powered by LIneA | Dark Energy Survey | NCSA',
             cls: 'des-portal-footer-text'
         }
         // '->',

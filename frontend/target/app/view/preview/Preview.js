@@ -4,7 +4,8 @@ Ext.define('Target.view.preview.Preview', {
     requires: [
         'Target.view.preview.PreviewController',
         'Target.view.preview.PreviewModel',
-        'Target.view.preview.Visiomatic'
+        'Target.view.preview.Visiomatic',
+        'Ext.ux.rating.Picker'
     ],
 
     xtype: 'targets-preview',
@@ -26,34 +27,29 @@ Ext.define('Target.view.preview.Preview', {
         }
     ],
     tbar: [
-    //     {
-    //         xtype: 'checkboxfield',
-    //         // name: 'acceptTerms',
-    //         reference: 'reject',
-    //         hideLabel: true,
-    //         boxLabel: 'Reject',
-    //         bind: {
-    //             // value: '{currentRecord.reject}',
-    //             // disabled: '{!currentRecord._meta_id}'
-    //         }
-    //     },
-    //     {
-    //         xtype: 'tbtext',
-    //         html: 'Rating'
-    //     },
-    //     {
-    //         xtype: 'rating',
-    //         scale: '200%',
-    //         rounding: 1,
-    //         minimum: 0,
-    //         selectedStyle: 'color: rgb(96, 169, 23);',
-    //         style: {
-    //             'color': '#777777'
-    //         },
-    //         bind: {
-    //             // value: '{currentRecord.rating}'
-    //         }
-    //     },
+        {
+            xtype: 'checkboxfield',
+            reference: 'btnReject',
+            hideLabel: true,
+            boxLabel: 'Reject',
+            bind: {
+                value: '{currentRecord._meta_reject}',
+                disabled: '{!currentRecord._meta_id}'
+            }
+        },
+        {
+            xtype: 'tbtext',
+            html: 'Rating'
+        },
+        {
+            xtype: 'numberfield',
+            maxValue: 5,
+            minValue: 0,
+            width: 50,
+            bind: {
+                value: '{currentRecord._meta_rating}'
+            }
+        },
         {
             xtype: 'button',
             iconCls: 'x-fa fa-comments',
