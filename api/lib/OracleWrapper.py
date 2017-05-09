@@ -110,7 +110,7 @@ class OracleWrapper(BaseWrapper):
                 sql_sort = self.do_order(order_by, tbl_columns, cls)
 
         sql = sql_base
-        # print(sql)
+        print(sql)
         rows = list()
         if dict:
             rows = self.fetchall_dict(sql)

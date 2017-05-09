@@ -24,17 +24,17 @@ Ext.define('Target.view.settings.SystemMembers', {
                 align: 'stretch'
             },
             items: [
-                {
-                    xtype: 'panel',
-                    // region: 'north',
-                    height: 80,
-                    bodyPadding: 10,
-                    html: [
-                        'TEXTO Explicativo'
-                        // '</br>' + 'The list can be public or private in this case only the users selected or who are part of a group can access it.' +
-                        // '</br>' + 'You can create workgroups.'
-                    ]
-                },
+                // {
+                //     xtype: 'panel',
+                //     // region: 'north',
+                //     height: 80,
+                //     bodyPadding: 10,
+                //     html: [
+                //         'TEXTO Explicativo'
+                //         // '</br>' + 'The list can be public or private in this case only the users selected or who are part of a group can access it.' +
+                //         // '</br>' + 'You can create workgroups.'
+                //     ]
+                // },
                 {
                     xtype: 'form',
                     bodyPadding: 10,
