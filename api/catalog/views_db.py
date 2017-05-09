@@ -31,28 +31,26 @@ class CoaddObjectsDBHelper:
 
     @staticmethod
     def _is_coordinate_and_bounding_defined(params, properties):
-        if params.get('coordinate') and params.get('bounding') and\
-            (properties.get("pos.eq.ra;meta.main") or
-                properties.get("pos.eq.dec;meta.main")):
+        if params.get('coordinate') and\
+                params.get('bounding') and\
+                properties.get("pos.eq.ra;meta.main") and\
+                properties.get("pos.eq.dec;meta.main"):
             return True
         return False
 
     def make_coordinate_and_bounding_filters(self, params, properties):
-        if not CoaddObjectsDBHelper._is_coordinate_and_bounding_defined(params, properties):
+        if not CoaddObjectsDBHelper._is_coordinate_and_bounding_defined(
+                    params, properties):
             raise("Coordinate and bounding filters are not defined.")
 
         coordinate = params.get('coordinate', None).split(',')
         bounding = params.get('bounding', None).split(',')
 
-        property_ra = properties.get("pos.eq.ra;meta.main", None)
-        if property_ra:
-            property_ra = property_ra.lower()
-            property_ra_t = self.db.get_column_obj(self.table, property_ra)
+        property_ra = properties.get("pos.eq.ra;meta.main", None).lower()
+        property_ra_t = self.db.get_column_obj(self.table, property_ra)
 
-        property_dec = properties.get("pos.eq.dec;meta.main", None)
-        if property_dec:
-            property_dec = property_dec.lower()
-            property_dec_t = self.db.get_column_obj(self.table, property_dec)
+        property_dec = properties.get("pos.eq.dec;meta.main", None).lower()
+        property_dec_t = self.db.get_column_obj(self.table, property_dec)
 
         ra = float(coordinate[0])
         dec = float(coordinate[1])
@@ -60,14 +58,12 @@ class CoaddObjectsDBHelper:
         bdec = float(bounding[1])
 
         _filters = list()
-        if property_ra:
-            _filters.append(between(literal_column(str(property_ra_t)),
-                                    literal_column(str(ra - bra)),
-                                    literal_column(str(ra + bra))))
-        if property_dec:
-            _filters.append(between(literal_column(str(property_dec_t)),
-                                    literal_column(str(dec - bdec)),
-                                    literal_column(str(dec + bdec))))
+        _filters.append(between(literal_column(str(property_ra_t)),
+                                literal_column(str(ra - bra)),
+                                literal_column(str(ra + bra))))
+        _filters.append(between(literal_column(str(property_dec_t)),
+                                literal_column(str(dec - bdec)),
+                                literal_column(str(dec + bdec))))
         return and_(*_filters)
 
     def _create_stm(self, params, properties):
@@ -85,8 +81,10 @@ class CoaddObjectsDBHelper:
         columns = self._create_columns_sql_format(self.str_columns)
 
         filters = list()
-        if CoaddObjectsDBHelper._is_coordinate_and_bounding_defined(params, properties):
-            filters.append(self.make_coordinate_and_bounding_filters(params, properties))
+        if CoaddObjectsDBHelper._is_coordinate_and_bounding_defined(
+                params, properties):
+            filters.append(self.make_coordinate_and_bounding_filters(
+                params, properties))
 
         maglim = params.get('maglim', None)
         if maglim is not None:
@@ -94,19 +92,16 @@ class CoaddObjectsDBHelper:
             maglim = float(maglim)
             mag_t = self.db.get_column_obj(self.table, 'mag_auto_i')
             filters.append(
-                literal_column(str(mag_t) <= literal_column(maglim))
-            )
+                literal_column(str(mag_t)) <= literal_column(str(maglim)))
 
         coadd_object_id = params.get('coadd_object_id', None)
         property_id = properties.get("meta.id;meta.main", None).lower()
         property_id_t = self.db.get_column_obj(self.table, property_id)
         if coadd_object_id is not None:
             filters.append(
-                literal_column(str(property_id_t) ==
-                               literal_column(str(coadd_object_id)))
-            )
-
-        stm = select(columns).select_from(self.table)
+                literal_column(str(property_id_t)) ==
+                literal_column(str(coadd_object_id)))
+        stm = select(columns).select_from(self.table).where(and_(*filters))
 
         if limit:
             stm = stm.limit(literal_column(str(limit)))
