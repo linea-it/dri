@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework.fields import IntegerField, BooleanField, ReadOnlyField
-
-from .models import Rating, Reject
+from django.contrib.auth.models import User
+from .models import Rating, Reject, Comments
 
 class RatingSerializer(serializers.HyperlinkedModelSerializer):
     catalog_id = IntegerField(allow_null=False)
@@ -34,3 +34,46 @@ class RejectSerializer(serializers.HyperlinkedModelSerializer):
             'object_id',
             'reject'
         )
+
+class CommentsSerializer(serializers.HyperlinkedModelSerializer):
+    catalog_id = IntegerField(allow_null=False)
+    object_id = IntegerField(min_value=0, allow_null=False, required=True)
+    owner = serializers.SerializerMethodField()
+    date = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comments
+
+        fields = (
+            'id',
+            'date',
+            'catalog_id',
+            'object_id',
+            'owner',
+            'is_owner',
+            'comments',
+        )
+
+
+    def get_owner(self, obj):
+        try:
+            user = User.objects.get(pk=obj.owner)
+            return user.username
+        except:
+            return None
+
+
+    def get_date(self, obj):
+        try:
+            return obj.date.strftime('%Y-%m-%d %H:%M')
+        except:
+            return None
+
+
+    def get_is_owner(self, obj):
+        current_user = self.context['request'].user
+        if obj.owner == current_user.pk:
+            return True
+        else:
+            return False

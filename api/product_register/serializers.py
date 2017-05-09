@@ -10,7 +10,7 @@ class SiteSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
 
-        model = Export
+        model = Site
 
         fields = (
             'id',

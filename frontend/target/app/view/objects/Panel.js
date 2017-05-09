@@ -24,7 +24,11 @@ Ext.define('Target.view.objects.Panel', {
         currentCatalog: null
     },
 
-    layout: 'border',
+    layout: {
+        type: 'hbox',
+        pack: 'start',
+        align: 'stretch'
+    },
 
     bind: {
         currentCatalog: '{currentCatalog}'
@@ -32,9 +36,11 @@ Ext.define('Target.view.objects.Panel', {
 
     items: [
         {
-            region: 'center',
-            layout: 'border',
             reference: 'targetsGrid',
+            border: true,
+            frame: true,
+            flex: 1,
+            layout: 'border',
             items: [
                {
                     xtype: 'targets-objects-grid',
@@ -81,11 +87,13 @@ Ext.define('Target.view.objects.Panel', {
         },
         {
             xtype: 'targets-preview',
-            region: 'east',
             reference: 'targetsPreviewPanel',
-            width: 500,
+            flex: 1,
+            border: true,
+            frame: true,
             split: true,
-            resizable: true,
+            // width: 500,
+            // resizable: true,
             listeners: {
                 changeinobject: 'onChangeInObjects'
             }

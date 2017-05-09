@@ -4,7 +4,8 @@ Ext.define('Target.view.preview.Preview', {
     requires: [
         'Target.view.preview.PreviewController',
         'Target.view.preview.PreviewModel',
-        'Target.view.preview.Visiomatic'
+        'Target.view.preview.Visiomatic',
+        'Ext.ux.rating.Picker'
     ],
 
     xtype: 'targets-preview',
@@ -25,8 +26,41 @@ Ext.define('Target.view.preview.Preview', {
             reference: 'visiomatic'
         }
     ],
-
     tbar: [
+        {
+            xtype: 'checkboxfield',
+            reference: 'btnReject',
+            hideLabel: true,
+            boxLabel: 'Reject',
+            bind: {
+                value: '{currentRecord._meta_reject}',
+                disabled: '{!currentRecord._meta_id}'
+            }
+        },
+        {
+            xtype: 'tbtext',
+            html: 'Rating'
+        },
+        {
+            xtype: 'numberfield',
+            maxValue: 5,
+            minValue: 0,
+            width: 50,
+            bind: {
+                value: '{currentRecord._meta_rating}'
+            }
+        },
+        {
+            xtype: 'button',
+            iconCls: 'x-fa fa-comments',
+            bind: {
+                disabled: '{!currentRecord._meta_id}'
+            },
+            handler: 'onComment'
+        }
+    ],
+
+    bbar: [
         {
             xtype: 'combobox',
             reference: 'currentDataset',
@@ -61,6 +95,26 @@ Ext.define('Target.view.preview.Preview', {
             iconCls: 'x-fa fa-crosshairs',
             tooltip: 'Center',
             handler: 'onCenterTarget'
+        },
+        {
+            xtype: 'button',
+            reference: 'btnRadius',
+            iconCls: 'x-fa fa-circle-o',
+            tooltip: 'Show System Radius',
+            enableToggle: true,
+            toggleHandler: 'showHideRadius',
+            pressed: true,
+            hidden: true
+        },
+        {
+            xtype: 'button',
+            reference: 'btnMembers',
+            iconCls: 'x-fa fa-dot-circle-o',
+            tooltip: 'Show System Members',
+            enableToggle: true,
+            toggleHandler: 'showHideMembers',
+            pressed: true,
+            hidden: true
         }
     ],
 

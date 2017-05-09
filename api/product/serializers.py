@@ -25,6 +25,13 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     # pgr_name = serializers.SerializerMethodField()
     pgr_display_name = serializers.SerializerMethodField()
 
+    # epr_original_id = Original Process ID
+    epr_original_id = serializers.SerializerMethodField()
+
+    # Related Products
+    prl_related = serializers.SerializerMethodField()
+    prl_cross_identification = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
 
@@ -40,7 +47,10 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             'pcl_is_system',
             'pgr_group',
             # 'pgr_name',
-            'pgr_display_name'
+            'pgr_display_name',
+            'epr_original_id',
+            'prl_related',
+            'prl_cross_identification'
         )
 
     def get_pcl_name(self, obj):
@@ -60,6 +70,26 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_pgr_display_name(self, obj):
         return obj.prd_class.pcl_group.pgr_display_name
+
+    def get_epr_original_id(self, obj):
+        try:
+            return obj.prd_process_id.epr_original_id
+        except:
+            return None
+
+    def get_prl_related(self, obj):
+        try:
+            related = ProductRelated.objects.get(prl_product=obj.pk)
+            return related.prl_related.pk
+        except:
+            return None
+
+    def get_prl_cross_identification(self, obj):
+        try:
+            related = ProductRelated.objects.get(prl_product=obj.pk)
+            return related.prl_cross_identification.pk
+        except:
+            return None
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
@@ -224,15 +254,15 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_release_id(self, obj):
         try:
-           r = obj.productrelease_set.first()
-           return r.release.id
+            r = obj.productrelease_set.first()
+            return r.release.id
         except:
             return None
 
     def get_release_display_name(self, obj):
         try:
-           r = obj.productrelease_set.first()
-           return r.release.rls_display_name
+            r = obj.productrelease_set.first()
+            return r.release.rls_display_name
         except:
             return None
 
@@ -242,8 +272,6 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             return True
         else:
             return False
-
-
 
 
 class MapSerializer(serializers.HyperlinkedModelSerializer):
@@ -256,7 +284,13 @@ class MapSerializer(serializers.HyperlinkedModelSerializer):
             'mpa_ordering',
         )
 
-class CutOutJobSerializer(serializers.ModelSerializer):
+
+class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
+    cjb_product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=False)
+
+    owner = serializers.SerializerMethodField()
+
     class Meta:
         model = CutOutJob
 
@@ -270,7 +304,11 @@ class CutOutJobSerializer(serializers.ModelSerializer):
             'cjb_job_type',
             'cjb_band',
             'cjb_Blacklist',
+            'owner'
         )
+
+    def get_owner(self, obj):
+        return obj.owner.username
 
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
@@ -393,10 +431,31 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
             'pca_product',
             'pca_class_content',
             'pca_product_content',
-            'pca_setting',
         )
 
         read_only_fields = ('id')
+
+
+class ProductRelatedSerializer(serializers.ModelSerializer):
+    prl_cross_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = ProductRelated
+
+        fields = (
+            'id',
+            'prl_product',
+            'prl_related',
+            'prl_cross_identification',
+            'prl_cross_name'
+        )
+
+    def get_prl_cross_name(self, obj):
+        try:
+            return obj.prl_cross_identification.pcn_column_name
+
+        except:
+            return None
 
 
 class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
@@ -500,10 +559,10 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_epr_username(self, obj):
         return obj.prd_process_id.epr_username
-    
+
     def get_epr_end_date(self, obj):
         return obj.prd_process_id.epr_end_date
-    
+
     def get_exp_username(self, obj):
         try:
             r = obj.prd_process_id.export_set.first()
@@ -517,7 +576,7 @@ class AllProductsSerializer(serializers.HyperlinkedModelSerializer):
             return r.exp_date
         except AttributeError:
             return None
-            
+
     def get_prd_release_id(self, obj):
         try:
             r = obj.releases.first()
@@ -606,7 +665,7 @@ class CurrentSettingSerializer(serializers.ModelSerializer):
 class ProductContentSettingSerializer(serializers.ModelSerializer):
     display_name = serializers.SerializerMethodField()
     unit = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = ProductContentSetting
 
@@ -621,19 +680,17 @@ class ProductContentSettingSerializer(serializers.ModelSerializer):
         )
 
     def get_display_name(self, obj):
-
-        association = obj.pcs_content.productcontentassociation_set.filter(pca_setting=obj.pcs_setting).first()
-        if association is not None:
+        try:
+            association = obj.pcs_content.productcontentassociation_set.first()
             return association.pca_class_content.pcc_display_name
-        else:
+        except:
             return obj.pcs_content.pcn_column_name
 
     def get_unit(self, obj):
-
-        association = obj.pcs_content.productcontentassociation_set.filter(pca_setting=obj.pcs_setting).first()
-        if association is not None:
+        try:
+            association = obj.pcs_content.productcontentassociation_set.first()
             return association.pca_class_content.pcc_unit
-        else:
+        except:
             return None
 
 
@@ -654,7 +711,7 @@ class PermissionUserSerializer(serializers.ModelSerializer):
         )
 
     def get_username(self, obj):
-            return obj.prm_user.username
+        return obj.prm_user.username
 
 
 class PermissionWorkgroupUserSerializer(serializers.ModelSerializer):
@@ -699,8 +756,10 @@ class PermissionSerializer(serializers.ModelSerializer):
             'prm_workgroup',
         )
 
+
 class WorkgroupSerializer(serializers.ModelSerializer):
     owner = serializers.PrimaryKeyRelatedField(read_only=True)
+
     class Meta:
         model = Workgroup
 
@@ -709,6 +768,7 @@ class WorkgroupSerializer(serializers.ModelSerializer):
             'wgp_workgroup',
             'owner',
         )
+
 
 class WorkgroupUserSerializer(serializers.ModelSerializer):
     wgu_user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all(), many=False, allow_null=True)

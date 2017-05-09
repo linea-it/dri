@@ -1,0 +1,4 @@
+/** Ocultar o botao de Clipboard que nao funciona na nossa aplicacao */
+.leaflet-control-wcs-clipboard {
+    display: none;
+}

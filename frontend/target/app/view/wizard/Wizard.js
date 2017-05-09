@@ -14,14 +14,14 @@ Ext.define('Target.view.wizard.Wizard', {
         'Target.view.association.Panel',
         'Target.view.settings.Columns',
         'Target.view.settings.Permission',
+        'Target.view.settings.SystemMembers',
+        'Target.view.cutout.CutoutJob',
         'Ext.layout.container.Card'
     ],
 
     controller: 'wizard',
 
     viewModel: 'wizard',
-
-    //layout: 'card',
 
     defaultListenerScope: true,
 
@@ -34,32 +34,54 @@ Ext.define('Target.view.wizard.Wizard', {
     ui: 'navigation',
     tabPosition: 'left',
     tabRotation: 0,
+    defaults: {
+        textAlign: 'left'
+    },
 
     items: [
         {
             id: 'card-0',
             xtype: 'targets-settings',
             title: 'Setting',
+            iconCls: 'x-fa fa-cog',
             bind: {
                 product: '{product}'
             }
         },
         {
             id: 'card-1',
-            xtype: 'targets-association',
-            title: 'Association',
+            xtype: 'targets-columns',
+            title: 'Columns',
+            iconCls: 'x-fa fa-list',
             disabled: true
         },
         {
             id: 'card-2',
-            xtype: 'targets-columns',
-            title: 'Columns',
+            xtype: 'targets-association',
+            title: 'Association',
+            iconCls: 'x-fa fa-columns',
             disabled: true
         },
         {
             id: 'card-3',
+            xtype: 'targets-cutoutjob',
+            title: 'Cutouts',
+            iconCls: 'x-fa fa-picture-o',
+            disabled: true
+        },
+        {
+            id: 'card-4',
+            xtype: 'targets-system-members',
+            title: 'System Members',
+            iconCls: 'x-fa fa-dot-circle-o',
+            disabled: true
+            // hidden: true
+        },
+        {
+            id: 'card-5',
             xtype: 'targets-permission',
             title: 'Permission',
+            iconCls: 'x-fa fa-lock',
             disabled: true
         }
     ],
@@ -82,7 +104,7 @@ Ext.define('Target.view.wizard.Wizard', {
 
         me.down('targets-settings').setCurrentSetting(currentSetting);
 
-        me.enableTabs();
+        me.enableTabsBySettings();
 
     },
 
@@ -93,44 +115,51 @@ Ext.define('Target.view.wizard.Wizard', {
 
         me.getViewModel().set('currentCatalog', currentCatalog);
 
+        me.enableTabsByPermission();
+
     },
 
-    showNext: function () {
-        this.doCardNavigation(1);
-    },
-
-    showPrevious: function () {
-        this.doCardNavigation(-1);
-    },
-
-    doCardNavigation: function (incr) {
-        var me = this,
-            l = me.getLayout(),
-            i = l.activeItem.id.split('card-')[1],
-            next = parseInt(i, 10) + incr;
-
-        l.setActiveItem(next);
-
-        // me.down('#card-prev').setDisabled(next === 0);
-        // me.down('#card-next').setDisabled(next === 2);
-    },
-
-    enableTabs: function () {
+    enableTabsBySettings: function () {
         var me = this,
             vm = me.getViewModel(),
             currentSetting = vm.get('currentSetting');
 
+
+        // Configuracoes por settings caso o usuario tenha selecionado uma
+        // setting habilitar os paineis
         if ((currentSetting.get('id') > 0) && (currentSetting.get('editable'))) {
-            me.down('targets-association').enable();
             me.down('targets-columns').enable();
+
+        } else {
+            me.down('targets-columns').disable();
+
+        }
+
+    },
+
+    enableTabsByPermission: function () {
+        var me = this,
+        vm = me.getViewModel(),
+        currentCatalog = vm.get('currentCatalog');
+
+        // Configuracoes habilitadas se o usuario for o proprietario do catalogo
+        if ((currentCatalog.get('id') > 0) && (currentCatalog.get('is_owner'))) {
+            me.down('targets-association').enable();
             me.down('targets-permission').enable();
+            me.down('targets-system-members').enable();
 
         } else {
             me.down('targets-association').disable();
-            me.down('targets-columns').disable();
             me.down('targets-permission').disable();
+            me.down('targets-system-members').disable();
+
         }
 
+        if (currentCatalog.get('pcl_is_system')) {
+            me.down('targets-system-members').setVisible(true);
+        } else {
+            me.down('targets-system-members').setVisible(false);
+        }
     }
 
 });

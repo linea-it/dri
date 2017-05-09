@@ -110,7 +110,7 @@ class OracleWrapper(BaseWrapper):
                 sql_sort = self.do_order(order_by, tbl_columns, cls)
 
         sql = sql_base
-        # print(sql)
+        print(sql)
         rows = list()
         if dict:
             rows = self.fetchall_dict(sql)
@@ -224,6 +224,8 @@ class OracleWrapper(BaseWrapper):
         sql_where = ''
         clauses = list()
 
+        print(columns)
+
         for filter in filters:
             if 'property' in filter:
                 property = filter.get('property')
@@ -249,12 +251,12 @@ class OracleWrapper(BaseWrapper):
         else:
             sql_where = ''.join(clauses)
 
-        return sql_where
+        return "WHERE %s " % sql_where
 
     def get_clauses(self, filter):
 
         property = filter.get('property')
-        operator = filter.get('operator')
+        operator = filter.get('operator', "=")
         value = filter.get('value')
         clause = None
         if operator.lower() == 'between':

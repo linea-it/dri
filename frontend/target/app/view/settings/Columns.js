@@ -144,21 +144,14 @@ Ext.define('Target.view.settings.Columns', {
             ],
             buttons: [
                 {
-                    text: 'Previous',
+                    text: 'Cancel',
                     scope: me,
                     handler: function () {
-                        this.fireEvent('previous');
+                        this.fireEvent('finish', this);
                     }
                 },
                 {
-                    text: 'Next',
-                    scope: me,
-                    handler: function () {
-                        this.fireEvent('next');
-                    }
-                },
-                {
-                    text: 'Finish',
+                    text: 'Ok',
                     ui: 'soft-green',
                     scope: me,
                     handler: function () {

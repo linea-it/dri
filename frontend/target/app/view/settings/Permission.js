@@ -147,27 +147,20 @@ Ext.define('Target.view.settings.Permission', {
             ],
             buttons: [
                 {
-                    text: 'Previous',
+                    text: 'Cancel',
                     scope: me,
                     handler: function () {
-                        this.fireEvent('previous');
+                        this.fireEvent('finish', this);
                     }
                 },
                 {
-                    text: 'Finish',
+                    text: 'Ok',
                     ui: 'soft-green',
                     scope: me,
                     handler: function () {
                         this.fireEvent('finish', this);
                     }
                 }
-                // {
-                //     text: 'Next',
-                //     scope: me,
-                //     handler: function () {
-                //         this.fireEvent('next');
-                //     }
-                // }
             ]
         });
 
