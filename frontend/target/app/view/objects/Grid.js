@@ -18,9 +18,6 @@ Ext.define('Target.view.objects.Grid', {
     * Evento disparado depois que a grid de objetos e reconfigurada
     * @param {Portal.view.target.Objects} [this] this panel
     */
-
-    scrollable: true,
-
     config: {
         ready: false,
         columnRating: true,
@@ -34,12 +31,15 @@ Ext.define('Target.view.objects.Grid', {
         var me = this;
 
         Ext.apply(this, {
+            enableLocking: true,
+            syncRowHeight: true,
             columns: [
                 Ext.create('Ext.grid.RowNumberer'),
-                {text: 'Placeholder',  dataIndex: '', hidden: true}
+                {text: '',  dataIndex: '', width: 50},
+                {text: '',  dataIndex: '', flex: true}
             ],
             viewConfig: {
-                stripeRows: false,
+                stripeRows: true,
                 markDirty: false,
                 getRowClass: function (record) {
                     return record.get('_meta_reject') === true ? 'rejected-row' : '';
@@ -60,7 +60,8 @@ Ext.define('Target.view.objects.Grid', {
         // Coluna RowNunber
         columns.push(Ext.create('Ext.grid.RowNumberer', {
             width: 50,
-            resizable: true
+            resizable: true,
+            locked: true
         }));
 
         if (storeColumns.count() > 0) {
@@ -80,7 +81,8 @@ Ext.define('Target.view.objects.Grid', {
                         text: me.createColumnText(record),
                         dataIndex: record.get('column_name'),
                         tooltip: me.createColumnTooltip(record),
-                        renderer: me.formatNumber
+                        renderer: me.formatNumber,
+                        lockable: true
                     };
 
                     // if (type != undefined) {
@@ -103,6 +105,8 @@ Ext.define('Target.view.objects.Grid', {
                         column.xtype = 'numbercolumn';
                         column.format = '0.000';
                         column.renderer = null;
+                        column.locked = true;
+                        column.lockable = true;
                     }
 
                     // Coluna Radius
@@ -111,11 +115,16 @@ Ext.define('Target.view.objects.Grid', {
                         column.xtype = 'numbercolumn';
                         column.format = '0.000';
                         column.renderer = null;
+                        // column.locked = true;
+                        column.lockable = true;
                     }
 
 
                     // Se tiver a coluna id habilita as colunas de rating e reject
                     if (record.get('ucd') == 'meta.id;meta.main') {
+                        column.locked = true;
+                        column.lockable = true;
+
                         flag = true;
                     }
 
@@ -138,6 +147,7 @@ Ext.define('Target.view.objects.Grid', {
                         xtype: 'rating',
                         minimum: 0,
                         // overStyle: 'color: orange;'
+                        scale: '115%',
                         selectedStyle: 'color: rgb(96, 169, 23);',
                         style: {
                             'color': '#777777'
@@ -167,12 +177,13 @@ Ext.define('Target.view.objects.Grid', {
             // Coluna Comments
             if ((me.getColumnComments()) && (flag === true)) {
                 columns.push({
-                    // text: 'Comments',
+                    text: 'Comments',
                     dataIndex: '_meta_comments',
                     tooltip: 'Comments',
                     align: 'center',
                     flex: 1,
                     sortable: false,
+                    minWidth: 80,
                     renderer: function (value, metadata, record) {
                         var newValue = '';
                         if (value > 0) {
