@@ -15,7 +15,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         'Target.view.association.Panel',
         'Target.model.Rating',
         'Target.model.Reject',
-        'Target.view.wizard.Wizard'
+        'Target.view.wizard.Wizard',
+        'Target.view.objects.FiltersWindow'
     ],
 
     listen: {
@@ -37,6 +38,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     winAlertSetting: null,
+    winFilters: null,
 
     wizard: null,
 
@@ -534,6 +536,25 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.wizard.close();
             me.wizard = null;
         }
+    },
+
+    onClickFilter: function () {
+        console.log('onClickFilter');
+
+        var me = this,
+            winFilters = me.winFilters;
+
+        if (winFilters != null) {
+            winFilters.close();
+            winFilters = null;
+        }
+
+        winFilters = Ext.create('Target.view.objects.FiltersWindow',{
+
+        });
+
+        winFilters.show();
+
     }
 
 });

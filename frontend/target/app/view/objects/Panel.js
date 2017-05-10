@@ -55,6 +55,12 @@ Ext.define('Target.view.objects.Panel', {
                     },
                     tools:[
                         {
+                            type: 'filter',
+                            iconCls: 'x-fa fa-filter',
+                            tooltip: 'Filter',
+                            callback: 'onClickFilter'
+                        },
+                        {
                             type: 'gear',
                             tooltip: 'Settings',
                             callback: 'onClickSettings'
