@@ -131,3 +131,117 @@ class VisiomaticCoaddObjectsDBHelper:
 
         self.table = self.db.get_table_obj(table, schema=self.schema)
         self.columns = None
+
+    def _create_stm(self, params):
+        # Parametros de Paginacao
+        limit = params.get('limit', 1000)
+
+        # Parametros de Ordenacao
+        ordering = params.get('ordering', None)
+
+        # Parametro Columns
+        self.str_columns = params.get('columns', None)
+        if self.str_columns is not None:
+            self.str_columns = self.str_columns.split(',')
+        columns = self._create_columns_sql_format(self.str_columns)
+
+        coordinate = params.get('coordinate', None).split(',')
+        bounding = params.get('bounding', None).split(',')
+
+        filters = list()
+        if coordinate and bounding:
+            property_ra_t = self.db.get_column_obj(self.table, 'ra')
+            property_dec_t = self.db.get_column_obj(self.table, 'dec')
+
+            ra = float(coordinate[0])
+            dec = float(coordinate[1])
+            bra = float(bounding[0])
+            bdec = float(bounding[1])
+
+            _filters = list()
+            _filters.append(between(literal_column(str(property_ra_t)),
+                                    literal_column(str(ra - bra)),
+                                    literal_column(str(ra + bra))))
+            _filters.append(between(literal_column(str(property_dec_t)),
+                                    literal_column(str(dec - bdec)),
+                                    literal_column(str(dec + bdec))))
+            filters.append(and_(*_filters))
+
+        maglim = params.get('maglim', None)
+        if maglim is not None:
+            # TODO a magnitude continua com a propriedade hardcoded
+            maglim = float(maglim)
+            mag_t = self.db.get_column_obj(self.table, 'mag_auto_i')
+            filters.append(
+                literal_column(str(mag_t)) <= literal_column(str(maglim)))
+
+        stm = select(columns).select_from(self.table).where(and_(*filters))
+
+        if limit:
+            stm = stm.limit(literal_column(str(limit)))
+
+        return stm
+
+    def _create_columns_sql_format(self, columns):
+        t_columns = self.table
+        if columns is not None:
+            t_columns = list()
+            for col in columns:
+                t_columns.append(self.db.get_column_obj(self.table, col))
+        return t_columns
+
+    def query_result(self, params):
+        stm = self._create_stm(params)
+        return self.db.fetchall_dict(stm, self.str_columns)
+
+
+class TargetViewSetDBHelper:
+    def __init__(self, table, schema=None, database=None):
+        self.schema = schema
+
+        if database:
+            com = CatalogDB(db=database)
+        else:
+            com = CatalogDB()
+
+        self.db = com.database
+        if not self.db.table_exists(table, schema=self.schema):
+            raise Exception("Table or view  %s.%s does not exist" %
+                            (self.schema, table))
+
+        self.table = self.db.get_table_obj(table, schema=self.schema)
+        self.columns = None
+
+    def _create_stm(self, params, properties, catalog_columns):
+        property_id = properties.get("meta.id;meta.main", None)
+        if not property_id:
+            property_id = catalog_columns[0]
+
+        # Parametros de Paginacao
+        limit = params.get('limit', None)
+        start = params.get('offset', None)
+
+        # Parametros de Ordenacao
+        ordering = params.get('ordering', None)
+
+        # Parsing para os campos de rating e reject
+        if ordering == '_meta_rating':
+            ordering = 'b.rating'
+        elif ordering == '-_meta_rating':
+            ordering = '-b.rating'
+        elif ordering == '_meta_reject':
+            ordering = 'c.reject'
+        elif ordering == '-_meta_reject':
+            ordering = '-c.reject'
+
+        # Filters
+        filters = list()
+        params = params.dict()
+        for p in params:
+            if p in catalog_columns:
+                filters.append(dict(
+                    property="a.%s" % p,
+                    value=params.get(p)))
+
+        print("##### filters")
+        print(filters)

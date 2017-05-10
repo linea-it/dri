@@ -74,6 +74,10 @@ class TargetViewSet(ViewSet):
         """
         Return a list of targets in catalog.
         """
+
+        print("TARGETVIEWSET")
+        print(request.query_params)
+        print("###########################")
         # Recuperar o parametro product id que e obrigatorio
         product_id = request.query_params.get('product', None)
         if not product_id:
@@ -85,17 +89,10 @@ class TargetViewSet(ViewSet):
         if not catalog:
             raise Exception('No product found for this id.')
 
-        if catalog.tbl_database is not None:
-            db = CatalogDB(db=catalog.tbl_database)
-        else:
-            db = CatalogDB()
-
-        # Com o modelo catalog em maos deve ter um atributo para schema e tabela esses atributos estao descritos no
-        # model table.
-        schema = catalog.tbl_schema
-        table = catalog.tbl_name
-        if schema is not None:
-            table = "%s.%s" % (schema, table)
+        db_helper = VisiomaticCoaddObjectsDBHelper(
+                                         catalog.tbl_name,
+                                         schema=catalog.tbl_schema,
+                                         database=catalog.tbl_database)
 
         # colunas associadas ao produto
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
@@ -107,42 +104,13 @@ class TargetViewSet(ViewSet):
             if property.get('pcc_ucd'):
                 properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
 
-        property_id = properties.get("meta.id;meta.main", None)
-
         # Todas as colunas de catalogo.
         columns = list()
         queryset = ProductContent.objects.filter(pcn_product_id=catalog)
         for row in queryset:
             columns.append(row.pcn_column_name)
 
-        if not property_id:
-            property_id = columns[0]
-
-        # Parametros de Paginacao
-        limit = request.query_params.get('limit', None)
-        start = request.query_params.get('offset', None)
-
-        # Parametros de Ordenacao
-        ordering = request.query_params.get('ordering', None)
-
-        # Parsing para os campos de rating e reject
-        if ordering == '_meta_rating':
-            ordering = 'b.rating'
-        elif ordering == '-_meta_rating':
-            ordering = '-b.rating'
-        elif ordering == '_meta_reject':
-            ordering = 'c.reject'
-        elif ordering == '-_meta_reject':
-            ordering = '-c.reject'
-
-        # Filters
-        filters = list()
-        params = request.query_params.dict()
-        for p in params:
-            if p in columns:
-                filters.append(dict(
-                    property="a.%s" % p,
-                    value=params.get(p)))
+        rows = db_helper._create_stm(request.query_params, properties. columns)
 
         # retornar uma lista com os objetos da tabela
         rows = list()
@@ -282,77 +250,10 @@ class VisiomaticCoaddObjects(ViewSet):
                                          schema=catalog.tbl_schema,
                                          database=catalog.tbl_database)
 
-        # Parametros de Paginacao
-        limit = request.query_params.get('limit', 1000)
-
-        # Parametros de Ordenacao
-        ordering = request.query_params.get('ordering', None)
+        rows = db_helper.query_result(request.query_params)
 
         # Parametros de Retorno
         mime = request.query_params.get('mime', 'json')
-
-        # Parametro Columns
-        pcolumns = request.query_params.get('columns', None)
-        columns = None
-        if pcolumns is not None:
-            acolumns = pcolumns.split(',')
-            if len(acolumns) > 0:
-                columns = acolumns
-
-        coordinate = request.query_params.get('coordinate', None).split(',')
-        bounding = request.query_params.get('bounding', None).split(',')
-        maglim = request.query_params.get('maglim', None)
-
-        filters = list()
-        if coordinate and bounding:
-            ra = float(coordinate[0])
-            dec = float(coordinate[1])
-            bra = float(bounding[0])
-            bdec = float(bounding[1])
-            filters.append(
-                dict({
-                    "operator": "AND",
-                    "conditions": list([
-                        dict({
-                            "property": "RA",
-                            "operator": "between",
-                            "value": list([ra - bra, ra + bra])
-                        }),
-                        dict({
-                            "property": "DEC",
-                            "operator": "between",
-                            "value": list([dec - bdec, dec + bdec])
-                        })
-                    ])
-                })
-            )
-
-        if maglim is not None:
-            maglim = float(maglim)
-            mag = 'MAG_AUTO_I'
-            filters.append(
-                dict({
-                    "property": mag,
-                    "operator": "<=",
-                    "value": maglim
-                })
-            )
-
-        # retornar uma lista com os objetos da tabela
-        rows = list()
-
-        owner = request.user.pk
-
-        rows, count = db.query(
-            schema=catalog.tbl_schema,
-            table=catalog.tbl_name,
-            columns=columns,
-            filters=filters,
-            limit=limit,
-            order_by=ordering,
-            return_count=False,
-        )
-
         if mime == 'json':
             return Response(rows)
 
