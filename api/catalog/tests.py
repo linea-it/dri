@@ -40,10 +40,10 @@ class CommentsAPITestCase(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['comments'], comments)
 
-        #change comments
+        #change comments Use Patch method for partial data
         comments = 'comments 1 changed'
         put_data = {'comments' : comments }
-        response = self.client.put('/objectscomments/1/', put_data,format='json')
+        response = self.client.patch('/objectscomments/1/', put_data,format='json')
         self.assertEqual(response.status_code, 200)
 
         #return new comments list
