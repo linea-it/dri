@@ -75,17 +75,5 @@
       "lambda_max": null,
       "lambda_mean": null
     }
-  },
-  {
-    "model": "socialaccount.socialapp",
-    "pk": 1,
-    "fields": {
-      "provider": "facebook",
-      "name": "Facebook",
-      "client_id": "1",
-      "secret": "1",
-      "key": "",
-      "sites": [1]
-    }
   }
 ]
