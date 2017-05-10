@@ -104,7 +104,7 @@ class OracleWrapper(BaseWrapper):
                     sql_base = ("SELECT %s FROM %s %s %s") % (sql_columns, sql_from, sql_limit, sql_sort)
 
             else:
-                sql_base = ("SELECT %s FROM %s %s %s %s") % (sql_columns, sql_from, sql_where, sql_limit, sql_sort)
+                sql_base = ("SELECT %s FROM %s WHERE %s %s %s") % (sql_columns, sql_from, sql_where, sql_limit, sql_sort)
 
             if order_by:
                 sql_sort = self.do_order(order_by, tbl_columns, cls)
@@ -223,9 +223,6 @@ class OracleWrapper(BaseWrapper):
     def do_filters(self, filters, columns):
         sql_where = ''
         clauses = list()
-
-        print(columns)
-
         for filter in filters:
             if 'property' in filter:
                 property = filter.get('property')
@@ -251,7 +248,7 @@ class OracleWrapper(BaseWrapper):
         else:
             sql_where = ''.join(clauses)
 
-        return "WHERE %s " % sql_where
+        return sql_where
 
     def get_clauses(self, filter):
 
