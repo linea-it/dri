@@ -105,3 +105,12 @@ class DBBase:
             column = DBBase.get_column_obj(table, _filter['column'])
             f.append(getattr(column, op)(_filter['value']))
         return f
+
+    @staticmethod
+    def create_columns_sql_format(table, columns):
+        t_columns = table
+        if columns is not None:
+            t_columns = list()
+            for col in columns:
+                t_columns.append(DBBase.get_column_obj(table, col))
+        return t_columns
