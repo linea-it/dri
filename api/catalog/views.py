@@ -11,7 +11,7 @@ from .serializers import RatingSerializer, RejectSerializer, CommentsSerializer
 from rest_framework.permissions import AllowAny
 import csv
 
-from .views_db import CoaddObjectsDBHelper, VisiomaticCoaddObjectsDBHelper
+from .views_db import CoaddObjectsDBHelper, VisiomaticCoaddObjectsDBHelper, TargetViewSetDBHelper
 
 class RatingViewSet(viewsets.ModelViewSet):
     """
@@ -75,9 +75,6 @@ class TargetViewSet(ViewSet):
         Return a list of targets in catalog.
         """
 
-        print("TARGETVIEWSET")
-        print(request.query_params)
-        print("###########################")
         # Recuperar o parametro product id que e obrigatorio
         product_id = request.query_params.get('product', None)
         if not product_id:
@@ -89,7 +86,7 @@ class TargetViewSet(ViewSet):
         if not catalog:
             raise Exception('No product found for this id.')
 
-        db_helper = VisiomaticCoaddObjectsDBHelper(
+        db_helper = TargetViewSetDBHelper(
                                          catalog.tbl_name,
                                          schema=catalog.tbl_schema,
                                          database=catalog.tbl_database)
@@ -110,35 +107,8 @@ class TargetViewSet(ViewSet):
         for row in queryset:
             columns.append(row.pcn_column_name)
 
-        rows = db_helper._create_stm(request.query_params, properties. columns)
-
-        # retornar uma lista com os objetos da tabela
-        rows = list()
-
-        owner = request.user.pk
-
-        rows, count = db.wrapper.query(
-            table,
-            limit=limit,
-            offset=start,
-            order_by=ordering,
-            joins=list([dict({
-                'operation': 'LEFT',
-                'tablename': 'catalog_rating',
-                'alias': 'b',
-                'condition': 'a.%s = b.object_id AND b.owner = %s  AND b.catalog_id = %s' % (
-                    property_id, owner, product_id),
-                'columns': list(['id meta_rating_id', 'rating meta_rating'])
-            }), dict({
-                'operation': 'LEFT',
-                'tablename': 'catalog_reject',
-                'alias': 'c',
-                'condition': 'a.%s = c.object_id AND c.owner = %s  AND c.catalog_id = %s' % (
-                    property_id, owner, product_id),
-                'columns': list(['id meta_reject_id', 'reject meta_reject'])
-            })]),
-            filters=filters
-        )
+        rows = db_helper.query_result(request, properties, columns)
+        count = len(rows)
 
         for row in rows:
 
@@ -201,18 +171,6 @@ class TargetViewSet(ViewSet):
             row.update({
                 "_meta_comments": None
             })
-
-            # Count de Comentarios por objetos.
-            # TODO: utlizar um join com having count ao inves de uma query para cada linha
-
-            count2 = db.wrapper.fetchone("SELECT COUNT(*) FROM catalog_comments WHERE CATALOG_ID=%s AND OBJECT_ID=%s",
-                                         [catalog.pk, row.get("_meta_id")])[0]
-            count2 = int(count2)
-
-            if count2 is not 0:
-                row.update({
-                    "_meta_comments": count2
-                })
 
         return Response(dict({
             'count': count,

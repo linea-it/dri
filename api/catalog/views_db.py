@@ -1,7 +1,9 @@
 from lib.CatalogDB import CatalogDB
+from lib.CatalogDB import DBBase
 
 from sqlalchemy.sql.expression import literal_column, between
 from sqlalchemy.sql import select, and_
+from sqlalchemy import desc
 
 
 class CoaddObjectsDBHelper:
@@ -21,14 +23,6 @@ class CoaddObjectsDBHelper:
         self.table = self.db.get_table_obj(table, schema=self.schema)
         self.str_columns = None
 
-    def _create_columns_sql_format(self, columns):
-        t_columns = self.table
-        if columns is not None:
-            t_columns = list()
-            for col in columns:
-                t_columns.append(self.db.get_column_obj(self.table, col))
-        return t_columns
-
     @staticmethod
     def _is_coordinate_and_bounding_defined(params, properties):
         if params.get('coordinate') and\
@@ -47,10 +41,10 @@ class CoaddObjectsDBHelper:
         bounding = params.get('bounding', None).split(',')
 
         property_ra = properties.get("pos.eq.ra;meta.main", None).lower()
-        property_ra_t = self.db.get_column_obj(self.table, property_ra)
+        property_ra_t = DBBase.get_column_obj(self.table, property_ra)
 
         property_dec = properties.get("pos.eq.dec;meta.main", None).lower()
-        property_dec_t = self.db.get_column_obj(self.table, property_dec)
+        property_dec_t = DBBase.get_column_obj(self.table, property_dec)
 
         ra = float(coordinate[0])
         dec = float(coordinate[1])
@@ -78,7 +72,7 @@ class CoaddObjectsDBHelper:
         self.str_columns = params.get('columns', None)
         if self.str_columns is not None:
             self.str_columns = self.str_columns.split(',')
-        columns = self._create_columns_sql_format(self.str_columns)
+        columns = DBBase.create_columns_sql_format(self.table, self.str_columns)
 
         filters = list()
         if CoaddObjectsDBHelper._is_coordinate_and_bounding_defined(
@@ -90,13 +84,13 @@ class CoaddObjectsDBHelper:
         if maglim is not None:
             # TODO a magnitude continua com a propriedade hardcoded
             maglim = float(maglim)
-            mag_t = self.db.get_column_obj(self.table, 'mag_auto_i')
+            mag_t = DBBase.get_column_obj(self.table, 'mag_auto_i')
             filters.append(
                 literal_column(str(mag_t)) <= literal_column(str(maglim)))
 
         coadd_object_id = params.get('coadd_object_id', None)
         property_id = properties.get("meta.id;meta.main", None).lower()
-        property_id_t = self.db.get_column_obj(self.table, property_id)
+        property_id_t = DBBase.get_column_obj(self.table, property_id)
         if coadd_object_id is not None:
             filters.append(
                 literal_column(str(property_id_t)) ==
@@ -143,15 +137,15 @@ class VisiomaticCoaddObjectsDBHelper:
         self.str_columns = params.get('columns', None)
         if self.str_columns is not None:
             self.str_columns = self.str_columns.split(',')
-        columns = self._create_columns_sql_format(self.str_columns)
+        columns = DBBase.create_columns_sql_format(self.table, self.str_columns)
 
         coordinate = params.get('coordinate', None).split(',')
         bounding = params.get('bounding', None).split(',')
 
         filters = list()
         if coordinate and bounding:
-            property_ra_t = self.db.get_column_obj(self.table, 'ra')
-            property_dec_t = self.db.get_column_obj(self.table, 'dec')
+            property_ra_t = DBBase.get_column_obj(self.table, 'ra')
+            property_dec_t = DBBase.get_column_obj(self.table, 'dec')
 
             ra = float(coordinate[0])
             dec = float(coordinate[1])
@@ -171,7 +165,7 @@ class VisiomaticCoaddObjectsDBHelper:
         if maglim is not None:
             # TODO a magnitude continua com a propriedade hardcoded
             maglim = float(maglim)
-            mag_t = self.db.get_column_obj(self.table, 'mag_auto_i')
+            mag_t = DBBase.get_column_obj(self.table, 'mag_auto_i')
             filters.append(
                 literal_column(str(mag_t)) <= literal_column(str(maglim)))
 
@@ -181,14 +175,6 @@ class VisiomaticCoaddObjectsDBHelper:
             stm = stm.limit(literal_column(str(limit)))
 
         return stm
-
-    def _create_columns_sql_format(self, columns):
-        t_columns = self.table
-        if columns is not None:
-            t_columns = list()
-            for col in columns:
-                t_columns.append(self.db.get_column_obj(self.table, col))
-        return t_columns
 
     def query_result(self, params):
         stm = self._create_stm(params)
@@ -209,11 +195,16 @@ class TargetViewSetDBHelper:
             raise Exception("Table or view  %s.%s does not exist" %
                             (self.schema, table))
 
-        self.table = self.db.get_table_obj(table, schema=self.schema)
+        self.table = self.db.get_table_obj(table, schema=self.schema).alias('a')
         self.columns = None
 
-    def _create_stm(self, params, properties, catalog_columns):
-        property_id = properties.get("meta.id;meta.main", None)
+    def _create_stm(self, request, properties, catalog_columns):
+        params = request.query_params
+        owner = request.user.pk
+
+        product_id = request.query_params.get('product', None)
+        property_id = properties.get("meta.id;meta.main", None).lower()
+
         if not property_id:
             property_id = catalog_columns[0]
 
@@ -224,24 +215,61 @@ class TargetViewSetDBHelper:
         # Parametros de Ordenacao
         ordering = params.get('ordering', None)
 
-        # Parsing para os campos de rating e reject
-        if ordering == '_meta_rating':
-            ordering = 'b.rating'
-        elif ordering == '-_meta_rating':
-            ordering = '-b.rating'
-        elif ordering == '_meta_reject':
-            ordering = 'c.reject'
-        elif ordering == '-_meta_reject':
-            ordering = '-c.reject'
-
-        # Filters
+        # Filters TODO - condition?
         filters = list()
         params = params.dict()
         for p in params:
             if p in catalog_columns:
                 filters.append(dict(
-                    property="a.%s" % p,
+                    column=p.lower(),
+                    op='eq',
                     value=params.get(p)))
+            else:
+                if '__' in p:
+                    col, op = p.split('__')
+                    if col in catalog_columns:
+                        filters.append(dict(
+                            column=col.lower(),
+                            op=op,
+                            value=params.get(p)))
 
-        print("##### filters")
-        print(filters)
+
+
+        catalog_rating_id = self.db.get_table_obj('catalog_rating', schema=self.schema).alias('b')
+        catalog_reject_id = self.db.get_table_obj('catalog_reject', schema=self.schema).alias('c')
+
+        stm_join = self.table
+        stm_join = stm_join.join(catalog_rating_id,
+                                 DBBase.get_column_obj(self.table, property_id) ==
+                                 catalog_rating_id.c.object_id, isouter=True)
+        stm_join = stm_join.join(catalog_reject_id,
+                                 DBBase.get_column_obj(self.table, property_id) ==
+                                 catalog_reject_id.c.object_id, isouter=True)
+
+        self.str_columns = ['meta_rating_id', 'meta_rating', 'meta_reject_id', 'meta_reject']
+        stm = select([catalog_rating_id.c.id.label('meta_rating_id'),
+                      catalog_rating_id.c.rating.label('meta_rating'),
+                      catalog_reject_id.c.id.label('meta_reject_id'),
+                      catalog_reject_id.c.reject.label('meta_reject')]).\
+            select_from(stm_join)
+
+        if limit:
+            stm = stm.limit(literal_column(str(limit)))
+        if start:
+            stm = stm.offset(literal_column(str(start)))
+
+        if ordering == '_meta_rating':
+            stm = stm.order_by(catalog_rating_id.c.rating)
+        elif ordering == '-_meta_rating':
+            stm = stm.order_by(desc(catalog_rating_id.c.rating))
+        elif ordering == '_meta_reject':
+            stm = stm.order_by(catalog_reject_id.c.reject)
+        elif ordering == '-_meta_reject':
+            stm = stm.order_by(desc(catalog_reject_id.c.reject))
+
+        stm = stm.where(and_(*DBBase.do_filter(self.table, filters)))
+        return stm
+
+    def query_result(self, request, properties, catalog_columns):
+        stm = self._create_stm(request, properties, catalog_columns)
+        return self.db.fetchall_dict(stm, self.str_columns)
