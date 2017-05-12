@@ -77,7 +77,8 @@ class DBBase:
     def get_table_obj(self, table, schema=None):
         return Table(table, self.metadata, autoload=True, schema=schema)
 
-    def get_column_obj(self, table_obj, column_name):
+    @staticmethod
+    def get_column_obj(table_obj, column_name):
         return getattr(table_obj.c, column_name)
 
     def fetchall_dict(self, stm, columns):
@@ -95,3 +96,12 @@ class DBBase:
             stm = select([table]).select_from(table)
             result = con.execute(stm)
             return result.fetchall()
+
+    @staticmethod
+    def do_filter(table, filters):
+        f = []
+        for _filter in filters:
+            op = '__%s__' % _filter['op']
+            column = DBBase.get_column_obj(table, _filter['column'])
+            f.append(getattr(column, op)(_filter['value']))
+        return f
