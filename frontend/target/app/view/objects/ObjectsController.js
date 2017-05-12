@@ -66,7 +66,8 @@ Ext.define('Target.view.objects.ObjectsController', {
             vm = me.getViewModel(),
             currentCatalog,
             refs = me.getReferences(),
-            objectsGrid = refs.targetsObjectsGrid;
+            objectsGrid = refs.targetsObjectsGrid,
+            filtersets = vm.getStore('filterSets');
 
         if (store.count() === 1) {
             currentCatalog = store.first();
@@ -76,6 +77,13 @@ Ext.define('Target.view.objects.ObjectsController', {
             objectsGrid.setLoading(false);
 
             me.loadCurrentSetting();
+
+            // Adicionar Filtro a store de FIltersets
+            // combobox de filtros
+            filtersets.addFilter({
+                property: 'product',
+                value: currentCatalog.get('id')
+            });
         }
     },
 
@@ -219,16 +227,48 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     },
 
-    loadObjects: function (catalog) {
+    loadObjects: function (catalog, filters) {
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('objects'),
             refs = me.getReferences(),
-            objectsGrid = refs.targetsObjectsGrid;
+            objectsGrid = refs.targetsObjectsGrid,
+            btnFilterApply = refs.btnFilterApply,
+            aFilters = [];
 
         if (catalog) {
 
+            store.clearFilter();
+
             store.getProxy().setExtraParam('product', catalog);
+
+            // Se nao recebeu filtro pelo parametro verifica se tem filtro setado no viewModel
+            if (!filters) {
+                filters = vm.get('filters');
+            }
+
+
+            // Aplicar Filtros ao Produto
+            if ((filters) && (filters.count() > 0)) {
+                filters.each(function (filter) {
+
+                    aFilters.push({
+                        property: filter.get('property_name'),
+                        operator: filter.get('fcd_operation'),
+                        value: filter.get('fcd_value')
+                    });
+
+                }, me);
+
+                // Se tiver filtros para aplicar e o botão de filtro estiver precionado
+
+                if ((aFilters.length > 0) && (btnFilterApply.pressed))  {
+                    // Aplicar os Filtros
+                    store.addFilter(aFilters);
+
+                }
+
+            }
 
             store.load({
                 callback: function (records, operation, success) {
@@ -542,18 +582,71 @@ Ext.define('Target.view.objects.ObjectsController', {
         console.log('onClickFilter');
 
         var me = this,
-            winFilters = me.winFilters;
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
 
-        if (winFilters != null) {
-            winFilters.close();
-            winFilters = null;
+        if (me.winFilters === null) {
+            me.winFilters = Ext.create('Target.view.objects.FiltersWindow',{
+                listeners: {
+                    scope: me,
+                    applyfilters: 'onApplyFilters',
+                    disapplyfilters: 'onDisapplyFilters'
+                }
+            });
+
         }
 
-        winFilters = Ext.create('Target.view.objects.FiltersWindow',{
+        me.winFilters.setCurrentCatalog(currentCatalog);
 
-        });
+        me.winFilters.show();
 
-        winFilters.show();
+    },
+
+    onApplyFilters: function (filters, filterset) {
+        console.log('onApplyFilters(%o)', filters);
+
+        var me = this,
+            vm = me.getViewModel(),
+            filtersets = vm.getStore('filterSets'),
+            currentCatalog = vm.get('currentCatalog'),
+            combo = me.lookup('cmbFilterSet');
+
+        if ((filterset !== null) && (filterset.get('id') > 0)) {
+            // Selecionar a Combo com o Filterset escolhido
+            filtersets.load({
+                callback: function () {
+                    combo.select(filterset);
+                    vm.set('filterSet', filterset);
+                }
+            });
+        }
+
+        vm.set('filters', filters);
+
+        me.loadObjects(currentCatalog.get('id'), filters);
+
+    },
+
+    onDisapplyFilters: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
+
+        vm.set('filters', null);
+
+        me.loadObjects(currentCatalog.get('id'));
+
+    },
+
+    applyDisapplyFilter: function (btn, state) {
+        console.log('applyDisapplyFilter(%o)', state);
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
+
+        // Para ativar ou desativar um filtro basta chamar a funcao load ela
+        // ja checa se tem filtro selecionado e se o botao de filtro esta ativo.
+        me.loadObjects(currentCatalog.get('id'));
 
     }
 

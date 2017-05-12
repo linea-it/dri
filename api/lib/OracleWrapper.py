@@ -81,14 +81,18 @@ class OracleWrapper(BaseWrapper):
             start = int(offset)
             end = start + limit
 
+            if filters:
+                sql_where = "WHERE %s" % sql_where
+
             sql_main = ("SELECT /*+ first_rows(%s) */ %s, row_number() OVER (ORDER BY %s %s) rownumber FROM %s %s ") % (
                 limit, sql_columns, order_colun, direction, sql_from, sql_where)
 
             sql_base = (
-                           "SELECT * "
-                           "FROM (%s) "
-                           "WHERE rownumber BETWEEN %s and %s "
-                       ) % (sql_main, start, end)
+                       "SELECT * "
+                       "FROM (%s) "
+                       "WHERE rownumber BETWEEN %s and %s "
+                   ) % (sql_main, start, end)
+
 
             sql_count = ("SELECT COUNT(*) as count FROM %s %s") % (tablename, sql_where)
 
@@ -118,7 +122,7 @@ class OracleWrapper(BaseWrapper):
             rows = self.fetchall(sql)
 
         if sql_count and return_count:
-            # print(sql_count)
+            print(sql_count)
             count = self.fetchall(sql_count)[0][0]
         else:
             count = len(rows)

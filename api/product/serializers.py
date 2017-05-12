@@ -787,3 +787,61 @@ class WorkgroupUserSerializer(serializers.ModelSerializer):
 
     def get_username(self, obj):
         return obj.wgu_user.username
+
+
+class FiltersetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Filterset
+
+        fields = (
+            'id',
+            'product',
+            'owner',
+            'fst_name'
+        )
+
+
+class FilterConditionSerializer(serializers.ModelSerializer):
+    property_name = serializers.SerializerMethodField()
+    property_display_name = serializers.SerializerMethodField()
+    operator_display_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FilterCondition
+
+        fields = (
+            'id',
+            'filterset',
+            'fcd_property',
+            'fcd_operation',
+            'fcd_value',
+            'property_name',
+            'property_display_name',
+            'operator_display_name'
+        )
+
+    def get_property_name(self, obj):
+        return obj.fcd_property.pcn_column_name
+
+    def get_property_display_name(self, obj):
+        try:
+            association = obj.fcd_property.productcontentassociation_set.first()
+            return association.pca_class_content.pcc_display_name
+        except:
+            return obj.pcs_content.pcn_column_name
+
+    def get_operator_display_name(self, obj):
+        try:
+            operators = dict({
+                '=': 'is equal to',
+                '!=': 'is not equal to',
+                '>': 'is greater than',
+                '>=': 'is greater than or equal to',
+                '<': 'is less than',
+                '<=': 'is less than or equal to'
+            })
+
+            return operators.get(obj.fcd_operation)
+        except:
+            return None
+

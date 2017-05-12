@@ -202,6 +202,7 @@ class ProductRelated(models.Model):
     def __str__(self):
         return str(self.pk)
 
+
 # ------------------------------ Cutouts ------------------------------
 class CutOutJob(models.Model):
     status_job = (
@@ -326,3 +327,38 @@ class Permission(models.Model):
     prm_workgroup = models.ForeignKey(
         Workgroup,
         on_delete=models.CASCADE, verbose_name='Workgroup', null=True, blank=True)
+
+
+# ---------------------------------- Filtros ----------------------------------
+# Filtros que podem ser aplicados a um produto
+
+class Filterset(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product')
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+
+    fst_name = models.CharField(
+        max_length=60, verbose_name='Filterset', help_text='Filterset Display Name')
+
+    def __str__(self):
+        return str(self.fst_name)
+
+class FilterCondition(models.Model):
+    filterset = models.ForeignKey(
+        Filterset, on_delete=models.CASCADE, verbose_name='Filterset')
+
+    fcd_property = models.ForeignKey(
+        ProductContent, on_delete=models.CASCADE, verbose_name='Property'
+    )
+
+    fcd_operation = models.CharField(
+        max_length=10, verbose_name='Operator')
+
+    fcd_value = models.CharField(
+        max_length=10, verbose_name='Value')
+
+    def __str__(self):
+        return str("%s %s %s" %(self.fcd_property, self.fcd_operation, self.fcd_value))
