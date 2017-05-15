@@ -100,7 +100,9 @@ class TargetViewSet(ViewSet):
 
         for property in associations:
             if property.get('pcc_ucd'):
-                properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
+                properties.update({
+                    property.get('pcc_ucd'): property.get('pcn_column_name').lower()
+                })
 
         rows, count = db_helper.query_result(request, properties)
 
@@ -119,16 +121,16 @@ class TargetViewSet(ViewSet):
             })
 
             row.update({
-                "_meta_id": row.get(properties.get("meta.id;meta.main").lower())
+                "_meta_id": row.get(properties.get("meta.id;meta.main"))
             })
             row.update({
-                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main").lower())
+                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main"))
             })
             row.update({
-                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main").lower())
+                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main"))
             })
             row.update({
-                "_meta_radius": row.get(properties.get("phys.angSize;src").lower())
+                "_meta_radius": row.get(properties.get("phys.angSize;src"))
             })
 
             row.update({

@@ -206,8 +206,6 @@ class TargetViewSetDBHelper:
             # Nome das colunas originais na tabela
             self.columns = [column.key for column in table.columns]
 
-            self.stm_total = None
-
             self.table = table.alias('a')
 
     def _create_stm(self, request, properties):
@@ -263,9 +261,6 @@ class TargetViewSetDBHelper:
         start = params.get('offset', None)
 
         if limit:
-            # fazer uma copia do stm para fazer a paginacao
-            self.stm_total = stm
-
             stm = stm.limit(literal_column(str(limit)))
 
         if start:
@@ -302,6 +297,6 @@ class TargetViewSetDBHelper:
         print(str(stm))
         result = self.db.fetchall_dict(stm)
 
-        count = self.db.stm_count(self.stm_total)
+        count = self.db.stm_count(stm)
 
         return result, count
