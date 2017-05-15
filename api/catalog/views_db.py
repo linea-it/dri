@@ -126,8 +126,12 @@ class VisiomaticCoaddObjectsDBHelper:
             raise Exception("Table or view  %s.%s does not exist" %
                             (self.schema, table))
 
-        self.table = self.db.get_table_obj(table, schema=self.schema)
-        self.columns = None
+        # Desabilitar os warnings na criacao da tabela
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
+
+            self.table = self.db.get_table_obj(table, schema=self.schema)
+            self.columns = None
 
     def _create_stm(self, params):
         # Parametros de Paginacao
@@ -136,10 +140,15 @@ class VisiomaticCoaddObjectsDBHelper:
         # Parametros de Ordenacao
         ordering = params.get('ordering', None)
 
+        print("-----------------------")
+
         # Parametro Columns
-        self.str_columns = params.get('columns', None)
-        if self.str_columns is not None:
-            self.str_columns = self.str_columns.split(',')
+        self.str_columns = list()
+        if params.get('columns', None) is not None:
+            clmns = params.get('columns', None).split(',')
+            for clmn in clmns:
+                self.str_columns.append(clmn.lower())
+
         columns = DBBase.create_columns_sql_format(self.table, self.str_columns)
 
         coordinate = params.get('coordinate', None).split(',')
@@ -181,7 +190,7 @@ class VisiomaticCoaddObjectsDBHelper:
 
     def query_result(self, params):
         stm = self._create_stm(params)
-        return self.db.fetchall_dict(stm, self.str_columns)
+        return self.db.fetchall_dict(stm)
 
 
 class TargetViewSetDBHelper:

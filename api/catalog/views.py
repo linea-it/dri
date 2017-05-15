@@ -218,7 +218,7 @@ class VisiomaticCoaddObjects(ViewSet):
             for row in rows:
 
                 r = list()
-                for col in columns:
+                for col in row.keys():
                     value = row.get(col)
                     if isinstance(value, float):
                         value = float(format(value, '.4f'))
