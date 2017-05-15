@@ -5,6 +5,9 @@ from sqlalchemy.sql.expression import literal_column, between
 from sqlalchemy.sql import select, and_
 from sqlalchemy import desc
 
+import warnings
+from sqlalchemy import exc as sa_exc
+
 
 class CoaddObjectsDBHelper:
     def __init__(self, table, schema=None, database=None):
@@ -25,17 +28,17 @@ class CoaddObjectsDBHelper:
 
     @staticmethod
     def _is_coordinate_and_bounding_defined(params, properties):
-        if params.get('coordinate') and\
-                params.get('bounding') and\
-                properties.get("pos.eq.ra;meta.main") and\
+        if params.get('coordinate') and \
+                params.get('bounding') and \
+                properties.get("pos.eq.ra;meta.main") and \
                 properties.get("pos.eq.dec;meta.main"):
             return True
         return False
 
     def make_coordinate_and_bounding_filters(self, params, properties):
         if not CoaddObjectsDBHelper._is_coordinate_and_bounding_defined(
-                    params, properties):
-            raise("Coordinate and bounding filters are not defined.")
+                params, properties):
+            raise ("Coordinate and bounding filters are not defined.")
 
         coordinate = params.get('coordinate', None).split(',')
         bounding = params.get('bounding', None).split(',')
@@ -195,45 +198,44 @@ class TargetViewSetDBHelper:
             raise Exception("Table or view  %s.%s does not exist" %
                             (self.schema, table))
 
-        self.table = self.db.get_table_obj(table, schema=self.schema).alias('a')
-        self.columns = None
+        # Desabilitar os warnings na criacao da tabela
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
 
-    def _create_stm(self, request, properties, catalog_columns):
+            table = self.db.get_table_obj(table, schema=self.schema)
+            # Nome das colunas originais na tabela
+            self.columns = [column.key for column in table.columns]
+
+            self.stm_total = None
+
+            self.table = table.alias('a')
+
+    def _create_stm(self, request, properties):
         params = request.query_params
         owner = request.user.pk
 
         product_id = request.query_params.get('product', None)
-        property_id = properties.get("meta.id;meta.main", None).lower()
-
-        if not property_id:
-            property_id = catalog_columns[0]
-
-        # Parametros de Paginacao
-        limit = params.get('limit', None)
-        start = params.get('offset', None)
-
-        # Parametros de Ordenacao
-        ordering = params.get('ordering', None)
+        try:
+            property_id = properties.get("meta.id;meta.main").lower()
+        except:
+            raise ("Need association for ID column with meta.id;meta.main ucd.")
 
         # Filters TODO - condition?
+
         filters = list()
         params = params.dict()
-        for p in params:
-            if p in catalog_columns:
-                filters.append(dict(
-                    column=p.lower(),
-                    op='eq',
-                    value=params.get(p)))
+        for param in params:
+            if '__' in param:
+                col, op = param.split('__')
             else:
-                if '__' in p:
-                    col, op = p.split('__')
-                    if col in catalog_columns:
-                        filters.append(dict(
-                            column=col.lower(),
-                            op=op,
-                            value=params.get(p)))
+                col = param
+                op = 'eq'
 
-
+            if col.lower() in self.columns:
+                filters.append(dict(
+                    column=col.lower(),
+                    op=op,
+                    value=params.get(param)))
 
         catalog_rating_id = self.db.get_table_obj('catalog_rating', schema=self.schema).alias('b')
         catalog_reject_id = self.db.get_table_obj('catalog_reject', schema=self.schema).alias('c')
@@ -246,30 +248,60 @@ class TargetViewSetDBHelper:
                                  DBBase.get_column_obj(self.table, property_id) ==
                                  catalog_reject_id.c.object_id, isouter=True)
 
-        self.str_columns = ['meta_rating_id', 'meta_rating', 'meta_reject_id', 'meta_reject']
-        stm = select([catalog_rating_id.c.id.label('meta_rating_id'),
+        stm = select([self.table,
+                      catalog_rating_id.c.id.label('meta_rating_id'),
                       catalog_rating_id.c.rating.label('meta_rating'),
                       catalog_reject_id.c.id.label('meta_reject_id'),
-                      catalog_reject_id.c.reject.label('meta_reject')]).\
+                      catalog_reject_id.c.reject.label('meta_reject')]). \
             select_from(stm_join)
 
+        # Filtros
+        stm = stm.where(and_(*DBBase.do_filter(self.table, filters)))
+
+        # Parametros de Paginacao
+        limit = params.get('limit', None)
+        start = params.get('offset', None)
+
         if limit:
+            # fazer uma copia do stm para fazer a paginacao
+            self.stm_total = stm
+
             stm = stm.limit(literal_column(str(limit)))
+
         if start:
             stm = stm.offset(literal_column(str(start)))
 
-        if ordering == '_meta_rating':
-            stm = stm.order_by(catalog_rating_id.c.rating)
-        elif ordering == '-_meta_rating':
-            stm = stm.order_by(desc(catalog_rating_id.c.rating))
-        elif ordering == '_meta_reject':
-            stm = stm.order_by(catalog_reject_id.c.reject)
-        elif ordering == '-_meta_reject':
-            stm = stm.order_by(desc(catalog_reject_id.c.reject))
+        # Parametros de Ordenacao
+        ordering = params.get('ordering', None)
 
-        stm = stm.where(and_(*DBBase.do_filter(self.table, filters)))
+        if ordering is not None:
+            asc = True
+            property = ordering.lower()
+
+            if ordering[0] == '-':
+                asc = False
+                property = ordering[1:].lower()
+
+            if property == '_meta_rating':
+                property = catalog_rating_id.c.rating
+            elif property == '_meta_reject':
+                property = catalog_reject_id.c.reject
+            else:
+                property = 'a.' + property
+
+            if asc:
+                stm = stm.order_by(property)
+            else:
+                stm = stm.order_by(desc(property))
+
         return stm
 
-    def query_result(self, request, properties, catalog_columns):
-        stm = self._create_stm(request, properties, catalog_columns)
-        return self.db.fetchall_dict(stm, self.str_columns)
+    def query_result(self, request, properties):
+        stm = self._create_stm(request, properties)
+
+        print(str(stm))
+        result = self.db.fetchall_dict(stm)
+
+        count = self.db.stm_count(self.stm_total)
+
+        return result, count

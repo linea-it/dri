@@ -298,7 +298,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             reject = Ext.create('Target.model.Reject', {
                 'catalog_id': record.get('_meta_catalog_id'),
                 'object_id': record.get('_meta_id'),
-                'reject': record.get('reject')
+                'reject': true
             });
 
             reject.save({

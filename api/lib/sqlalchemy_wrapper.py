@@ -8,9 +8,9 @@ class DBOracle:
 
     def get_string_connection(self):
         url = ("oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
-              "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
-              "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
-              "SERVICE_NAME=%(database)s)))") %\
+               "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
+               "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
+               "SERVICE_NAME=%(database)s)))") % \
               {"username": self.db['USER'], 'password': self.db['PASSWORD'],
                'host': self.db['HOST'], 'port': self.db['PORT'],
                'database': self.db['DATABASE']}
@@ -81,13 +81,25 @@ class DBBase:
     def get_column_obj(table_obj, column_name):
         return getattr(table_obj.c, column_name)
 
-    def fetchall_dict(self, stm, columns):
+    def fetchall_dict(self, stm):
         with self.engine.connect() as con:
-            result = con.execute(stm)
-            return [
-                dict(zip(columns, row))
-                for row in result.fetchall()
-                ]
+            queryset = con.execute(stm)
+            result = list()
+            for row in queryset.fetchall():
+                result.append(dict(row))
+
+            return result
+
+    def fetchone_dict(self, stm):
+        with self.engine.connect() as con:
+            queryset = con.execute(stm)
+            return dict(queryset.fetchone())
+
+    def stm_count(self, stm):
+        with self.engine.connect() as con:
+            queryset = con.execute(stm.with_only_columns([func.count()]))
+            result = dict(queryset.fetchone())
+            return result.get('count_1')
 
     def select_all(self, table, schema=None):
         with self.engine.connect() as con:

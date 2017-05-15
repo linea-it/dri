@@ -13,6 +13,7 @@ import csv
 
 from .views_db import CoaddObjectsDBHelper, VisiomaticCoaddObjectsDBHelper, TargetViewSetDBHelper
 
+
 class RatingViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Rating to be viewed or edited
@@ -87,9 +88,9 @@ class TargetViewSet(ViewSet):
             raise Exception('No product found for this id.')
 
         db_helper = TargetViewSetDBHelper(
-                                         catalog.tbl_name,
-                                         schema=catalog.tbl_schema,
-                                         database=catalog.tbl_database)
+            catalog.tbl_name,
+            schema=catalog.tbl_schema,
+            database=catalog.tbl_database)
 
         # colunas associadas ao produto
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
@@ -101,39 +102,9 @@ class TargetViewSet(ViewSet):
             if property.get('pcc_ucd'):
                 properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
 
-        # Todas as colunas de catalogo.
-        columns = list()
-        queryset = ProductContent.objects.filter(pcn_product_id=catalog)
-        for row in queryset:
-            columns.append(row.pcn_column_name)
-
-        rows = db_helper.query_result(request, properties, columns)
-        count = len(rows)
+        rows, count = db_helper.query_result(request, properties)
 
         for row in rows:
-
-            if 'META_RATING_ID' in row:
-                rating_id = row.get('META_RATING_ID')
-                rating = row.get('META_RATING')
-                reject_id = row.get('META_REJECT_ID', 0)
-                reject = row.get('META_REJECT', False)
-            elif 'meta_rating_id' in row:
-                rating_id = row.get('meta_rating_id')
-                rating = row.get('meta_rating')
-                reject_id = row.get('meta_reject_id', 0)
-                reject = row.get('meta_reject', False)
-            else:
-                rating_id = None
-                rating = None
-                reject_id = None
-                reject = None
-
-            if reject_id is not None:
-                reject_id = int(reject_id)
-                reject = True
-            else:
-                reject = False
-
             row.update({
                 "_meta_catalog_id": catalog.pk,
                 "_meta_is_system": catalog.prd_class.pcl_is_system,
@@ -141,36 +112,58 @@ class TargetViewSet(ViewSet):
                 "_meta_ra": 0,
                 "_meta_dec": 0,
                 "_meta_radius": 0,
-                "_meta_rating_id": rating_id,
-                "_meta_rating": rating,
-                "_meta_reject_id": reject_id,
-                "_meta_reject": reject,
+                "_meta_rating_id": None,
+                "_meta_rating": None,
+                "_meta_reject_id": None,
+                "_meta_reject": False,
             })
 
-            row.pop("META_RATING_ID", None)
+            row.update({
+                "_meta_id": row.get(properties.get("meta.id;meta.main").lower())
+            })
+            row.update({
+                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main").lower())
+            })
+            row.update({
+                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main").lower())
+            })
+            row.update({
+                "_meta_radius": row.get(properties.get("phys.angSize;src").lower())
+            })
+
+            row.update({
+                "_meta_rating_id": row.get('meta_rating_id', None)
+            })
+            row.update({
+                "_meta_rating": row.get('meta_rating', None)
+            })
+            row.update({
+                "_meta_reject_id": row.get('meta_reject_id', None)
+            })
+            row.update({
+                "_meta_reject": bool(row.get('meta_reject', False))
+            })
+
             row.pop("meta_rating_id", None)
-            row.pop("META_RATING", None)
             row.pop("meta_rating", None)
-            row.pop("META_REJECT_ID", None)
             row.pop("meta_reject_id", None)
-            row.pop("META_REJECT", None)
             row.pop("meta_reject", None)
 
-            row.update({
-                "_meta_id": row.get(properties.get("meta.id;meta.main"))
-            })
-            row.update({
-                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main"))
-            })
-            row.update({
-                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main"))
-            })
-            row.update({
-                "_meta_radius": row.get(properties.get("phys.angSize;src"))
-            })
-            row.update({
-                "_meta_comments": None
-            })
+            # Count de Comentarios por objetos.
+            # TODO: utlizar um join com having count ao inves de uma query para cada linha
+
+            try:
+                comments = Comments.objects.filter(
+                    catalog_id=catalog.pk, object_id=row.get("_meta_id"))
+
+                row.update({
+                    "_meta_comments": comments.count()
+                })
+
+            except:
+                row.update({
+                    "_meta_comments": None
+                })
 
         return Response(dict({
             'count': count,
@@ -204,9 +197,9 @@ class VisiomaticCoaddObjects(ViewSet):
             raise Exception('No product found.')
 
         db_helper = VisiomaticCoaddObjectsDBHelper(
-                                         catalog.tbl_name,
-                                         schema=catalog.tbl_schema,
-                                         database=catalog.tbl_database)
+            catalog.tbl_name,
+            schema=catalog.tbl_schema,
+            database=catalog.tbl_database)
 
         rows = db_helper.query_result(request.query_params)
 

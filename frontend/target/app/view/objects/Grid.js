@@ -78,7 +78,7 @@ Ext.define('Target.view.objects.Grid', {
 
                     var column = {
                         text: me.createColumnText(record),
-                        dataIndex: record.get('column_name'),
+                        dataIndex: record.get('column_name').toLowerCase(),
                         tooltip: me.createColumnTooltip(record),
                         renderer: me.formatNumber
                     };
@@ -116,6 +116,7 @@ Ext.define('Target.view.objects.Grid', {
 
                     // Se tiver a coluna id habilita as colunas de rating e reject
                     if (record.get('ucd') == 'meta.id;meta.main') {
+                        column.renderer = null;
                         flag = true;
                     }
 
@@ -263,7 +264,6 @@ Ext.define('Target.view.objects.Grid', {
     },
 
     formatNumber: function (value) {
-
         var precision = 3,
             aValue, decimal;
 
