@@ -1,5 +1,7 @@
 from sqlalchemy import create_engine, inspect, MetaData, func, Table
 from sqlalchemy.sql import select
+import warnings
+from sqlalchemy import exc as sa_exc
 
 
 class DBOracle:
@@ -61,18 +63,29 @@ class DBBase:
         return self.database.get_engine()
 
     def get_table_columns(self, table, schema=None):
-        return [value['name'] for value in self.inspect.get_columns(table, schema)]
+        # Desabilitar os warnings na criacao da tabela
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
+
+            return [value['name'] for value in self.inspect.get_columns(table, schema)]
 
     def get_count(self, table, schema=None):
         with self.engine.connect() as con:
-            table = Table(table, self.metadata,
-                          autoload=True, schema=schema)
-            stm = select([func.count()]).select_from(table)
-            result = con.execute(stm)
-            return result.fetchone()[0]
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", category=sa_exc.SAWarning)
+
+                table = Table(table, self.metadata,
+                              autoload=True, schema=schema)
+                stm = select([func.count()]).select_from(table)
+                result = con.execute(stm)
+                return result.fetchone()[0]
 
     def table_exists(self, table, schema=None):
-        return self.engine.has_table(table, schema)
+        # Desabilitar os warnings na criacao da tabela
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
+
+            return self.engine.has_table(table, schema)
 
     def get_table_obj(self, table, schema=None):
         return Table(table, self.metadata, autoload=True, schema=schema)

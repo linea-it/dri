@@ -74,7 +74,6 @@ class Import():
         except Site.DoesNotExist:
             return None
 
-
     # =============================< PROCESS >=============================
     def import_process(self, data):
 
@@ -199,14 +198,14 @@ class Import():
 
         if not self.db:
             con = CatalogDB(db=database)
-            db = con.database
+            self.db = con.database
 
-        if not db.table_exists(data.get('table'), schema=data.get('schema', None)):
+        if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
                             (data.get('schema', None), data.get('table')))
 
         # Recuperar a quantidade de linhas da tabela
-        count = db.get_count(data.get('table'), schema=data.get('schema', None))
+        count = self.db.get_count(data.get('table'), schema=data.get('schema', None))
 
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))
@@ -261,8 +260,6 @@ class Import():
             # Registar as colunas do catalogo
             self.register_catalog_content(product, data, created)
 
-
-
             return True
         else:
             raise Exception(
@@ -294,9 +291,7 @@ class Import():
             ProductContent.objects.filter(pcn_product_id=catalog).delete()
 
         # Recuperar as colunas do catalogo.
-        tablename = self.db.get_tablename(catalog.tbl_schema, catalog.tbl_name)
-
-        columns = self.db.get_table_columns(tablename)
+        columns = self.db.get_table_columns(catalog.tbl_name, catalog.tbl_schema)
 
         if columns and len(columns) > 0:
             for column in columns:
@@ -367,9 +362,6 @@ class Import():
             except:
                 raise Exception("it was not possible to create association for this column: %s" % property)
 
-
-
-
     def product_release(self, product, releases):
         for r in releases:
             rls_name = r.lower()
@@ -414,9 +406,9 @@ class Import():
     def register_map(self, data):
         if not self.db:
             con = CatalogDB()
-            db = con.database
+            self.db = con.database
 
-        if not db.table_exists(data.get('table'), schema=data.get('schema', None)):
+        if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
                             (data.get('schema', None), data.get('table')))
 
@@ -516,9 +508,9 @@ class Import():
     def register_mask(self, data):
         if not self.db:
             con = CatalogDB()
-            db = con.database
+            self.db = con.database
 
-        if not db.table_exists(data.get('table'), schema=data.get('schema', None)):
+        if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
                             (data.get('schema', None), data.get('table')))
 
