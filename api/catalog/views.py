@@ -204,7 +204,7 @@ class VisiomaticCoaddObjects(ViewSet):
             database=catalog.tbl_database)
 
         rows = db_helper.query_result(request.query_params)
-
+        cols = db_helper.str_columns
         # Parametros de Retorno
         mime = request.query_params.get('mime', 'json')
         if mime == 'json':
@@ -216,14 +216,14 @@ class VisiomaticCoaddObjects(ViewSet):
 
             writer = csv.writer(response)
             for row in rows:
-
                 r = list()
-                for col in row.keys():
+                for col in cols:
                     value = row.get(col)
                     if isinstance(value, float):
                         value = float(format(value, '.4f'))
                     r.append(value)
 
+                # print(r)
                 writer.writerow(r)
 
             return response
@@ -269,18 +269,19 @@ class CoaddObjects(ViewSet):
         # propriedades corretas
         for property in associations:
             if property.get('pcc_ucd'):
-                properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
+                properties.update({property.get('pcc_ucd'): property.get('pcn_column_name').lower()})
 
         rows = db_helper.query_result(request.query_params, properties)
         for row in rows:
+            print(row)
             row.update({
-                "_meta_id": row.get(properties.get("meta.id;meta.main").lower())
+                "_meta_id": row.get(properties.get("meta.id;meta.main"))
             })
             row.update({
-                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main").lower())
+                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main"))
             })
             row.update({
-                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main").lower())
+                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main"))
             })
 
         return Response(rows)

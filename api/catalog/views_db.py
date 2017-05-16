@@ -23,8 +23,12 @@ class CoaddObjectsDBHelper:
             raise Exception("Table or view  %s.%s does not exist" %
                             (self.schema, table))
 
-        self.table = self.db.get_table_obj(table, schema=self.schema)
-        self.str_columns = None
+        # Desabilitar os warnings na criacao da tabela
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
+
+            self.table = self.db.get_table_obj(table, schema=self.schema)
+            self.str_columns = None
 
     @staticmethod
     def _is_coordinate_and_bounding_defined(params, properties):
@@ -72,10 +76,13 @@ class CoaddObjectsDBHelper:
         ordering = params.get('ordering', None)
 
         # Parametro Columns
+        columns = list()
         self.str_columns = params.get('columns', None)
         if self.str_columns is not None:
             self.str_columns = self.str_columns.split(',')
-        columns = DBBase.create_columns_sql_format(self.table, self.str_columns)
+            columns = DBBase.create_columns_sql_format(self.table, self.str_columns)
+        else:
+            columns = self.table.columns
 
         filters = list()
         if CoaddObjectsDBHelper._is_coordinate_and_bounding_defined(
@@ -109,7 +116,7 @@ class CoaddObjectsDBHelper:
 
     def query_result(self, params, properties):
         stm = self._create_stm(params, properties)
-        return self.db.fetchall_dict(stm, self.str_columns)
+        return self.db.fetchall_dict(stm)
 
 
 class VisiomaticCoaddObjectsDBHelper:
@@ -139,8 +146,6 @@ class VisiomaticCoaddObjectsDBHelper:
 
         # Parametros de Ordenacao
         ordering = params.get('ordering', None)
-
-        print("-----------------------")
 
         # Parametro Columns
         self.str_columns = list()
@@ -190,6 +195,7 @@ class VisiomaticCoaddObjectsDBHelper:
 
     def query_result(self, params):
         stm = self._create_stm(params)
+
         return self.db.fetchall_dict(stm)
 
 
@@ -303,7 +309,6 @@ class TargetViewSetDBHelper:
     def query_result(self, request, properties):
         stm = self._create_stm(request, properties)
 
-        print(str(stm))
         result = self.db.fetchall_dict(stm)
 
         count = self.db.stm_count(stm)
