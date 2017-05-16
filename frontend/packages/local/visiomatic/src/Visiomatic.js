@@ -161,12 +161,12 @@ Ext.define('visiomatic.Visiomatic', {
                 url: 'http://' + host + '/dri/api/visiomatic/coadd_objects/' +
                 '?mime=csv' +
                 '&source=Y3A1_COADD_OBJECT_SUMMARY' +
-                '&columns=COADD_OBJECT_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y,A_IMAGE,B_IMAGE,THETA_J2000' +
+                '&columns=coadd_object_id,ra,dec,mag_auto_g,mag_auto_r,mag_auto_i,mag_auto_z,mag_auto_y,a_image,b_image,theta_j2000' +
                 '&coordinate={lng},{lat}' +
                 '&bounding={dlng},{dlat}' +
                 '&maglim={maglim}' +
                 '&limit=2000',
-                properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
+                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
                 units: [],
                 objurl: 'http://' + host + '/dri/apps/explorer/#coadd/Y3A1_COADD_OBJECT_SUMMARY/{id}',
                 draw: function (feature, latlng) {
@@ -193,12 +193,12 @@ Ext.define('visiomatic.Visiomatic', {
                 url: 'http://' + host + '/dri/api/visiomatic/coadd_objects/' +
                 '?mime=csv' +
                 '&source=y1a1_coadd_objects' +
-                '&columns=COADD_OBJECTS_ID,RA,DEC,MAG_AUTO_G,MAG_AUTO_R,MAG_AUTO_I,MAG_AUTO_Z,MAG_AUTO_Y,A_IMAGE,B_IMAGE,THETA_IMAGE' +
+                '&columns=coadd_objects_id,ra,dec,mag_auto_g,mag_auto_r,mag_auto_i,mag_auto_z,mag_auto_y,a_image,b_image,theta_image' +
                 '&coordinate={lng},{lat}' +
                 '&bounding={dlng},{dlat}' +
                 '&maglim={maglim}' +
                 '&limit=2000',
-                properties: ['MAG_AUTO_G', 'MAG_AUTO_R', 'MAG_AUTO_I', 'MAG_AUTO_Z', 'MAG_AUTO_Y'],
+                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
                 units: [],
                 objurl: 'http://' + host + '/dri/apps/explorer/#coadd/y1a1_coadd_objects/{id}',
                 draw: function (feature, latlng) {

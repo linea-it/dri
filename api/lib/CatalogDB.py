@@ -1,57 +1,36 @@
-from django.db import connections
-from collections import namedtuple
+from dri.settings.local_vars import *
+from lib.sqlalchemy_wrapper import DBBase
 
-from lib.OracleWrapper import OracleWrapper
-from lib.SqliteWrapper import SqliteWrapper
 
 class CatalogDB:
-    available_engines = list(['sqlite3', 'oracle'])
-    db = None
-    engine = None
-    cursor = None
-    wrapper = None
-
     def __init__(self, db='catalog'):
-        self.setDb(db)
+        self.database = DBBase(self.prepare_connection(db))
 
-        self.setWrapper()
 
-    def setDb(self, db):
-        if db != 'default':
-            # Tenta conectar ao banco de dados se conseguir retorna o cursor.
-            self.cursor = connections[db].cursor()
+    def prepare_connection(self, db):
+        connection_data = {}
 
-            # Recupera a engine a ser usada no banco de dados
-            self.engine = self.__getDbEngine()
+        if db not in DATABASES:
+            raise Exception('This configuration does not exist.')
 
-            #  So seta o banco se tiver conseguido criar o cursor e recuperado a engine.
-            self.db = db
+        db_settings_django = DATABASES[db]
+        connection_data['ENGINE'] = db_settings_django['ENGINE'].split('.')[-1]
+
+        if connection_data['ENGINE'] == 'sqlite3':
+            connection_data['PATH_FILE'] = db_settings_django['NAME']
+
+        elif connection_data['ENGINE'] == 'oracle':
+            aux = db_settings_django['NAME'].split('/')
+            connection_data['DATABASE'] = aux[1]
+
+            aux = aux[0].split(':')
+            connection_data['HOST'] = aux[0]
+            connection_data['PORT'] = aux[1]
+            connection_data['USER'] = db_settings_django['USER']
+            connection_data['PASSWORD'] = db_settings_django['PASSWORD']
 
         else:
-            raise Exception('The database default can not be used as a catalog database.')
+            raise Exception('Unknown database')
 
-    def setWrapper(self):
-        # cria uma intancia da classe wrapper a ser usada de acordo com o banco de dados
-        engine = self.engine
+        return connection_data
 
-        if engine == 'sqlite3':
-            self.wrapper = SqliteWrapper(self.cursor)
-
-        elif engine == 'oracle':
-            self.wrapper = OracleWrapper(self.cursor)
-
-
-
-    def __getDbEngine(self):
-        # Recuperar no dict settings DATABASE a configuracao do banco de dados atual
-        complete_engine = self.cursor.db.settings_dict.get('ENGINE')
-
-        # a string comple e esta django.db.backends.sqlite3 com o split usamos so a ultima parte sqlite3
-        engine = complete_engine.split('.').pop()
-
-        # checar se a engine esta na lista de engines suportadas como banco de catalogos
-        if engine in self.available_engines:
-            return engine
-        else:
-            raise Exception("The engine %s is not available to be used as database for catalogs."
-                            "The available engines are these: %s" % (engine, ', '.join(self.available_engines)))

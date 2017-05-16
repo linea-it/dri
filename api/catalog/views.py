@@ -11,6 +11,8 @@ from .serializers import RatingSerializer, RejectSerializer, CommentsSerializer
 from rest_framework.permissions import AllowAny
 import csv
 
+from .views_db import CoaddObjectsDBHelper, VisiomaticCoaddObjectsDBHelper, TargetViewSetDBHelper
+
 
 class RatingViewSet(viewsets.ModelViewSet):
     """
@@ -73,6 +75,7 @@ class TargetViewSet(ViewSet):
         """
         Return a list of targets in catalog.
         """
+
         # Recuperar o parametro product id que e obrigatorio
         product_id = request.query_params.get('product', None)
         if not product_id:
@@ -84,17 +87,10 @@ class TargetViewSet(ViewSet):
         if not catalog:
             raise Exception('No product found for this id.')
 
-        if catalog.tbl_database is not None:
-            db = CatalogDB(db=catalog.tbl_database)
-        else:
-            db = CatalogDB()
-
-        # Com o modelo catalog em maos deve ter um atributo para schema e tabela esses atributos estao descritos no
-        # model table.
-        schema = catalog.tbl_schema
-        table = catalog.tbl_name
-        if schema is not None:
-            table = "%s.%s" % (schema, table)
+        db_helper = TargetViewSetDBHelper(
+            catalog.tbl_name,
+            schema=catalog.tbl_schema,
+            database=catalog.tbl_database)
 
         # colunas associadas ao produto
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
@@ -104,97 +100,13 @@ class TargetViewSet(ViewSet):
 
         for property in associations:
             if property.get('pcc_ucd'):
-                properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
+                properties.update({
+                    property.get('pcc_ucd'): property.get('pcn_column_name').lower()
+                })
 
-        property_id = properties.get("meta.id;meta.main", None)
-
-        # Todas as colunas de catalogo.
-        columns = list()
-        queryset = ProductContent.objects.filter(pcn_product_id=catalog)
-        for row in queryset:
-            columns.append(row.pcn_column_name)
-
-        if not property_id:
-            property_id = columns[0]
-
-        # Parametros de Paginacao
-        limit = request.query_params.get('limit', None)
-        start = request.query_params.get('offset', None)
-
-        # Parametros de Ordenacao
-        ordering = request.query_params.get('ordering', None)
-
-        # Parsing para os campos de rating e reject
-        if ordering == '_meta_rating':
-            ordering = 'b.rating'
-        elif ordering == '-_meta_rating':
-            ordering = '-b.rating'
-        elif ordering == '_meta_reject':
-            ordering = 'c.reject'
-        elif ordering == '-_meta_reject':
-            ordering = '-c.reject'
-
-        # Filters
-        filters = list()
-        params = request.query_params.dict()
-        for p in params:
-            if p in columns:
-                filters.append(dict(
-                    property="a.%s" % p,
-                    value=params.get(p)))
-
-        # retornar uma lista com os objetos da tabela
-        rows = list()
-
-        owner = request.user.pk
-
-        rows, count = db.wrapper.query(
-            table,
-            limit=limit,
-            offset=start,
-            order_by=ordering,
-            joins=list([dict({
-                'operation': 'LEFT',
-                'tablename': 'catalog_rating',
-                'alias': 'b',
-                'condition': 'a.%s = b.object_id AND b.owner = %s  AND b.catalog_id = %s' % (
-                    property_id, owner, product_id),
-                'columns': list(['id meta_rating_id', 'rating meta_rating'])
-            }), dict({
-                'operation': 'LEFT',
-                'tablename': 'catalog_reject',
-                'alias': 'c',
-                'condition': 'a.%s = c.object_id AND c.owner = %s  AND c.catalog_id = %s' % (
-                    property_id, owner, product_id),
-                'columns': list(['id meta_reject_id', 'reject meta_reject'])
-            })]),
-            filters=filters
-        )
+        rows, count = db_helper.query_result(request, properties)
 
         for row in rows:
-
-            if 'META_RATING_ID' in row:
-                rating_id = row.get('META_RATING_ID')
-                rating = row.get('META_RATING')
-                reject_id = row.get('META_REJECT_ID', 0)
-                reject = row.get('META_REJECT', False)
-            elif 'meta_rating_id' in row:
-                rating_id = row.get('meta_rating_id')
-                rating = row.get('meta_rating')
-                reject_id = row.get('meta_reject_id', 0)
-                reject = row.get('meta_reject', False)
-            else:
-                rating_id = None
-                rating = None
-                reject_id = None
-                reject = None
-
-            if reject_id is not None:
-                reject_id = int(reject_id)
-                reject = True
-            else:
-                reject = False
-
             row.update({
                 "_meta_catalog_id": catalog.pk,
                 "_meta_is_system": catalog.prd_class.pcl_is_system,
@@ -202,20 +114,11 @@ class TargetViewSet(ViewSet):
                 "_meta_ra": 0,
                 "_meta_dec": 0,
                 "_meta_radius": 0,
-                "_meta_rating_id": rating_id,
-                "_meta_rating": rating,
-                "_meta_reject_id": reject_id,
-                "_meta_reject": reject,
+                "_meta_rating_id": None,
+                "_meta_rating": None,
+                "_meta_reject_id": None,
+                "_meta_reject": False,
             })
-
-            row.pop("META_RATING_ID", None)
-            row.pop("meta_rating_id", None)
-            row.pop("META_RATING", None)
-            row.pop("meta_rating", None)
-            row.pop("META_REJECT_ID", None)
-            row.pop("meta_reject_id", None)
-            row.pop("META_REJECT", None)
-            row.pop("meta_reject", None)
 
             row.update({
                 "_meta_id": row.get(properties.get("meta.id;meta.main"))
@@ -229,20 +132,39 @@ class TargetViewSet(ViewSet):
             row.update({
                 "_meta_radius": row.get(properties.get("phys.angSize;src"))
             })
+
             row.update({
-                "_meta_comments": None
+                "_meta_rating_id": row.get('meta_rating_id', None)
             })
+            row.update({
+                "_meta_rating": row.get('meta_rating', None)
+            })
+            row.update({
+                "_meta_reject_id": row.get('meta_reject_id', None)
+            })
+            row.update({
+                "_meta_reject": bool(row.get('meta_reject', False))
+            })
+
+            row.pop("meta_rating_id", None)
+            row.pop("meta_rating", None)
+            row.pop("meta_reject_id", None)
+            row.pop("meta_reject", None)
 
             # Count de Comentarios por objetos.
             # TODO: utlizar um join com having count ao inves de uma query para cada linha
 
-            count2 = db.wrapper.fetchone("SELECT COUNT(*) FROM catalog_comments WHERE CATALOG_ID=%s AND OBJECT_ID=%s",
-                                         [catalog.pk, row.get("_meta_id")])[0]
-            count2 = int(count2)
+            try:
+                comments = Comments.objects.filter(
+                    catalog_id=catalog.pk, object_id=row.get("_meta_id"))
 
-            if count2 is not 0:
                 row.update({
-                    "_meta_comments": count2
+                    "_meta_comments": comments.count()
+                })
+
+            except:
+                row.update({
+                    "_meta_comments": None
                 })
 
         return Response(dict({
@@ -276,89 +198,15 @@ class VisiomaticCoaddObjects(ViewSet):
         if not catalog:
             raise Exception('No product found.')
 
-        if catalog.tbl_database is not None:
-            com = CatalogDB(db=catalog.tbl_database)
-        else:
-            com = CatalogDB()
+        db_helper = VisiomaticCoaddObjectsDBHelper(
+            catalog.tbl_name,
+            schema=catalog.tbl_schema,
+            database=catalog.tbl_database)
 
-        db = com.wrapper
-
-        # tablename
-        # Verifica se a tabela existe
-        if not db.table_exists(catalog.tbl_schema, catalog.tbl_name):
-            raise Exception("Table or view  %s.%s does not exist" % (catalog.tbl_schema, catalog.tbl_name))
-
-        # Parametros de Paginacao
-        limit = request.query_params.get('limit', 1000)
-
-        # Parametros de Ordenacao
-        ordering = request.query_params.get('ordering', None)
-
+        rows = db_helper.query_result(request.query_params)
+        cols = db_helper.str_columns
         # Parametros de Retorno
         mime = request.query_params.get('mime', 'json')
-
-        # Parametro Columns
-        pcolumns = request.query_params.get('columns', None)
-        columns = None
-        if pcolumns is not None:
-            acolumns = pcolumns.split(',')
-            if len(acolumns) > 0:
-                columns = acolumns
-
-        coordinate = request.query_params.get('coordinate', None).split(',')
-        bounding = request.query_params.get('bounding', None).split(',')
-        maglim = request.query_params.get('maglim', None)
-
-        filters = list()
-        if coordinate and bounding:
-            ra = float(coordinate[0])
-            dec = float(coordinate[1])
-            bra = float(bounding[0])
-            bdec = float(bounding[1])
-            filters.append(
-                dict({
-                    "operator": "AND",
-                    "conditions": list([
-                        dict({
-                            "property": "RA",
-                            "operator": "between",
-                            "value": list([ra - bra, ra + bra])
-                        }),
-                        dict({
-                            "property": "DEC",
-                            "operator": "between",
-                            "value": list([dec - bdec, dec + bdec])
-                        })
-                    ])
-                })
-            )
-
-        if maglim is not None:
-            maglim = float(maglim)
-            mag = 'MAG_AUTO_I'
-            filters.append(
-                dict({
-                    "property": mag,
-                    "operator": "<=",
-                    "value": maglim
-                })
-            )
-
-        # retornar uma lista com os objetos da tabela
-        rows = list()
-
-        owner = request.user.pk
-
-        rows, count = db.query(
-            schema=catalog.tbl_schema,
-            table=catalog.tbl_name,
-            columns=columns,
-            filters=filters,
-            limit=limit,
-            order_by=ordering,
-            return_count=False,
-        )
-
         if mime == 'json':
             return Response(rows)
 
@@ -368,14 +216,14 @@ class VisiomaticCoaddObjects(ViewSet):
 
             writer = csv.writer(response)
             for row in rows:
-
                 r = list()
-                for col in columns:
+                for col in cols:
                     value = row.get(col)
                     if isinstance(value, float):
                         value = float(format(value, '.4f'))
                     r.append(value)
 
+                # print(r)
                 writer.writerow(r)
 
             return response
@@ -396,6 +244,7 @@ class CoaddObjects(ViewSet):
         # Recuperar o parametro product id ou sorce e obrigatorio
         product_id = request.query_params.get('product', None)
         source = request.query_params.get('source', None)
+
         if product_id is not None:
             # Recuperar no model Catalog pelo id passado na url
             catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
@@ -407,121 +256,24 @@ class CoaddObjects(ViewSet):
         if not catalog:
             raise Exception('No product found.')
 
-        if catalog.tbl_database is not None:
-            com = CatalogDB(db=catalog.tbl_database)
-        else:
-            com = CatalogDB()
-
-        db = com.wrapper
-
-        # tablename
-        # Verifica se a tabela existe
-        if not db.table_exists(catalog.tbl_schema, catalog.tbl_name):
-            raise Exception("Table or view  %.%s does not exist" % (catalog.tbl_schema, catalog.tbl_name))
-
-        # Parametros de Paginacao
-        limit = request.query_params.get('limit', 1000)
-        start = request.query_params.get('offset', None)
-
-        # Parametros de Ordenacao
-        ordering = request.query_params.get('ordering', None)
-
-        # Parametro Columns
-        pcolumns = request.query_params.get('columns', None)
-        columns = None
-        if pcolumns is not None:
-            acolumns = pcolumns.split(',')
-            if len(acolumns) > 0:
-                columns = acolumns
-
-        coordinate = request.query_params.get('coordinate', None)
-        if coordinate is not None:
-            coordinate = coordinate.split(',')
-        bounding = request.query_params.get('bounding', None)
-        if bounding is not None:
-            bounding = bounding.split(',')
-        maglim = request.query_params.get('maglim', None)
-
-        coadd_object_id = request.query_params.get('coadd_object_id', None)
+        db_helper = CoaddObjectsDBHelper(catalog.tbl_name,
+                                         schema=catalog.tbl_schema,
+                                         database=catalog.tbl_database)
 
         # Antes de criar os filtros para a query verificar se o catalogo tem associacao e descobrir as
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=catalog.pk)
         serializer = AssociationSerializer(queryset, many=True)
         associations = serializer.data
         properties = dict()
+
         # propriedades corretas
         for property in associations:
             if property.get('pcc_ucd'):
-                properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
+                properties.update({property.get('pcc_ucd'): property.get('pcn_column_name').lower()})
 
-        property_id = properties.get("meta.id;meta.main", None)
-        property_ra = properties.get("pos.eq.ra;meta.main", None)
-        property_dec = properties.get("pos.eq.dec;meta.main", None)
-
-        filters = list()
-        if coordinate and bounding:
-            ra = float(coordinate[0])
-            dec = float(coordinate[1])
-            bra = float(bounding[0])
-            bdec = float(bounding[1])
-            filters.append(
-                dict({
-                    "operator": "AND",
-                    "conditions": list([
-                        dict({
-                            "property": property_ra,
-                            "operator": "between",
-                            "value": list([ra - bra, ra + bra])
-                        }),
-                        dict({
-                            "property": property_dec,
-                            "operator": "between",
-                            "value": list([dec - bdec, dec + bdec])
-                        })
-                    ])
-                })
-            )
-
-        if maglim is not None:
-            # TODO a magnitude continua com a propriedade hardcoded
-            maglim = float(maglim)
-            mag = 'MAG_AUTO_I'
-            filters.append(
-                dict({
-                    "property": mag,
-                    "operator": "<=",
-                    "value": maglim
-                })
-            )
-
-        if coadd_object_id is not None:
-            filters.append(
-                dict({
-                    "property": property_id,
-                    "operator": '=',
-                    "value": int(coadd_object_id)
-                })
-            )
-
-        if len(filters) == 0:
-            filters = None
-
-        # retornar uma lista com os objetos da tabela
-        rows = list()
-
-        owner = request.user.pk
-
-        rows, count = db.query(
-            schema=catalog.tbl_schema,
-            table=catalog.tbl_name,
-            columns=columns,
-            filters=filters,
-            limit=limit,
-            offset=start,
-            order_by=ordering
-        )
-
+        rows = db_helper.query_result(request.query_params, properties)
         for row in rows:
+            print(row)
             row.update({
                 "_meta_id": row.get(properties.get("meta.id;meta.main"))
             })

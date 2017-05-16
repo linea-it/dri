@@ -7,7 +7,6 @@ from pprint import pprint
 
 from coadd.models import Release, Tag
 from common.models import Filter
-from lib.CatalogDB import CatalogDB
 from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ProcessRelease
@@ -22,6 +21,8 @@ from common.models import Filter
 from product.serializers import AssociationSerializer
 from os import mkdir, path
 import csv
+from .views_db import CutoutJobsDBHelper
+
 
 class CutoutJobs:
     db = None
@@ -425,21 +426,12 @@ class CutoutJobs:
             if property.get('pcc_ucd'):
                 properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
 
-        # Conexao com banco de Dados de Catalogos
-        if catalog.tbl_database is not None:
-            db = CatalogDB(db=catalog.tbl_database)
-        else:
-            db = CatalogDB()
+        db_helper = CutoutJobsDBHelper(
+                                    catalog.tbl_name,
+                                    schema=catalog.tbl_schema,
+                                    database=catalog.tbl_database)
 
-        rows, count = db.wrapper.query(
-            schema=catalog.tbl_schema,
-            table=catalog.tbl_name,
-            columns=[
-                properties.get("meta.id;meta.main"),
-                properties.get("pos.eq.ra;meta.main"),
-                properties.get("pos.eq.dec;meta.main")
-            ]
-         )
+        rows = db_helper.query_result(properties)
 
         raDec = list()
         for row in rows:
