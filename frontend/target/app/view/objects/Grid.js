@@ -79,7 +79,7 @@ Ext.define('Target.view.objects.Grid', {
 
                     var column = {
                         text: me.createColumnText(record),
-                        dataIndex: record.get('column_name'),
+                        dataIndex: record.get('column_name').toLowerCase(),
                         tooltip: me.createColumnTooltip(record),
                         renderer: me.formatNumber,
                         lockable: true
@@ -88,6 +88,14 @@ Ext.define('Target.view.objects.Grid', {
                     // if (type != undefined) {
                     //     column.filter = {type: type, itemDefaults: {emptyText: 'Search for...'}};
                     // }
+
+                    // Se tiver a coluna id habilita as colunas de rating e reject
+                    if (record.get('ucd') == 'meta.id;meta.main') {
+                        column.locked = true;
+                        column.lockable = true;
+                        column.renderer = null;
+                        flag = true;
+                    }
 
                     //  Tratamento Tilename default hidden
                     if (record.get('column_name').toLowerCase() == 'tilename') {
@@ -117,15 +125,6 @@ Ext.define('Target.view.objects.Grid', {
                         column.renderer = null;
                         // column.locked = true;
                         column.lockable = true;
-                    }
-
-
-                    // Se tiver a coluna id habilita as colunas de rating e reject
-                    if (record.get('ucd') == 'meta.id;meta.main') {
-                        column.locked = true;
-                        column.lockable = true;
-
-                        flag = true;
                     }
 
                     columns.push(column);
@@ -274,7 +273,6 @@ Ext.define('Target.view.objects.Grid', {
     },
 
     formatNumber: function (value) {
-
         var precision = 3,
             aValue, decimal;
 
