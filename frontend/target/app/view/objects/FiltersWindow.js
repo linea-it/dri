@@ -76,12 +76,12 @@ Ext.define('Target.view.objects.FiltersWindow', {
                                         store: '{contents}',
                                         selection: '{content}'
                                     },
-                                    // listeners: {
-                                    //     select: 'onSelectSetting'
-                                    // },
+                                    listeners: {
+                                        select: 'onSelectProperty'
+                                    },
                                     minChars: 0,
                                     queryMode: 'local',
-                                    // editable: false,
+                                    editable: false,
                                     readOnly: false,
                                     margin: '0 5 0 0'
                                 },
@@ -114,8 +114,7 @@ Ext.define('Target.view.objects.FiltersWindow', {
                                         value: '{value}'
                                     },
                                     margin: '0 5 0 0',
-                                    allowBlank: false,
-                                    value: 1
+                                    allowBlank: false
                                 },
                                 {
                                     xtype: 'button',
@@ -141,6 +140,9 @@ Ext.define('Target.view.objects.FiltersWindow', {
             flex: 1,
             bind: {
                 store: '{filters}'
+            },
+            viewConfig: {
+                markDirty: false
             },
             columns: [
                 {

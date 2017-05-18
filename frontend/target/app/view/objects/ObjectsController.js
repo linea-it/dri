@@ -584,8 +584,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onClickFilter: function () {
-        console.log('onClickFilter');
-
         var me = this,
             vm = me.getViewModel(),
             filterset = vm.get('filterSet'),
@@ -613,8 +611,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onWindowApplyFilters: function (filterset, filters) {
-        console.log('onApplyFilters(%o)', filters);
-
         var me = this,
             vm = me.getViewModel(),
             filtersets = vm.getStore('filterSets'),
@@ -633,7 +629,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             });
 
         } else {
-            console.log('TODO aplicar filtro local');
             // Aplicar Filtro Local
             vm.set('filterSet', filterset);
             vm.set('filters', filters);

@@ -233,35 +233,6 @@ class TargetViewSetDBHelper:
         except:
             raise ("Need association for ID column with meta.id;meta.main ucd.")
 
-        # Filters TODO - condition?
-
-        print('-------------------')
-        not_in_table_filters = dict({
-            '_meta_rating': 'meta_rating',
-            '_meta_reject': 'meta_reject',
-        })
-        filters = list()
-        other_filters = list()
-        params = params.dict()
-        for param in params:
-            if '__' in param:
-                col, op = param.split('__')
-            else:
-                col = param
-                op = 'eq'
-
-            if col.lower() in self.columns:
-                filters.append(dict(
-                    column=col.lower(),
-                    op=op,
-                    value=params.get(param)))
-            else:
-                if col in not_in_table_filters:
-                    other_filters.append(dict(
-                        column=not_in_table_filters.get(col).lower(),
-                        op=op,
-                        value=params.get(param)))
-
         catalog_rating_id = self.db.get_table_obj('catalog_rating', schema=self.schema).alias('b')
         catalog_reject_id = self.db.get_table_obj('catalog_reject', schema=self.schema).alias('c')
 
@@ -281,10 +252,41 @@ class TargetViewSetDBHelper:
             select_from(stm_join)
 
         # Filtros
-        stm = stm.where(and_(*DBBase.do_filter(self.table, filters)))
-        if len(other_filters) > 0:
-            # Adicionar filtros que nao estao na tabela
-            pass
+        filters = list()
+        rating_filter = list()
+        reject_filter = list()
+
+        params = params.dict()
+        for param in params:
+            if '__' in param:
+                col, op = param.split('__')
+            else:
+                col = param
+                op = 'eq'
+
+            if col.lower() in self.columns:
+                filters.append(dict(
+                    column=col.lower(),
+                    op=op,
+                    value=params.get(param)))
+            else:
+                if col == '_meta_rating':
+                    rating_filter = list([dict(
+                        column='rating',
+                        op=op,
+                        value=params.get(param))])
+                elif col == '_meta_reject':
+                    value = False
+                    if params.get(param) in ['True', 'true', '1', 't', 'y', 'yes']:
+                        value = True
+                    reject_filter = list([dict(
+                        column='reject',
+                        op=op,
+                        value=value)])
+
+        stm = stm.where(and_(*DBBase.do_filter(self.table, filters) +
+                              DBBase.do_filter(catalog_rating_id, rating_filter) +
+                              DBBase.do_filter(catalog_reject_id, reject_filter)))
 
         # Parametros de Paginacao
         limit = params.get('limit', None)

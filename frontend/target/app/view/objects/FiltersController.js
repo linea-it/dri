@@ -49,12 +49,13 @@ Ext.define('Target.view.objects.FiltersController', {
 
         contents.add(rating);
 
-        // reject = Ext.create('Target.model.CatalogContent', {
-        //     column_name: '_meta_reject',
-        //     display_name: 'Reject'
-        // });
+        reject = Ext.create('Target.model.CatalogContent', {
+            id: null,
+            column_name: '_meta_reject',
+            display_name: 'Reject'
+        });
 
-        // contents.add(reject);
+        contents.add(reject);
 
     },
 
@@ -70,7 +71,7 @@ Ext.define('Target.view.objects.FiltersController', {
             content = vm.get('content'),
             operator = vm.get('operator'),
             value = vm.get('value'),
-            filterSet = vm.getStore('filterSet'),
+            filterSet = vm.get('filterSet'),
             filters = vm.getStore('filters'),
             filter;
 
@@ -102,10 +103,12 @@ Ext.define('Target.view.objects.FiltersController', {
 
         Ext.MessageBox.confirm('',
             'The Filter will be removed. Do you want continue?',
-            function () {
-                record.drop();
+            function (btn) {
+                if (btn === 'yes') {
+                    record.drop();
 
-                me.checkHaveFilters();
+                    me.checkHaveFilters();
+                }
 
             }, this);
 
@@ -123,6 +126,40 @@ Ext.define('Target.view.objects.FiltersController', {
             vm.set('haveFilters', false);
 
         }
+    },
+
+    onSelectProperty: function (combo, property) {
+        var me = this,
+            vm = me.getViewModel(),
+            filterSet = vm.get('filterSet'),
+            filters = vm.getStore('filters'),
+            filter;
+
+        if (property.get('column_name') === '_meta_reject') {
+
+            // Criar um Model com os dados do filtro
+            filter = Ext.create('Target.model.FilterCondition', {
+                fcd_property: property.get('id'),
+                fcd_property_name: property.get('column_name'),
+                fcd_operation: '=',
+                fcd_value: true,
+                property_display_name: property.get('display_name'),
+                operator_display_name: 'is equal to'
+            });
+
+            if ((filterSet) && (filterSet.get('id') > 0)) {
+                filter.set('filterset', filterSet.get('id'));
+
+            }
+
+            filters.add(filter);
+
+            me.clearImputs();
+
+            me.checkHaveFilters();
+
+        }
+
     },
 
     onSelectOperator: function (combo, operator) {

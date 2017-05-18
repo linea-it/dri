@@ -46,7 +46,7 @@ Ext.define('Target.view.objects.FiltersModel', {
 
     data: {
         operator: null,
-        value: '14087',
+        value: null,
         haveFilters: false,
         filterName: null
     },
