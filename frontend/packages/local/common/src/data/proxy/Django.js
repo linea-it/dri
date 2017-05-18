@@ -98,7 +98,7 @@ Ext.define('common.data.proxy.Django', {
                     break;
 
                 case '!=':
-                    p = Ext.String.format('{0}!', property);
+                    p = Ext.String.format('{0}__ne', property);
                     params[p] = value;
                     break;
 

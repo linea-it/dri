@@ -63,6 +63,9 @@ router.register(r'product_permission_workgroup_user', product_views.PermissionWo
 router.register(r'product_permission', product_views.PermissionViewSet)
 router.register(r'workgroup', product_views.WorkgroupViewSet)
 router.register(r'workgroup_users', product_views.WorkgroupUserViewSet)
+router.register(r'filterset', product_views.FiltersetViewSet)
+router.register(r'filtercondition', product_views.FilterConditionViewSet)
+
 
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)

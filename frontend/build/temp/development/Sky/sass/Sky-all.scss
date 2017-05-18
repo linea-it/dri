@@ -986,6 +986,9 @@ $include-aladin-maps: dynamic(true);;
 $include-common-bandfilter: dynamic(true);;
 $include-common-searchfield: dynamic(true);;
 $include-common-toolbarcontroller: dynamic(true);;
+$include-common-comment-commentsobject: dynamic(true);;
+$include-common-comment-commentsobjectcontroller: dynamic(true);;
+$include-common-comment-commentsobjectmodel: dynamic(true);;
 $include-common-contact-contact: dynamic(true);;
 $include-common-contact-contactcontroller: dynamic(true);;
 $include-common-data-proxy-crsftoken: dynamic(true);;
@@ -996,6 +999,7 @@ $include-common-header-toolbar: dynamic(true);;
 $include-common-help-tutorials: dynamic(true);;
 $include-common-help-tutorialscontroller: dynamic(true);;
 $include-common-link-linkprompt: dynamic(true);;
+$include-common-model-commentobject: dynamic(true);;
 $include-common-model-dataset: dynamic(true);;
 $include-common-model-filter: dynamic(true);;
 $include-common-model-footprint: dynamic(true);;
@@ -1004,6 +1008,7 @@ $include-common-model-survey: dynamic(true);;
 $include-common-model-tag: dynamic(true);;
 $include-common-model-tile: dynamic(true);;
 $include-common-store-csvdelimiters: dynamic(true);;
+$include-common-store-commentsobjects: dynamic(true);;
 $include-common-store-datasets: dynamic(true);;
 $include-common-store-fields: dynamic(true);;
 $include-common-store-filters: dynamic(true);;
@@ -1526,6 +1531,14 @@ $current-package: 'aladin';
 $current-resource-root: $aladin-resource-root;
 $relative-image-path-for-uis: $aladin-resource-path;
 @import '../../../../../packages/local/aladin/sass/src/Aladin';
+
+/* including package visiomatic */
+$visiomatic-resource-root: 'visiomatic' !default;
+$visiomatic-resource-path: 'visiomatic/images' !default;
+$current-package: 'visiomatic';
+$current-resource-root: $visiomatic-resource-root;
+$relative-image-path-for-uis: $visiomatic-resource-path;
+@import '../../../../../packages/local/visiomatic/sass/src/Visiomatic';
 
 /* including package Sky */
 $Sky-resource-root: '' !default;

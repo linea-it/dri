@@ -124,7 +124,7 @@ class DBBase:
 
     @staticmethod
     def do_filter(table, filters):
-        f = []
+        f = list()
         for _filter in filters:
             op = '__%s__' % _filter['op']
             column = DBBase.get_column_obj(table, _filter['column'])

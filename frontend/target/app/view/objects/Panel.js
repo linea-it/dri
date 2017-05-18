@@ -36,15 +36,18 @@ Ext.define('Target.view.objects.Panel', {
 
     items: [
         {
-            reference: 'targetsGrid',
-            border: true,
-            frame: true,
-            flex: 1,
-            layout: 'border',
-            items: [
-               {
+                    // reference: 'targetsGrid',
+                    // border: true,
+                    // frame: true,
+                    // flex: 1,
+                    // layout: 'border',
+                    // items: [
+                    // {
                     xtype: 'targets-objects-grid',
-                    region: 'center',
+                    border: true,
+                    frame: true,
+                    flex: 1,
+                    // region: 'center',
                     reference: 'targetsObjectsGrid',
                     bind: {
                         store: '{objects}'
@@ -53,11 +56,70 @@ Ext.define('Target.view.objects.Panel', {
                         ready: 'onGridObjectsReady',
                         select: 'onSelectObject'
                     },
-                    tools:[
+                    tbar: [
                         {
-                            type: 'gear',
+                            xtype: 'tbtext',
+                            reference: 'txtTargetTitle',
+                            html: 'Sample Text Item',
+                            cls: 'tb-text-target-title'
+                        },
+                        '->',
+                        {
+                            xtype: 'fieldcontainer',
+                            layout: 'hbox',
+                            defaults: {
+                                flex: 1
+                            },
+                            items: [
+                                {
+                                    xtype: 'button',
+                                    reference: 'btnFilterApply',
+                                    iconCls: 'x-fa fa-bolt',
+                                    tooltip: 'Apply or Disapply Filters',
+                                    pressed: true,
+                                    enableToggle: true,
+                                    toggleHandler: 'applyDisapplyFilter',
+                                    bind: {
+                                        disabled: '{!filters}'
+                                    }
+                                },
+                                {
+                                    xtype: 'combobox',
+                                    reference: 'cmbFilterSet',
+                                    emptyText: 'No filter',
+                                    displayField: 'fst_name',
+                                    publishes: 'id',
+                                    bind: {
+                                        store: '{filterSets}',
+                                        selection: '{filterSet}'
+                                    },
+                                    listeners: {
+                                        select: 'onSelectFilterSet'
+                                    },
+                                    triggers: {
+                                        clear: {
+                                            cls: 'x-form-clear-trigger',
+                                            handler: 'onClearCmbFilterSet',
+                                            hidden: true
+                                        }
+                                    },
+                                    minChars: 0,
+                                    queryMode: 'local',
+                                    editable: false
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-filter',
+                            tooltip: 'Filters',
+                            handler: 'onClickFilter'
+                        },
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-gear',
                             tooltip: 'Settings',
-                            callback: 'onClickSettings'
+                            handler: 'onClickSettings'
                         }
                     ],
                     bbar: [
@@ -82,9 +144,9 @@ Ext.define('Target.view.objects.Panel', {
                         //     emptyMsg: 'No data to display'
                         // })
                     ]
-                }
-            ]
-        },
+                    // },
+                    // ]
+                },
         {
             xtype: 'targets-preview',
             reference: 'targetsPreviewPanel',
@@ -152,13 +214,15 @@ Ext.define('Target.view.objects.Panel', {
 
     setCurrentCatalog: function (catalog) {
         var me = this,
-            gridPanel = me.down('targets-objects-grid'),
+            // gridPanel = me.down('targets-objects-grid'),
+            txtTargetTitle = me.lookup('txtTargetTitle'),
             title = '';
 
         if (catalog.get('id') > 0) {
             title = Ext.String.format('{0} - {1}', catalog.get('pcl_display_name'), catalog.get('prd_display_name'));
 
-            gridPanel.setTitle(title);
+            // gridPanel.setTitle(title);
+            txtTargetTitle.setHtml(title);
 
         }
     },
