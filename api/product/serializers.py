@@ -813,6 +813,7 @@ class FilterConditionSerializer(serializers.ModelSerializer):
             'id',
             'filterset',
             'fcd_property',
+            'fcd_property_name',
             'fcd_operation',
             'fcd_value',
             'property_name',
@@ -821,14 +822,20 @@ class FilterConditionSerializer(serializers.ModelSerializer):
         )
 
     def get_property_name(self, obj):
-        return obj.fcd_property.pcn_column_name
+        try:
+            return obj.fcd_property.pcn_column_name
+        except:
+            return obj.fcd_property_name
 
     def get_property_display_name(self, obj):
         try:
             association = obj.fcd_property.productcontentassociation_set.first()
             return association.pca_class_content.pcc_display_name
         except:
-            return obj.pcs_content.pcn_column_name
+            try:
+                return obj.pcs_content.pcn_column_name
+            except:
+                return None
 
     def get_operator_display_name(self, obj):
         try:
@@ -844,4 +851,3 @@ class FilterConditionSerializer(serializers.ModelSerializer):
             return operators.get(obj.fcd_operation)
         except:
             return None
-

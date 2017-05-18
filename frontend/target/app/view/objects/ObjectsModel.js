@@ -14,7 +14,8 @@ Ext.define('Target.view.objects.ObjectsModel', {
         'Target.model.FilterSet',
         'Target.store.CurrentSettings',
         'Target.store.ProductDisplayContents',
-        'Target.store.FilterSets'
+        'Target.store.FilterSets',
+        'Target.store.FilterConditions'
 
     ],
 
@@ -43,6 +44,10 @@ Ext.define('Target.view.objects.ObjectsModel', {
         },
         filterSets: {
             type: 'target-filtersets',
+            autoLoad: false
+        },
+        filterConditions: {
+            type: 'target-filter-conditions',
             autoLoad: false
         }
     },

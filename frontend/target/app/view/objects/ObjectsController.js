@@ -230,13 +230,18 @@ Ext.define('Target.view.objects.ObjectsController', {
     loadObjects: function (catalog, filters) {
         var me = this,
             vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog'),
             store = vm.getStore('objects'),
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid,
             btnFilterApply = refs.btnFilterApply,
             aFilters = [];
 
-        if (catalog) {
+        if (!catalog) {
+            catalog = currentCatalog.get('id');
+        }
+
+        if (catalog > 0) {
 
             store.clearFilter();
 
@@ -583,70 +588,159 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         var me = this,
             vm = me.getViewModel(),
+            filterset = vm.get('filterSet'),
             currentCatalog = vm.get('currentCatalog');
 
-        if (me.winFilters === null) {
-            me.winFilters = Ext.create('Target.view.objects.FiltersWindow',{
-                listeners: {
-                    scope: me,
-                    applyfilters: 'onApplyFilters',
-                    disapplyfilters: 'onDisapplyFilters'
-                }
-            });
-
+        if (me.winFilters !== null) {
+            me.winFilters.close();
+            me.winFilters = null;
         }
 
+        me.winFilters = Ext.create('Target.view.objects.FiltersWindow',{
+            listeners: {
+                scope: me,
+                applyfilters: 'onWindowApplyFilters',
+                disapplyfilters: 'onWindowDisapplyFilters'
+            }
+        });
+
         me.winFilters.setCurrentCatalog(currentCatalog);
+
+        me.winFilters.setFilterSet(filterset);
 
         me.winFilters.show();
 
     },
 
-    onApplyFilters: function (filters, filterset) {
+    onWindowApplyFilters: function (filterset, filters) {
         console.log('onApplyFilters(%o)', filters);
 
         var me = this,
             vm = me.getViewModel(),
             filtersets = vm.getStore('filterSets'),
-            currentCatalog = vm.get('currentCatalog'),
-            combo = me.lookup('cmbFilterSet');
+            combo = me.lookup('cmbFilterSet'),
+            currentCatalog = vm.get('currentCatalog');
 
-        if ((filterset !== null) && (filterset.get('id') > 0)) {
+        if ((filterset) && (filterset.get('id') > 0)) {
             // Selecionar a Combo com o Filterset escolhido
             filtersets.load({
                 callback: function () {
                     combo.select(filterset);
-                    vm.set('filterSet', filterset);
+
+                    // applicar os filtros
+                    me.applyFilter(filterset);
                 }
             });
+
+        } else {
+            console.log('TODO aplicar filtro local');
+            // Aplicar Filtro Local
+            vm.set('filterSet', filterset);
+            vm.set('filters', filters);
+
+            combo.getTrigger('clear').show();
+
+            me.loadObjects(currentCatalog.get('id'), filters);
         }
-
-        vm.set('filters', filters);
-
-        me.loadObjects(currentCatalog.get('id'), filters);
-
     },
 
-    onDisapplyFilters: function () {
+    onWindowDisapplyFilters: function () {
         var me = this,
             vm = me.getViewModel(),
-            currentCatalog = vm.get('currentCatalog');
+            combo = me.lookup('cmbFilterSet'),
+            filterset;
 
+        filterset = Ext.create('Target.model.FilterSet',{});
+
+        vm.set('filterSet', filterset);
         vm.set('filters', null);
 
-        me.loadObjects(currentCatalog.get('id'));
+        combo.getTrigger('clear').hide();
 
+        me.loadObjects();
     },
 
+    /**
+     * Executado pelo botao apply/disappy
+     * Para ativar ou desativar um filtro basta chamar a funcao load ela
+     * ja checa se tem filtro selecionado e se o botao de filtro esta ativo.
+     */
     applyDisapplyFilter: function (btn, state) {
-        console.log('applyDisapplyFilter(%o)', state);
+        var me = this;
+
+        me.loadObjects();
+    },
+
+    /**
+     * Executado toda vez que e selecionado um filterset
+     * na combo box, apenas executa a funcao applyFilter.
+     * @param  {Target.model.FilterSet} filterset [description]
+     */
+    onSelectFilterSet: function (combo, filterset) {
+        var me = this;
+
+        // mostrar o botao clear da combo box
+        if (filterset.get('id') > 0) {
+            combo.getTrigger('clear').show();
+
+            me.applyFilter(filterset);
+        }
+    },
+
+    /**
+     * executado quando clica no trigger clear da combo box
+     * apenas seta um Filterset em branco no model
+     * para que a combo fique sem selecao, remove
+     * a variavel filters.
+     */
+    onClearCmbFilterSet: function (combo) {
+        var me = this;
+
+        // Esconder o botao clear da combo box
+        combo.getTrigger('clear').hide();
+
+        me.applyFilter();
+    },
+
+    /**
+     * Recebe um filter set e carrega a store
+     * filterConditions, depois de carregar
+     * seta na variavel filters a store de condicoes.
+     * essa variavel vai ser usada no metodo loadObjects.
+     * @param  {Target.model.FilterSet} filterset
+     * caso filterset seja null ou um model vazio, limpa as variaveis de filtro e reload a store.
+     */
+    applyFilter: function (filterset) {
+        // Baseado no Filterset selecionado
         var me = this,
             vm = me.getViewModel(),
-            currentCatalog = vm.get('currentCatalog');
+            filterConditions = vm.getStore('filterConditions');
 
-        // Para ativar ou desativar um filtro basta chamar a funcao load ela
-        // ja checa se tem filtro selecionado e se o botao de filtro esta ativo.
-        me.loadObjects(currentCatalog.get('id'));
+        if ((filterset) && (filterset.get('id') > 0)) {
+            // Filtra a store de condicoes pelo id do filterset
+            filterConditions.addFilter({
+                property: 'filterset',
+                value: filterset.get('id')
+            });
+
+            filterConditions.load({
+                callback: function () {
+                    // coloca uma copia da store de filtros na variavel filters
+                    vm.set('filters', this);
+
+                    // Carregar a lista de objetos.
+                    me.loadObjects();
+                }
+            });
+        } else {
+            filterset = Ext.create('Target.model.FilterSet',{});
+
+            vm.set('filterSet', filterset);
+            vm.set('filters', null);
+
+            // Se nao tiver filterset apenas reload na lista
+            me.loadObjects();
+        }
 
     }
 

@@ -346,12 +346,18 @@ class Filterset(models.Model):
     def __str__(self):
         return str(self.fst_name)
 
+
 class FilterCondition(models.Model):
     filterset = models.ForeignKey(
         Filterset, on_delete=models.CASCADE, verbose_name='Filterset')
 
     fcd_property = models.ForeignKey(
-        ProductContent, on_delete=models.CASCADE, verbose_name='Property'
+        ProductContent, on_delete=models.CASCADE, verbose_name='Property', null=True, blank=True, default=None
+    )
+
+    fcd_property_name = models.CharField(
+        max_length=60, verbose_name='Operator', null=True, blank=True, default=None,
+        help_text='Name of the property like this in the database'
     )
 
     fcd_operation = models.CharField(
@@ -361,4 +367,4 @@ class FilterCondition(models.Model):
         max_length=10, verbose_name='Value')
 
     def __str__(self):
-        return str("%s %s %s" %(self.fcd_property, self.fcd_operation, self.fcd_value))
+        return str("%s %s %s" % (self.fcd_property, self.fcd_operation, self.fcd_value))

@@ -15,7 +15,7 @@ Ext.define('Target.store.Objects', {
 
     model: 'Target.model.Object',
 
-    pageSize: 50,
+    pageSize: 100,
 
     proxy: {
         type: 'django',

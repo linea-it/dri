@@ -28,6 +28,7 @@ Ext.define('Target.view.objects.FiltersModel', {
         },
         filters: {
             type: 'target-filter-conditions',
+            storeId: 'filterConditions',
             autoLoad: false
         },
         operators: {

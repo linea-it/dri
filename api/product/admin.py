@@ -125,7 +125,7 @@ class FiltersetdAdmin(admin.ModelAdmin):
 
 
 class FilterConditionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'filterset', 'fcd_property', 'fcd_operation', 'fcd_value')
+    list_display = ('id', 'filterset', 'fcd_property', 'fcd_property_name', 'fcd_operation', 'fcd_value')
 
 
 admin.site.register(Product, ProductAdmin)

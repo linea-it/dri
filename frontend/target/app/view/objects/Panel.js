@@ -93,6 +93,16 @@ Ext.define('Target.view.objects.Panel', {
                                         store: '{filterSets}',
                                         selection: '{filterSet}'
                                     },
+                                    listeners: {
+                                        select: 'onSelectFilterSet'
+                                    },
+                                    triggers: {
+                                        clear: {
+                                            cls: 'x-form-clear-trigger',
+                                            handler: 'onClearCmbFilterSet',
+                                            hidden: true
+                                        }
+                                    },
                                     minChars: 0,
                                     queryMode: 'local',
                                     editable: false

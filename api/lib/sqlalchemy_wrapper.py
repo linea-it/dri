@@ -129,6 +129,7 @@ class DBBase:
             op = '__%s__' % _filter['op']
             column = DBBase.get_column_obj(table, _filter['column'])
             f.append(getattr(column, op)(_filter['value']))
+        print(f)
         return f
 
     @staticmethod

@@ -28,12 +28,13 @@ Ext.define('common.store.MyStore', {
                     }
 
                 } else {
-                    var error = eOpts.getError();
+                    var error = eOpts.getError(),
+                        response;
 
                     switch (error.status) {
                         case 403:
                             // 403 - Forbidden
-                            var response = JSON.parse(error.response.responseText);
+                            response = JSON.parse(error.response.responseText);
                             Ext.MessageBox.show({
                                 title: error.status + ' - ' + error.statusText,
                                 msg: response.detail,
@@ -51,6 +52,17 @@ Ext.define('common.store.MyStore', {
                                     window.location.assign(location);
 
                                 }
+                            });
+
+                            break;
+                        case 408:
+                            // 408 - Timeout
+                            response = JSON.parse(error.response.responseText);
+                            Ext.MessageBox.show({
+                                title: error.status + ' - ' + error.statusText,
+                                msg: 'Maximum execution time exceeded.',
+                                buttons: Ext.MessageBox.OK,
+                                icon: Ext.MessageBox.WARNING
                             });
 
                             break;

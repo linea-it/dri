@@ -235,7 +235,13 @@ class TargetViewSetDBHelper:
 
         # Filters TODO - condition?
 
+        print('-------------------')
+        not_in_table_filters = dict({
+            '_meta_rating': 'meta_rating',
+            '_meta_reject': 'meta_reject',
+        })
         filters = list()
+        other_filters = list()
         params = params.dict()
         for param in params:
             if '__' in param:
@@ -249,6 +255,12 @@ class TargetViewSetDBHelper:
                     column=col.lower(),
                     op=op,
                     value=params.get(param)))
+            else:
+                if col in not_in_table_filters:
+                    other_filters.append(dict(
+                        column=not_in_table_filters.get(col).lower(),
+                        op=op,
+                        value=params.get(param)))
 
         catalog_rating_id = self.db.get_table_obj('catalog_rating', schema=self.schema).alias('b')
         catalog_reject_id = self.db.get_table_obj('catalog_reject', schema=self.schema).alias('c')
@@ -270,6 +282,9 @@ class TargetViewSetDBHelper:
 
         # Filtros
         stm = stm.where(and_(*DBBase.do_filter(self.table, filters)))
+        if len(other_filters) > 0:
+            # Adicionar filtros que nao estao na tabela
+            pass
 
         # Parametros de Paginacao
         limit = params.get('limit', None)

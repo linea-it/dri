@@ -16,6 +16,9 @@ Ext.define('Target.view.objects.FiltersController', {
         store: {
             '#productContents': {
                 load: 'onLoadContents'
+            },
+            '#filterConditions': {
+                load: 'onLoadFilterConditions'
             }
         }
     },
@@ -32,10 +35,6 @@ Ext.define('Target.view.objects.FiltersController', {
             value: currentCatalog.get('id')
         });
 
-        console.log('onChangeCatalog');
-
-        // TODO: Carregar os Filtros Salvos
-
     },
 
     onLoadContents: function (contents) {
@@ -43,6 +42,7 @@ Ext.define('Target.view.objects.FiltersController', {
         var rating, reject;
 
         rating = Ext.create('Target.model.CatalogContent', {
+            id: null,
             column_name: '_meta_rating',
             display_name: 'Rating'
         });
@@ -58,24 +58,36 @@ Ext.define('Target.view.objects.FiltersController', {
 
     },
 
+    onLoadFilterConditions: function () {
+        var me = this;
+
+        me.checkHaveFilters();
+    },
+
     onAddFilter: function () {
         var me = this,
             vm = me.getViewModel(),
             content = vm.get('content'),
             operator = vm.get('operator'),
             value = vm.get('value'),
+            filterSet = vm.getStore('filterSet'),
             filters = vm.getStore('filters'),
             filter;
 
         // Criar um Model com os dados do filtro
         filter = Ext.create('Target.model.FilterCondition', {
             fcd_property: content.get('id'),
+            fcd_property_name: content.get('column_name'),
             fcd_operation: operator.get('name'),
             fcd_value: value,
-            property_name: content.get('column_name'),
             property_display_name: content.get('display_name'),
             operator_display_name: operator.get('display_name')
         });
+
+        if ((filterSet) && (filterSet.get('id') > 0)) {
+            filter.set('filterset', filterSet.get('id'));
+
+        }
 
         filters.add(filter);
 
@@ -88,9 +100,15 @@ Ext.define('Target.view.objects.FiltersController', {
     onRemoveFilterClick: function (view, recIndex, cellIndex, item, e, record) {
         var me = this;
 
-        record.drop();
+        Ext.MessageBox.confirm('',
+            'The Filter will be removed. Do you want continue?',
+            function () {
+                record.drop();
 
-        me.checkHaveFilters();
+                me.checkHaveFilters();
+
+            }, this);
+
     },
 
     checkHaveFilters: function () {
@@ -117,17 +135,25 @@ Ext.define('Target.view.objects.FiltersController', {
 
     },
 
-    onDeleteFilter: function () {
+    onDeleteFilterSet: function () {
         var me = this,
+            vm = me.getViewModel(),
+            filterSet = vm.get('filterSet'),
             view = me.getView();
 
-        view.fireEvent('disapplyfilters', me);
-        me.getView().close();
+        if ((filterSet) && (filterSet.get('id') > 0)) {
+            filterSet.erase({
+                callback: function (record, operation, success) {
+                    if (success) {
+                        view.fireEvent('disapplyfilters', me);
+                        me.getView().close();
+                    }
+                }
+            });
+        }
     },
 
     onApplyFilter: function () {
-        console.log('onApplyFilter');
-
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
@@ -141,16 +167,23 @@ Ext.define('Target.view.objects.FiltersController', {
         // Verificar se tem nome para o filtro se tiver
         // Criar um Filter
         if ((filterName !== null) && (filterName !== '')) {
-            console.log('filterName: %o', filterName);
-
-            console.log(filterSet);
             if (filterSet.get('id') > 0) {
 
                 // Fazer update das condicoes
+                if (filters.needsSync === true) {
+                    filters.sync({
+                        callback: function () {
+                            // Disparar o evento
+                            me.applyFilters();
+
+                        }
+                    });
+
+                } else {
+                    me.applyFilters();
+                }
 
             } else {
-                console.log('NAO TEM FILTER SET CRIAR UM');
-
                 view.setLoading(true);
 
                 fset = Ext.create('Target.model.FilterSet', {
@@ -172,25 +205,25 @@ Ext.define('Target.view.objects.FiltersController', {
                         }
                     }
                 });
-
-                // filterSets.add(fset);
-
-                // filterSets.sync({
-                //     callback: function () {
-                //         console.log(arguments);
-                //         console.log('Criou o Filterset');
-                //         var record = this.find()
-                //         me.onCreateFilterset();
-
-                //     }
-                // });
             }
+        } else {
+            // Nao tem FilterName mais tem filterConditions
+            if (filters.count() > 0) {
+                // Aplicar como um filtro local
+                fset = Ext.create('Target.model.FilterSet', {
+                    product: currentCatalog.get('id'),
+                    fst_name: 'Unnamed Filter'
+                });
 
+                vm.set('filterSet', fset);
+
+                me.applyFilters();
+
+            }
         }
     },
 
     onCreateFilterset: function (fset, filters) {
-        console.log('onCreateFilterset(%o, %o)', fset, filters);
         var me = this,
             view = me.getView();
 
@@ -220,7 +253,7 @@ Ext.define('Target.view.objects.FiltersController', {
             filterset = vm.get('filterSet');
 
         if (filters.count() > 0) {
-            view.fireEvent('applyfilters', filters, filterset, me);
+            view.fireEvent('applyfilters', filterset, filters, me);
 
         } else {
             view.fireEvent('disapplyfilters', me);

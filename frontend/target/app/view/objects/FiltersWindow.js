@@ -15,7 +15,7 @@ Ext.define('Target.view.objects.FiltersWindow', {
     autoShow: true,
     controller: 'filters',
     viewModel: 'filters',
-    closeAction: 'hide',
+    closeAction: 'destroy',
 
     bodyPadding: 20,
 
@@ -81,7 +81,7 @@ Ext.define('Target.view.objects.FiltersWindow', {
                                     // },
                                     minChars: 0,
                                     queryMode: 'local',
-                                    editable: false,
+                                    // editable: false,
                                     readOnly: false,
                                     margin: '0 5 0 0'
                                 },
@@ -155,7 +155,7 @@ Ext.define('Target.view.objects.FiltersWindow', {
                 },
                 {
                     text: 'Value',
-                    dataIndex: 'value',
+                    dataIndex: 'fcd_value',
                     flex: 1
                 },
                 {
@@ -179,10 +179,11 @@ Ext.define('Target.view.objects.FiltersWindow', {
         {
             iconCls: 'x-fa fa-trash',
             ui: 'soft-red',
-            handler: 'onDeleteFilter',
+            handler: 'onDeleteFilterSet',
             width: 40,
             tooltip: 'Delete Filter',
-            disabled: true
+            disabled: true,
+            reference: 'btnDeleteFilterSet'
         },
         {
             text: 'Cancel',
@@ -201,9 +202,7 @@ Ext.define('Target.view.objects.FiltersWindow', {
     setCurrentCatalog: function (currentCatalog) {
         var me = this;
 
-        if ((currentCatalog !== null) && (currentCatalog.get('id') > 0)) {
-
-            console.log('currentCatalog', '=', currentCatalog.get('id'));
+        if ((currentCatalog) && (currentCatalog.get('id') > 0)) {
 
             me.currentCatalog = currentCatalog;
 
@@ -212,6 +211,50 @@ Ext.define('Target.view.objects.FiltersWindow', {
             me.fireEvent('changecatalog', currentCatalog);
 
         }
+    },
+
+    setFilterSet: function (filterset) {
+        var me = this,
+            vm = me.getViewModel(),
+            filters = vm.getStore('filters'),
+            btnDelete = me.lookup('btnDeleteFilterSet'),
+            txtFilter = me.lookup('txtFilter');
+
+        if ((filterset) && (filterset.get('id') > 0)) {
+
+            vm.set('filterSet', filterset);
+
+            vm.set('filterName', filterset.get('fst_name'));
+
+            // Filter name como readonly
+            txtFilter.setReadOnly(true);
+
+            // Habilitar o botao de Delete FilterSet
+            btnDelete.enable();
+
+            filters.addFilter({
+                property: 'filterset',
+                value: filterset.get('id')
+            });
+
+            filters.load();
+
+        } else {
+            // Um filterSet vazio
+
+            vm.set('filterName', null);
+
+            // Filter name
+            txtFilter.setReadOnly(false);
+
+            // Habilitar o botao de Delete FilterSet
+            btnDelete.disable();
+
+            filters.clearFilter();
+            filters.removeAll(true);
+
+        }
+
     }
 
 });
