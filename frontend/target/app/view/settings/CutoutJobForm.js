@@ -27,7 +27,8 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                     xtype: 'textfield',
                     fieldLabel: 'Job Name',
                     name: 'job_name',
-                    allowBlank: false
+                    allowBlank: false,
+                    maxLength: 40
                 },
                 {
                     xtype: 'radiogroup',

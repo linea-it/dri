@@ -228,7 +228,7 @@ class CutOutJob(models.Model):
         on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
 
     cjb_display_name = models.CharField(
-        max_length=20, verbose_name='Name')
+        max_length=40, verbose_name='Name')
 
     cjb_xsize = models.CharField(
         max_length=5, verbose_name='Xsize', help_text='xsize in arcmin, default is 1.0', default='1.0')
@@ -245,8 +245,8 @@ class CutOutJob(models.Model):
     cjb_band = models.CharField(
         max_length=20, verbose_name='Filters', null=True, blank=True)
 
-    cjb_Blacklist = models.CharField(
-        max_length=10, verbose_name='Blacklist', null=True, blank=True, help_text='Exclude blacklisted ccds')
+    cjb_Blacklist = models.BooleanField(
+        verbose_name='Blacklist', default=False, help_text='Exclude blacklisted ccds')
 
     cjb_status = models.CharField(
         max_length=2,

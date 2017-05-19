@@ -295,6 +295,7 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
         model = CutOutJob
 
         fields = (
+            'id',
             'cjb_product',
             'cjb_display_name',
             'cjb_status',
