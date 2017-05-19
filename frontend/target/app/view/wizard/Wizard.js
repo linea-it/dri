@@ -15,7 +15,7 @@ Ext.define('Target.view.wizard.Wizard', {
         'Target.view.settings.Columns',
         'Target.view.settings.Permission',
         'Target.view.settings.SystemMembers',
-        'Target.view.cutout.CutoutJob',
+        'Target.view.settings.Cutout',
         'Ext.layout.container.Card'
     ],
 
@@ -64,10 +64,10 @@ Ext.define('Target.view.wizard.Wizard', {
         },
         {
             id: 'card-3',
-            xtype: 'targets-cutoutjob',
+            xtype: 'targets-cutout',
             title: 'Cutouts',
-            iconCls: 'x-fa fa-picture-o',
-            disabled: true
+            iconCls: 'x-fa fa-picture-o'
+            // disabled: true
         },
         {
             id: 'card-4',
@@ -75,7 +75,6 @@ Ext.define('Target.view.wizard.Wizard', {
             title: 'System Members',
             iconCls: 'x-fa fa-dot-circle-o',
             disabled: true
-            // hidden: true
         },
         {
             id: 'card-5',

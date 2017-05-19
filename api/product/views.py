@@ -441,6 +441,8 @@ class CutoutJobViewSet(viewsets.ModelViewSet):
 
     serializer_class = CutoutJobSerializer
 
+    filter_fields = ('id', 'cjb_product', 'cjb_display_name')
+
     ordering_fields = ('id',)
 
 

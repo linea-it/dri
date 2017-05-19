@@ -302,6 +302,7 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_xsize',
             'cjb_ysize',
             'cjb_job_type',
+            'cjb_tag',
             'cjb_band',
             'cjb_Blacklist',
             'owner'

@@ -231,19 +231,22 @@ class CutOutJob(models.Model):
         max_length=20, verbose_name='Name')
 
     cjb_xsize = models.CharField(
-        max_length=5, verbose_name='Xsize')
+        max_length=5, verbose_name='Xsize', help_text='xsize in arcmin, default is 1.0', default='1.0')
 
     cjb_ysize = models.CharField(
-        max_length=5, verbose_name='ysize')
+        max_length=5, verbose_name='ysize', help_text='ysize in arcmin, default is 1.0', default='1.0')
 
     cjb_job_type = models.CharField(
-        max_length=10, verbose_name='JobType')
+        max_length=10, verbose_name='Job Type', choices=(('coadd', 'Coadd Images'), ('single', 'Single Epoch')))
+
+    cjb_tag = models.CharField(
+        max_length=60, verbose_name='Release Tag', null=True, blank=True)
 
     cjb_band = models.CharField(
-        max_length=10, verbose_name='band', null=True, blank=True)
+        max_length=20, verbose_name='Filters', null=True, blank=True)
 
     cjb_Blacklist = models.CharField(
-        max_length=10, verbose_name='Blacklist', null=True, blank=True)
+        max_length=10, verbose_name='Blacklist', null=True, blank=True, help_text='Exclude blacklisted ccds')
 
     cjb_status = models.CharField(
         max_length=2,
@@ -253,7 +256,7 @@ class CutOutJob(models.Model):
     )
 
     cjb_job_id = models.CharField(
-        max_length=1024, verbose_name='Job ID')
+        max_length=1024, verbose_name='Job ID', null=True, blank=True)
 
     def __str__(self):
         return str(self.cjb_display_name)

@@ -1,11 +1,5 @@
-Ext.define('Target.view.cutout.Jobs', {
+Ext.define('Target.view.settings.CutoutJobs', {
     extend: 'Ext.grid.Panel',
-
-    requires: [
-        // 'Target.view.settings.PermissionController',
-        // 'Target.view.settings.PermissionModel',
-        // 'Ext.grid.feature.Grouping'
-    ],
 
     xtype: 'targets-cutout-jobs',
 
@@ -40,7 +34,8 @@ Ext.define('Target.view.cutout.Jobs', {
                 // },
                 {
                     text: 'Release Tag',
-                    dataIndex: ''
+                    dataIndex: 'cjb_tag',
+                    flex: 1
                 },
                 {
                     text: 'Status',
