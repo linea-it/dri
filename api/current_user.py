@@ -7,4 +7,7 @@ class CurrentUserMiddleware(object):
         _user.value = request.user
 
 def get_current_user():
-    return _user.value
+    try:
+        return _user.value
+    except:
+        return None

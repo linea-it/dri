@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='product',
             name='prd_process',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='product_register.ExternalProcess', verbose_name='External Process'),
+            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='product_register.ExternalProcess', verbose_name='External Process'),
             preserve_default=False,
         ),
     ]

@@ -139,7 +139,7 @@ class Survey(models.Model):
     srv_release = models.ForeignKey(
         Release, related_name='surveys', on_delete=models.CASCADE, verbose_name='Release')
     srv_filter = models.ForeignKey(
-        'common.Filter', verbose_name='Filter')
+        'common.Filter', verbose_name='Filter', default=None, null=True, blank=True)
     srv_project = models.CharField(
         max_length=20, null=True, blank=True, verbose_name='Project')
     srv_display_name = models.CharField(
