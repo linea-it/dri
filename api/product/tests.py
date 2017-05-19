@@ -13,7 +13,7 @@ from model_mommy.recipe import Recipe, foreign_key
 from pprint import pprint
 
 
-# Create your tests here.
+# ----------------------------------------- < Filters > -----------------------------------------
 class FilterSetAPITestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user("dri", "dri@linea.org", "dri")
@@ -146,3 +146,107 @@ class FilterConditionAPITestCase(APITestCase):
         response = self.client.get('/filtercondition/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0)
+
+
+# ----------------------------------------- < Cutout > -----------------------------------------
+class CutOutJobAPITestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user("dri", "dri@linea.org", "dri")
+        self.client.login(username='dri', password='dri')
+
+        self.route = '/cutoutjob/'
+
+        self.product = mommy.make(
+            Product,
+            prd_owner=self.user
+        )
+
+        self.job_data_single = dict(
+            cjb_product=self.product.pk,
+            cjb_display_name="Teste Cutout Job",
+            cjb_status="st",
+            cjb_job_id=None,
+            cjb_xsize="1.0",
+            cjb_ysize="1.0",
+            cjb_job_type="single",
+            cjb_tag=None,
+            cjb_band="g,r,i,z,Y",
+            cjb_Blacklist=True,
+            owner=self.user.pk
+        )
+
+        self.job_data_coadd = dict(
+            cjb_product=self.product.pk,
+            cjb_display_name="Cutout Job Coadd",
+            cjb_status="st",
+            cjb_job_id=None,
+            cjb_xsize="1.0",
+            cjb_ysize="1.0",
+            cjb_job_type="coadd",
+            cjb_tag="Y3A1_COADD",
+            cjb_band=None,
+            cjb_Blacklist=False,
+            owner=self.user.pk
+        )
+
+    def test_cutout_route(self):
+        route = resolve(self.route)
+        self.assertEqual(route.func.__name__, 'CutoutJobViewSet')
+
+    def test_cutout_crud(self):
+        # Create
+        response = self.client.post(
+            self.route,
+            self.job_data_single,
+            format='json')
+
+        self.assertEqual(response.status_code, 201)
+
+        data = response.data
+
+        # Read
+        response = self.client.get(self.route)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['cjb_display_name'], data['cjb_display_name'])
+
+        # Update
+        patch_data = dict({'cjb_display_name': "CutoutJob Updated"})
+        response = self.client.patch(
+            self.route + '%s/' % data['id'],
+            patch_data,
+            format='json')
+
+        self.assertEqual(response.status_code, 200)
+
+        # Confirm Updated
+        response = self.client.get(self.route)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['cjb_display_name'], patch_data['cjb_display_name'])
+
+        # Delete
+        response = self.client.delete(
+            self.route + '%s/' % data['id'])
+        self.assertEqual(response.status_code, 204)
+
+        # Confirm Deleted
+        response = self.client.get(self.route)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 0)
+
+        # Create Coadd Images
+        response = self.client.post(
+            self.route,
+            self.job_data_coadd,
+            format='json')
+
+        self.assertEqual(response.status_code, 201)
+
+        data = response.data
+
+        # Read Coadd Images
+        response = self.client.get(self.route)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['cjb_display_name'], data['cjb_display_name'])

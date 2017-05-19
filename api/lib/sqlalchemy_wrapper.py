@@ -87,6 +87,7 @@ class DBBase:
 
             return self.engine.has_table(table, schema)
 
+
     def get_table_obj(self, table, schema=None):
         return Table(table, self.metadata, autoload=True, schema=schema)
 

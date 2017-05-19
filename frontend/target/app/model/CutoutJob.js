@@ -8,8 +8,9 @@ Ext.define('Target.model.CutoutJob', {
         {name:'cjb_xsize', type: 'float'},
         {name:'cjb_ysize', type: 'float'},
         {name:'cjb_job_type', type: 'string'},
+        {name:'cjb_tag', type: 'string'},
         {name:'cjb_band', type: 'string'},
-        {name:'cjb_Blacklist', type: 'string'},
+        {name:'cjb_Blacklist', type: 'boolean', default: false},
 
         {name:'cjb_status', type: 'string', persist: false},
         {name:'cjb_job_id', type: 'string', persist: false},

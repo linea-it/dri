@@ -55,10 +55,13 @@ class MapAdmin(admin.ModelAdmin):
 
 class CutOutJobAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'cjb_display_name', 'cjb_status',
+        'id', 'cjb_product', 'cjb_display_name', 'cjb_status', 'cjb_job_type', 'cjb_tag', 'cjb_job_id', 'owner',
     )
     list_display_links = ('id',)
     search_fields = ('cjb_display_name',)
+
+
+
 
 
 class CutoutAdmin(admin.ModelAdmin):
