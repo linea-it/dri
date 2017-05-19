@@ -100,7 +100,8 @@ Ext.define('Target.view.settings.CutoutController', {
                 cjb_display_name: values.job_name,
                 cjb_job_type: values.job_type,
                 cjb_xsize: values.xsize,
-                cjb_ysize: values.ysize
+                cjb_ysize: values.ysize,
+                cjb_Blacklist: false
             });
 
             if (values.job_type == 'single') {
