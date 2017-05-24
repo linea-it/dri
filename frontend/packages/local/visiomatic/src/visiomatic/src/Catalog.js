@@ -1,12 +1,12 @@
 /*
 # L.Catalog contains specific catalog settings and conversion tools.
 #
-#	This file part of:	VisiOmatic
+#	This file part of:       VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 12/01/2016
+#	Last modified: 07/01/2017
 */
 
 L.Catalog = {
@@ -59,7 +59,6 @@ L.Catalog = {
 		var str = '<div>';
 		if (this.objurl) {
 			str += 'ID: <a href=\"' +  L.Util.template(this.objurl, L.extend({
-				id: feature.id,
 				ra: feature.geometry.coordinates[0].toFixed(6),
 				dec: feature.geometry.coordinates[1].toFixed(6)
 			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';
@@ -71,10 +70,10 @@ L.Catalog = {
 		for	(var i in this.properties) {
 			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
 			       '<TD>' + feature.properties.items[i].toString() + ' ';
-	        if (this.units[i]){
-	        	str += this.units[i];
-	        }
-	        str += '</TD></TR>';
+			if (this.units[i]) {
+				str += this.units[i];
+			}
+			str += '</TD></TR>';
 		}
 		str += '</TBODY></TABLE>';
 		return str;
@@ -82,9 +81,9 @@ L.Catalog = {
 	},
 
 	draw: function (feature, latlng) {
+		var refmag = feature.properties.items[this.magindex ? this.magindex : 0];
 		return L.circleMarker(latlng, {
-			radius: feature.properties.items[0] ?
-			  5 + 17 - feature.properties.items[0] : 8
+			radius: refmag ? this.maglim + 5 - refmag : 8
 		});
 	},
 
