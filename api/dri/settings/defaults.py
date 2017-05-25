@@ -33,7 +33,6 @@ USE_OAUTH = False
 BASE_APPS = [
     'django.contrib.admin',
     'django.contrib.sites',
-
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -60,6 +59,7 @@ THIRD_PARTY_APPS = [
 PROJECT_APPS = [
     'common',
     'coadd',
+    'comment',
     'product_classifier',
     'product_register',
     'product',

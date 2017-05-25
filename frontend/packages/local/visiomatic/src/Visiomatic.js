@@ -265,6 +265,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         // Add Events Listeners to Map
         map.on('dblclick', me.onDblClick, me);
+        map.on('contextmenu', me.onContextMenuClick, me);
         map.on('layeradd', me.onLayerAdd, me);
         map.on('move', me.onMove, me);
 
@@ -444,11 +445,17 @@ Ext.define('visiomatic.Visiomatic', {
 
     },
 
-    onDblClick: function () {
+    onDblClick: function (event) {
+        var me = this;
+
+        me.fireEvent('dblclick', event, me);
+    },
+
+    onContextMenuClick: function (latlng) {
+        console.log('onContextMenuClick(%o)', latlng);
         var me = this,
             map = me.getMap();
 
-        me.fireEvent('dblclick', me);
     },
 
     removeImageLayer: function () {
