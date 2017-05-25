@@ -1,0 +1,43 @@
+language: python
+python:
+#  - "3.2"
+#  - "3.3"
+  - "3.4"
+  - "3.5"
+  - "3.6"
+  - "nightly" # currently points to 3.7-dev
+
+env:
+  - DJANGO_SETTINGS_MODULE=dri.settings.travis
+
+
+#before_install:
+#  - export DJANGO_SETTINGS_MODULE=dri.settings.travis
+
+# command to install dependencies
+install:
+  - pip install -r api/requirements.txt
+  - pip install -r api/requirements_dev.txt
+  - pip install coverage
+  - pip install coveralls
+  - pip install pep8
+
+#before_script:
+#  - "pep8 --exclude=migrations --ignore=E501,E225 src"
+#   - pyflakes -x W src
+
+# command to run tests
+script:
+  - cd api
+
+  # Run pep8 on all .py files in all subfolders
+#  - num_errors_before=`find . -name \*.py -exec pep8 --ignore=E402 {} + | wc -l`
+  - num_errors_before=`find . -name \*.py -exec pep8 --exclude=migrations {} + | wc -l`
+  - echo PEP8 Errors [$num_errors_before]
+
+  # Create a Local Vars settings to prevent import errors.
+  - cp dri/settings/travis.py dri/settings/local_vars.py
+
+  # Run Tests and generate reports on coveralls
+  - coverage run --source=. --omit='*migrations' manage.py test --verbosity=2
+  - coveralls
