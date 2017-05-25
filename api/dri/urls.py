@@ -26,6 +26,7 @@ from rest_framework import routers
 from validation import views as validation_views
 from dri.settings.defaults import *
 from userquery import views as userquery_views
+from comment import views as comment_views
 
 router = routers.DefaultRouter()
 
@@ -90,6 +91,10 @@ router.register(r'visiomatic/coadd_objects', catalog_views.VisiomaticCoaddObject
 
 # UserQuery API 
 router.register(r'userquery', userquery_views.UserQueryViewSet)
+
+# Comment API
+router.register(r'comment/position', comment_views.PositionViewSet)
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
