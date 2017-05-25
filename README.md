@@ -1,5 +1,7 @@
 # DRI - Data Release Interface
 
+[![Coverage Status](https://coveralls.io/repos/github/linea-it/dri/badge.svg)](https://coveralls.io/github/linea-it/dri)
+
 ## Overview
 
 ## Requirements
