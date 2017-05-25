@@ -53,9 +53,11 @@ class CommentPositionAPITestCase(APITestCase):
 
         data = response.data
 
-        create_date = data['pst_date']
+        # Se foi criado pelo usuario correto  a flag is_ower deve ser true
+        self.assertEqual(data['is_owner'], True)
 
         # Se o campo Data nao esta vazio
+        create_date = data['pst_date']
         self.assertIsNotNone(create_date)
 
         # Read
