@@ -33,7 +33,7 @@ class ExternalProcess(models.Model):
         help_text='original process username on your instances of origin.')
     epr_site = models.ForeignKey(
         Site, on_delete=models.CASCADE, verbose_name='Site',
-        help_text='origin of the process. instance from which it was imported.', default=None, null=True, blank=True,)
+        help_text='origin of the process. instance from which it was imported.', default=None, null=True, blank=True, )
     epr_original_id = models.CharField(
         max_length=128, null=True, verbose_name='Original Id',
         help_text='original process id on your instances of origin.')

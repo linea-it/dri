@@ -61,9 +61,6 @@ class CutOutJobAdmin(admin.ModelAdmin):
     search_fields = ('cjb_display_name',)
 
 
-
-
-
 class CutoutAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_object_ra', 'ctt_object_dec', 'ctt_filter', 'ctt_thumbname',

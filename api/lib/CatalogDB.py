@@ -6,7 +6,6 @@ class CatalogDB:
     def __init__(self, db='catalog'):
         self.database = DBBase(self.prepare_connection(db))
 
-
     def prepare_connection(self, db):
         connection_data = {}
 
@@ -33,4 +32,3 @@ class CatalogDB:
             raise Exception('Unknown database')
 
         return connection_data
-

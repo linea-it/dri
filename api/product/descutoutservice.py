@@ -101,7 +101,6 @@ class CutoutJobs:
         else:
             return False
 
-
     def delete_job_results(self, token, jobid):
         """
         Delete Jobs: Delete Job by its Id
@@ -118,7 +117,6 @@ class CutoutJobs:
             return True
         else:
             return False
-
 
     def parse_result_url(self, url):
         """
@@ -186,7 +184,6 @@ class CutoutJobs:
                 thumbname = filename[0:21]
                 arq.update({"thumbname": thumbname})
 
-
         return arq
 
     def start_job(self):
@@ -210,7 +207,6 @@ class CutoutJobs:
             if job.cjb_status == 'st':
                 CutOutJob.objects.filter(pk=job.pk).update(cjb_status='bs')
 
-
             # Recupera os objetos do catalogo
             rows = self.get_catalog_objects(product_id)
 
@@ -219,7 +215,6 @@ class CutoutJobs:
             for row in rows:
                 ra.append(float(row['_meta_ra']))
                 dec.append(float(row['_meta_dec']))
-
 
             body = {
                 'token': token,
@@ -292,7 +287,6 @@ class CutoutJobs:
 
         return ({"status": "ok"})
 
-
     def get_cutout_dir(self, cutout_job):
         """
         Criar um Diretorio agrupando os jobs de cutouts por produtos
@@ -313,7 +307,7 @@ class CutoutJobs:
 
         except OSError:
             return cutout_dir
-          # print("Cutout path already exists: %s" % cutout_dir)
+            # print("Cutout path already exists: %s" % cutout_dir)
             # raise
 
     def download_cutouts(self, cutout_job, list_files):
@@ -371,7 +365,7 @@ class CutoutJobs:
             else:
                 self.download_file(arq.get('url'), cutout_dir, arq.get('filename'))
 
-        #  Associar o arquivo com o objeto no catalogo
+        # Associar o arquivo com o objeto no catalogo
 
         # Recupera os objetos do catalogo e cria um dict onde a chave e o ra+dec
         catalog = dict()
@@ -400,7 +394,6 @@ class CutoutJobs:
                         # TODO nao consegue associar o arquivo com um objeto do catalogo
                         pass
 
-
     def download_file(self, url, cutout_dir, filename):
         # print("------------- download_file -------------")
         # print("URL: %s" % url)
@@ -410,9 +403,7 @@ class CutoutJobs:
         if not os.path.exists(file_path):
             urllib.request.urlretrieve(url, file_path)
 
-
         return file_path
-
 
     def get_catalog_objects(self, product_id):
         # print("get_catalog_objects(product_id=%s)" % product_id)
@@ -427,15 +418,14 @@ class CutoutJobs:
                 properties.update({property.get('pcc_ucd'): property.get('pcn_column_name')})
 
         db_helper = CutoutJobsDBHelper(
-                                    catalog.tbl_name,
-                                    schema=catalog.tbl_schema,
-                                    database=catalog.tbl_database)
+            catalog.tbl_name,
+            schema=catalog.tbl_schema,
+            database=catalog.tbl_database)
 
         rows = db_helper.query_result(properties)
 
         raDec = list()
         for row in rows:
-
             key = self.get_object_position_key(
                 row.get(properties.get("pos.eq.ra;meta.main")), row.get(properties.get("pos.eq.dec;meta.main")))
 
@@ -471,8 +461,6 @@ class CutoutJobs:
 
         return key
 
-
-
     def test_api_help(self):
         print('-------------- test_api_help --------------')
         token = self.generate_token()
@@ -492,7 +480,7 @@ class CutoutJobs:
             'ysize': str(ys),  # optional (default : 1.0)
             'band': 'g,r,i',  # optional for 'single' epochs jobs (default: all bands)
             'no_blacklist': 'false',
-        # optional for 'single' epochs jobs (default: 'false'). return or not blacklisted exposures
+            # optional for 'single' epochs jobs (default: 'false'). return or not blacklisted exposures
             'list_only': 'false',  # optional (default : 'false') 'true': will not generate pngs (faster)
             'email': 'false'  # optional will send email when job is finished
         }

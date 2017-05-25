@@ -2,6 +2,7 @@ from .models import Filter
 from rest_framework import serializers
 from django.contrib.auth.models import User
 
+
 class FilterSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Filter
@@ -14,6 +15,7 @@ class FilterSerializer(serializers.HyperlinkedModelSerializer):
             'lambda_max',
             'lambda_mean'
         )
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

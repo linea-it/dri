@@ -12,6 +12,7 @@ from rest_framework import viewsets
 
 logger = logging.getLogger(__name__)
 
+
 class FeatureViewSet(viewsets.ModelViewSet):
     queryset = Feature.objects.select_related().all()
     serializer_class = FeatureSerializer
@@ -19,6 +20,7 @@ class FeatureViewSet(viewsets.ModelViewSet):
     search_fields = ('ftr_name',)
     filter_fields = ('id', 'ftr_name',)
     ordering_fields = '__all__'
+
 
 class FlaggedFilter(django_filters.FilterSet):
     release = django_filters.MethodFilter()
@@ -30,6 +32,7 @@ class FlaggedFilter(django_filters.FilterSet):
     def filter_release(self, queryset, value):
         # f.dataset.tag.tag_release.rls_name
         return queryset.filter(flg_dataset__tag__tag_release__id=int(value))
+
 
 class FlaggedViewSet(viewsets.ModelViewSet):
     queryset = Flagged.objects.all()

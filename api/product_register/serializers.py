@@ -6,10 +6,9 @@ from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
 
+
 class SiteSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
-
         model = Site
 
         fields = (
@@ -19,10 +18,9 @@ class SiteSerializer(serializers.HyperlinkedModelSerializer):
             'sti_url',
         )
 
+
 class ExportSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
-
         model = Export
 
         fields = (
@@ -33,8 +31,8 @@ class ExportSerializer(serializers.HyperlinkedModelSerializer):
             'exp_external_process'
         )
 
-class ExternalProcessSerializer(serializers.HyperlinkedModelSerializer):
 
+class ExternalProcessSerializer(serializers.HyperlinkedModelSerializer):
     epr_owner = serializers.PrimaryKeyRelatedField(
         queryset=User.objects.all(), many=False)
 
@@ -42,7 +40,6 @@ class ExternalProcessSerializer(serializers.HyperlinkedModelSerializer):
         queryset=Site.objects.all(), many=False)
 
     class Meta:
-
         model = ExternalProcess
 
         fields = (
@@ -58,12 +55,11 @@ class ExternalProcessSerializer(serializers.HyperlinkedModelSerializer):
             'epr_site'
         )
 
-class AuthorizationSerializer(serializers.HyperlinkedModelSerializer):
 
+class AuthorizationSerializer(serializers.HyperlinkedModelSerializer):
     ticket = serializers.SerializerMethodField()
 
     class Meta:
-
         model = Authorization
 
         fields = (

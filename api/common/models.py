@@ -1,6 +1,7 @@
 # Create your models here.
 from django.db import models
 
+
 class Filter(models.Model):
     project = models.CharField(
         max_length=20, null=True, blank=True, verbose_name='Project')

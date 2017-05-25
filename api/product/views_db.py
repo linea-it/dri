@@ -30,4 +30,3 @@ class CutoutJobsDBHelper:
         columns = DBBase.create_columns_sql_format(self.table, cols)
         stm = select([columns]).select_from(self.table)
         return self.db.fetchall_dict(stm, self.str_columns)
-

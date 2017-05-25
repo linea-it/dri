@@ -1,5 +1,7 @@
 from rest_framework import filters
 from django.db.models import Q
+
+
 class UserQueryPermissionFilterBackend(filters.BaseFilterBackend):
     """
         Filter that only allows users to see their own user queries,

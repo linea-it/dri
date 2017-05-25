@@ -19,14 +19,16 @@ class Application(models.Model):
         max_length=1024, verbose_name='Icon Source', blank=True, null=True, help_text='path to the applications icon.'
     )
     app_video_src = models.CharField(
-        max_length=2048, verbose_name='Video Source', blank=True, null=True, help_text='Url to video. eg. https://www.youtube.com/embed/XGSy3_Czz8k'
+        max_length=2048, verbose_name='Video Source', blank=True, null=True,
+        help_text='Url to video. eg. https://www.youtube.com/embed/XGSy3_Czz8k'
     )
-    app_order = models.IntegerField (
+    app_order = models.IntegerField(
         verbose_name='Order', blank=True, null=True, help_text='Order in menu.'
     )
-    app_disabled = models.BooleanField (
+    app_disabled = models.BooleanField(
         verbose_name='Disabled', default=False, help_text='mark True to disable this application in the menu.'
     )
+
     def __str__(self):
         return self.app_display_name
 
@@ -37,7 +39,8 @@ class Tutorial(models.Model):
     ttr_title = models.CharField(
         max_length=1024, verbose_name='Title', blank=False, null=False, default='')
     ttr_src = models.CharField(
-        max_length=2048, verbose_name='Video Source', blank=True, null=True, help_text='Url to video. eg. https://www.youtube.com/embed/XGSy3_Czz8k')
+        max_length=2048, verbose_name='Video Source', blank=True, null=True,
+        help_text='Url to video. eg. https://www.youtube.com/embed/XGSy3_Czz8k')
     ttr_description = models.TextField(
         max_length=2048, verbose_name='Description', blank=True, null=True)
 

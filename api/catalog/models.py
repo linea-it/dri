@@ -2,7 +2,6 @@ from django.db import models
 
 
 class Rating(models.Model):
-
     catalog_id = models.IntegerField(
         verbose_name='Catalog', null=False)
 
@@ -18,8 +17,8 @@ class Rating(models.Model):
     def __str__(self):
         return self.pk
 
-class Reject(models.Model):
 
+class Reject(models.Model):
     catalog_id = models.IntegerField(
         verbose_name='Catalog', null=False, blank=False)
 
@@ -35,8 +34,8 @@ class Reject(models.Model):
     def __str__(self):
         return self.pk
 
-class Comments(models.Model):
 
+class Comments(models.Model):
     catalog_id = models.IntegerField(
         verbose_name='Catalog', null=False, blank=False)
 

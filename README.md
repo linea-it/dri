@@ -1,6 +1,6 @@
 # DRI - Data Release Interface
-
-[![Coverage Status](https://coveralls.io/repos/github/linea-it/dri/badge.svg)](https://coveralls.io/github/linea-it/dri)
+[![Build Status](https://travis-ci.org/linea-it/dri.svg?branch=master)](https://travis-ci.org/linea-it/dri)
+[![Coverage Status](https://coveralls.io/repos/github/linea-it/dri/badge.svg?branch=develop)](https://coveralls.io/github/linea-it/dri?branch=develop)
 
 ## Overview
 

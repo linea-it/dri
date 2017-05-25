@@ -19,6 +19,3 @@ class UserQuerySerializer(serializers.HyperlinkedModelSerializer):
             'is_public',
             'description'
         )
-        
-
-

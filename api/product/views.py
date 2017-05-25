@@ -541,4 +541,3 @@ class FilterConditionViewSet(viewsets.ModelViewSet):
     serializer_class = FilterConditionSerializer
 
     filter_fields = ('id', 'filterset', 'fcd_property', 'fcd_operation', 'fcd_value')
-

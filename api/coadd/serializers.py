@@ -91,6 +91,7 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
             'tag_discovery_date',
         )
 
+
 class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     tag = serializers.PrimaryKeyRelatedField(read_only=True)
     tag_display_name = serializers.SerializerMethodField(read_only=True)
@@ -116,7 +117,7 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'tli_tilename',
             'tli_ra',
             'tli_dec',
-            #'image_src_thumbnails',
+            # 'image_src_thumbnails',
             'image_src_ptif'
         )
 
@@ -141,13 +142,13 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     def get_tli_dec(self, obj):
         return obj.tile.tli_dec
 
-    # def image_src_ptif(self, obj):
-    #     tile = obj.tile
-    #     base_src = obj.image_src_ptif
-    #
-    #     image_src = "/%s.ptif" % (tile.tli_tilename)
-    #
-    #     return base_src + image_src
+        # def image_src_ptif(self, obj):
+        #     tile = obj.tile
+        #     base_src = obj.image_src_ptif
+        #
+        #     image_src = "/%s.ptif" % (tile.tli_tilename)
+        #
+        #     return base_src + image_src
 
 
 class DatasetFootprintSerializer(serializers.BaseSerializer):

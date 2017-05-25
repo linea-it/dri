@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 from django.db import models
 from django.conf import settings
 
+
 class UserQuery(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,

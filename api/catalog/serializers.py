@@ -3,13 +3,13 @@ from rest_framework.fields import IntegerField, BooleanField, ReadOnlyField
 from django.contrib.auth.models import User
 from .models import Rating, Reject, Comments
 
+
 class RatingSerializer(serializers.HyperlinkedModelSerializer):
     catalog_id = IntegerField(allow_null=False)
     object_id = IntegerField(min_value=0, allow_null=False, required=True)
     rating = IntegerField(min_value=1, max_value=5, allow_null=False, required=True)
 
     class Meta:
-
         model = Rating
 
         fields = (
@@ -35,6 +35,7 @@ class RejectSerializer(serializers.HyperlinkedModelSerializer):
             'reject'
         )
 
+
 class CommentsSerializer(serializers.HyperlinkedModelSerializer):
     catalog_id = IntegerField(allow_null=False)
     object_id = IntegerField(min_value=0, allow_null=False, required=True)
@@ -55,7 +56,6 @@ class CommentsSerializer(serializers.HyperlinkedModelSerializer):
             'comments',
         )
 
-
     def get_owner(self, obj):
         try:
             user = User.objects.get(pk=obj.owner)
@@ -63,13 +63,11 @@ class CommentsSerializer(serializers.HyperlinkedModelSerializer):
         except:
             return None
 
-
     def get_date(self, obj):
         try:
             return obj.date.strftime('%Y-%m-%d %H:%M')
         except:
             return None
-
 
     def get_is_owner(self, obj):
         current_user = self.context['request'].user
