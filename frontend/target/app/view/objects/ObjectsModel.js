@@ -15,7 +15,8 @@ Ext.define('Target.view.objects.ObjectsModel', {
         'Target.store.CurrentSettings',
         'Target.store.ProductDisplayContents',
         'Target.store.FilterSets',
-        'Target.store.FilterConditions'
+        'Target.store.FilterConditions',
+        'Target.store.CutoutJobs'
 
     ],
 
@@ -23,7 +24,8 @@ Ext.define('Target.view.objects.ObjectsModel', {
         tag_id: 0,
         field_id: 0,
         catalog: 0,
-        filters: null
+        filters: null,
+        mosaic_is_visible: false
     },
 
     stores: {
@@ -48,6 +50,10 @@ Ext.define('Target.view.objects.ObjectsModel', {
         },
         filterConditions: {
             type: 'target-filter-conditions',
+            autoLoad: false
+        },
+        cutoutsJobs: {
+            type: 'cutoutjobs',
             autoLoad: false
         }
     },

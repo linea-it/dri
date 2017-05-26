@@ -67,7 +67,8 @@ Ext.define('Target.view.objects.ObjectsController', {
             currentCatalog,
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid,
-            filtersets = vm.getStore('filterSets');
+            filtersets = vm.getStore('filterSets'),
+            cutoutsJobs = vm.getStore('cutoutsJobs');
 
         if (store.count() === 1) {
             currentCatalog = store.first();
@@ -84,6 +85,17 @@ Ext.define('Target.view.objects.ObjectsController', {
                 property: 'product',
                 value: currentCatalog.get('id')
             });
+
+
+            // Adicionar Filtro a store CutoutJobs
+            // combobox Mosaic-cutoutJobs
+            cutoutsJobs.addFilter([{
+                property: 'cjb_product',
+                value: currentCatalog.get('id')
+            },{
+                property: 'cjb_status',
+                value: 'ok'
+            }]);
         }
     },
 
@@ -736,6 +748,44 @@ Ext.define('Target.view.objects.ObjectsController', {
             // Se nao tiver filterset apenas reload na lista
             me.loadObjects();
         }
+
+    },
+
+    /**
+     * Alterna a Visualizacao entre o modo Data Grid e Mosaic
+     * @param  {Ext.button.Button} btn
+     * @param  {boolean} state
+     * Caso state = true Mosaic visivel.
+     * Caso state = false Data Grid visivel
+     * O icone do botao e alternado de acordo com o componente visivel
+     */
+    switchMosaicGrid: function (btn, state) {
+        var me = this,
+            cardpanel = me.lookup('ObjectCardPanel'),
+            layout = cardpanel.getLayout();
+
+        if (state) {
+            // Mosaic Visivel
+            // Data Grid Invisivel
+            // Icone do botao deve ser o de grid
+            btn.setIconCls('x-fa fa-th-list');
+            layout.next();
+        } else {
+            // Mosaic Invisivel
+            // Data Grid Visivel
+            // Icone do botao deve ser o de mosaic
+            btn.setIconCls('x-fa fa-th-large');
+            layout.prev();
+        }
+    },
+
+    onClickSaveAs: function () {
+        console.log('onClickSaveAs');
+
+    },
+
+    onClickDownloadCutouts: function () {
+        console.log('onClickDownloadCutouts');
 
     }
 

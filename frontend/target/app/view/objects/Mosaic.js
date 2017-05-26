@@ -38,24 +38,45 @@ Ext.define('Target.view.objects.Mosaic', {
             '<tpl for=".">',
                 '<div class="thumb-wrap" id="target_{_meta_ra}-{_meta_dec}">',
                     '<div class="thumb">',
+                        '<div class="image_legend">',
+                            '<spam class=legend_j2000>Id: {_meta_id}</spam>',
+                            '</br>',
+                            '<spam class=legend_j2000>J2000 {[this.formatNumber(values._meta_ra)]}, {[this.formatNumber(values._meta_dec)]}</spam>',
+                        '</div>',
                         // Usando timestamp com Unique id para a imagem não ficar em cache
                         '<img style="width:200px; height:200px;" src="{postage_stamps}?_dc={timestamp}" title="ID: {_meta_id} RA: {[this.formatNumber(values._meta_ra)]} Dec: {[this.formatNumber(values._meta_dec)]}" onError="this.onerror=null;this.src=\'resources/cutout_placeholder.png\';" >',
-                    '</div>',
-                    '<div>',
-                        '<p>Id: {_meta_id}</p>',
-                        '<tpl if=\'name != ""\'>',
-                            '<p>Name: {name}</p>',
-                        '</tpl>',
-                        '<p>RA: {[this.formatNumber(values._meta_ra)]} Dec: {[this.formatNumber(values._meta_dec)]}</p>',
                     '</div>',
                 '</div>',
             '</tpl>',
             '<div class="x-clear"></div>',
             {
                 formatNumber: function (value) {
-                    return value.toFixed(4);
+                    return value.toFixed(3);
                 }
             });
+
+        // var tpl =  Ext.create('Ext.XTemplate',
+        //     '<tpl for=".">',
+        //         '<div class="thumb-wrap" id="target_{_meta_ra}-{_meta_dec}">',
+        //             '<div class="thumb">',
+        //                 // Usando timestamp com Unique id para a imagem não ficar em cache
+        //                 '<img style="width:200px; height:200px;" src="{postage_stamps}?_dc={timestamp}" title="ID: {_meta_id} RA: {[this.formatNumber(values._meta_ra)]} Dec: {[this.formatNumber(values._meta_dec)]}" onError="this.onerror=null;this.src=\'resources/cutout_placeholder.png\';" >',
+        //             '</div>',
+        //             '<div>',
+        //                 '<p>Id: {_meta_id}</p>',
+        //                 '<tpl if=\'name != ""\'>',
+        //                     '<p>Name: {name}</p>',
+        //                 '</tpl>',
+        //                 '<p>RA: {[this.formatNumber(values._meta_ra)]} Dec: {[this.formatNumber(values._meta_dec)]}</p>',
+        //             '</div>',
+        //         '</div>',
+        //     '</tpl>',
+        //     '<div class="x-clear"></div>',
+        //     {
+        //         formatNumber: function (value) {
+        //             return value.toFixed(4);
+        //         }
+        //     });
 
         var _view = Ext.create('Ext.view.View', {
             tpl: tpl,

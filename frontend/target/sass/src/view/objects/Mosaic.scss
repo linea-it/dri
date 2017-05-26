@@ -1,0 +1,77 @@
+.thumb{
+    background: #dddddd;
+    padding: 3px;
+    padding-bottom: 0;
+}
+
+.x-quirks .thumb {
+    padding-bottom: 3px;
+}
+
+.thumb img{
+    height: 400px;
+    width: 400px;
+}
+.thumb-wrap{
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 5px;
+}
+.thumb-wrap-red{
+    float: left;
+    margin: 4px;
+    margin-right: 0;
+    padding: 4px;
+    background: #FCE4E4 repeat-x left top;
+}
+.thumb-wrap span {
+    display: block;
+    overflow: hidden;
+    text-align: center;
+    width: 86px; /* for ie to ensure that the text is centered */
+}
+
+.x-item-over{
+    border:1px solid #dddddd;
+    background: #efefef repeat-x left top;
+    padding: 4px;
+}
+
+.x-item-selected{
+    background: #eff5fb  no-repeat right bottom;
+    border:1px solid #99bbe8;
+    padding: 4px;
+}
+.x-item-selected .thumb{
+    background:transparent;
+}
+
+.x-view-selector {
+    position:absolute;
+    left:0;
+    top:0;
+    width:0;
+    border:1px dotted;
+    opacity: .5;
+    -moz-opacity: .5;
+    filter:alpha(opacity=50);
+    zoom:1;
+    background-color:#c3daf9;
+    border-color:#3399bb;
+}
+
+.ext-strict .ext-ie .x-tree .x-panel-bwrap{
+    position:relative;
+    overflow:hidden;
+}
+
+.image_legend {
+    position:absolute;
+    padding-left: 5px;
+}
+
+.legend_j2000 {
+    color: $color-soft-blue;
+    font-size: 10px;
+}
