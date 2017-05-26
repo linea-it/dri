@@ -16,7 +16,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         'Target.model.Rating',
         'Target.model.Reject',
         'Target.view.wizard.Wizard',
-        'Target.view.objects.FiltersWindow'
+        'Target.view.objects.FiltersWindow',
+        'Target.view.objects.SaveCatalogWindow'
     ],
 
     listen: {
@@ -39,7 +40,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     winAlertSetting: null,
     winFilters: null,
-
+    winSaveAs: null,
     wizard: null,
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
@@ -781,6 +782,24 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     onClickSaveAs: function () {
         console.log('onClickSaveAs');
+
+        var me = this,
+            vm = me.getViewModel(),
+            // filterset = vm.get('filterSet'),
+            currentCatalog = vm.get('currentCatalog');
+
+        if (me.winSaveAs !== null) {
+            me.winSaveAs.close();
+            me.winSaveAs = null;
+        }
+
+        me.winSaveAs = Ext.create('Target.view.objects.SaveCatalogWindow',{});
+
+        me.winSaveAs.setCurrentCatalog(currentCatalog);
+
+        // me.winSaveAs.setFilterSet(filterset);
+
+        me.winSaveAs.show();
 
     },
 
