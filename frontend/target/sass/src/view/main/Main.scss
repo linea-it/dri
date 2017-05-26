@@ -12,6 +12,12 @@
     $border-color:darken($color-soft-red, 5%)
 );
 
+@include extjs-button-small-ui(
+    $ui: 'soft-blue',
+    $background-color: $color-soft-blue,
+    $border-color:darken($color-soft-blue, 5%)
+);
+
 
 // Font vermelha
 .color-soft-red {

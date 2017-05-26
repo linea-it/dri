@@ -26,97 +26,113 @@ Ext.define('Target.view.preview.Preview', {
             reference: 'visiomatic'
         }
     ],
-    tbar: [
-        {
-            xtype: 'checkboxfield',
-            reference: 'btnReject',
-            hideLabel: true,
-            boxLabel: 'Reject',
-            bind: {
-                value: '{currentRecord._meta_reject}',
-                disabled: '{!currentRecord._meta_id}'
-            }
-        },
-        {
-            xtype: 'tbtext',
-            html: 'Rating'
-        },
-        {
-            xtype: 'numberfield',
-            maxValue: 5,
-            minValue: 0,
-            width: 50,
-            bind: {
-                value: '{currentRecord._meta_rating}'
-            }
-        },
-        {
-            xtype: 'button',
-            iconCls: 'x-fa fa-comments',
-            bind: {
-                disabled: '{!currentRecord._meta_id}'
+    dockedItems: [{
+        xtype: 'toolbar',
+        dock: 'top',
+        items: [
+            {
+                xtype: 'combobox',
+                reference: 'currentDataset',
+                publishes: 'id',
+                width: 250,
+                displayField: 'release_tag',
+                bind: {
+                    store: '{datasets}',
+                    disabled: '{!currentRecord._meta_id}',
+                    selection: '{!currentDataset}'
+                },
+                queryMode: 'local',
+                listConfig: {
+                    itemTpl: [
+                        '<div data-qtip="{release_display_name} - {tag_display_name}">{release_display_name} - {tag_display_name}</div>'
+                    ]
+                },
+                listeners: {
+                    change: 'onChangeDataset'
+                }
             },
-            handler: 'onComment'
-        }
-    ],
-
-    bbar: [
-        {
-            xtype: 'combobox',
-            reference: 'currentDataset',
-            publishes: 'id',
-            width: 250,
-            displayField: 'release_tag',
-            bind: {
-                store: '{datasets}',
-                disabled: '{!currentRecord._meta_id}',
-                selection: '{!currentDataset}'
+            {
+                xtype: 'textfield',
+                width: 120,
+                readOnly: true,
+                bind: {
+                    value: '{currentDataset.tli_tilename}'
+                }
             },
-            queryMode: 'local',
-            listConfig: {
-                itemTpl: [
-                    '<div data-qtip="{release_display_name} - {tag_display_name}">{release_display_name} - {tag_display_name}</div>'
-                ]
+            {
+                xtype: 'button',
+                text: 'Explorer',
+                tooltip: 'See more information about this object in Explorer app',
+                ui: 'soft-blue',
+                iconCls: 'x-fa fa-info-circle'
+                // handler: 'onCenterTarget'
+            }
+        ]
+    },
+    {
+        xtype: 'toolbar',
+        dock: 'top',
+        items: [
+            {
+                xtype: 'checkboxfield',
+                reference: 'btnReject',
+                hideLabel: true,
+                boxLabel: 'Reject',
+                bind: {
+                    value: '{currentRecord._meta_reject}',
+                    disabled: '{!currentRecord._meta_id}'
+                }
             },
-            listeners: {
-                change: 'onChangeDataset'
+            {
+                xtype: 'tbtext',
+                html: 'Rating'
+            },
+            {
+                xtype: 'numberfield',
+                maxValue: 5,
+                minValue: 0,
+                width: 50,
+                bind: {
+                    value: '{currentRecord._meta_rating}'
+                }
+            },
+            {
+                xtype: 'button',
+                iconCls: 'x-fa fa-comments',
+                bind: {
+                    disabled: '{!currentRecord._meta_id}'
+                },
+                handler: 'onComment'
+            },
+            '-',
+            {
+                xtype: 'button',
+                iconCls: 'x-fa fa-crosshairs',
+                tooltip: 'Center',
+                handler: 'onCenterTarget'
+            },
+            {
+                xtype: 'button',
+                reference: 'btnRadius',
+                iconCls: 'x-fa fa-circle-o',
+                tooltip: 'Show System Radius',
+                enableToggle: true,
+                toggleHandler: 'showHideRadius',
+                pressed: true,
+                hidden: true
+            },
+            {
+                xtype: 'button',
+                reference: 'btnMembers',
+                iconCls: 'x-fa fa-dot-circle-o',
+                tooltip: 'Show System Members',
+                enableToggle: true,
+                toggleHandler: 'showHideMembers',
+                pressed: true,
+                hidden: true
             }
-        },
-        {
-            xtype: 'textfield',
-            width: 120,
-            readOnly: true,
-            bind: {
-                value: '{currentDataset.tli_tilename}'
-            }
-        },
-        {
-            xtype: 'button',
-            iconCls: 'x-fa fa-crosshairs',
-            tooltip: 'Center',
-            handler: 'onCenterTarget'
-        },
-        {
-            xtype: 'button',
-            reference: 'btnRadius',
-            iconCls: 'x-fa fa-circle-o',
-            tooltip: 'Show System Radius',
-            enableToggle: true,
-            toggleHandler: 'showHideRadius',
-            pressed: true,
-            hidden: true
-        },
-        {
-            xtype: 'button',
-            reference: 'btnMembers',
-            iconCls: 'x-fa fa-dot-circle-o',
-            tooltip: 'Show System Members',
-            enableToggle: true,
-            toggleHandler: 'showHideMembers',
-            pressed: true,
-            hidden: true
-        }
-    ],
+        ]
+    }],
 
     setCurrentRecord: function (record, catalog) {
         var me = this,

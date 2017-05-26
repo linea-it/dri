@@ -8,11 +8,12 @@ Ext.define('Target.view.objects.Panel', {
 
     requires: [
         'Ext.layout.container.Border',
-        'Ext.layout.container.Accordion',
         'Target.view.objects.ObjectsController',
         'Target.view.objects.ObjectsModel',
         'Target.view.objects.TabPanel',
-        'Target.view.preview.Preview'
+        'Target.view.preview.Preview',
+        'Target.view.objects.Mosaic',
+        'Ext.layout.container.Card'
     ],
 
     controller: 'objects',
@@ -36,18 +37,97 @@ Ext.define('Target.view.objects.Panel', {
 
     items: [
         {
-                    // reference: 'targetsGrid',
-                    // border: true,
-                    // frame: true,
-                    // flex: 1,
-                    // layout: 'border',
-                    // items: [
-                    // {
+            xtype: 'panel',
+            layout: 'card',
+            reference: 'ObjectCardPanel',
+            flex: 1,
+            border: true,
+            frame: true,
+            tbar: [
+                {
+                    xtype: 'tbtext',
+                    reference: 'txtTargetTitle',
+                    html: 'Sample Text Item',
+                    cls: 'tb-text-target-title'
+                },
+                '->',
+                {
+                    xtype: 'button',
+                    iconCls: 'x-fa fa-floppy-o',
+                    tooltip: 'Save As',
+                    handler: 'onClickSaveAs'
+                },
+                {
+                    xtype: 'button',
+                    iconCls: 'x-fa fa-th-large',
+                    tooltip: 'Switching between Mosaic and Data Grid',
+                    enableToggle: true,
+                    toggleHandler: 'switchMosaicGrid',
+                    bind: {
+                        pressed: '{mosaic_is_visible}'
+                    }
+                },
+                {
+                    xtype: 'fieldcontainer',
+                    layout: 'hbox',
+                    defaults: {
+                        flex: 1
+                    },
+                    items: [
+                        {
+                            xtype: 'button',
+                            reference: 'btnFilterApply',
+                            iconCls: 'x-fa fa-bolt',
+                            tooltip: 'Apply or Disapply Filters',
+                            pressed: true,
+                            enableToggle: true,
+                            toggleHandler: 'applyDisapplyFilter',
+                            bind: {
+                                disabled: '{!filters}'
+                            }
+                        },
+                        {
+                            xtype: 'combobox',
+                            reference: 'cmbFilterSet',
+                            emptyText: 'No filter',
+                            displayField: 'fst_name',
+                            publishes: 'id',
+                            bind: {
+                                store: '{filterSets}',
+                                selection: '{filterSet}'
+                            },
+                            listeners: {
+                                select: 'onSelectFilterSet'
+                            },
+                            triggers: {
+                                clear: {
+                                    cls: 'x-form-clear-trigger',
+                                    handler: 'onClearCmbFilterSet',
+                                    hidden: true
+                                }
+                            },
+                            minChars: 0,
+                            queryMode: 'local',
+                            editable: false
+                        }
+                    ]
+                },
+                {
+                    xtype: 'button',
+                    iconCls: 'x-fa fa-filter',
+                    tooltip: 'Filters',
+                    handler: 'onClickFilter'
+                },
+                {
+                    xtype: 'button',
+                    iconCls: 'x-fa fa-gear',
+                    tooltip: 'Settings',
+                    handler: 'onClickSettings'
+                }
+            ],
+            items: [
+                {
                     xtype: 'targets-objects-grid',
-                    border: true,
-                    frame: true,
-                    flex: 1,
-                    // region: 'center',
                     reference: 'targetsObjectsGrid',
                     bind: {
                         store: '{objects}'
@@ -55,98 +135,52 @@ Ext.define('Target.view.objects.Panel', {
                     listeners: {
                         ready: 'onGridObjectsReady',
                         select: 'onSelectObject'
+                    }
+                },
+                {
+                    xtype: 'targets-objects-mosaic',
+                    bind: {
+                        store: '{objects}'
                     },
                     tbar: [
                         {
-                            xtype: 'tbtext',
-                            reference: 'txtTargetTitle',
-                            html: 'Sample Text Item',
-                            cls: 'tb-text-target-title'
-                        },
-                        '->',
-                        {
-                            xtype: 'fieldcontainer',
-                            layout: 'hbox',
-                            defaults: {
-                                flex: 1
-                            },
-                            items: [
-                                {
-                                    xtype: 'button',
-                                    reference: 'btnFilterApply',
-                                    iconCls: 'x-fa fa-bolt',
-                                    tooltip: 'Apply or Disapply Filters',
-                                    pressed: true,
-                                    enableToggle: true,
-                                    toggleHandler: 'applyDisapplyFilter',
-                                    bind: {
-                                        disabled: '{!filters}'
-                                    }
-                                },
-                                {
-                                    xtype: 'combobox',
-                                    reference: 'cmbFilterSet',
-                                    emptyText: 'No filter',
-                                    displayField: 'fst_name',
-                                    publishes: 'id',
-                                    bind: {
-                                        store: '{filterSets}',
-                                        selection: '{filterSet}'
-                                    },
-                                    listeners: {
-                                        select: 'onSelectFilterSet'
-                                    },
-                                    triggers: {
-                                        clear: {
-                                            cls: 'x-form-clear-trigger',
-                                            handler: 'onClearCmbFilterSet',
-                                            hidden: true
-                                        }
-                                    },
-                                    minChars: 0,
-                                    queryMode: 'local',
-                                    editable: false
-                                }
-                            ]
-                        },
-                        {
-                            xtype: 'button',
-                            iconCls: 'x-fa fa-filter',
-                            tooltip: 'Filters',
-                            handler: 'onClickFilter'
-                        },
-                        {
-                            xtype: 'button',
-                            iconCls: 'x-fa fa-gear',
-                            tooltip: 'Settings',
-                            handler: 'onClickSettings'
-                        }
-                    ],
-                    bbar: [
-                        {
-                            xtype: 'pagingtoolbar',
-                            reference: 'pagingtoolbar',
+                            xtype: 'combobox',
+                            reference: 'cmbCutoutJob',
+                            emptyText: 'Choose Cutout',
+                            displayField: 'cjb_display_name',
+                            publishes: 'id',
                             bind: {
-                                store: '{objects}'
+                                store: '{cutoutsJobs}'
                             },
-                            displayInfo: true,
-                            displayMsg: 'Displaying {0} - {1} of {2}',
-                            emptyMsg: 'No data to display'
-
+                            listeners: {
+                                select: 'onSelectCutoutJob'
+                            },
+                            minChars: 0,
+                            queryMode: 'local',
+                            editable: false
+                        },
+                        {
+                            iconCls: 'x-fa fa-download ',
+                            tooltip: 'Download cutouts',
+                            handler: 'onClickDownloadCutouts'
                         }
-                        // Ext.create('Ext.PagingToolbar', {
-                        //     reference: 'pagingtoolbar',
-                        //     bind: {
-                        //         store: '{objects}'
-                        //     },
-                        //     displayInfo: true,
-                        //     displayMsg: 'Displaying {0} - {1} of {2}',
-                        //     emptyMsg: 'No data to display'
-                        // })
                     ]
-                    // },
-                    // ]
-                },
+                }
+            ],
+            bbar: [
+                {
+                    xtype: 'pagingtoolbar',
+                    reference: 'pagingtoolbar',
+                    bind: {
+                        store: '{objects}'
+                    },
+                    displayInfo: true,
+                    displayMsg: 'Displaying {0} - {1} of {2}',
+                    emptyMsg: 'No data to display'
+
+                }
+            ]
+        },
         {
             xtype: 'targets-preview',
             reference: 'targetsPreviewPanel',
@@ -154,8 +188,6 @@ Ext.define('Target.view.objects.Panel', {
             border: true,
             frame: true,
             split: true,
-            // width: 500,
-            // resizable: true,
             listeners: {
                 changeinobject: 'onChangeInObjects'
             }
