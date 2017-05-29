@@ -21,7 +21,7 @@ Ext.define('Target.view.wizard.WizardController', {
                 activate: 'onActiveColumns',
                 finish: 'finishWizard'
             },
-            'targets-cutoutjob': {
+            'targets-cutout': {
                 activate: 'onActiveCutout',
                 finish: 'finishWizard'
             },
@@ -79,7 +79,7 @@ Ext.define('Target.view.wizard.WizardController', {
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
             view = me.getView(),
-            cutouts = view.down('targets-cutoutjob');
+            cutouts = view.down('targets-cutout');
 
         cutouts.setCurrentCatalog(currentCatalog);
 

@@ -5,8 +5,8 @@ from rest_framework.permissions import AllowAny
 import django_filters
 from rest_framework import filters
 
-class ApplicationViewSet(viewsets.ModelViewSet):
 
+class ApplicationViewSet(viewsets.ModelViewSet):
     queryset = Application.objects.all()
 
     permission_classes = (AllowAny,)
@@ -32,7 +32,6 @@ class TutorialFilter(django_filters.FilterSet):
 
 
 class TutorialViewSet(viewsets.ModelViewSet):
-
     queryset = Tutorial.objects.all()
 
     permission_classes = (AllowAny,)

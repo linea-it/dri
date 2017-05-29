@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class ProductGroup(models.Model):
     pgr_name = models.CharField(
         max_length=128, unique=True, verbose_name='Internal Name', help_text='Internal name, unique')

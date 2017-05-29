@@ -1,18 +1,18 @@
-Ext.define('Target.view.cutout.CutoutJob', {
+Ext.define('Target.view.settings.Cutout', {
     extend: 'Ext.panel.Panel',
 
     requires: [
-        'Target.view.cutout.CutoutJobController',
-        'Target.view.cutout.CutoutJobModel',
-        'Target.view.cutout.Jobs',
-        'Target.view.cutout.AddJobWindow'
+        'Target.view.settings.CutoutController',
+        'Target.view.settings.CutoutModel',
+        'Target.view.settings.CutoutJobs',
+        'Target.view.settings.CutoutJobForm'
     ],
 
-    xtype: 'targets-cutoutjob',
+    xtype: 'targets-cutout',
 
-    controller: 'cutoutjob',
+    controller: 'cutout',
 
-    viewModel: 'cutoutjob',
+    viewModel: 'cutout',
 
     config: {
         currentCatalog: null
@@ -21,22 +21,12 @@ Ext.define('Target.view.cutout.CutoutJob', {
     initComponent: function () {
         var me = this;
         Ext.apply(this, {
+            bodyPadding: 20,
             layout: {
                 type: 'vbox',
                 align: 'stretch'
             },
             items: [
-                {
-                    xtype: 'panel',
-                    // region: 'north',
-                    height: 80,
-                    bodyPadding: 10,
-                    html: [
-                        'TEXTO Explicativo'
-                        // '</br>' + 'The list can be public or private in this case only the users selected or who are part of a group can access it.' +
-                        // '</br>' + 'You can create workgroups.'
-                    ]
-                },
                 {
                     xtype: 'targets-cutout-jobs',
                     reference: 'cutoutJobsGrid',
@@ -59,7 +49,7 @@ Ext.define('Target.view.cutout.CutoutJob', {
                             handler: 'onClickDownload',
                             disabled: true,
                             bind: {
-                                disabled: '{!cutoutJobsGrid.selection.ready_to_download}'
+                                // disabled: '{!cutoutJobsGrid.selection.ready_to_download}'
                             }
                         }
 
@@ -67,20 +57,6 @@ Ext.define('Target.view.cutout.CutoutJob', {
                 }
             ],
             buttons: [
-                {
-                    text: 'Previous',
-                    scope: me,
-                    handler: function () {
-                        this.fireEvent('previous');
-                    }
-                },
-                {
-                    text: 'Next',
-                    scope: me,
-                    handler: function () {
-                        this.fireEvent('next');
-                    }
-                },
                 {
                     text: 'Finish',
                     ui: 'soft-green',
@@ -96,9 +72,12 @@ Ext.define('Target.view.cutout.CutoutJob', {
     },
 
     setCurrentCatalog: function (catalog) {
-        var me = this;
+        var me = this,
+            vm = me.getViewModel();
 
         me.currentCatalog = catalog;
+
+        vm.set('currentCatalog', catalog);
 
         me.fireEvent('changecatalog', catalog, me);
 

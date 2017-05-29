@@ -441,6 +441,8 @@ class CutoutJobViewSet(viewsets.ModelViewSet):
 
     serializer_class = CutoutJobSerializer
 
+    filter_fields = ('id', 'cjb_product', 'cjb_display_name', 'cjb_status')
+
     ordering_fields = ('id',)
 
 
@@ -513,3 +515,29 @@ class WorkgroupUserViewSet(viewsets.ModelViewSet):
     serializer_class = WorkgroupUserSerializer
 
     filter_fields = ('wgu_workgroup',)
+
+
+# ---------------------------------- Filtros ----------------------------------
+class FiltersetViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = Filterset.objects.select_related().all()
+
+    serializer_class = FiltersetSerializer
+
+    filter_fields = ('id', 'product', 'owner', 'fst_name')
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class FilterConditionViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = FilterCondition.objects.select_related().all()
+
+    serializer_class = FilterConditionSerializer
+
+    filter_fields = ('id', 'filterset', 'fcd_property', 'fcd_operation', 'fcd_value')

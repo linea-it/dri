@@ -4,8 +4,8 @@ from rest_framework import exceptions
 # import cx_Oracle
 from django.conf import settings
 
-class NcsaBackend(object):
 
+class NcsaBackend(object):
     def authenticate(self, username=None, password=None):
 
         if self.check_user(username, password):
@@ -23,13 +23,11 @@ class NcsaBackend(object):
 
         return None
 
-
     def get_user(self, user_id):
         try:
             return User.objects.get(pk=user_id)
         except User.DoesNotExist:
             return None
-
 
     def check_user(self, username, password):
 

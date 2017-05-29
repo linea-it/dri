@@ -9,14 +9,13 @@ from .serializers import ProductClassSerializer, ProductGroupSerializer, Product
 
 
 class ProductClassViewSet(viewsets.ModelViewSet):
-
     queryset = ProductClass.objects.all()
 
     serializer_class = ProductClassSerializer
 
     search_fields = ('pcl_name', 'pcl_display_name')
 
-    filter_fields = ('id', 'pcl_name', 'pcl_display_name', )
+    filter_fields = ('id', 'pcl_name', 'pcl_display_name',)
 
     ordering_fields = ('id', 'pcl_name', 'pcl_display_name')
 
@@ -49,6 +48,7 @@ class ProductGroupViewSet(viewsets.ModelViewSet):
         # return Response(dict({'success':True}))
         return Response(result)
 
+
 class ProductClassContentFilter(django_filters.FilterSet):
     pcc_class = django_filters.MethodFilter()
     search = django_filters.MethodFilter()
@@ -66,6 +66,7 @@ class ProductClassContentFilter(django_filters.FilterSet):
             Q(pcc_name__icontains=value) | Q(pcc_display_name__icontains=value) | Q(pcc_ucd__icontains=value)
         ).order_by('-pcc_mandatory', 'pcc_display_name')
 
+
 class ProductClassContentViewSet(viewsets.ModelViewSet):
     queryset = ProductClassContent.objects.all()
 
@@ -73,6 +74,6 @@ class ProductClassContentViewSet(viewsets.ModelViewSet):
 
     search_fields = ('pcc_name', 'pcc_display_name', 'pcc_ucd')
 
-    filter_backends = (filters.DjangoFilterBackend, )
+    filter_backends = (filters.DjangoFilterBackend,)
 
     filter_class = ProductClassContentFilter

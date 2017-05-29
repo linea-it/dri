@@ -1,5 +1,7 @@
 from rest_framework import filters
 from django.db.models import Q
+
+
 class ProductPermissionFilterBackend(filters.BaseFilterBackend):
     """
         Filter that only allows users to see their own products,

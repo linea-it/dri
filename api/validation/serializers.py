@@ -7,6 +7,7 @@ from common.models import Filter
 
 logger = logging.getLogger(__name__)
 
+
 class FeatureSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Feature
@@ -16,8 +17,10 @@ class FeatureSerializer(serializers.HyperlinkedModelSerializer):
             'ftr_name',
         )
 
+
 class FlaggedSerializer(serializers.HyperlinkedModelSerializer):
     flg_dataset = serializers.PrimaryKeyRelatedField(queryset=Dataset.objects.all())
+
     # owner = serializers.PrimaryKeyRelatedField(read_only=True)
     class Meta:
         model = Flagged
@@ -28,6 +31,7 @@ class FlaggedSerializer(serializers.HyperlinkedModelSerializer):
             'flg_dataset',
             'flg_flagged',
         )
+
 
 class DefectSerializer(serializers.HyperlinkedModelSerializer):
     dfc_dataset = serializers.PrimaryKeyRelatedField(queryset=Dataset.objects.all())
@@ -45,5 +49,3 @@ class DefectSerializer(serializers.HyperlinkedModelSerializer):
             'dfc_ra',
             'dfc_dec',
         )
-
-

@@ -5,11 +5,10 @@ from .models import Application, Tutorial
 
 logger = logging.getLogger(__name__)
 
+
 class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
-
     class Meta:
-
-        model = Application 
+        model = Application
 
         fields = (
             'id',
@@ -25,15 +24,14 @@ class ApplicationSerializer(serializers.HyperlinkedModelSerializer):
             'app_disabled'
         )
 
-class TutorialSerializer(serializers.HyperlinkedModelSerializer):
 
+class TutorialSerializer(serializers.HyperlinkedModelSerializer):
     application = serializers.PrimaryKeyRelatedField(
         queryset=Application.objects.all(), many=False)
 
     application_display_name = serializers.SerializerMethodField()
 
     class Meta:
-
         model = Tutorial
 
         fields = (

@@ -1,7 +1,8 @@
 from coadd.models import Dataset, Tile, Tag
 import csv
-class Utils():
 
+
+class Utils():
     # def generate_ptif_url(self, release, host):
     #     NAO E MAIS VALIDA ESSA FUNCAO POR QUE NO RELEASE Y3 OS PTIFS TEM UM SUFIXO APOS O TILENAME.
     #     print("Generate PTIFs URLs")
@@ -43,11 +44,11 @@ class Utils():
 
                 print('Tag: %s' % tag.id)
 
-                #para cara tilename procurar o registro da tile
+                # para cara tilename procurar o registro da tile
                 tilename = row.get('tilename')
                 tile = Tile.objects.select_related().get(tli_tilename__icontains=tilename)
 
-                print('Tile: %s' %  tile.id)
+                print('Tile: %s' % tile.id)
 
                 ptif = row.get('ptif')
                 ptif = ptif.replace("+", "%2B")

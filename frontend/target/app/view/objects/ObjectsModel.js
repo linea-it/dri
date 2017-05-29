@@ -11,16 +11,21 @@ Ext.define('Target.view.objects.ObjectsModel', {
         'Target.model.CatalogObject',
         'Target.model.CurrentSetting',
         'Target.store.Objects',
-        // 'Target.store.ProductContent',
-        // 'Target.store.ProductAssociation',
+        'Target.model.FilterSet',
         'Target.store.CurrentSettings',
-        'Target.store.ProductDisplayContents'
+        'Target.store.ProductDisplayContents',
+        'Target.store.FilterSets',
+        'Target.store.FilterConditions',
+        'Target.store.CutoutJobs'
+
     ],
 
     data: {
         tag_id: 0,
         field_id: 0,
-        catalog: 0
+        catalog: 0,
+        filters: null,
+        mosaic_is_visible: false
     },
 
     stores: {
@@ -38,6 +43,18 @@ Ext.define('Target.view.objects.ObjectsModel', {
         displayContents: {
             type: 'product-display-contents',
             autoLoad: false
+        },
+        filterSets: {
+            type: 'target-filtersets',
+            autoLoad: false
+        },
+        filterConditions: {
+            type: 'target-filter-conditions',
+            autoLoad: false
+        },
+        cutoutsJobs: {
+            type: 'cutoutjobs',
+            autoLoad: false
         }
     },
 
@@ -48,6 +65,10 @@ Ext.define('Target.view.objects.ObjectsModel', {
         },
         currentSetting: {
             type: 'Target.model.CurrentSetting',
+            create: true
+        },
+        filterSet: {
+            type: 'Target.model.FilterSet',
             create: true
         }
     }

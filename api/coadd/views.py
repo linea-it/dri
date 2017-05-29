@@ -97,8 +97,6 @@ class DatasetFilter(django_filters.FilterSet):
         return q
 
 
-
-
 class DatasetViewSet(viewsets.ModelViewSet):
     queryset = Dataset.objects.select_related().all()
 

@@ -7,12 +7,14 @@ from common.models import Filter
 
 logger = logging.getLogger(__name__)
 
+
 class Feature(models.Model):
     ftr_name = models.CharField(
-       max_length=60, verbose_name='Internal Name')
+        max_length=60, verbose_name='Internal Name')
 
     def __str__(self):
         return self.ftr_name
+
 
 class Flagged(models.Model):
     owner = models.ForeignKey(
@@ -26,6 +28,7 @@ class Flagged(models.Model):
 
     def __str__(self):
         return str(self.flg_flagged)
+
 
 class Defect(models.Model):
     owner = models.ForeignKey(
@@ -48,4 +51,3 @@ class Defect(models.Model):
         null=True, blank=True, default=0, verbose_name='RA')
     dfc_dec = models.FloatField(
         null=True, blank=True, default=0, verbose_name='Dec')
-

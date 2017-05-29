@@ -15,7 +15,7 @@ Ext.define('Target.view.wizard.Wizard', {
         'Target.view.settings.Columns',
         'Target.view.settings.Permission',
         'Target.view.settings.SystemMembers',
-        'Target.view.cutout.CutoutJob',
+        'Target.view.settings.Cutout',
         'Ext.layout.container.Card'
     ],
 
@@ -64,10 +64,9 @@ Ext.define('Target.view.wizard.Wizard', {
         },
         {
             id: 'card-3',
-            xtype: 'targets-cutoutjob',
+            xtype: 'targets-cutout',
             title: 'Cutouts',
-            iconCls: 'x-fa fa-picture-o',
-            disabled: true
+            iconCls: 'x-fa fa-picture-o'
         },
         {
             id: 'card-4',
@@ -75,7 +74,6 @@ Ext.define('Target.view.wizard.Wizard', {
             title: 'System Members',
             iconCls: 'x-fa fa-dot-circle-o',
             disabled: true
-            // hidden: true
         },
         {
             id: 'card-5',
@@ -143,22 +141,22 @@ Ext.define('Target.view.wizard.Wizard', {
         currentCatalog = vm.get('currentCatalog');
 
         // Configuracoes habilitadas se o usuario for o proprietario do catalogo
-        if ((currentCatalog.get('id') > 0) && (currentCatalog.get('is_owner'))) {
-            me.down('targets-association').enable();
-            me.down('targets-permission').enable();
-            me.down('targets-system-members').enable();
+        // if ((currentCatalog.get('id') > 0) && (currentCatalog.get('is_owner'))) {
+        me.down('targets-association').enable();
+        me.down('targets-permission').enable();
+        // me.down('targets-system-members').enable();
 
-        } else {
-            me.down('targets-association').disable();
-            me.down('targets-permission').disable();
-            me.down('targets-system-members').disable();
+        // } else {
+        //     me.down('targets-association').disable();
+        //     me.down('targets-permission').disable();
+        //     me.down('targets-system-members').disable();
 
-        }
+        // }
 
         if (currentCatalog.get('pcl_is_system')) {
-            me.down('targets-system-members').setVisible(true);
+            me.down('targets-system-members').enable();
         } else {
-            me.down('targets-system-members').setVisible(false);
+            me.down('targets-system-members').disable();
         }
     }
 

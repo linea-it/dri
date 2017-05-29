@@ -164,11 +164,11 @@ Ext.define('Target.view.catalog.Tree', {
                     tooltip:'Remove Target List',
                     iconCls: 'x-fa fa-trash',
                     ui: 'soft-red',
-                    handler: 'onRemoveCatalog',
-                    disabled: true,
-                    bind: {
-                        disabled: '{!selectedCatalog.editable}'
-                    }
+                    handler: 'onRemoveCatalog'
+                    // disabled: true
+                    // bind: {
+                    //     disabled: '{!selectedCatalog.editable}'
+                    // }
                 },
                 {
                     xtype: 'textfield',

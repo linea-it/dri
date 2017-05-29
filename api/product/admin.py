@@ -55,7 +55,7 @@ class MapAdmin(admin.ModelAdmin):
 
 class CutOutJobAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'cjb_display_name', 'cjb_status',
+        'id', 'cjb_product', 'cjb_display_name', 'cjb_status', 'cjb_job_type', 'cjb_tag', 'cjb_job_id', 'owner',
     )
     list_display_links = ('id',)
     search_fields = ('cjb_display_name',)
@@ -63,7 +63,8 @@ class CutOutJobAdmin(admin.ModelAdmin):
 
 class CutoutAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_object_ra', 'ctt_object_dec', 'ctt_filter', 'ctt_thumbname', 'ctt_file_name', 'ctt_file_path', 'ctt_file_type', 'ctt_file_size', 'ctt_download_start_time',
+        'id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_object_ra', 'ctt_object_dec', 'ctt_filter', 'ctt_thumbname',
+        'ctt_file_name', 'ctt_file_path', 'ctt_file_type', 'ctt_file_size', 'ctt_download_start_time',
         'ctt_download_finish_time',
     )
     list_display_links = ('id',)
@@ -119,6 +120,14 @@ class ProductRelatedAdmin(admin.ModelAdmin):
     list_display = ('id', 'prl_product', 'prl_related', 'prl_cross_identification',)
 
 
+class FiltersetdAdmin(admin.ModelAdmin):
+    list_display = ('id', 'product', 'owner', 'fst_name',)
+
+
+class FilterConditionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'filterset', 'fcd_property', 'fcd_property_name', 'fcd_operation', 'fcd_value')
+
+
 admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductRelease, ProductReleaseAdmin)
 admin.site.register(ProductTag, ProductTagAdmin)
@@ -137,6 +146,8 @@ admin.site.register(CurrentSetting, CurrentSettingAdmin)
 admin.site.register(Permission, PermissionAdmin)
 admin.site.register(ProductRelated, ProductRelatedAdmin)
 
-
 admin.site.register(Workgroup, WorkgroupAdmin)
 admin.site.register(WorkgroupUser, WorkgroupUserAdmin)
+
+admin.site.register(Filterset, FiltersetdAdmin)
+admin.site.register(FilterCondition, FilterConditionAdmin)

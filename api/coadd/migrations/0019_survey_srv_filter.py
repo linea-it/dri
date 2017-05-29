@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='survey',
             name='srv_filter',
-            field=models.ForeignKey(default=0, on_delete=django.db.models.deletion.CASCADE, to='common.Filter', verbose_name='Filter'),
+            field=models.ForeignKey(default=None, null=True, blank=True, on_delete=django.db.models.deletion.CASCADE, to='common.Filter', verbose_name='Filter'),
             preserve_default=False,
         ),
     ]

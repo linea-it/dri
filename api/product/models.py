@@ -202,6 +202,7 @@ class ProductRelated(models.Model):
     def __str__(self):
         return str(self.pk)
 
+
 # ------------------------------ Cutouts ------------------------------
 class CutOutJob(models.Model):
     status_job = (
@@ -227,22 +228,25 @@ class CutOutJob(models.Model):
         on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
 
     cjb_display_name = models.CharField(
-        max_length=20, verbose_name='Name')
+        max_length=40, verbose_name='Name')
 
     cjb_xsize = models.CharField(
-        max_length=5, verbose_name='Xsize')
+        max_length=5, verbose_name='Xsize', help_text='xsize in arcmin, default is 1.0', default='1.0')
 
     cjb_ysize = models.CharField(
-        max_length=5, verbose_name='ysize')
+        max_length=5, verbose_name='ysize', help_text='ysize in arcmin, default is 1.0', default='1.0')
 
     cjb_job_type = models.CharField(
-        max_length=10, verbose_name='JobType')
+        max_length=10, verbose_name='Job Type', choices=(('coadd', 'Coadd Images'), ('single', 'Single Epoch')))
+
+    cjb_tag = models.CharField(
+        max_length=60, verbose_name='Release Tag', null=True, blank=True)
 
     cjb_band = models.CharField(
-        max_length=10, verbose_name='band', null=True, blank=True)
+        max_length=20, verbose_name='Filters', null=True, blank=True)
 
-    cjb_Blacklist = models.CharField(
-        max_length=10, verbose_name='Blacklist', null=True, blank=True)
+    cjb_Blacklist = models.BooleanField(
+        verbose_name='Blacklist', default=False, help_text='Exclude blacklisted ccds')
 
     cjb_status = models.CharField(
         max_length=2,
@@ -252,7 +256,7 @@ class CutOutJob(models.Model):
     )
 
     cjb_job_id = models.CharField(
-        max_length=1024, verbose_name='Job ID')
+        max_length=1024, verbose_name='Job ID', null=True, blank=True)
 
     def __str__(self):
         return str(self.cjb_display_name)
@@ -326,3 +330,44 @@ class Permission(models.Model):
     prm_workgroup = models.ForeignKey(
         Workgroup,
         on_delete=models.CASCADE, verbose_name='Workgroup', null=True, blank=True)
+
+
+# ---------------------------------- Filtros ----------------------------------
+# Filtros que podem ser aplicados a um produto
+
+class Filterset(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product')
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+
+    fst_name = models.CharField(
+        max_length=60, verbose_name='Filterset', help_text='Filterset Display Name')
+
+    def __str__(self):
+        return str(self.fst_name)
+
+
+class FilterCondition(models.Model):
+    filterset = models.ForeignKey(
+        Filterset, on_delete=models.CASCADE, verbose_name='Filterset')
+
+    fcd_property = models.ForeignKey(
+        ProductContent, on_delete=models.CASCADE, verbose_name='Property', null=True, blank=True, default=None
+    )
+
+    fcd_property_name = models.CharField(
+        max_length=60, verbose_name='Operator', null=True, blank=True, default=None,
+        help_text='Name of the property like this in the database'
+    )
+
+    fcd_operation = models.CharField(
+        max_length=10, verbose_name='Operator')
+
+    fcd_value = models.CharField(
+        max_length=10, verbose_name='Value')
+
+    def __str__(self):
+        return str("%s %s %s" % (self.fcd_property, self.fcd_operation, self.fcd_value))

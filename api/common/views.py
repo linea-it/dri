@@ -17,6 +17,7 @@ from rest_framework import status
 import django_filters
 from rest_framework import filters
 
+
 class FilterViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows filters to be viewed or edited
@@ -32,7 +33,6 @@ class FilterViewSet(viewsets.ModelViewSet):
 
 
 class LoggedUserViewSet(viewsets.ModelViewSet):
-
     queryset = User.objects.all()
     model = User
     serializer_class = UserSerializer
@@ -42,14 +42,11 @@ class LoggedUserViewSet(viewsets.ModelViewSet):
         return self.request.user
 
     def get_queryset(self):
-
         users = [self.request.user]
         return users
 
     def get_logged(self):
         return self.request.user
-
-
 
 
 # class UsersFilter(django_filters.FilterSet):
@@ -68,9 +65,11 @@ class UsersSameGroupFilterBackend(filters.BaseFilterBackend):
     """
         Retornar os Usuarios que estao no mesmo User Group que o usuario logado.
     """
+
     def filter_queryset(self, request, queryset, view):
         groups = request.user.groups.all()
         return queryset.filter(groups__in=groups).exclude(pk=request.user.pk)
+
 
 class UsersInSameGroupViewSet(viewsets.ModelViewSet):
     """
@@ -80,7 +79,6 @@ class UsersInSameGroupViewSet(viewsets.ModelViewSet):
     model = User
     serializer_class = UserSerializer
     filter_backends = (filters.DjangoFilterBackend, UsersSameGroupFilterBackend)
-
 
 
 @api_view(['POST'])
@@ -127,7 +125,6 @@ def contact_us(request):
 
 @api_view(['GET'])
 def teste(request):
-
     if request.method == 'GET':
         print('Teste---------------------')
 
@@ -137,4 +134,4 @@ def teste(request):
         # a = cutoutjobs.start_job()
         # a = cutoutjobs.test_api_help()
 
-        return Response(dict({'teste':''}))
+        return Response(dict({'teste': ''}))
