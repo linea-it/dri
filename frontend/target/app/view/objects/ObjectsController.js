@@ -803,6 +803,11 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     },
 
+    onClickCreateCutouts: function () {
+        console.log('onClickCreateCutouts');
+
+    },
+
     onClickDownloadCutouts: function () {
         console.log('onClickDownloadCutouts');
 

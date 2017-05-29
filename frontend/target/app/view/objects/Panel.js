@@ -58,6 +58,16 @@ Ext.define('Target.view.objects.Panel', {
                     handler: 'onClickSaveAs'
                 },
                 {
+                    iconCls: 'x-fa fa-download',
+                    tooltip: 'Download',
+                    handler: 'onClickDownloadCutouts'
+                },
+                {
+                    iconCls: 'x-fa fa-picture-o',
+                    tooltip: 'Create cutouts',
+                    handler: 'onClickCreateCutouts'
+                },
+                {
                     xtype: 'button',
                     iconCls: 'x-fa fa-th-large',
                     tooltip: 'Switching between Mosaic and Data Grid',
@@ -158,11 +168,6 @@ Ext.define('Target.view.objects.Panel', {
                             minChars: 0,
                             queryMode: 'local',
                             editable: false
-                        },
-                        {
-                            iconCls: 'x-fa fa-download ',
-                            tooltip: 'Download cutouts',
-                            handler: 'onClickDownloadCutouts'
                         }
                     ]
                 }

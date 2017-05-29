@@ -9,12 +9,17 @@ Ext.define('Target.view.objects.SaveCatalogModel', {
     requires: [
         'Target.model.Catalog',
         'Target.model.FilterSet',
-        'Target.store.FilterSets'
+        'Target.store.FilterSets',
+        'Target.store.ProductContent'
     ],
 
     stores: {
         filterSets: {
             type: 'target-filtersets',
+            autoLoad: false
+        },
+        contents: {
+            type: 'product-content',
             autoLoad: false
         }
     },

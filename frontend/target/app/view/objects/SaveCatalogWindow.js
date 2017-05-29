@@ -3,14 +3,15 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
 
     requires: [
         'Target.view.objects.SaveCatalogController',
-        'Target.view.objects.SaveCatalogModel'
+        'Target.view.objects.SaveCatalogModel',
+        'Ext.view.MultiSelector'
     ],
 
     xtype: 'target-savecatalog',
 
     title: 'Save As',
-    width: 600,
-    height: 350,
+    width: 450,
+    height: 500,
     modal: true,
     autoShow: true,
     controller: 'savecatalog',
@@ -31,7 +32,7 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
     items: [
         {
             xtype: 'form',
-            reference: 'filterForm',
+            reference: 'SaveAsForm',
             layout: {
                 type: 'vbox',
                 align: 'stretch'
@@ -54,37 +55,40 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
                 },
                 {
                     xtype: 'tagfield',
-                    fieldLabel: 'Filter',
+                    name: 'filters',
+                    fieldLabel: 'Filters',
                     displayField: 'fst_name',
                     publishes: 'id',
-                    filterPickList: true,
+                    valueField: 'id',
                     queryMode: 'local',
+                    allowBlank: false,
                     bind: {
-                        store: '{filterSets}',
-                        selection: '{filterSet}'
+                        store: '{filterSets}'
+                        // selection: '{filterSet}'
                     }
                 },
-                // {
-                //     xtype: 'combobox',
-                //     name: 'Filter',
-                //     emptyText: 'Choose Filter',
-                //     displayField: 'fst_name',
-                //     publishes: 'id',
-                //     // bind: {
-                //     //     store: '{filterSets}',
-                //     //     selection: '{filterSet}'
-                //     // },
-                //     // listeners: {
-                //     //     select: 'onSelectFilterSet'
-                //     // },
-                //     minChars: 0,
-                //     queryMode: 'local',
-                //     editable: false
-                // },
                 {
-                    xtype: 'textfield',
+                    xtype: 'multiselector',
+                    title: 'Columns',
+                    fieldName: 'columns',
+                    valueField: 'pcn_column_name',
+                    height: 200,
+                    viewConfig: {
+                        deferEmptyText: false,
+                        emptyText: 'Choose a set of columns or leave it blank to keep them all. </br> Use + to add columns.'
+                    },
+                    search: {
+                        field: 'pcn_column_name',
+                        bind: {
+                            store: '{contents}'
+                        }
+                    }
+                },
+                {
+                    xtype: 'textarea',
                     fieldLabel: 'Description',
-                    name: 'description'
+                    name: 'description',
+                    maxLength: 2048
                 }
             ]
         }
@@ -99,9 +103,6 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
             iconCls: 'x-fa fa-floppy-o',
             ui: 'soft-green',
             handler: 'onSaveCatalog'
-            // bind: {
-            //     disabled: '{!haveFilters}'
-            // }
         }
     ],
 

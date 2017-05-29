@@ -139,7 +139,7 @@ Ext.define('Target.view.catalog.Tree', {
                     handler: 'onStarredCatalog',
                     width: 60,
                     enableToggle: true,
-                    disabled: true,
+                    // disabled: true,
                     bind: {
                         // disabled: '{!selectedCatalog.markable}',
                         pressed: '{selectedCatalog.starred}'
