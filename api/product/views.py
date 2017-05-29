@@ -1,24 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
-
+import json
 import django_filters
+
 from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework.decorators import list_route
 from rest_framework.response import Response
+from rest_framework.generics import CreateAPIView
+from rest_framework.decorators import api_view
 from django.db.models import Q
 from common.filters import IsOwnerFilterBackend
 from .models import Product, Catalog, Map, Mask, CutOutJob, ProductContent, ProductContentAssociation, ProductSetting, \
     CurrentSetting, ProductContentSetting, Permission, WorkgroupUser
 from .serializers import *
-
 from .filters import ProductPermissionFilterBackend
 import operator
 
 logger = logging.getLogger(__name__)
-
 
 class ProductFilter(django_filters.FilterSet):
     group = django_filters.MethodFilter()
@@ -541,3 +542,24 @@ class FilterConditionViewSet(viewsets.ModelViewSet):
     serializer_class = FilterConditionSerializer
 
     filter_fields = ('id', 'filterset', 'fcd_property', 'fcd_operation', 'fcd_value')
+
+
+@api_view(['POST'])
+def SaveFilterAsProduct(request):
+    print(request.data)
+    data = json.dumps({'status':'success'})
+    return Response(data, status=status.HTTP_200_OK)
+
+
+#class SaveFilterAsProduct(CreateAPIView):
+#    """
+#    API endpoint that create a product using a filter
+#    """
+#    http_method_names = ['post', ]
+#    ##authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
+#    ##permission_classes = (IsAuthenticated,)
+#
+#    def create(self, request):
+#        data=json.dumps({'status':'success'})
+#        return Response(data, status=status.HTTP_200_OK)
+

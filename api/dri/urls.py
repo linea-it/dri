@@ -95,11 +95,16 @@ router.register(r'userquery', userquery_views.UserQueryViewSet)
 # Comment API
 router.register(r'comment/position', comment_views.PositionViewSet)
 
+# FilterCommands
+#router.register(r'savefilterproduct', product_views.SaveFilterAsProduct.as_view(), 
+#    base_name="savefilterproduct")
+
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^admin', admin.site.urls),
     url(r'^', include(router.urls)),
+    url(r'^savefilterproduct/$', product_views.SaveFilterAsProduct),
     url(r'^contact/', common_views.contact_us),
 
     url(r'^teste/', common_views.teste),

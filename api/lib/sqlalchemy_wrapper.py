@@ -1,3 +1,4 @@
+from dri.settings.local_vars import *
 from sqlalchemy import create_engine, inspect, MetaData, func, Table
 from sqlalchemy.sql import select
 import warnings
@@ -124,7 +125,7 @@ class DBBase:
 
     @staticmethod
     def do_filter(table, filters):
-        f = list()
+        f = []
         for _filter in filters:
             op = '__%s__' % _filter['op']
             column = DBBase.get_column_obj(table, _filter['column'])
@@ -139,3 +140,35 @@ class DBBase:
             for col in columns:
                 t_columns.append(DBBase.get_column_obj(table, col))
         return t_columns
+
+
+class DBDRIHelper:
+
+    @staticmethod
+    def prepare_connection(db):
+        connection_data = {}
+
+        if db not in DATABASES:
+            raise Exception('This configuration does not exist.')
+
+        db_settings_django = DATABASES[db]
+        connection_data['ENGINE'] = db_settings_django['ENGINE'].split('.')[-1]
+
+        if connection_data['ENGINE'] == 'sqlite3':
+            connection_data['PATH_FILE'] = db_settings_django['NAME']
+
+        elif connection_data['ENGINE'] == 'oracle':
+            aux = db_settings_django['NAME'].split('/')
+            connection_data['DATABASE'] = aux[1]
+
+            aux = aux[0].split(':')
+            connection_data['HOST'] = aux[0]
+            connection_data['PORT'] = aux[1]
+            connection_data['USER'] = db_settings_django['USER']
+            connection_data['PASSWORD'] = db_settings_django['PASSWORD']
+
+        else:
+            raise Exception('Unknown database')
+
+        return connection_data
+
