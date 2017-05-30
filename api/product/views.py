@@ -548,9 +548,9 @@ class BookmarkedViewSet(viewsets.ModelViewSet):
     """
 
     """
-    queryset = Filterset.objects.select_related().all()
+    queryset = BookmarkProduct.objects.select_related().all()
 
-    serializer_class = FiltersetSerializer
+    serializer_class = BookmarkedSerializer
 
     filter_fields = ('id', 'product', 'owner', 'cst_starred')
 
