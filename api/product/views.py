@@ -366,7 +366,7 @@ class MaskViewSet(viewsets.ModelViewSet):
 
 class AllProductViewSet(viewsets.ModelViewSet):
     """
-    
+
     """
     queryset = Product.objects.select_related().filter(prd_process_id__isnull=False)
 
@@ -541,3 +541,18 @@ class FilterConditionViewSet(viewsets.ModelViewSet):
     serializer_class = FilterConditionSerializer
 
     filter_fields = ('id', 'filterset', 'fcd_property', 'fcd_operation', 'fcd_value')
+
+# ---------------------------------- Bookmark ----------------------------------
+
+class BookmarkedViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = Filterset.objects.select_related().all()
+
+    serializer_class = FiltersetSerializer
+
+    filter_fields = ('id', 'product', 'owner', 'cst_starred')
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)

@@ -853,3 +853,16 @@ class FilterConditionSerializer(serializers.ModelSerializer):
             return operators.get(obj.fcd_operation)
         except:
             return None
+
+# ---------------------------------- Bookmark ----------------------------------
+
+class BookmarkedSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookmarkProduct
+
+        fields = (
+            'id',
+            'product',
+            'owner',
+            'cst_starred'
+        )
