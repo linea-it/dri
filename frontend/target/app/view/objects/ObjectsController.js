@@ -18,7 +18,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         'Target.view.wizard.Wizard',
         'Target.view.objects.FiltersWindow',
         'Target.view.objects.SaveCatalogWindow',
-        'Target.view.objects.DownloadWindow'
+        'Target.view.objects.DownloadWindow',
+        'Target.view.settings.CutoutJobForm'
     ],
 
     listen: {
@@ -44,6 +45,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     winSaveAs: null,
     wizard: null,
     winDownload: null,
+    winCutout: null,
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
         var me = this,
@@ -803,7 +805,28 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onClickCreateCutouts: function () {
-        console.log('onClickCreateCutouts');
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
+
+        if (me.winCutout !== null) {
+            me.winCutout.close();
+            me.winCutout = null;
+        }
+
+        me.winCutout = Ext.create('Target.view.settings.CutoutJobForm',{
+            modal: true,
+            listeners: {
+                scope: me,
+                submitedjob: function () {
+                    Ext.MessageBox.alert('', 'The job will run in the background and you will be notified when it is finished.');
+                }
+            }
+        });
+
+        me.winCutout.getViewModel().set('currentCatalog', currentCatalog);
+
+        me.winCutout.show();
 
     },
 
