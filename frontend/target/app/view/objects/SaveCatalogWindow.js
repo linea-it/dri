@@ -11,7 +11,7 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
 
     title: 'Save As',
     width: 450,
-    height: 500,
+    height: 450,
     modal: true,
     autoShow: true,
     controller: 'savecatalog',
@@ -28,83 +28,97 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
     config: {
         currentCatalog: null
     },
+    initComponent: function () {
+        var me = this;
 
-    items: [
-        {
-            xtype: 'form',
-            reference: 'SaveAsForm',
-            layout: {
-                type: 'vbox',
-                align: 'stretch'
-            },
-            border: false,
-            // bodyPadding: 10,
-            fieldDefaults: {
-                msgTarget: 'side',
-                labelAlign: 'top',
-                labelWidth: 100,
-                labelStyle: 'font-weight:bold'
-            },
+        Ext.apply(this, {
             items: [
                 {
-                    xtype: 'textfield',
-                    fieldLabel: 'Name',
-                    name: 'name',
-                    allowBlank: false,
-                    maxLength: 40
-                },
-                {
-                    xtype: 'tagfield',
-                    name: 'filters',
-                    fieldLabel: 'Filters',
-                    displayField: 'fst_name',
-                    publishes: 'id',
-                    valueField: 'id',
-                    queryMode: 'local',
-                    allowBlank: false,
-                    bind: {
-                        store: '{filterSets}'
-                        // selection: '{filterSet}'
-                    }
-                },
-                {
-                    xtype: 'multiselector',
-                    title: 'Columns',
-                    fieldName: 'columns',
-                    valueField: 'pcn_column_name',
-                    height: 200,
-                    viewConfig: {
-                        deferEmptyText: false,
-                        emptyText: 'Choose a set of columns or leave it blank to keep them all. </br> Use + to add columns.'
+                    xtype: 'form',
+                    reference: 'SaveAsForm',
+                    layout: {
+                        type: 'vbox',
+                        align: 'stretch'
                     },
-                    search: {
-                        field: 'pcn_column_name',
-                        bind: {
-                            store: '{contents}'
+                    border: false,
+                    // bodyPadding: 10,
+                    fieldDefaults: {
+                        msgTarget: 'side',
+                        labelAlign: 'top',
+                        labelWidth: 100,
+                        labelStyle: 'font-weight:bold'
+                    },
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: 'Name',
+                            name: 'name',
+                            allowBlank: false,
+                            maxLength: 40
+                        },
+                        {
+                            xtype: 'tagfield',
+                            name: 'filters',
+                            fieldLabel: 'Filters',
+                            displayField: 'fst_name',
+                            publishes: 'id',
+                            valueField: 'id',
+                            queryMode: 'local',
+                            allowBlank: true,
+                            bind: {
+                                store: '{filterSets}'
+                            }
+                        },
+                        {
+                            xtype: 'multiselector',
+                            reference: 'mtsColumns',
+                            title: 'Columns',
+                            name: 'columns',
+                            height: 150,
+                            viewConfig: {
+                                deferEmptyText: false,
+                                emptyText: 'Choose a set of columns or leave it blank to keep them all. </br> Use + to add columns.'
+                            },
+                            fieldName: 'pcn_column_name',
+                            valueField: 'pcn_column_name',
+                            search: {
+                                field: 'pcn_column_name',
+                                store: Ext.create('Ext.data.Store', {
+                                    storeId: 'multiselectColumnsStore',
+                                    model: 'Target.model.CatalogColumn',
+                                    sorters: 'pcn_column_name',
+                                    proxy: {
+                                        type: 'django',
+                                        limitParam: null,
+                                        url: '/dri/api/productcontent/'
+                                    }
+                                 })
+                            }
+                        },
+                        {
+                            xtype: 'textarea',
+                            fieldLabel: 'Description',
+                            name: 'description',
+                            maxLength: 2048
                         }
-                    }
+                    ]
+                }
+            ],
+            buttons: [
+                {
+                    text: 'Cancel',
+                    handler: 'onCancel'
                 },
                 {
-                    xtype: 'textarea',
-                    fieldLabel: 'Description',
-                    name: 'description',
-                    maxLength: 2048
+                    text: 'Save',
+                    iconCls: 'x-fa fa-floppy-o',
+                    ui: 'soft-green',
+                    handler: 'onSaveCatalog'
                 }
             ]
-        }
-    ],
-    buttons: [
-        {
-            text: 'Cancel',
-            handler: 'onCancel'
-        },
-        {
-            text: 'Save',
-            iconCls: 'x-fa fa-floppy-o',
-            ui: 'soft-green',
-            handler: 'onSaveCatalog'
-        }
-    ],
+        });
+        me.callParent(arguments);
+    },
 
     setCurrentCatalog: function (currentCatalog) {
         var me = this;

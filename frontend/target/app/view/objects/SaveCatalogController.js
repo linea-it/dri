@@ -27,9 +27,7 @@ Ext.define('Target.view.objects.SaveCatalogController', {
         var me = this,
             vm = me.getViewModel(),
             filterSets = vm.getStore('filterSets'),
-            contents = vm.getStore('contents');
-
-        // me.clearImputs();
+            contents = Ext.data.StoreManager.lookup('multiselectColumnsStore');
 
         filterSets.addFilter({
             property: 'product',
@@ -51,6 +49,9 @@ Ext.define('Target.view.objects.SaveCatalogController', {
             form = me.lookup('SaveAsForm').getForm(),
             values;
 
+        console.log(form.getValues());
+
+
         if (form.isValid()) {
             values = form.getValues();
 
@@ -61,7 +62,8 @@ Ext.define('Target.view.objects.SaveCatalogController', {
                     'product': currentCatalog.get('id'),
                     'name': values.name,
                     'filters': values.filters,
-                    'description': values.description
+                    'description': values.description,
+                    'columns': values.columns
                 },
                 success: function (response) {
                     // Recuperar a resposta e fazer o decode no json.
