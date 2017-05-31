@@ -857,8 +857,11 @@ class FilterConditionSerializer(serializers.ModelSerializer):
 # ---------------------------------- Bookmark ----------------------------------
 
 class BookmarkedSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+
     class Meta:
         model = BookmarkProduct
+
 
         fields = (
             'id',
@@ -866,3 +869,6 @@ class BookmarkedSerializer(serializers.ModelSerializer):
             'owner',
             'is_starred'
         )
+
+    def get_owner(self, obj):
+        return obj.owner.username
