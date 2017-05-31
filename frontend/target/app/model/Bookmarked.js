@@ -11,7 +11,7 @@ Ext.define('Target.model.Bookmarked', {
     },
 
     fields: [
-        {name:'id', type:'int', default: null},
+        {name:'id', type:'int', default: null, persist: false},
         {name:'catalog_id', type:'int'},
         {name:'owner', type:'int'},
         {name:'is_starred', type:'bool'},

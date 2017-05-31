@@ -94,14 +94,14 @@ Ext.define('Target.view.catalog.CatalogController', {
                 var starred = true;
 
                 if (records && records.length === 1) {
-                  starred = !records[0].data.is_starred;
                   store.remove(records[0]);
+                } else {
+                  store.add({
+                    'product': selected.get('id'),
+                    'owner': 1,
+                    'is_starred': true
+                  })
                 }
-
-                store.add({
-                  'product': selected.get('id'),
-                  'is_starred': starred
-                })
 
                 store.sync();
               }
