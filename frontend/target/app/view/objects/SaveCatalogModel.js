@@ -24,13 +24,6 @@ Ext.define('Target.view.objects.SaveCatalogModel', {
         }
     },
 
-    // data: {
-    //     operator: null,
-    //     value: null,
-    //     haveFilters: false,
-    //     filterName: null
-    // },
-
     links: {
         currentCatalog: {
             type: 'Target.model.Catalog',

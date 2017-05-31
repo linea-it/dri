@@ -60,7 +60,7 @@ Ext.define('Target.view.objects.Panel', {
                 {
                     iconCls: 'x-fa fa-download',
                     tooltip: 'Download',
-                    handler: 'onClickDownloadCutouts'
+                    handler: 'onClickDownload'
                 },
                 {
                     iconCls: 'x-fa fa-picture-o',
