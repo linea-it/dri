@@ -11,7 +11,7 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
 
     title: 'Save As',
     width: 450,
-    height: 450,
+    height: 500,
     modal: true,
     autoShow: true,
     controller: 'savecatalog',
@@ -92,7 +92,7 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
                                         limitParam: null,
                                         url: '/dri/api/productcontent/'
                                     }
-                                 })
+                                })
                             }
                         },
                         {
@@ -133,49 +133,4 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
 
         }
     }
-
-    // setFilterSet: function (filterset) {
-    //     var me = this,
-    //         vm = me.getViewModel(),
-    //         filters = vm.getStore('filters'),
-    //         btnDelete = me.lookup('btnDeleteFilterSet'),
-    //         txtFilter = me.lookup('txtFilter');
-
-    //     if ((filterset) && (filterset.get('id') > 0)) {
-
-    //         vm.set('filterSet', filterset);
-
-    //         vm.set('filterName', filterset.get('fst_name'));
-
-    //         // Filter name como readonly
-    //         txtFilter.setReadOnly(true);
-
-    //         // Habilitar o botao de Delete FilterSet
-    //         btnDelete.enable();
-
-    //         filters.addFilter({
-    //             property: 'filterset',
-    //             value: filterset.get('id')
-    //         });
-
-    //         filters.load();
-
-    //     } else {
-    //         // Um filterSet vazio
-
-    //         vm.set('filterName', null);
-
-    //         // Filter name
-    //         txtFilter.setReadOnly(false);
-
-    //         // Habilitar o botao de Delete FilterSet
-    //         btnDelete.disable();
-
-    //         filters.clearFilter();
-    //         filters.removeAll(true);
-
-    //     }
-
-    // }
-
 });

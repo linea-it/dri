@@ -13,14 +13,6 @@ Ext.define('Target.view.objects.SaveCatalogController', {
                 changecatalog: 'onChangeCatalog'
             }
         }
-        // store: {
-        //     '#productContents': {
-        //         load: 'onLoadContents'
-        //     },
-        //     '#filterConditions': {
-        //         load: 'onLoadFilterConditions'
-        //     }
-        // }
     },
 
     onChangeCatalog: function (currentCatalog) {
@@ -50,7 +42,6 @@ Ext.define('Target.view.objects.SaveCatalogController', {
             values;
 
         console.log(form.getValues());
-
 
         if (form.isValid()) {
             values = form.getValues();

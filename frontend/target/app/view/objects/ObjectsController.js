@@ -17,7 +17,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         'Target.model.Reject',
         'Target.view.wizard.Wizard',
         'Target.view.objects.FiltersWindow',
-        'Target.view.objects.SaveCatalogWindow'
+        'Target.view.objects.SaveCatalogWindow',
+        'Target.view.objects.DownloadWindow'
     ],
 
     listen: {
@@ -42,6 +43,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     winFilters: null,
     winSaveAs: null,
     wizard: null,
+    winDownload: null,
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
         var me = this,
@@ -785,7 +787,6 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         var me = this,
             vm = me.getViewModel(),
-            // filterset = vm.get('filterSet'),
             currentCatalog = vm.get('currentCatalog');
 
         if (me.winSaveAs !== null) {
@@ -797,8 +798,6 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         me.winSaveAs.setCurrentCatalog(currentCatalog);
 
-        // me.winSaveAs.setFilterSet(filterset);
-
         me.winSaveAs.show();
 
     },
@@ -808,8 +807,21 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     },
 
-    onClickDownloadCutouts: function () {
-        console.log('onClickDownloadCutouts');
+    onClickDownload: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
+
+        if (me.winDownload !== null) {
+            me.winDownload.close();
+            me.winDownload = null;
+        }
+
+        me.winDownload = Ext.create('Target.view.objects.DownloadWindow',{});
+
+        me.winDownload.setCurrentCatalog(currentCatalog);
+
+        me.winDownload.show();
 
     }
 
