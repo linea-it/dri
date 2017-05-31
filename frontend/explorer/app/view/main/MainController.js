@@ -10,12 +10,16 @@ Ext.define('Explorer.view.main.MainController', {
     alias: 'controller.main',
 
     requires: [
-        'Explorer.view.coadd.Coadd'
+        'Explorer.view.coadd.Coadd',
+        'Explorer.view.system.System'
     ],
 
     routes : {
         'coadd/:source/:object': {
             action: 'onCoadd'
+        },
+        'system/:source/:object': {
+            action: 'onSystem'
         }
     },
 
@@ -58,5 +62,18 @@ Ext.define('Explorer.view.main.MainController', {
         });
 
         this.setActivePanel(newView, source, object_id);
+    },
+
+    onSystem: function (source, object_id) {
+        console.log('onSystem(%o, %o)', source, object_id);
+
+        var newView = Ext.create('Explorer.view.system.System', {
+            hideMode: 'offsets',
+            routeId: 'sytem',
+            layout: 'fit'
+        });
+
+        this.setActivePanel(newView, source, object_id);
+
     }
 });

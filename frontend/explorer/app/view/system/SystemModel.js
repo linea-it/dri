@@ -1,0 +1,50 @@
+Ext.define('Explorer.view.system.SystemModel', {
+    extend: 'Ext.app.ViewModel',
+
+    alias: 'viewmodel.system',
+
+    requires: [
+        // 'Explorer.store.CoaddObject',
+        // 'common.model.Dataset',
+        // 'common.store.Datasets'
+    ],
+
+    data: {
+        source: null,
+        object_id: null,
+        coaddObject: null
+    },
+
+    links: {
+        currentDataset: {
+            type: 'common.model.Dataset',
+            create: true
+        }
+    },
+
+    stores: {
+        coaddObject: {
+            type: 'coaddobject',
+            storeId: 'coaddObject'
+        },
+        properties: {
+            type: 'array',
+            fields: ['property', 'value'],
+            remoteSort: false,
+            remoteFilter: false,
+            sorters: [{
+                property: 'property',
+                direction: 'ASC'
+            }]
+        },
+        datasets: {
+            type: 'datasets',
+            storeId: 'datasets',
+            remoteSort: false,
+            sorters: [{
+                property: 'id',
+                direction: 'DESC'
+            }]
+        }
+    }
+});
