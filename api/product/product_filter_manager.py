@@ -9,6 +9,8 @@ from sqlalchemy.ext.compiler import compiles
 import csv
 from tabulate import tabulate
 import json
+from product_register.ImportProcess import Import 
+
 
 class CreateTableAs(Executable, ClauseElement):
     """
@@ -69,21 +71,44 @@ class FilterCommand:
 
     def execute(self):
         pass
-
+    
 class SaveFilterAsProduct(FilterCommand):
     "Implements routines to convert target filter into product"
-    def __init__(self, filter_id, tablename, description):
+    def __init__(self, filter_id, tablename, user, description):
         self.tablename = tablename
         self.description = description
+        self.user = user
         super().__init__(filter_id)
 
     def createTableFromFilter(self):
         self.conn.execute("create table " + self.tablename + " as (" + self.createSQLFromFilter() + ")")
 
     def registerProductFromFilter(self):
-        ##TODO
-        pass
-
+        imp = Import()
+        imp.user = self.user
+        imp.site = imp.get_site(imp.user)
+        #imp.process 
+        data = [{
+            "process_id": 1002,
+            #     "display_name": "Galaxy Clusters (Sqlite3)",
+            #     "product_id": 2143,
+            #     "nside": null,
+            #     "ordering": null,
+            #     "fields": ["Y1A1_COADD_STRIPE82"],
+            #     "pypeline_name": "WAZP",
+            #     "job_id": 135586,
+            #     "filter": null,
+            #     "version": 9,
+            #     "releases": [],
+            "table": self.tablename,
+            #     "schema": null,
+            "type": "catalog",
+            "class": self.filter.product.prd_class.pcl_name,
+            "name": "Filter " + self.filter.fst_name + " - " + self.filter.product.prd_display_name,  
+        }]
+        print(data)
+        imp.import_products(data)
+        
     def execute(self):
         self.createTableFromFilter()
         self.registerProductFromFilter()
