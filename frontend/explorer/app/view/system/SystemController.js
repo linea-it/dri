@@ -24,34 +24,63 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     onLoadPanel: function (source, object_id) {
-        this.loadObject();
+        this.load(source);
 
     },
 
-    loadObject: function () {
-        // var me = this,
-        //     vm = me.getViewModel(),
-        //     store = vm.getStore('coaddObject'),
-        //     source = vm.get('source'),
-        //     object_id = vm.get('object_id'),
-        //     view = me.getView();
+    load: function (source) {
+        console.log('load');
+        var me = this;
 
-        // view.setLoading(true);
+        me.loadProduct(source);
+    },
 
-        // store.addFilter([
-        //     {
-        //         'property': 'source',
-        //         'value': source
-        //     },
-        //     {
-        //         'property': 'coadd_object_id',
-        //         'value': object_id
-        //     }
-        // ]);
+    loadProduct: function (source) {
+        console.log('loadProduct(%o)', source);
 
-        // store.load();
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            products = vm.getStore('products');
 
+        view.setLoading(true);
+
+        products.addFilter({
+            property: 'prd_name',
+            value: source
+        });
+
+        products.load({
+            callback: function () {
+                console.log('Carregou o produto');
+                if (this.count() === 1) {
+                    me.onLoadProduct(this.first());
+                    view.setLoading(false);
+                }
+
+            }
+        });
+
+    },
+
+    onLoadProduct: function (product) {
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView();
+
+        vm.set('currentProduct', product);
+
+        view.setTitle(product.get('prd_display_name'));
+
+
+        me.loadObject();
     }
+
+    loadObject: function() {
+        console.log('loadObject')
+
+
+    },
 
     // onLoadObject: function (store) {
     //     var me = this,

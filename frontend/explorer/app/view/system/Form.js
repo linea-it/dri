@@ -22,25 +22,25 @@ Ext.define('Explorer.view.system.Form', {
                         {
                             fieldLabel: 'Source',
                             bind: {
-                                value: '{source}'
+                                value: ''
                             }
                         },
                         {
-                            fieldLabel: 'Coadd Object ID',
+                            fieldLabel: 'Object ID',
                             bind: {
-                                value: '{coaddObject._meta_id}'
+                                value: '{object._meta_id}'
                             }
                         },
                         {
                             fieldLabel: 'RA (deg)',
                             bind: {
-                                value: '{coaddObject._meta_ra}'
+                                value: '{object._meta_ra}'
                             }
                         },
                         {
                             fieldLabel: 'Dec (deg)',
                             bind: {
-                                value: '{coaddObject._meta_dec}'
+                                value: '{object._meta_dec}'
                             }
                         }
                     ]

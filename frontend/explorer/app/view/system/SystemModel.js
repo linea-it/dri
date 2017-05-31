@@ -4,18 +4,23 @@ Ext.define('Explorer.view.system.SystemModel', {
     alias: 'viewmodel.system',
 
     requires: [
-        // 'Explorer.store.CoaddObject',
-        // 'common.model.Dataset',
-        // 'common.store.Datasets'
+        'Explorer.store.Products',
+        'Explorer.store.Objects',
+        'Explorer.model.Product',
+        'common.model.Dataset'
     ],
 
     data: {
         source: null,
         object_id: null,
-        coaddObject: null
+        object: null
     },
 
     links: {
+        currentProduct: {
+            type: 'Explorer.model.Product',
+            create: true
+        },
         currentDataset: {
             type: 'common.model.Dataset',
             create: true
@@ -23,10 +28,16 @@ Ext.define('Explorer.view.system.SystemModel', {
     },
 
     stores: {
-        coaddObject: {
-            type: 'coaddobject',
-            storeId: 'coaddObject'
+        products: {
+            type: 'products'
         },
+        objects: {
+            type: 'objects'
+        },
+        // coaddObject: {
+        //     type: 'coaddobject',
+        //     storeId: 'coaddObject'
+        // },
         properties: {
             type: 'array',
             fields: ['property', 'value'],
