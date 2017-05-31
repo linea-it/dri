@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             name='BookmarkProduct',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('cst_starred', models.BooleanField(default=False, verbose_name='Is Starred')),
+                ('is_starred', models.BooleanField(default=False, verbose_name='Is Starred')),
                 ('owner', models.ForeignKey(default=current_user.get_current_user, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL, verbose_name='Owner')),
                 ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='product.Product', verbose_name='Product')),
             ],

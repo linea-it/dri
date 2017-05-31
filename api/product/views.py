@@ -552,7 +552,7 @@ class BookmarkedViewSet(viewsets.ModelViewSet):
 
     serializer_class = BookmarkedSerializer
 
-    filter_fields = ('id', 'product', 'owner', 'cst_starred')
+    filter_fields = ('id', 'product', 'owner', 'is_starred')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

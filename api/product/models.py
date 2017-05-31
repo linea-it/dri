@@ -382,7 +382,7 @@ class BookmarkProduct(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
 
-    cst_starred = models.BooleanField(
+    is_starred = models.BooleanField(
         default=False, verbose_name='Is Starred')
 
     def __str__(self):

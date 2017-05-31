@@ -864,5 +864,5 @@ class BookmarkedSerializer(serializers.ModelSerializer):
             'id',
             'product',
             'owner',
-            'cst_starred'
+            'is_starred'
         )
