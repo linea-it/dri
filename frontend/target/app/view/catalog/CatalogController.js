@@ -85,7 +85,7 @@ Ext.define('Target.view.catalog.CatalogController', {
             selected = view.getSelectedCatalog(),
             bookmark;
 
-        if (selected && selected.get('id')) {
+        if (selected && Number.isInteger(selected.get('id'))) {
           store.addFilter([{property: 'product', value: selected.get('id')}]);
 
           store.load({
@@ -98,7 +98,6 @@ Ext.define('Target.view.catalog.CatalogController', {
                 } else {
                   store.add({
                     'product': selected.get('id'),
-                    'owner': 1,
                     'is_starred': true
                   })
                 }
