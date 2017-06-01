@@ -72,15 +72,19 @@ Ext.define('Explorer.view.system.SystemController', {
 
         view.setTitle(product.get('prd_display_name'));
 
-
         me.loadObject();
-    }
-
-    loadObject: function() {
-        console.log('loadObject')
-
-
     },
+
+    loadObject: function () {
+        console.log('loadObject');
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            product = vm.get('currentProduct'),
+            objects = vm.getStore('objects'),
+            object_id = vm.get('object_id');
+
+    }
 
     // onLoadObject: function (store) {
     //     var me = this,

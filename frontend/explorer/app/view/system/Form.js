@@ -32,17 +32,23 @@ Ext.define('Explorer.view.system.Form', {
                             }
                         },
                         {
-                            fieldLabel: 'RA (deg)',
+                            fieldLabel: 'RA, Dec (deg)',
                             bind: {
-                                value: '{object._meta_ra}'
-                            }
-                        },
-                        {
-                            fieldLabel: 'Dec (deg)',
-                            bind: {
-                                value: '{object._meta_dec}'
+                                value: '{object._meta_ra}, {object._meta_dec}'
                             }
                         }
+                        // {
+                        //     fieldLabel: 'RA (deg)',
+                        //     bind: {
+                        //         value: '{object._meta_ra}'
+                        //     }
+                        // },
+                        // {
+                        //     fieldLabel: 'Dec (deg)',
+                        //     bind: {
+                        //         value: '{object._meta_dec}'
+                        //     }
+                        // }
                     ]
                 }
             ]
