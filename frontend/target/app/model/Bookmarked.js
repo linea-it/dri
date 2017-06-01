@@ -15,6 +15,7 @@ Ext.define('Target.model.Bookmarked', {
         {name:'catalog_id', type:'int'},
         {name:'owner', type:'string'},
         {name:'is_starred', type:'bool'},
+        {name:'is_owner', type:'bool'},
     ]
 
 });
