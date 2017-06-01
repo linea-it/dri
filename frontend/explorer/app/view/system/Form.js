@@ -22,19 +22,25 @@ Ext.define('Explorer.view.system.Form', {
                         {
                             fieldLabel: 'Source',
                             bind: {
-                                value: ''
+                                value: '{currentProduct.tablename}'
                             }
                         },
                         {
                             fieldLabel: 'Object ID',
                             bind: {
-                                value: '{object._meta_id}'
+                                value: '{object_data._meta_id}'
                             }
                         },
                         {
                             fieldLabel: 'RA, Dec (deg)',
                             bind: {
-                                value: '{object._meta_ra}, {object._meta_dec}'
+                                value: '{object_data._meta_ra}, {object_data._meta_dec}'
+                            }
+                        },
+                        {
+                            fieldLabel: 'Radius (arcmin)',
+                            bind: {
+                                value: '{object_data._meta_radius}'
                             }
                         }
                         // {

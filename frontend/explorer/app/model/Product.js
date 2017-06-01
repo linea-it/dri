@@ -14,7 +14,8 @@ Ext.define('Explorer.model.Product', {
         {name:'prd_class', type:'int'},
         {name:'prd_date', type:'date'},
         {name:'prd_is_public', type:'boolean', defaultValue: false},
-        {name:'is_owner', type:'boolean', defaultValue: false}
+        {name:'is_owner', type:'boolean', defaultValue: false},
+        {name:'tablename', type:'string'}
     ]
 
 });

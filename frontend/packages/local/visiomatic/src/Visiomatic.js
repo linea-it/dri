@@ -645,6 +645,8 @@ Ext.define('visiomatic.Visiomatic', {
 
         pathOptions = Ext.Object.merge(catalogOptions, options);
 
+        console.log('pathOptions', '=', pathOptions);
+
         collection = {
             type: 'FeatureCollection',
             features: []
@@ -696,8 +698,11 @@ Ext.define('visiomatic.Visiomatic', {
                 popup = '<TABLE style="margin:auto;">' +
                    '<TBODY style="vertical-align:top;text-align:left;">' +
                         '<TR><TD><spam style="font-weight: bold;">ID </spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
-                        '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
-                        '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
+                        // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
+                        // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
+                        '<TR><TD><spam style="font-weight: bold;">J2000</spam>: </TD><TD>' +
+                            feature.properties._meta_ra.toFixed(3) + ', ' + feature.properties._meta_dec.toFixed(3) +
+                        '</td></tr>' +
                     '</TBODY></TABLE>';
 
             return popup;

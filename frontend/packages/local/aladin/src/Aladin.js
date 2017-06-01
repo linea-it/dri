@@ -602,7 +602,7 @@ Ext.define('aladin.Aladin', {
 
         }
 
-        if (store.count()) {
+        if ((store) && (store.count())) {
             tile = store.filterByRaDec(radec[0], radec[1]);
 
         }

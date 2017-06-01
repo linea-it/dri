@@ -7,13 +7,18 @@ Ext.define('Explorer.view.system.SystemModel', {
         'Explorer.store.Products',
         'Explorer.store.Objects',
         'Explorer.model.Product',
-        'common.model.Dataset'
+        'Explorer.store.Association',
+        'common.model.Dataset',
+        'common.store.Datasets'
     ],
 
     data: {
         source: null,
         object_id: null,
-        object: null
+        object: null,
+        object_data: null,
+        property_id: null,
+        overlayMembers: null
     },
 
     links: {
@@ -31,13 +36,15 @@ Ext.define('Explorer.view.system.SystemModel', {
         products: {
             type: 'products'
         },
+        associations: {
+            type: 'association'
+        },
         objects: {
             type: 'objects'
         },
-        // coaddObject: {
-        //     type: 'coaddobject',
-        //     storeId: 'coaddObject'
-        // },
+        members: {
+            type: 'objects'
+        },
         properties: {
             type: 'array',
             fields: ['property', 'value'],
