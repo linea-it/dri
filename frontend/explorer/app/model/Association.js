@@ -1,4 +1,4 @@
-Ext.define('Target.model.Association', {
+Ext.define('Explorer.model.Association', {
     extend: 'Ext.data.Model',
 
     requires: [
@@ -9,7 +9,6 @@ Ext.define('Target.model.Association', {
         {name:'id', type:'int', persist: false},
         {name:'pca_product', type:'int'},
         {name:'pca_class_content', type:'int'},
-        {name:'pca_product_content', type:'int'},
         {name:'pcc_ucd', type:'string'},
         {name:'pcn_column_name', type:'string'}
     ],

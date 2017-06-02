@@ -362,6 +362,27 @@ Ext.define('Target.view.preview.PreviewController', {
 
         visiomatic.showHideLayer(lmembers, state);
 
+    },
+
+    onExplorer: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            catalog = vm.get('currentCatalog'),
+            object = vm.get('currentRecord'),
+            host = window.location.host,
+            source, id, hash;
+
+        if (vm.get('is_system') === true) {
+            source = catalog.get('prd_name');
+            id = object.get('_meta_id');
+
+            hash = Ext.String.format('http://{0}/dri/apps/explorer/#system/{1}/{2}', host, source, id);
+
+            window.open(hash, '_blank');
+
+        } else {
+            console.log('Explorer single object');
+        }
     }
 
 });
