@@ -214,10 +214,11 @@ class TargetViewSetDBHelper:
                 try:
                     self.schema_rating_reject = settings.SCHEMA_RATING_REJECT
                 except:
-                    raise ("The table is in a different schema of the catalog database, "
+                    msg = ("The table is in a different schema of the catalog database, "
                            "the rating and reject tables are not available in this schema. "
                            "To solve this add the variable SCHEMA_RATING_REJECT to the settings"
                            "pointing to the schema where the rating and reject tables are available.")
+                    raise (msg)
 
         else:
             com = CatalogDB()
