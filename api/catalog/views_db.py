@@ -7,6 +7,7 @@ from sqlalchemy import desc
 
 import warnings
 from sqlalchemy import exc as sa_exc
+from django.conf import settings
 
 
 class CoaddObjectsDBHelper:
@@ -202,9 +203,19 @@ class VisiomaticCoaddObjectsDBHelper:
 class TargetViewSetDBHelper:
     def __init__(self, table, schema=None, database=None):
         self.schema = schema
+        self.schema_rating_reject = None
 
         if database:
             com = CatalogDB(db=database)
+
+            if database is not 'catalog':
+                # Se o catalogo a ser lido nao esta no banco de dados de catalogo
+                # e necessario informar em qual esquema esta as tabelas de Rating e Reject
+                try:
+                    self.schema_rating_reject = settings.SCHEMA_RATING_REJECT
+                except:
+                    raise ("The table is in a different schema of the catalog database, the rating and reject tables are not available in this schema. To solve this add the variable SCHEMA_RATING_REJECT to the settings pointing to the schema where the rating and reject tables are available.")
+
         else:
             com = CatalogDB()
 
@@ -233,8 +244,8 @@ class TargetViewSetDBHelper:
         except:
             raise ("Need association for ID column with meta.id;meta.main ucd.")
 
-        catalog_rating_id = self.db.get_table_obj('catalog_rating', schema=self.schema).alias('b')
-        catalog_reject_id = self.db.get_table_obj('catalog_reject', schema=self.schema).alias('c')
+        catalog_rating_id = self.db.get_table_obj('catalog_rating', schema=self.schema_rating_reject).alias('b')
+        catalog_reject_id = self.db.get_table_obj('catalog_reject', schema=self.schema_rating_reject).alias('c')
 
         stm_join = self.table
         stm_join = stm_join.join(catalog_rating_id,
