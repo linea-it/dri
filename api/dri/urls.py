@@ -68,10 +68,10 @@ router.register(r'filtercondition', product_views.FilterConditionViewSet)
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
 router.register(r'defect', validation_views.DefectViewSet)
-
 router.register(r'filters', common_views.FilterViewSet)
-
 router.register(r'site', product_register_views.SiteViewSet)
+router.register(r'saveas', product_views.SaveFilterAsProduct)
+
 router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet,
                 base_name='importprocess')
 router.register(r'importauthorization', product_register_views.AuthorizationViewSet)
@@ -103,8 +103,7 @@ router.register(r'comment/position', comment_views.PositionViewSet)
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^admin', admin.site.urls),
-    url(r'^', include(router.urls)),
-    url(r'^savefilterproduct/$', product_views.SaveFilterAsProduct),
+    url(r'^', include(router.urls)), 
     url(r'^contact/', common_views.contact_us),
 
     url(r'^teste/', common_views.teste),

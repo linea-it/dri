@@ -9,7 +9,8 @@ from sqlalchemy.ext.compiler import compiles
 import csv
 from tabulate import tabulate
 import json
-from product_register.ImportProcess import Import 
+from product_register.ImportProcess import Import
+from product_register.models import *
 
 
 class CreateTableAs(Executable, ClauseElement):
@@ -86,16 +87,17 @@ class SaveFilterAsProduct(FilterCommand):
     def registerProductFromFilter(self):
         imp = Import()
         imp.user = self.user
+        imp.owner = self.user
         imp.site = imp.get_site(imp.user)
-        #imp.process 
+        imp.process = None
+        
         data = [{
-            "process_id": 1002,
-            #     "display_name": "Galaxy Clusters (Sqlite3)",
-            #     "product_id": 2143,
+            "process_id": 103,
+            "display_name": "Filter " + self.filter.fst_name + " - " + self.filter.product.prd_display_name,
             #     "nside": null,
             #     "ordering": null,
             #     "fields": ["Y1A1_COADD_STRIPE82"],
-            #     "pypeline_name": "WAZP",
+            #"pypeline_name": "WAZP",
             #     "job_id": 135586,
             #     "filter": null,
             #     "version": 9,
@@ -106,7 +108,6 @@ class SaveFilterAsProduct(FilterCommand):
             "class": self.filter.product.prd_class.pcl_name,
             "name": "Filter " + self.filter.fst_name + " - " + self.filter.product.prd_display_name,  
         }]
-        print(data)
         imp.import_products(data)
         
     def execute(self):

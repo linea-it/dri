@@ -544,22 +544,22 @@ class FilterConditionViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'filterset', 'fcd_property', 'fcd_operation', 'fcd_value')
 
 
-@api_view(['POST'])
-def SaveFilterAsProduct(request):
-    print(request.data)
-    data = json.dumps({'status':'success'})
-    return Response(data, status=status.HTTP_200_OK)
+#@api_view(['POST'])
+#def SaveFilterAsProduct(request):
+#    print(request.data)
+#    data = json.dumps({'status':'success'})
+#    return Response(data, status=status.HTTP_200_OK)
 
 
-#class SaveFilterAsProduct(CreateAPIView):
-#    """
-#    API endpoint that create a product using a filter
-#    """
-#    http_method_names = ['post', ]
-#    ##authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
-#    ##permission_classes = (IsAuthenticated,)
-#
-#    def create(self, request):
-#        data=json.dumps({'status':'success'})
-#        return Response(data, status=status.HTTP_200_OK)
+class SaveFilterAsProduct(CreateAPIView):
+    """
+    API endpoint that create a product using a filter
+    """
+    http_method_names = ['post', ]
+    ##authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
+    ##permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        data=json.dumps({'status':'success'})
+        return Response(data, status=status.HTTP_200_OK)
 
