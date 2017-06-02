@@ -128,7 +128,7 @@ class FilterConditionAdmin(admin.ModelAdmin):
     list_display = ('id', 'filterset', 'fcd_property', 'fcd_property_name', 'fcd_operation', 'fcd_value')
 
 class BookmarkedAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product', 'owner', 'is_starred',)
+    list_display = ('id', 'product', 'owner', 'is_starred', 'is_owner')
 
 
 admin.site.register(Product, ProductAdmin)

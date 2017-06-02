@@ -83,19 +83,23 @@ Ext.define('Target.view.catalog.CatalogController', {
             vm = view.getViewModel(),
             store = vm.getStore('bookmarks'),
             selected = view.getSelectedCatalog(),
-            bookmark;
+            bookmark,
+            node;
 
         if (selected && Number.isInteger(selected.get('id'))) {
+          node = view.getStore().findNode('id', selected.get('id'));
           store.addFilter([{property: 'product', value: selected.get('id')}]);
 
           store.load({
               scope: this,
               callback: function (records, operation, success) {
                 var starred = true;
-
-                if (records && records.length === 1) {
-                  store.remove(records[0]);
-                } else {
+                const owner_record = records.filter( rec => {
+                    return rec.data.is_owner
+                })
+                if (owner_record && owner_record.length === 1) {
+                  store.remove(owner_record[0]);
+                } else if (owner_record.length === 0) {
                   store.add({
                     'product': selected.get('id'),
                     'is_starred': true

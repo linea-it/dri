@@ -98,9 +98,9 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     @list_route()
     def get_class_tree_by_group(self, request):
         """
-            Este metodo retorna uma tree, com todos os produtos de um grupo. estes produtos estão
+            Este metodo retorna uma tree, com todos os produtos de um grupo. estes produtos estÃ£o
             agrupados por suas classes.
-            é necessario o parametro group que é o internal name da tabela Group
+            Ã© necessario o parametro group que Ã© o internal name da tabela Group
             ex: catalog/get_class_tree_by_group/group='targets'
         """
         group = request.query_params.get('group', None)
@@ -109,7 +109,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             # TODO retornar execpt que o group e obrigatorio
             return Response({
                 'success': False,
-                'msg': 'Necessário passar o parametro group.'
+                'msg': 'NecessÃ¡rio passar o parametro group.'
             })
 
         # Usando Filter_Queryset e aplicado os filtros listados no filterbackend
@@ -552,7 +552,7 @@ class BookmarkedViewSet(viewsets.ModelViewSet):
 
     serializer_class = BookmarkedSerializer
 
-    filter_fields = ('id', 'product', 'owner', 'is_starred')
+    filter_fields = ('id', 'product', 'owner', 'is_starred', 'is_owner')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
