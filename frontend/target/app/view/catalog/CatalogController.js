@@ -87,75 +87,32 @@ Ext.define('Target.view.catalog.CatalogController', {
             node;
 
         if (selected && Number.isInteger(selected.get('id'))) {
-          node = view.getStore().findNode('id', selected.get('id'));
-          store.addFilter([{property: 'product', value: selected.get('id')}]);
+            store.addFilter([{property: 'product', value: selected.get('id')}]);
 
-          store.load({
-              scope: this,
-              callback: function (records, operation, success) {
-                var starred = true;
-                const owner_record = records.filter( rec => {
-                    return rec.data.is_owner
-                })
-                if (owner_record && owner_record.length === 1) {
-                  store.remove(owner_record[0]);
-                } else if (owner_record.length === 0) {
-                  store.add({
-                    'product': selected.get('id'),
-                    'is_starred': true
-                  })
-                }
-
-                store.sync();
-              }
-          });
-        }
-
-        if (selected && selected.get('id')) {
-
-        //
-        //     Ext.Ajax.request({
-        //         url: '/PRJSUB/TargetViewer/starredCatalog',
-        //         scope: this,
-        //         params: {
-        //             'catalog_id': selected.get('catalog_id')
-        //         },
-        //         success: function (response) {
-        //             // Recuperar a resposta e fazer o decode no json.
-        //             var obj = Ext.decode(response.responseText);
-        //
-        //             if (obj.success) {
-        //                 // Alterar o Icone no node da tree desta forma evita o reload
-        //                 // da interface
-        //                 if (node.get('starred') == false) {
-        //                     node.set('iconCls', 'catalog-starred');
-        //                     node.set('starred', true);
-        //                 } else {
-        //                     node.set('iconCls', 'no-icon');
-        //                     node.set('starred', false);
-        //                 }
-        //
-        //                 console.log('node', '=', node);
-        //             } else {
-        //                 Ext.Msg.show({
-        //                     title: 'Sorry',
-        //                     msg: obj.msg,
-        //                     icon: Ext.Msg.WARNING,
-        //                     buttons: Ext.Msg.OK
-        //                 });
-        //             }
-        //         },
-        //         failure: function (response, opts) {
-        //             // TODO: Mostrar mensagem de falha
-        //             var msg = response.status + ' ' + response.statusText;
-        //             Ext.Msg.show({
-        //                 title: 'Sorry',
-        //                 msg: msg,
-        //                 icon: Ext.Msg.ERROR,
-        //                 buttons: Ext.Msg.OK
-        //             });
-        //         }
-        //     });
+            store.load({
+                  scope: this,
+                  callback: function (records, operation, success) {
+                    var starred = true;
+                    const owner_record = records.filter( rec => {
+                        return rec.data.is_owner
+                    })
+                    if (owner_record && owner_record.length === 1) {
+                      node = view.getStore().findNode('id', selected.get('id'));
+                      node.set('iconCls', 'no-icon');
+                      node.set('starred', false);
+                      store.remove(owner_record[0]);
+                    } else if (owner_record.length === 0) {
+                      node = view.getStore().findNode('id', selected.get('id'));
+                      node.set('iconCls', 'no-icon');
+                      node.set('starred', true);
+                      store.add({
+                        'product': selected.get('id'),
+                        'is_starred': true
+                      })
+                    }
+                    store.sync();
+                  }
+            });
         }
     },
 

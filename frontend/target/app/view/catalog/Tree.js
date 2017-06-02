@@ -50,7 +50,13 @@ Ext.define('Target.view.catalog.Tree', {
                     text: 'Name',
                     flex: 2,
                     sortable: true,
-                    dataIndex: 'text'
+                    dataIndex: 'text',
+                    renderer: function (value, metadata, record) {
+                        if(record.data.starred){
+                            metadata.innerCls = 'fa fa-bookmark';
+                        }
+                        return value
+                    },
                 },
                 {
                     text: 'Owner',
