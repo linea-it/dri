@@ -69,6 +69,9 @@ Ext.define('Explorer.view.system.SystemController', {
         // Descobrir a Propriedade Id
         me.loadAssociations(product);
 
+        // Carregar as propriedades dos system members
+        me.loadMembersContent(product);
+
     },
 
     loadAssociations: function (product) {
@@ -182,7 +185,7 @@ Ext.define('Explorer.view.system.SystemController', {
         // Aladin
         aladin.showDesFootprint();
         aladin.goToPosition(position);
-        aladin.setFov(20);
+        aladin.setFov(0.1);
         // aladin.plotObject(data, product.get('prd_display_name'));
 
         view.setLoading(false);
@@ -313,9 +316,31 @@ Ext.define('Explorer.view.system.SystemController', {
 
 
     // ---------------------- System Members ----------------------
-    loadSystemMembers: function (product, object) {
-        console.log('loadSystemMembers(%o)', product);
+    loadMembersContent: function (product) {
+        var me = this,
+            vm = me.getViewModel(),
+            displayContents = vm.getStore('displayContents'),
+            membersGrid = me.lookupReference('members-grid');
 
+        displayContents.addFilter(
+            {
+                'property': 'pcn_product_id',
+                value: product.get('prl_related')
+            }
+        );
+
+        displayContents.load({
+            callback: function () {
+                if (this.check_ucds()) {
+                    membersGrid.reconfigureGrid(this);
+
+                }
+            }
+        });
+
+    },
+
+    loadSystemMembers: function (product, object) {
         var me = this,
             vm = me.getViewModel(),
             members = vm.getStore('members');
@@ -339,8 +364,6 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     onLoadSystemMembers: function (members) {
-        console.log('onLoadSystemMembers');
-
         var me = this,
             vm = me.getViewModel(),
             visiomatic = me.lookupReference('visiomatic'),
@@ -351,12 +374,44 @@ Ext.define('Explorer.view.system.SystemController', {
 
         visiomatic.showHideLayer(lmembers, true);
 
-        console.log('lmembers', '=', lmembers);
         vm.set('overlayMembers', lmembers);
-
 
         // Aladin
         aladin.plotSystemMembers('system_members', members);
+
+    },
+
+    onSelectSystemMember: function (selModel, member) {
+        var me = this,
+            vm = me.getViewModel(),
+            product = vm.get('currentProduct'),
+            object = vm.get('object'),
+            lMarkPosition = vm.get('lMarkPosition'),
+            visiomatic = me.lookupReference('visiomatic'),
+            aladin = me.lookupReference('aladin'),
+            fov = visiomatic.getFov(),
+            position;
+
+        visiomatic.setView(
+            member.get('_meta_ra'),
+            member.get('_meta_dec'),
+            fov
+            );
+
+        if (lMarkPosition) {
+            visiomatic.showHideLayer(lMarkPosition, false);
+        }
+
+        lMarkPosition = visiomatic.markPosition(
+            member.get('_meta_ra'),
+            member.get('_meta_dec'),
+            'x-fa fa-sort-desc fa-2x');
+
+        vm.set('lMarkPosition', lMarkPosition);
+
+        // Aladin
+        position = String(member.get('_meta_ra')) + ',' + String(member.get('_meta_dec'));
+        aladin.goToPosition(position);
 
     }
 });

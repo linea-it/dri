@@ -645,8 +645,6 @@ Ext.define('visiomatic.Visiomatic', {
 
         pathOptions = Ext.Object.merge(catalogOptions, options);
 
-        console.log('pathOptions', '=', pathOptions);
-
         collection = {
             type: 'FeatureCollection',
             features: []
@@ -727,6 +725,34 @@ Ext.define('visiomatic.Visiomatic', {
                 map.removeLayer(layer);
             }
         }
+    },
+
+    markPosition: function (ra, dec, iconCls) {
+        var me = this,
+            l = me.libL,
+            map = me.getMap(),
+            latlng, lmarkPosition, myIcon;
+
+        latlng = l.latLng(dec, ra);
+
+        if (iconCls) {
+            myIcon = l.divIcon({
+                className: 'visiomatic-marker-position',
+                iconAnchor: [8, 44],
+                html:'<i class="' + iconCls + '"></i>'
+            });
+
+            lmarkPosition = l.marker(latlng, {icon: myIcon});
+
+        } else {
+
+            lmarkPosition = l.marker(latlng);
+        }
+
+        lmarkPosition.addTo(map);
+
+        return lmarkPosition;
+
     }
 
 });

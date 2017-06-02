@@ -20,9 +20,9 @@ Ext.define('Explorer.view.system.MembersGrid', {
     */
     config: {
         ready: false,
-        columnRating: true,
-        columnAccept: true,
-        columnComments: true
+        columnRating: false,
+        columnAccept: false,
+        columnComments: false
     },
 
     emptyText: 'No data to dysplay.',

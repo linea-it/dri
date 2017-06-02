@@ -8,6 +8,7 @@ Ext.define('Explorer.view.system.SystemModel', {
         'Explorer.store.Objects',
         'Explorer.model.Product',
         'Explorer.store.Association',
+        'Explorer.store.ProductDisplayContents',
         'common.model.Dataset',
         'common.store.Datasets'
     ],
@@ -44,6 +45,9 @@ Ext.define('Explorer.view.system.SystemModel', {
         },
         members: {
             type: 'objects'
+        },
+        displayContents: {
+            type: 'product-display-contents'
         },
         properties: {
             type: 'array',

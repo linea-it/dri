@@ -65,8 +65,6 @@ Ext.define('Explorer.view.main.MainController', {
     },
 
     onSystem: function (source, object_id) {
-        console.log('onSystem(%o, %o)', source, object_id);
-
         var newView = Ext.create('Explorer.view.system.System', {
             hideMode: 'offsets',
             routeId: 'sytem',

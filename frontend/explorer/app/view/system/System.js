@@ -9,7 +9,8 @@ Ext.define('Explorer.view.system.System', {
         'Explorer.view.system.Form',
         'Explorer.view.system.Properties',
         'Explorer.view.system.Visiomatic',
-        'Explorer.view.system.Aladin'
+        'Explorer.view.system.Aladin',
+        'Explorer.view.system.MembersGrid'
     ],
 
     controller: 'system',
@@ -103,9 +104,21 @@ Ext.define('Explorer.view.system.System', {
                         },
                         // Painel Direito Inferior
                         {
-                            xtype: 'panel',
-                            //title: 'Inferior',
-                            flex: 1
+                            xtype: 'tabpanel',
+                            flex: 1,
+                            items: [
+                                {
+                                    xtype: 'system-members-grid',
+                                    title: 'System Members',
+                                    reference: 'members-grid',
+                                    bind: {
+                                        store: '{members}'
+                                    },
+                                    listeners: {
+                                        select: 'onSelectSystemMember'
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }
