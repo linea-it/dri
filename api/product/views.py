@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+from django.core.exceptions import ObjectDoesNotExist
 
 import django_filters
 from rest_framework import filters
@@ -146,13 +147,20 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             if row.prd_owner and request.user.pk == row.prd_owner.pk:
                 editable = True
 
+            starred = True
+            try:
+                BookmarkProduct.objects.get(product=row.id, owner=request.user.pk)
+            except ObjectDoesNotExist:
+                starred = False
+
+            # logger.error(request.user)
             # Adiciono os atributos que serao usados pela interface
             # esse dict vai ser um no filho de um dos nos de classe.
             catalog.update({
                 "text": row.prd_display_name,
                 "leaf": True,
                 "iconCls": "no-icon",
-                "starred": False,
+                "starred": starred,
                 "markable": True,
                 "editable": editable
             })

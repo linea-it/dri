@@ -110,6 +110,7 @@ Ext.define('Target.view.catalog.CatalogController', {
                         'is_starred': true
                       })
                     }
+
                     store.sync();
                   }
             });
