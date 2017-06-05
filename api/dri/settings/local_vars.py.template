@@ -39,6 +39,10 @@ CUTOUT_USER = '<User required for cutout>'
 CUTOUT_PASSWORD = '<password required for cutout>'
 CUTOUT_ROOT = '<cutouts main directory>'
 
+# Target Viewer Rating, Reject Schema
+# https://github.com/linea-it/dri/issues/467
+SCHEMA_RATING_REJECT = None
+
 
 # Exemple using Mysql need mysqlclient in requiments.txt
 # DATABASES = {
