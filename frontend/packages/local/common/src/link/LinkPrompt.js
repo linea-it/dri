@@ -5,7 +5,9 @@ Ext.define('common.link.LinkPrompt', {
         link: null
     },
 
-    header: false,
+    // header: true,
+    closable: true,
+    title: 'Get Link',
 
     closeAction: 'destroy',
 

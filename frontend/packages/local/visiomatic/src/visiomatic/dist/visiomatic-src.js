@@ -2325,7 +2325,7 @@ L.SpinBox = L.Evented.extend({
 				}
 			}, this);
 		}
-	
+
 		if (options.disabled) {
 			this.disable();
 		}
@@ -2471,9 +2471,9 @@ L.spinbox = function (parent, options) {
 //           loadMessage    - Message to display while initial tree loads (can be HTML)
 //
 // TERMS OF USE
-// 
+//
 // This plugin is dual-licensed under the GNU General Public License and the MIT License and
-// is copyright 2008 A Beautiful Site, LLC. 
+// is copyright 2008 A Beautiful Site, LLC.
 //
 */
 
@@ -3015,21 +3015,21 @@ if (typeof require !== 'undefined') {
 			title: 'Toggle full screen mode',
 			forceSeparateButton: false
 		},
-	
+
 		onAdd: function (map) {
 			var className = 'leaflet-control-zoom-fullscreen', container;
-		
+
 			if (map.zoomControl && !this.options.forceSeparateButton) {
 				container = map.zoomControl._container;
 			} else {
 				container = L.DomUtil.create('div', 'leaflet-bar');
 			}
-		
+
 			this._createButton(this.options.title, className, container, this.toogleFullScreen, map);
 
 			return container;
 		},
-	
+
 		_createButton: function (title, className, container, fn, context) {
 			var link = L.DomUtil.create('a', className, container);
 			link.href = '#';
@@ -3077,7 +3077,7 @@ if (typeof require !== 'undefined') {
 				this._isFullscreen = true;
 			}
 		},
-	
+
 		_handleEscKey: function () {
 			if (!fullScreenApi.isFullScreen(this) && !this._exitFired) {
 				this.fire('exitFullscreen');
@@ -3098,7 +3098,7 @@ if (typeof require !== 'undefined') {
 		return new L.Control.FullScreen(options);
 	};
 
-/* 
+/*
 Native FullScreen JavaScript API
 -------------
 Assumes Mozilla naming conventions instead of W3C for now
@@ -3116,7 +3116,7 @@ source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugi
 			prefix: ''
 		},
 		browserPrefixes = 'webkit moz o ms khtml'.split(' ');
-	
+
 	// check for native support
 	if (typeof document.exitFullscreen !== 'undefined') {
 		fullScreenApi.supportsFullScreen = true;
@@ -3130,7 +3130,7 @@ source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugi
 			}
 		}
 	}
-	
+
 	// update methods to do something useful
 	if (fullScreenApi.supportsFullScreen) {
 		fullScreenApi.fullScreenEventName = fullScreenApi.prefix + 'fullscreenchange';
@@ -3590,7 +3590,7 @@ L.Control.IIP = L.Control.extend({
 			}, this);
 			inputdiv.appendChild(input);
 		}
-	
+
 		var name = L.DomUtil.create('div', 'leaflet-control-iip-layername', layerItem);
 		name.innerHTML = ' ' + obj.name;
 		name.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
@@ -4010,7 +4010,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		// Create Mode selection control section
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'mono',
 		  (this._mode === 'mono'), function () {
-			// Save previous settings 
+			// Save previous settings
 			_this.saveSettings(layer, _this._settings, _this._mode);
 
 			// Remove previous dialogs
@@ -4028,7 +4028,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'color',
 		  (this._mode !== 'mono'), function () {
-			// Save previous settings 
+			// Save previous settings
 			_this.saveSettings(layer, _this._settings, _this._mode);
 			// Remove previous dialogs
 			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
@@ -4093,7 +4093,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		this._addMinMax(layer, layer.iipChannel, box);
 		layer.redraw();
 	},
- 
+
 	_initColorDialog: function (layer, box) {
 		// Multiple Channels with mixing matrix
 
@@ -4417,7 +4417,7 @@ L.Control.IIP.Doc = L.Control.IIP.extend({
 	_onloadNav: function () {
 		if (true) {
 			// Force all external iframe links to open in new tab/window
-			// from 
+			// from
 			var	as = this._iframe.contentDocument.getElementsByTagName('a');
 			for (var i = 0; i < as.length; i++) {
 				if (L.IIPUtils.isExternal(as[i].href)) {
@@ -5215,7 +5215,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 			L.DomEvent.on(input, 'click', this._onInputClick, this);
 			inputdiv.appendChild(input);
 		}
-		
+
 		var name = L.DomUtil.create('div', 'leaflet-control-layers-name', item);
 		name.innerHTML = ' ' + obj.name;
 		name.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
@@ -5559,7 +5559,7 @@ L.control.scale.wcs = function (options) {
 
 
 /*
-# L.Control.Sidebar adds support for responsive side bars 
+# L.Control.Sidebar adds support for responsive side bars
 # Adapted from the leaflet-sidebar plugin by Tobias Bieniek
 # (original copyright notice reproduced below).
 #
@@ -5647,7 +5647,7 @@ L.Control.Sidebar = L.Control.extend({
 		var className = 'leaflet-control-zoom-sidebar',
 				parent = map._controlContainer,
 		    buttonContainer;
-	
+
 		// Create sidebar
 		L.DomUtil.addClass(map._container, 'sidebar-map');
 		parent.insertBefore(this._sidebar, parent.firstChild);
@@ -5663,7 +5663,7 @@ L.Control.Sidebar = L.Control.extend({
 		} else {
 			buttonContainer = L.DomUtil.create('div', 'leaflet-bar');
 		}
-		
+
 		this._toggleButton = this._createButton(this.options.title,
 		  className + (this.options.collapsed ? ' collapsed' : ''), buttonContainer);
 
