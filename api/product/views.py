@@ -12,12 +12,16 @@ from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView
 from rest_framework.decorators import api_view
 from django.db.models import Q
+from django.db import transaction
 from common.filters import IsOwnerFilterBackend
 from .models import Product, Catalog, Map, Mask, CutOutJob, ProductContent, ProductContentAssociation, ProductSetting, \
     CurrentSetting, ProductContentSetting, Permission, WorkgroupUser
 from .serializers import *
 from .filters import ProductPermissionFilterBackend
 import operator
+
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 logger = logging.getLogger(__name__)
 
@@ -550,16 +554,23 @@ class FilterConditionViewSet(viewsets.ModelViewSet):
 #    data = json.dumps({'status':'success'})
 #    return Response(data, status=status.HTTP_200_OK)
 
-
-class SaveFilterAsProduct(CreateAPIView):
+class SaveFilterAsProduct(viewsets.ModelViewSet):
     """
-    API endpoint that create a product using a filter
+    API endpoint that allows External Processes to be imported
     """
     http_method_names = ['post', ]
-    ##authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
-    ##permission_classes = (IsAuthenticated,)
+    
+    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
 
+    permission_classes = (IsAuthenticated,)
+    
+    #serializer_class = ExternalProcessSerializer
+    
+    @transaction.atomic
     def create(self, request):
-        data=json.dumps({'status':'success'})
-        return Response(data, status=status.HTTP_200_OK)
-
+        response = {} 
+        if response is not None:
+            return response
+        else:
+            raise Exception('was a failure to create the record.')
+        

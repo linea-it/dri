@@ -70,10 +70,9 @@ router.register(r'flagged', validation_views.FlaggedViewSet)
 router.register(r'defect', validation_views.DefectViewSet)
 router.register(r'filters', common_views.FilterViewSet)
 router.register(r'site', product_register_views.SiteViewSet)
-router.register(r'saveas', product_views.SaveFilterAsProduct)
 
-router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet,
-                base_name='importprocess')
+router.register(r'product/saveas', product_views.SaveFilterAsProduct, base_name="productsaveas")
+router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet,  base_name='importprocess')
 router.register(r'importauthorization', product_register_views.AuthorizationViewSet)
 
 router.register(r'application', interfaces_views.ApplicationViewSet)
@@ -95,15 +94,11 @@ router.register(r'userquery', userquery_views.UserQueryViewSet)
 # Comment API
 router.register(r'comment/position', comment_views.PositionViewSet)
 
-# FilterCommands
-#router.register(r'savefilterproduct', product_views.SaveFilterAsProduct.as_view(), 
-#    base_name="savefilterproduct")
-
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^admin', admin.site.urls),
-    url(r'^', include(router.urls)), 
+    url(r'^', include(router.urls)),
     url(r'^contact/', common_views.contact_us),
 
     url(r'^teste/', common_views.teste),
@@ -112,3 +107,5 @@ urlpatterns = [
 
 if USE_OAUTH:
     urlpatterns += (url(r'^accounts/', include('allauth.urls')),)
+
+    
