@@ -23,7 +23,10 @@ Ext.define('Target.view.preview.Preview', {
     items: [
         {
             xtype: 'targets-visiomatic',
-            reference: 'visiomatic'
+            reference: 'visiomatic',
+            bind: {
+                showCrosshair: '{BtnCrosshair.pressed}'
+            }
         }
     ],
     dockedItems: [{
@@ -107,9 +110,17 @@ Ext.define('Target.view.preview.Preview', {
             '-',
             {
                 xtype: 'button',
-                iconCls: 'x-fa fa-crosshairs',
+                iconCls: 'x-fa fa-arrows',
                 tooltip: 'Center',
                 handler: 'onCenterTarget'
+            },
+            {
+                xtype: 'button',
+                iconCls: 'x-fa fa-crosshairs',
+                tooltip: 'Show/Hide Crosshair',
+                enableToggle: true,
+                pressed: true,
+                reference: 'BtnCrosshair'
             },
             {
                 xtype: 'button',
