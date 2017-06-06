@@ -44,7 +44,18 @@ Ext.define('Explorer.view.system.Visiomatic', {
                         value: '{currentDataset.tli_tilename}'
                     }
                 }
+                // {
+                //     xtype: 'button',
+                //     iconCls: 'x-fa fa-crosshairs',
+                //     tooltip: 'Show/Hide Crosshair',
+                //     enableToggle: true,
+                //     pressed: true,
+                //     bind: {
+                //         pressed: '{showCrosshair}'
+                //     }
+                // }
             ]
+
         });
 
         me.callParent(arguments);
