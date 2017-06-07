@@ -385,5 +385,8 @@ class BookmarkProduct(models.Model):
     is_starred = models.BooleanField(
         default=False, verbose_name='Is Starred')
 
+    is_owner = models.BooleanField(
+        default=False, verbose_name='Is Owner')
+
     def __str__(self):
         return str(self.fst_name)

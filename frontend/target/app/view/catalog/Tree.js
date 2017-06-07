@@ -53,7 +53,7 @@ Ext.define('Target.view.catalog.Tree', {
                     dataIndex: 'text',
                     renderer: function (value, metadata, record) {
                         if(record.data.starred){
-                            metadata.innerCls = 'fa fa-bookmark';
+                            metadata.innerCls = record.data.icon;
                         }
                         return value
                     },

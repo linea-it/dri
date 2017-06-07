@@ -159,7 +159,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             catalog.update({
                 "text": row.prd_display_name,
                 "leaf": True,
-                "iconCls": "no-icon",
+                "icon": ("no-icon", "x-fa fa-bookmark")[starred],
                 "starred": starred,
                 "markable": True,
                 "editable": editable

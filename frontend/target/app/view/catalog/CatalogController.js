@@ -93,25 +93,26 @@ Ext.define('Target.view.catalog.CatalogController', {
                   scope: this,
                   callback: function (records, operation, success) {
                     var starred = true;
-                    const owner_record = records.filter( rec => {
+                    if(records){
+                      const owner_record = records.filter( rec => {
                         return rec.data.is_owner
-                    })
-                    if (owner_record && owner_record.length === 1) {
-                      node = view.getStore().findNode('id', selected.get('id'));
-                      node.set('iconCls', 'no-icon');
-                      node.set('starred', false);
-                      store.remove(owner_record[0]);
-                    } else if (owner_record.length === 0) {
-                      node = view.getStore().findNode('id', selected.get('id'));
-                      node.set('iconCls', 'no-icon');
-                      node.set('starred', true);
-                      store.add({
-                        'product': selected.get('id'),
-                        'is_starred': true
                       })
-                    }
+                      if (owner_record && owner_record.length === 1) {
+                        node = view.getStore().findNode('id', selected.get('id'));
+                        node.set('starred', false);
+                        store.remove(owner_record[0]);
+                      } else if (owner_record.length === 0) {
+                        node = view.getStore().findNode('id', selected.get('id'));
+                        node.set('starred', true);
+                        node.set('icon', 'x-fa fa-bookmark');
+                        store.add({
+                          'product': selected.get('id'),
+                          'is_starred': true
+                        })
+                      }
 
-                    store.sync();
+                      store.sync();
+                    }
                   }
             });
         }
