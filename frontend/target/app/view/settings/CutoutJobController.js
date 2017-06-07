@@ -3,6 +3,29 @@ Ext.define('Target.view.settings.CutoutJobController', {
 
     alias: 'controller.cutoutjob',
 
+    listen: {
+        component: {
+            'target-cutoutjob-form': {
+                changeproduct: 'onChangeProduct'
+            }
+        }
+    },
+
+    onChangeProduct: function (product) {
+        var me = this,
+            vm = me.getViewModel(),
+            contents = vm.getStore('contents');
+
+        vm.set('currentProduct', product);
+
+        contents.addFilter({
+            property: 'pcn_product_id',
+            value: product.get('id')
+        });
+
+        contents.load();
+    },
+
     onCancelAddJob: function () {
         var me = this,
             win = me.getView(),
@@ -21,15 +44,17 @@ Ext.define('Target.view.settings.CutoutJobController', {
             view = me.getView(),
             vm = me.getViewModel(),
             cutoutjobs = vm.getStore('cutoutjobs'),
-            product = vm.get('currentCatalog'),
+            product = vm.get('currentProduct'),
             form = view.down('form'),
             values, job;
 
         if (form.isValid()) {
 
-            view.setLoading(true);
+            // view.setLoading(true);
 
             values = form.getValues();
+
+            console.log(values);
 
             job = Ext.create('Target.model.CutoutJob', {
                 cjb_product: product.get('id'),
@@ -61,6 +86,14 @@ Ext.define('Target.view.settings.CutoutJobController', {
 
                 }
             }
+
+            if ((values.label_properties) && (values.label_properties.length > 0)) {
+                job.set('cjb_label_position', values.label_position);
+                job.set('cjb_label_properties', values.label_properties.join());
+
+            }
+
+            console.log('job', '=', job);
 
             // adicionar o record a store e fazer o sync
             cutoutjobs.add(job);

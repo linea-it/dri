@@ -51,8 +51,17 @@ Ext.define('Target.view.settings.Cutout', {
                             bind: {
                                 // disabled: '{!cutoutJobsGrid.selection.ready_to_download}'
                             }
+                        },
+                        {
+                            tooltip:'Remove Cutout Job',
+                            iconCls: 'x-fa fa-trash',
+                            ui: 'soft-red',
+                            handler: 'onRemoveCutoutJob',
+                            disabled: true,
+                            bind: {
+                                disabled: '{!cutoutJobsGrid.selection}'
+                            }
                         }
-
                     ]
                 }
             ],

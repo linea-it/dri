@@ -5,11 +5,12 @@ Ext.define('Target.view.settings.CutoutJobModel', {
 
     requires: [
         'Target.model.CutoutJob',
-        'Target.store.CutoutJobs'
+        'Target.store.CutoutJobs',
+        'Target.store.ProductDisplayContents'
     ],
 
     links: {
-        currentCatalog: {
+        currentProduct: {
             type: 'Target.model.Catalog',
             create: true
         }
@@ -29,6 +30,10 @@ Ext.define('Target.view.settings.CutoutJobModel', {
                 {name: 'y1a1_coadd_dfull',  displayName: 'Y1A1 COADD DFULL'},
                 {name: 'sva1_coadd', displayName: 'SVA1 COADD'}
             ]
+        },
+        contents: {
+            type: 'product-display-contents',
+            autoLoad: false
         }
     }
 });

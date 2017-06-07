@@ -6,6 +6,7 @@ Ext.define('Target.view.settings.CutoutJobs', {
     initComponent: function () {
         var me = this;
         Ext.apply(this, {
+            markDirty: false,
             columns: [
                 {
                     text: 'Name',

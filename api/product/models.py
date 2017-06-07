@@ -218,6 +218,7 @@ class CutOutJob(models.Model):
         ('er', 'Error'),
         # Erro com o job no lado da Api.
         ('job_error', 'Job Error'),
+        ('dl', 'Delete'),
     )
 
     cjb_product = models.ForeignKey(

@@ -824,7 +824,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             }
         });
 
-        me.winCutout.getViewModel().set('currentCatalog', currentCatalog);
+        me.winCutout.setCurrentProduct(currentCatalog);
 
         me.winCutout.show();
 
