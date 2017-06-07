@@ -121,6 +121,16 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
         if prd_display_name:
             queryset = self.queryset.filter(prd_display_name__icontains=prd_display_name)
 
+        # Bookmark
+        bookmarked = request.query_params.get('bookmark', None)
+        if bookmarked:
+            # Recuperar todos os catalogos marcados como favorito pelo usuario logado
+            bookmarkeds = BookmarkProduct.objects.filter(owner=request.user.pk)
+            if bookmarkeds.count() > 0:
+                ids = bookmarkeds.values_list('product', flat=True)
+                queryset = self.queryset.filter(pk__in=ids)
+
+
         # Esse dicionario vai receber os nos principais que sao as classes.
         classes = dict()
 
@@ -147,23 +157,25 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             if row.prd_owner and request.user.pk == row.prd_owner.pk:
                 editable = True
 
-            starred = True
-            try:
-                BookmarkProduct.objects.get(product=row.id, owner=request.user.pk)
-            except ObjectDoesNotExist:
-                starred = False
-
-            # logger.error(request.user)
             # Adiciono os atributos que serao usados pela interface
             # esse dict vai ser um no filho de um dos nos de classe.
             catalog.update({
                 "text": row.prd_display_name,
                 "leaf": True,
-                "icon": ("no-icon", "x-fa fa-bookmark")[starred],
-                "starred": starred,
-                "markable": True,
+                "iconCls": "no-icon",
+                "bookmark": None,
                 "editable": editable
             })
+
+            try:
+                bookmark = BookmarkProduct.objects.get(product=row.id, owner=request.user.pk)
+                catalog.update({
+                    "bookmark": bookmark.pk,
+                    "iconCls": "x-fa fa-star color-icon-starred"
+                })
+
+            except ObjectDoesNotExist:
+                pass
 
             # pega o no da classe e adiciona este no como filho.
             dclass = classes.get(class_name)
@@ -560,7 +572,7 @@ class BookmarkedViewSet(viewsets.ModelViewSet):
 
     serializer_class = BookmarkedSerializer
 
-    filter_fields = ('id', 'product', 'owner', 'is_starred', 'is_owner')
+    filter_fields = ('id', 'product', 'owner', 'is_starred')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

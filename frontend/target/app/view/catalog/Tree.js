@@ -50,13 +50,13 @@ Ext.define('Target.view.catalog.Tree', {
                     text: 'Name',
                     flex: 2,
                     sortable: true,
-                    dataIndex: 'text',
-                    renderer: function (value, metadata, record) {
-                        if(record.data.starred){
-                            metadata.innerCls = record.data.icon;
-                        }
-                        return value
-                    },
+                    dataIndex: 'text'
+                    // renderer: function (value, metadata, record) {
+                    //     if(record.data.starred){
+                    //         metadata.innerCls = record.data.icon;
+                    //     }
+                    //     return value
+                    // },
                 },
                 {
                     text: 'Owner',
@@ -147,7 +147,6 @@ Ext.define('Target.view.catalog.Tree', {
                     enableToggle: true,
                     // disabled: true,
                     bind: {
-                        // disabled: '{!selectedCatalog.markable}',
                         pressed: '{selectedCatalog.starred}'
                     },
                     menu: [{
