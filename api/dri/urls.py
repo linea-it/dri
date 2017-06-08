@@ -64,6 +64,7 @@ router.register(r'workgroup', product_views.WorkgroupViewSet)
 router.register(r'workgroup_users', product_views.WorkgroupUserViewSet)
 router.register(r'filterset', product_views.FiltersetViewSet)
 router.register(r'filtercondition', product_views.FilterConditionViewSet)
+router.register(r'bookmarked', product_views.BookmarkedViewSet)
 
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
@@ -89,7 +90,7 @@ router.register(r'coadd_objects', catalog_views.CoaddObjects, base_name='coadd_o
 # API Catalogos para o Visiomatic
 router.register(r'visiomatic/coadd_objects', catalog_views.VisiomaticCoaddObjects, base_name='visiomatic_coadd_objects')
 
-# UserQuery API 
+# UserQuery API
 router.register(r'userquery', userquery_views.UserQueryViewSet)
 
 # Comment API

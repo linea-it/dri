@@ -371,3 +371,22 @@ class FilterCondition(models.Model):
 
     def __str__(self):
         return str("%s %s %s" % (self.fcd_property, self.fcd_operation, self.fcd_value))
+
+# ---------------------------------- Bookmark ----------------------------------
+
+class BookmarkProduct(models.Model):
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, verbose_name='Product')
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+
+    is_starred = models.BooleanField(
+        default=False, verbose_name='Is Starred')
+
+    is_owner = models.BooleanField(
+        default=False, verbose_name='Is Owner')
+
+    def __str__(self):
+        return str(self.fst_name)

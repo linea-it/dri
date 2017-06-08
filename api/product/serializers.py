@@ -888,3 +888,31 @@ class FilterConditionSerializer(serializers.ModelSerializer):
             return operators.get(obj.fcd_operation)
         except:
             return None
+
+# ---------------------------------- Bookmark ----------------------------------
+
+class BookmarkedSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BookmarkProduct
+
+
+        fields = (
+            'id',
+            'product',
+            'owner',
+            'is_starred',
+            'is_owner'
+        )
+
+    def get_owner(self, obj):
+        return obj.owner.username
+
+    def get_is_owner(self, obj):
+        current_user = self.context['request'].user
+        if obj.owner.pk == current_user.pk:
+            return True
+        else:
+            return False
