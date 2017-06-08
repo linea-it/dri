@@ -217,7 +217,8 @@ class CutOutJob(models.Model):
         # Erro no nosso lado
         ('er', 'Error'),
         # Erro com o job no lado da Api.
-        ('job_error', 'Job Error'),
+        ('je', 'Job Error'),
+        # Marcado como Deletado
         ('dl', 'Delete'),
     )
 

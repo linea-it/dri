@@ -20,15 +20,17 @@ Ext.define('Target.view.settings.CutoutController', {
 
         vm.set('currentCatalog', currentCatalog);
 
-        cutoutjobs.addFilter({
-            property: 'cjb_product',
-            value: currentCatalog.get('id')
-        }, {
-            property: 'cjb_status',
-            operator: '!=',
-            value: 'dl'
-        });
-
+        cutoutjobs.addFilter([
+            {
+                property: 'cjb_product',
+                value: currentCatalog.get('id')
+            },
+            {
+                property: 'cjb_status',
+                operator: 'in',
+                value: ['st', 'bs', 'rn', 'ok', 'er', 'je']
+            }
+        ]);
         cutoutjobs.load();
 
         me.taskReloadJobs = Ext.TaskManager.start({
@@ -58,13 +60,16 @@ Ext.define('Target.view.settings.CutoutController', {
         if (!win) {
             win = Ext.create('Target.view.settings.CutoutJobForm',{
                 reference: 'winCutoutJobForm',
-                modal: true
+                modal: true,
+                listeners: {
+                    close: 'reloadJobs'
+                }
             });
 
             me.getView().add(win);
         }
 
-        win.winCutout.setCurrentProduct(currentCatalog);
+        win.setCurrentProduct(currentCatalog);
 
         win.show();
 
@@ -104,9 +109,7 @@ Ext.define('Target.view.settings.CutoutController', {
             store = me.getViewModel().getStore('cutoutjobs'),
             record = grid.selection;
 
-        console.log('record', '=', record);
         me.startStopTask(false);
-
 
         // Marcando a linha como Deletada
         record.set('cjb_status', 'dl');
@@ -133,6 +136,5 @@ Ext.define('Target.view.settings.CutoutController', {
             }
 
         }
-
     }
 });

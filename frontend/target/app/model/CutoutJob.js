@@ -35,6 +35,38 @@ Ext.define('Target.model.CutoutJob', {
                 }
 
             }
+        },
+        {
+            name: 'status',
+            type: 'string',
+            persist: false,
+            convert: function (value, record) {
+                var status = '';
+                switch (record.get('cjb_status')) {
+                    case 'st':
+                        status = 'Start';
+                        break;
+                    case 'bs':
+                        status = 'Submit Job';
+                        break;
+                    case 'rn':
+                        status = 'Running';
+                        break;
+                    case 'ok':
+                        status = 'Done';
+                        break;
+                    case 'er':
+                        status = 'Error';
+                        break;
+                    case 'je':
+                        status = 'Job Error';
+                        break;
+                    case 'dl':
+                        status = 'Deleted';
+                        break;
+                }
+                return status;
+            }
         }
     ]
 
