@@ -34,6 +34,8 @@ Ext.define('Sky.view.dataset.DatasetController', {
         }
     },
 
+    winGetLink: null,
+
     onLoadPanel: function (dataset) {
         var me = this;
 
@@ -155,9 +157,12 @@ Ext.define('Sky.view.dataset.DatasetController', {
             link = Ext.String.format('{0}/#dataset/{1}/{2}', host, current.get('id'), coordinate);
         }
 
-        Ext.create('common.link.LinkPrompt', {
+        me.winGetLink = Ext.create('common.link.LinkPrompt', {
             link: link
-        }).show();
+        });
+
+        me.winGetLink.show();
+
     },
 
     toAladin: function () {
@@ -166,6 +171,11 @@ Ext.define('Sky.view.dataset.DatasetController', {
             current = vm.get('currentDataset'),
             release = current.get('release'),
             hash;
+
+        if (me.winGetLink != null) {
+            me.winGetLink.close();
+            me.winGetLink = null;
+        }
 
         hash = 'sky/' + release;
 

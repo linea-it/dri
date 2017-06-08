@@ -8,8 +8,8 @@ class Rating(models.Model):
     owner = models.IntegerField(
         verbose_name='Owner', null=False)
 
-    object_id = models.IntegerField(
-        verbose_name='Object Id', null=False, blank=False)
+    object_id = models.CharField(
+        max_length=255, verbose_name='Object Id', null=False, blank=False)
 
     rating = models.IntegerField(
         verbose_name='Rating', null=False, blank=False)
@@ -25,8 +25,8 @@ class Reject(models.Model):
     owner = models.IntegerField(
         verbose_name='Owner', null=False, blank=False)
 
-    object_id = models.IntegerField(
-        verbose_name='Object Id', null=False, blank=False)
+    object_id = models.CharField(
+        max_length=255, verbose_name='Object Id', null=False, blank=False)
 
     reject = models.BooleanField(
         verbose_name='Reject', default=False, null=False, blank=False)
@@ -42,8 +42,8 @@ class Comments(models.Model):
     owner = models.IntegerField(
         verbose_name='Owner', null=False, blank=False)
 
-    object_id = models.IntegerField(
-        verbose_name='Object Id', null=False, blank=False)
+    object_id = models.CharField(
+        max_length=255, verbose_name='Object Id', null=False, blank=False)
 
     date = models.DateTimeField(
         auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Creation Date')

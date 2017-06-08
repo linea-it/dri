@@ -16,7 +16,10 @@ Ext.define('Target.view.objects.ObjectsController', {
         'Target.model.Rating',
         'Target.model.Reject',
         'Target.view.wizard.Wizard',
-        'Target.view.objects.FiltersWindow'
+        'Target.view.objects.FiltersWindow',
+        'Target.view.objects.SaveCatalogWindow',
+        'Target.view.objects.DownloadWindow',
+        'Target.view.settings.CutoutJobForm'
     ],
 
     listen: {
@@ -39,8 +42,10 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     winAlertSetting: null,
     winFilters: null,
-
+    winSaveAs: null,
     wizard: null,
+    winDownload: null,
+    winCutout: null,
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
         var me = this,
@@ -782,10 +787,64 @@ Ext.define('Target.view.objects.ObjectsController', {
     onClickSaveAs: function () {
         console.log('onClickSaveAs');
 
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
+
+        if (me.winSaveAs !== null) {
+            me.winSaveAs.close();
+            me.winSaveAs = null;
+        }
+
+        me.winSaveAs = Ext.create('Target.view.objects.SaveCatalogWindow',{});
+
+        me.winSaveAs.setCurrentCatalog(currentCatalog);
+
+        me.winSaveAs.show();
+
     },
 
-    onClickDownloadCutouts: function () {
-        console.log('onClickDownloadCutouts');
+    onClickCreateCutouts: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
+
+        if (me.winCutout !== null) {
+            me.winCutout.close();
+            me.winCutout = null;
+        }
+
+        me.winCutout = Ext.create('Target.view.settings.CutoutJobForm',{
+            modal: true,
+            listeners: {
+                scope: me,
+                submitedjob: function () {
+                    Ext.MessageBox.alert('', 'The job will run in the background and you will be notified when it is finished.');
+                }
+            }
+        });
+
+        me.winCutout.getViewModel().set('currentCatalog', currentCatalog);
+
+        me.winCutout.show();
+
+    },
+
+    onClickDownload: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
+
+        if (me.winDownload !== null) {
+            me.winDownload.close();
+            me.winDownload = null;
+        }
+
+        me.winDownload = Ext.create('Target.view.objects.DownloadWindow',{});
+
+        me.winDownload.setCurrentCatalog(currentCatalog);
+
+        me.winDownload.show();
 
     }
 
