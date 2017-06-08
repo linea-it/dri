@@ -153,6 +153,7 @@ Ext.define('Target.view.objects.Panel', {
                 },
                 {
                     xtype: 'targets-objects-mosaic',
+                    reference: 'TargetMosaic',
                     bind: {
                         store: '{objects}'
                     },
@@ -164,7 +165,8 @@ Ext.define('Target.view.objects.Panel', {
                             displayField: 'cjb_display_name',
                             publishes: 'id',
                             bind: {
-                                store: '{cutoutsJobs}'
+                                store: '{cutoutsJobs}',
+                                selection: '{currentCutoutJob}'
                             },
                             listeners: {
                                 select: 'onSelectCutoutJob'

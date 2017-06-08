@@ -279,11 +279,12 @@ Ext.define('Target.view.objects.Grid', {
         if (typeof(value) === 'number') {
 
             if (value > 10000) {
-                // Se for maior que 10.000 usar notacao exponencial
-                value = value.toExponential(1);
+                // Se for maior que 10000 e tiver um float usar notacao exponencial
+                if (value.toString().indexOf('.') != -1) {
+                    value = value.toExponential(1);
+                }
 
             } else {
-                // Se for float
                 if (value.toString().indexOf('.') != -1) {
                     aValue = value.toString().split('.');
                     decimal = aValue[1];

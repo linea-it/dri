@@ -846,6 +846,21 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         me.winDownload.show();
 
+    },
+
+    onSelectCutoutJob: function (cmb) {
+        var me = this,
+            vm = me.getViewModel(),
+            cutoutJob = vm.get('currentCutoutJob'),
+            mosaic = me.lookup('TargetMosaic');
+
+        if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
+            console.log('Selecionou um CutoutJob');
+
+            // Setar no Mosaic o Cutout Job Selecionado
+            mosaic.setCutoutJob(cutoutJob);
+        }
+
     }
 
 });
