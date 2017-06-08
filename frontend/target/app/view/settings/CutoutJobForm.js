@@ -2,7 +2,9 @@ Ext.define('Target.view.settings.CutoutJobForm', {
     extend: 'Ext.window.Window',
 
     requires: [
-        'Ext.slider.Single'
+        'Ext.slider.Single',
+        'Target.view.settings.CutoutJobController',
+        'Target.view.settings.CutoutJobModel'
     ],
 
     title: 'Create Cutout',
@@ -10,6 +12,9 @@ Ext.define('Target.view.settings.CutoutJobForm', {
     height: 480,
     layout: 'fit',
     modal: true,
+
+    controller: 'cutoutjob',
+    viewModel: 'cutoutjob',
 
     closeAction: 'hide',
 

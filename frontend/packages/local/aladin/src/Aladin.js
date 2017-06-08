@@ -119,6 +119,9 @@ Ext.define('aladin.Aladin', {
 
         // habilitar o campo de GoTo
         enableGoto: true,
+        // esse parametro determina se o campo de GoTo, vai posicionar a imagem na coordenada
+        // ou se vai disparar um evento.
+        gotoSetPosition: true,
 
         // Este array permite adicionar mais items na toolbar.
         auxTools: [],
@@ -602,7 +605,7 @@ Ext.define('aladin.Aladin', {
 
         }
 
-        if (store.count()) {
+        if ((store) && (store.count())) {
             tile = store.filterByRaDec(radec[0], radec[1]);
 
         }
@@ -887,10 +890,26 @@ Ext.define('aladin.Aladin', {
 
     submitGoToPosition: function (field) {
         var me = this,
-            value = field.getValue();
+            value = field.getValue(),
+            position,
+            menu = field.up('menu');
 
         if ((field.isValid()) && (field.getValue() !== '')) {
-            me.goToPosition(value);
+
+            // Foi pedido que essa funcao dispare um evento ao inves de
+            // apontar a imagem para a posicao entao caso o parametro gotoSetPosition
+            // seja true executa o metodo goToPosition
+            // caso contrario dispara um evento.
+            if (me.getGotoSetPosition()) {
+                me.goToPosition(value);
+
+            } else {
+                // Desativar o item de menu para nao ficar na tela
+                menu.deactivateActiveItem ();
+
+                position = me.parsePosition(value);
+                me.fireEvent('gotoposition', position, me);
+            }
 
         } else {
             if (field.getValue() !== '') {
@@ -901,10 +920,8 @@ Ext.define('aladin.Aladin', {
 
     },
 
-    goToPosition: function (position) {
-        var me = this,
-            aladin = me.getAladin(),
-            ra, dec, newposition;
+    parsePosition: function (position) {
+        var ra, dec, newposition;
 
         if (position) {
             // Fix if value in degrees need a space between values
@@ -914,9 +931,24 @@ Ext.define('aladin.Aladin', {
                 dec = position[1].trim();
                 newposition = [ra, dec];
                 position = newposition.join(', ');
+            } else {
+                position = newposition;
             }
 
-            aladin.gotoObject(position);
+            return newposition;
+        }
+    },
+
+    goToPosition: function (position) {
+        var me = this,
+            aladin = me.getAladin(),
+            newposition;
+
+        if (position) {
+            // Fix if value in degrees need a space between values
+            newposition = me.parsePosition(position);
+
+            aladin.gotoObject(newposition);
         }
     },
 
