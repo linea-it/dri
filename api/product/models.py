@@ -260,6 +260,17 @@ class CutOutJob(models.Model):
     cjb_job_id = models.CharField(
         max_length=1024, verbose_name='Job ID', null=True, blank=True)
 
+    # Fields Referentes as labels que serao aplicadas ao cutout
+    cjb_label_position = models.CharField(
+        max_length=10, verbose_name='Label Position', choices=(('inside', 'Inside'), ('outside', 'Outside')),
+        null=True, blank=True,
+        help_text="This field determines the position of the labels, 'inside' for labels on the image and 'outside' for labels outside the image.")
+
+    cjb_label_properties = models.CharField(
+        max_length=1024, verbose_name='Label Properties', null=True, blank=True,
+        help_text="A list with the ids of the properties that will be used as a label. (Id = ProductContent.pk)")
+
+
     def __str__(self):
         return str(self.cjb_display_name)
 
@@ -373,6 +384,7 @@ class FilterCondition(models.Model):
 
     def __str__(self):
         return str("%s %s %s" % (self.fcd_property, self.fcd_operation, self.fcd_value))
+
 
 # ---------------------------------- Bookmark ----------------------------------
 
