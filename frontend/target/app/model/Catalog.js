@@ -34,9 +34,9 @@ Ext.define('Target.model.Catalog', {
 
         {name:'prd_is_public', type:'boolean', defaultValue: false},
         {name:'editable', type:'boolean', defaultValue: false},
-        {name:'markable', type:'boolean', defaultValue: false},
 
-        {name:'is_owner', type:'boolean', defaultValue: false}
+        {name:'is_owner', type:'boolean', defaultValue: false},
+        {name:'bookmark'}
 
     ]
 

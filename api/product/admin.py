@@ -127,6 +127,9 @@ class FiltersetdAdmin(admin.ModelAdmin):
 class FilterConditionAdmin(admin.ModelAdmin):
     list_display = ('id', 'filterset', 'fcd_property', 'fcd_property_name', 'fcd_operation', 'fcd_value')
 
+class BookmarkedAdmin(admin.ModelAdmin):
+    list_display = ('id', 'product', 'owner', 'is_starred')
+
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductRelease, ProductReleaseAdmin)
@@ -151,3 +154,5 @@ admin.site.register(WorkgroupUser, WorkgroupUserAdmin)
 
 admin.site.register(Filterset, FiltersetdAdmin)
 admin.site.register(FilterCondition, FilterConditionAdmin)
+
+admin.site.register(BookmarkProduct, BookmarkedAdmin)
