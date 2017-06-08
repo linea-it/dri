@@ -77,100 +77,77 @@ Ext.define('Target.view.catalog.CatalogController', {
         }
     },
 
-    onStarredCatalog: function (btn) {
+    onStarredCatalog: function () {
         var me = this,
             view = me.getView(),
-            vm = view.getViewModel(),
-            store = vm.getStore('bookmarks'),
             selected = view.getSelectedCatalog(),
             bookmark,
             node;
 
         if (selected && Number.isInteger(selected.get('id'))) {
-            store.addFilter([{property: 'product', value: selected.get('id')}]);
 
-            store.load({
-                  scope: this,
-                  callback: function (records, operation, success) {
-                    var starred = true;
-                    if(records){
-                      const owner_record = records.filter( rec => {
-                        return rec.data.is_owner
-                      })
-                      if (owner_record && owner_record.length === 1) {
-                        node = view.getStore().findNode('id', selected.get('id'));
-                        node.set('starred', false);
-                        store.remove(owner_record[0]);
-                      } else if (owner_record.length === 0) {
-                        node = view.getStore().findNode('id', selected.get('id'));
-                        node.set('starred', true);
-                        node.set('icon', 'x-fa fa-bookmark');
-                        store.add({
-                          'product': selected.get('id'),
-                          'is_starred': true
-                        })
-                      }
+            view.setLoading(true);
 
-                      store.sync();
+            node = view.getStore().findNode('id', selected.get('id'));
+
+            if ((selected.get('bookmark') > 0) && (selected.get('is_owner') === true)) {
+                // Criar um model setando o Id do model bookmark
+                bookmark = Ext.create('Target.model.Bookmarked',{
+                    'id': selected.get('bookmark')
+                });
+
+                // Deleta o Model no Backend
+                bookmark.erase({
+                    callback: function (saved, operation, success) {
+                        if (success) {
+                            // Altera os Icones e seta id bookmark como null
+                            node.set('bookmark', null);
+                            node.set('iconCls', 'no-icon');
+
+                            view.setLoading(false);
+
+                        }
                     }
-                  }
-            });
+                });
+
+            } else {
+                // Criar um Model sem id, com o id do produto e a flag is_starred true
+                bookmark = Ext.create('Target.model.Bookmarked',{
+                    'product': selected.get('id'),
+                    'is_starred': true
+                });
+
+                // Adiciona novo registro no database.
+                bookmark.save({
+                    callback: function (saved, operation, success) {
+                        if (success) {
+                            var obj = Ext.decode(operation.getResponse().responseText);
+
+                            // Altera o icon direto no tree node para que nao seja necessario fazer o reload.
+                            node.set('bookmark', obj.id);
+                            node.set('iconCls', 'x-fa fa-star color-icon-starred');
+
+                            view.setLoading(false);
+                        }
+                    }
+                });
+
+            }
         }
     },
 
     filterByStarred: function () {
-        console.log('filterByStarred');
-
         var me = this,
-            view = me.getView();
+            view = me.getView(),
+            vm = me.getViewModel(),
+            catalogs = vm.getStore('catalogs');
 
-        Ext.Ajax.request({
-            url: '/PRJSUB/TargetViewer/getStarredCatalogs',
-            scope: this,
-            success: function (response, opts) {
-                // Recuperar a resposta e fazer o decode no json.
-                var obj = Ext.decode(response.responseText);
-
-                if (obj.success != true) {
-                    // Se Model.py retornar alguma falha exibe a mensagem
-                    Ext.Msg.alert('Status', obj.msg);
-                } else {
-
-                    var data = obj.data;
-                    console.log('data', '=', data);
-                    if (data.length > 0) {
-
-                        var search = [];
-                        var ids = [];
-
-                        for (i in data) {
-                            var c = data[i];
-                            ids.push(c.catalog_id);
-                        }
-
-                        console.log('ids', '=', ids);
-
-                        var f = {
-                            property: 'catalog_id',
-                            value: ids.join(),
-                            operator: 'in'
-                        };
-
-                        search.push(f);
-
-                        view.filterCatalogs(search);
-                    }
-                }
-            },
-            failure: function (response, opts) {
-                //console.log("server-side failure " + response.status);
-                Ext.MessageBox.show({
-                    title: 'Server Side Failure',
-                    msg: response.status + ' ' + response.statusText,
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
-                });
-            }
+        catalogs.addFilter({
+            property: 'bookmark',
+            value: true
         });
+
+        catalogs.load();
+
     }
 });
