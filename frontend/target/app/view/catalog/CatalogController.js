@@ -141,12 +141,19 @@ console.log(node);
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
-            catalogs = vm.getStore('catalogs');
+            catalogs = vm.getStore('catalogs'),
+            bookmarkeds = catalogs.filters.items.filter(
+              ch => (ch._id == "bookmark")
+            );
 
-        catalogs.addFilter({
+        if(bookmarkeds.length == 0){
+          catalogs.addFilter({
             property: 'bookmark',
             value: true
-        });
+          });
+        }else{
+          console.log(catalogs.filters.items);
+        }
 
         catalogs.load();
 
