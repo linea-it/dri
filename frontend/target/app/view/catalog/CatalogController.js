@@ -89,8 +89,9 @@ Ext.define('Target.view.catalog.CatalogController', {
             view.setLoading(true);
 
             node = view.getStore().findNode('id', selected.get('id'));
-
-            if ((selected.get('bookmark') > 0) && (selected.get('is_owner') === true)) {
+console.log(selected);
+console.log(node);
+            if ((selected.get('bookmark') > 0) && (selected.get('starred') === true)) {
                 // Criar um model setando o Id do model bookmark
                 bookmark = Ext.create('Target.model.Bookmarked',{
                     'id': selected.get('bookmark')

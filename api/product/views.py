@@ -171,7 +171,8 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 bookmark = BookmarkProduct.objects.get(product=row.id, owner=request.user.pk)
                 catalog.update({
                     "bookmark": bookmark.pk,
-                    "iconCls": "x-fa fa-star color-icon-starred"
+                    "iconCls": "x-fa fa-star color-icon-starred",
+                    "starred": True
                 })
 
             except ObjectDoesNotExist:
