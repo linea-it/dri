@@ -89,8 +89,7 @@ Ext.define('Target.view.catalog.CatalogController', {
             view.setLoading(true);
 
             node = view.getStore().findNode('id', selected.get('id'));
-console.log(selected);
-console.log(node);
+
             if ((selected.get('bookmark') > 0) && (selected.get('starred') === true)) {
                 // Criar um model setando o Id do model bookmark
                 bookmark = Ext.create('Target.model.Bookmarked',{
@@ -137,22 +136,21 @@ console.log(node);
         }
     },
 
-    filterByStarred: function () {
+    filterByStarred: function (btn) {
         var me = this,
-            view = me.getView(),
             vm = me.getViewModel(),
             catalogs = vm.getStore('catalogs'),
-            bookmarkeds = catalogs.filters.items.filter(
-              ch => (ch._id == "bookmark")
-            );
+            bookmarkeds = catalogs.filters.items.filter(function (ch) { return ch.id === "bookmark"; });
 
-        if(bookmarkeds.length == 0){
-          catalogs.addFilter({
-            property: 'bookmark',
-            value: true
-          });
-        }else{
-          console.log(catalogs.filters.items);
+        if (bookmarkeds.length === 0) {
+            btn.setText('Show all');
+            catalogs.addFilter({
+                property: 'bookmark',
+                value: true
+            });
+        } else {
+            btn.setText('Show only bookmarked');
+            catalogs.removeFilter('bookmark');
         }
 
         catalogs.load();
