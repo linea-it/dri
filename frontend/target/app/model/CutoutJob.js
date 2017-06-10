@@ -13,6 +13,7 @@ Ext.define('Target.model.CutoutJob', {
         {name:'cjb_Blacklist', type: 'boolean', default: false},
 
         {name:'cjb_label_position', type: 'string'},
+        {name:'cjb_label_colors', type: 'string'},
         {name:'cjb_label_properties', type: 'string'},
 
         {name:'cjb_status', type: 'string', default: 'st'},

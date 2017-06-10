@@ -329,6 +329,7 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_Blacklist',
             'cjb_label_position',
             'cjb_label_properties',
+            'cjb_label_colors',
             'owner'
         )
 

@@ -23,7 +23,7 @@ Ext.define('Target.view.objects.Mosaic', {
 
     setStore: function (store) {
         this.store = store;
-        this.createView();
+//        this.createView();
     },
 
     setCutoutJob: function (cutoutJob) {
@@ -161,22 +161,34 @@ Ext.define('Target.view.objects.Mosaic', {
 
     createLabels: function () {
         var me = this,
+            cutoutJob = me.getCutoutJob(),
             labelProperties = me.getLabelProperties(),
             labels = [],
             tpl_label, label_element,
-            tpl_labels;
+            tpl_labels,
+            color = '',
+            class_labels = 'mosaic-labels-outside';
 
-        tpl_label = '<spam class="mosaic-labels">{0}: {[this.formatNumber(values.{0})]}</spam>',
+        if (cutoutJob.get('cjb_label_position') === 'inside') {
+            class_labels = 'mosaic-labels-inside';
+        }
+
+        if (cutoutJob.get('cjb_label_colors') !== null){
+            color = Ext.String.format('style="color:#{0};"', cutoutJob.get('cjb_label_colors'));
+
+        }
+
+        tpl_label = '<spam class="mosaic-labels" {0}>{1}: {[this.formatNumber(values.{1})]}</spam>',
 
         Ext.each(labelProperties, function (label) {
             console.log('label', '=', label);
 
-            label_element = Ext.String.format(tpl_label, label);
+            label_element = Ext.String.format(tpl_label, color, label);
             labels.push(label_element);
 
         }, me);
 
-        tpl_labels = '<div class="mosaic-labels-inside">' + labels.join('</br>') + '</div>';
+        tpl_labels = Ext.String.format('<div class="{0}">{1}</div>', class_labels, labels.join('</br>'));
 
         return tpl_labels;
 

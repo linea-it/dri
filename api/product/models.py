@@ -270,6 +270,8 @@ class CutOutJob(models.Model):
         max_length=1024, verbose_name='Label Properties', null=True, blank=True,
         help_text="A list with the ids of the properties that will be used as a label. (Id = ProductContent.pk)")
 
+    cjb_label_colors = models.CharField(
+        max_length=6, verbose_name='Label Colors', null=True, blank=True)
 
     def __str__(self):
         return str(self.cjb_display_name)

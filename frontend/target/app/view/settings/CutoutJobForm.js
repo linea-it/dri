@@ -11,7 +11,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
 
     title: 'Create Cutout',
     width: 600,
-    height: 580,
+    height: 450,
     layout: 'fit',
     modal: true,
 
@@ -144,12 +144,18 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     ]
                                 },
                                 {
+                                    xtype: 'colorfield',
+                                    fieldLabel: 'Color',
+                                    name: 'label_color',
+                                    value: '#2eadf5'
+                                },
+                                {
                                     xtype: 'tagfield',
                                     name: 'label_properties',
                                     fieldLabel: 'Properties',
                                     displayField: 'display_name',
                                     publishes: 'id',
-                                    valueField: 'id',
+                                    valueField: 'column_name',
                                     queryMode: 'local',
                                     allowBlank: true,
                                     growMax: 60,
