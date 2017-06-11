@@ -1,0 +1,13 @@
+version: '2'
+services:
+  dri:
+    build: .
+    volumes:
+      - /Users/felipemachado/Documents/linea/dri:/app
+    command: service apache2 restart
+    image: dri
+    ports:
+     - "80:80"
+    environment:
+     - "VIRTUAL_HOST=dri.com"
+    tty: true
