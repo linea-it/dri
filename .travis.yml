@@ -7,12 +7,10 @@ python:
 
 env:
   - DJANGO_SETTINGS_MODULE=dri.settings.travis
-  - SENCHA_CMD_VERSION=6.5.0
 
 before_install:
-  - echo $SENCHA_CMD_VERSION
   # Download Senhca CMD
-  - wget http://cdn.sencha.com/cmd/6.5.0/no-jre/SenchaCmd-$SENCHA_CMD_VERSION-linux-amd64.sh.zip
+  - wget http://cdn.sencha.com/cmd/6.5.0/no-jre/SenchaCmd-6.5.0-linux-amd64.sh.zip
 
 # command to install dependencies
 install:
@@ -23,12 +21,13 @@ install:
   - pip install pep8
 
   # Install Sencha CMD
-  - "unzip -q SenchaCmd-$SENCHA_CMD_VERSION-linux-amd64.sh.zip -d SenchaCmd-$SENCHA_CMD_VERSION"
-  - "cd SenchaCmd-$SENCHA_CMD_VERSION"
-  - "mv *.sh SenchaCmd-$SENCHA_CMD_VERSION.sh"
-  - "chmod +x SenchaCmd-$SENCHA_CMD_VERSION.sh"
-  - "./SenchaCmd-$SENCHA_CMD_VERSION.sh -q"
+  - "unzip -q SenchaCmd-6.5.0-linux-amd64.sh.zip -d SenchaCmd"
+  - "cd SenchaCmd"
+  - "mv *.sh SenchaCmd.sh"
+  - "chmod +x SenchaCmd.sh"
+  - "./SenchaCmd.sh -q"
   - "sencha"
+  - "cd .."
 
 #before_script:
 #  - "pep8 --exclude=migrations --ignore=E501,E225 src"
