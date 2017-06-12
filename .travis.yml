@@ -14,8 +14,8 @@ env:
 
 # command to install dependencies
 install:
-  - openjdk-7-jdk
-  - ant
+  - sudo apt-get install openjdk-7-jdk -y -q
+  - sudo apt-get install ant -y -q
   - pip install -r api/requirements.txt
   - pip install -r api/requirements_dev.txt
   - pip install coverage
