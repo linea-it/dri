@@ -9,6 +9,8 @@ env:
   - DJANGO_SETTINGS_MODULE=dri.settings.travis
 
 before_install:
+  - echo $TRAVIS_BUILD_DIR
+
   # Download Senhca CMD
   - wget http://cdn.sencha.com/cmd/6.5.0/no-jre/SenchaCmd-6.5.0-linux-amd64.sh.zip
   # Install Sencha CMD
@@ -22,10 +24,10 @@ before_install:
   - "cd .."
 
   # Build Sencha Apps
-  - cd ../frontend/target
+  - cd frontend/target
   - sencha app build production
 
-  - echo $TRAVIS_BUILD_DIR
+
 
   # Config GitHub
   - git config --global user.email "travis@travis-ci.org"
@@ -33,6 +35,7 @@ before_install:
   - git status
   - cd ../../
   - git add frontend/build/ -A
+  - git commit --message "Travis build: $TRAVIS_BUILD_NUMBER"
 
 # command to install dependencies
 install:
