@@ -54,6 +54,7 @@ THIRD_PARTY_APPS = [
     'corsheaders',
     'django_filters',
     'url_filter',
+    # 'django_nose'
 ]
 
 PROJECT_APPS = [
@@ -184,3 +185,13 @@ REST_FRAMEWORK = {
 }
 
 SITE_ID = 1
+
+# Run Test with Django Nose http://django-testing-docs.readthedocs.io/en/latest/coverage.html#coverage-reports
+# Use nose to run all tests
+# TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+# Tell nose to measure coverage on the 'foo' and 'bar' apps
+# NOSE_ARGS = [
+#     '--with-coverage',
+#     '--cover-package=' + ','.join(PROJECT_APPS),
+# ]

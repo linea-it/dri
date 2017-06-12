@@ -275,7 +275,7 @@ class CutoutJobs:
                 break
             elif list_files is False:
                 # job com error no lado do servidor
-                job.cjb_status = 'job_error'
+                job.cjb_status = 'je'
                 job.save()
                 break
 

@@ -20,17 +20,22 @@ Ext.define('Target.view.settings.CutoutController', {
 
         vm.set('currentCatalog', currentCatalog);
 
-        cutoutjobs.addFilter({
-            property: 'cjb_product',
-            value: currentCatalog.get('id')
-        });
-
+        cutoutjobs.addFilter([
+            {
+                property: 'cjb_product',
+                value: currentCatalog.get('id')
+            },
+            {
+                property: 'cjb_status',
+                operator: 'in',
+                value: ['st', 'bs', 'rn', 'ok', 'er', 'je']
+            }
+        ]);
         cutoutjobs.load();
 
         me.taskReloadJobs = Ext.TaskManager.start({
             run: me.reloadJobs,
             interval: 10000,
-            // repeat: 10,
             scope: me
         });
 
@@ -55,13 +60,16 @@ Ext.define('Target.view.settings.CutoutController', {
         if (!win) {
             win = Ext.create('Target.view.settings.CutoutJobForm',{
                 reference: 'winCutoutJobForm',
-                modal: true
+                modal: true,
+                listeners: {
+                    close: 'reloadJobs'
+                }
             });
 
             me.getView().add(win);
         }
 
-        win.getViewModel().set('currentCatalog', currentCatalog);
+        win.setCurrentProduct(currentCatalog);
 
         win.show();
 
@@ -93,5 +101,41 @@ Ext.define('Target.view.settings.CutoutController', {
 
         }, me);
 
+    },
+
+    onRemoveCutoutJob: function () {
+        var me = this,
+            grid = me.lookup('cutoutJobsGrid'),
+            store = me.getViewModel().getStore('cutoutjobs'),
+            record = grid.selection;
+
+        me.startStopTask(false);
+
+        // Marcando a linha como Deletada
+        record.set('cjb_status', 'dl');
+
+        store.sync({
+            callback: function () {
+                me.startStopTask(true);
+
+            }
+        });
+
+    },
+
+    startStopTask: function (state) {
+        var me = this;
+
+        if (me.taskReloadJobs) {
+            if (state) {
+                Ext.TaskManager.start(me.taskReloadJobs);
+
+            } else {
+                Ext.TaskManager.stop(me.taskReloadJobs);
+
+            }
+
+        }
     }
+
 });
