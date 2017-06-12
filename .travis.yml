@@ -11,6 +11,16 @@ env:
 before_install:
   # Download Senhca CMD
   - wget http://cdn.sencha.com/cmd/6.5.0/no-jre/SenchaCmd-6.5.0-linux-amd64.sh.zip
+  # Install Sencha CMD
+  - "unzip -q SenchaCmd-6.5.0-linux-amd64.sh.zip -d SenchaCmd"
+  - "cd SenchaCmd"
+  - "mv *.sh SenchaCmd.sh"
+  - "chmod +x SenchaCmd.sh"
+  - "./SenchaCmd.sh -q"
+  - "export PATH=~/bin/Sencha/Cmd/6.5.0.180/:$PATH"
+  - "sencha"
+  - "cd .."
+
 
 # command to install dependencies
 install:
@@ -20,14 +30,14 @@ install:
   - pip install coveralls
   - pip install pep8
 
-  # Install Sencha CMD
-  - "unzip -q SenchaCmd-6.5.0-linux-amd64.sh.zip -d SenchaCmd"
-  - "cd SenchaCmd"
-  - "mv *.sh SenchaCmd.sh"
-  - "chmod +x SenchaCmd.sh"
-  - "./SenchaCmd.sh -q"
-  - "sencha"
-  - "cd .."
+  # # Install Sencha CMD
+  # - "unzip -q SenchaCmd-6.5.0-linux-amd64.sh.zip -d SenchaCmd"
+  # - "cd SenchaCmd"
+  # - "mv *.sh SenchaCmd.sh"
+  # - "chmod +x SenchaCmd.sh"
+  # - "./SenchaCmd.sh -q"
+  # - "sencha"
+  # - "cd .."
 
 #before_script:
 #  - "pep8 --exclude=migrations --ignore=E501,E225 src"
