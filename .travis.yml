@@ -18,9 +18,21 @@ before_install:
   - "chmod +x SenchaCmd.sh"
   - "./SenchaCmd.sh -q"
   - "export PATH=~/bin/Sencha/Cmd/6.5.0.180/:$PATH"
-  - "sencha"
+  # - "sencha"
   - "cd .."
 
+  # Build Sencha Apps
+  - cd ../frontend/target
+  - sencha app build production
+
+  - echo $TRAVIS_BUILD_DIR
+
+  # Config GitHub
+  - git config --global user.email "travis@travis-ci.org"
+  - git config --global user.name "Travis CI"
+  - git status
+  - cd ../../
+  - git add frontend/build/ -A
 
 # command to install dependencies
 install:
@@ -60,5 +72,5 @@ script:
   - coveralls
 
   # Build Sencha Apps
-  - cd ../frontend/target
-  - sencha app build production
+  # - cd ../frontend/target
+  # - sencha app build production
