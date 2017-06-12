@@ -70,8 +70,12 @@ Ext.define('Target.view.settings.CutoutJobController', {
                 // Se for job Single Epoch
 
                 if (values.band) {
-                    job.set('cjb_band', values.band.join());
-
+                    try {
+                        job.set('cjb_band', values.band.join());
+                    }
+                    catch (err) {
+                        job.set('cjb_band', values.band);
+                    }
                 }
 
                 if (values.no_blacklist) {
