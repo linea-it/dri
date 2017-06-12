@@ -14,11 +14,14 @@ env:
 
 # command to install dependencies
 install:
+  - openjdk-7-jdk
+  - ant
   - pip install -r api/requirements.txt
   - pip install -r api/requirements_dev.txt
   - pip install coverage
   - pip install coveralls
   - pip install pep8
+
 
 #before_script:
 #  - "pep8 --exclude=migrations --ignore=E501,E225 src"
@@ -39,3 +42,8 @@ script:
   # Run Tests and generate reports on coveralls
   - coverage run --source=. --omit='*migrations' manage.py test --verbosity=2
   - coveralls
+
+  # Build Sencha Apps
+  - cd ../frontend/target
+  - ant -version
+  - ant production build
