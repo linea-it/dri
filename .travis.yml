@@ -7,21 +7,29 @@ python:
 
 env:
   - DJANGO_SETTINGS_MODULE=dri.settings.travis
+  - SENCHA_CMD_VERSION=6.5.0
 
+before_install:
+ # - export DJANGO_SETTINGS_MODULE=dri.settings.travis
 
-#before_install:
-#  - export DJANGO_SETTINGS_MODULE=dri.settings.travis
+  # Download Senhca CMD
+  - "wget http://cdn.sencha.com/cmd/6.5.0/no-jre/SenchaCmd-$SENCHA_CMD_VERSION-linux-amd64.sh.zip"
 
 # command to install dependencies
 install:
-  - sudo apt-get install openjdk-7-jdk -y -q
-  - sudo apt-get install ant -y -q
   - pip install -r api/requirements.txt
   - pip install -r api/requirements_dev.txt
   - pip install coverage
   - pip install coveralls
   - pip install pep8
 
+  # Install Sencha CMD
+  - "unzip -q SenchaCmd-$SENCHA_CMD_VERSION-linux-amd64.sh.zip -d SenchaCmd-$SENCHA_CMD_VERSION"
+  - "cd SenchaCmd-$SENCHA_CMD_VERSION"
+  - "mv *.sh SenchaCmd-$SENCHA_CMD_VERSION.sh"
+  - "chmod +x SenchaCmd-$SENCHA_CMD_VERSION.sh"
+  - "./SenchaCmd-$SENCHA_CMD_VERSION.sh -q"
+  - "sencha"
 
 #before_script:
 #  - "pep8 --exclude=migrations --ignore=E501,E225 src"
@@ -45,5 +53,4 @@ script:
 
   # Build Sencha Apps
   - cd ../frontend/target
-  - ant -version
-  - ant production build
+  - sencha app build production
