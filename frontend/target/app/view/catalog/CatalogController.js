@@ -90,7 +90,7 @@ Ext.define('Target.view.catalog.CatalogController', {
 
             node = view.getStore().findNode('id', selected.get('id'));
 
-            if ((selected.get('bookmark') > 0) && (selected.get('is_owner') === true)) {
+            if ((selected.get('bookmark') > 0) && (selected.get('starred') === true)) {
                 // Criar um model setando o Id do model bookmark
                 bookmark = Ext.create('Target.model.Bookmarked',{
                     'id': selected.get('bookmark')
@@ -136,16 +136,21 @@ Ext.define('Target.view.catalog.CatalogController', {
         }
     },
 
-    filterByStarred: function () {
+    filterByStarred: function (btn) {
         var me = this,
-            view = me.getView(),
             vm = me.getViewModel(),
-            catalogs = vm.getStore('catalogs');
-
-        catalogs.addFilter({
-            property: 'bookmark',
-            value: true
-        });
+            catalogs = vm.getStore('catalogs'),
+            bookmarkeds = catalogs.filters.items.filter(function (ch) { return ch._id === "bookmark"; });
+        if (bookmarkeds.length === 0) {
+            btn.setText('Show all');
+            catalogs.addFilter({
+                property: 'bookmark',
+                value: true
+            });
+        } else {
+            btn.setText('Show only bookmarked');
+            catalogs.removeFilter('bookmark');
+        }
 
         catalogs.load();
 

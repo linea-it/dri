@@ -401,5 +401,8 @@ class BookmarkProduct(models.Model):
     is_starred = models.BooleanField(
         default=False, verbose_name='Is Starred')
 
+    class Meta:
+        unique_together = ('product', 'owner')
+
     def __str__(self):
         return str(self.pk)
