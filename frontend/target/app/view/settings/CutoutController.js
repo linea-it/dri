@@ -137,4 +137,5 @@ Ext.define('Target.view.settings.CutoutController', {
 
         }
     }
+
 });

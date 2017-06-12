@@ -91,6 +91,8 @@ Ext.define('Target.view.settings.CutoutJobController', {
             if ((values.label_properties) && (values.label_properties.length > 0)) {
                 job.set('cjb_label_position', values.label_position);
                 job.set('cjb_label_colors', values.label_color);
+                job.set('cjb_label_font_size', values.label_font_size);
+
                 job.set('cjb_label_properties', values.label_properties.join().toLowerCase());
 
             }
@@ -147,4 +149,5 @@ Ext.define('Target.view.settings.CutoutJobController', {
         }, me);
 
     }
+
 });

@@ -271,7 +271,10 @@ class CutOutJob(models.Model):
         help_text="A list with the ids of the properties that will be used as a label. (Id = ProductContent.pk)")
 
     cjb_label_colors = models.CharField(
-        max_length=6, verbose_name='Label Colors', null=True, blank=True)
+        max_length=6, verbose_name='Label Font Colors', null=True, blank=True)
+
+    cjb_label_font_size = models.PositiveIntegerField(
+        verbose_name='Label Font Size', default=10, null=True, blank=True, help_text='Font size in px.')
 
     def __str__(self):
         return str(self.cjb_display_name)

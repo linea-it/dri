@@ -13,6 +13,10 @@ Ext.define('Target.view.settings.CutoutJobModel', {
         currentProduct: {
             type: 'Target.model.Catalog',
             create: true
+        },
+        cutoutJob: {
+            type: 'Target.model.CutoutJob',
+            create: true
         }
     },
 

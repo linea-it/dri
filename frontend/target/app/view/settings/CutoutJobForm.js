@@ -43,8 +43,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             fieldLabel: 'Job Name',
                             name: 'job_name',
                             allowBlank: false,
-                            maxLength: 40,
-                            value: 'TESTE'
+                            maxLength: 40
                         },
                         {
                             xtype: 'radiogroup',
@@ -145,9 +144,17 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                 },
                                 {
                                     xtype: 'colorfield',
-                                    fieldLabel: 'Color',
+                                    fieldLabel: 'Font Color',
                                     name: 'label_color',
                                     value: '#2eadf5'
+                                },
+                                {
+                                    xtype: 'numberfield',
+                                    fieldLabel: 'Font Size',
+                                    name: 'label_font_size',
+                                    value: 10,
+                                    minValue: 6,
+                                    maxValue: 18
                                 },
                                 {
                                     xtype: 'tagfield',
@@ -156,10 +163,10 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     displayField: 'display_name',
                                     publishes: 'id',
                                     valueField: 'column_name',
-                                    queryMode: 'local',
+                                    // queryMode: 'local',
                                     allowBlank: true,
                                     growMax: 60,
-                                    maxLength: 5,
+                                    // maxLength: 5,
                                     bind: {
                                         store: '{contents}'
                                     }

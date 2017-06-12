@@ -32,7 +32,8 @@ Ext.define('Target.view.settings.Cutout', {
                     reference: 'cutoutJobsGrid',
                     flex: 1,
                     bind: {
-                        store: '{cutoutjobs}'
+                        store: '{cutoutjobs}',
+                        selection: '{cutoutJob}'
                     },
                     tbar: [
                         {

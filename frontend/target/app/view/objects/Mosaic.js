@@ -23,7 +23,7 @@ Ext.define('Target.view.objects.Mosaic', {
 
     setStore: function (store) {
         this.store = store;
-//        this.createView();
+
     },
 
     setCutoutJob: function (cutoutJob) {
@@ -54,7 +54,10 @@ Ext.define('Target.view.objects.Mosaic', {
         var me = this,
             store = me.getStore(),
             labelProperties = me.getLabelProperties(),
-            labels = '',
+            cutoutJob = me.getCutoutJob(),
+            labels_inside = '',
+            labels_outside = '',
+            labels,
             string_tpl;
 
         if (me._view) {
@@ -64,19 +67,25 @@ Ext.define('Target.view.objects.Mosaic', {
 
         if ((labelProperties) && (labelProperties.length > 0)) {
             labels = me.createLabels();
+
+            if (cutoutJob.get('cjb_label_position') === 'inside') {
+                labels_inside = labels.toString();
+
+            } else {
+                labels_outside = labels.toString();
+            }
         }
 
         string_tpl = '<tpl for=".">' +
                         '<div class="thumb-wrap" id="target_{_meta_ra}-{_meta_dec}">' +
                             '<div class="thumb">' +
-                                labels.toString() +
+                                labels_inside +
                                 '<img style="width:200px; height:200px;" src="{postage_stamps}?_dc={timestamp}" title="ID: {_meta_id} RA: {[this.formatNumber(values._meta_ra)]} Dec: {[this.formatNumber(values._meta_dec)]}" onError="this.onerror=null;this.src=\'resources/cutout_placeholder.png\';" >' +
+                                labels_outside +
                             '</div>' +
                         '</div>' +
                     '</tpl>' +
                     '<div class="x-clear"></div>';
-
-        console.log(string_tpl);
 
         var tpl =  Ext.create('Ext.XTemplate',
             string_tpl.toString(),
@@ -132,12 +141,10 @@ Ext.define('Target.view.objects.Mosaic', {
             tpl: tpl,
             store:  store,
             itemSelector: 'div.thumb-wrap',
-            emptyText: 'No images to display',
+            emptyText: 'Choose a CutoutJob',
             multiSelect: false,
             trackOver: true,
             overItemCls:'x-item-over',
-            itemSelector: 'div.thumb-wrap',
-            emptyText:'No images to display',
             listeners: {
                 scope: me,
                 select: function (selModel, record, index) {
@@ -173,19 +180,20 @@ Ext.define('Target.view.objects.Mosaic', {
             class_labels = 'mosaic-labels-inside';
         }
 
-        if (cutoutJob.get('cjb_label_colors') !== null){
-            color = Ext.String.format('style="color:#{0};"', cutoutJob.get('cjb_label_colors'));
+        if (cutoutJob.get('cjb_label_colors') !== null) {
+            color = Ext.String.format(
+                'style="color:#{0}; font-size:{1}px;"',
+                cutoutJob.get('cjb_label_colors'),
+                cutoutJob.get('cjb_label_font_size'));
 
         }
 
         tpl_label = '<spam class="mosaic-labels" {0}>{1}: {[this.formatNumber(values.{1})]}</spam>',
 
         Ext.each(labelProperties, function (label) {
-            console.log('label', '=', label);
-
             label_element = Ext.String.format(tpl_label, color, label);
-            labels.push(label_element);
 
+            labels.push(label_element);
         }, me);
 
         tpl_labels = Ext.String.format('<div class="{0}">{1}</div>', class_labels, labels.join('</br>'));
@@ -204,10 +212,11 @@ Ext.define('Target.view.objects.Mosaic', {
                 aValue = value.toString().split('.');
 
                 decimal = aValue[1];
-
-                // se tiver mais casas decimais
-                if (decimal.length > precision) {
-                    value =  value.toFixed(precision);
+                if (decimal) {
+                    // se tiver mais casas decimais
+                    if (decimal.length > precision) {
+                        value =  value.toFixed(precision);
+                    }
                 }
             }
         } else {
@@ -218,10 +227,11 @@ Ext.define('Target.view.objects.Mosaic', {
                         aValue = value.toString().split('.');
 
                         decimal = aValue[1];
-
-                        // se tiver mais casas decimais
-                        if (decimal.length > precision) {
-                            value =  value.toFixed(precision);
+                        if (decimal) {
+                            // se tiver mais casas decimais
+                            if (decimal.length > precision) {
+                                value =  value.toFixed(precision);
+                            }
                         }
                     }
                 }

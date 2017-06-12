@@ -41,34 +41,6 @@ Ext.define('Target.view.settings.CutoutJobs', {
                 {
                     text: 'Status',
                     dataIndex: 'status'
-                    // dataIndex: 'cjb_status',
-                    // renderer : function (val) {
-                    //     var status = '';
-                    //     switch (val) {
-                    //         case 'st':
-                    //             status = 'Start';
-                    //             break;
-                    //         case 'bs':
-                    //             status = 'Submit Job';
-                    //             break;
-                    //         case 'rn':
-                    //             status = 'Running';
-                    //             break;
-                    //         case 'ok':
-                    //             status = 'Done';
-                    //             break;
-                    //         case 'er':
-                    //             status = 'Error';
-                    //             break;
-                    //         case 'job_error':
-                    //             status = 'Job Error';
-                    //             break;
-                    //         case 'dl':
-                    //             status = 'Deleted';
-                    //             break;
-                    //     }
-                    //     return status;
-                    // }
                 }
             ]
         });
