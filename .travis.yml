@@ -7,10 +7,9 @@ python:
 
 env:
   - DJANGO_SETTINGS_MODULE=dri.settings.travis
-  - SENCHA_CMD_VERSION=6.5.0
 
 before_install:
- # - export DJANGO_SETTINGS_MODULE=dri.settings.travis
+  - export SENCHA_CMD_VERSION=6.5.0
 
   # Download Senhca CMD
   - "wget http://cdn.sencha.com/cmd/6.5.0/no-jre/SenchaCmd-$SENCHA_CMD_VERSION-linux-amd64.sh.zip"
