@@ -140,8 +140,7 @@ Ext.define('Target.view.catalog.CatalogController', {
         var me = this,
             vm = me.getViewModel(),
             catalogs = vm.getStore('catalogs'),
-            bookmarkeds = catalogs.filters.items.filter(function (ch) { return ch.id === "bookmark"; });
-
+            bookmarkeds = catalogs.filters.items.filter(function (ch) { return ch._id === "bookmark"; });
         if (bookmarkeds.length === 0) {
             btn.setText('Show all');
             catalogs.addFilter({
