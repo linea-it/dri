@@ -11,31 +11,37 @@ env:
 before_install:
   - echo $TRAVIS_BUILD_DIR
 
-  # Download Senhca CMD
-  - wget http://cdn.sencha.com/cmd/6.5.0/no-jre/SenchaCmd-6.5.0-linux-amd64.sh.zip
-  # Install Sencha CMD
-  - "unzip -q SenchaCmd-6.5.0-linux-amd64.sh.zip -d SenchaCmd"
-  - "cd SenchaCmd"
-  - "mv *.sh SenchaCmd.sh"
-  - "chmod +x SenchaCmd.sh"
-  - "./SenchaCmd.sh -q"
-  - "export PATH=~/bin/Sencha/Cmd/6.5.0.180/:$PATH"
-  # - "sencha"
-  - "cd .."
+  # # Download Senhca CMD
+  # - wget http://cdn.sencha.com/cmd/6.5.0/no-jre/SenchaCmd-6.5.0-linux-amd64.sh.zip
+  # # Install Sencha CMD
+  # - "unzip -q SenchaCmd-6.5.0-linux-amd64.sh.zip -d SenchaCmd"
+  # - "cd SenchaCmd"
+  # - "mv *.sh SenchaCmd.sh"
+  # - "chmod +x SenchaCmd.sh"
+  # - "./SenchaCmd.sh -q"
+  # - "export PATH=~/bin/Sencha/Cmd/6.5.0.180/:$PATH"
+  # # - "sencha"
+  # - "cd .."
 
-  # Build Sencha Apps
-  - cd frontend/target
-  - sencha app build production
+  # # Build Sencha Apps
+  # - cd frontend/target
+  # - sencha app build production
 
 
 
   # Config GitHub
   - git config --global user.email "travis@travis-ci.org"
   - git config --global user.name "Travis CI"
+
+  - echo 'teste' > teste.txt
+
   - git status
-  - cd ../../
-  - git add frontend/build/ -A
-  - git commit --message "Travis build: $TRAVIS_BUILD_NUMBER"
+  - git add teste.txt
+  - git commit -m 'test add file'
+  - git push origin develop
+  # - cd ../../
+  # - git add frontend/build/ -A
+  # - git commit --message 'Teste'
 
 # command to install dependencies
 install:
