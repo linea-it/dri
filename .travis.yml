@@ -8,9 +8,44 @@ python:
 env:
   - DJANGO_SETTINGS_MODULE=dri.settings.travis
 
+before_install:
+  - echo $TRAVIS_BUILD_DIR
 
-#before_install:
-#  - export DJANGO_SETTINGS_MODULE=dri.settings.travis
+  # # Download Senhca CMD
+  # - wget http://cdn.sencha.com/cmd/6.5.0/no-jre/SenchaCmd-6.5.0-linux-amd64.sh.zip
+  # # Install Sencha CMD
+  # - "unzip -q SenchaCmd-6.5.0-linux-amd64.sh.zip -d SenchaCmd"
+  # - "cd SenchaCmd"
+  # - "mv *.sh SenchaCmd.sh"
+  # - "chmod +x SenchaCmd.sh"
+  # - "./SenchaCmd.sh -q"
+  # - "export PATH=~/bin/Sencha/Cmd/6.5.0.180/:$PATH"
+  # # - "sencha"
+  # - "cd .."
+
+  # # Build Sencha Apps
+  # - cd frontend/target
+  # - sencha app build production
+
+
+
+  # Config GitHub
+  - git config --global user.email "glauber.vila.verde@gmail.com"
+  - git config --global user.name "glaubervila"
+  - git config credential.helper "store --file=.git/credentials"
+  - echo "https://${GH_TOKEN}:@github.com" > .git/credentials
+  #- git config --global github-oauth.github.com "$GH_TOKEN" 
+
+
+  - echo 'teste' > teste.txt
+
+  - git status
+  - git add teste.txt
+  - git commit -m 'test add file'
+  - git push
+  # - cd ../../
+  # - git add frontend/build/ -A
+  # - git commit --message 'Teste'
 
 # command to install dependencies
 install:
@@ -19,6 +54,15 @@ install:
   - pip install coverage
   - pip install coveralls
   - pip install pep8
+
+  # # Install Sencha CMD
+  # - "unzip -q SenchaCmd-6.5.0-linux-amd64.sh.zip -d SenchaCmd"
+  # - "cd SenchaCmd"
+  # - "mv *.sh SenchaCmd.sh"
+  # - "chmod +x SenchaCmd.sh"
+  # - "./SenchaCmd.sh -q"
+  # - "sencha"
+  # - "cd .."
 
 #before_script:
 #  - "pep8 --exclude=migrations --ignore=E501,E225 src"
@@ -30,8 +74,8 @@ script:
 
   # Run pep8 on all .py files in all subfolders
 #  - num_errors_before=`find . -name \*.py -exec pep8 --ignore=E402 {} + | wc -l`
-  - num_errors_before=`find . -name \*.py -exec pep8 --exclude=migrations {} + | wc -l`
-  - echo PEP8 Errors [$num_errors_before]
+  #- num_errors_before=`find . -name \*.py -exec pep8 --exclude=migrations {} + | wc -l`
+  #- echo PEP8 Errors [$num_errors_before]
 
   # Create a Local Vars settings to prevent import errors.
   - cp dri/settings/travis.py dri/settings/local_vars.py
@@ -39,3 +83,7 @@ script:
   # Run Tests and generate reports on coveralls
   - coverage run --source=. --omit='*migrations' manage.py test --verbosity=2
   - coveralls
+
+  # Build Sencha Apps
+  # - cd ../frontend/target
+  # - sencha app build production
