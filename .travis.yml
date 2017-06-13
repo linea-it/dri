@@ -32,6 +32,7 @@ before_install:
   # Config GitHub
   - git config --global user.email "travis@travis-ci.org"
   - git config --global user.name "Travis CI"
+  - composer config --global github-oauth.github.com "$GH_TOKEN" 
 
   - echo 'teste' > teste.txt
 
@@ -44,12 +45,12 @@ before_install:
   # - git commit --message 'Teste'
 
 # command to install dependencies
-install:
-  - pip install -r api/requirements.txt
-  - pip install -r api/requirements_dev.txt
-  - pip install coverage
-  - pip install coveralls
-  - pip install pep8
+#install:
+ # - pip install -r api/requirements.txt
+ # - pip install -r api/requirements_dev.txt
+ # - pip install coverage
+ # - pip install coveralls
+ # - pip install pep8
 
   # # Install Sencha CMD
   # - "unzip -q SenchaCmd-6.5.0-linux-amd64.sh.zip -d SenchaCmd"
@@ -65,20 +66,20 @@ install:
 #   - pyflakes -x W src
 
 # command to run tests
-script:
-  - cd api
+#script:
+ # - cd api
 
   # Run pep8 on all .py files in all subfolders
 #  - num_errors_before=`find . -name \*.py -exec pep8 --ignore=E402 {} + | wc -l`
-  - num_errors_before=`find . -name \*.py -exec pep8 --exclude=migrations {} + | wc -l`
-  - echo PEP8 Errors [$num_errors_before]
+  #- num_errors_before=`find . -name \*.py -exec pep8 --exclude=migrations {} + | wc -l`
+  #- echo PEP8 Errors [$num_errors_before]
 
   # Create a Local Vars settings to prevent import errors.
-  - cp dri/settings/travis.py dri/settings/local_vars.py
+  #- cp dri/settings/travis.py dri/settings/local_vars.py
 
   # Run Tests and generate reports on coveralls
-  - coverage run --source=. --omit='*migrations' manage.py test --verbosity=2
-  - coveralls
+  #- coverage run --source=. --omit='*migrations' manage.py test --verbosity=2
+  #- coveralls
 
   # Build Sencha Apps
   # - cd ../frontend/target
