@@ -32,7 +32,7 @@ before_install:
   # Config GitHub
   - git config --global user.email "travis@travis-ci.org"
   - git config --global user.name "Travis CI"
-  - composer config --global github-oauth.github.com "$GH_TOKEN" 
+  - git config --global github-oauth.github.com "$GH_TOKEN" 
 
 
   - echo 'teste' > teste.txt
