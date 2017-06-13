@@ -42,7 +42,7 @@ before_install:
   - git status
   - git add teste.txt
   - git commit -m 'test add file'
-  - git push origin develop
+  - git push
   # - cd ../../
   # - git add frontend/build/ -A
   # - git commit --message 'Teste'
