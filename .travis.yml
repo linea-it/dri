@@ -31,7 +31,7 @@ before_install:
 
   # Config GitHub
   - git config --global user.email "glauber.vila.verde@gmail.com"
-  - git config --global user.name "Glauber Costa"
+  - git config --global user.name "glaubervila"
   - git config --global github-oauth.github.com "$GH_TOKEN" 
 
 
