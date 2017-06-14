@@ -36,6 +36,8 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     winGetLink: null,
 
+    lMarker: null,
+
     onLoadPanel: function (dataset) {
         var me = this;
 
@@ -111,7 +113,13 @@ Ext.define('Sky.view.dataset.DatasetController', {
             fov = view.getFov(),
             visiomatic = me.lookupReference('visiomatic');
 
+        if (fov > 0.60) {
+            fov = 0.60;
+        }
+
         visiomatic.setView(radec.ra, radec.dec, fov);
+
+        me.lMarker = visiomatic.markPosition(radec.ra, radec.dec, 'x-fa fa-map-marker fa-2x');
 
     },
 
@@ -254,6 +262,14 @@ Ext.define('Sky.view.dataset.DatasetController', {
         if (compare.isVisible()) {
             compare.close();
         }
+
+    },
+
+    showHideMarker: function (btn, state) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
+
+        visiomatic.showHideLayer(me.lMarker, state);
 
     }
 

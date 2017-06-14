@@ -20,7 +20,8 @@ Ext.define('Sky.view.dataset.Visiomatic', {
         var me = this;
 
         Ext.apply(this, {
-            enableTools: false
+            enableTools: false,
+            showCrosshair: false
         });
 
         me.callParent(arguments);
