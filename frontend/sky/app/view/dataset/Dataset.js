@@ -41,10 +41,10 @@ Ext.define('Sky.view.dataset.Dataset', {
                     xtype: 'sky-visiomatic',
                     reference: 'visiomatic',
                     region: 'center',
-                    split: true,
-                    bind: {
-                        showCrosshair: '{BtnCrosshair.pressed}'
-                    }
+                    split: true
+                    // bind: {
+                    // showCrosshair: '{BtnCrosshair.pressed}'
+                    // }
                 },{
                     xtype: 'sky-compare',
                     reference: 'compare',
@@ -89,11 +89,11 @@ Ext.define('Sky.view.dataset.Dataset', {
                         },
                         {
                             xtype: 'button',
-                            iconCls: 'x-fa fa-crosshairs',
-                            tooltip: 'Show/Hide Crosshair',
+                            iconCls: 'x-fa fa-map-marker',
+                            tooltip: 'Show/Hide Pin',
                             enableToggle: true,
                             pressed: true,
-                            reference: 'BtnCrosshair'
+                            toggleHandler: 'showHideMarker'
                         }
                     ]
                 }

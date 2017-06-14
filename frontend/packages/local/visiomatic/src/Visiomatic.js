@@ -453,6 +453,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         if (me.getShowCrosshair()) {
             me.drawCrosshair(ra, dec);
+
         }
     },
 
