@@ -17,8 +17,8 @@ Ext.define('Catalogs.view.main.tree', {
         // selection: '{selectedCatalog}'
     },
 
-    rootVisible: true,      
-    
+    rootVisible: true,
+
 
     listeners: {
         select: 'onItemSelected'

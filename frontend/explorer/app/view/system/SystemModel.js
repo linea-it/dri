@@ -19,7 +19,8 @@ Ext.define('Explorer.view.system.SystemModel', {
         object: null,
         object_data: null,
         property_id: null,
-        overlayMembers: null
+        overlayMembers: null,
+        showCrosshair: true
     },
 
     links: {

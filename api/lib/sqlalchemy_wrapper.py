@@ -110,7 +110,8 @@ class DBBase:
 
     def stm_count(self, stm):
         with self.engine.connect() as con:
-            queryset = con.execute(stm.with_only_columns([func.count()]))
+            stm_count = stm.with_only_columns([func.count()]).limit(None).offset(None)
+            queryset = con.execute(stm_count)
             result = dict(queryset.fetchone())
             return result.get('count_1')
 

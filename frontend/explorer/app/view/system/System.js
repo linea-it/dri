@@ -92,7 +92,11 @@ Ext.define('Explorer.view.system.System', {
                                     reference: 'visiomatic',
                                     margin: '0 10 0 0',
                                     split: true,
-                                    flex: 1
+                                    flex: 1,
+                                    showCrosshair: false
+                                    // bind: {
+                                    //     showCrosshair: '{showCrosshair}'
+                                    // }
                                 },
                                 {
                                     xtype: 'system-aladin',

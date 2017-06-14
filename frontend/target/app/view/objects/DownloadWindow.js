@@ -54,7 +54,7 @@ Ext.define('Target.view.objects.DownloadWindow', {
                                     items: [
                                         {boxLabel: 'CSV', name: 'table_format', inputValue: 'csv', checked: true},
                                         {boxLabel: 'FITS', name: 'table_format', inputValue: 'fits'},
-                                        {boxLabel: 'JSON', name: 'table_format', inputValue: 'json'}
+                                        //{boxLabel: 'JSON', name: 'table_format', inputValue: 'json'}
                                     ]
                                 }
                             ]
@@ -77,7 +77,7 @@ Ext.define('Target.view.objects.DownloadWindow', {
                                     xtype: 'checkboxgroup',
                                     columns: 1,
                                     items: [
-                                        {boxLabel: 'HTML', name: 'report_format', inputValue: 'html'},
+                                        // {boxLabel: 'HTML', name: 'report_format', inputValue: 'html'},
                                         {boxLabel: 'PDF', name: 'report_format', inputValue: 'pdf'}
                                     ]
                                 }

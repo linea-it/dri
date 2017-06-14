@@ -223,17 +223,22 @@ Ext.define('Sky.view.footprint.FootprintController', {
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('tiles'),
-            dataset = store.filterByRaDec(radec[0], radec[1]),
             aladin = me.lookupReference('aladin'),
             coordinate,
             fov = aladin.getFov()[0].toFixed(2).replace('.', ','),
-            hash;
+            hash, dataset, ra, dec;
+
+        ra = parseFloat(radec[0]).toFixed(3);
+        dec = parseFloat(radec[1]).toFixed(3);
+
+        dataset = store.filterByRaDec(ra, dec);
 
         if (dataset) {
-            if (radec[1] > 0) {
-                coordinate = radec[0].toFixed(3).replace('.', ',') + '+' + radec[1].toFixed(3).replace('.', ',');
+
+            if (ra > 0) {
+                coordinate = ra.replace('.', ',') + '+' + dec.replace('.', ',');
             } else {
-                coordinate = radec[0].toFixed(3).replace('.', ',') + radec[1].toFixed(3).replace('.', ',');
+                coordinate = ra.replace('.', ',') + dec.replace('.', ',');
             }
 
             coordinate = encodeURIComponent(coordinate);
@@ -244,6 +249,12 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
         }
 
+    },
+
+    onAladinGoToPosition: function (position, aladin) {
+        var me = this;
+
+        me.toVisiomatic(position);
     }
 
 });
