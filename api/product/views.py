@@ -548,6 +548,38 @@ class FilterConditionViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'filterset', 'fcd_property', 'fcd_operation', 'fcd_value')
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class SaveAsSerializer(serializers.HyperlinkedModelSerializer):
+#    epr_owner = serializers.PrimaryKeyRelatedField(
+#        queryset=User.objects.all(), many=False)
+#
+#    epr_site = serializers.PrimaryKeyRelatedField(
+#        queryset=Site.objects.all(), many=False)
+#
+    class Meta:
+
+        fields = (
+            'id',
+            'um',
+            'dois',
+        )
+
 #@api_view(['POST'])
 #def SaveFilterAsProduct(request):
 #    print(request.data)
@@ -558,13 +590,10 @@ class SaveFilterAsProduct(viewsets.ModelViewSet):
     """
     API endpoint that allows External Processes to be imported
     """
-    http_method_names = ['post', ]
-    
+    http_method_names = ['post', ]   
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
-
     permission_classes = (IsAuthenticated,)
-    
-    #serializer_class = ExternalProcessSerializer
+    serializer_class = SaveAsSerializer
     
     @transaction.atomic
     def create(self, request):
@@ -574,3 +603,8 @@ class SaveFilterAsProduct(viewsets.ModelViewSet):
         else:
             raise Exception('was a failure to create the record.')
         
+#class SaveFilterAsProduct(viewsets.ViewSet):
+#    def list(self, request):
+#        """GET - Show all users"""
+#        print(request.version)
+#        return Response()

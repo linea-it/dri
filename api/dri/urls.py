@@ -71,7 +71,7 @@ router.register(r'defect', validation_views.DefectViewSet)
 router.register(r'filters', common_views.FilterViewSet)
 router.register(r'site', product_register_views.SiteViewSet)
 
-router.register(r'product/saveas', product_views.SaveFilterAsProduct, base_name="productsaveas")
+router.register(r'product/saveas', viewset=product_views.SaveFilterAsProduct, base_name="productsaveas")
 router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet,  base_name='importprocess')
 router.register(r'importauthorization', product_register_views.AuthorizationViewSet)
 
