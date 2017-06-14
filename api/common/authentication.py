@@ -29,19 +29,19 @@ class NcsaBackend(object):
 
     def check_user(self, username, password):
 
-        db = settings.DATABASES.get('dessci')
-        host, name = db.get('NAME').split('/')
-        host, port = host.split(':')
-
-        url = ("oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
-               "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
-               "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
-               "SERVICE_NAME=%(database)s)))") % \
-              {"username": username, 'password': password,
-               'host': host, 'port': port,
-               'database': name}
-
         try:
+            db = settings.DATABASES.get('dessci')
+            host, name = db.get('NAME').split('/')
+            host, port = host.split(':')
+
+            url = ("oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
+                   "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
+                   "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
+                   "SERVICE_NAME=%(database)s)))") % \
+                  {"username": username, 'password': password,
+                   'host': host, 'port': port,
+                   'database': name}
+
             engine = create_engine(url)
             connection = engine.connect()
             connection.close()
