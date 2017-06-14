@@ -121,7 +121,7 @@ Ext.define('visiomatic.Visiomatic', {
             opacity: 0.8,
             smoothFactor: 1,
             centerPadding: 0.005, // Deg
-            size: 0.05 // Deg
+            size: 0.010 // Deg
         },
 
         release: null,
