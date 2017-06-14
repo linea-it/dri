@@ -35,8 +35,9 @@ Ext.define('Explorer.view.system.System', {
                 // Painel Esquerdo
                 {
                     xtype: 'panel',
-                    width: 400,
+                    width: 300,
                     margin: '0 10 0 0',
+                    split: true,
                     layout: {
                         type: 'vbox',
                         pack: 'start',
@@ -63,6 +64,7 @@ Ext.define('Explorer.view.system.System', {
                 {
                     xtype: 'panel',
                     flex: 1,
+                    split: true,
                     layout: {
                         type: 'vbox',
                         pack: 'start',
@@ -78,6 +80,7 @@ Ext.define('Explorer.view.system.System', {
                             xtype: 'panel',
                             // title: 'Superior',
                             height: 400,
+                            split: true,
                             layout: {
                                 type: 'hbox',
                                 pack: 'start',
@@ -92,11 +95,7 @@ Ext.define('Explorer.view.system.System', {
                                     reference: 'visiomatic',
                                     margin: '0 10 0 0',
                                     split: true,
-                                    flex: 1,
-                                    showCrosshair: false
-                                    // bind: {
-                                    //     showCrosshair: '{showCrosshair}'
-                                    // }
+                                    flex: 1
                                 },
                                 {
                                     xtype: 'system-aladin',
@@ -110,6 +109,7 @@ Ext.define('Explorer.view.system.System', {
                         {
                             xtype: 'tabpanel',
                             flex: 1,
+                            split: true,
                             items: [
                                 {
                                     xtype: 'system-members-grid',
