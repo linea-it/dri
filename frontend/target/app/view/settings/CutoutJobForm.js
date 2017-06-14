@@ -2,14 +2,13 @@ Ext.define('Target.view.settings.CutoutJobForm', {
     extend: 'Ext.window.Window',
 
     requires: [
-        'Ext.slider.Single',
         'Target.view.settings.CutoutJobController',
         'Target.view.settings.CutoutJobModel'
     ],
 
     xtype: 'target-cutoutjob-form',
 
-    title: 'Create Cutout',
+    title: 'Create Mosaic',
     width: 600,
     height: 450,
     layout: 'fit',
@@ -40,14 +39,14 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                     items: [
                         {
                             xtype: 'textfield',
-                            fieldLabel: 'Job Name',
+                            fieldLabel: 'Name',
                             name: 'job_name',
                             allowBlank: false,
                             maxLength: 40
                         },
                         {
                             xtype: 'radiogroup',
-                            fieldLabel: 'Job Type',
+                            fieldLabel: 'Type',
                             cls: 'x-check-group-alt',
                             name: 'job_type',
                             items: [
@@ -56,7 +55,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             ]
                         },
                         {
-                            xtype: 'slider',
+                            xtype: 'numberfield',
                             fieldLabel: 'X Size (arcmin)',
                             value: 1,
                             name: 'xsize',
@@ -64,7 +63,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             maxValue: 10
                         },
                         {
-                            xtype: 'slider',
+                            xtype: 'numberfield',
                             fieldLabel: 'Y Size (arcmin)',
                             value: 1,
                             name: 'ysize',
