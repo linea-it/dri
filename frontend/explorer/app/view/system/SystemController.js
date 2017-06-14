@@ -395,7 +395,8 @@ Ext.define('Explorer.view.system.SystemController', {
         visiomatic.setView(
             member.get('_meta_ra'),
             member.get('_meta_dec'),
-            fov
+            fov,
+            true // Nao mover a crosshair
             );
 
         if (lMarkPosition) {

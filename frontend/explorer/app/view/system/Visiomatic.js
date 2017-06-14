@@ -43,17 +43,16 @@ Ext.define('Explorer.view.system.Visiomatic', {
                     bind: {
                         value: '{currentDataset.tli_tilename}'
                     }
+                },
+                {
+                    xtype: 'button',
+                    iconCls: 'x-fa fa-crosshairs',
+                    tooltip: 'Show/Hide Crosshair',
+                    enableToggle: true,
+                    pressed: true,
+                    scope: this,
+                    toggleHandler: 'onShowHideCrosshair'
                 }
-                // {
-                //     xtype: 'button',
-                //     iconCls: 'x-fa fa-crosshairs',
-                //     tooltip: 'Show/Hide Crosshair',
-                //     enableToggle: true,
-                //     pressed: true,
-                //     bind: {
-                //         pressed: '{showCrosshair}'
-                //     }
-                // }
             ]
 
         });
@@ -64,6 +63,12 @@ Ext.define('Explorer.view.system.Visiomatic', {
     changeDataset: function (combo) {
         this.fireEvent('changedataset', combo.getSelectedRecord(), this);
 
+    },
+
+    onShowHideCrosshair: function (btn, state) {
+        var me = this;
+
+        me.setShowCrosshair(state);
     }
 
 });
