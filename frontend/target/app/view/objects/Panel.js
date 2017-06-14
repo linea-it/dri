@@ -53,6 +53,7 @@ Ext.define('Target.view.objects.Panel', {
                         reference: 'txtTargetTitle',
                         html: 'Sample Text Item',
                         cls: 'tb-text-target-title'
+
                     },
                     '->',
                     {
