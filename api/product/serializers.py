@@ -876,7 +876,7 @@ class FilterConditionSerializer(serializers.ModelSerializer):
             try:
                 return obj.pcs_content.pcn_column_name
             except:
-                return None
+                return obj.fcd_property_name
 
     def get_operator_display_name(self, obj):
         try:
