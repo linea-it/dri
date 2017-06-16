@@ -53,6 +53,7 @@ Ext.define('Target.view.settings.CutoutController', {
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
+            currentSetting = vm.get('currentSetting'),
             win;
 
         win = me.lookupReference('winCutoutJobForm');
@@ -70,6 +71,11 @@ Ext.define('Target.view.settings.CutoutController', {
         }
 
         win.setCurrentProduct(currentCatalog);
+
+        if ((currentSetting) && (currentSetting.get('id') > 0)) {
+            win.setCurrentSetting(currentSetting);
+
+        }
 
         win.show();
 

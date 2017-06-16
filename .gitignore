@@ -10,3 +10,6 @@ __pycache__
 *.log
 *.swp
 *.bak
+
+# Evitar que o visiomatic seja sobrescrito a cada build 
+/frontend/build/production/Target/packages/local/visiomatic/src/visiomatic/dist/*

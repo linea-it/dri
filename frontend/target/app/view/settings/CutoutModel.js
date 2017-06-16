@@ -5,7 +5,8 @@ Ext.define('Target.view.settings.CutoutModel', {
 
     requires: [
         'Target.model.CutoutJob',
-        'Target.store.CutoutJobs'
+        'Target.store.CutoutJobs',
+        'Target.model.CurrentSetting'
     ],
 
     links: {
@@ -15,6 +16,10 @@ Ext.define('Target.view.settings.CutoutModel', {
         },
         cutoutJob: {
             type: 'Target.model.CutoutJob',
+            create: true
+        },
+        currentSetting: {
+            type: 'Target.model.CurrentSetting',
             create: true
         }
     },

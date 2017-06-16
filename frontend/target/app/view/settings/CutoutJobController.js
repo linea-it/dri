@@ -6,7 +6,13 @@ Ext.define('Target.view.settings.CutoutJobController', {
     listen: {
         component: {
             'target-cutoutjob-form': {
-                changeproduct: 'onChangeProduct'
+                changeproduct: 'onChangeProduct',
+                changesetting: 'onChangeSetting'
+            }
+        },
+        store: {
+            '#Contents': {
+                load: 'onLoadContents'
             }
         }
     },
@@ -24,6 +30,40 @@ Ext.define('Target.view.settings.CutoutJobController', {
         });
 
         contents.load();
+    },
+
+    onChangeSetting: function (setting) {
+         var me = this,
+             vm = me.getViewModel(),
+             product = vm.get('currentProduct'),
+             contents = vm.getStore('contents');
+
+        vm.set('currentSetting', setting);
+
+        contents.addFilter([
+            {'property': 'pcn_product_id', value: product.get('id')},
+            {'property': 'pca_setting', value: setting.get('cst_setting')}
+        ]);
+
+    },
+
+    onLoadContents: function (store) {
+        this.addContentsToField(store);
+
+    },
+
+    addContentsToField: function (store){
+        var me = this,
+            vm = me.getViewModel(),
+            auxcontents = vm.get('auxcontents');
+
+        store.each(function(record){
+            if (record.get('is_visible') === true){
+                auxcontents.add(record);
+
+            }
+
+        }, store)
     },
 
     onCancelAddJob: function () {
@@ -50,7 +90,7 @@ Ext.define('Target.view.settings.CutoutJobController', {
 
         if (form.isValid()) {
 
-            // view.setLoading(true);
+            view.setLoading(true);
 
             values = form.getValues();
 

@@ -264,14 +264,16 @@ Ext.define('Target.view.objects.Panel', {
 
     setCurrentCatalog: function (catalog) {
         var me = this,
-            // gridPanel = me.down('targets-objects-grid'),
             txtTargetTitle = me.lookup('txtTargetTitle'),
             title = '';
 
         if (catalog.get('id') > 0) {
             title = Ext.String.format('{0} - {1}', catalog.get('pcl_display_name'), catalog.get('prd_display_name'));
 
-            // gridPanel.setTitle(title);
+            if (title.length > 30) {
+                title = catalog.get('prd_display_name');
+            }
+
             txtTargetTitle.setHtml(title);
 
         }
@@ -284,8 +286,6 @@ Ext.define('Target.view.objects.Panel', {
         //         refs = me.getReferences(),
         //         grids = refs.targetsGrid,
         //         preview = refs.targetsPreviewPanel;
-
-        gridPanel.setTitle('loading...');
 
         vm.getStore('catalogs').removeAll();
         vm.getStore('catalogs').clearFilter(true);
