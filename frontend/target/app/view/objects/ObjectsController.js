@@ -507,7 +507,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             closable: true,
             closeAction: 'destroy',
             width: 880,
-            height: 620,
+            height: 500,
             modal:true,
             items: [{
                 xtype: 'targets-wizard',

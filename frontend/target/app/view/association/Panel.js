@@ -113,7 +113,8 @@ Ext.define('Target.view.association.Panel', {
                             bind: {
                                 store: '{auxclasscontent}'
                             },
-                            flex: 2,
+                            flex: 1,
+                            split: true,
                             viewConfig: {
                                 plugins: {
                                     ptype: 'customcelldragdrop',
@@ -131,7 +132,8 @@ Ext.define('Target.view.association.Panel', {
                         {
                             xtype: 'targets-association-class-content-form',
                             reference: 'classcontentform',
-                            height: 220
+                            split: true,
+                            flex: 1
                         }
                     ],
                     tbar: [
