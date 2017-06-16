@@ -26,6 +26,9 @@ Ext.define('Target.view.preview.Preview', {
             reference: 'visiomatic',
             bind: {
                 showCrosshair: '{BtnCrosshair.pressed}'
+            },
+            listeners: {
+                contextItemClick: 'onContextItemClickVisiomatic'
             }
         }
     ],

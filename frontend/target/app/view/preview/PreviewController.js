@@ -26,6 +26,13 @@ Ext.define('Target.view.preview.PreviewController', {
         }
     },
 
+    //ao clicar com botão direito na imagem (visiomatic)
+    //feature existirá somente quando o click for sobre o objeto
+    onContextItemClickVisiomatic: function(event, feature){
+        console.log(event, feature);
+        this.onComment();
+    },
+
     onChangeRecord: function (record) {
         var me = this,
             view = me.getView(),
