@@ -20,7 +20,8 @@ Ext.define('Target.view.settings.CutoutJobForm', {
     closeAction: 'hide',
 
     config: {
-        currentProduct: null
+        currentProduct: null,
+        currentSetting: null
     },
 
     initComponent: function () {
@@ -162,12 +163,12 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     displayField: 'display_name',
                                     publishes: 'id',
                                     valueField: 'column_name',
-                                    // queryMode: 'local',
+                                    queryMode: 'local',
                                     allowBlank: true,
                                     growMax: 60,
                                     // maxLength: 5,
                                     bind: {
-                                        store: '{contents}'
+                                        store: '{auxcontents}'
                                     }
                                 }
                             ]
@@ -199,6 +200,14 @@ Ext.define('Target.view.settings.CutoutJobForm', {
         me.currentProduct = record;
 
         me.fireEvent('changeproduct', record, me);
+    },
+
+    setCurrentSetting: function (record) {
+        var me = this;
+
+        me.currentSetting = record;
+
+        me.fireEvent('changesetting', record, me);
     }
 
 });

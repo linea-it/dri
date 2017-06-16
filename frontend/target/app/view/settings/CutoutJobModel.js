@@ -37,6 +37,11 @@ Ext.define('Target.view.settings.CutoutJobModel', {
         },
         contents: {
             type: 'product-display-contents',
+            storeId: 'Contents',
+            autoLoad: false
+        },
+        auxcontents: {
+            type: 'product-display-contents',
             autoLoad: false
         }
     }
