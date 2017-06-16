@@ -490,11 +490,17 @@ Ext.define('visiomatic.Visiomatic', {
         me.fireEvent('dblclick', event, me);
     },
 
-    onContextMenuClick: function (latlng) {
-        console.log('onContextMenuClick(%o)', latlng);
+    onContextMenuClick: function (event) {
         var me = this,
             map = me.getMap();
 
+        //evita chamar showContextMenu novamente, já foi chamada no evento contextmenu do objeto
+        if (!me.isObjectContextMenu){
+            me.showContextMenu(event);
+        }
+        me.isObjectContextMenu = false;
+
+        //console.log('onContextMenuClick(%o)', event);
     },
 
     removeImageLayer: function () {
@@ -762,12 +768,20 @@ Ext.define('visiomatic.Visiomatic', {
 
             return popup;
 
-        }).on('dblclick', function () { alert('TODO: OPEN IN EXPLORER!'); });
+        }).on('dblclick', function () {
+            alert('TODO: OPEN IN EXPLORER!');
+        })
+        /**
+         * @description Chama a função de exibição do menu de contexto
+         */
+        .on('contextmenu', function(event){
+            me.isObjectContextMenu = true; //diz para cancelar o evento em onContextMenuClick
+            me.showContextMenu(event);
+        });
 
         map.addLayer(lCatalog);
 
         return lCatalog;
-
     },
 
     showHideLayer: function (layer, state) {
@@ -923,6 +937,44 @@ Ext.define('visiomatic.Visiomatic', {
 
             return false;
         }
+    },
+
+    /**
+     * @description Exibe um menu de contexto
+     */
+    showContextMenu: function(event){
+        var feature, objectMenuItem,
+            me = this,
+            xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
+
+        if (!this.contextMenu){
+            this.contextMenu = new Ext.menu.Menu({
+                items: [
+                    {
+                        id: 'comment-position',
+                        text: 'Comment Position',
+                        handler: function(item) {
+                            me.fireEvent('contextItemClick', event, feature);
+                        }
+                    },
+                    {
+                        id: 'comment-object',
+                        text: 'Comment Object',
+                        handler: function(item) {
+                            me.fireEvent('contextItemClick', event, feature);
+                        }
+                    }]
+            });
+        }
+
+        //feature existirá quando o click for sobre um objeto
+        //o item Comment Object será desabilitado quando o click não for sobre um objeto
+        feature = event.layer ? event.layer.feature :  null;
+        objectMenuItem = me.contextMenu.items.get("comment-object");
+        objectMenuItem.setDisabled(!me.isObjectContextMenu);
+        
+        this.contextMenu.showAt(xy);
+
     }
 
 });
