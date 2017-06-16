@@ -2,6 +2,7 @@ FROM  grahamdumpleton/mod-wsgi-docker:python-3.5
 
 WORKDIR /app
 ADD . /app
+
 ENV VIRTUAL_ENV /env
 ENV PATH /env/bin:$PATH
 
@@ -10,6 +11,9 @@ RUN pip install -r api/requirements.txt
 RUN apt-get update
 RUN apt-get install -y apache2
 RUN apt-get install -y libapache2-mod-wsgi
+RUN apt-get install -y python3-pip
+RUN apt-get install -y python-virtualenv
+RUN apt install -y virtualenv
 RUN cp dri.conf /etc/apache2/sites-available/
 
 env APACHE_RUN_USER    www-data
@@ -25,7 +29,7 @@ RUN chown -R www-data:www-data db
 EXPOSE 80
 RUN apt-get install -y openssh-server
 RUN mkdir /var/run/sshd
-RUN echo 'root:screencast' | chpasswd
+RUN echo 'root:driadmin' | chpasswd
 RUN sed -i 's/PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
 # SSH login fix. Otherwise user is kicked off after login
