@@ -629,7 +629,7 @@ Ext.define('visiomatic.Visiomatic', {
                 }
             },
             pointToLayer: function (feature, latlng) {
-
+                
                 path_options = Ext.Object.merge(radiusOptions, {
                     majAxis: radius,
                     minAxis: radius,
@@ -709,6 +709,9 @@ Ext.define('visiomatic.Visiomatic', {
                     return new l.LatLng(coords[1], coords[0], coords[2]);
                 }
             },
+
+            //Desenha os objetos (círculos pequenos)
+            //TODO: FABIO, v como adicionar algo que informe que neste círculo contém comentário
             pointToLayer: function (feature, latlng) {
                 path_options = Ext.Object.merge(pathOptions, {
                     majAxis: pathOptions.radius,
@@ -894,14 +897,14 @@ Ext.define('visiomatic.Visiomatic', {
                         id: 'comment-position',
                         text: 'Comment Position',
                         handler: function(item) {
-                            me.fireEvent('contextItemClick', event, feature);
+                            me.fireEvent('contextItemClick', event);
                         }
                     },
                     {
                         id: 'comment-object',
                         text: 'Comment Object',
                         handler: function(item) {
-                            me.fireEvent('contextItemClick', event, feature);
+                            me.fireEvent('contextItemClick', event, this.feature);
                         }
                     }]
             });
@@ -909,9 +912,10 @@ Ext.define('visiomatic.Visiomatic', {
 
         //feature existirá quando o click for sobre um objeto
         //o item Comment Object será desabilitado quando o click não for sobre um objeto
-        feature = event.layer ? event.layer.feature :  null;
+        //feature = event.layer ? event.layer.feature :  null;
         objectMenuItem = me.contextMenu.items.get("comment-object");
         objectMenuItem.setDisabled(!me.isObjectContextMenu);
+        objectMenuItem.feature = event.layer ? event.layer.feature :  null;
         
         this.contextMenu.showAt(xy);
     }

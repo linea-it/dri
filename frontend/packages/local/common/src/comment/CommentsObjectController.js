@@ -3,7 +3,7 @@ Ext.define('common.comment.CommentsObjectController', {
 
     alias: 'controller.comment-object',
 
-    loadComments: function (catalog_id, object_id) {
+    loadComments: function (catalog_id, object_id, latlng, feature) {
         var me = this,
             // refs = me.getReferences(),
             // catalogPanel = refs.targetsCatalogPanel,
@@ -22,7 +22,9 @@ Ext.define('common.comment.CommentsObjectController', {
             {
                 property: 'object_id',
                 value: object_id
-            }
+            },
+            //TODO: filtro para carregar somente comments de uma posição ou de um objeto
+
         ]);
     },
 
@@ -139,7 +141,12 @@ Ext.define('common.comment.CommentsObjectController', {
         var model = Ext.create('common.model.CommentObject', {
             catalog_id: vm.get('catalog_id'),
             object_id: vm.get('object_id'),
-            is_owner: true
+            is_owner: true,
+
+            //FABIO, acrescentei a propriedade position, não salva
+            //Mudança tbm no model/CommentsObject
+            position_x:0, 
+            position_y:1
         });
 
         store.insert(0, model);
