@@ -29,8 +29,7 @@ Ext.define('Target.view.preview.PreviewController', {
     //ao clicar com botão direito na imagem (visiomatic)
     //feature existirá somente quando o click for sobre o objeto
     onContextItemClickVisiomatic: function(event, feature){
-        console.log(event, feature);
-        this.onComment();
+        this.onComment(event.latlng, feature);
     },
 
     onChangeRecord: function (record) {
@@ -237,7 +236,12 @@ Ext.define('Target.view.preview.PreviewController', {
         visiomatic.showHideRadius(state);
     },
 
-    onComment: function () {
+    /**
+     * @description
+     * @param latlng Object Posição x,y referente a lat long da imagem
+     * @param feature Object Informações sobre o objeto
+     */
+    onComment: function (latlng, feature) {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -275,7 +279,8 @@ Ext.define('Target.view.preview.PreviewController', {
                 ]
             });
 
-            comment.down('comments-object').getController().loadComments(catalog, id);
+            //passar latlng e feature para ser caregado comentários de um objeto específico ou de uma posição específica
+            comment.down('comments-object').getController().loadComments(catalog, id, latlng, feature);
         }
 
     },
