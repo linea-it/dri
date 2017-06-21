@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
-<<<<<<< HEAD
 import json
-=======
 from django.core.exceptions import ObjectDoesNotExist
 
->>>>>>> develop
 import django_filters
 
 from rest_framework import filters
