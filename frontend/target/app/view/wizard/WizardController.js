@@ -78,11 +78,12 @@ Ext.define('Target.view.wizard.WizardController', {
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
+            currentSetting = vm.get('currentSetting'),
             view = me.getView(),
             cutouts = view.down('targets-cutout');
 
         cutouts.setCurrentCatalog(currentCatalog);
-
+        cutouts.setCurrentSetting(currentSetting);
     },
 
     onActiveSystemMembers: function () {

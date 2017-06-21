@@ -8,6 +8,10 @@ Ext.define('Target.view.catalog.CatalogController', {
 
     winAddCatalog: null,
 
+    requires: [
+        'Target.model.Bookmarked'
+    ],
+
     onAddCatalog: function () {
         var me = this;
 
@@ -73,115 +77,82 @@ Ext.define('Target.view.catalog.CatalogController', {
         }
     },
 
-    onStarredCatalog: function (btn) {
+    onStarredCatalog: function () {
         var me = this,
             view = me.getView(),
-            vm = view.getViewModel(),
             selected = view.getSelectedCatalog(),
+            bookmark,
             node;
 
-        node = view.getStore().findNode('catalog_id', selected.get('catalog_id'));
+        if (selected && Number.isInteger(selected.get('id'))) {
 
-        if (selected.get('catalog_id')) {
+            view.setLoading(true);
 
-            Ext.Ajax.request({
-                url: '/PRJSUB/TargetViewer/starredCatalog',
-                scope: this,
-                params: {
-                    'catalog_id': selected.get('catalog_id')
-                },
-                success: function (response) {
-                    // Recuperar a resposta e fazer o decode no json.
-                    var obj = Ext.decode(response.responseText);
+            node = view.getStore().findNode('id', selected.get('id'));
 
-                    if (obj.success) {
-                        // Alterar o Icone no node da tree desta forma evita o reload
-                        // da interface
-                        if (node.get('starred') == false) {
-                            node.set('iconCls', 'catalog-starred');
-                            node.set('starred', true);
-                        } else {
+            if ((selected.get('bookmark') > 0) && (selected.get('starred') === true)) {
+                // Criar um model setando o Id do model bookmark
+                bookmark = Ext.create('Target.model.Bookmarked',{
+                    'id': selected.get('bookmark')
+                });
+
+                // Deleta o Model no Backend
+                bookmark.erase({
+                    callback: function (saved, operation, success) {
+                        if (success) {
+                            // Altera os Icones e seta id bookmark como null
+                            node.set('bookmark', null);
                             node.set('iconCls', 'no-icon');
-                            node.set('starred', false);
-                        }
 
-                        console.log('node', '=', node);
-                    } else {
-                        Ext.Msg.show({
-                            title: 'Sorry',
-                            msg: obj.msg,
-                            icon: Ext.Msg.WARNING,
-                            buttons: Ext.Msg.OK
-                        });
+                            view.setLoading(false);
+
+                        }
                     }
-                },
-                failure: function (response, opts) {
-                    // TODO: Mostrar mensagem de falha
-                    var msg = response.status + ' ' + response.statusText;
-                    Ext.Msg.show({
-                        title: 'Sorry',
-                        msg: msg,
-                        icon: Ext.Msg.ERROR,
-                        buttons: Ext.Msg.OK
-                    });
-                }
-            });
+                });
+
+            } else {
+                // Criar um Model sem id, com o id do produto e a flag is_starred true
+                bookmark = Ext.create('Target.model.Bookmarked',{
+                    'product': selected.get('id'),
+                    'is_starred': true
+                });
+
+                // Adiciona novo registro no database.
+                bookmark.save({
+                    callback: function (saved, operation, success) {
+                        if (success) {
+                            var obj = Ext.decode(operation.getResponse().responseText);
+
+                            // Altera o icon direto no tree node para que nao seja necessario fazer o reload.
+                            node.set('bookmark', obj.id);
+                            node.set('iconCls', 'x-fa fa-star color-icon-starred');
+
+                            view.setLoading(false);
+                        }
+                    }
+                });
+
+            }
         }
     },
 
-    filterByStarred: function () {
-        console.log('filterByStarred');
-
+    filterByStarred: function (btn) {
         var me = this,
-            view = me.getView();
+            vm = me.getViewModel(),
+            catalogs = vm.getStore('catalogs'),
+            bookmarkeds = catalogs.filters.items.filter(function (ch) { return ch._id === "bookmark"; });
+        if (bookmarkeds.length === 0) {
+            btn.setText('Show all');
+            catalogs.addFilter({
+                property: 'bookmark',
+                value: true
+            });
+        } else {
+            btn.setText('Show only bookmarked');
+            catalogs.removeFilter('bookmark');
+        }
 
-        Ext.Ajax.request({
-            url: '/PRJSUB/TargetViewer/getStarredCatalogs',
-            scope: this,
-            success: function (response, opts) {
-                // Recuperar a resposta e fazer o decode no json.
-                var obj = Ext.decode(response.responseText);
+        catalogs.load();
 
-                if (obj.success != true) {
-                    // Se Model.py retornar alguma falha exibe a mensagem
-                    Ext.Msg.alert('Status', obj.msg);
-                } else {
-
-                    var data = obj.data;
-                    console.log('data', '=', data);
-                    if (data.length > 0) {
-
-                        var search = [];
-                        var ids = [];
-
-                        for (i in data) {
-                            var c = data[i];
-                            ids.push(c.catalog_id);
-                        }
-
-                        console.log('ids', '=', ids);
-
-                        var f = {
-                            property: 'catalog_id',
-                            value: ids.join(),
-                            operator: 'in'
-                        };
-
-                        search.push(f);
-
-                        view.filterCatalogs(search);
-                    }
-                }
-            },
-            failure: function (response, opts) {
-                //console.log("server-side failure " + response.status);
-                Ext.MessageBox.show({
-                    title: 'Server Side Failure',
-                    msg: response.status + ' ' + response.statusText,
-                    buttons: Ext.MessageBox.OK,
-                    icon: Ext.MessageBox.WARNING
-                });
-            }
-        });
     }
 });

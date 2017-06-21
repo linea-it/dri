@@ -114,6 +114,16 @@ Ext.define('visiomatic.Visiomatic', {
             radius: 0.001 // radius do marker circulo em graus
         },
 
+        // Draw Crosshair Path Options http://leafletjs.com/reference-1.0.3.html#path
+        crosshairOptions: {
+            color: '#90FA3A',
+            weight: 1,
+            opacity: 0.8,
+            smoothFactor: 1,
+            centerPadding: 0.005, // Deg
+            size: 0.010 // Deg
+        },
+
         release: null,
         tag: null,
         dataset: null,
@@ -132,7 +142,12 @@ Ext.define('visiomatic.Visiomatic', {
         ready: false,
 
         // Layer usada para exibir ou ocultar o raio de um cluster
-        lradius: null
+        lradius: null,
+
+        // Layer usada para exibir ou ocultar a crosshair
+        lcrosshair: null,
+
+        showCrosshair: true
     },
 
     bind: {
@@ -166,7 +181,8 @@ Ext.define('visiomatic.Visiomatic', {
                 '&bounding={dlng},{dlat}' +
                 '&maglim={maglim}' +
                 '&limit=2000',
-                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
+                // properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
+                properties: ['ra', 'dec'],
                 units: [],
                 objurl: 'http://' + host + '/dri/apps/explorer/#coadd/Y3A1_COADD_OBJECT_SUMMARY/{id}',
                 draw: function (feature, latlng) {
@@ -198,7 +214,8 @@ Ext.define('visiomatic.Visiomatic', {
                 '&bounding={dlng},{dlat}' +
                 '&maglim={maglim}' +
                 '&limit=2000',
-                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
+                // properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
+                properties: ['ra', 'dec'],
                 units: [],
                 objurl: 'http://' + host + '/dri/apps/explorer/#coadd/y1a1_coadd_objects/{id}',
                 draw: function (feature, latlng) {
@@ -425,14 +442,25 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
-    setView: function (ra, dec, fov) {
+    setView: function (ra, dec, fov, dontMoveCrosshair) {
         var me = this,
             libL = me.libL,
             map = me.getMap(),
             latlng;
 
+        ra = parseFloat(parseFloat(ra).toFixed(3));
+        dec = parseFloat(parseFloat(dec).toFixed(3));
+
         latlng = libL.latLng(dec, ra);
         map.setView(latlng, map.options.crs.fovToZoom(map, fov, latlng));
+
+        if (me.getShowCrosshair()) {
+
+            if (!dontMoveCrosshair) {
+                me.drawCrosshair(ra, dec);
+            }
+
+        }
     },
 
     onLayerAdd: function (e) {
@@ -696,8 +724,11 @@ Ext.define('visiomatic.Visiomatic', {
                 popup = '<TABLE style="margin:auto;">' +
                    '<TBODY style="vertical-align:top;text-align:left;">' +
                         '<TR><TD><spam style="font-weight: bold;">ID </spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
-                        '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
-                        '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
+                        // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
+                        // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
+                        '<TR><TD><spam style="font-weight: bold;">J2000</spam>: </TD><TD>' +
+                            feature.properties._meta_ra.toFixed(3) + ', ' + feature.properties._meta_dec.toFixed(3) +
+                        '</td></tr>' +
                     '</TBODY></TABLE>';
 
             return popup;
@@ -722,6 +753,116 @@ Ext.define('visiomatic.Visiomatic', {
                 map.removeLayer(layer);
             }
         }
+    },
+
+    markPosition: function (ra, dec, iconCls) {
+        var me = this,
+            l = me.libL,
+            map = me.getMap(),
+            latlng, lmarkPosition, myIcon;
+
+        latlng = l.latLng(dec, ra);
+
+        if (iconCls) {
+            myIcon = l.divIcon({
+                className: 'visiomatic-marker-position',
+                iconAnchor: [8, 44],
+                html:'<i class="' + iconCls + '"></i>'
+            });
+
+            lmarkPosition = l.marker(latlng, {icon: myIcon});
+
+        } else {
+
+            lmarkPosition = l.marker(latlng);
+        }
+
+        lmarkPosition.addTo(map);
+
+        return lmarkPosition;
+
+    },
+
+    setShowCrosshair: function (state) {
+        var me = this,
+            map = me.getMap(),
+            lcrosshair = me.lcrosshair;
+
+        me.showCrosshair = state;
+
+        if (lcrosshair !== null) {
+            if (state) {
+                map.addLayer(lcrosshair);
+
+            } else {
+                map.removeLayer(lcrosshair);
+
+            }
+        }
+
+    },
+
+    /**
+     * Desenha uma crosshair marcando a coordenada passada por parametro
+     * @param {Model/Array[ra,dec]} object - uma instancia de model com
+     * atributos ra e dec ou um array com [ra, dec]
+     * @return {I.GroupLayer} Return crosshair a groupLayer
+     */
+    drawCrosshair: function (ra, dec, options) {
+        // console.log("Zoomify - drawCrosshair()");
+        var me = this,
+            l = me.libL,
+            map = me.getMap(),
+            crosshairOptions = me.getCrosshairOptions(),
+            layer = null,
+            labelOptions, centerPadding, size, latlng,
+            lineTop, lineBotton, lineLeft, lineRight;
+
+        labelOptions = Ext.Object.merge({}, crosshairOptions);
+        if (options) {
+            labelOptions = Ext.Object.merge(labelOptions, options);
+        }
+
+        // Verificar se ja tem crosshair
+        if (me.lcrosshair) {
+            if (map.hasLayer(me.lcrosshair)) {
+                // se ja houver remove do map
+                map.removeLayer(me.lcrosshair);
+                me.lcrosshair = null;
+            }
+        }
+
+        // coordenadas
+        latlng = l.latLng(dec, ra);
+
+        // centerPadding e a distancia que as linhas vao ter a partir do centro.
+        centerPadding = ((labelOptions.centerPadding) ?
+                labelOptions.centerPadding : 0.005);
+
+        size = ((labelOptions.size) ?
+                labelOptions.size : 0.05);
+
+        lineTop       = [l.latLng((dec + centerPadding), ra), l.latLng((dec + size), ra)];
+        lineBotton    = [l.latLng((dec - centerPadding), ra), l.latLng((dec - size), ra)];
+        lineLeft      = [l.latLng(dec, (ra + centerPadding)), l.latLng(dec, (ra + size))];
+        lineRight     = [l.latLng(dec, (ra - centerPadding)), l.latLng(dec, (ra - size))];
+
+        lineTop     = l.polyline(lineTop, options);
+        lineBotton  = l.polyline(lineBotton, options);
+        lineLeft    = l.polyline(lineLeft, options);
+        lineRight   = l.polyline(lineRight, options);
+
+        layer = new l.LayerGroup(
+                [lineTop, lineBotton, lineLeft, lineRight]);
+
+        me.lcrosshair = layer;
+
+        if (me.getShowCrosshair()) {
+            map.addLayer(me.lcrosshair);
+
+        }
+
+        return me.lcrosshair;
     }
 
 });

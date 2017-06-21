@@ -43,98 +43,109 @@ Ext.define('Target.view.objects.Panel', {
             flex: 1,
             border: true,
             frame: true,
-            tbar: [
-                {
-                    xtype: 'tbtext',
-                    reference: 'txtTargetTitle',
-                    html: 'Sample Text Item',
-                    cls: 'tb-text-target-title'
-                },
-                '->',
-                {
-                    xtype: 'button',
-                    iconCls: 'x-fa fa-floppy-o',
-                    tooltip: 'Save As',
-                    handler: 'onClickSaveAs'
-                },
-                {
-                    iconCls: 'x-fa fa-download',
-                    tooltip: 'Download',
-                    handler: 'onClickDownload'
-                },
-                {
-                    iconCls: 'x-fa fa-picture-o',
-                    tooltip: 'Create cutouts',
-                    handler: 'onClickCreateCutouts'
-                },
-                {
-                    xtype: 'button',
-                    iconCls: 'x-fa fa-th-large',
-                    tooltip: 'Switching between Mosaic and Data Grid',
-                    enableToggle: true,
-                    toggleHandler: 'switchMosaicGrid',
-                    bind: {
-                        pressed: '{mosaic_is_visible}'
-                    }
-                },
-                {
-                    xtype: 'fieldcontainer',
-                    layout: 'hbox',
-                    defaults: {
-                        flex: 1
+            dockedItems: [{
+                dock: 'top',
+                xtype: 'toolbar',
+                overflowHandler: 'scroller',
+                items: [
+                    {
+                        xtype: 'tbtext',
+                        reference: 'txtTargetTitle',
+                        html: 'Sample Text Item',
+                        cls: 'tb-text-target-title'
+
                     },
-                    items: [
-                        {
-                            xtype: 'button',
-                            reference: 'btnFilterApply',
-                            iconCls: 'x-fa fa-bolt',
-                            tooltip: 'Apply or Disapply Filters',
-                            pressed: true,
-                            enableToggle: true,
-                            toggleHandler: 'applyDisapplyFilter',
-                            bind: {
-                                disabled: '{!filters}'
-                            }
+                    '->',
+                    {
+                        xtype: 'button',
+                        iconCls: 'x-fa fa-floppy-o',
+                        // tooltip: 'Save As',
+                        tooltip: 'Under Construction',
+                        handler: 'onClickSaveAs'
+                    },
+                    {
+                        iconCls: 'x-fa fa-download',
+                        // tooltip: 'Download',
+                        tooltip: 'Under Construction',
+                        handler: 'onClickDownload'
+                    },
+                    {
+                        iconCls: 'x-fa fa-picture-o',
+                        // tooltip: 'Create cutouts',
+                        tooltip: 'Under Construction',
+                        handler: 'onClickCreateCutouts'
+                    },
+                    {
+                        xtype: 'button',
+                        iconCls: 'x-fa fa-th-large',
+                        // tooltip: 'Switching between Mosaic and Data Grid',
+                        tooltip: 'Under Construction',
+                        enableToggle: true,
+                        toggleHandler: 'switchMosaicGrid',
+                        bind: {
+                            pressed: '{mosaic_is_visible}'
+                        }
+                    },
+                    {
+                        xtype: 'fieldcontainer',
+                        layout: 'hbox',
+                        defaults: {
+                            flex: 1
                         },
-                        {
-                            xtype: 'combobox',
-                            reference: 'cmbFilterSet',
-                            emptyText: 'No filter',
-                            displayField: 'fst_name',
-                            publishes: 'id',
-                            bind: {
-                                store: '{filterSets}',
-                                selection: '{filterSet}'
-                            },
-                            listeners: {
-                                select: 'onSelectFilterSet'
-                            },
-                            triggers: {
-                                clear: {
-                                    cls: 'x-form-clear-trigger',
-                                    handler: 'onClearCmbFilterSet',
-                                    hidden: true
+                        items: [
+                            {
+                                xtype: 'button',
+                                reference: 'btnFilterApply',
+                                iconCls: 'x-fa fa-bolt',
+                                tooltip: 'Apply or Disapply Filters',
+                                pressed: true,
+                                enableToggle: true,
+                                toggleHandler: 'applyDisapplyFilter',
+                                bind: {
+                                    disabled: '{!filters}'
                                 }
                             },
-                            minChars: 0,
-                            queryMode: 'local',
-                            editable: false
-                        }
-                    ]
-                },
-                {
-                    xtype: 'button',
-                    iconCls: 'x-fa fa-filter',
-                    tooltip: 'Filters',
-                    handler: 'onClickFilter'
-                },
-                {
-                    xtype: 'button',
-                    iconCls: 'x-fa fa-gear',
-                    tooltip: 'Settings',
-                    handler: 'onClickSettings'
-                }
-            ],
+                            {
+                                xtype: 'combobox',
+                                reference: 'cmbFilterSet',
+                                emptyText: 'No filter',
+                                displayField: 'fst_name',
+                                publishes: 'id',
+                                bind: {
+                                    store: '{filterSets}',
+                                    selection: '{filterSet}'
+                                },
+                                listeners: {
+                                    select: 'onSelectFilterSet'
+                                },
+                                triggers: {
+                                    clear: {
+                                        cls: 'x-form-clear-trigger',
+                                        handler: 'onClearCmbFilterSet',
+                                        hidden: true
+                                    }
+                                },
+                                minChars: 0,
+                                queryMode: 'local',
+                                editable: false
+                            }
+                        ]
+                    },
+                    {
+                        xtype: 'button',
+                        iconCls: 'x-fa fa-filter',
+                        tooltip: 'Filters',
+                        handler: 'onClickFilter'
+                    },
+                    {
+                        xtype: 'button',
+                        iconCls: 'x-fa fa-gear',
+                        tooltip: 'Settings',
+                        handler: 'onClickSettings'
+                    }
+                ]
+            }],
+
             items: [
                 {
                     xtype: 'targets-objects-grid',
@@ -149,6 +160,7 @@ Ext.define('Target.view.objects.Panel', {
                 },
                 {
                     xtype: 'targets-objects-mosaic',
+                    reference: 'TargetMosaic',
                     bind: {
                         store: '{objects}'
                     },
@@ -160,7 +172,8 @@ Ext.define('Target.view.objects.Panel', {
                             displayField: 'cjb_display_name',
                             publishes: 'id',
                             bind: {
-                                store: '{cutoutsJobs}'
+                                store: '{cutoutsJobs}',
+                                selection: '{currentCutoutJob}'
                             },
                             listeners: {
                                 select: 'onSelectCutoutJob'
@@ -251,14 +264,16 @@ Ext.define('Target.view.objects.Panel', {
 
     setCurrentCatalog: function (catalog) {
         var me = this,
-            // gridPanel = me.down('targets-objects-grid'),
             txtTargetTitle = me.lookup('txtTargetTitle'),
             title = '';
 
         if (catalog.get('id') > 0) {
             title = Ext.String.format('{0} - {1}', catalog.get('pcl_display_name'), catalog.get('prd_display_name'));
 
-            // gridPanel.setTitle(title);
+            if (title.length > 30) {
+                title = catalog.get('prd_display_name');
+            }
+
             txtTargetTitle.setHtml(title);
 
         }
@@ -271,8 +286,6 @@ Ext.define('Target.view.objects.Panel', {
         //         refs = me.getReferences(),
         //         grids = refs.targetsGrid,
         //         preview = refs.targetsPreviewPanel;
-
-        gridPanel.setTitle('loading...');
 
         vm.getStore('catalogs').removeAll();
         vm.getStore('catalogs').clearFilter(true);

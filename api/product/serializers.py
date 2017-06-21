@@ -31,6 +31,9 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     # Related Products
     prl_related = serializers.SerializerMethodField()
     prl_cross_identification = serializers.SerializerMethodField()
+    prl_cross_property = serializers.SerializerMethodField()
+
+    tablename = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -50,7 +53,9 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             'pgr_display_name',
             'epr_original_id',
             'prl_related',
-            'prl_cross_identification'
+            'prl_cross_identification',
+            'prl_cross_property',
+            'tablename'
         )
 
     def get_pcl_name(self, obj):
@@ -90,6 +95,22 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             return related.prl_cross_identification.pk
         except:
             return None
+
+    def get_prl_cross_property(self, obj):
+        try:
+            related = ProductRelated.objects.get(prl_product=obj.pk)
+            return related.prl_cross_identification.pcn_column_name.lower()
+        except:
+            return None
+
+    def get_tablename(self, obj):
+        try:
+            if obj.table.tbl_schema is not None:
+                return "%s.%s" % (obj.table.tbl_schema, obj.table.tbl_name)
+            else:
+                return obj.table.tbl_name
+        except:
+            return  None
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
@@ -306,6 +327,10 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_tag',
             'cjb_band',
             'cjb_Blacklist',
+            'cjb_label_position',
+            'cjb_label_properties',
+            'cjb_label_colors',
+            'cjb_label_font_size',
             'owner'
         )
 
@@ -372,7 +397,7 @@ class ProductContentAssociationSerializer(serializers.HyperlinkedModelSerializer
             'pcc_unit',
             'pcc_reference',
             'pcc_mandatory',
-            'pcn_column_name'
+            'pcn_column_name',
         )
 
         read_only_fields = ('id')
@@ -425,6 +450,12 @@ class AssociationSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ProductAssociationSerializer(serializers.ModelSerializer):
+    # Atributos da  product_classifier.ProductClassContent
+    pcc_ucd = serializers.SerializerMethodField()
+
+    # Atributos da  product.ProductContent
+    pcn_column_name = serializers.SerializerMethodField()
+
     class Meta:
         model = ProductContentAssociation
 
@@ -433,9 +464,17 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
             'pca_product',
             'pca_class_content',
             'pca_product_content',
+            'pcc_ucd',
+            'pcn_column_name'
         )
 
         read_only_fields = ('id')
+
+    def get_pcc_ucd(self, obj):
+        return obj.pca_class_content.pcc_ucd
+
+    def get_pcn_column_name(self, obj):
+        return obj.pca_product_content.pcn_column_name.lower()
 
 
 class ProductRelatedSerializer(serializers.ModelSerializer):
@@ -837,7 +876,7 @@ class FilterConditionSerializer(serializers.ModelSerializer):
             try:
                 return obj.pcs_content.pcn_column_name
             except:
-                return None
+                return obj.fcd_property_name
 
     def get_operator_display_name(self, obj):
         try:
@@ -853,3 +892,31 @@ class FilterConditionSerializer(serializers.ModelSerializer):
             return operators.get(obj.fcd_operation)
         except:
             return None
+
+# ---------------------------------- Bookmark ----------------------------------
+
+class BookmarkedSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BookmarkProduct
+
+
+        fields = (
+            'id',
+            'product',
+            'owner',
+            'is_starred',
+            'is_owner'
+        )
+
+    def get_owner(self, obj):
+        return obj.owner.username
+
+    def get_is_owner(self, obj):
+        current_user = self.context['request'].user
+        if obj.owner.pk == current_user.pk:
+            return True
+        else:
+            return False

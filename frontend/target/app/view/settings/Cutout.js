@@ -15,7 +15,8 @@ Ext.define('Target.view.settings.Cutout', {
     viewModel: 'cutout',
 
     config: {
-        currentCatalog: null
+        currentCatalog: null,
+        currentSetting: null
     },
 
     initComponent: function () {
@@ -32,7 +33,8 @@ Ext.define('Target.view.settings.Cutout', {
                     reference: 'cutoutJobsGrid',
                     flex: 1,
                     bind: {
-                        store: '{cutoutjobs}'
+                        store: '{cutoutjobs}',
+                        selection: '{cutoutJob}'
                     },
                     tbar: [
                         {
@@ -51,8 +53,17 @@ Ext.define('Target.view.settings.Cutout', {
                             bind: {
                                 // disabled: '{!cutoutJobsGrid.selection.ready_to_download}'
                             }
+                        },
+                        {
+                            tooltip:'Remove Cutout Job',
+                            iconCls: 'x-fa fa-trash',
+                            ui: 'soft-red',
+                            handler: 'onRemoveCutoutJob',
+                            disabled: true,
+                            bind: {
+                                disabled: '{!cutoutJobsGrid.selection}'
+                            }
                         }
-
                     ]
                 }
             ],
@@ -80,6 +91,16 @@ Ext.define('Target.view.settings.Cutout', {
         vm.set('currentCatalog', catalog);
 
         me.fireEvent('changecatalog', catalog, me);
+
+    },
+
+    setCurrentSetting: function (currentSetting) {
+        var me = this,
+            vm = me.getViewModel();
+
+        me.currentSetting = currentSetting;
+
+        me.getViewModel().set('currentSetting', currentSetting);
 
     }
 });

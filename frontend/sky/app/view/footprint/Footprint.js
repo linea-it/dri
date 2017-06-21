@@ -32,7 +32,8 @@ Ext.define('Sky.view.footprint.Footprint', {
                         storeTiles: '{tiles}'
                     },
                     listeners: {
-                        ondblclick: 'onDblClickAladin'
+                        ondblclick: 'onDblClickAladin',
+                        gotoposition: 'onAladinGoToPosition'
                     }
                 }
             ]

@@ -121,16 +121,20 @@ class TargetViewSet(ViewSet):
             })
 
             row.update({
-                "_meta_id": row.get(properties.get("meta.id;meta.main"))
+                "_meta_id": row.get(properties.get("meta.id;meta.main")),
+                "_meta_property_id": properties.get("meta.id;meta.main")
             })
             row.update({
-                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main"))
+                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main")),
+                "_meta_property_ra": properties.get("pos.eq.ra;meta.main")
             })
             row.update({
-                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main"))
+                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main")),
+                "_meta_property_dec": properties.get("pos.eq.dec;meta.main")
             })
             row.update({
-                "_meta_radius": row.get(properties.get("phys.angSize;src"))
+                "_meta_radius": row.get(properties.get("phys.angSize;src")),
+                "_meta_property_radius": properties.get("phys.angSize;src")
             })
 
             row.update({

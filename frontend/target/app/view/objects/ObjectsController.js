@@ -185,10 +185,8 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     onLoadProductContent: function (productContent) {
         var me = this,
-            vm = me.getViewModel(),
             refs = me.getReferences(),
-            objectsGrid = refs.targetsObjectsGrid,
-            currentSetting = vm.get('currentSetting');
+            objectsGrid = refs.targetsObjectsGrid;
 
         // Checar se tem as associacoes obrigatorias
         if (productContent.check_ucds()) {
@@ -293,7 +291,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             }
 
             store.load({
-                callback: function (records, operation, success) {
+                callback: function () {
 
                     // remover a mensagem de load do painel
                     objectsGrid.setLoading(false);
@@ -315,7 +313,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     reloadObjects: function () {
         var me = this,
             vm = me.getViewModel(),
-            objects = vm.getStore('objects'),
             catalog = vm.get('catalog');
 
         me.clearObjects();
@@ -336,7 +333,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     },
 
-    onUpdateObject: function (store, record, operation, modifiedFieldNames, details) {
+    onUpdateObject: function (store, record, operation, modifiedFieldNames) {
         if (modifiedFieldNames) {
             // Caso o campo alterado seja o reject
             if (modifiedFieldNames.indexOf('_meta_reject') >= 0) {
@@ -482,7 +479,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.showWizard();
     },
 
-    onChangeInObjects: function (argument) {
+    onChangeInObjects: function () {
         // toda vez que houver uma modificacao no objeto ex. comentarios
         // atualiza a store de objetos
         var me = this,
@@ -491,7 +488,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         store.load({
             scope: this,
-            callback: function (records, operation, success) {
+            callback: function () {
                 // Todo caso seja necessario selecionar o record que estava selecionado antes
             }
         });
@@ -510,7 +507,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             closable: true,
             closeAction: 'destroy',
             width: 880,
-            height: 620,
+            height: 500,
             modal:true,
             items: [{
                 xtype: 'targets-wizard',
@@ -677,7 +674,7 @@ Ext.define('Target.view.objects.ObjectsController', {
      * Para ativar ou desativar um filtro basta chamar a funcao load ela
      * ja checa se tem filtro selecionado e se o botao de filtro esta ativo.
      */
-    applyDisapplyFilter: function (btn, state) {
+    applyDisapplyFilter: function () {
         var me = this;
 
         me.loadObjects();
@@ -785,8 +782,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onClickSaveAs: function () {
-        console.log('onClickSaveAs');
-
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog');
@@ -807,6 +802,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     onClickCreateCutouts: function () {
         var me = this,
             vm = me.getViewModel(),
+            currentSetting = vm.get('currentSetting'),
             currentCatalog = vm.get('currentCatalog');
 
         if (me.winCutout !== null) {
@@ -824,7 +820,11 @@ Ext.define('Target.view.objects.ObjectsController', {
             }
         });
 
-        me.winCutout.getViewModel().set('currentCatalog', currentCatalog);
+        me.winCutout.setCurrentProduct(currentCatalog);
+
+        if ((currentSetting) && (currentSetting.get('id') > 0)) {
+            me.winCutout.setCurrentSetting(currentSetting);
+        }
 
         me.winCutout.show();
 
@@ -845,6 +845,20 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.winDownload.setCurrentCatalog(currentCatalog);
 
         me.winDownload.show();
+
+    },
+
+    onSelectCutoutJob: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            cutoutJob = vm.get('currentCutoutJob'),
+            mosaic = me.lookup('TargetMosaic');
+
+        if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
+            // Setar no Mosaic o Cutout Job Selecionado
+            mosaic.setCutoutJob(cutoutJob);
+
+        }
 
     }
 

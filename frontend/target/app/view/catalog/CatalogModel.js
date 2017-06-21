@@ -9,7 +9,8 @@ Ext.define('Target.view.catalog.CatalogModel', {
     requires: [
         'Target.model.Catalog',
         'Target.store.CatalogsTree',
-        'Target.store.Products'
+        'Target.store.Products',
+        'Target.store.Bookmarks'
     ],
 
     stores: {
@@ -18,6 +19,10 @@ Ext.define('Target.view.catalog.CatalogModel', {
         },
         products: {
             type: 'products'
+        },
+        bookmarks: {
+            type: 'bookmarks',
+            autoLoad: false
         }
     },
 

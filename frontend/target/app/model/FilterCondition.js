@@ -15,19 +15,17 @@ Ext.define('Target.model.FilterCondition', {
             type:'string',
             persist: false,
             convert: function (value, record) {
-                if (!value) {
-                    var propery = record.get('fcd_property_name');
-                    switch (propery) {
-                        case '_meta_rating':
-                            value = 'Rating';
+                var propery = record.get('fcd_property_name');
+                switch (propery) {
+                    case '_meta_rating':
+                        value = 'Rating';
 
-                            break;
+                        break;
 
-                        case '_meta_reject':
-                            value = 'Reject';
+                    case '_meta_reject':
+                        value = 'Reject';
 
-                            break;
-                    }
+                        break;
                 }
 
                 return value;

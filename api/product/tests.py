@@ -250,16 +250,25 @@ class CutOutJobAPITestCase(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['cjb_display_name'], data['cjb_display_name'])
 
+<<<<<<< HEAD
 '''
 # ----------------------------------------- < SaveFilter > -----------------------------------------
 class SaveFilterAPITestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user("dri", "dri@linea.org", "dri")
         self.client.login(username='dri', password='dri')
+=======
+class BookmarkedTestCases(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user("dri", "dri@linea.org", "dri")
+        self.client.login(username='dri', password='dri')
+
+>>>>>>> develop
         self.product = mommy.make(
             Product,
             prd_owner=self.user
         )
+<<<<<<< HEAD
         self.filterset_data = dict({
             "product": self.product.pk,
             "owner": self.user.pk,
@@ -284,3 +293,58 @@ class SaveFilterAPITestCase(APITestCase):
 
         data = response.data
 '''
+=======
+
+        self.bookmarked_data = dict({
+            "product": self.product.pk,
+            "owner": self.user.pk,
+            "is_starred": True
+        })
+
+
+    def test_list_bookmark_route(self):
+        route = resolve('/bookmarked/')
+        self.assertEqual(route.func.__name__, 'BookmarkedViewSet')
+
+    def test_list_bookarks(self):
+        response = self.client.get('/bookmarked/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_crud_filterset(self):
+        # Create
+        response = self.client.post('/bookmarked/', self.bookmarked_data, format='json')
+        self.assertEqual(response.status_code, 201)
+
+        bookmarked = response.data
+
+        # Read
+        response = self.client.get('/bookmarked/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['is_starred'], bookmarked['is_starred'])
+
+        # Update
+        patch_data = dict({'is_starred': False})
+        response = self.client.patch(
+            '/bookmarked/%s/' % bookmarked['id'],
+            patch_data,
+            format='json')
+
+        self.assertEqual(response.status_code, 200)
+
+        # Confirm Updated
+        response = self.client.get('/bookmarked/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(response.data[0]['is_starred'], patch_data['is_starred'])
+
+        # Delete
+        response = self.client.delete(
+            '/bookmarked/%s/' % bookmarked['id'])
+        self.assertEqual(response.status_code, 204)
+
+        # Confirm Deleted
+        response = self.client.get('/bookmarked/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 0)
+>>>>>>> develop

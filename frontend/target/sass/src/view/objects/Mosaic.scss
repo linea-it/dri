@@ -1,11 +1,11 @@
 .thumb{
     background: #dddddd;
-    padding: 3px;
+    /**padding: 3px;*/
     padding-bottom: 0;
 }
 
 .x-quirks .thumb {
-    padding-bottom: 3px;
+    /**padding-bottom: 3px;*/
 }
 
 .thumb img{
@@ -66,12 +66,16 @@
     overflow:hidden;
 }
 
-.image_legend {
+.mosaic-labels-inside {
     position:absolute;
     padding-left: 5px;
 }
+.mosaic-labels-outside {
+    padding-left: 5px;
+    background-color: #fff;
+}
 
-.legend_j2000 {
+.mosaic-labels {
     color: $color-soft-blue;
     font-size: 10px;
 }

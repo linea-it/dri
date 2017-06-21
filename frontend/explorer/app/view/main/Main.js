@@ -19,7 +19,8 @@ Ext.define('Explorer.view.main.Main', {
         'common.header.Toolbar',
         'common.footer.Footer',
 
-        'Explorer.view.coadd.Coadd'
+        'Explorer.view.coadd.Coadd',
+        'Explorer.view.system.System'
     ],
 
     controller: 'main',

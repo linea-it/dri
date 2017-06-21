@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 import logging
+<<<<<<< HEAD
 import json
+=======
+from django.core.exceptions import ObjectDoesNotExist
+
+>>>>>>> develop
 import django_filters
 
 from rest_framework import filters
@@ -103,9 +108,9 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     @list_route()
     def get_class_tree_by_group(self, request):
         """
-            Este metodo retorna uma tree, com todos os produtos de um grupo. estes produtos estão
+            Este metodo retorna uma tree, com todos os produtos de um grupo. estes produtos estÃ£o
             agrupados por suas classes.
-            é necessario o parametro group que é o internal name da tabela Group
+            Ã© necessario o parametro group que Ã© o internal name da tabela Group
             ex: catalog/get_class_tree_by_group/group='targets'
         """
         group = request.query_params.get('group', None)
@@ -114,7 +119,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             # TODO retornar execpt que o group e obrigatorio
             return Response({
                 'success': False,
-                'msg': 'Necessário passar o parametro group.'
+                'msg': 'NecessÃ¡rio passar o parametro group.'
             })
 
         # Usando Filter_Queryset e aplicado os filtros listados no filterbackend
@@ -124,6 +129,16 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
         prd_display_name = request.query_params.get('search', None)
         if prd_display_name:
             queryset = self.queryset.filter(prd_display_name__icontains=prd_display_name)
+
+        # Bookmark
+        bookmarked = request.query_params.get('bookmark', None)
+        if bookmarked:
+            # Recuperar todos os catalogos marcados como favorito pelo usuario logado
+            bookmarkeds = BookmarkProduct.objects.filter(owner=request.user.pk)
+            if bookmarkeds.count() > 0:
+                ids = bookmarkeds.values_list('product', flat=True)
+                queryset = self.queryset.filter(pk__in=ids)
+
 
         # Esse dicionario vai receber os nos principais que sao as classes.
         classes = dict()
@@ -157,10 +172,20 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 "text": row.prd_display_name,
                 "leaf": True,
                 "iconCls": "no-icon",
-                "starred": False,
-                "markable": True,
+                "bookmark": None,
                 "editable": editable
             })
+
+            try:
+                bookmark = BookmarkProduct.objects.get(product=row.id, owner=request.user.pk)
+                catalog.update({
+                    "bookmark": bookmark.pk,
+                    "iconCls": "x-fa fa-star color-icon-starred",
+                    "starred": True
+                })
+
+            except ObjectDoesNotExist:
+                pass
 
             # pega o no da classe e adiciona este no como filho.
             dclass = classes.get(class_name)
@@ -371,7 +396,7 @@ class MaskViewSet(viewsets.ModelViewSet):
 
 class AllProductViewSet(viewsets.ModelViewSet):
     """
-    
+
     """
     queryset = Product.objects.select_related().filter(prd_process_id__isnull=False)
 
@@ -587,3 +612,18 @@ def export_product(request):
             return HttpResponse(content="type not implemented")        
     except Exception as e:
         return HttpResponse(status=405)
+
+
+# ---------------------------------- Bookmark ----------------------------------
+class BookmarkedViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = BookmarkProduct.objects.select_related().all()
+
+    serializer_class = BookmarkedSerializer
+
+    filter_fields = ('id', 'product', 'owner', 'is_starred')
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
