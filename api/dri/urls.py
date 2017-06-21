@@ -71,7 +71,6 @@ router.register(r'defect', validation_views.DefectViewSet)
 router.register(r'filters', common_views.FilterViewSet)
 router.register(r'site', product_register_views.SiteViewSet)
 
-router.register(r'product/saveas', viewset=product_views.SaveFilterAsProduct, base_name="productsaveas")
 router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet,  base_name='importprocess')
 router.register(r'importauthorization', product_register_views.AuthorizationViewSet)
 
@@ -100,6 +99,8 @@ urlpatterns = [
     url(r'^admin', admin.site.urls),
     url(r'^', include(router.urls)),
     url(r'^contact/', common_views.contact_us),
+
+    url(r'^save_product_as', product_views.save_product_as),
 
     url(r'^teste/', common_views.teste),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),

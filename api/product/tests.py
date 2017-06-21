@@ -12,7 +12,6 @@ from model_mommy import mommy
 from model_mommy.recipe import Recipe, foreign_key
 from pprint import pprint
 
-
 # ----------------------------------------- < Filters > -----------------------------------------
 class FilterSetAPITestCase(APITestCase):
     def setUp(self):
@@ -251,23 +250,37 @@ class CutOutJobAPITestCase(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['cjb_display_name'], data['cjb_display_name'])
 
+'''
 # ----------------------------------------- < SaveFilter > -----------------------------------------
-#class SaveFilterAPITestCase(APITestCase):
-#    def setUp(self):
-#        self.user = User.objects.create_user("dri", "dri@linea.org", "dri")
-#        self.client.login(username='dri', password='dri')
-#
-#        self.route = '/cutoutjob/'
-#
-#    def test_save_filter(self):
-#        # Save
-#        response = self.client.post(
-#            self.route,
-#            dict(),
-#            format='json')
-#
-#        self.assertEqual(response.status_code, 201)
-#
-#        data = response.data
+class SaveFilterAPITestCase(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user("dri", "dri@linea.org", "dri")
+        self.client.login(username='dri', password='dri')
+        self.product = mommy.make(
+            Product,
+            prd_owner=self.user
+        )
+        self.filterset_data = dict({
+            "product": self.product.pk,
+            "owner": self.user.pk,
+            "fst_name": "FilterSet Test"
+        })
+        self.route = '/cutoutjob/'
 
+    def test_save_filter(self):
+        # Create
+        response = self.client.post('/filterset/', self.filterset_data, format='json')
+        self.assertEqual(response.status_code, 201)
 
+        filterset = response.data
+
+        # Save
+        response = self.client.post(
+            self.route,
+            dict(),
+            format='json')
+
+        self.assertEqual(response.status_code, 201)
+
+        data = response.data
+'''

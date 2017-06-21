@@ -19,7 +19,7 @@ from .models import Product, Catalog, Map, Mask, CutOutJob, ProductContent, Prod
 from .serializers import *
 from .filters import ProductPermissionFilterBackend
 import operator
-
+from django.http import HttpResponse
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
 from rest_framework.permissions import IsAuthenticated
 
@@ -548,63 +548,42 @@ class FilterConditionViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'filterset', 'fcd_property', 'fcd_operation', 'fcd_value')
 
 
+##------------------ <RPC to save_as> -------------------
+from django.views.decorators.http import require_http_methods
+from product.product_filter_manager import SaveFilterAsProduct, ExporteFilter
+from dri.settings import DOWNLOAD_DIR
+import json
+import uuid
+
+@require_http_methods(["POST"])
+def save_product_as(request):
+    data = json.loads(request.body)
+    filter_id = data['filter']
+    tablename = data['name']
+    description = data["description"]
+
+    saver = SaveFilterAsProduct(filter_id, tablename, request.user, description)
+    try:
+        saver.execute()
+        return HttpResponse(status=200)
+    except Exception as e:
+        return HttpResponse(status=405)
 
 
+##------------------ <RPC to export> -------------------
+@require_http_methods(["POST"])
+def export_product(request):
+    data = json.loads(request.body)
+    filter_id = data['filter']    
+    typefile = data['type']    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class SaveAsSerializer(serializers.HyperlinkedModelSerializer):
-#    epr_owner = serializers.PrimaryKeyRelatedField(
-#        queryset=User.objects.all(), many=False)
-#
-#    epr_site = serializers.PrimaryKeyRelatedField(
-#        queryset=Site.objects.all(), many=False)
-#
-    class Meta:
-
-        fields = (
-            'id',
-            'um',
-            'dois',
-        )
-
-#@api_view(['POST'])
-#def SaveFilterAsProduct(request):
-#    print(request.data)
-#    data = json.dumps({'status':'success'})
-#    return Response(data, status=status.HTTP_200_OK)
-
-class SaveFilterAsProduct(viewsets.ModelViewSet):
-    """
-    API endpoint that allows External Processes to be imported
-    """
-    http_method_names = ['post', ]   
-    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
-    permission_classes = (IsAuthenticated,)
-    serializer_class = SaveAsSerializer
-    
-    @transaction.atomic
-    def create(self, request):
-        response = {} 
-        if response is not None:
-            return response
+    exporter = ExporteFilter(filter_id)    
+    try:
+        if typefile == 'csv':
+            filename = DOWNLOAD_DIR + str(uuid.uuid4()) + '.csv'
+            exporter.export2CSV(filename)            
+            return HttpResponse(content=filename, status=200)
         else:
-            raise Exception('was a failure to create the record.')
-        
-#class SaveFilterAsProduct(viewsets.ViewSet):
-#    def list(self, request):
-#        """GET - Show all users"""
-#        print(request.version)
-#        return Response()
+            return HttpResponse(content="type not implemented")        
+    except Exception as e:
+        return HttpResponse(status=405)
