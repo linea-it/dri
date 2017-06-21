@@ -60,16 +60,18 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             fieldLabel: 'X Size (arcmin)',
                             value: 1,
                             name: 'xsize',
-                            minValue: 1,
-                            maxValue: 10
+                            hideTrigger: true
+                            // minValue: 1,
+                            // maxValue: 10
                         },
                         {
                             xtype: 'numberfield',
                             fieldLabel: 'Y Size (arcmin)',
                             value: 1,
                             name: 'ysize',
-                            minValue: 1,
-                            maxValue: 10
+                            hideTrigger: true
+                            // minValue: 1,
+                            // maxValue: 10
                         },
                         {
                             xtype: 'combobox',
@@ -153,6 +155,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     fieldLabel: 'Font Size',
                                     name: 'label_font_size',
                                     value: 10,
+                                    // hideTrigger: true,
                                     minValue: 6,
                                     maxValue: 18
                                 },
