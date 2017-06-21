@@ -3,8 +3,8 @@ Ext.define('visiomatic.Visiomatic', {
 
     requires: [
         'visiomatic.VisiomaticModel',
-        'visiomatic.VisiomaticController'
-
+        'visiomatic.VisiomaticController',
+        'visiomatic.catalog.CatalogOverlayWindow'
     ],
 
     mixins: {
@@ -147,8 +147,11 @@ Ext.define('visiomatic.Visiomatic', {
         // Layer usada para exibir ou ocultar a crosshair
         lcrosshair: null,
 
-        showCrosshair: true
+        showCrosshair: true,
+
     },
+
+    _winCatalogOverlay: null,
 
     bind: {
         release: '{release}',
@@ -863,6 +866,26 @@ Ext.define('visiomatic.Visiomatic', {
         }
 
         return me.lcrosshair;
+    },
+
+
+
+    showCatalogOverlayWindow: function() {
+        console.log('showCatalogOverlayWindow')
+        var me = this,
+            win = me._winCatalogOverlay;
+
+        if (win != null) {
+            win.show();
+        } else {
+            win = Ext.create('visiomatic.catalog.CatalogOverlayWindow', {});
+
+            win.show();
+
+            me._winCatalogOverlay = win;
+
+        }
+
     }
 
 });

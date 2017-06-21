@@ -1027,6 +1027,9 @@ $include-visiomatic-interface: dynamic(true);;
 $include-visiomatic-visiomatic: dynamic(true);;
 $include-visiomatic-visiomaticcontroller: dynamic(true);;
 $include-visiomatic-visiomaticmodel: dynamic(true);;
+$include-visiomatic-catalog-catalogoverlaywindow: dynamic(true);;
+$include-visiomatic-catalog-catalogs: dynamic(true);;
+$include-visiomatic-model-catalogtree: dynamic(true);;
 $output-paths: ("path": "../resources");
 
 /* ======================== ETC ======================== */
