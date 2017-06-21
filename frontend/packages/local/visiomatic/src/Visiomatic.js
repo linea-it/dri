@@ -442,17 +442,23 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
-    setView: function (ra, dec, fov) {
+    setView: function (ra, dec, fov, dontMoveCrosshair) {
         var me = this,
             libL = me.libL,
             map = me.getMap(),
             latlng;
 
+        ra = parseFloat(parseFloat(ra).toFixed(3));
+        dec = parseFloat(parseFloat(dec).toFixed(3));
+
         latlng = libL.latLng(dec, ra);
         map.setView(latlng, map.options.crs.fovToZoom(map, fov, latlng));
 
         if (me.getShowCrosshair()) {
-            me.drawCrosshair(ra, dec);
+
+            if (!dontMoveCrosshair) {
+                me.drawCrosshair(ra, dec);
+            }
 
         }
     },

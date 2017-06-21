@@ -507,7 +507,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             closable: true,
             closeAction: 'destroy',
             width: 880,
-            height: 620,
+            height: 500,
             modal:true,
             items: [{
                 xtype: 'targets-wizard',
@@ -802,6 +802,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     onClickCreateCutouts: function () {
         var me = this,
             vm = me.getViewModel(),
+            currentSetting = vm.get('currentSetting'),
             currentCatalog = vm.get('currentCatalog');
 
         if (me.winCutout !== null) {
@@ -820,6 +821,10 @@ Ext.define('Target.view.objects.ObjectsController', {
         });
 
         me.winCutout.setCurrentProduct(currentCatalog);
+
+        if ((currentSetting) && (currentSetting.get('id') > 0)) {
+            me.winCutout.setCurrentSetting(currentSetting);
+        }
 
         me.winCutout.show();
 
