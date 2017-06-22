@@ -69,7 +69,7 @@ Ext.define('Target.view.objects.Panel', {
                     },
                     {
                         iconCls: 'x-fa fa-picture-o',
-                        tooltip: 'Create cutouts',
+                        tooltip: 'Create Mosaic',
                         handler: 'onClickCreateCutouts'
                     },
                     {
