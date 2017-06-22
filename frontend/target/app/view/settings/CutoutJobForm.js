@@ -9,7 +9,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
     xtype: 'target-cutoutjob-form',
 
     title: 'Create Mosaic',
-    width: 600,
+    width: 450,
     height: 450,
     layout: 'fit',
     modal: true,
@@ -77,7 +77,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             xtype: 'combobox',
                             name: 'tag',
                             fieldLabel: 'Release TAG',
-                            emptyText: 'Release tag for coadd cutouts jobs',
+                            emptyText: 'Release tag for coadd cutouts',
                             publishes: 'name',
                             displayField: 'displayName',
                             minChars: 0,
