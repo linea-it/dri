@@ -107,6 +107,11 @@ Ext.define('Target.view.preview.Preview', {
                 },
                 handler: 'onComment'
             },
+            {
+                xtype: 'button',
+                iconCls: 'x-fa fa-floppy-o',
+                handler: 'onSave'
+            },
             '-',
             {
                 xtype: 'button',

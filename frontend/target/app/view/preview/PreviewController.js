@@ -7,7 +7,8 @@ Ext.define('Target.view.preview.PreviewController', {
     alias: 'controller.preview',
 
     requires: [
-        'common.comment.CommentsObject'
+        'common.comment.CommentsObject',
+        'Target.view.preview.DescutDownloadWindow'
     ],
 
     listen: {
@@ -270,6 +271,22 @@ Ext.define('Target.view.preview.PreviewController', {
 
             comment.down('comments-object').getController().loadComments(catalog, id);
         }
+
+    },
+
+    onSave: function () {
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            object = vm.get('currentRecord'),
+            catalog = vm.get('currentCatalog'),
+            id;
+        console.log('test');
+        me.winDownload = Ext.create('Target.view.objects.DownloadWindow',{});
+
+        me.winDownload.setCurrentCatalog(catalog);
+
+        me.winDownload.show();
 
     },
 
