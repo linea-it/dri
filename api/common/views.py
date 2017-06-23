@@ -128,10 +128,30 @@ def teste(request):
     if request.method == 'GET':
         print('Teste---------------------')
 
-        # from product.CutoutJobs import CutoutJobs
-        # cutoutjobs = CutoutJobs()
+        from product.descutoutservice import CutoutJobs
+        cutoutjobs = CutoutJobs()
+        token = cutoutjobs.generate_token()
+        print('Token---------------------')
+        print(token)
         # a = cutoutjobs.check_job()
         # a = cutoutjobs.start_job()
         # a = cutoutjobs.test_api_help()
+        # a = cutoutjobs.check_token_status('e37d1c43-7f65-4f6e-b735-5d22e830a6e8')
+        print('jobId---------------------')
+        # jobId = cutoutjobs.get_job_by_ra_dec([341.44103], [0.06931])
+
+        jobId = 'e37d1c43-7f65-4f6e-b735-5d22e830a6e8'
+        print('result---------------------')
+        result = cutoutjobs.get_job(token, jobId)
+        png_link = result.get('links')[10]
+        print(result)
+        # print(png_link.split('/')[len(png_link.split('/')) - 1])
+
+        # file_path = cutoutjobs.download_file_png(result.get('links')[10], png_link.split('/')[len(png_link.split('/')) - 1])
+        # print(file_path)
+
+        # download = cutoutjobs.download_cutouts(jobId, results)
+        # print(download)
+
 
         return Response(dict({'teste': ''}))

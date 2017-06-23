@@ -496,6 +496,59 @@ class CutoutJobs:
         print(req.text)
         print(req.json()['job'])
 
+    def get_job_by_ra_dec(self, ra, dec):
+        print('-------------- get_ra_dec --------------')
+        token = self.generate_token()
+
+        xs = [1.0]
+        ys = [1.0]
+
+        # create body of request
+        body = {
+            'token': token,  # required
+            'ra': str(ra),  # required
+            'dec': str(dec),  # required
+            'job_type': 'coadd',  # required 'coadd' or 'single'
+            'xsize': str(xs),  # optional (default : 1.0)
+            'ysize': str(ys),  # optional (default : 1.0)
+            'band': 'g,r,i',  # optional for 'single' epochs jobs (default: all bands)
+            'no_blacklist': 'false',
+            # optional for 'single' epochs jobs (default: 'false'). return or not blacklisted exposures
+            'list_only': 'false',  # optional (default : 'false') 'true': will not generate pngs (faster)
+            'email': 'false'  # optional will send email when job is finished
+        }
+
+        req = requests.post('http://descut.cosmology.illinois.edu/api/jobs/', data=body)
+
+        # create body for files if needed
+        # body_files = {'csvfile': open('mydata.csv', 'rb')}  # To load csv file as part of request
+        # To include files
+        # req = requests.post('http://descut.cosmology.illinois.edu/api/jobs/', data=body, files=body_files)
+
+        return req.json()['job']
+
+    def get_job(self, token, jobid):
+        """
+        Get Job Results : Mainly returns a list of links to files
+
+        """
+        req = requests.get(
+            self.host_jobs + "?token=" + token + '&jobid=' + jobid)
+
+        data = req.json()
+        return data
+
+    def download_file_png(self, url, filename):
+        # print("------------- download_file -------------")
+        # print("URL: %s" % url)
+        # print("Filename: %s" % filename)
+        file_path = os.path.join(self.cutout_root, filename)
+
+        if not os.path.exists(file_path):
+            urllib.request.urlretrieve(url, file_path)
+
+        return file_path
+
 
 def sextodec(xyz, delimiter=None):
     """Decimal value from numbers in sexagesimal system.
