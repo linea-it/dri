@@ -6,7 +6,9 @@ Ext.define('visiomatic.catalog.CatalogViewModel', {
 
     requires: [
         'visiomatic.store.CatalogsTree',
-        'visiomatic.model.CatalogTree'
+        'visiomatic.model.CatalogTree',
+        'visiomatic.store.Overlays',
+        'common.model.Dataset'
     ],
 
     alias: 'viewmodel.catalogoverlay',
@@ -15,6 +17,24 @@ Ext.define('visiomatic.catalog.CatalogViewModel', {
         catalogs: {
             type: 'catalogs-overlay-tree'
         },
-    }
+        overlays: {
+            type: 'overlays'
+        }
+    },
 
+    data: {
+        visiomatic: null,
+        currentColor: '1dff00',
+    },
+
+    links: {
+        currentCatalog: {
+            type: 'visiomatic.model.CatalogTree',
+            create: true
+        },
+        dataset: {
+            type: 'common.model.Dataset',
+            create: true
+        }
+    }
 });

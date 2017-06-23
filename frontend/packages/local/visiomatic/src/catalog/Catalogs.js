@@ -7,6 +7,7 @@ Ext.define('visiomatic.catalog.Catalogs', {
         var me = this;
         Ext.apply(this, {
             emptyText: 'No data to dysplay.',
+            hideHeaders: true,
             columns: [
                 {
                     xtype: 'treecolumn',
@@ -14,16 +15,39 @@ Ext.define('visiomatic.catalog.Catalogs', {
                     flex: 2,
                     sortable: true,
                     dataIndex: 'text'
-                },
-                {
-                    text: 'Owner',
-                    flex: 1,
-                    dataIndex: 'owner',
-                    sortable: true,
-                    filter: {
-                        type: 'string'
-                    }
                 }
+//                {
+//                    text: 'Owner',
+//                    flex: 1,
+//                    dataIndex: 'owner',
+//                    sortable: true,
+//                    filter: {
+//                        type: 'string'
+//                    }
+//                }
+            ],
+
+            tbar: [
+                {
+                    xtype: 'textfield',
+                    emptyText: 'Search by name',
+                    flex: 1,
+                    triggers: {
+                        clear: {
+                            cls: 'x-form-clear-trigger',
+//                            handler: this.cancelFilter,
+                            hidden: true
+                        },
+                        search: {
+                            cls: ' x-form-search-trigger'
+                        }
+                    },
+//                    listeners: {
+//                        change: me.filterByname,
+//                        buffer: 500
+//                    }
+                },
+
             ]
 
         });

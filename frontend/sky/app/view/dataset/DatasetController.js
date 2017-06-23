@@ -274,7 +274,6 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     showCatalogOverlay: function () {
-        window.console.log('showCatalogOverlay')
         var me = this,
             visiomatic = me.lookupReference('visiomatic');
 

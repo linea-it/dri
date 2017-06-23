@@ -126,7 +126,10 @@ Ext.define('visiomatic.Visiomatic', {
 
         release: null,
         tag: null,
+        // Dataset e o id de um dataset
         dataset: null,
+        // CurrentDataset e uma instancia completa do model common.model.Dataset
+        currentDataset: null,
 
         // adicionar uma toolbar
         enableTools: true,
@@ -380,6 +383,13 @@ Ext.define('visiomatic.Visiomatic', {
             map = me.getMap();
 
         libL.control.scale.wcs({pixels: false}).addTo(map);
+    },
+
+    setCurrentDataset: function (currentDataset) {
+        var me = this;
+
+        me.currentDataset = currentDataset;
+
     },
 
     setImage: function (image, options) {
@@ -674,7 +684,8 @@ Ext.define('visiomatic.Visiomatic', {
             catalogOptions = me.getCatalogOptions(),
             pathOptions, collection, feature, lCatalog;
 
-        pathOptions = Ext.Object.merge(catalogOptions, options);
+//        pathOptions = Ext.Object.merge(catalogOptions, options);
+        pathOptions = catalogOptions;
 
         collection = {
             type: 'FeatureCollection',
@@ -687,6 +698,7 @@ Ext.define('visiomatic.Visiomatic', {
                 type: 'Feature',
                 id: record.get('_meta_id'),
                 properties: record.data,
+                is_system: record.get('_meta_is_system'),
                 geometry: {
                     type: 'Point',
                     coordinates: [record.get('_meta_ra'), record.get('_meta_dec')]
@@ -707,11 +719,27 @@ Ext.define('visiomatic.Visiomatic', {
                 }
             },
             pointToLayer: function (feature, latlng) {
-                path_options = Ext.Object.merge(pathOptions, {
-                    majAxis: pathOptions.radius,
-                    minAxis: pathOptions.radius,
+
+                var radius = pathOptions.radius,
+                    opts = pathOptions;
+
+                if (feature.is_system) {
+                    // Se o Objeto for um sistema usar a propriedade radius em arcmin
+                    if (feature.properties._meta_radius) {
+                        radius = feature.properties._meta_radius / 60;
+
+                        // Usar as opcoes de path do radius
+                        opts = me.getRadiusOptions();
+                    }
+                }
+
+                path_options = Ext.Object.merge(opts, {
+                    majAxis: radius,
+                    minAxis: radius,
                     posAngle: 90
                 });
+
+                path_options = Ext.Object.merge(path_options, options);
 
                 // Usei ellipse por ja estar em degrees a funcao circulo
                 // estava em pixels
@@ -868,24 +896,35 @@ Ext.define('visiomatic.Visiomatic', {
         return me.lcrosshair;
     },
 
-
-
     showCatalogOverlayWindow: function() {
-        console.log('showCatalogOverlayWindow')
         var me = this,
+            currentDataset = me.getCurrentDataset(),
             win = me._winCatalogOverlay;
 
-        if (win != null) {
-            win.show();
+        if ((currentDataset !== null) && (currentDataset.get('id') > 0)) {
+
+            if (win != null) {
+                win.show();
+
+            } else {
+                win = Ext.create('visiomatic.catalog.CatalogOverlayWindow', {
+                    visiomatic: me,
+                });
+
+                win.show();
+
+                me._winCatalogOverlay = win;
+
+            }
+
+            me._winCatalogOverlay.setDataset(currentDataset);
+
         } else {
-            win = Ext.create('visiomatic.catalog.CatalogOverlayWindow', {});
+            // Nao tem Dataset Selecionado a funcao de Overlay necessita de um dataset.
+            console.log('Dataset nao foi definido, a funcao overlay precisa de um dataset.')
 
-            win.show();
-
-            me._winCatalogOverlay = win;
-
+            return false;
         }
-
     }
 
 });
