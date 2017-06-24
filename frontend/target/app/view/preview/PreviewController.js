@@ -282,7 +282,7 @@ Ext.define('Target.view.preview.PreviewController', {
             catalog = vm.get('currentCatalog'),
             id;
         console.log('test');
-        me.winDownload = Ext.create('Target.view.objects.DownloadWindow',{});
+        me.winDownload = Ext.create('Target.view.preview.DescutDownloadWindow',{});
 
         me.winDownload.setCurrentCatalog(catalog);
 

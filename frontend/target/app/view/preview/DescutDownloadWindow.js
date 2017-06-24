@@ -5,7 +5,7 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
 
     title: 'Download',
     width: 300,
-    height: 400,
+    height: 200,
     modal: true,
     autoShow: true,
 
@@ -43,47 +43,23 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
                     items: [
                         {
                             xtype: 'fieldset',
-                            title: 'Table',
+                            title: 'Format',
                             defaults: {
                                 anchor: '100%'
                             },
                             items: [
                                 {
-                                    xtype: 'checkboxgroup',
-                                    columns: 1,
+                                    xtype: 'radiogroup',
+                                    vertical: true,
+                                    columns: 2,
                                     items: [
-                                        {boxLabel: 'CSV', name: 'table_format', inputValue: 'csv', checked: true},
+                                        {boxLabel: 'PNG', name: 'table_format', inputValue: 'csv', checked: true},
                                         {boxLabel: 'FITS', name: 'table_format', inputValue: 'fits'},
                                         //{boxLabel: 'JSON', name: 'table_format', inputValue: 'json'}
                                     ]
                                 }
                             ]
                         },
-                        {
-                            xtype: 'checkbox',
-                            boxLabel: 'Cutouts',
-                            name: 'cutouts',
-                            margin: '10 0 0 0',
-                            inputValue: true
-                        },
-                        {
-                            xtype: 'fieldset',
-                            title: 'Report',
-                            defaults: {
-                                anchor: '100%'
-                            },
-                            items: [
-                                {
-                                    xtype: 'checkboxgroup',
-                                    columns: 1,
-                                    items: [
-                                        // {boxLabel: 'HTML', name: 'report_format', inputValue: 'html'},
-                                        {boxLabel: 'PDF', name: 'report_format', inputValue: 'pdf'}
-                                    ]
-                                }
-                            ],
-                            margin: '10 0 0 0'
-                        }
                     ]
                 }
             ],
