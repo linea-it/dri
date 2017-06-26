@@ -9,7 +9,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
     xtype: 'target-cutoutjob-form',
 
     title: 'Create Mosaic',
-    width: 600,
+    width: 450,
     height: 450,
     layout: 'fit',
     modal: true,
@@ -60,22 +60,24 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             fieldLabel: 'X Size (arcmin)',
                             value: 1,
                             name: 'xsize',
-                            minValue: 1,
-                            maxValue: 10
+                            hideTrigger: true
+                            // minValue: 1,
+                            // maxValue: 10
                         },
                         {
                             xtype: 'numberfield',
                             fieldLabel: 'Y Size (arcmin)',
                             value: 1,
                             name: 'ysize',
-                            minValue: 1,
-                            maxValue: 10
+                            hideTrigger: true
+                            // minValue: 1,
+                            // maxValue: 10
                         },
                         {
                             xtype: 'combobox',
                             name: 'tag',
                             fieldLabel: 'Release TAG',
-                            emptyText: 'Release tag for coadd cutouts jobs',
+                            emptyText: 'Release tag for coadd cutouts',
                             publishes: 'name',
                             displayField: 'displayName',
                             minChars: 0,
@@ -153,6 +155,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     fieldLabel: 'Font Size',
                                     name: 'label_font_size',
                                     value: 10,
+                                    // hideTrigger: true,
                                     minValue: 6,
                                     maxValue: 18
                                 },

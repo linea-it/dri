@@ -59,27 +59,23 @@ Ext.define('Target.view.objects.Panel', {
                     {
                         xtype: 'button',
                         iconCls: 'x-fa fa-floppy-o',
-                        // tooltip: 'Save As',
-                        tooltip: 'Under Construction',
+                        tooltip: 'Save As',
                         handler: 'onClickSaveAs'
                     },
                     {
                         iconCls: 'x-fa fa-download',
-                        // tooltip: 'Download',
-                        tooltip: 'Under Construction',
+                        tooltip: 'Download',
                         handler: 'onClickDownload'
                     },
                     {
                         iconCls: 'x-fa fa-picture-o',
-                        // tooltip: 'Create cutouts',
-                        tooltip: 'Under Construction',
+                        tooltip: 'Create Mosaic',
                         handler: 'onClickCreateCutouts'
                     },
                     {
                         xtype: 'button',
                         iconCls: 'x-fa fa-th-large',
-                        // tooltip: 'Switching between Mosaic and Data Grid',
-                        tooltip: 'Under Construction',
+                        tooltip: 'Switching between Mosaic and Data Grid',
                         enableToggle: true,
                         toggleHandler: 'switchMosaicGrid',
                         bind: {
