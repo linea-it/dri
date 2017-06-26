@@ -26,7 +26,8 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
     },
 
     config: {
-        currentCatalog: null
+        currentCatalog: null,
+        filterSet: null
     },
     initComponent: function () {
         var me = this;
@@ -120,17 +121,30 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
         me.callParent(arguments);
     },
 
-    setCurrentCatalog: function (currentCatalog) {
+    setCurrentCatalog: function (currentCatalog, filterSet) {
         var me = this;
-
+        console.log('TESTE:', filterSet )
         if ((currentCatalog) && (currentCatalog.get('id') > 0)) {
 
             me.currentCatalog = currentCatalog;
 
             me.getViewModel().set('currentCatalog', currentCatalog);
 
+            me.setFilterSet(filterSet);
+
             me.fireEvent('changecatalog', currentCatalog);
 
         }
+    },
+
+    setFilterSet: function (filterSet) {
+        var me = this;
+
+        console.log('setFilterSet:', filterSet)
+
+        this.filterSet = filterSet;
+
+        me.getViewModel().set('filterSet', filterSet);
+
     }
 });

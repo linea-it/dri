@@ -784,19 +784,28 @@ Ext.define('Target.view.objects.ObjectsController', {
     onClickSaveAs: function () {
         var me = this,
             vm = me.getViewModel(),
-            currentCatalog = vm.get('currentCatalog');
+            currentCatalog = vm.get('currentCatalog'),
+            combo = me.lookup('cmbFilterSet'),
+            filterSet = combo.selection;
 
-        if (me.winSaveAs !== null) {
-            me.winSaveAs.close();
-            me.winSaveAs = null;
+        if ((filterSet !== null) && (filterSet.get('id'))) {
+
+
+            if (me.winSaveAs !== null) {
+                me.winSaveAs.close();
+                me.winSaveAs = null;
+            }
+
+            me.winSaveAs = Ext.create('Target.view.objects.SaveCatalogWindow',{});
+
+            me.winSaveAs.setCurrentCatalog(currentCatalog, filterSet);
+//            me.winSaveAs.setFilterSet();
+
+            me.winSaveAs.show();
+        } else {
+            Ext.MessageBox.alert('', 'You need to select a named filter.');
+
         }
-
-        me.winSaveAs = Ext.create('Target.view.objects.SaveCatalogWindow',{});
-
-        me.winSaveAs.setCurrentCatalog(currentCatalog);
-
-        me.winSaveAs.show();
-
     },
 
     onClickCreateCutouts: function () {

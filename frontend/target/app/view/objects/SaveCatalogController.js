@@ -38,23 +38,25 @@ Ext.define('Target.view.objects.SaveCatalogController', {
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
+            filterSet = vm.get('filterSet'),
             form = me.lookup('SaveAsForm').getForm(),
             values;
 
         console.log(form.getValues());
 
+        console.log('filterSet: ',filterSet)
         if (form.isValid()) {
             values = form.getValues();
 
             Ext.Ajax.request({
-                url: '/dri/api/product/saveas/',
+                url: '/dri/api/save_product_as/',
                 scope: this,
                 params: {
-                    'product': currentCatalog.get('id'),
+                    'product': parseInt(currentCatalog.get('id')),
                     'name': values.name,
-                    'filters': values.filters,
-                    'description': values.description,
-                    'columns': values.columns
+                    'filter': parseInt(filterSet.get('id')),
+                    'description': values.description
+//                    'columns': values.columns
                 },
                 success: function (response) {
                     // Recuperar a resposta e fazer o decode no json.
