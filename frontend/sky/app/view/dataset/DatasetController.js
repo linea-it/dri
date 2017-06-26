@@ -271,6 +271,15 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
         visiomatic.showHideLayer(me.lMarker, state);
 
+    },
+
+    showCatalogOverlay: function () {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
+
+        visiomatic.showCatalogOverlayWindow();
+
+
     }
 
 });
