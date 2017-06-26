@@ -472,6 +472,8 @@ Ext.define('visiomatic.Visiomatic', {
             }
 
         }
+
+        me.getBox();
     },
 
     onLayerAdd: function (e) {
@@ -527,6 +529,85 @@ Ext.define('visiomatic.Visiomatic', {
         };
 
     },
+
+    /**
+     * Retonar a posicao central e a distancia entre o centro e a borda
+     */
+    getBounds: function () {
+        var me = this,
+            libL = me.libL,
+            map = me.getMap(),
+            wcs = map.options.crs,
+            sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
+		    center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(),
+		    lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
+		    b = map.getPixelBounds(),
+		    z = map.getZoom(),
+            c, lng, lat, dlng, dlat, box;
+
+        // Compute the search cone
+        c = sysflag ?
+              [wcs.celsysToEq(map.unproject(b.min, z)),
+              wcs.celsysToEq(map.unproject(libL.point(b.min.x, b.max.y), z)),
+              wcs.celsysToEq(map.unproject(b.max, z)),
+              wcs.celsysToEq(map.unproject(libLpoint(b.max.x, b.min.y), z))] :
+                        [map.unproject(b.min, z),
+                         map.unproject(libL.point(b.min.x, b.max.y), z),
+                         map.unproject(b.max, z),
+                         map.unproject(libL.point(b.max.x, b.min.y), z)];
+
+        lng = parseFloat(center.lng.toFixed(6));
+        lat = parseFloat(center.lat.toFixed(6));
+
+        // CDS box search
+        dlng = (Math.max(wcs._deltaLng(c[0], center),
+                               wcs._deltaLng(c[1], center),
+                               wcs._deltaLng(c[2], center),
+                               wcs._deltaLng(c[3], center)) -
+                    Math.min(wcs._deltaLng(c[0], center),
+                               wcs._deltaLng(c[1], center),
+                               wcs._deltaLng(c[2], center),
+                               wcs._deltaLng(c[3], center))) * lngfac;
+
+        dlat = Math.max(c[0].lat, c[1].lat, c[2].lat, c[3].lat) -
+              Math.min(c[0].lat, c[1].lat, c[2].lat, c[3].lat);
+
+        if (dlat < 0.0001) {
+            dlat = 0.0001;
+        }
+        if (dlng < 0.0001) {
+            dlng = 0.0001;
+        }
+
+        return {
+            lat: lat,
+            lng: lng,
+            dlat: dlat,
+            dlng: dlng
+        }
+
+    },
+
+    /**
+     * Retorna um box composto pela coordenada superior e inferior. da area visivel no mapa
+     */
+    getBox: function () {
+        var me = this,
+            box;
+
+        bounding = me.getBounds();
+        //lng = RA, lat = DEC
+        coord1 = [bounding.lng - bounding.dlng, bounding.lat - bounding.dlat];
+        coord2 = [bounding.lng + bounding.dlng, bounding.lat + bounding.dlat];
+
+        box = [
+            coord1,
+            coord2
+            ];
+
+        return box;
+    },
+
 
     getFov: function () {
         var me = this,
