@@ -43,6 +43,9 @@ CUTOUT_ROOT = '<cutouts main directory>'
 # https://github.com/linea-it/dri/issues/467
 SCHEMA_RATING_REJECT = None
 
+# Path onde ficaram os arquivos que serao gerados para download
+DOWNLOAD_DIR = os.path.join(BASE_PROJECT, 'download')
+
 
 # Exemple using Mysql need mysqlclient in requiments.txt
 # DATABASES = {
