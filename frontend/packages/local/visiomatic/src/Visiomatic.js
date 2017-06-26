@@ -187,8 +187,7 @@ Ext.define('visiomatic.Visiomatic', {
                 '&bounding={dlng},{dlat}' +
                 '&maglim={maglim}' +
                 '&limit=2000',
-                // properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
-                properties: ['ra', 'dec'],
+                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
                 units: [],
                 objurl: 'http://' + host + '/dri/apps/explorer/#coadd/Y3A1_COADD_OBJECT_SUMMARY/{id}',
                 draw: function (feature, latlng) {
@@ -220,8 +219,7 @@ Ext.define('visiomatic.Visiomatic', {
                 '&bounding={dlng},{dlat}' +
                 '&maglim={maglim}' +
                 '&limit=2000',
-                // properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
-                properties: ['ra', 'dec'],
+                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
                 units: [],
                 objurl: 'http://' + host + '/dri/apps/explorer/#coadd/y1a1_coadd_objects/{id}',
                 draw: function (feature, latlng) {

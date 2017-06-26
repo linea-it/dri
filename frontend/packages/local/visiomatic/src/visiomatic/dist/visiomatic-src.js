@@ -1925,7 +1925,12 @@ L.Catalog = {
                                 id: feature.id,
 				ra: feature.geometry.coordinates[0].toFixed(6),
 				dec: feature.geometry.coordinates[1].toFixed(6)
-			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';
+			})) + '\" target=\"_blank\">' + feature.id + '</a>';
+
+			str += '</br><spam>J2000: ' + feature.geometry.coordinates[0].toFixed(3) + ', ' +
+			        feature.geometry.coordinates[1].toFixed(3) + '</spam>';
+
+			str += '</div>';
 		} else {
 			str += 'ID: ' + feature.id + '</div>';
 		}
