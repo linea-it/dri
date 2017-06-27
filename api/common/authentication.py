@@ -4,21 +4,47 @@ from django.conf import settings
 
 
 class NcsaBackend(object):
+    def updateEmail(self, username):
+        db = settings.DATABASES.get('dessci')
+        host, name = db.get('NAME').split('/')
+        host, port = host.split(':')
+
+        portalusername = db.get('USER')
+        portalpass = db.get('PASSWORD')
+
+        url = ("oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
+               "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
+               "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
+               "SERVICE_NAME=%(database)s)))") % \
+               {"username": portalusername, 'password': portalpass,
+               'host': host, 'port': port,
+               'database': name}
+        engine = create_engine(url)
+        connection = engine.connect()
+    
+        rs = connection.execute("SELECT email from des_users where username = '" + username +"'")
+        email = rs.fetchone()[0]    
+        connection.close()
+
+        return email
+        
+
     def authenticate(self, username=None, password=None):
 
         if self.check_user(username, password):
             try:
                 user = User.objects.get(username=username)
+                user.email = self.updateEmail(username)
+                user.save()         
             except User.DoesNotExist:
-
                 group = self.get_group('NCSA')
-
                 user = User(username=username)
+                user.email = self.updateEmail(username)
                 user.save()
                 user.groups.add(group)
-
+            
             return user
-
+        
         return None
 
     def get_user(self, user_id):
