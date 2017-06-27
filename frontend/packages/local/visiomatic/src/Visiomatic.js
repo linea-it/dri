@@ -472,8 +472,6 @@ Ext.define('visiomatic.Visiomatic', {
             }
 
         }
-
-        me.getBox();
     },
 
     onLayerAdd: function (e) {
@@ -532,6 +530,7 @@ Ext.define('visiomatic.Visiomatic', {
 
     /**
      * Retonar a posicao central e a distancia entre o centro e a borda
+     * o valor de bound e a distancia inteira.
      */
     getBounds: function () {
         var me = this,
@@ -580,30 +579,37 @@ Ext.define('visiomatic.Visiomatic', {
         }
 
         return {
-            lat: lat,
-            lng: lng,
-            dlat: dlat,
-            dlng: dlng
+            lat: parseFloat(lat.toFixed(6)),
+            lng: parseFloat(lng.toFixed(6)),
+            dlat: parseFloat(dlat.toFixed(6)),
+            dlng: parseFloat(dlng.toFixed(6))
         }
-
     },
 
     /**
      * Retorna um box composto pela coordenada superior e inferior. da area visivel no mapa
+     * [[upper right ra, upper right dec], [lower left ra, lower left dec]]
+     * Dividir o bounding por 2 para ter o valor do raio.
+     * lng = RA, lat = Dec
      */
     getBox: function () {
         var me = this,
-            box;
+            box, urra, urdec, llra, lldec, ur, ll;
 
         bounding = me.getBounds();
-        //lng = RA, lat = DEC
-        coord1 = [bounding.lng - bounding.dlng, bounding.lat - bounding.dlat];
-        coord2 = [bounding.lng + bounding.dlng, bounding.lat + bounding.dlat];
 
-        box = [
-            coord1,
-            coord2
-            ];
+        urra = parseFloat(bounding.lng + bounding.dlng/2).toFixed(6)
+        urdec = parseFloat(bounding.lat + bounding.dlat/2).toFixed(6)
+        llra = parseFloat(bounding.lng - bounding.dlng/2).toFixed(6)
+        lldec = parseFloat(bounding.lat - bounding.dlat/2).toFixed(6)
+
+        ur = [urra, urdec];
+        ll = [llra, lldec];
+
+        box = [ ur, ll ];
+
+        // Debugar o Box
+        ldebugbox = me.drawRectangle(ur, ll, {color: '#1dff00', weight: 5});
 
         return box;
     },
@@ -1004,6 +1010,47 @@ Ext.define('visiomatic.Visiomatic', {
 
             return false;
         }
+    },
+
+
+
+    /**
+     * Desenha um retangulo
+     * @param upperRight = [ra, dec] coordenadas do canto superior direito
+     * @param lowerLeft = [ra, dec] coordenadas do canto inferior esquerdo
+     * @return layer, essa layer e uma group layer com as linhas que foram usadas para desenhar o retangulo
+     */
+    drawRectangle: function (upperRight, lowerLeft, options) {
+        var me = this,
+            l = me.libL,
+            map = me.getMap(),
+            urra = upperRight[0],
+            urdec = upperRight[1],
+            llra = lowerLeft[0],
+            lldec = lowerLeft[1],
+            lineTop, lineBotton, lineLeft, lineRight, lt, lb, ll, lr;
+
+
+        pathOptions = Ext.Object.merge(me.getCrosshairOptions(), options)
+
+        lineTop = [l.latLng(urdec, llra), l.latLng(urdec, urra)];
+        lineBotton = [l.latLng(lldec, llra), l.latLng(lldec, urra)];
+        lineLeft = [l.latLng(urdec, urra), l.latLng(lldec, urra)];
+        lineRight = [l.latLng(urdec, llra), l.latLng(lldec, llra)];
+
+
+        lt = l.polyline(lineTop, pathOptions);
+        lb = l.polyline(lineBotton, pathOptions);
+        ll = l.polyline(lineLeft, pathOptions);
+        lr = l.polyline(lineRight, pathOptions);
+
+        layer = new l.LayerGroup([lt, lb, ll, lr]);
+
+        console.log(layer)
+
+        map.addLayer(layer);
+
+        return layer
     }
 
 });
