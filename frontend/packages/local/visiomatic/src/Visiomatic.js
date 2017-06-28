@@ -780,20 +780,21 @@ Ext.define('visiomatic.Visiomatic', {
         store.each(function (record) {
 
             // Checar se objeto esta dentro dos limites da tile
-            me.isInsideTile(record.get('_meta_ra'), record.get('_meta_dec'));
+            if (me.isInsideTile(record.get('_meta_ra'), record.get('_meta_dec'))) {
 
-            feature = {
-                type: 'Feature',
-                id: record.get('_meta_id'),
-                properties: record.data,
-                is_system: record.get('_meta_is_system'),
-                geometry: {
-                    type: 'Point',
-                    coordinates: [record.get('_meta_ra'), record.get('_meta_dec')]
-                }
-            };
+                feature = {
+                    type: 'Feature',
+                    id: record.get('_meta_id'),
+                    properties: record.data,
+                    is_system: record.get('_meta_is_system'),
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [record.get('_meta_ra'), record.get('_meta_dec')]
+                    }
+                };
 
-            collection.features.push(feature);
+                collection.features.push(feature);
+            }
 
         }, me);
 
@@ -829,6 +830,9 @@ Ext.define('visiomatic.Visiomatic', {
 
                 path_options = Ext.Object.merge(path_options, options);
 
+                // tornar o objeto clicavel
+                path_options.interactive = true
+
                 // Usei ellipse por ja estar em degrees a funcao circulo
                 // estava em pixels
                 // usei o mesmo valor de raio para os lados da ellipse para
@@ -840,9 +844,10 @@ Ext.define('visiomatic.Visiomatic', {
             }
         }).bindPopup(function (layer) {
             var feature = layer.feature,
-                popup = '<TABLE style="margin:auto;">' +
+                popup = '<spam>' + id + '</spam></br>' +
+                   '<TABLE style="margin:auto;">' +
                    '<TBODY style="vertical-align:top;text-align:left;">' +
-                        '<TR><TD><spam style="font-weight: bold;">ID </spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
+                        '<TR><TD><spam style="font-weight: bold;">ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
                         // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
                         // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
                         '<TR><TD><spam style="font-weight: bold;">J2000</spam>: </TD><TD>' +
@@ -1049,20 +1054,27 @@ Ext.define('visiomatic.Visiomatic', {
 
         layer = new l.LayerGroup([lt, lb, ll, lr]);
 
-        console.log(layer)
-
         map.addLayer(layer);
 
         return layer
     },
 
+
+    /**
+     * Verifica se uma dada coordenada esta dentro dos limites do dataset atual.
+     */
     isInsideTile: function (ra, dec) {
-        console.log('isInsideTile(%o, %o)', ra, dec);
         var me = this,
             currentDataset = me.getCurrentDataset();
 
-        // Criei um metodo no common.model.Dataset para isso.
-        currentDataset.isInsideTile(ra, dec)
+        if ((currentDataset != null) && (currentDataset.get('id') > 0)) {
+
+            // Usa um metodo do proprio model common.model.dataset para validar se a posicao esta dentro da tile
+            return currentDataset.isInsideTile(ra, dec);
+        } else {
+            // nao tem um dataset carregado nao da pra testar se esta dentro ou nao
+            return true
+        }
 
     }
 

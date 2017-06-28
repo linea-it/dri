@@ -18,7 +18,6 @@ Ext.define('visiomatic.catalog.CatalogController', {
 
 
     onChangeDataset: function (dataset) {
-        console.log('onChangeDataset(%o)', dataset);
         var me = this,
             vm = me.getViewModel(),
             overlays = vm.getStore('overlays');

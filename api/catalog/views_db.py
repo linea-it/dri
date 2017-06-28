@@ -320,6 +320,8 @@ class TargetViewSetDBHelper:
                               coordinates_filter
                              ))
 
+        print(str(stm))
+
         # Parametros de Paginacao
         limit = params.get('limit', None)
         start = params.get('offset', None)
