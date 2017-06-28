@@ -15,7 +15,7 @@ Ext.define('visiomatic.store.Objects', {
 
     model: 'visiomatic.model.Object',
 
-    pageSize: 100,
+    pageSize: 2000,
 
     proxy: {
         type: 'django',

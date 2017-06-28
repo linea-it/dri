@@ -83,6 +83,13 @@ Ext.define('common.model.Dataset', {
                     record.get('image_src_thumbnails'), 'irg', record.get('tli_tilename'));
             }
         }
-    ]
+    ],
+
+    isInsideTile: function (ra, dec) {
+        console.log('isInsideTile(%o, %o)', ra, dec);
+
+        // Verifica se uma determinada coordenada esta dentro dessa instancia de Dataset
+        console.log('Chegou aqui')
+    }
 });
 

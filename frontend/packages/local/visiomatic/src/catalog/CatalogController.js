@@ -80,12 +80,21 @@ Ext.define('visiomatic.catalog.CatalogController', {
         // console.log('loadObjects(%o)', overlay);
         var me = this,
             vm = me.getViewModel(),
-            store = overlay.get('objects');
+            visiomatic = vm.get('visiomatic'),
+            store = overlay.get('objects'),
+            box;
+
+        // Recuperar as Coordenadas da area visivel no visiomatic
+        box = visiomatic.getBox();
+
 
         store.addFilter([
             {
                 property: 'product',
                 value: overlay.get('catalog').get('id')
+            }, {
+                property: 'coordinates',
+                value: JSON.stringify(box)
             }
         ])
 

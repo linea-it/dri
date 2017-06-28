@@ -8,7 +8,7 @@ from sqlalchemy import desc
 import warnings
 from sqlalchemy import exc as sa_exc
 from django.conf import settings
-
+import json
 
 class CoaddObjectsDBHelper:
     def __init__(self, table, schema=None, database=None):
@@ -266,6 +266,7 @@ class TargetViewSetDBHelper:
         filters = list()
         rating_filter = list()
         reject_filter = list()
+        coordinates_filter = list()
 
         params = params.dict()
         for param in params:
@@ -294,10 +295,30 @@ class TargetViewSetDBHelper:
                         column='reject',
                         op=op,
                         value=value)])
+                # Coordenadas query por quadrado
+                elif col == 'coordinates':
+                    value = json.loads(params.get(param))
+                    # Upper Right
+                    ur = value[0]
+                    # Lower Left
+                    ll = value[1]
+                    coordinates_filter.append(
+                        and_(between(
+                            literal_column(str('ra')),
+                            literal_column(str(ll[0])),
+                            literal_column(str(ur[0]))
+                        ), between(
+                            literal_column(str('dec')),
+                            literal_column(str(ll[1])),
+                            literal_column(str(ur[1]))
+                        ))
+                    )
 
         stm = stm.where(and_(*DBBase.do_filter(self.table, filters) +
                               DBBase.do_filter(catalog_rating_id, rating_filter) +
-                              DBBase.do_filter(catalog_reject_id, reject_filter)))
+                              DBBase.do_filter(catalog_reject_id, reject_filter) +
+                              coordinates_filter
+                             ))
 
         # Parametros de Paginacao
         limit = params.get('limit', None)

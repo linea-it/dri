@@ -779,6 +779,9 @@ Ext.define('visiomatic.Visiomatic', {
 
         store.each(function (record) {
 
+            // Checar se objeto esta dentro dos limites da tile
+            me.isInsideTile(record.get('_meta_ra'), record.get('_meta_dec'));
+
             feature = {
                 type: 'Feature',
                 id: record.get('_meta_id'),
@@ -1051,6 +1054,16 @@ Ext.define('visiomatic.Visiomatic', {
         map.addLayer(layer);
 
         return layer
+    },
+
+    isInsideTile: function (ra, dec) {
+        console.log('isInsideTile(%o, %o)', ra, dec);
+        var me = this,
+            currentDataset = me.getCurrentDataset();
+
+        // Criei um metodo no common.model.Dataset para isso.
+        currentDataset.isInsideTile(ra, dec)
+
     }
 
 });
