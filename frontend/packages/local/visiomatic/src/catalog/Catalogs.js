@@ -6,8 +6,13 @@ Ext.define('visiomatic.catalog.Catalogs', {
     initComponent: function () {
         var me = this;
         Ext.apply(this, {
-            emptyText: 'No data to dysplay.',
+            emptyText: 'No data to display.',
             hideHeaders: true,
+            rootVisible: false,
+            useArrows: true,
+            selModel: {
+                mode: 'SINGLE'
+            },
             columns: [
                 {
                     xtype: 'treecolumn',

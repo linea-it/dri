@@ -394,12 +394,13 @@ class TestViewSetDBHelper:
             table = self.db.get_table_obj(table, schema=self.schema)
 
             # Nome das colunas originais na tabela
-            self.columns = [column.key for column in table.columns]
+            self.columns = [column.key.strip() for column in table.columns]
 
             if len(columns) > 0:
                 for col in columns:
                     if col in self.columns:
                         self.query_columns.append(literal_column(str(col)))
+
             else:
                 self.query_columns = self.columns
 

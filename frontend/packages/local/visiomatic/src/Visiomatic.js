@@ -761,7 +761,7 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
-    overlayCatalog: function (id, store, options) {
+    overlayCatalog: function (title, store, options) {
         var me = this,
             l = me.libL,
             map = me.getMap(),
@@ -785,6 +785,7 @@ Ext.define('visiomatic.Visiomatic', {
                 feature = {
                     type: 'Feature',
                     id: record.get('_meta_id'),
+                    title: title,
                     properties: record.data,
                     is_system: record.get('_meta_is_system'),
                     geometry: {
@@ -842,26 +843,36 @@ Ext.define('visiomatic.Visiomatic', {
                     path_options);
 
             }
-        }).bindPopup(function (layer) {
-            var feature = layer.feature,
-                popup = '<spam>' + id + '</spam></br>' +
-                   '<TABLE style="margin:auto;">' +
-                   '<TBODY style="vertical-align:top;text-align:left;">' +
-                        '<TR><TD><spam style="font-weight: bold;">ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
-                        // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
-                        // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
-                        '<TR><TD><spam style="font-weight: bold;">RA, Dec (deg)</spam>: </TD><TD>' +
-                            feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
-                        '</td></tr>' +
-                    '</TBODY></TABLE>';
-
-            return popup;
-
-        }).on('dblclick', function () { alert('TODO: OPEN IN EXPLORER!'); });
+        })
+        .bindPopup(me.createOverlayPopup)
+        .on('dblclick', me.onDblClickOverlay);
 
         map.addLayer(lCatalog);
 
         return lCatalog;
+
+    },
+
+    createOverlayPopup: function (layer) {
+        console.log('createOverlayPopup')
+
+        var feature = layer.feature,
+            popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
+               '<TABLE style="margin:auto;">' +
+               '<TBODY style="vertical-align:top;text-align:left;">' +
+                    '<TR><TD><spam>ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
+                    // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
+                    // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
+                    '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
+                        feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
+                    '</td></tr>' +
+                '</TBODY></TABLE>';
+
+        return popup;
+    },
+
+    onDblClickOverlay: function () {
+        console.log('onDblClickOverlay(%o)', arguments);
 
     },
 

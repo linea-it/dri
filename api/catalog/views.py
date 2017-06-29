@@ -316,16 +316,13 @@ class TestViewSet(ViewSet):
         limit = request.query_params.get('limit', None)
         start = request.query_params.get('offset', None)
 
-        # Parametros de Retorno
-        mime = request.query_params.get('mime', 'json')
-        print('MIME: %s' % mime)
-
         # colunas associadas ao produto
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
         serializer = AssociationSerializer(queryset, many=True)
         associations = serializer.data
         properties = dict()
 
+        # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
         columns = list()
         for property in associations:
             if property.get('pcc_ucd'):
@@ -334,7 +331,6 @@ class TestViewSet(ViewSet):
                 })
 
                 columns.append(property.get('pcn_column_name').lower())
-
 
         db_helper = TestViewSetDBHelper(
             catalog.tbl_name,
@@ -353,8 +349,7 @@ class TestViewSet(ViewSet):
                 "_meta_is_system": catalog.prd_class.pcl_is_system,
                 "_meta_id": '',
                 "_meta_ra": 0,
-                "_meta_dec": 0,
-                "_meta_radius": 0
+                "_meta_dec": 0
             })
 
             row.update({
@@ -369,43 +364,16 @@ class TestViewSet(ViewSet):
                 "_meta_dec": float(row.get(properties.get("pos.eq.dec;meta.main"))),
                 "_meta_property_dec": properties.get("pos.eq.dec;meta.main")
             })
-            row.update({
-                "_meta_radius": float(row.get(properties.get("phys.angSize;src"))),
-                "_meta_property_radius": properties.get("phys.angSize;src")
-            })
+            try:
+                # Raio so e obrigatorio para catalogo do tipo sistema
+                row.update({
+                    "_meta_radius": float(row.get(properties.get("phys.angSize;src"))),
+                    "_meta_property_radius": properties.get("phys.angSize;src")
+                })
+            except:
+                pass
 
         return Response(dict({
             'count': count,
             'results': rows
         }))
-
-        # if mime == 'json':
-        #     # return Response(rows)
-
-        #
-        # elif mime == 'csv':
-        #     response = HttpResponse(content_type='text/csv')
-        #     response['Content-Disposition'] = 'inline'
-        #
-        #     if len(rows) > 0:
-        #         headers = sorted(list(rows[0].keys()))
-        #
-        #         writer = csv.writer(response)
-        #
-        #         writer.writerow(headers)
-        #
-        #         for row in rows:
-        #             r = list()
-        #             for col in headers:
-        #                 value = row.get(col)
-        #                 try:
-        #                     value = float(value)
-        #                     value = float(format(value, '.5f'))
-        #                 except:
-        #                     pass
-        #                 r.append(value)
-        #
-        #             print(r)
-        #             writer.writerow(r)
-        #
-        #     return response
