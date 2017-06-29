@@ -578,11 +578,10 @@ import json
 import uuid
 
 @require_http_methods(["POST"])
-def save_product_as(request):
-    data = json.loads(request.body)
-    filter_id = data['filter']
-    tablename = data['name']
-    description = data["description"]
+def save_product_as(request):    
+    filter_id = request.POST.get('filter', "")
+    tablename = request.POST.get('name', "") 
+    description = request.POST.get('description', "")
 
     saver = SaveFilterAsProduct(filter_id, tablename, request.user, description)
     try:
