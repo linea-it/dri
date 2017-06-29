@@ -850,8 +850,8 @@ Ext.define('visiomatic.Visiomatic', {
                         '<TR><TD><spam style="font-weight: bold;">ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
                         // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
                         // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
-                        '<TR><TD><spam style="font-weight: bold;">J2000</spam>: </TD><TD>' +
-                            feature.properties._meta_ra.toFixed(3) + ', ' + feature.properties._meta_dec.toFixed(3) +
+                        '<TR><TD><spam style="font-weight: bold;">RA, Dec (deg)</spam>: </TD><TD>' +
+                            feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
                         '</td></tr>' +
                     '</TBODY></TABLE>';
 

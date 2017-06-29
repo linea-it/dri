@@ -369,8 +369,12 @@ class TargetViewSetDBHelper:
 
 
 class TestViewSetDBHelper:
-    def __init__(self, table, schema=None, database=None):
+    def __init__(self, table, schema=None, database=None, columns=list(), limit=None, start=None):
         self.schema = schema
+        self.query_columns = list()
+        self.limit = limit
+        self.start = start
+
 
         if database:
             com = CatalogDB(db=database)
@@ -388,8 +392,16 @@ class TestViewSetDBHelper:
             warnings.simplefilter("ignore", category=sa_exc.SAWarning)
 
             table = self.db.get_table_obj(table, schema=self.schema)
+
             # Nome das colunas originais na tabela
             self.columns = [column.key for column in table.columns]
+
+            if len(columns) > 0:
+                for col in columns:
+                    if col in self.columns:
+                        self.query_columns.append(literal_column(str(col)))
+            else:
+                self.query_columns = self.columns
 
             self.table = table.alias('a')
 
@@ -404,7 +416,7 @@ class TestViewSetDBHelper:
             raise ("Need association for ID column with meta.id;meta.main ucd.")
 
         # Aqui pode entrar o parametro para escolher as colunas
-        stm = select(self.table.columns).select_from(self.table)
+        stm = select(self.query_columns).select_from(self.table)
 
         # Filtros
         filters = list()
@@ -449,40 +461,14 @@ class TestViewSetDBHelper:
 
         print(str(stm))
 
-        # Parametros de Paginacao
-        limit = params.get('limit', None)
-        start = params.get('offset', None)
+        if self.limit:
+            stm = stm.limit(literal_column(str(self.limit)))
 
-        if limit:
-            stm = stm.limit(literal_column(str(limit)))
-
-        if start:
-            stm = stm.offset(literal_column(str(start)))
-
-        # Parametros de Ordenacao
-        ordering = params.get('ordering', None)
-
-        # if ordering is not None:
-        #     asc = True
-        #     property = ordering.lower()
-        #
-        #     if ordering[0] == '-':
-        #         asc = False
-        #         property = ordering[1:].lower()
-        #
-        #     if property == '_meta_rating':
-        #         property = catalog_rating_id.c.rating
-        #     elif property == '_meta_reject':
-        #         property = catalog_reject_id.c.reject
-        #     else:
-        #         property = 'a.' + property
-        #
-        #     if asc:
-        #         stm = stm.order_by(property)
-        #     else:
-        #         stm = stm.order_by(desc(property))
+            if self.start:
+                stm = stm.offset(literal_column(str(self.start)))
 
         return stm
+
 
     def query_result(self, request, properties):
         stm = self._create_stm(request, properties)

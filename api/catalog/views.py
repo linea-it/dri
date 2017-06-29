@@ -299,7 +299,7 @@ class TestViewSet(ViewSet):
         """
         Return a list of targets in catalog.
         """
-
+        print('----------------------------------------')
         # Recuperar o parametro product id que e obrigatorio
         product_id = request.query_params.get('product', None)
         if not product_id:
@@ -311,10 +311,14 @@ class TestViewSet(ViewSet):
         if not catalog:
             raise Exception('No product found for this id.')
 
-        db_helper = TestViewSetDBHelper(
-            catalog.tbl_name,
-            schema=catalog.tbl_schema,
-            database=catalog.tbl_database)
+
+        # Parametros de Paginacao
+        limit = request.query_params.get('limit', None)
+        start = request.query_params.get('offset', None)
+
+        # Parametros de Retorno
+        mime = request.query_params.get('mime', 'json')
+        print('MIME: %s' % mime)
 
         # colunas associadas ao produto
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
@@ -322,11 +326,24 @@ class TestViewSet(ViewSet):
         associations = serializer.data
         properties = dict()
 
+        columns = list()
         for property in associations:
             if property.get('pcc_ucd'):
                 properties.update({
                     property.get('pcc_ucd'): property.get('pcn_column_name').lower()
                 })
+
+                columns.append(property.get('pcn_column_name').lower())
+
+
+        db_helper = TestViewSetDBHelper(
+            catalog.tbl_name,
+            schema=catalog.tbl_schema,
+            database=catalog.tbl_database,
+            columns=columns,
+            limit=limit,
+            start=start)
+
 
         rows, count = db_helper.query_result(request, properties)
 
@@ -345,15 +362,15 @@ class TestViewSet(ViewSet):
                 "_meta_property_id": properties.get("meta.id;meta.main")
             })
             row.update({
-                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main")),
+                "_meta_ra": float(row.get(properties.get("pos.eq.ra;meta.main"))),
                 "_meta_property_ra": properties.get("pos.eq.ra;meta.main")
             })
             row.update({
-                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main")),
+                "_meta_dec": float(row.get(properties.get("pos.eq.dec;meta.main"))),
                 "_meta_property_dec": properties.get("pos.eq.dec;meta.main")
             })
             row.update({
-                "_meta_radius": row.get(properties.get("phys.angSize;src")),
+                "_meta_radius": float(row.get(properties.get("phys.angSize;src"))),
                 "_meta_property_radius": properties.get("phys.angSize;src")
             })
 
@@ -361,3 +378,34 @@ class TestViewSet(ViewSet):
             'count': count,
             'results': rows
         }))
+
+        # if mime == 'json':
+        #     # return Response(rows)
+
+        #
+        # elif mime == 'csv':
+        #     response = HttpResponse(content_type='text/csv')
+        #     response['Content-Disposition'] = 'inline'
+        #
+        #     if len(rows) > 0:
+        #         headers = sorted(list(rows[0].keys()))
+        #
+        #         writer = csv.writer(response)
+        #
+        #         writer.writerow(headers)
+        #
+        #         for row in rows:
+        #             r = list()
+        #             for col in headers:
+        #                 value = row.get(col)
+        #                 try:
+        #                     value = float(value)
+        #                     value = float(format(value, '.5f'))
+        #                 except:
+        #                     pass
+        #                 r.append(value)
+        #
+        #             print(r)
+        #             writer.writerow(r)
+        #
+        #     return response
