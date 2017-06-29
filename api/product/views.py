@@ -593,10 +593,9 @@ def save_product_as(request):
 
 ##------------------ <RPC to export> -------------------
 @require_http_methods(["POST"])
-def export_product(request):
-    data = json.loads(request.body)
-    filter_id = data['filter']    
-    typefile = data['type']    
+def export_product(request):    
+    filter_id = request.POST.get('filter', "")
+    typefile = request.POST.get('type', "")
 
     exporter = ExporteFilter(filter_id)    
     try:

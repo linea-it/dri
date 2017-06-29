@@ -102,6 +102,7 @@ urlpatterns = [
     url(r'^contact/', common_views.contact_us),
 
     url(r'^save_product_as', product_views.save_product_as),
+    url(r'^export_product', product_views.export_product),
 
     url(r'^teste/', common_views.teste),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
