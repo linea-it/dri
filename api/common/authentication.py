@@ -22,11 +22,14 @@ class NcsaBackend(object):
         engine = create_engine(url)
         connection = engine.connect()
     
-        rs = connection.execute("SELECT email from des_users where username = '" + username +"'")
-        email = rs.fetchone()[0]    
+        rs = connection.execute("SELECT email, firstname, lastname from des_users where username = '" + username +"'")
+        row = rs.fetchone()
+        email = row[0]    
+        first_name = row[1]   
+        last_name = row[2]     
         connection.close()
 
-        return email
+        return (email, first_name, last_name)
         
 
     def authenticate(self, username=None, password=None):
@@ -34,12 +37,18 @@ class NcsaBackend(object):
         if self.check_user(username, password):
             try:
                 user = User.objects.get(username=username)
-                user.email = self.updateEmail(username)
+                email, first_name, last_name = self.updateEmail(username)
+                user.email = email
+                user.first_name = first_name
+                user.last_name = last_name
                 user.save()         
             except User.DoesNotExist:
                 group = self.get_group('NCSA')
                 user = User(username=username)
-                user.email = self.updateEmail(username)
+                email, first_name, last_name = self.updateEmail(username)
+                user.email = email
+                user.first_name = first_name
+                user.last_name = last_name
                 user.save()
                 user.groups.add(group)
             
