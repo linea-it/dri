@@ -105,12 +105,12 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             ex: catalog/get_class_tree_by_group/group='targets'
         """
         group = request.query_params.get('group', None)
-
-        if not group:
+        groupin = request.query_params.get('group__in', None)
+        if not group and not groupin:
             # TODO retornar execpt que o group e obrigatorio
             return Response({
                 'success': False,
-                'msg': 'NecessÃ¡rio passar o parametro group.'
+                'msg': 'Necessario passar o parametro group.'
             })
 
         # Usando Filter_Queryset e aplicado os filtros listados no filterbackend

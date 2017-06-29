@@ -11,7 +11,7 @@ from .serializers import RatingSerializer, RejectSerializer, CommentsSerializer
 from rest_framework.permissions import AllowAny
 import csv
 
-from .views_db import CoaddObjectsDBHelper, VisiomaticCoaddObjectsDBHelper, TargetViewSetDBHelper
+from .views_db import CoaddObjectsDBHelper, VisiomaticCoaddObjectsDBHelper, TargetViewSetDBHelper, TestViewSetDBHelper
 
 
 class RatingViewSet(viewsets.ModelViewSet):
@@ -289,3 +289,75 @@ class CoaddObjects(ViewSet):
             })
 
         return Response(rows)
+
+class TestViewSet(ViewSet):
+    """
+
+    """
+
+    def list(self, request):
+        """
+        Return a list of targets in catalog.
+        """
+
+        # Recuperar o parametro product id que e obrigatorio
+        product_id = request.query_params.get('product', None)
+        if not product_id:
+            raise Exception('Product parameter is missing.')
+
+        # Recuperar no model Catalog pelo id passado na url
+        catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
+
+        if not catalog:
+            raise Exception('No product found for this id.')
+
+        db_helper = TestViewSetDBHelper(
+            catalog.tbl_name,
+            schema=catalog.tbl_schema,
+            database=catalog.tbl_database)
+
+        # colunas associadas ao produto
+        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
+        serializer = AssociationSerializer(queryset, many=True)
+        associations = serializer.data
+        properties = dict()
+
+        for property in associations:
+            if property.get('pcc_ucd'):
+                properties.update({
+                    property.get('pcc_ucd'): property.get('pcn_column_name').lower()
+                })
+
+        rows, count = db_helper.query_result(request, properties)
+
+        for row in rows:
+            row.update({
+                "_meta_catalog_id": catalog.pk,
+                "_meta_is_system": catalog.prd_class.pcl_is_system,
+                "_meta_id": '',
+                "_meta_ra": 0,
+                "_meta_dec": 0,
+                "_meta_radius": 0
+            })
+
+            row.update({
+                "_meta_id": row.get(properties.get("meta.id;meta.main")),
+                "_meta_property_id": properties.get("meta.id;meta.main")
+            })
+            row.update({
+                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main")),
+                "_meta_property_ra": properties.get("pos.eq.ra;meta.main")
+            })
+            row.update({
+                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main")),
+                "_meta_property_dec": properties.get("pos.eq.dec;meta.main")
+            })
+            row.update({
+                "_meta_radius": row.get(properties.get("phys.angSize;src")),
+                "_meta_property_radius": properties.get("phys.angSize;src")
+            })
+
+        return Response(dict({
+            'count': count,
+            'results': rows
+        }))

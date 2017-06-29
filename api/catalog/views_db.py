@@ -365,3 +365,132 @@ class TargetViewSetDBHelper:
         count = self.db.stm_count(stm)
 
         return result, count
+
+
+
+class TestViewSetDBHelper:
+    def __init__(self, table, schema=None, database=None):
+        self.schema = schema
+
+        if database:
+            com = CatalogDB(db=database)
+
+        else:
+            com = CatalogDB()
+
+        self.db = com.database
+        if not self.db.table_exists(table, schema=self.schema):
+            raise Exception("Table or view  %s.%s does not exist" %
+                            (self.schema, table))
+
+        # Desabilitar os warnings na criacao da tabela
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
+
+            table = self.db.get_table_obj(table, schema=self.schema)
+            # Nome das colunas originais na tabela
+            self.columns = [column.key for column in table.columns]
+
+            self.table = table.alias('a')
+
+    def _create_stm(self, request, properties):
+        params = request.query_params
+        owner = request.user.pk
+
+        product_id = request.query_params.get('product', None)
+        try:
+            property_id = properties.get("meta.id;meta.main").lower()
+        except:
+            raise ("Need association for ID column with meta.id;meta.main ucd.")
+
+        # Aqui pode entrar o parametro para escolher as colunas
+        stm = select(self.table.columns).select_from(self.table)
+
+        # Filtros
+        filters = list()
+        coordinates_filter = list()
+
+        params = params.dict()
+        for param in params:
+            if '__' in param:
+                col, op = param.split('__')
+            else:
+                col = param
+                op = 'eq'
+
+            if col.lower() in self.columns:
+                filters.append(dict(
+                    column=col.lower(),
+                    op=op,
+                    value=params.get(param)))
+            else:
+                # Coordenadas query por quadrado
+                if col == 'coordinates':
+                    value = json.loads(params.get(param))
+                    # Upper Right
+                    ur = value[0]
+                    # Lower Left
+                    ll = value[1]
+                    coordinates_filter.append(
+                        and_(between(
+                            literal_column(str('ra')),
+                            literal_column(str(ll[0])),
+                            literal_column(str(ur[0]))
+                        ), between(
+                            literal_column(str('dec')),
+                            literal_column(str(ll[1])),
+                            literal_column(str(ur[1]))
+                        ))
+                    )
+
+        stm = stm.where(and_(*DBBase.do_filter(self.table, filters) +
+                              coordinates_filter
+                             ))
+
+        print(str(stm))
+
+        # Parametros de Paginacao
+        limit = params.get('limit', None)
+        start = params.get('offset', None)
+
+        if limit:
+            stm = stm.limit(literal_column(str(limit)))
+
+        if start:
+            stm = stm.offset(literal_column(str(start)))
+
+        # Parametros de Ordenacao
+        ordering = params.get('ordering', None)
+
+        # if ordering is not None:
+        #     asc = True
+        #     property = ordering.lower()
+        #
+        #     if ordering[0] == '-':
+        #         asc = False
+        #         property = ordering[1:].lower()
+        #
+        #     if property == '_meta_rating':
+        #         property = catalog_rating_id.c.rating
+        #     elif property == '_meta_reject':
+        #         property = catalog_reject_id.c.reject
+        #     else:
+        #         property = 'a.' + property
+        #
+        #     if asc:
+        #         stm = stm.order_by(property)
+        #     else:
+        #         stm = stm.order_by(desc(property))
+
+        return stm
+
+    def query_result(self, request, properties):
+        stm = self._create_stm(request, properties)
+
+        result = self.db.fetchall_dict(stm)
+
+        count = self.db.stm_count(stm)
+
+        return result, count
+
+

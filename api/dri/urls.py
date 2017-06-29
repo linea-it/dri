@@ -86,6 +86,7 @@ router.register(r'objectsrating', catalog_views.RatingViewSet)
 router.register(r'objectsreject', catalog_views.RejectViewSet)
 router.register(r'objectscomments', catalog_views.CommentsViewSet)
 router.register(r'coadd_objects', catalog_views.CoaddObjects, base_name='coadd_objects')
+router.register(r'overlay_test', catalog_views.TestViewSet, base_name='visiomatic_overlay')
 
 # API Catalogos para o Visiomatic
 router.register(r'visiomatic/coadd_objects', catalog_views.VisiomaticCoaddObjects, base_name='visiomatic_coadd_objects')
@@ -103,7 +104,7 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^contact/', common_views.contact_us),
 
-    url(r'^teste/', common_views.teste),
+    # url(r'^teste/', common_views.teste),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 

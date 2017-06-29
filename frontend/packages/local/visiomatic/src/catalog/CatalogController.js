@@ -38,7 +38,8 @@ Ext.define('visiomatic.catalog.CatalogController', {
         catalogs.addFilter([
            {
                 property:'group',
-                value: 'targets'
+                operator: 'in',
+                value: ['objects_catalog', 'targets']
             }
         ]);
 
