@@ -799,7 +799,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winSaveAs = Ext.create('Target.view.objects.SaveCatalogWindow',{});
 
             me.winSaveAs.setCurrentCatalog(currentCatalog, filterSet);
-//            me.winSaveAs.setFilterSet();
 
             me.winSaveAs.show();
         } else {
@@ -842,16 +841,24 @@ Ext.define('Target.view.objects.ObjectsController', {
     onClickDownload: function () {
         var me = this,
             vm = me.getViewModel(),
-            currentCatalog = vm.get('currentCatalog');
+            currentCatalog = vm.get('currentCatalog'),
+            combo = me.lookup('cmbFilterSet'),
+            filterSet = combo.selection;            ;
 
         if (me.winDownload !== null) {
             me.winDownload.close();
             me.winDownload = null;
         }
 
-        me.winDownload = Ext.create('Target.view.objects.DownloadWindow',{});
+        if ((filterSet !== null) && (filterSet.get('id'))) {
+            me.winDownload = Ext.create('Target.view.objects.DownloadWindow',{});
 
-        me.winDownload.setCurrentCatalog(currentCatalog);
+            me.winDownload.setCurrentCatalog(currentCatalog, filterSet);
+
+        } else {
+            Ext.MessageBox.alert('', 'You need to select a named filter.');
+
+        }
 
         me.winDownload.show();
 

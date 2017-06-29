@@ -42,9 +42,6 @@ Ext.define('Target.view.objects.SaveCatalogController', {
             form = me.lookup('SaveAsForm').getForm(),
             values;
 
-        console.log(form.getValues());
-
-        console.log('filterSet: ',filterSet)
         if (form.isValid()) {
             values = form.getValues();
 

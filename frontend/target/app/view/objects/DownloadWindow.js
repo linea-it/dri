@@ -19,7 +19,8 @@ Ext.define('Target.view.objects.DownloadWindow', {
     },
 
     config: {
-        currentCatalog: null
+        currentCatalog: null,
+        filterSet: null
     },
 
     initComponent: function () {
@@ -105,14 +106,20 @@ Ext.define('Target.view.objects.DownloadWindow', {
         me.callParent(arguments);
     },
 
-    setCurrentCatalog: function (currentCatalog) {
+    setCurrentCatalog: function (currentCatalog, filterSet) {
         var me = this;
 
         if ((currentCatalog) && (currentCatalog.get('id') > 0)) {
 
             me.currentCatalog = currentCatalog;
-
+            me.setFilterSet(filterSet);
         }
+    },
+
+    setFilterSet: function (filterSet) {
+        var me = this;
+
+        this.filterSet = filterSet;
     },
 
     onDownload: function () {
@@ -122,7 +129,9 @@ Ext.define('Target.view.objects.DownloadWindow', {
             values,
             table_format = [],
             cutouts = false,
-            report_format = [];
+            report_format = [],
+            filterSet = me.getFilterSet(),
+            filter = null;
 
         if (form.isValid()) {
 
@@ -140,14 +149,19 @@ Ext.define('Target.view.objects.DownloadWindow', {
                 report_format = values.report_format;
             }
 
+            if ((filterSet !== null) && (filterSet.get('id') > 0)) {
+                filter = filterSet.get('id');
+            }
+
             Ext.Ajax.request({
                 url: '/dri/api/product/download/',
                 scope: this,
                 params: {
                     'product': currentCatalog.get('id'),
-                    'table_format': table_format,
+                    'type': table_format,
                     'cutouts': cutouts,
-                    'report_format': report_format
+                    'report_format': report_format,
+                    'filter': filter
                 },
                 success: function (response) {
                     // Recuperar a resposta e fazer o decode no json.

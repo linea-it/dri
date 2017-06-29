@@ -123,7 +123,6 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
 
     setCurrentCatalog: function (currentCatalog, filterSet) {
         var me = this;
-        console.log('TESTE:', filterSet )
         if ((currentCatalog) && (currentCatalog.get('id') > 0)) {
 
             me.currentCatalog = currentCatalog;
