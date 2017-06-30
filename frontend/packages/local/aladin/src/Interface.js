@@ -19,7 +19,7 @@ Ext.define('aladin.Interfaces', {
             w;
 
         w = Ext.create('Ext.Component', {
-            width: 200,
+            width: 280,
             height: 100,
             x: 5,
             y: 10,
@@ -35,7 +35,7 @@ Ext.define('aladin.Interfaces', {
             tpl: [
                 '<spam>{release}</spam> <spam>{tag}</spam>',
                 '</br><spam>{tilename}</spam>',
-                '</br><spam>J2000 {location}</spam>'
+                '</br><spam>RA, Dec (deg): {location}</spam>'
             ]
         });
 

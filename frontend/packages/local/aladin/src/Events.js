@@ -176,7 +176,7 @@ Ext.define('aladin.Events', {
     skyToString: function (radec) {
 
         if ((radec) && (radec[0]) && (radec[1])) {
-            return String(radec[0].toFixed(4) + ', ' + radec[1].toFixed(4));
+            return String(radec[0].toFixed(5) + ', ' + radec[1].toFixed(5));
         }
     },
 
