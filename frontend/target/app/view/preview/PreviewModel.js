@@ -11,6 +11,7 @@ Ext.define('Target.view.preview.PreviewModel', {
         'common.store.Releases',
         'common.store.Tags',
         'common.store.Datasets',
+        'Target.store.TileFiles',
         'Target.store.Objects',
         'Target.store.ProductRelateds',
         'Target.model.ProductRelated'
@@ -61,6 +62,10 @@ Ext.define('Target.view.preview.PreviewModel', {
         },
         productRelateds: {
             type: 'product_relateds',
+            autoLoad: false
+        },
+        tile_files: {
+            type: 'tile_files',
             autoLoad: false
         }
     }

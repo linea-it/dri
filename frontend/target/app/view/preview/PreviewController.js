@@ -8,7 +8,8 @@ Ext.define('Target.view.preview.PreviewController', {
 
     requires: [
         'common.comment.CommentsObject',
-        'Target.view.preview.DescutDownloadWindow'
+        'Target.view.preview.DescutDownloadWindow',
+        'Target.model.TileFiles'
     ],
 
     listen: {
@@ -280,8 +281,16 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = view.getViewModel(),
             object = vm.get('currentRecord'),
             catalog = vm.get('currentCatalog'),
+            store = vm.getStore('tile_files'),
             id;
-        console.log('test');
+        console.log(object);
+        store.load({
+             params: {
+                tag : 'Y3A2_COADD',
+                tile : '2354'
+           },
+        });
+        console.log(store);
         me.winDownload = Ext.create('Target.view.preview.DescutDownloadWindow',{});
 
         me.winDownload.setCurrentCatalog(catalog);

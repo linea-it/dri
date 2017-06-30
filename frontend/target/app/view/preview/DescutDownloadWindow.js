@@ -4,8 +4,8 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
     xtype: 'target-download-descut',
 
     title: 'Download',
-    width: 300,
-    height: 200,
+    width: 600,
+    height: 400,
     modal: true,
     autoShow: true,
 
@@ -53,9 +53,8 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
                                     vertical: true,
                                     columns: 2,
                                     items: [
-                                        {boxLabel: 'PNG', name: 'table_format', inputValue: 'csv', checked: true},
+                                        {boxLabel: 'PNG', name: 'table_format', inputValue: 'png', checked: true},
                                         {boxLabel: 'FITS', name: 'table_format', inputValue: 'fits'},
-                                        //{boxLabel: 'JSON', name: 'table_format', inputValue: 'json'}
                                     ]
                                 }
                             ]
@@ -148,6 +147,5 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
 
     onCancel: function () {
         this.close();
-
     }
 });

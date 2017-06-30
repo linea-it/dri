@@ -191,7 +191,7 @@ class SurveyViewSet(viewsets.ModelViewSet):
 #             return content
 
 @api_view(['GET'])
-def get_tile(request):
+def get_tiles(request):
     if request.method == 'GET':
 
         if request.query_params.get('tag') ==None:
