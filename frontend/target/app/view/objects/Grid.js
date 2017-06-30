@@ -111,7 +111,7 @@ Ext.define('Target.view.objects.Grid', {
 
                         column.width = 90;
                         column.xtype = 'numbercolumn';
-                        column.format = '0.000';
+                        column.format = '0.00000';
                         column.renderer = null;
                         column.locked = true;
                         column.lockable = true;
