@@ -22,7 +22,7 @@ from product.serializers import AssociationSerializer
 from os import mkdir, path
 import csv
 from .views_db import CutoutJobsDBHelper
-
+import re
 
 class CutoutJobs:
     db = None
@@ -530,13 +530,40 @@ class CutoutJobs:
     def get_job(self, token, jobid):
         """
         Get Job Results : Mainly returns a list of links to files
-
         """
+        token = self.generate_token()
         req = requests.get(
             self.host_jobs + "?token=" + token + '&jobid=' + jobid)
 
         data = req.json()
         return data
+
+    def check_job_status(self, jobId):
+        """
+        Get Job Status : Return job current status
+        """
+        token = self.generate_token()
+        result = self.get_job(token, jobId)
+        return result.get('job_status')
+
+    def get_job_png_url(self, jobId):
+        """
+        Get Job PNG Result : Returns png url
+
+        """
+        token = self.generate_token()
+        result = self.get_job(token, jobId)
+        png_urls = re.findall('http[s]?://\S+?/\S+?\.(?:png)', str(result))
+        return png_urls[0]
+
+    def get_job_fits_urls(self, jobId):
+        """
+        Get Job PNG Result : Returns png url
+
+        """
+        token = self.generate_token()
+        result = self.get_job(token, jobId)
+        return re.findall('http[s]?://\S+?/\S+?\.(?:fits)', str(result))
 
     def download_file_png(self, url, filename):
         # print("------------- download_file -------------")

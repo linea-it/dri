@@ -10,6 +10,9 @@ from .serializers import ReleaseSerializer, TagSerializer, TileSerializer, Datas
 
 logger = logging.getLogger(__name__)
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from coadd.datadiscovery import DataDiscovery
 
 # Create your views here.
 class ReleaseViewSet(viewsets.ModelViewSet):
@@ -186,3 +189,9 @@ class SurveyViewSet(viewsets.ModelViewSet):
 #             })
 #
 #             return content
+
+@api_view(['GET'])
+def get_tile(request):
+    if request.method == 'GET':
+        url = DataDiscovery().get_tiles_by_tag_and_field('Y3A2_COADD','2354')
+        return Response(dict({'teste': url}))

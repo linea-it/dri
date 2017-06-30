@@ -17,7 +17,6 @@ from rest_framework import status
 import django_filters
 from rest_framework import filters
 
-
 class FilterViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows filters to be viewed or edited
@@ -127,7 +126,6 @@ def contact_us(request):
 def teste(request):
     if request.method == 'GET':
         print('Teste---------------------')
-
         from product.descutoutservice import CutoutJobs
         cutoutjobs = CutoutJobs()
         token = cutoutjobs.generate_token()
@@ -143,8 +141,9 @@ def teste(request):
         jobId = 'e37d1c43-7f65-4f6e-b735-5d22e830a6e8'
         print('result---------------------')
         result = cutoutjobs.get_job(token, jobId)
-        png_link = result.get('links')[10]
-        print(result)
+        # print(result)
+        fits = cutoutjobs.check_job_status(jobId)
+        print(fits)
         # print(png_link.split('/')[len(png_link.split('/')) - 1])
 
         # file_path = cutoutjobs.download_file_png(result.get('links')[10], png_link.split('/')[len(png_link.split('/')) - 1])
