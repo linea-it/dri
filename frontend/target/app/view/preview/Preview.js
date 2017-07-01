@@ -110,6 +110,7 @@ Ext.define('Target.view.preview.Preview', {
                 },
                 handler: 'onComment'
             },
+
             '-',
             {
                 xtype: 'button',
@@ -124,6 +125,17 @@ Ext.define('Target.view.preview.Preview', {
                 enableToggle: true,
                 pressed: true,
                 reference: 'BtnCrosshair'
+            },
+            '-',
+            {
+                xtype: 'button',
+                reference: 'btnComments',
+                iconCls: 'x-fa fa-comments',
+                enableToggle: true,
+                toggleHandler: 'showHideComments',
+                tooltip: 'Show/Hide Comments',
+                pressed: true,
+                hidden: true
             },
             {
                 xtype: 'button',

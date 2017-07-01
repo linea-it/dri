@@ -576,12 +576,10 @@ Ext.define('visiomatic.Visiomatic', {
 
     onShift: function () {
         this.fireEvent('shift', this.getRaDec(), this);
-
     },
 
     isReady: function () {
         return this.getReady();
-
     },
 
 
@@ -726,7 +724,6 @@ Ext.define('visiomatic.Visiomatic', {
             //Desenha os objetos (círculos pequenos)
             //TODO: FABIO, v como adicionar algo que informe que neste círculo contém comentário
             pointToLayer: function (feature, latlng) {
-
                 var radius = pathOptions.radius,
                     opts = pathOptions;
 
@@ -743,7 +740,8 @@ Ext.define('visiomatic.Visiomatic', {
                 path_options = Ext.Object.merge(opts, {
                     majAxis: radius,
                     minAxis: radius,
-                    posAngle: 90
+                    posAngle: 90,
+                    color: feature.properties._meta_comments ? '#FF9800' : '#4AAB46'
                 });
 
                 path_options = Ext.Object.merge(path_options, options);
@@ -799,6 +797,38 @@ Ext.define('visiomatic.Visiomatic', {
                 map.removeLayer(layer);
             }
         }
+    },
+
+    showHideComments: function (layer, state) {
+        var me = this, l, q,
+            map = me.getMap();
+
+        if (layer !== null) {
+            for (i in layer._layers){
+                l = layer._layers[i];
+                q = l.feature.properties._meta_comments;
+                if (q>0){
+                    l._path.setAttribute('stroke', state ? '#FF9800' : '#4AAB46');
+                }
+            }
+        }
+    },
+
+    updateComment: function (layer, comment, total) {
+        var me = this, l, id,
+            layers = layer._layers;
+
+        for (i in layers){
+            l  = layers[i];
+            id = l.feature.id;
+
+            if (id==comment.data.object_id){
+                l.feature.properties._meta_comments = total;
+                l._path.setAttribute('stroke', total ? '#FF9800' : '#4AAB46');
+            }
+            
+        }
+    
     },
 
     markPosition: function (ra, dec, iconCls) {
