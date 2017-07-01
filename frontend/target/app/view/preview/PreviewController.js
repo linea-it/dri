@@ -283,19 +283,39 @@ Ext.define('Target.view.preview.PreviewController', {
             catalog = vm.get('currentCatalog'),
             store = vm.getStore('tile_files'),
             id;
-        console.log(object);
-        store.load({
-             params: {
-                tag : 'Y3A2_COADD',
-                tile : '2354'
-           },
-        });
-        console.log(store);
-        me.winDownload = Ext.create('Target.view.preview.DescutDownloadWindow',{});
 
-        me.winDownload.setCurrentCatalog(catalog);
+        if (object.get('tilename')) {
 
-        me.winDownload.show();
+          view.setLoading(true);
+
+          if (object.get('tilename').includes('+')) {
+            id = object.get('tilename').split('+')[0].slice(3);
+          } else {
+            id = object.get('tilename').split('-')[0].slice(3);
+          };
+
+          store.load({
+            params: {
+              tag : 'Y3A2_COADD',
+              tile : id
+            },
+            callback: function (r, option, success) {
+              me.winDownload = Ext.create('Target.view.preview.DescutDownloadWindow', {
+                args: {result: r}
+              });
+              me.winDownload.show();
+              view.setLoading(false);
+            }
+          });
+
+        } else {
+
+          alert ('Please select an element.')
+
+        }
+
+        // me.winDownload = Ext.create('Target.view.preview.DescutDownloadWindow',{args: {id: '1'}});
+        // me.winDownload.show();
 
     },
 
