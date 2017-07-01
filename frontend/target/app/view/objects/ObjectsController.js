@@ -669,6 +669,12 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.loadObjects();
     },
 
+    onCommentButton: function(event){
+        //var refs = me.getReferences();
+        //refs.targetsPreviewPanel;
+        Ext.getCmp('panel-targets-preview').getController().onContextItemClickVisiomatic({});
+    },
+
     /**
      * Executado pelo botao apply/disappy
      * Para ativar ou desativar um filtro basta chamar a funcao load ela

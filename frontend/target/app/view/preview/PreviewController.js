@@ -116,10 +116,11 @@ Ext.define('Target.view.preview.PreviewController', {
         if (vm.get('is_system')) {
             refs.btnRadius.setVisible(true);
             refs.btnMembers.setVisible(true);
-
+            refs.btnComments.setVisible(true);
         } else {
             refs.btnRadius.setVisible(false);
             refs.btnMembers.setVisible(true);
+            refs.btnComments.setVisible(false);
         }
 
     },
@@ -247,17 +248,21 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = view.getViewModel(),
             object = vm.get('currentRecord'),
             catalog = vm.get('currentCatalog'),
-            id;
+            object_id, catalog_id;
 
         if ((!object) || (!object.get('_meta_id'))) {
             return false;
-
         }
 
-        catalog = catalog.get('id');
-        id = object.get('_meta_id');
+        if (feature && feature.properties){
+            catalog_id = feature.properties._meta_catalog_id;
+            object_id  = feature.id;
+        }else{
+            catalog_id = catalog.get('id');
+            object_id  = object.get('_meta_id');
+        }
 
-        if (id > 0) {
+        if (object_id > 0) {
 
             var comment = Ext.create('Ext.window.Window', {
                 title: 'Comments',
@@ -266,8 +271,9 @@ Ext.define('Target.view.preview.PreviewController', {
                 closeAction: 'destroy',
                 constrainHeader:true,
                 width: 500,
-                height: 500,
+                height: 300,
                 autoShow:true,
+                onEsc: Ext.emptyFn,
                 items: [
                     {
                         xtype: 'comments-object',
@@ -280,16 +286,25 @@ Ext.define('Target.view.preview.PreviewController', {
             });
 
             //passar latlng e feature para ser caregado comentários de um objeto específico ou de uma posição específica
-            comment.down('comments-object').getController().loadComments(catalog, id, latlng, feature);
+            comment.down('comments-object').getController().loadComments(catalog_id, object_id, latlng, feature);
         }
 
     },
 
-    onChangeComments: function () {
+    onChangeComments: function (event) {
         var me = this,
-           view = me.getView();
+           view = me.getView(),
+           visiomatic = me.lookupReference('visiomatic'),
+           vm = me.getViewModel(),
+           lmembers = vm.get('overlayMembers');
+
+        if (event && event.comment) {
+            //TODO: atualizar o número de comentários em lmembers.feature.properties.
+            visiomatic.updateComment(lmembers, event.comment, event.total);
+        }
 
         view.fireEvent('changeinobject');
+
     },
 
     loadSystemMembers: function () {
@@ -373,6 +388,16 @@ Ext.define('Target.view.preview.PreviewController', {
             lmembers = vm.get('overlayMembers');
 
         visiomatic.showHideLayer(lmembers, state);
+
+    },
+
+    showHideComments: function (btn, state) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic'),
+            vm = me.getViewModel(),
+            lmembers = vm.get('overlayMembers');
+
+        visiomatic.showHideComments(lmembers, state);
 
     },
 

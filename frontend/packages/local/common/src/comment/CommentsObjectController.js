@@ -10,7 +10,7 @@ Ext.define('common.comment.CommentsObjectController', {
             view = me.getView(),
             vm = view.getViewModel(),
             store = vm.getStore('comments');
-
+        
         vm.set('catalog_id', catalog_id);
         vm.set('object_id', object_id);
 
@@ -22,13 +22,11 @@ Ext.define('common.comment.CommentsObjectController', {
             {
                 property: 'object_id',
                 value: object_id
-            },
-            //TODO: filtro para carregar somente comments de uma posição ou de um objeto
-
+            }
         ]);
     },
 
-    onDeleteComment: function (btn) {
+    onDeleteComment: function (item) {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -51,17 +49,26 @@ Ext.define('common.comment.CommentsObjectController', {
             view = me.getView(),
             vm = view.getViewModel(),
             store = vm.getStore('comments');
-
+        
         view.setLoading(true);
         // Remover da store
         store.remove(comment);
+
+        /*data: Object
+            catalog_id: 74
+            comments: "adasd"
+            date: "2017-07-01 14:05"
+            id: 21
+            is_owner: true
+            object_id: 3017197200
+            owner: "admin"*/
 
         // Faz com que a store envie as alteracoes no caso um delete
         store.sync({
             success: function () {
 
                 // Disparar evento de que houve mudanca nos comentarios
-                view.fireEvent('changecomments');
+                view.fireEvent('changecomments', {type:'delete', comment:comment, total:store.data.items.length});
                 view.setLoading(false);
             },
             failure: function (r, operation) {
@@ -92,11 +99,11 @@ Ext.define('common.comment.CommentsObjectController', {
             vm = view.getViewModel(),
             store = vm.getStore('comments');
 
-        view.setLoading(true);
-
         var currentcomment = vm.get('currentcomment');
 
         if (currentcomment.get('comments') != '') {
+            view.setLoading(true);
+
             store.sync({
                 success: function () {
 
@@ -106,8 +113,8 @@ Ext.define('common.comment.CommentsObjectController', {
                         callback: function () {
 
                             // Disparar evento de que houve mudanca nos comentarios
+                            view.fireEvent('changecomments', {type:'delete', comment:currentcomment, total:store.data.items.length});
                             view.fireEvent('changecomments');
-
                         }
                     });
 
@@ -131,7 +138,7 @@ Ext.define('common.comment.CommentsObjectController', {
         }
     },
 
-    onNewComment: function (btn) {
+    onNewComment: function (comment) {
 
         var me = this,
             view = me.getView(),
@@ -142,6 +149,7 @@ Ext.define('common.comment.CommentsObjectController', {
             catalog_id: vm.get('catalog_id'),
             object_id: vm.get('object_id'),
             is_owner: true,
+            comments: comment,
 
             //FABIO, acrescentei a propriedade position, não salva
             //Mudança tbm no model/CommentsObject
