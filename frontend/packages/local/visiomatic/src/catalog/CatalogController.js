@@ -16,6 +16,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
         },
     },
 
+    baseFilters: [],
 
     onChangeDataset: function (dataset) {
         var me = this,
@@ -32,19 +33,98 @@ Ext.define('visiomatic.catalog.CatalogController', {
     loadCatalogs: function () {
         var me = this,
             vm = me.getViewModel(),
-            catalogs = vm.getStore('catalogs');
+            catalogs = vm.getStore('catalogs'),
+            baseFilters;
 
 
-        catalogs.addFilter([
+        baseFilters = [
            {
                 property:'group',
                 operator: 'in',
                 value: ['objects_catalog', 'targets']
             }
-        ]);
+        ]
+
+        me.baseFilters = baseFilters;
+        catalogs.addFilter(baseFilters);
 
         catalogs.load();
 
+    },
+
+    filterCatalogByname: function () {
+        var me = this,
+            tree = me.lookup('CatalogsTree'),
+            field = me.lookup('SearchField'),
+            store = tree.getStore(),
+            value = field.getValue(),
+            fts = [],
+            f;
+
+        if (value.length > 0) {
+
+            field.getTrigger('clear').show();
+
+            // checar se a store esta em loading
+            if (store.isLoading()) {
+                // Se a store estiver carregando ainda cancelar o ultimo
+                // request antes de fazer um novo
+                console.log('Store is Loading: %o', store.isLoading());
+
+                var proxy = store.getProxy();
+                proxy.abort();
+
+                console.log('Store proxy abort');
+            }
+
+            f = {
+                property: 'search',
+                value: value
+            };
+
+            fts.push(f);
+
+            me.filterCatalogs(fts);
+
+        } else {
+            field.getTrigger('clear').hide();
+
+            me.filterCatalogs();
+        }
+
+    },
+
+    filterCatalogs: function (search) {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('catalogs'),
+            baseFilters = me.baseFilters,
+            f,
+            fts = Ext.clone(baseFilters);
+
+        store.clearFilter(true);
+        store.removeAll();
+
+        if ((search) && (Array.isArray(search))) {
+
+            for (index in search) {
+                f = search[index];
+                fts.push(f);
+            }
+        }
+
+        store.filter(fts);
+    },
+
+    cancelFilter: function () {
+        var me = this,
+            field = me.lookup('SearchField');
+
+        field.reset();
+
+        me.filterCatalogs();
+
+        field.getTrigger('clear').hide();
     },
 
 

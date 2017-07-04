@@ -21,38 +21,29 @@ Ext.define('visiomatic.catalog.Catalogs', {
                     sortable: true,
                     dataIndex: 'text'
                 }
-//                {
-//                    text: 'Owner',
-//                    flex: 1,
-//                    dataIndex: 'owner',
-//                    sortable: true,
-//                    filter: {
-//                        type: 'string'
-//                    }
-//                }
             ],
 
             tbar: [
                 {
                     xtype: 'textfield',
                     emptyText: 'Search by name',
+                    reference: 'SearchField',
                     flex: 1,
                     triggers: {
                         clear: {
                             cls: 'x-form-clear-trigger',
-//                            handler: this.cancelFilter,
+                            handler: 'cancelFilter',
                             hidden: true
                         },
                         search: {
                             cls: ' x-form-search-trigger'
                         }
                     },
-//                    listeners: {
-//                        change: me.filterByname,
-//                        buffer: 500
-//                    }
-                },
-
+                    listeners: {
+                        change: 'filterCatalogByname',
+                        buffer: 500
+                    }
+                }
             ]
 
         });
