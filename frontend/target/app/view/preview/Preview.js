@@ -109,7 +109,7 @@ Ext.define('Target.view.preview.Preview', {
             },
             {
                 xtype: 'button',
-                iconCls: 'x-fa fa-floppy-o',
+                iconCls: 'x-fa fa-download',
                 handler: 'onSave'
             },
             '-',
