@@ -22,12 +22,27 @@ Ext.define('Sky.view.main.MainController', {
         'sky/:release': {
             action: 'onSky'
         },
+        'sky/:release/:coordinate/:fov': {
+            action: 'onSky'
+        },
+        'sky/:release/:coordinate': {
+            action: 'onSky'
+        },
         'dataset/:dataset/:coordinate/:fov': {
             action: 'onDataset'
         },
         'dataset/:dataset/:coordinate': {
             action: 'onDataset'
         }
+    },
+
+    doSearch: function(value){
+        var view = this.getView(),
+            footprintAladin = view.down('footprint'),
+            footprintAladinCtrl = footprintAladin.getController();
+
+        footprintAladinCtrl.toVisiomatic(value);
+        //console.log(value, aladin);
     },
 
     setActivePanel: function (panel) {
@@ -70,15 +85,17 @@ Ext.define('Sky.view.main.MainController', {
         this.setActivePanel(newView);
     },
 
-    onSky: function (release) {
+    onSky: function (release, coordinate, fov) {
         var newView = Ext.create('Sky.view.footprint.Footprint', {
             hideMode: 'offsets',
             routeId: 'sky',
             layout: 'fit',
-            release: release
+            release: release,
+            coordinate: coordinate,
+            foc: fov
         });
 
-        this.setActivePanel(newView, release);
+        this.setActivePanel(newView, release, coordinate, fov);
     },
 
     onDataset: function (dataset, coordinate, fov) {

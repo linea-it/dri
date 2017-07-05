@@ -158,7 +158,6 @@ Ext.define('Target.view.preview.PreviewController', {
             object = vm.get('currentRecord'),
             visiomatic = me.lookupReference('visiomatic');
 
-
         // Checar se o catalogo representa single objects ou sistemas
         if (vm.get('is_system')) {
             me.targetIsSystem();
@@ -307,6 +306,9 @@ Ext.define('Target.view.preview.PreviewController', {
 
     },
 
+    /**
+     * Carrega a lista de objetos membros
+     */
     loadSystemMembers: function () {
         var me = this,
             vm = me.getViewModel(),

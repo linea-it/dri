@@ -306,6 +306,7 @@ Ext.define('visiomatic.Visiomatic', {
             me.addScaleController();
         }
 
+        this.map
     },
 
     onResize: function () {
@@ -667,6 +668,9 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
+    /**
+     * Desenha os objetos na tela a partir da store recebida
+     */
     overlayCatalog: function (id, store, options) {
         var me = this,
             l = me.libL,

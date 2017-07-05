@@ -142,7 +142,8 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     onDblClickVisiomatic: function () {
-        console.log('onDblClickVisiomatic()');
+        this.toAladin();
+        //console.log('onDblClickVisiomatic()');
 
     },
 
@@ -178,17 +179,29 @@ Ext.define('Sky.view.dataset.DatasetController', {
             vm = me.getViewModel(),
             current = vm.get('currentDataset'),
             release = current.get('release'),
-            hash;
+            view = me.getView(),
+            fov = view.getFov(),
+            visiomatic = me.lookupReference('visiomatic'),
+            hash, coordinate;
+
+        fov = visiomatic.getFov();
 
         if (me.winGetLink != null) {
             me.winGetLink.close();
             me.winGetLink = null;
         }
 
-        hash = 'sky/' + release;
+        //current.data.tli_ra: 35.982515
+        //current.data.tli_dec: -4.266667
+        //encodeURIComponent
+        coordinate = (
+            current.data.tli_ra.toString().replace('.', ',') + '|' + 
+            current.data.tli_dec.toString().replace('.', ',')
+        );
+
+        hash = 'sky/' + release + '/' + coordinate + '/' + fov;
 
         me.redirectTo(hash);
-
     },
 
     getDatasetInOtherReleases: function (current) {

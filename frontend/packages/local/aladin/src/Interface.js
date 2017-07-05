@@ -159,7 +159,7 @@ Ext.define('aladin.Interfaces', {
         }
 
         // Goto
-        if (me.getEnableGoto()) {
+        /*if (me.getEnableGoto()) {
             tools.push({
                 iconCls: 'x-fa fa-search',
                 tooltip: 'Go To position. 356.0085, 0.5168 or 23 44 2.040 +00 31 0.48',
@@ -188,7 +188,7 @@ Ext.define('aladin.Interfaces', {
                     }
                 ]
             });
-        }
+        }*/
 
         // Export Png
         if (me.getEnableExportPng()) {
