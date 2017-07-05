@@ -33,7 +33,8 @@ Ext.define('visiomatic.Visiomatic', {
         map: null,
         mapOptions: {
             fullscreenControl: true,
-            zoom: 1
+            zoom: 1,
+            enableLineaOverlay: true
         },
 
         prefix: '',
@@ -289,6 +290,7 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('contextmenu', me.onContextMenuClick, me);
         map.on('layeradd', me.onLayerAdd, me);
         map.on('move', me.onMove, me);
+        map.on('overlaycatalog', me.showCatalogOverlayWindow, me);
 
         // instancia de L.map
         me.setMap(map);

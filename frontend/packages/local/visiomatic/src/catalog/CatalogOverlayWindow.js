@@ -67,7 +67,6 @@ Ext.define('visiomatic.catalog.CatalogOverlayWindow', {
                     xtype: 'visiomatic-catalogs-overlays-grid',
                     split: true,
                     framed: true,
-                    bodyPadding: 5,
                     flex: 1,
                     bind: {
                         store: '{overlays}'
