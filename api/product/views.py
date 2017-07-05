@@ -113,6 +113,10 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 'msg': 'Necessario passar o parametro group.'
             })
 
+        groups = None
+        if groupin is not None:
+            groups = groupin.split(',')
+
         # Usando Filter_Queryset e aplicado os filtros listados no filterbackend
         queryset = self.filter_queryset(self.get_queryset())
 
@@ -131,6 +135,9 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 queryset = self.queryset.filter(pk__in=ids)
 
 
+        # Caso tenha mais de um group passado por parametro o no principal sera o grupo
+        nodeGroup = dict()
+
         # Esse dicionario vai receber os nos principais que sao as classes.
         classes = dict()
 
@@ -145,7 +152,8 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                     class_name: dict({
                         "text": "%s" % row.prd_class.pcl_display_name,
                         "expanded": False,
-                        "children": list()
+                        "children": list(),
+                        "pgr_name": str(row.prd_class.pcl_group.pgr_name)
                     })
                 })
 
@@ -178,9 +186,24 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             except ObjectDoesNotExist:
                 pass
 
-            # pega o no da classe e adiciona este no como filho.
+            # pega o no da classe e adiciona este no de catalogo como filho.
             dclass = classes.get(class_name)
             dclass.get('children').append(catalog)
+
+            if groups is not None:
+                # Model Product Group
+                productgroup = row.prd_class.pcl_group
+                group_name = productgroup.pgr_name
+
+                # Verifica se ja existe um no para esse grupo
+                if nodeGroup.get(group_name) is None:
+                    nodeGroup.update({
+                        group_name: dict({
+                            "text": str(productgroup.pgr_display_name),
+                            "expanded": False,
+                            "children": list()
+                        })
+                    })
 
         result = dict({
             'success': True,
@@ -188,9 +211,23 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             'children': list()
         })
 
-        for class_name in classes:
-            # result.get("root").get('children').append(classes.get(class_name))
-            result.get('children').append(classes.get(class_name))
+        # Se tiver mais de um grupo, as classes vao ficar como subdiretorio do grupo.
+        if groups is not None:
+
+            for class_name in classes:
+                c = classes.get(class_name)
+                group_name = c.get('pgr_name')
+
+                if group_name in nodeGroup:
+                    nodeGroup.get(group_name).get('children').append(c)
+
+            for group_name in nodeGroup:
+                result.get('children').append(nodeGroup.get(group_name))
+
+        else:
+            # Se tiver apenas um grupo basta retornar as classes
+            for class_name in classes:
+                result.get('children').append(classes.get(class_name))
 
         return Response(result)
 
