@@ -200,5 +200,9 @@ def get_tiles(request):
         if request.query_params.get('tile') == None:
             return Response(dict({'error': "tile can't be null"}))
 
-        url = DataDiscovery().get_tiles_by_tag_and_field(request.query_params.get('tag'),request.query_params.get('tile'))
+        # url = DataDiscovery().get_tiles_by_tag_and_field(request.query_params.get('tag'),request.query_params.get('tile'))
+######DESCI TEST
+        url = DataDiscovery().get_tiles_by_tag_and_field_dessci(request.query_params.get('tag'),request.query_params.get('tile'),
+######DESCI TEST
+         request.query_params.get('tilename'))
         return Response(dict({'results': url}))
