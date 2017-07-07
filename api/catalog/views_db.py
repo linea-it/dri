@@ -120,86 +120,6 @@ class CoaddObjectsDBHelper:
         return self.db.fetchall_dict(stm)
 
 
-class VisiomaticCoaddObjectsDBHelper:
-    def __init__(self, table, schema=None, database=None):
-        self.schema = schema
-
-        if database:
-            com = CatalogDB(db=database)
-        else:
-            com = CatalogDB()
-
-        self.db = com.database
-        if not self.db.table_exists(table, schema=self.schema):
-            raise Exception("Table or view  %s.%s does not exist" %
-                            (self.schema, table))
-
-        # Desabilitar os warnings na criacao da tabela
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
-
-            self.table = self.db.get_table_obj(table, schema=self.schema)
-            self.columns = None
-
-    def _create_stm(self, params):
-        # Parametros de Paginacao
-        limit = params.get('limit', 1000)
-
-        # Parametros de Ordenacao
-        ordering = params.get('ordering', None)
-
-        # Parametro Columns
-        self.str_columns = list()
-        if params.get('columns', None) is not None:
-            clmns = params.get('columns', None).split(',')
-            for clmn in clmns:
-                self.str_columns.append(clmn.lower())
-
-        columns = DBBase.create_columns_sql_format(self.table, self.str_columns)
-
-        coordinate = params.get('coordinate', None).split(',')
-        bounding = params.get('bounding', None).split(',')
-
-        filters = list()
-        if coordinate and bounding:
-            property_ra_t = DBBase.get_column_obj(self.table, 'ra')
-            property_dec_t = DBBase.get_column_obj(self.table, 'dec')
-
-            ra = float(coordinate[0])
-            dec = float(coordinate[1])
-            bra = float(bounding[0])
-            bdec = float(bounding[1])
-
-            _filters = list()
-            _filters.append(between(literal_column(str(property_ra_t)),
-                                    literal_column(str(ra - bra)),
-                                    literal_column(str(ra + bra))))
-            _filters.append(between(literal_column(str(property_dec_t)),
-                                    literal_column(str(dec - bdec)),
-                                    literal_column(str(dec + bdec))))
-            filters.append(and_(*_filters))
-
-        maglim = params.get('maglim', None)
-        if maglim is not None:
-            # TODO a magnitude continua com a propriedade hardcoded
-            maglim = float(maglim)
-            mag_t = DBBase.get_column_obj(self.table, 'mag_auto_i')
-            filters.append(
-                literal_column(str(mag_t)) <= literal_column(str(maglim)))
-
-        stm = select(columns).select_from(self.table).where(and_(*filters))
-
-        if limit:
-            stm = stm.limit(literal_column(str(limit)))
-
-        return stm
-
-    def query_result(self, params):
-        stm = self._create_stm(params)
-
-        return self.db.fetchall_dict(stm)
-
-
 class TargetViewSetDBHelper:
     def __init__(self, table, schema=None, database=None):
         self.schema = schema
@@ -368,7 +288,7 @@ class TargetViewSetDBHelper:
 
 
 
-class TestViewSetDBHelper:
+class CatalogObjectsViewSetDBHelper:
     def __init__(self, table, schema=None, database=None, columns=list(), limit=None, start=None):
         self.schema = schema
         self.query_columns = list()

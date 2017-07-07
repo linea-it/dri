@@ -101,7 +101,7 @@ Ext.define('visiomatic.catalog.OverlayGrid', {
                         record.get('count'));
         } else {
             return record.get('status_message');
-            
+
         }
    },
 
