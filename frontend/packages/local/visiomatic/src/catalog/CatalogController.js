@@ -189,14 +189,37 @@ Ext.define('visiomatic.catalog.CatalogController', {
         var me = this,
             vm = me.getViewModel(),
             visiomatic = vm.get('visiomatic'),
-            store = overlay.get('objects');
+            store = overlay.get('objects'),
+            msg, excess;
 
         overlay.set('count', store.count());
 
         // Alterar o Status do overlay
         // se nao tiver encontrado objetos colocar como status warning
         if (store.count() > 0) {
-            overlay.set('status', 'ok');
+
+
+            // Verificar se a query possui mais registros do que o tamanho da pagina da store
+            // ou seja nao estao sendo mostrados todos os objetos que satisfazem a query.
+            if (store.totalCount > store.pageSize) {
+
+                excess = (store.totalCount - store.pageSize);
+
+                msg = Ext.String.format(
+                    'The query returned more objects than the limit.</br>' +
+                    '{0} objects are not being displayed.</br>' +
+                    'Limit: {1}</br>' +
+                    'Query returned: {2}</br>', excess, store.pageSize, store.totalCount)
+
+                overlay.set('total_count', store.totalCount);
+                overlay.set('excess', excess);
+                overlay.set('status', 'alert');
+                overlay.set('status_message', msg);
+
+            } else {
+                overlay.set('status', 'ok');
+
+            }
 
         } else {
             overlay.set('status', 'warning');
@@ -251,3 +274,4 @@ Ext.define('visiomatic.catalog.CatalogController', {
 
 
 });
+

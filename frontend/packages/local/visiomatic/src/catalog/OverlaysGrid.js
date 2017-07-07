@@ -129,6 +129,7 @@ Ext.define('visiomatic.catalog.OverlayGrid', {
      * Baseado no Status
      *      - loading: Quando a store de objetos ainda esta carregando o value dessa coluna vai ser um iconde de loading
      *      - ok: quando a store termina de carregar e tem objetos. o valor vai ser um icone com a cor do overlay
+     *      - alert: quando a query retorna mais objetos do que o limit estipulado no pageSize da store.
      *      - warning: quando o resultado da store e 0 objetos. o valor vai ser um icone de warning com um tootip.
      *      - error: TODO: adiconar esse status, quando a store falhar por algum motivo.
      */
@@ -143,6 +144,17 @@ Ext.define('visiomatic.catalog.OverlayGrid', {
                             '<i class="fa fa-square" aria-hidden="true" style="color:{0}"></i>', value)
                 break;
 
+            case 'alert':
+                msg = record.get('status_message')
+                value = '<i class="fa fa-exclamation" ' +
+                            'aria-hidden="true" style="color:#FF8C2E" ' +
+                            'data-qtip="' + msg + '"></i>';
+
+                // Como esse icone e muito pequeno e dificil abrir o tooltip, entao adicionei o tooltip
+                // a cell
+                meta.tdAttr = 'data-qtip= "' + msg + '"';
+
+                break;
             case 'warning':
                 value = '<i class="fa fa-exclamation-triangle" ' +
                             'aria-hidden="true" style="color:#FF8C2E" data-qtip="0 Entries"></i>'

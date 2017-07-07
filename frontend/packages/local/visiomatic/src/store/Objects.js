@@ -21,7 +21,6 @@ Ext.define('visiomatic.store.Objects', {
         type: 'django',
         timeout: 60000,
         api: {
-//            read    : '/dri/api/target/'
             read    : '/dri/api/overlay_test/'
         }
     }

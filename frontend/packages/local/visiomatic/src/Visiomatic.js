@@ -870,8 +870,6 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     createOverlayPopup: function (layer) {
-        console.log('createOverlayPopup')
-
         var feature = layer.feature,
             popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
                '<TABLE style="margin:auto;">' +
