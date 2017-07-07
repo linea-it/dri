@@ -179,13 +179,13 @@ Ext.define('visiomatic.catalog.CatalogController', {
         ])
 
         store.load({
-            callback: function () {
-                me.onLoadObjects(overlay);
+            callback: function (store, operation, successful) {
+                me.onLoadObjects(overlay, operation, successful);
             }
         })
     },
 
-    onLoadObjects: function (overlay) {
+    onLoadObjects: function (overlay, operation, successful) {
         var me = this,
             vm = me.getViewModel(),
             visiomatic = vm.get('visiomatic'),
@@ -194,47 +194,60 @@ Ext.define('visiomatic.catalog.CatalogController', {
 
         overlay.set('count', store.count());
 
-        // Alterar o Status do overlay
-        // se nao tiver encontrado objetos colocar como status warning
-        if (store.count() > 0) {
+        if (!successful) {
+            // Error no Servidor
+            msg = Ext.String.format(
+                'Sorry, there was a server error, and this operation can not be performed.</br>' +
+                'Error: {0} - {1}', operation.error.status, operation.error.statusText);
 
+            overlay.set('status', 'error');
+            overlay.set('status_message', msg);
 
-            // Verificar se a query possui mais registros do que o tamanho da pagina da store
-            // ou seja nao estao sendo mostrados todos os objetos que satisfazem a query.
-            if (store.totalCount > store.pageSize) {
+            console.log("Server Side ERROR: %o - %o", operation.error.status, operation.error.statusText);
+            // console.log(operation.error.response.responseText);
 
-                excess = (store.totalCount - store.pageSize);
+        } else {
 
-                msg = Ext.String.format(
-                    'The query returned more objects than the limit.</br>' +
-                    '{0} objects are not being displayed.</br>' +
-                    'Limit: {1}</br>' +
-                    'Query returned: {2}</br>', excess, store.pageSize, store.totalCount)
+            // Alterar o Status do overlay
+            if (store.count() > 0) {
+                // Verificar se a query possui mais registros do que o tamanho da pagina da store
+                // ou seja nao estao sendo mostrados todos os objetos que satisfazem a query.
+                if (store.totalCount > store.pageSize) {
 
-                overlay.set('total_count', store.totalCount);
-                overlay.set('excess', excess);
-                overlay.set('status', 'alert');
-                overlay.set('status_message', msg);
+                    excess = (store.totalCount - store.pageSize);
+
+                    msg = Ext.String.format(
+                        'The query returned more objects than the limit.</br>' +
+                        '{0} objects are not being displayed.</br>' +
+                        'Limit: {1}</br>' +
+                        'Query returned: {2}</br>', excess, store.pageSize, store.totalCount)
+
+                    overlay.set('total_count', store.totalCount);
+                    overlay.set('excess', excess);
+                    overlay.set('status', 'alert');
+                    overlay.set('status_message', msg);
+
+                } else {
+                    overlay.set('status', 'ok');
+
+                }
 
             } else {
-                overlay.set('status', 'ok');
+                // se nao tiver encontrado objetos colocar como status warning
+                overlay.set('status', 'warning');
 
             }
 
-        } else {
-            overlay.set('status', 'warning');
+            layers = visiomatic.overlayCatalog(
+                        overlay.get('name'),
+                        store,
+                        {
+                            color: overlay.get('color')
+                        });
+
+            overlay.set('layers', layers);
 
         }
-
-        layers = visiomatic.overlayCatalog(
-                    overlay.get('name'),
-                    store,
-                    {
-                        color: overlay.get('color')
-                    });
-
-        overlay.set('layers', layers);
-
     },
 
 
@@ -246,14 +259,15 @@ Ext.define('visiomatic.catalog.CatalogController', {
             record = overlays.getAt(rowIndex),
             layers = record.get('layers');
 
+        // Remover as layers no visiomatic
         if (layers !== null) {
-            // Remover as layers no visiomatic
             visiomatic.showHideLayer(layers, false);
 
-            // remover o overlay da Store
-            record.erase();
-
         }
+
+        // remover o overlay da Store
+        record.erase();
+
     },
 
     onChangeVisibility: function (cell, rowIndex, state) {
@@ -270,8 +284,6 @@ Ext.define('visiomatic.catalog.CatalogController', {
         }
 
     },
-
-
 
 });
 

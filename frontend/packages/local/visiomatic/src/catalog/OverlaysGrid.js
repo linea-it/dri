@@ -93,12 +93,16 @@ Ext.define('visiomatic.catalog.OverlayGrid', {
     */
    getTooltipName: function(record) {
 
-        return Ext.String.format(
-                    '<spam>{0}</spam></br>'+
-                    '<spam>Entries: {1}</spam>',
-                    record.get('name'),
-                    record.get('count'));
-
+        if (record.get('status') !== 'error') {
+            return Ext.String.format(
+                        '<spam>{0}</spam></br>'+
+                        '<spam>Entries: {1}</spam>',
+                        record.get('name'),
+                        record.get('count'));
+        } else {
+            return record.get('status_message');
+            
+        }
    },
 
     /**
@@ -115,7 +119,7 @@ Ext.define('visiomatic.catalog.OverlayGrid', {
             value = value + '...';
         }
 
-        if (record.get('status') !== 'loading') {
+        if ((record.get('status') !== 'loading') && (record.get('status') !== 'error')) {
             return Ext.String.format("{0} ({1} entries)", value, record.get('count'));
 
         } else {
@@ -131,7 +135,7 @@ Ext.define('visiomatic.catalog.OverlayGrid', {
      *      - ok: quando a store termina de carregar e tem objetos. o valor vai ser um icone com a cor do overlay
      *      - alert: quando a query retorna mais objetos do que o limit estipulado no pageSize da store.
      *      - warning: quando o resultado da store e 0 objetos. o valor vai ser um icone de warning com um tootip.
-     *      - error: TODO: adiconar esse status, quando a store falhar por algum motivo.
+     *      - error: Quando a Requisicao falha no lado do Servidor ex: error 500
      */
    renderColumnColor: function(value, meta, record) {
         switch (record.get('status')) {
@@ -145,7 +149,8 @@ Ext.define('visiomatic.catalog.OverlayGrid', {
                 break;
 
             case 'alert':
-                msg = record.get('status_message')
+                msg = record.get('status_message');
+
                 value = '<i class="fa fa-exclamation" ' +
                             'aria-hidden="true" style="color:#FF8C2E" ' +
                             'data-qtip="' + msg + '"></i>';
@@ -155,9 +160,18 @@ Ext.define('visiomatic.catalog.OverlayGrid', {
                 meta.tdAttr = 'data-qtip= "' + msg + '"';
 
                 break;
+
             case 'warning':
                 value = '<i class="fa fa-exclamation-triangle" ' +
                             'aria-hidden="true" style="color:#FF8C2E" data-qtip="0 Entries"></i>'
+
+                break;
+
+            case 'error':
+                msg = record.get('status_message');
+
+                value = '<i class="fa fa-exclamation-triangle" ' +
+                            'aria-hidden="true" style="color:#FD172C" data-qtip="' + msg + '"></i>'
 
                 break;
         }
