@@ -179,65 +179,6 @@ class TargetViewSet(ViewSet):
         }))
 
 
-# class VisiomaticCoaddObjects(ViewSet):
-#     """
-#
-#     """
-#
-#     # permission_classes = (AllowAny,)
-#
-#     def list(self, request):
-#         """
-#         Return a list of coadd objects for visiomatic.
-#         """
-#         # Recuperar o parametro product id ou sorce e obrigatorio
-#         product_id = request.query_params.get('product', None)
-#         source = request.query_params.get('source', None)
-#         if product_id is not None:
-#             # Recuperar no model Catalog pelo id passado na url
-#             catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
-#         elif source is not None:
-#             catalog = Catalog.objects.select_related().get(prd_name=source)
-#         else:
-#             raise Exception('Product id or source is mandatory.')
-#
-#         if not catalog:
-#             raise Exception('No product found.')
-#
-#         db_helper = VisiomaticCoaddObjectsDBHelper(
-#             catalog.tbl_name,
-#             schema=catalog.tbl_schema,
-#             database=catalog.tbl_database)
-#
-#         rows = db_helper.query_result(request.query_params)
-#         cols = db_helper.str_columns
-#         # Parametros de Retorno
-#         mime = request.query_params.get('mime', 'json')
-#         if mime == 'json':
-#             return Response(rows)
-#
-#         elif mime == 'csv':
-#             response = HttpResponse(content_type='text/csv')
-#             response['Content-Disposition'] = 'inline'
-#
-#             writer = csv.writer(response)
-#             for row in rows:
-#                 r = list()
-#                 for col in cols:
-#                     value = row.get(col)
-#                     if isinstance(value, float):
-#                         value = float(format(value, '.4f'))
-#                     r.append(value)
-#
-#                 # print(r)
-#                 writer.writerow(r)
-#
-#             return response
-#
-#         else:
-#             pass
-
-
 class CoaddObjects(ViewSet):
     """
 
@@ -299,7 +240,7 @@ class CatalogObjectsViewSet(ViewSet):
 
     def list(self, request):
         """
-        Return a list of targets in catalog.
+        Return a list of objects in catalog.
         """
         print('----------------------------------------')
         # Recuperar o parametro product id que e obrigatorio

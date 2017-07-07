@@ -41,7 +41,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
            {
                 property:'group',
                 operator: 'in',
-                value: ['objects_catalog', 'targets']
+                value: ['objects_catalog', 'targets', 'value_added_catalogs']
             }
         ]
 

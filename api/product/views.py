@@ -69,14 +69,19 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 class CatalogFilter(django_filters.FilterSet):
     group = django_filters.MethodFilter()
+    group__in = django_filters.MethodFilter()
 
     class Meta:
         model = Product
-        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'group']
+        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'group', 'group__in']
 
     def filter_group(self, queryset, value):
         # product -> product_class -> product_group
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
+
+    def filter_group__in(self, queryset, value):
+        # product -> product_class -> product_group
+        return queryset.filter(prd_class__pcl_group__pgr_name__in=value.split(','))
 
 
 # Create your views here.
