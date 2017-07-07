@@ -1927,8 +1927,8 @@ L.Catalog = {
 				dec: feature.geometry.coordinates[1].toFixed(6)
 			})) + '\" target=\"_blank\">' + feature.id + '</a>';
 
-			str += '</br><spam>J2000: ' + feature.geometry.coordinates[0].toFixed(3) + ', ' +
-			        feature.geometry.coordinates[1].toFixed(3) + '</spam>';
+			str += '</br><spam>RA, Dec (deg): ' + feature.geometry.coordinates[0].toFixed(5) + ', ' +
+			        feature.geometry.coordinates[1].toFixed(5) + '</spam>';
 
 			str += '</div>';
 		} else {
@@ -1938,7 +1938,7 @@ L.Catalog = {
 		       '<TBODY style="vertical-align:top;text-align:left;">';
 		for	(var i in this.properties) {
 			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
-			       '<TD>' + feature.properties.items[i].toString() + ' ';
+			       '<TD>' + feature.properties.items[i].toFixed(2).toString() + ' ';
 			if (this.units[i]) {
 				str += this.units[i];
 			}
@@ -6144,8 +6144,6 @@ L.Control.LineaOverlay = L.Control.extend({
 
 L.Map.addInitHook(function () {
     if (this.options.enableLineaOverlay) {
-
-        console.log('entrou aqui')
         this.lineaoverlayControl = L.control.lineaoverlay();
         this.addControl(this.lineaoverlayControl);
     }
