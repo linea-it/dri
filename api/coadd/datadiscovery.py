@@ -5,21 +5,32 @@ from pprint import pprint
 
 
 class DataDiscovery:
-    def __init__(self):
+    def __init__(self, options):
 
-        kwargs = settings.DATADISCOVERY_DATABASE
+        self.database = options['database']
+        self.tag = options['tag']
+
+        self.db = None
+
+        dbparams = settings.DATABASES.get(self.database)
+
+        if dbparams is None:
+            raise Exception("There are no settings for the \'%s\' database." % self.database)
 
         try:
+            pprint(dbparams)
             print ("Connecting to database")
+            host, port = dbparams.get('NAME').split(':')
+            port, servicename = port.split('/')
 
             args = {
-                'host': kwargs.get('host'),
-                'port': kwargs.get('port'),
-                'service_name': kwargs.get('service_name')
+                'host': host,
+                'port': port,
+                'service_name': servicename
             }
 
             dsn = cx_Oracle.makedsn(**args)
-            self.db = cx_Oracle.connect(kwargs.get('user'), kwargs.get('password'), dsn=dsn)
+            self.db = cx_Oracle.connect(dbparams.get('USER'), dbparams.get('PASSWORD'), dsn=dsn)
             self.cursor = self.db.cursor()
 
             print ("Connected")
@@ -29,11 +40,11 @@ class DataDiscovery:
 
     def start(self):
 
+
         excludes = ["Y3A1_COADD_TEST_123", "Y3A1_COADD_TEST_123_t025", "Y3A1_COADD_TEST_123_t050",
                     "Y3A1_COADD_TEST_123_t100", "Y3A1_COADD_TEST_DEEP", "Y3A1_COADD_TEST_11"]
 
-        patterns = ["tag like 'Y3A1_COADD_TEST%'", "tag='Y3A1_COADD'", "tag='Y3A1_COADD_DEEP'", "tag='Y3A2_COADD'",
-                    "tag='Y3A2'"]
+        patterns = ["tag='Y3A1_COADD'", "tag='Y3A1_COADD_DEEP'"]
 
         for pattern in patterns:
             print ("--------------------------------------")
