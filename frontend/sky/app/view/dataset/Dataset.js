@@ -94,12 +94,6 @@ Ext.define('Sky.view.dataset.Dataset', {
                             enableToggle: true,
                             pressed: true,
                             toggleHandler: 'showHideMarker'
-                        },
-                        {
-                            xtype: 'button',
-                            tooltip: 'Catalog Overlay',
-                            iconCls: 'x-fa fa-bullseye',
-                            handler: 'showCatalogOverlay'
                         }
                     ]
                 }

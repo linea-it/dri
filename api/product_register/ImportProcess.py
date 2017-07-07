@@ -360,8 +360,7 @@ class Import():
                     pc.save()
 
             except:
-                pass
-                # raise Exception("it was not possible to create association for this column: %s" % property)
+                raise Exception("it was not possible to create association for this column: %s" % property)
 
     def product_release(self, product, releases):
         for r in releases:
