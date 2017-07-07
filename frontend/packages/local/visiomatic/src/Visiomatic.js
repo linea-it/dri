@@ -610,8 +610,8 @@ Ext.define('visiomatic.Visiomatic', {
 
         box = [ ur, ll ];
 
-        // Debugar o Box
-        ldebugbox = me.drawRectangle(ur, ll, {color: '#1dff00', weight: 5});
+        // Debugar o Box, desenha um retangulo representando a area visivel
+        // ldebugbox = me.drawRectangle(ur, ll, {color: '#1dff00', weight: 5});
 
         return box;
     },
