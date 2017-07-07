@@ -6144,8 +6144,6 @@ L.Control.LineaOverlay = L.Control.extend({
 
 L.Map.addInitHook(function () {
     if (this.options.enableLineaOverlay) {
-
-        console.log('entrou aqui')
         this.lineaoverlayControl = L.control.lineaoverlay();
         this.addControl(this.lineaoverlayControl);
     }
