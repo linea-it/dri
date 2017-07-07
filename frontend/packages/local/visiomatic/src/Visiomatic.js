@@ -496,7 +496,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         //evita chamar showContextMenu novamente, já foi chamada no evento contextmenu do objeto
         if (!me.isObjectContextMenu){
-            me.showContextMenu(event);
+            me.showContextMenuImage(event);
         }
         me.isObjectContextMenu = false;
 
@@ -722,10 +722,9 @@ Ext.define('visiomatic.Visiomatic', {
             },
 
             //Desenha os objetos (círculos pequenos)
-            //TODO: FABIO, v como adicionar algo que informe que neste círculo contém comentário
             pointToLayer: function (feature, latlng) {
                 var radius = pathOptions.radius,
-                    opts = pathOptions;
+                    opts = pathOptions, circle;
 
                 if (feature.is_system) {
                     // Se o Objeto for um sistema usar a propriedade radius em arcmin
@@ -741,19 +740,26 @@ Ext.define('visiomatic.Visiomatic', {
                     majAxis: radius,
                     minAxis: radius,
                     posAngle: 90,
-                    color: feature.properties._meta_comments ? '#FF9800' : '#4AAB46'
+                    //color: feature.properties._meta_comments ? '#FF9800' : '#4AAB46'
                 });
-
+                
                 path_options = Ext.Object.merge(path_options, options);
 
                 // Usei ellipse por ja estar em degrees a funcao circulo
                 // estava em pixels
                 // usei o mesmo valor de raio para os lados da ellipse para
                 // gerar um circulo por ser um circulo o angulo tanto faz.
-                return l.ellipse(
-                    latlng,
-                    path_options);
+                circle = l.ellipse(latlng, path_options);
+                
+                //adiciona o ícone de comentário
+                if (feature.properties._meta_comments){
+                    //x-fa fa-map-marker fa-2x
+                    circle.commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker')
+                        .on('contextmenu', onLayerContextMenu);
+                    circle.commentMaker.targetObjet = circle;
+                }
 
+                return circle;
             }
         }).bindPopup(function (layer) {
             var feature = layer.feature,
@@ -775,10 +781,18 @@ Ext.define('visiomatic.Visiomatic', {
         /**
          * @description Chama a função de exibição do menu de contexto
          */
-        .on('contextmenu', function(event){
+        .on('contextmenu', onLayerContextMenu);
+
+        function onLayerContextMenu(event){
             me.isObjectContextMenu = true; //diz para cancelar o evento em onContextMenuClick
-            me.showContextMenu(event);
-        });
+
+            if (event.target.targetObjet){
+                //o evento foi sobre um comentário de um objeto
+                event.layer = {feature: event.target.targetObjet.feature};
+            }
+
+            me.showContextMenuObject(event);
+        }
 
         map.addLayer(lCatalog);
 
@@ -807,8 +821,10 @@ Ext.define('visiomatic.Visiomatic', {
             for (i in layer._layers){
                 l = layer._layers[i];
                 q = l.feature.properties._meta_comments;
+
+                //se tem comentário(s), oculta ou exibe o ícone
                 if (q>0){
-                    l._path.setAttribute('stroke', state ? '#FF9800' : '#4AAB46');
+                    l.commentMaker._icon.style.display = state ? '' : 'none';
                 }
             }
         }
@@ -831,18 +847,30 @@ Ext.define('visiomatic.Visiomatic', {
     
     },
 
+    /**
+     * Adiciona um maker em uma determinada posição, podendo cher chamada de duas formas:
+     *      markPosition(ra, dec, iconCls);
+     *      markPosition(latlng, iconCls);
+     */
     markPosition: function (ra, dec, iconCls) {
         var me = this,
             l = me.libL,
             map = me.getMap(),
-            latlng, lmarkPosition, myIcon;
-
-        latlng = l.latLng(dec, ra);
+            latlng, lmarkPosition, myIcon, iconAnchor;
+        
+        if (arguments.length==2){
+            latlng = ra;
+            iconCls = dec;
+            iconAnchor = [6,22];//28];
+        }else{
+            latlng = l.latLng(dec, ra);
+            iconAnchor = [8,44];
+        }
 
         if (iconCls) {
             myIcon = l.divIcon({
                 className: 'visiomatic-marker-position',
-                iconAnchor: [8, 44],
+                iconAnchor: iconAnchor,
                 html:'<i class="' + iconCls + '"></i>'
             });
 
@@ -975,40 +1003,52 @@ Ext.define('visiomatic.Visiomatic', {
     /**
      * @description Exibe um menu de contexto
      */
-    showContextMenu: function(event){
-        var feature, objectMenuItem,
-            me = this,
+    showContextMenuImage: function(event){
+        var me = this,
             xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
+        
+        if (event.originalEvent.target.classList.contains('comment-maker')){
+            return me.showContextMenuObject(event);
+        }
 
-        if (!this.contextMenu){
-            this.contextMenu = new Ext.menu.Menu({
+        if (!this.contextMenuImage){
+            this.contextMenuImage = new Ext.menu.Menu({
                 items: [
                     {
                         id: 'comment-position',
                         text: 'Comment Position',
                         handler: function(item) {
-                            me.fireEvent('contextItemClick', event);
+                            me.fireEvent('imageMenuItemClick', event);
                         }
-                    },
+                    }]
+            });
+        }
+        
+        this.contextMenuImage.showAt(xy);
+    },
+
+    showContextMenuObject: function(event){
+        var objectMenuItem,
+            me = this,
+            xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
+
+        if (!this.contextMenuObject){
+            this.contextMenuObject = new Ext.menu.Menu({
+                items: [
                     {
                         id: 'comment-object',
                         text: 'Comment Object',
                         handler: function(item) {
-                            me.fireEvent('contextItemClick', event, this.feature);
+                            me.fireEvent('objectMenuItemClick', event, this.feature);
                         }
                     }]
             });
         }
 
-        //feature existirá quando o click for sobre um objeto
-        //o item Comment Object será desabilitado quando o click não for sobre um objeto
-        //feature = event.layer ? event.layer.feature :  null;
-        objectMenuItem = me.contextMenu.items.get("comment-object");
-        objectMenuItem.setDisabled(!me.isObjectContextMenu);
+        objectMenuItem = me.contextMenuObject.items.get("comment-object");
         objectMenuItem.feature = event.layer ? event.layer.feature :  null;
         
-        this.contextMenu.showAt(xy);
-
+        me.contextMenuObject.showAt(xy);
     }
 
 });

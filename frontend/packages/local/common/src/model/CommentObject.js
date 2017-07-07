@@ -8,9 +8,7 @@ Ext.define('common.model.CommentObject', {
         {name:'owner', type:'string'},
         {name:'date', type:'date'},
         {name:'comments', type:'string'},
-        {name:'is_owner', type:'boolean'},
-        {name:'position_x', type:'int'},
-        {name:'position_y', type:'int'}
+        {name:'is_owner', type:'boolean'}
     ]
 
 });

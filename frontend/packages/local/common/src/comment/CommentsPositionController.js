@@ -1,29 +1,29 @@
-Ext.define('common.comment.CommentsObjectController', {
+Ext.define('common.comment.CommentsPositionController', {
     extend: 'Ext.app.ViewController',
 
-    alias: 'controller.comment-object',
+    alias: 'controller.comment-position',
 
-    loadComments: function (catalog_id, object_id) {
-        var me = this,
-            // refs = me.getReferences(),
-            // catalogPanel = refs.targetsCatalogPanel,
-            view = me.getView(),
-            vm = view.getViewModel(),
+    loadComments: function (dec, ra /**vai ser pelos cantos dat tile */) {
+        var vm = this.getView().getViewModel(),
             store = vm.getStore('comments');
         
-        vm.set('catalog_id', catalog_id);
-        vm.set('object_id', object_id);
+        var catalog_id = 74;
 
-        store.filter([
+        //guardar valores da posição e do dataset
+
+        vm.set('catalog_id', 74); //dataset
+        //vm.set('pst_ra', ra);
+
+        /*pstore.filter([
             {
-                property:'catalog_id',
-                value: catalog_id
+                property:'pst_dec',
+                value: dec
             },
             {
-                property: 'object_id',
-                value: object_id
+                property: 'pst_ra',
+                value: ra
             }
-        ]);
+        ]);*/
     },
 
     onDeleteComment: function (item) {
@@ -139,27 +139,18 @@ Ext.define('common.comment.CommentsObjectController', {
     },
 
     onNewComment: function (comment) {
-
-        var me = this,
-            view = me.getView(),
-            vm = view.getViewModel(),
+        var vm = this.getView().getViewModel(),
             store = vm.getStore('comments');
 
-        var model = Ext.create('common.model.CommentObject', {
-            catalog_id: vm.get('catalog_id'),
-            object_id: vm.get('object_id'),
-            is_owner: true,
-            comments: comment,
-
-            //FABIO, acrescentei a propriedade position, não salva
-            //Mudança tbm no model/CommentsObject
-            position_x:0, 
-            position_y:1
+        var model = Ext.create('common.model.CommentPosition', {
+            pst_ra: vm.get('pst_ra'),
+            pst_dec: vm.get('pst_dec'),
+            pst_comment: comment,
+            //dataset
         });
 
         store.insert(0, model);
         vm.set('currentcomment', model);
-
     }
 
 });

@@ -26,12 +26,16 @@ Ext.define('Target.view.preview.PreviewController', {
         }
     },
 
-    //ao clicar com botão direito na imagem (visiomatic)
-    //feature existirá somente quando o click for sobre o objeto
-    onContextItemClickVisiomatic: function(event, feature){
+    //ao clicar em um item do menu de contexto de objeto do visiomatic
+    onObjectMenuItemClickVisiomatic: function(event, feature){
         this.onComment(event.latlng, feature);
     },
 
+    //ao clicar em um item do menu de contexto de objeto do visiomatic
+    onImageMenuItemClickVisiomatic: function(event){
+        this.onCommentPosition(event.latlng);
+    },
+    
     onChangeRecord: function (record) {
         var me = this,
             view = me.getView(),
@@ -277,6 +281,7 @@ Ext.define('Target.view.preview.PreviewController', {
                 items: [
                     {
                         xtype: 'comments-object',
+                        reference: '',
                         listeners: {
                             scope: this,
                             changecomments: 'onChangeComments'
@@ -288,6 +293,58 @@ Ext.define('Target.view.preview.PreviewController', {
             //passar latlng e feature para ser caregado comentários de um objeto específico ou de uma posição específica
             comment.down('comments-object').getController().loadComments(catalog_id, object_id, latlng, feature);
         }
+
+    },
+
+    /**
+     * @description
+     * @param latlng Object Posição x,y referente a lat long da imagem
+     */
+    onCommentPosition: function (latlng) {
+        /*var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            object = vm.get('currentRecord'),
+            catalog = vm.get('currentCatalog'),
+            object_id, catalog_id;
+
+        if ((!object) || (!object.get('_meta_id'))) {
+            return false;
+        }
+
+        if (feature && feature.properties){
+            catalog_id = feature.properties._meta_catalog_id;
+            object_id  = feature.id;
+        }else{
+            catalog_id = catalog.get('id');
+            object_id  = object.get('_meta_id');
+        }*/
+
+        //if (object_id > 0) {
+
+            var comment = Ext.create('Ext.window.Window', {
+                title: 'Position Comments',
+                iconCls: 'x-fa fa-comments',
+                layout: 'fit',
+                closeAction: 'destroy',
+                constrainHeader:true,
+                width: 500,
+                height: 300,
+                autoShow:true,
+                onEsc: Ext.emptyFn,
+                items: [
+                    {
+                        xtype: 'comments-position',
+                        listeners: {
+                            scope: this,
+                            changecomments: 'onChangeComments'
+                        }
+                    }
+                ]
+            });
+
+            comment.down('comments-position').getController().loadComments(/*dec*/latlng.lat, /*ra*/latlng.lng);
+        //}
 
     },
 
