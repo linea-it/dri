@@ -193,16 +193,8 @@ class SurveyViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 def get_tiles(request):
     if request.method == 'GET':
+        if request.query_params.get('tilename') == None:
+            return Response(dict({'error': "tilename can't be null"}))
 
-        if request.query_params.get('tag') ==None:
-            return Response(dict({'error': "tag can't be null"}))
-
-        if request.query_params.get('tile') == None:
-            return Response(dict({'error': "tile can't be null"}))
-
-        # url = DataDiscovery().get_tiles_by_tag_and_field(request.query_params.get('tag'),request.query_params.get('tile'))
-######DESCI TEST
-        url = DataDiscovery().get_tiles_by_tag_and_field_dessci(request.query_params.get('tag'),request.query_params.get('tile'),
-######DESCI TEST
-         request.query_params.get('tilename'))
+        url = DataDiscovery().get_fits_by_tilename(request.query_params.get('tilename'))
         return Response(dict({'results': url}))

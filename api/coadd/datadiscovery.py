@@ -27,29 +27,6 @@ class DataDiscovery:
         except Exception as e:
             print(e)
 
-######DESCI TEST
-        #Init dessci
-        kwargs_dessci = settings.DATADISCOVERY_DATABASE_DESSCI
-
-        try:
-            print ("Connecting to database DESSCI")
-
-            args_dessci = {
-                'host': kwargs_dessci.get('host'),
-                'port': kwargs_dessci.get('port'),
-                'service_name': kwargs_dessci.get('service_name')
-            }
-
-            dsn_dessci = cx_Oracle.makedsn(**args_dessci)
-            self.db_dessci = cx_Oracle.connect(kwargs_dessci.get('user'), kwargs_dessci.get('password'), dsn=dsn_dessci)
-            self.cursor_dessci = self.db_dessci.cursor()
-
-            print ("Connected DESSCI")
-
-        except Exception as e:
-            print(e)
-######DESCI TEST
-
     def start(self):
 
         excludes = ["Y3A1_COADD_TEST_123", "Y3A1_COADD_TEST_123_t025", "Y3A1_COADD_TEST_123_t050",
@@ -348,95 +325,30 @@ class DataDiscovery:
 
         else:
             return list()
-######DESCI TEST
-    def fetch_scalar_dessci(self, query, col=0):
-        self.cursor_dessci.execute(query)
-        row = self.cursor_dessci.fetchone()
-        if row != None:
-            return row[col]
-        else:
-            return None
 
-    def fetchall_dict_dessci(self, query):
-        self.cursor_dessci.execute(query)
-        header = [item[0] for item in self.cursor_dessci.description]
-        rows = self.cursor_dessci.fetchall()
+    def get_fits_by_tilename(self, tilename):
+        if tilename != None:
+            sql = ("select c.tilename, c.filename, fai.PATH, c.FILETYPE from coadd c, FILE_ARCHIVE_INFO fai where c.filename = fai.filename and c.tilename='" + tilename + "'")
 
-        l = list()
-        d = dict()
-        result_dict = dict()
+            print("Query: %s" % sql)
 
-        for row in rows:
-            item = dict(zip(header, row))
-            l.append(item)
-            result_dict = l
-
-        return result_dict
-
-    def get_tiles_by_tag_and_field_dessci(self, tag, field, tilename):
-        # Checar se a quantidade de tiles e diferente das registradas
-        sql = "SELECT COUNT(*) as count FROM coadd c INNER JOIN filepath f ON c.id = f.id WHERE c.tilename='%s'" % tilename
-        print(sql)
-        # sql = "SELECT COUNT(*) as count from pfw_attempt p,proctag t WHERE t.tilename='%s' AND t.pfw_attempt_id=p.id" % tilename
-        original_count = self.fetch_scalar_dessci(sql)
-
-        print("Tiles Available [ %s ]" % original_count)
-
-        dri_count = Dataset.objects.filter(tag=field).count()
-
-        last_tile = Dataset.objects.filter(tag=field).order_by('-date').first()
-
-        last_date = None
-        if last_tile:
-            last_date = last_tile.date
-
-            print("Tiles Installed [ %s ] Recent Date [ %s ]" % (dri_count, last_date))
-
-        if original_count != dri_count:
-            print ('Tiles to be installed [ %s ]' % (original_count - dri_count))
-
-            # sql = "SELECT unitname as tilename, archive_path, t.created_date FROM pfw_attempt p,proctag t WHERE t.tag='%s' AND t.pfw_attempt_id=p.id ORDER BY created_date" % tag
-            # sql = ("SELECT p.unitname as tilename, p.reqnum, p.attnum, f.path as archive_path, d.filename "
-            #        "FROM proctag t, pfw_attempt p, file_archive_info f, desfile d "
-            #        "WHERE d.id=f.desfile_id AND d.pfw_attempt_id = p.id AND t.pfw_attempt_id = p.id "
-            #        "AND t.tag='" + tag + "' AND f.filename like '%.ptif' AND ROWNUM < 5 ORDER by unitname")
-
-            # sql = (
-            #     "SELECT m.tilename, f.path as archive_path, m.filename, t.created_date FROM proctag t, file_archive_info f, miscfile m "
-            #     "WHERE t.pfw_attempt_id = m.pfw_attempt_id AND t.tag='" + tag + "' AND m.filetype='coadd_ptif' "
-            #                                                                     "AND f.filename=m.filename")
-
-            sql = "SELECT c.tilename, f.path FROM coadd c INNER JOIN filepath f ON c.id = f.id WHERE c.tilename='%s'" % tilename
-            print("sqlFINAL: "+sql)
-            # if last_date:
-            #     # datetime = last_date.split('.')[0]
-            #     # sql = sql + " AND t.created_date >= TO_DATE('" + datetime + "', 'YYYY-MM-DD HH24:MI:SS') "
-            #     sql = sql + " AND t.created_date >= TO_DATE('%s', 'YYYY-MM-DD HH24:MI:SS') " % last_date.strftime('%Y-%m-%d %H:%M:%S')
-            #
-            #
-            # sql = sql + " ORDER by t.created_date, m.tilename"
-
-            # print("Query: %s" % sql)
-
-            tiles = self.fetchall_dict_dessci(sql)
-
+            tiles = self.fetchall_dict(sql)
+            fits_file = {}
+            result = []
             for tile in tiles:
-                image_src_ptif = "https://desar2.cosmology.illinois.edu/DESFiles/desarchive/%s" % (
-                    tile.get('PATH'))
+                url = "https://desar2.cosmology.illinois.edu/DESFiles/desarchive/%s/%s.fz" % (tile.get('PATH').replace("+", "%2B"), tile.get('FILENAME').replace("+", "%2B"))
+                fits_file.update({'url': url})
 
-                tile.update({
-                    'image_src_ptif': image_src_ptif.replace("+", "%2B")
+                fits_file.update({
+                    'tilename': tilename
                 })
 
-                tile.update({
-                    'image_src_fits': image_src_ptif.replace("+", "%2B").replace("qa", "coadd")
-                })
+                result.append(fits_file)
 
-            return tiles
+            return result
 
         else:
             return list()
-######DESCI TEST
 
 if __name__ == '__main__':
     print ("---------- stand alone -------------")
