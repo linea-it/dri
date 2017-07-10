@@ -123,7 +123,7 @@ def contact_us(request):
 
 
 @api_view(['GET'])
-def teste(request):
+def cutout_fits(request):
     if request.method == 'GET':
         print('Teste---------------------')
         from product.descutoutservice import CutoutJobs

@@ -2,6 +2,7 @@ import cx_Oracle
 from coadd.models import Release, Dataset, Tile, Tag
 from django.conf import settings
 from pprint import pprint
+import copy
 
 
 class DataDiscovery:
@@ -328,7 +329,7 @@ class DataDiscovery:
 
     def get_fits_by_tilename(self, tilename):
         if tilename != None:
-            sql = ("select c.tilename, c.filename, fai.PATH, c.FILETYPE from coadd c, FILE_ARCHIVE_INFO fai where c.filename = fai.filename and c.tilename='" + tilename + "'")
+            sql = ("select c.tilename, c.filename, c.band, fai.PATH, c.FILETYPE from coadd c, FILE_ARCHIVE_INFO fai where c.filename = fai.filename and c.tilename='" + tilename + "'")
 
             print("Query: %s" % sql)
 
@@ -337,13 +338,18 @@ class DataDiscovery:
             result = []
             for tile in tiles:
                 url = "https://desar2.cosmology.illinois.edu/DESFiles/desarchive/%s/%s.fz" % (tile.get('PATH').replace("+", "%2B"), tile.get('FILENAME').replace("+", "%2B"))
+
                 fits_file.update({'url': url})
 
                 fits_file.update({
                     'tilename': tilename
                 })
 
-                result.append(fits_file)
+                fits_file.update({
+                    'band': tile.get('BAND')
+                })
+
+                result.append(copy.copy(fits_file))
 
             return result
 
