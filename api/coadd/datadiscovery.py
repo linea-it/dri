@@ -334,9 +334,13 @@ class DataDiscovery:
             print("Query: %s" % sql)
 
             tiles = self.fetchall_dict(sql)
+
             fits_file = {}
+
             result = []
+
             for tile in tiles:
+
                 url = "https://desar2.cosmology.illinois.edu/DESFiles/desarchive/%s/%s.fz" % (tile.get('PATH').replace("+", "%2B"), tile.get('FILENAME').replace("+", "%2B"))
 
                 fits_file.update({'url': url})

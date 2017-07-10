@@ -1,4 +1,4 @@
-Ext.define('Target.model.TileFiles', {
+Ext.define('Target.model.FitsFiles', {
     extend: 'Ext.data.Model',
 
     requires: [

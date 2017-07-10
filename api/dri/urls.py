@@ -104,7 +104,7 @@ urlpatterns = [
     url(r'^contact/', common_views.contact_us),
 
     url(r'^cutout_fits', common_views.cutout_fits),
-    url(r'^get_tiles', coadd_views.get_tiles),
+    url(r'^get_fits_files', coadd_views.get_fits_files),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 

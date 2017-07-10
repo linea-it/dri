@@ -38,17 +38,21 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
                     columns: [
                         {
                             text: 'Tile Name',
-                            sortable: true,
                             renderer: function (value, metadata, record) {
-                                return record.data.field1.get('TILENAME');
+                                return record.data.field1.get('tilename');
                             },
                             flex: 1
                         },
                         {
-                            text: 'FITS',
-                            dataIndex: 'image_src_fits',
+                            text: 'Band',
                             renderer: function (value, metadata, record) {
-                                return '<a href=' + record.data.field1.get('image_src_fits') + '>Download</a>';
+                                return record.data.field1.get('band');
+                            },
+                        },
+                        {
+                            text: 'FITS',
+                            renderer: function (value, metadata, record) {
+                                return '<a href=' + record.data.field1.get('url') + '>Download</a>';
                             },
                         }
                     ]

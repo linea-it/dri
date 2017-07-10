@@ -9,7 +9,7 @@ Ext.define('Target.view.preview.PreviewController', {
     requires: [
         'common.comment.CommentsObject',
         'Target.view.preview.DescutDownloadWindow',
-        'Target.model.TileFiles'
+        'Target.model.FitsFiles'
     ],
 
     listen: {
@@ -287,17 +287,11 @@ Ext.define('Target.view.preview.PreviewController', {
         if (object.get('tilename')) {
 
           view.setLoading(true);
-
-          if (object.get('tilename').includes('+')) {
-            id = object.get('tilename').split('+')[0].slice(3);
-          } else {
-            id = object.get('tilename').split('-')[0].slice(3);
-          };
+          tilename = object.get('tilename');
 
           store.load({
             params: {
-              tag : 'Y3A2_COADD',
-              tile : id
+              tilename: tilename
             },
             callback: function (r, option, success) {
               me.winDownload = Ext.create('Target.view.preview.DescutDownloadWindow', {

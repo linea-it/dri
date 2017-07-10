@@ -11,7 +11,7 @@ Ext.define('Target.view.preview.PreviewModel', {
         'common.store.Releases',
         'common.store.Tags',
         'common.store.Datasets',
-        'Target.store.TileFiles',
+        'Target.store.FitsFiles',
         'Target.store.Objects',
         'Target.store.ProductRelateds',
         'Target.model.ProductRelated'

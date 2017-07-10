@@ -1,20 +1,20 @@
-Ext.define('Target.store.TileFiles', {
+Ext.define('Target.store.FitsFiles', {
     extend: 'common.store.MyStore',
 
     alias: 'store.tile_files',
 
     requires: [
-        'Target.model.TileFiles'
+        'Target.model.FitsFiles'
     ],
 
-    model: 'Target.model.TileFiles',
+    model: 'Target.model.FitsFiles',
 
     remoteFilter: true,
 
     pageSize: 0,
 
     proxy: {
-        url: '/dri/api/get_tiles'
+        url: '/dri/api/get_fits_files'
     },
 
     sorters: [
