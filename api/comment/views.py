@@ -12,7 +12,7 @@ class PositionViewSet(viewsets.ModelViewSet):
 
     serializer_class = PositionSerializer
 
-    filter_fields = ('id', 'owner', 'pst_dataset', 'pst_filter', 'pst_ra',
+    filter_fields = ('id', 'owner', 'pst_dataset', 'pst_ra',
                      'pst_dec', 'pst_date', 'pst_comment',)
 
     ordering_fields = ('pst_date',)

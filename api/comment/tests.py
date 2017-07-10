@@ -9,8 +9,6 @@ from rest_framework.test import force_authenticate
 from model_mommy import mommy
 
 from coadd.models import Dataset
-from common.models import Filter
-
 
 # ----------------------------------------- < Comments By Position > -----------------------------------------
 class CommentPositionAPITestCase(APITestCase):
@@ -24,14 +22,9 @@ class CommentPositionAPITestCase(APITestCase):
             Dataset,
         )
 
-        self.filter = mommy.make(
-            Filter,
-        )
-
         self.data = dict(
             owner=self.user.pk,
             pst_dataset=self.dataset.pk,
-            pst_filter=self.filter.pk,
             pst_ra="0.10632100",
             pst_dec="-1.68346700",
             # pst_date=None,
