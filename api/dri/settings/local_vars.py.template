@@ -8,6 +8,13 @@ BASE_PROJECT = "#BASEPROJECT#"
 
 LOG_DIR = os.path.join(BASE_PROJECT, 'log')
 
+# Diretorio onde ficam os arquivos estaticos gerados pela aplicacao, arquivos como imagens, csvs, zips que necessitam
+# ter uma url acessivel para download.
+DATA_DIR = os.path.join(BASE_PROJECT, 'data')
+
+# Path onde ficaram os arquivos que serao gerados para download
+DOWNLOAD_DIR = os.path.join(DATA_DIR, 'download')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -19,11 +26,6 @@ DATABASES = {
     }
 }
 
-DATADISCOVERY_DATABASE = {
-    'host': '<host para o database oracle desoper>',
-    'port': 0,
-    'service_name': '<database>'
-}
 
 # Configs para email de contato.
 EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
@@ -37,7 +39,7 @@ EMAIL_USE_TLS = True
 CUTOUT_HOST = 'http://descut.cosmology.illinois.edu'
 CUTOUT_USER = '<User required for cutout>'
 CUTOUT_PASSWORD = '<password required for cutout>'
-CUTOUT_ROOT = '<cutouts main directory>'
+CUTOUT_DIR = os.path.join(DATA_DIR, 'targets/cutouts')
 
 # Target Viewer Rating, Reject Schema
 # https://github.com/linea-it/dri/issues/467
