@@ -1,7 +1,7 @@
 Ext.define('Target.store.FitsFiles', {
     extend: 'common.store.MyStore',
 
-    alias: 'store.tile_files',
+    alias: 'store.fits_files',
 
     requires: [
         'Target.model.FitsFiles'

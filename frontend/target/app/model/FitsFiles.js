@@ -7,16 +7,13 @@ Ext.define('Target.model.FitsFiles', {
 
     proxy: {
         type: 'django',
-        url: '/dri/api/get_tiles'
+        url: '/dri/api/get_fits_files'
     },
 
     fields: [
-        {name:'TILENAME', type:'string', default: null, persist: false},
-        {name:'image_src_fits', type:'string', default: null, persist: false},
-        {name:'ARCHIVE_PATH', type:'string', default: null, persist: false},
-        {name:'CREATED_DATE', type:'string', default: null, persist: false},
-        {name:'image_src_ptif', type:'string', default: null, persist: false},
-        {name:'FILENAME', type:'string', default: null, persist: false},
+        {name:'tilename', type:'string', default: null, persist: false},
+        {name:'band', type:'string', default: null, persist: false},
+        {name:'url', type:'string', default: null, persist: false},
     ]
 
 });

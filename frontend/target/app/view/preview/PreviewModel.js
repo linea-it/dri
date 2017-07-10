@@ -64,8 +64,8 @@ Ext.define('Target.view.preview.PreviewModel', {
             type: 'product_relateds',
             autoLoad: false
         },
-        tile_files: {
-            type: 'tile_files',
+        fits_files: {
+            type: 'fits_files',
             autoLoad: false
         }
     }

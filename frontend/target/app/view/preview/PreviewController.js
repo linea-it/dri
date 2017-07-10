@@ -281,7 +281,7 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = view.getViewModel(),
             object = vm.get('currentRecord'),
             catalog = vm.get('currentCatalog'),
-            store = vm.getStore('tile_files'),
+            store = vm.getStore('fits_files'),
             id;
 
         if (object.get('tilename')) {
