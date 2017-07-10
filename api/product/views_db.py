@@ -2,7 +2,7 @@ from lib.CatalogDB import CatalogDB
 from lib.CatalogDB import DBBase
 
 from sqlalchemy.sql import select
-
+from sqlalchemy.sql import column
 
 class CutoutJobsDBHelper:
     def __init__(self, table, schema=None, database=None):
@@ -19,7 +19,7 @@ class CutoutJobsDBHelper:
                             (self.schema, table))
 
         self.table = self.db.get_table_obj(table, schema=self.schema)
-        self.str_columns = None
+        self.str_columns = [column.key for column in self.table.columns]
 
     def query_result(self, properties):
         cols = [
@@ -27,6 +27,11 @@ class CutoutJobsDBHelper:
             properties.get("pos.eq.ra;meta.main"),
             properties.get("pos.eq.dec;meta.main")
         ]
-        columns = DBBase.create_columns_sql_format(self.table, cols)
-        stm = select([columns]).select_from(self.table)
-        return self.db.fetchall_dict(stm, self.str_columns)
+        columns = list()
+        for col in cols:
+            if col in self.str_columns:
+                columns.append(column(str(col)))
+
+        stm = select(columns).select_from(self.table)
+        print("Catalog Query: %s" % str(stm))
+        return self.db.fetchall_dict(stm)

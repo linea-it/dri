@@ -35,7 +35,7 @@ class CutoutJobs:
         self.password = settings.CUTOUT_PASSWORD
 
         # Diretorio raiz onde ficaram as imagens do cutout
-        self.cutout_root = settings.CUTOUT_ROOT
+        self.cutout_dir = settings.CUTOUT_DIR
 
         # TODO Checar se o diretorio cutout_root existe se tem permissao e se foi setado no settings
         # # Checar o Diretorio Raiz
@@ -299,7 +299,7 @@ class CutoutJobs:
 
         """
         cutout_dir = os.path.join(
-            self.cutout_root, str(cutout_job.cjb_product_id), str(cutout_job.id))
+            self.cutout_dir, str(cutout_job.cjb_product_id), str(cutout_job.id))
 
         try:
             os.makedirs(cutout_dir)

@@ -105,7 +105,7 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^contact/', common_views.contact_us),
 
-    # url(r'^teste/', common_views.teste),
+    url(r'^teste/', common_views.teste),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 

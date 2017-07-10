@@ -185,7 +185,7 @@ Ext.define('Target.view.objects.Mosaic', {
     },
 
     formatNumber: function (value) {
-        var precision = 3,
+        var precision = 5,
             aValue, decimal;
 
         if (typeof(value) === 'number') {

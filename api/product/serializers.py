@@ -4,6 +4,8 @@ from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ExternalProcess
 from rest_framework import serializers
 from django.conf import settings
+import urllib.parse
+
 from .models import *
 
 from django.contrib.auth.models import User
@@ -355,7 +357,7 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
             'ctt_object_dec',
             'ctt_filter',
             'ctt_thumbname',
-            'ctt_file_path',
+            # 'ctt_file_path',
             'ctt_file_name',
             'ctt_file_type',
             'ctt_file_size',
@@ -365,9 +367,14 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
         )
 
     def get_ctt_file_source(self, obj):
-        print(obj.ctt_file_path)
 
-        return None
+        data_dir = settings.DATA_DIR.split(settings.BASE_PROJECT, 1)[1]
+        path = obj.ctt_file_path
+
+        source = path.split(data_dir, 1)[1]
+        source = data_dir + source
+
+        return source
 
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
