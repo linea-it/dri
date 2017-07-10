@@ -91,7 +91,7 @@ Ext.define('Target.view.objects.Grid', {
 
                     // Se tiver a coluna id habilita as colunas de rating e reject
                     if (record.get('ucd') == 'meta.id;meta.main') {
-                        column.locked = true;
+                        // column.locked = true;
                         column.lockable = true;
                         column.renderer = null;
                         flag = true;
@@ -111,9 +111,9 @@ Ext.define('Target.view.objects.Grid', {
 
                         column.width = 90;
                         column.xtype = 'numbercolumn';
-                        column.format = '0.000';
+                        column.format = '0.00000';
                         column.renderer = null;
-                        column.locked = true;
+                        // column.locked = true;
                         column.lockable = true;
                     }
 

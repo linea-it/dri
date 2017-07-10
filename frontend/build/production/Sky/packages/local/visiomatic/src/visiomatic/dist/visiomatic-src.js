@@ -938,7 +938,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		channelUnits: [],
 		minMaxValues: [],
 		defaultChannel: 0,
-		credentials: false
+		credentials: false,
 		/*
 		pane: 'tilePane',
 		opacity: 1,
@@ -1925,7 +1925,12 @@ L.Catalog = {
                                 id: feature.id,
 				ra: feature.geometry.coordinates[0].toFixed(6),
 				dec: feature.geometry.coordinates[1].toFixed(6)
-			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';
+			})) + '\" target=\"_blank\">' + feature.id + '</a>';
+
+			str += '</br><spam>RA, Dec (deg): ' + feature.geometry.coordinates[0].toFixed(5) + ', ' +
+			        feature.geometry.coordinates[1].toFixed(5) + '</spam>';
+
+			str += '</div>';
 		} else {
 			str += 'ID: ' + feature.id + '</div>';
 		}
@@ -1933,7 +1938,7 @@ L.Catalog = {
 		       '<TBODY style="vertical-align:top;text-align:left;">';
 		for	(var i in this.properties) {
 			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
-			       '<TD>' + feature.properties.items[i].toString() + ' ';
+			       '<TD>' + feature.properties.items[i].toFixed(2).toString() + ' ';
 			if (this.units[i]) {
 				str += this.units[i];
 			}
@@ -6090,3 +6095,60 @@ L.control.wcs = function (options) {
 };
 
 
+/**
+ * This control is just a button that triggers the overlaycatalog event that will be used with the
+ * LIneA - DRI integration
+ */
+L.Control.LineaOverlay = L.Control.extend({
+    options: {
+        position: 'topleft',
+        title: 'Catalog Overlay',
+        forceSeparateButton: false
+    },
+
+    onAdd: function (map) {
+        var className = 'leaflet-control-linea-overlay-catalog', container;
+
+        if (map.zoomControl && !this.options.forceSeparateButton) {
+            container = map.zoomControl._container;
+        } else {
+            container = L.DomUtil.create('div', 'leaflet-bar');
+        }
+
+        this._createButton(this.options.title, className, container, this.onClickLineaOverlayCatalog, map);
+
+        return container;
+    },
+
+    _createButton: function (title, className, container, fn, context) {
+        var link = L.DomUtil.create('a', className, container);
+        link.href = '#';
+        link.title = title;
+
+        L.DomEvent
+            .addListener(link, 'click', L.DomEvent.stopPropagation)
+            .addListener(link, 'click', L.DomEvent.preventDefault)
+            .addListener(link, 'click', fn, context);
+
+
+        return link;
+    },
+
+    onClickLineaOverlayCatalog: function () {
+
+        this.fire('overlaycatalog');
+
+    },
+
+});
+
+L.Map.addInitHook(function () {
+    if (this.options.enableLineaOverlay) {
+        this.lineaoverlayControl = L.control.lineaoverlay();
+        this.addControl(this.lineaoverlayControl);
+    }
+});
+
+L.control.lineaoverlay = function (options) {
+    return new L.Control.LineaOverlay(options);
+};

@@ -61,14 +61,6 @@ Ext.define('Target.view.preview.Preview', {
                 bind: {
                     value: '{currentDataset.tli_tilename}'
                 }
-            },
-            {
-                xtype: 'button',
-                text: 'Explorer',
-                tooltip: 'See more information about this object in Explorer app',
-                ui: 'soft-blue',
-                iconCls: 'x-fa fa-info-circle',
-                handler: 'onExplorer'
             }
         ]
     },
@@ -98,6 +90,14 @@ Ext.define('Target.view.preview.Preview', {
                 bind: {
                     value: '{currentRecord._meta_rating}'
                 }
+            },
+            {
+                xtype: 'button',
+                text: 'Explorer',
+                tooltip: 'See more information about this object in Explorer app',
+                ui: 'soft-blue',
+                iconCls: 'x-fa fa-info-circle',
+                handler: 'onExplorer'
             },
             {
                 xtype: 'button',

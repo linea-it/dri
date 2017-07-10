@@ -45,7 +45,7 @@ Ext.define('Target.view.catalog.CatalogController', {
         Ext.MessageBox.confirm('', 'The catalog will be removed. Do you want continue?', this.removeCatalog, this);
     },
 
-    removeCatalog: function () {
+    removeCatalog: function (btn) {
 
         var me = this,
             view = me.getView(),
@@ -53,6 +53,10 @@ Ext.define('Target.view.catalog.CatalogController', {
             store = vm.getStore('products'),
             catalogs = vm.getStore('catalogs'),
             selected = vm.get('selectedCatalog');
+
+        if (btn === 'no') {
+            return false;
+        }
 
         if (selected.get('id')) {
             view.setLoading(true);
