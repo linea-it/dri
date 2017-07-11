@@ -1018,7 +1018,7 @@ Ext.define('visiomatic.Visiomatic', {
                         id: 'comment-position',
                         text: 'Comment Position',
                         handler: function(item) {
-                            me.fireEvent('imageMenuItemClick', event);
+                            me.fireEvent('imageMenuItemClick', event, me.getCurrentDataset());
                         }
                     }]
             });

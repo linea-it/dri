@@ -3,18 +3,15 @@ Ext.define('common.comment.CommentsPositionController', {
 
     alias: 'controller.comment-position',
 
-    loadComments: function (dec, ra /**vai ser pelos cantos dat tile */) {
+    loadComments: function (dec, ra /**vai ser pelos cantos dat tile */, dataset) {
         var vm = this.getView().getViewModel(),
             store = vm.getStore('comments');
+
+        vm.set('pst_dataset', dataset.id);
+        vm.set('pst_dec', dec);
+        vm.set('pst_ra', ra);
         
-        var catalog_id = 74;
-
-        //guardar valores da posição e do dataset
-
-        vm.set('catalog_id', 74); //dataset
-        //vm.set('pst_ra', ra);
-
-        /*pstore.filter([
+        store.filter([
             {
                 property:'pst_dec',
                 value: dec
@@ -23,7 +20,7 @@ Ext.define('common.comment.CommentsPositionController', {
                 property: 'pst_ra',
                 value: ra
             }
-        ]);*/
+        ]);
     },
 
     onDeleteComment: function (item) {
@@ -146,7 +143,7 @@ Ext.define('common.comment.CommentsPositionController', {
             pst_ra: vm.get('pst_ra'),
             pst_dec: vm.get('pst_dec'),
             pst_comment: comment,
-            //dataset
+            pst_dataset: vm.get('pst_dataset')
         });
 
         store.insert(0, model);
