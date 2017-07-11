@@ -8,8 +8,7 @@ Ext.define('Target.view.preview.PreviewController', {
 
     requires: [
         'common.comment.CommentsObject',
-        'Target.view.preview.DescutDownloadWindow',
-        'Target.model.FitsFiles'
+        'Target.view.preview.DescutDownloadWindow'
     ],
 
     listen: {
@@ -288,21 +287,10 @@ Ext.define('Target.view.preview.PreviewController', {
           view.setLoading(true);
           tilename = object.get('tilename');
 
-          me.winDownload = Ext.create('Target.view.preview.DescutDownloadWindow');
-          console.log(me.winDownload.getViewModel());
-          // me.getController('fits_files').loadFits(tilename);
-          me.winDownload.show();
+          var winDownload = Ext.create('Target.view.preview.DescutDownloadWindow');
+          winDownload.loadFits(tilename);
+          winDownload.show();
           view.setLoading(false);
-
-          // store.load({
-          //   params: {
-          //     tilename: tilename
-          //   },
-          //   callback: function (r, option, success) {
-          //
-          //   }
-          // });
-
         } else {
 
           alert ('Please select an element.')

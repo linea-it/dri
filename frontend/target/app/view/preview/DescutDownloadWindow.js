@@ -2,13 +2,14 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
     extend: 'Ext.window.Window',
 
     requires: [
+        'Target.view.preview.FitsController',
         'Target.view.preview.FitsModel',
     ],
 
     xtype: 'target-download-descut',
 
-    viewModel: 'fits_files',
-    viewController: 'fits_files',
+    viewModel: 'fits-files',
+    controller: 'fits-files',
 
     title: 'Download',
     width: 600,
@@ -26,39 +27,31 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
     },
 
     initComponent: function () {
+
         var me = this;
-            // store = me.args.result;
-console.log(this);
+
         Ext.apply(this, {
             layout: 'fit',
             items: [
                 {
                     xtype: 'gridpanel',
                     scrollable: true,
-                    // store: store,
                     bind: {
-                        store: '{fits_files}',
+                        store: '{fitsFiles}',
                     },
                     columns: [
                         {
                             text: 'Tile Name',
                             dataIndex: 'tilename',
-                            // renderer: function (value, metadata, record) {
-                            //     return record.data.field1.get('tilename');
-                            // },
                             flex: 1
                         },
                         {
                             text: 'Band',
-                            // renderer: function (value, metadata, record) {
-                            //     return record.data.field1.get('band');
-                            // },
+                            dataIndex: 'band',
                         },
                         {
                             text: 'FITS',
-                            // renderer: function (value, metadata, record) {
-                            //     return '<a href=' + record.data.field1.get('url') + '>Download</a>';
-                            // },
+                            dataIndex: 'url',
                         }
                     ]
                 }
@@ -76,5 +69,11 @@ console.log(this);
 
     onCancel: function () {
         this.close();
-    }
+    },
+
+    loadFits: function (tilename) {
+        var me = this;
+        this.loadFits = tilename;
+        me.fireEvent('changeLoadFits', tilename);
+    },
 });

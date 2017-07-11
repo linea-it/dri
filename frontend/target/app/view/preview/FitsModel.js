@@ -1,7 +1,7 @@
 Ext.define('Target.view.preview.FitsModel', {
     extend: 'Ext.app.ViewModel',
 
-    alias: 'viewmodel.fits_files',
+    alias: 'viewmodel.fits-files',
 
     requires: [
         'Target.store.FitsFiles',
@@ -9,8 +9,8 @@ Ext.define('Target.view.preview.FitsModel', {
     ],
 
     stores: {
-        fits_files: {
-            type: 'fits_files'
+        fitsFiles: {
+            type: 'fits-files'
         }
     },
 });

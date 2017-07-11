@@ -1,13 +1,29 @@
 Ext.define('Target.view.preview.FitsController', {
     extend: 'Ext.app.ViewController',
 
-    alias: 'controller.fits_files',
+    alias: 'controller.fits-files',
 
-    loadFits: function (tilename) {
+    listen: {
+          component: {
+              'target-download-descut': {
+                  changeLoadFits: 'onChangeLoadFits',
+              }
+      }
+    },
+
+    listen: {
+        component: {
+            'target-download-descut': {
+                changeLoadFits: 'onChangeLoadFits'
+            }
+        },
+    },
+
+    onChangeLoadFits: function(tilename) {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
-            store = vm.getStore('fits_files');
+            store = vm.getStore('fitsFiles');
 
         vm.set('tilename', tilename);
 
@@ -15,7 +31,7 @@ Ext.define('Target.view.preview.FitsController', {
             {
                 property:'tilename',
                 value: tilename
-            },
+            }
         ]);
     },
 });
