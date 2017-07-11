@@ -293,8 +293,11 @@ class DesCutoutService:
                     data.update({'no_blacklist': 'true'})
                 else:
                     data.update({'no_blacklist': 'false'})
+            else:
+                if job.cjb_tag:
+                    data.update({'tag': job.cjb_tag})
 
-            self.logger.debug("Data to be send Without corrdinates: %s" % pformat(data))
+            self.logger.debug("Data to be send Without coordinates: %s" % pformat(data))
 
             # Adiciona as coordenadas dos objetos aos parametros
             ra = list()
@@ -304,8 +307,8 @@ class DesCutoutService:
                 dec.append(float(row['_meta_dec']))
 
             data.update({
-                'ra': str(ra[0]),
-                'dec': str(dec[0]),
+                'ra': str(ra),
+                'dec': str(dec),
             })
 
             # Submit a Job
@@ -333,7 +336,7 @@ class DesCutoutService:
                 self.logger.critical(e)
                 raise e
         else:
-            msg = ("This cutoutjob %s can not be started because the current status '%s' is different from 'stating'" % (job.pk, job.cjb_status))
+            msg = ("This cutoutjob %s can not be started because the current status '%s' is different from 'starting'" % (job.pk, job.cjb_status))
             raise Exception(msg)
 
     def start_job_by_id(self, id):
