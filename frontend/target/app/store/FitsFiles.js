@@ -19,7 +19,7 @@ Ext.define('Target.store.FitsFiles', {
 
     sorters: [
         {
-            property: 'TILENAME',
+            property: 'tilename',
             direction: 'ASC'
         }
     ]

@@ -281,7 +281,6 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = view.getViewModel(),
             object = vm.get('currentRecord'),
             catalog = vm.get('currentCatalog'),
-            store = vm.getStore('fits_files'),
             id;
 
         if (object.get('tilename')) {
@@ -289,18 +288,20 @@ Ext.define('Target.view.preview.PreviewController', {
           view.setLoading(true);
           tilename = object.get('tilename');
 
-          store.load({
-            params: {
-              tilename: tilename
-            },
-            callback: function (r, option, success) {
-              me.winDownload = Ext.create('Target.view.preview.DescutDownloadWindow', {
-                args: {result: r}
-              });
-              me.winDownload.show();
-              view.setLoading(false);
-            }
-          });
+          me.winDownload = Ext.create('Target.view.preview.DescutDownloadWindow');
+          console.log(me.winDownload.getViewModel());
+          // me.getController('fits_files').loadFits(tilename);
+          me.winDownload.show();
+          view.setLoading(false);
+
+          // store.load({
+          //   params: {
+          //     tilename: tilename
+          //   },
+          //   callback: function (r, option, success) {
+          //
+          //   }
+          // });
 
         } else {
 
