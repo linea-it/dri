@@ -52,6 +52,9 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
                         {
                             text: 'FITS',
                             dataIndex: 'url',
+                            renderer: function (value, metadata, record) {
+                                return '<a href=' + value + '><i class="fa fa-download"> </i></a>';
+                            },
                         }
                     ]
                 }
