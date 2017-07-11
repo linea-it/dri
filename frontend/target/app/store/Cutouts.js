@@ -18,7 +18,7 @@ Ext.define('Target.store.Cutouts', {
     },
 
 
-    getImageSourceByObjectId: function (meta_id, fileFormat) {
+    getImageSourceByObjectId: function (meta_id, fileFormat, timestamp) {
         var me = this,
             record;
 
@@ -38,7 +38,7 @@ Ext.define('Target.store.Cutouts', {
         }, me);
 
        if ((record) && (record.get('ctt_file_source') !== null) && (record.get('ctt_file_source') !== '')) {
-           return record.get('ctt_file_source');
+           return record.getImageSource(timestamp);
 
         } else {
             return null;

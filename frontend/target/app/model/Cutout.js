@@ -16,7 +16,21 @@ Ext.define('Target.model.Cutout', {
         {name:'ctt_download_start_time', type:'date'},
         {name:'ctt_download_finish_time', type:'date'},
         {name:'ctt_file_source', type:'string'},
+        {name:'timestamp', type:'string'},
 
-    ]
+
+    ],
+
+    getImageSource: function(timestamp) {
+        var me = this;
+
+        if (timestamp) {
+            return Ext.String.format('{0}?_dc={1}', me.get('ctt_file_source'), me.get('timestamp'));
+
+        } else {
+            return me.get('ctt_file_source')
+        }
+
+    }
 
 });

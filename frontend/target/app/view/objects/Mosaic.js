@@ -85,7 +85,7 @@ Ext.define('Target.view.objects.Mosaic', {
                             '<div class="thumb">' +
                                 labels_inside +
                                 '<img style="width:200px; height:200px;"' +
-                                    'src="{[this.getImageSource(values._meta_id)]}?_dc={timestamp}"' +
+                                    'src="{[this.getImageSource(values._meta_id)]}"' +
                                     'title="ID: {_meta_id} RA: {[this.formatNumber(values._meta_ra)]} ' +
                                         'Dec: {[this.formatNumber(values._meta_dec)]}"' +
                                     'onError="this.onerror=null;this.src=\'resources/cutout_placeholder.png\';" >' +
@@ -179,7 +179,7 @@ Ext.define('Target.view.objects.Mosaic', {
 
         imageSource = cutouts.getImageSourceByObjectId(
             meta_id,
-            imagesFormat);
+            imagesFormat, true);
 
         return imageSource;
     },

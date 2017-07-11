@@ -5,7 +5,7 @@ from product_register.models import ExternalProcess
 from rest_framework import serializers
 from django.conf import settings
 import urllib.parse
-
+import time
 from .models import *
 
 from django.contrib.auth.models import User
@@ -345,6 +345,7 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
         queryset=CutOutJob.objects.all(), many=False)
 
     ctt_file_source = serializers.SerializerMethodField()
+    timestamp = serializers.SerializerMethodField()
 
     class Meta:
         model = Cutout
@@ -364,6 +365,7 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
             'ctt_download_start_time',
             'ctt_download_finish_time',
             'ctt_file_source',
+            'timestamp'
         )
 
     def get_ctt_file_source(self, obj):
@@ -376,6 +378,8 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
 
         return source
 
+    def get_timestamp(self, obj):
+        return time.time()
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
