@@ -128,13 +128,14 @@ def teste(request):
     if request.method == 'GET':
         print('Teste---------------------')
 
-        from product.tasks import test_task
+        from product.tasks import start_des_cutout_job_by_id
         from pprint import pprint
 
-        # result = test_task.delay(5, 15)
+        # result = start_des_cutout_job_by_id.delay(37)
         # pprint(result)
-        # from product.descutoutservice import CutoutJobs
-        # cutoutjobs = CutoutJobs()
+        from product.descutoutservice import DesCutoutService
+        cutoutjobs = DesCutoutService()
+        a = cutoutjobs.start_job_by_id(37)
         # a = cutoutjobs.check_job()
         # a = cutoutjobs.start_job()
         # a = cutoutjobs.test_api_help()

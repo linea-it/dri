@@ -3,7 +3,7 @@ import os
 import shutil
 import urllib
 from django.utils import timezone
-from pprint import pprint
+from pprint import pprint, pformat
 
 from coadd.models import Release, Tag
 from common.models import Filter
@@ -15,27 +15,40 @@ from rest_framework.response import Response
 from django.db.models import Q
 from django.conf import settings
 import requests
-from .models import CutOutJob
-from .models import Cutout
+from product.models import CutOutJob
+from product.models import Cutout
 from common.models import Filter
 from product.serializers import AssociationSerializer
 from os import mkdir, path
 import csv
 from .views_db import CutoutJobsDBHelper
+import logging
 
-
-class CutoutJobs:
+class DesCutoutService:
     db = None
 
     def __init__(self):
         # TODO substituir os prints por LOG
-        # print("--------- Init ----------")
-        self.host = settings.CUTOUT_HOST
-        self.user = settings.CUTOUT_USER
-        self.password = settings.CUTOUT_PASSWORD
+
+        # Get an instance of a logger
+        self.logger = logging.getLogger('descutoutservice')
+
+        self.logger.info("Start!")
+
+        self.logger.info("Retrieving settings for des cutout service")
+
+        params = settings.DES_CUTOUT_SERVICE
+
+        self.logger.debug(params)
+
+        # TODO checar se existem os parametros no settings.
+
+        self.host = params['HOST']
+        self.user = params['USER']
+        self.password = params['PASSWORD']
 
         # Diretorio raiz onde ficaram as imagens do cutout
-        self.cutout_dir = settings.CUTOUT_DIR
+        self.cutout_dir = params['CUTOUT_DIR']
 
         # TODO Checar se o diretorio cutout_root existe se tem permissao e se foi setado no settings
         # # Checar o Diretorio Raiz
@@ -46,6 +59,9 @@ class CutoutJobs:
         self.host_token = self.host + '/api/token/'
         self.host_jobs = self.host + '/api/jobs/'
 
+        self.logger.debug("host_token: %s" % self.host_token)
+        self.logger.debug("host_jobs: %s" % self.host_jobs)
+
         # Tipos de arquivos recebidos que nao sao imagens
         self.not_images = ['log', 'csv', 'stifflog']
 
@@ -54,7 +70,8 @@ class CutoutJobs:
         Returns a token to create other requests
         Returns: str(token)
         """
-        # print("Create Authetication Token")
+        self.logger.info("Generating a new Authentication token")
+
         # Create Authetication Token
         req = requests.post(
             self.host_token,
@@ -63,7 +80,18 @@ class CutoutJobs:
                 'password': self.password
             })
 
-        return req.json()['token']
+        try:
+            self.logger.debug(req.json())
+
+            return req.json()['token']
+        except Exception as e:
+            text = req.json()
+            msg = ("Token generation error %s - %s" % (req.status_code, text['message']))
+
+            self.logger.critical(msg)
+        raise Exception(msg)
+
+
 
     def check_token_status(self, token):
         """
@@ -80,6 +108,47 @@ class CutoutJobs:
             return True
         else:
             return False
+
+    def create_job(self, token, data):
+        """
+        Submit a Job to service
+            :param token:
+            :param data: {
+                'token'        : 'aaa...',          # required
+                'ra'           : str(ra),           # required
+                'dec'          : str(dec),          # required
+                'job_type'     : 'coadd',           # required 'coadd' or 'single'
+                'xsize'        : str(xs),           # optional (default : 1.0)
+                'ysize'        : str(ys),           # optional (default : 1.0)
+                'tag'          : 'Y3A1_COADD',      # optional for 'coadd' jobs (default: Y3A1_COADD, see Coadd Help page for more options)
+                'band'         : 'g,r,i',           # optional for 'single' epochs jobs (default: all bands)
+                'no_blacklist' : 'false',           # optional for 'single' epochs jobs (default: 'false'). return or not blacklisted exposures
+                'list_only'    : 'false',           # optional (default : 'false') 'true': will not generate pngs (faster)
+                'email'        : 'myemail@mmm.com'  # optional will send email when job is finished
+            }
+        """
+        self.logger.info("Sending request to create a new job in the Service")
+
+        data['token'] = token
+
+        req = requests.post(
+            self.host_jobs,
+            data=data)
+
+        self.logger.debug(req.json())
+
+        try:
+            if req.json()['status'] == 'ok':
+                return req.json()
+
+        except Exception as e:
+            text = req.json()
+            msg = ("Token generation error %s - %s" % (req.status_code, text['message']))
+
+            self.logger.critical(msg)
+
+            raise Exception(msg)
+
 
     def get_job_results(self, token, jobid):
         """
@@ -186,69 +255,125 @@ class CutoutJobs:
 
         return arq
 
-    def start_job(self):
-        # print ("Start Job")
 
-        # print(self.host)
-        # Pegar todos os CutoutJobs com status = st (Start)
-        cutoutjobs = CutOutJob.objects.filter(cjb_status='st')
 
-        # print("Jobs: %s" % cutoutjobs.count())
+    def start_job(self, job):
 
-        # Faz um for para cara job
-        for job in cutoutjobs:
-            # print(job.cjb_status)
+        product_id = job.cjb_product_id
 
-            product_id = job.cjb_product_id
+        # Se o Estatus for Starting
+        if job.cjb_status == 'st':
 
+            # Criando o token de acesso
             token = self.generate_token()
+            self.logger.debug("Token: %s" % token)
 
-            # muda Status para Before Submit status
-            if job.cjb_status == 'st':
-                CutOutJob.objects.filter(pk=job.pk).update(cjb_status='bs')
+            # Muda o Status para Before Submit
+            CutOutJob.objects.filter(pk=job.pk).update(cjb_status='bs')
 
             # Recupera os objetos do catalogo
+            self.logger.info("Retrieving the objects to be sent")
+
             rows = self.get_catalog_objects(product_id)
 
+            self.logger.info("There are %s objects to send" % len(rows))
+
+            data = {
+                'job_type': job.cjb_job_type
+            }
+            if job.cjb_xsize:
+                data.update({'xsize': job.cjb_xsize})
+            if job.cjb_ysize:
+                data.update({'ysize': job.cjb_ysize})
+
+            if job.cjb_job_type == 'single':
+                if job.cjb_band:
+                    data.update({'band': job.cjb_band})
+                if job.cjb_Blacklist:
+                    data.update({'no_blacklist': 'true'})
+                else:
+                    data.update({'no_blacklist': 'false'})
+
+            self.logger.debug("Data to be send Without corrdinates: %s" % pformat(data))
+
+            # Adiciona as coordenadas dos objetos aos parametros
             ra = list()
             dec = list()
             for row in rows:
                 ra.append(float(row['_meta_ra']))
                 dec.append(float(row['_meta_dec']))
 
-            body = {
-                'token': token,
-                'ra': str(ra),
-                'dec': str(dec),
-                'job_type': job.cjb_job_type
-            }
-            if job.cjb_xsize:
-                body.update({'xsize': job.cjb_xsize})
-            if job.cjb_ysize:
-                body.update({'ysize': job.cjb_ysize})
+            data.update({
+                'ra': str(ra[0]),
+                'dec': str(dec[0]),
+            })
 
-            if job.cjb_job_type == 'single':
-                if job.cjb_band:
-                    body.update({'band': job.cjb_band})
-                if job.cjb_Blacklist:
-                    body.update({'no_blacklist': 'true'})
-                else:
-                    body.update({'no_blacklist': 'false'})
+            # Submit a Job
+            result = self.create_job(token, data)
 
-            # Faz o Submit pro serviço do NCSA
-            req = requests.post(
-                self.host_jobs, data=body)
+            try:
+                self.logger.info(result['message'])
 
-            # muda o status pra enviado e inclui o retorno do submit
-            if req.json()['status'] == 'ok':
-                CutOutJob.objects.filter(pk=job.pk).update(cjb_job_id=req.json()['job'])
+                self.logger.info("Updating CutoutJob to keep job id returned")
 
+                self.logger.debug("Job ID: %s" % result['job'])
+
+                CutOutJob.objects.filter(pk=job.pk).update(cjb_job_id=str(result['job']))
+
+                self.logger.info("Changing the CutoutJob Status for Running")
                 CutOutJob.objects.filter(pk=job.pk).update(cjb_status='rn')
 
-            else:
+                self.logger.info("Done! The new job was created successfully")
+
+            except Exception as e:
+                self.logger.info("Changing the CutoutJob Status for Error")
+
                 CutOutJob.objects.filter(pk=job.pk).update(cjb_status='er')
 
-        return ({"status": "ok"})
+                self.logger.critical(e)
+                raise e
+        else:
+            msg = ("This cutoutjob %s can not be started because the current status '%s' is different from 'stating'" % (job.pk, job.cjb_status))
+            raise Exception(msg)
+
+    def start_job_by_id(self, id):
+        self.logger.info("Des Cutout Start Job by ID %s" % id)
+
+        # Recupera o Model CutoutJob pelo id
+        try:
+            cutoutjob = CutOutJob.objects.get(pk=int(id))
+
+            self.logger.debug("CutoutJob Name: %s" % cutoutjob.cjb_display_name)
+
+            self.start_job(cutoutjob)
+
+
+        except CutOutJob.DoesNotExist as e:
+            self.logger.critical(e)
+            raise e
+
+        except Exception as e:
+            self.logger.critical(e)
+            raise e
+
+
+    def start_jobs(self):
+        self.logger.info("Des Cutout Start Jobs with status is 'starting'")
+
+        # Recuperar a lista de jobs com o status 'st'
+        cutoutjobs = self.get_cutoutjobs_by_status('st')
+
+        self.logger.info("There are %s CutoutJobs to start" % len(jobs))
+
+        for job in cutoutjobs:
+            # TODO chamar o metodo start_job
+            pass
+
+    def get_cutoutjobs_by_status(self, status):
+
+        # Pegar todos os CutoutJobs com status = st (Start)
+        return CutOutJob.objects.filter(cjb_status=str(status))
+
 
     def check_job(self):
         """

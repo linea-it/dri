@@ -205,6 +205,14 @@ class ProductRelated(models.Model):
 
 # ------------------------------ Cutouts ------------------------------
 class CutOutJob(models.Model):
+    """
+        Este Model possui um Signal conectado a ele
+        toda vez que este model disparar o evento post_save
+        o metodo start_des_cutout_job do arquivo .signals sera executado.
+        este metodo ira enviar o job para o servico do DesCutout
+
+        OBS: este signal esta no final do arquivo. para evitar erros de import.
+    """
     status_job = (
         # Jobs que ainda nao foram enviados
         ('st', 'Start'),
@@ -278,7 +286,6 @@ class CutOutJob(models.Model):
 
     def __str__(self):
         return str(self.cjb_display_name)
-
 
 class Cutout(models.Model):
     cjb_cutout_job = models.ForeignKey(
@@ -409,3 +416,11 @@ class BookmarkProduct(models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+
+
+# -------------------------------- Signals --------------------------------------
+# Esses signals connect devem ficar no final do arquivo para nao dar problema de import.
+from django.db.models.signals import post_save
+from .signals import start_des_cutout_job
+post_save.connect(start_des_cutout_job, sender=CutOutJob)

@@ -36,10 +36,13 @@ EMAIL_HOST_PASSWORD = '<senha do smtp>'
 EMAIL_USE_TLS = True
 
 # DES Cutout Service
-CUTOUT_HOST = 'http://descut.cosmology.illinois.edu'
-CUTOUT_USER = '<User required for cutout>'
-CUTOUT_PASSWORD = '<password required for cutout>'
-CUTOUT_DIR = os.path.join(DATA_DIR, 'targets/cutouts')
+DES_CUTOUT_SERVICE = {
+    'HOST': 'http://descut.cosmology.illinois.edu',
+    'USER': '<User required for cutout>',
+    'PASSWORD': '<password required for cutout>',
+    'CUTOUT_DIR': os.path.join(DATA_DIR, 'targets/cutouts')
+}
+
 
 # Target Viewer Rating, Reject Schema
 # https://github.com/linea-it/dri/issues/467
