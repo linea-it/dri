@@ -14,14 +14,6 @@ class Command(BaseCommand):
             default=None,
             help='Name of the release corresponding to the name the DES uses.',
         )
-        parser.add_argument(
-            '--database',
-            dest='database',
-            default='dessi',
-            help='Name of the database as it is in the settings. Default is dessci.'
-        )
-
 
     def handle(self, *args, **options):
-
         DataDiscovery(options).start()
