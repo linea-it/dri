@@ -135,8 +135,8 @@ def teste(request):
         # pprint(result)
         from product.descutoutservice import DesCutoutService
         cutoutjobs = DesCutoutService()
-        a = cutoutjobs.start_job_by_id(38)
-        # a = cutoutjobs.check_job()
+        # a = cutoutjobs.start_job_by_id(39)
+        a = cutoutjobs.check_jobs()
         # a = cutoutjobs.start_job()
         # a = cutoutjobs.test_api_help()
 

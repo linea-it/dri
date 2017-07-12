@@ -2,10 +2,6 @@ from __future__ import absolute_import, unicode_literals
 from celery import task
 from product.descutoutservice import DesCutoutService
 
-@task(name="test_task")
-def test_task(x, y):
-    return x + y
-
 @task(name="start_des_cutout_job_by_id")
 def start_des_cutout_job_by_id(id):
     """
@@ -17,3 +13,12 @@ def start_des_cutout_job_by_id(id):
     """
     print("start_des_cutout_job_by_id(%s)" % id)
     DesCutoutService().start_job_by_id(int(id))
+
+
+def check_jobs_running():
+    """
+        Recupera todos os cutoutjobs com status Running
+        e verifica no servico DESCutout o status do job
+        e os marca com status
+    """
+    DesCutoutService().check_jobs()

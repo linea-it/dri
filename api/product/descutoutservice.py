@@ -160,15 +160,20 @@ class DesCutoutService:
         req = requests.get(
             self.host_jobs + "?token=" + token + '&jobid=' + jobid)
 
+        self.logger.info("Get Results for job %s" % jobid)
+
         # print(req.text)
         data = req.json()
 
         if data['status'] != 'error' and data['job_status'] == 'SUCCESS':
+            self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
 
             return data['links']
+
         elif data['status'] != 'error' and data['job_status'] == 'PENDING':
             # O job ainda nao terminou no servidor
-            pass
+            self.logger.info("This job %s is still running" % jobid)
+
         else:
             return False
 
@@ -379,42 +384,44 @@ class DesCutoutService:
         return CutOutJob.objects.filter(cjb_status=str(status))
 
 
-    def check_job(self):
+    def check_jobs(self):
         """
         Verifica todos os jobs com status running
         """
-        # print("---------- check_job ----------------")
 
         # Pegar todos os CutoutJobs com status running
         jobs = CutOutJob.objects.filter(cjb_status='rn')
 
         # print('Count: %s' % jobs.count())
+        if jobs.count() > 0:
+            self.logger.info("Check %s Jobs with status running" % jobs.count())
 
-        # Faz um for para cara job
-        for job in jobs:
-            # print("Job: %s" % job.cjb_job_id)
+            # Faz um for para cara job
+            for job in jobs:
+                # print("Job: %s" % job.cjb_job_id)
+                self.logger.info("Get Status for job %s" % job.pk)
 
-            # Cria um Token
-            token = self.generate_token()
+                # Cria um Token
+                token = self.generate_token()
 
-            # Consulta o Job no servico
-            list_files = self.get_job_results(token, job.cjb_job_id)
+                # Consulta o Job no servico
+                list_files = self.get_job_results(token, job.cjb_job_id)
 
-            if list_files is None:
-                break
-            elif list_files is False:
-                # job com error no lado do servidor
-                job.cjb_status = 'je'
-                job.save()
-                break
+                self.logger.info("GUARDAR O ARQUIVO DE RESULTADOS" % job.pk)
 
-            # Download Files
-            self.download_cutouts(job, list_files)
+                # if list_files is None:
+                #     break
+                # elif list_files is False:
+                #     # job com error no lado do servidor
+                #     job.cjb_status = 'je'
+                #     job.save()
+                #     break
 
-            # Apagar na API descut o job que já foi baixado
-            # self.delete_job_results(token, job.cjb_job_id)
+                # Download Files
+                # self.download_cutouts(job, list_files)
 
-        return ({"status": "ok"})
+                # Apagar na API descut o job que já foi baixado
+                # self.delete_job_results(token, job.cjb_job_id)
 
     def get_cutout_dir(self, cutout_job):
         """
