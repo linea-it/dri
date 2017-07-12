@@ -141,11 +141,13 @@ class DesCutoutService:
             if req.json()['status'] == 'ok':
                 return req.json()
 
+            else:
+                msg = ("Create Job Error: " % req.json()['message'])
+                raise Exception(msg)
+
         except Exception as e:
             text = req.json()
-            msg = ("Token generation error %s - %s" % (req.status_code, text['message']))
-
-            self.logger.critical(msg)
+            msg = ("Request Create Job error %s - %s" % (req.status_code, text['message']))
 
             raise Exception(msg)
 
@@ -312,9 +314,9 @@ class DesCutoutService:
             })
 
             # Submit a Job
-            result = self.create_job(token, data)
-
             try:
+                result = self.create_job(token, data)
+
                 self.logger.info(result['message'])
 
                 self.logger.info("Updating CutoutJob to keep job id returned")
@@ -333,7 +335,6 @@ class DesCutoutService:
 
                 CutOutJob.objects.filter(pk=job.pk).update(cjb_status='er')
 
-                self.logger.critical(e)
                 raise e
         else:
             msg = ("This cutoutjob %s can not be started because the current status '%s' is different from 'starting'" % (job.pk, job.cjb_status))

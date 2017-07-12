@@ -78,7 +78,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             name: 'tag',
                             fieldLabel: 'Release TAG',
                             emptyText: 'Release tag for coadd cutouts',
-                            publishes: 'name',
+                            valueField: 'name',
                             displayField: 'displayName',
                             minChars: 0,
                             queryMode: 'local',

@@ -9,6 +9,6 @@ def start_des_cutout_job(sender, instance, created, **kwargs):
         Toda vez que um model CutOutJob for criado sera disparado um job para o servico DESCutout
         Utilizando uma Task com Cellery
     """
-    # if created:
-    start_des_cutout_job_by_id.delay(instance.pk)
+    if created:
+        start_des_cutout_job_by_id.delay(instance.pk)
 
