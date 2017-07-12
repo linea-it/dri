@@ -1,6 +1,7 @@
 import dri.settings
 from dri.settings.local_vars import *
 from .models import *
+from .serializers import *
 from sqlalchemy import create_engine, inspect, MetaData, func, Table
 from sqlalchemy.sql import select
 from lib.sqlalchemy_wrapper import DBDRIHelper, DBOracle
@@ -90,7 +91,28 @@ class SaveFilterAsProduct(FilterCommand):
         imp.owner = self.user
         imp.site = imp.get_site(imp.user)
         imp.process = None
+
         
+        product_id = self.filter.product.id
+        print(product_id)
+        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
+        
+        serializer = AssociationSerializer(queryset, many=True)
+        associations = serializer.data
+        properties = dict()
+        
+        for property in associations:
+            if property.get('pcc_ucd'):
+                properties.update({
+                    property.get('pcc_ucd'): property.get('pcn_column_name').lower()
+                })
+
+        massoc = []
+        for key, value in properties.items():
+            maux = {"ucd": key, "property" : value }
+            massoc.append(maux)
+         
+                
         data = [{
             "process_id": 103,
             "display_name": "Filter " + self.filter.fst_name + " - " + self.filter.product.prd_display_name,
@@ -104,6 +126,7 @@ class SaveFilterAsProduct(FilterCommand):
             #  "releases": [],
             "table": self.tablename,
             #   "schema": null,
+            "association": massoc,
             "type": "catalog",
             "class": self.filter.product.prd_class.pcl_name,
             "name": "Filter " + self.filter.fst_name + " - " + self.filter.product.prd_display_name,  
