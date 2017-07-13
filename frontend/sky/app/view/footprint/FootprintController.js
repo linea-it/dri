@@ -209,7 +209,8 @@ Ext.define('Sky.view.footprint.FootprintController', {
     },
 
     onDblClickAladin: function (radec) {
-        console.log('onDblClickAladin(%o)', radec);
+        this.toVisiomatic(radec);
+        //console.log('onDblClickAladin(%o)', radec);
 
     },
 
@@ -245,8 +246,10 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
             hash = 'dataset/' + dataset.get('id') + '/' + coordinate + '/' + fov;
 
-            me.redirectTo(hash);
+            me.redirectTo(hash, true);
 
+        }else{
+            Ext.MessageBox.alert('Alert', 'There is no DES tile in the current release on this position.');
         }
 
     },
