@@ -42,5 +42,17 @@ Ext.define('visiomatic.Interface', {
 
 
         return tools;
+    },
+
+    makeMousePosition: function(){
+        return Ext.create('Ext.Component', {
+            renderTpl: [
+                '<div class="visiomatic-mouse-position-label">',
+                    'Mouse RA, Dec ({mlocate})',
+                '</div>'],
+            id: 'fabio'+(iii++),
+            cls: 'visiomatic-mouse-position leaflet-control-wcs-dialog'
+        });
     }
 });
+var iii=0

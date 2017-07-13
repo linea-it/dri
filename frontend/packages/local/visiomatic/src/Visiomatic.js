@@ -152,6 +152,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         showCrosshair: true,
 
+        mlocate:''
     },
 
     _winCatalogOverlay: null,
@@ -256,9 +257,12 @@ Ext.define('visiomatic.Visiomatic', {
 
         }
 
+        me.cmpMousePosition = me.makeMousePosition();
+
         Ext.apply(this, {
             items: [
-                cmpVisiomatic
+                cmpVisiomatic,
+                me.cmpMousePosition
             ]
         });
 
@@ -289,6 +293,7 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('contextmenu', me.onContextMenuClick, me);
         map.on('layeradd', me.onLayerAdd, me);
         map.on('move', me.onMove, me);
+        map.on('mousemove', me.onMouseMove, me);
 
         // instancia de L.map
         me.setMap(map);
@@ -309,7 +314,6 @@ Ext.define('visiomatic.Visiomatic', {
         if (me.getEnableScale()) {
             me.addScaleController();
         }
-
     },
 
     onResize: function () {
@@ -550,8 +554,14 @@ Ext.define('visiomatic.Visiomatic', {
         var me = this,
             radec = me.getRaDec(),
             fov = me.getFov();
-
+            
         me.fireEvent('changeposition', radec, fov, me);
+    },
+
+    onMouseMove: function (event) {
+        var pos = String(event.latlng.lng.toFixed(5) + ', ' + event.latlng.lat.toFixed(5));
+        this.cmpMousePosition.el.dom.children[0].innerHTML = 'Mouse RA, Dec ('+(pos)+')';
+        //me.fireEvent('changemouseposition', event, me);
     },
 
     getLinkToPosition: function () {

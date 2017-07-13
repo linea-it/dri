@@ -26,7 +26,7 @@ Ext.define('Sky.Application', {
                 var data = JSON.parse(response.responseText);
 
                 // Identificar o usuario no Google Analitics
-                ga('set', 'userId', data.id);
+                if (window.ga) ga('set', 'userId', data.id);
             },
             failure: function (response, opts) {
                 var pathname = window.location.pathname,
