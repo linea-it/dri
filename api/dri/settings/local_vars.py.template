@@ -3,7 +3,7 @@ import os
 # Just the 3 vars that the specific environment will use:
 # BASE_PROJECT, LOG_DIR, DATABASES
 
-# Substituir /home/glauber/dri pelo diretorio de intalacao do projeto.
+# NOTE: change "#BASEPROJECT#" for the initial project full path
 BASE_PROJECT = "#BASEPROJECT#"
 
 LOG_DIR = os.path.join(BASE_PROJECT, 'log')
@@ -19,13 +19,7 @@ DATABASES = {
     }
 }
 
-DATADISCOVERY_DATABASE = {
-    'host': '<host para o database oracle desoper>',
-    'port': 0,
-    'service_name': '<database>'
-}
-
-# Configs para email de contato.
+# Email notification configs
 EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
 EMAIL_HOST = 'smtp.linea.gov.br'
 EMAIL_PORT = '<porta do smtp>'
@@ -40,7 +34,6 @@ CUTOUT_PASSWORD = '<password required for cutout>'
 CUTOUT_ROOT = '<cutouts main directory>'
 
 # Target Viewer Rating, Reject Schema
-# https://github.com/linea-it/dri/issues/467
 SCHEMA_RATING_REJECT = None
 
 
