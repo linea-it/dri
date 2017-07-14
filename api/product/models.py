@@ -275,7 +275,7 @@ class CutOutJob(models.Model):
     # Fields Referentes as labels que serao aplicadas ao cutout
     cjb_label_position = models.CharField(
         max_length=10, verbose_name='Label Position', choices=(('inside', 'Inside'), ('outside', 'Outside')),
-        null=True, blank=True,
+        null=True, blank=True, default='outside',
         help_text="This field determines the position of the labels, 'inside' for labels on the image and 'outside' for labels outside the image.")
 
     cjb_label_properties = models.CharField(

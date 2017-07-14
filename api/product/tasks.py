@@ -5,8 +5,11 @@ from celery.decorators import periodic_task
 from celery import group
 from product.descutoutservice import DesCutoutService
 import math
+from django.utils import timezone
 
 descutout = DesCutoutService()
+import os
+
 
 @task(name="start_des_cutout_job_by_id")
 def start_des_cutout_job_by_id(id):
@@ -17,16 +20,15 @@ def start_des_cutout_job_by_id(id):
 
         :param id: Chave pk do model product.CutOutModel
     """
-    print("start_des_cutout_job_by_id(%s)" % id)
     descutout.start_job_by_id(int(id))
 
 
-# @periodic_task(
-#     # run_every=(crontab(minute='*/1')),
-#     run_every=10.0,
-#     name="check_jobs_running",
-#     ignore_result=True
-# )
+@periodic_task(
+    run_every=(crontab(minute='*/1')),
+    # run_every=10.0,
+    name="check_jobs_running",
+    ignore_result=True
+)
 def check_jobs_running():
     """
         Recupera todos os cutoutjobs com status Running
@@ -37,96 +39,107 @@ def check_jobs_running():
 
 
 @periodic_task(
-    run_every=(crontab(minute='*/1')),
-    # run_every=10.0,
+    # run_every=(crontab(minute='*/1')),
+    run_every=30.0,
     name="check_jobs_to_be_downloaded",
-    ignore_result=True
+    # ignore_result=True
 )
 def check_jobs_to_be_downloaded():
     logger = descutout.logger
 
-    number_task = 3
-
     # Recuperar todos os jobs com status Before Downloading
     cutoutjobs = descutout.get_cutoutjobs_by_status('bd')
-
 
     if cutoutjobs.count() > 0:
 
         logger.info("There are %s jobs waiting to start downloading" % cutoutjobs.count())
 
-        for cutoutjob in cutoutjobs:
+        cutoutjob = cutoutjobs.first()
 
-            # cutoutjob.cjb_status = 'dw'
-            # cutoutjob.save()
+        logger.info("Start downloading Cutout Job [ %s ]" % cutoutjob.pk)
 
-            cutoutdir = descutout.get_cutout_dir(cutoutjob)
+        # Changing the CutoutJob Status for Downloading
+        descutout.change_cutoutjob_status(cutoutjob, "dw")
 
-            allarqs = list()
+        cutoutdir = descutout.get_cutout_dir(cutoutjob)
 
-            # Recuperar o arquivo de Results
-            with open(cutoutjob.cjb_results_file, 'r') as result_file:
-                lines = result_file.readlines()
-                for url in lines:
-                    arq = descutout.parse_result_url(url)
+        allarqs = list()
 
-                    # TODO adicionar um parametro para decidir se baixa somente os arquivos pngs.
-                    if arq.get('file_type') == 'png':
-                        allarqs.append(arq)
+        # Deixar na memoria a lista de objetos ja associada com os nomes dos arquivos
+        objects = descutout.get_objects_from_file(cutoutjob)
 
-            result_file.close()
-            total_files = len(allarqs)
+        # Recuperar o arquivo de Results
+        with open(cutoutjob.cjb_results_file, 'r') as result_file:
+            lines = result_file.readlines()
+            for url in lines:
+                arq = descutout.parse_result_url(url)
 
-            arqs_per_tasks = math.ceil(total_files / number_task)
+                # TODO adicionar um parametro para decidir se baixa somente os arquivos pngs.
+                if arq.get('file_type') == 'png':
+                    allarqs.append(arq)
 
-            group_id = 0
-            tasks = list()
-            while (group_id < number_task):
-                # Criar grupos para a task download file
-                arqs = list()
-                while (len(arqs) < arqs_per_tasks):
-                    try:
-                        arqs.append(allarqs.pop())
-                    except:
-                        break
+                    object_id = None
+                    object_ra = None
+                    object_dec = None
+
+                    for obj in objects:
+                        if arq.get("thumbname") == obj.get("thumbname"):
+                            object_id = obj.get("id")
+                            object_ra = obj.get("ra")
+                            object_dec = obj.get("dec")
+
+                    start = timezone.now()
+                    file_path = descutout.download_file(
+                        arq.get('url'),
+                        cutoutdir,
+                        arq.get('filename')
+                    )
+
+                    file_size = os.path.getsize(file_path)
+
+                    finish = timezone.now()
+
+                    cutout = descutout.create_cutout_model(
+                        cutoutjob,
+                        filename=arq.get('filename'),
+                        thumbname=arq.get('thumbname'),
+                        type=arq.get('file_type'),
+                        filter=None,
+                        object_id=object_id,
+                        object_ra=object_ra,
+                        object_dec=object_dec,
+                        file_path=file_path,
+                        file_size=file_size,
+                        start=start,
+                        finish=finish)
 
 
-                logger.debug("Group: %s Arqs: %s" % (group_id, len(arqs)))
+        result_file.close()
+
+        # Changing the CutoutJob Status for Done
+        descutout.change_cutoutjob_status(cutoutjob, "ok")
 
 
-                task = download_files.s(arqs, cutoutdir, group_id)
-                tasks.append(task)
 
 
-                group_id = group_id + 1
-
-            a = group(tasks)
-            result = a.apply_async()
-            result.then(test_callback())
-            # for g in groups:
-            #     g.apply_async()
-
-            #     print(g.get('arqs'))
-            #     arqs = g.get('arqs')
-            #     jobs = group(download_files.s(arqs, cutoutdir, g.get('group_id')))
-            #     jobs.apply_async()
-
-
-@task(name="download_files")
-def download_files(arqs, dir, group_id):
-    logger = descutout.logger
-    import time
-    for arq in arqs:
-        logger.debug("Download Group [ %s ] File: %s" % (group_id, arq.get('filename')))
-
-        time.sleep(60)
-
-        # descutout.download_file(
-        #     arq.get('url'),
-        #     dir,
-        #     arq.get('filename')
-        # )
-
-@task(name="test_callback")
-def test_callback():
-    print("TESTE CALLBACK")
+        # @task(name="download_files")
+        # def download_files(arq, dir):
+        #     logger = descutout.logger
+        #     import time
+        #     import random
+        #     # for arq in arqs:
+        #     logger.debug("Iniciando task [ %s ] " % arq['id'])
+        #     # logger.debug("Download Group [ %s ] File: %s" % (group_id, arq.get('filename')))
+        #
+        #     time.sleep(random.randint(1,10))
+        #
+        #     logger.debug("Terminada task [ %s ] " % arq['id'])
+        #         # descutout.download_file(
+        #         #     arq.get('url'),
+        #         #     dir,
+        #         #     arq.get('filename')
+        #         # )
+        #
+        # @task(name="test_callback")
+        # def test_callback():
+        #     print("TESTE CALLBACK")
