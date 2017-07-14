@@ -663,6 +663,10 @@ class DesCutoutService:
 
 class CutoutJobsDBHelper:
     def __init__(self, table, schema=None, database=None):
+
+        # Get an instance of a logger
+        self.logger = logging.getLogger("descutoutservice")
+
         self.schema = schema
 
         if database:
