@@ -382,7 +382,6 @@ class DesCutoutService:
 
         # Faz um for para cara job
         for job in jobs:
-            # print("Job: %s" % job.cjb_job_id)
             self.logger.info("Get Status for job %s" % job.pk)
 
             # Cria um Token
@@ -391,16 +390,11 @@ class DesCutoutService:
             # Consulta o Job no servico
             list_files = self.get_job_results(token, job.cjb_job_id)
 
-            if list_files is None:
-                break
-
-            elif list_files is False:
+            if list_files is False:
                 # Changing the CutoutJob Status for Error in the DesCutout side.
                 self.change_cutoutjob_status(job, "je")
 
-                break
-
-            else:
+            if list_files is not None:
                 # Guardar o Arquivo de resultado com os links a serem baixados
                 result_file = self.save_result_links_file(job, list_files)
                 job.cjb_results_file = result_file
