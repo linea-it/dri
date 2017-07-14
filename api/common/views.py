@@ -133,9 +133,9 @@ def teste(request):
 
         # result = start_des_cutout_job_by_id.delay(37)
         # pprint(result)
-        # from product.descutoutservice import DesCutoutService
-        # cutoutjobs = DesCutoutService()
-        # a = cutoutjobs.start_job_by_id(40)
+        from product.descutoutservice import DesCutoutService
+        cutoutjobs = DesCutoutService()
+        a = cutoutjobs.start_job_by_id(46)
         # a = cutoutjobs.check_jobs()
         # a = cutoutjobs.start_job()
         # a = cutoutjobs.test_api_help()

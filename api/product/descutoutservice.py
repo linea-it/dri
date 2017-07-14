@@ -21,8 +21,14 @@ from common.models import Filter
 from product.serializers import AssociationSerializer
 from os import mkdir, path
 import csv
-from .views_db import CutoutJobsDBHelper
+# from .views_db import CutoutJobsDBHelper
 import logging
+from lib.CatalogDB import CatalogDB
+from lib.CatalogDB import DBBase
+import warnings
+from sqlalchemy import exc as sa_exc
+from sqlalchemy.sql import select
+from sqlalchemy.sql import column
 
 
 class DesCutoutService:
@@ -353,7 +359,6 @@ class DesCutoutService:
 
             self.delete_job_results(token, cutoutjob.cjb_job_id)
 
-
     def get_cutoutjobs_by_status(self, status):
 
         # Pegar todos os CutoutJobs com status = st (Start)
@@ -509,10 +514,19 @@ class DesCutoutService:
         associations = serializer.data
 
         properties = dict()
+        columns = list()
         for property in associations:
             if property.get("pcc_ucd"):
-                properties.update({property.get("pcc_ucd"): property.get("pcn_column_name")})
+                properties.update({property.get("pcc_ucd"): property.get("pcn_column_name").lower().strip()})
+                columns.append(property.get("pcn_column_name"))
 
+        # db_helper = CatalogObjectsViewSetDBHelper(
+        #         catalog.tbl_name,
+        #         schema=catalog.tbl_schema,
+        #         database=catalog.tbl_database,
+        #         columns=columns)
+        #
+        # rows, count = db_helper.query_result(request, properties)
         db_helper = CutoutJobsDBHelper(
             catalog.tbl_name,
             schema=catalog.tbl_schema,
@@ -645,6 +659,46 @@ class DesCutoutService:
 
         self.logger.debug("Cutout ID %s Registred" % cutout.pk)
         return cutout
+
+
+class CutoutJobsDBHelper:
+    def __init__(self, table, schema=None, database=None):
+        self.schema = schema
+
+        if database:
+            com = CatalogDB(db=database)
+        else:
+            com = CatalogDB()
+
+        self.db = com.database
+        if not self.db.table_exists(table, schema=self.schema):
+            raise Exception("Table or view  %s.%s does not exist" %
+                            (self.schema, table))
+
+        # Desabilitar os warnings na criacao da tabela
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
+
+            self.table = self.db.get_table_obj(table, schema=self.schema)
+            self.str_columns = [column.key for column in self.table.columns]
+
+    def query_result(self, properties):
+        cols = [
+            properties.get("meta.id;meta.main"),
+            properties.get("pos.eq.ra;meta.main"),
+            properties.get("pos.eq.dec;meta.main")
+        ]
+        columns = list()
+
+        for col in cols:
+            col = col.lower().strip()
+            if col in self.str_columns:
+                columns.append(column(str(col)))
+
+        stm = select(columns).select_from(self.table)
+        self.logger.debug("Catalog Query: %s" % str(stm))
+
+        return self.db.fetchall_dict(stm)
 
 # def sextodec(xyz, delimiter=None):
 #     """Decimal value from numbers in sexagesimal system.
