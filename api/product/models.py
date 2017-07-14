@@ -263,7 +263,7 @@ class CutOutJob(models.Model):
         verbose_name='Blacklist', default=False, help_text='Exclude blacklisted ccds')
 
     cjb_status = models.CharField(
-        max_length=2,
+        max_length=25,
         choices=status_job,
         default='st',
         verbose_name='Status'
