@@ -220,6 +220,10 @@ class CutOutJob(models.Model):
         ('bs', 'Submit Job'),
         # Cutout Job enviado e aguardando termino na API
         ('rn', 'Running'),
+        # Before Download o job terminou mais ainda nao comecou a ser baixado
+        ('bd', 'Before Download'),
+        # Downloading
+        ('dw', 'Downloading'),
         # Cutout Job Concluido
         ('ok', 'Done'),
         # Erro no nosso lado
@@ -283,6 +287,14 @@ class CutOutJob(models.Model):
 
     cjb_label_font_size = models.PositiveIntegerField(
         verbose_name='Label Font Size', default=10, null=True, blank=True, help_text='Font size in px.')
+
+    cjb_results_file = models.CharField(
+        max_length=4096, verbose_name='Result File',
+        null=True, blank=True, default=None, help_text="File that contains the links returned by the DesCutouts service")
+
+    cjb_matched_file = models.CharField(
+        max_length=4096, verbose_name='Matched File',
+        null=True, blank=True, default=None, help_text="File containing the relations between ra, dec with the image")
 
     def __str__(self):
         return str(self.cjb_display_name)

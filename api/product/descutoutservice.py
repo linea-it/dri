@@ -24,12 +24,11 @@ import csv
 from .views_db import CutoutJobsDBHelper
 import logging
 
+
 class DesCutoutService:
     db = None
 
     def __init__(self):
-        # TODO substituir os prints por LOG
-
         # Get an instance of a logger
         self.logger = logging.getLogger('descutoutservice')
 
@@ -50,12 +49,6 @@ class DesCutoutService:
         # Diretorio raiz onde ficaram as imagens do cutout
         self.cutout_dir = params['CUTOUT_DIR']
 
-        # TODO Checar se o diretorio cutout_root existe se tem permissao e se foi setado no settings
-        # # Checar o Diretorio Raiz
-        # if os.path.exists(self.cutout_root):
-        #
-        # else:
-
         self.host_token = self.host + '/api/token/'
         self.host_jobs = self.host + '/api/jobs/'
 
@@ -64,6 +57,14 @@ class DesCutoutService:
 
         # Tipos de arquivos recebidos que nao sao imagens
         self.not_images = ['log', 'csv', 'stifflog']
+
+        # Nome do arquivo de resultados
+        self.result_file = 'result_file.txt'
+
+        # self.filters = dict({})
+        # filters = Filter.objects.all()
+        # for f in filters:
+        #     self.filter.update({f.filter:f.pk})
 
     def generate_token(self):
         """
@@ -91,8 +92,6 @@ class DesCutoutService:
             self.logger.critical(msg)
         raise Exception(msg)
 
-
-
     def check_token_status(self, token):
         """
         Check Token status: Check the expiration time for a token
@@ -101,8 +100,6 @@ class DesCutoutService:
         # print("Check the expiration time for a token")
         req = requests.get(
             self.host_token + '?token=' + token)
-
-        # print(req.json()['message'])
 
         if req.json()['status'].lower() == 'ok':
             return True
@@ -150,7 +147,6 @@ class DesCutoutService:
             msg = ("Request Create Job error %s - %s" % (req.status_code, text['message']))
 
             raise Exception(msg)
-
 
     def get_job_results(self, token, jobid):
         """
@@ -207,62 +203,61 @@ class DesCutoutService:
             "thumbname": None,
             "filename": None,
             "file_type": None,
-            "ra_sex": None,
-            "dec_sex": None,
-            "ra": None,
-            "dec": None,
+            # "ra_sex": None,
+            # "dec_sex": None,
+            # "ra": None,
+            # "dec": None,
             "filter": None,
-            "url": url
+            "url": url.strip()
         })
 
         # filename = ultima parte da url
         aurl = url.split('/')
         filename = aurl[len(aurl) - 1]
-        arq.update({"filename": filename})
+        arq.update({"filename": filename.strip()})
 
         # file_type extensao do arquivo
         file_type = filename.split('.')[len(filename.split('.')) - 1]
-        arq.update({"file_type": file_type})
+        arq.update({"file_type": file_type.strip()})
 
         if file_type not in self.not_images:
-            # recuperar a coordenada no nome do arquivo em sexagenal
-            raDecList = filename[+4:].split('.')
-            raDecList[0] = raDecList[0] + '.' + raDecList[1][-1:]
-            raDecList[1] = raDecList[1][+1:] + '.' + raDecList[2]
-            ra_sex = raDecList[0][:+2] + ' ' + raDecList[0][+2:][:+2] + ' ' + raDecList[0][+4:]
-            dec_sex = raDecList[1][:+3] + ' ' + raDecList[1][+3:][:+2] + ' ' + raDecList[1][+5:].split("_")[0]
 
-            arq.update({
-                "ra_sex": ra_sex,
-                "dec_sex": dec_sex,
-            })
-            #  Converter a coordenada que esta no filename para degrees
-            ra = sextodec(ra_sex) * 15
-            dec = sextodec(dec_sex)
-            arq.update({
-                "ra": float("{:6.3f}".format(ra)),
-                "dec": float("{:6.3f}".format(dec)),
-            })
+            # # recuperar a coordenada no nome do arquivo em sexagenal
+            # raDecList = filename[+4:].split('.')
+            # raDecList[0] = raDecList[0] + '.' + raDecList[1][-1:]
+            # raDecList[1] = raDecList[1][+1:] + '.' + raDecList[2]
+            # ra_sex = raDecList[0][:+2] + ' ' + raDecList[0][+2:][:+2] + ' ' + raDecList[0][+4:]
+            # dec_sex = raDecList[1][:+3] + ' ' + raDecList[1][+3:][:+2] + ' ' + raDecList[1][+5:].split("_")[0]
+            #
+            # arq.update({
+            #     "ra_sex": ra_sex,
+            #     "dec_sex": dec_sex,
+            # })
+            # #  Converter a coordenada que esta no filename para degrees
+            # ra = sextodec(ra_sex) * 15
+            # dec = sextodec(dec_sex)
+            # arq.update({
+            #     "ra": float("{:6.3f}".format(ra)),
+            #     "dec": float("{:6.3f}".format(dec)),
+            # })
 
             # Filtro da Imagem.
             try:
                 filter = filename.split('_')[1].split('.')[0]
-                arq.update({"filter": filter})
+                arq.update({"filter": filter.strip()})
 
                 # thumbname = filename split _
                 thumbname = filename.split('_')[0]
-                arq.update({"thumbname": thumbname})
+                arq.update({"thumbname": thumbname.strip()})
 
             except:
                 # NAO TEM BANDA
                 # TODO descobrir um jeito de saber quais as bandas usadas para imagem colorida
 
                 thumbname = filename[0:21]
-                arq.update({"thumbname": thumbname})
+                arq.update({"thumbname": thumbname.strip()})
 
         return arq
-
-
 
     def start_job(self, job):
 
@@ -342,7 +337,9 @@ class DesCutoutService:
 
                 raise e
         else:
-            msg = ("This cutoutjob %s can not be started because the current status '%s' is different from 'starting'" % (job.pk, job.cjb_status))
+            msg = (
+            "This cutoutjob %s can not be started because the current status '%s' is different from 'starting'" % (
+            job.pk, job.cjb_status))
             raise Exception(msg)
 
     def start_job_by_id(self, id):
@@ -365,7 +362,6 @@ class DesCutoutService:
             self.logger.critical(e)
             raise e
 
-
     def start_jobs(self):
         self.logger.info("Des Cutout Start Jobs with status is 'starting'")
 
@@ -383,7 +379,6 @@ class DesCutoutService:
         # Pegar todos os CutoutJobs com status = st (Start)
         return CutOutJob.objects.filter(cjb_status=str(status))
 
-
     def check_jobs(self):
         """
         Verifica todos os jobs com status running
@@ -392,36 +387,57 @@ class DesCutoutService:
         # Pegar todos os CutoutJobs com status running
         jobs = CutOutJob.objects.filter(cjb_status='rn')
 
-        # print('Count: %s' % jobs.count())
         if jobs.count() > 0:
             self.logger.info("Check %s Jobs with status running" % jobs.count())
 
-            # Faz um for para cara job
-            for job in jobs:
-                # print("Job: %s" % job.cjb_job_id)
-                self.logger.info("Get Status for job %s" % job.pk)
+        # Faz um for para cara job
+        for job in jobs:
+            # print("Job: %s" % job.cjb_job_id)
+            self.logger.info("Get Status for job %s" % job.pk)
 
-                # Cria um Token
-                token = self.generate_token()
+            # Cria um Token
+            token = self.generate_token()
 
-                # Consulta o Job no servico
-                list_files = self.get_job_results(token, job.cjb_job_id)
+            # Consulta o Job no servico
 
-                self.logger.info("GUARDAR O ARQUIVO DE RESULTADOS" % job.pk)
+            list_files = self.get_job_results(token, job.cjb_job_id)
+            if list_files is None:
+                break
 
-                # if list_files is None:
-                #     break
-                # elif list_files is False:
-                #     # job com error no lado do servidor
-                #     job.cjb_status = 'je'
-                #     job.save()
-                #     break
+            elif list_files is False:
+                self.logger.info("Changing the CutoutJob Status for Error in the DesCutout side.")
 
-                # Download Files
-                # self.download_cutouts(job, list_files)
+                job.cjb_status = 'je'
+                job.save()
+                break
 
-                # Apagar na API descut o job que já foi baixado
-                # self.delete_job_results(token, job.cjb_job_id)
+            else:
+                # Guardar o Arquivo de resultado com os links a serem baixados
+                result_file = self.save_result_links_file(job, list_files)
+                job.cjb_results_file = result_file
+
+                # Baixar o Arquivo Matched que sera usado para associar os arquivos baixados com os objetos.
+                matched = None
+                for link in list_files:
+                    arq = self.parse_result_url(link)
+                    if arq.get('file_type') == 'csv' and arq.get('filename').find('matched') > -1:
+                        matched = arq
+                        break
+
+                if matched is not None:
+                    cutoutdir = self.get_cutout_dir(job)
+                    print(matched)
+                    matched_file = self.download_file(matched.get("url"), cutoutdir, matched.get("filename"))
+
+                    job.cjb_matched_file = matched_file
+
+                #Alterar o Status para Before Download
+                job.cjb_status = 'bd'
+
+                self.logger.info("Changing the CutoutJob Status for Before Download")
+
+                job.save()
+
 
     def get_cutout_dir(self, cutout_job):
         """
@@ -442,9 +458,8 @@ class DesCutoutService:
             return cutout_dir
 
         except OSError:
+            # Cutout path already exists
             return cutout_dir
-            # print("Cutout path already exists: %s" % cutout_dir)
-            # raise
 
     def download_cutouts(self, cutout_job, list_files):
         # print("----------- download_cutouts -------------------")
@@ -531,15 +546,34 @@ class DesCutoutService:
                         pass
 
     def download_file(self, url, cutout_dir, filename):
-        # print("------------- download_file -------------")
-        # print("URL: %s" % url)
-        # print("Filename: %s" % filename)
+        self.logger.info("Downloading File %s From %s" % (filename, url))
+
         file_path = os.path.join(cutout_dir, filename)
 
         if not os.path.exists(file_path):
             urllib.request.urlretrieve(url, file_path)
+            size = os.path.getsize(file_path)
+
+            self.logger.info("Downloading Done! File: %s Size: %s bytes" % (file_path, size))
+        else:
+            self.logger.debug("File %s exists" % filename)
 
         return file_path
+
+    def save_result_links_file(self, cutoutjob, links):
+        self.logger.info("Save result links to a file")
+
+        cutoutdir = self.get_cutout_dir(cutoutjob)
+        f = os.path.join(cutoutdir, self.result_file)
+
+        with open(f, 'w') as result:
+            for l in links:
+                result.write(l + "\n")
+
+            result.close()
+
+        self.logger.debug("Result File %s" % f)
+        return f
 
     def get_catalog_objects(self, product_id):
         # print("get_catalog_objects(product_id=%s)" % product_id)
@@ -631,6 +665,21 @@ class DesCutoutService:
         print(req)
         print(req.text)
         print(req.json()['job'])
+
+
+    def create_cutout_model(self, cutoutjob, filename, thumbname, type, filter=None):
+        cutout, created = Cutout.objects.update_or_create(
+            cjb_cutout_job=cutoutjob,
+            ctt_file_name=filename,
+            ctt_file_type=type,
+            ctt_filter=filter,
+            defaults={
+                "ctt_thumbname": thumbname,
+                "ctt_download_start_time": timezone.now()
+            }
+        )
+
+        return cutout
 
 
 def sextodec(xyz, delimiter=None):
