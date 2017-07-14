@@ -139,7 +139,6 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 ids = bookmarkeds.values_list('product', flat=True)
                 queryset = self.queryset.filter(pk__in=ids)
 
-
         # Caso tenha mais de um group passado por parametro o no principal sera o grupo
         nodeGroup = dict()
 
@@ -509,6 +508,19 @@ class CutoutJobViewSet(viewsets.ModelViewSet):
     ordering_fields = ('id',)
 
 
+class CutoutViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = Cutout.objects.all()
+
+    serializer_class = CutoutSerializer
+
+    filter_fields = ('id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_filter',)
+
+    ordering_fields = ('id',)
+
+
 class PermissionUserViewSet(viewsets.ModelViewSet):
     """
 
@@ -604,6 +616,7 @@ class FilterConditionViewSet(viewsets.ModelViewSet):
     serializer_class = FilterConditionSerializer
 
     filter_fields = ('id', 'filterset', 'fcd_property', 'fcd_operation', 'fcd_value')
+
 
 # ---------------------------------- Bookmark ----------------------------------
 

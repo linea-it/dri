@@ -158,7 +158,10 @@ Ext.define('Target.view.objects.Panel', {
                     xtype: 'targets-objects-mosaic',
                     reference: 'TargetMosaic',
                     bind: {
-                        store: '{objects}'
+                        store: '{objects}',
+                    },
+                    listeners: {
+                        select: 'onSelectObject'
                     },
                     tbar: [
                         {

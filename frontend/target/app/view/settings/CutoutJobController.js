@@ -100,8 +100,8 @@ Ext.define('Target.view.settings.CutoutJobController', {
                 cjb_product: product.get('id'),
                 cjb_display_name: values.job_name,
                 cjb_job_type: values.job_type,
-                cjb_xsize: values.xsize,
-                cjb_ysize: values.ysize,
+                cjb_xsize: parseFloat(values.xsize / 60).toFixed(3),
+                cjb_ysize: parseFloat(values.ysize / 60).toFixed(3),
                 cjb_Blacklist: false,
                 cjb_status: 'st' // Status Start
             });
