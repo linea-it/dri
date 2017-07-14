@@ -144,7 +144,7 @@ Ext.define('Target.view.wizard.Wizard', {
         // if ((currentCatalog.get('id') > 0) && (currentCatalog.get('is_owner'))) {
         me.down('targets-association').enable();
         me.down('targets-permission').enable();
-//        me.down('targets-system-members').enable();
+        //me.down('targets-system-members').enable();
 
         // } else {
         //     me.down('targets-association').disable();
