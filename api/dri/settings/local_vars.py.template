@@ -3,7 +3,7 @@ import os
 # Just the 3 vars that the specific environment will use:
 # BASE_PROJECT, LOG_DIR, DATABASES
 
-# Substituir /home/glauber/dri pelo diretorio de intalacao do projeto.
+# Substituir #BASEPROJECT# pelo diretorio de intalacao do projeto.
 BASE_PROJECT = "#BASEPROJECT#"
 
 LOG_DIR = os.path.join(BASE_PROJECT, 'log')

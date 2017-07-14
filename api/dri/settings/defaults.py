@@ -188,7 +188,10 @@ SITE_ID = 1
 
 
 # CELERY SETTINGS
-BROKER_URL = 'amqp://localhost'
+# start celery with
+#  celery worker --workdir api --app dri -l info
+# or such configs will not be used
+CELERY_BROKER_URL = 'amqp://localhost'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
