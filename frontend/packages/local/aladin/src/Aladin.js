@@ -223,8 +223,6 @@ Ext.define('aladin.Aladin', {
                 //onpanend: 'onPanEnd'
             }
         });
-        
-        console.log('initComponent Aladin package', this.getId(), me.getAladinId(), this.getAladin());
 
         me.callParent(arguments);
     },
@@ -249,9 +247,10 @@ Ext.define('aladin.Aladin', {
             aladinOptions
         );
 
+        console.log('remover window.aladin');
         window.aladin = aladin;
         window.aladinEx = this;
-        //console.log(aladin);
+        
         me.setAladin(aladin);
 
         me.createImageSurveys();
@@ -270,7 +269,6 @@ Ext.define('aladin.Aladin', {
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);
         
-        console.log('onAfterrender Aladin package', this.getId(), me.getAladinId(), this.getAladin());
     },
 
     aladinIsReady: function () {

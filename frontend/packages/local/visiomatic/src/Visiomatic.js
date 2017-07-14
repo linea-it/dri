@@ -239,8 +239,7 @@ Ext.define('visiomatic.Visiomatic', {
         } else {
             console.log('window.L ainda nao esta carregada, incluir no app.json a biblioteca Leaflet');
         }
-
-        cmpVisiomatic = Ext.create('Ext.Component', {
+        this.cmpVisiomatic = cmpVisiomatic = Ext.create('Ext.Component', {
             id: me.getMapContainer(),
             width: '100%',
             height: '100%'
@@ -313,6 +312,20 @@ Ext.define('visiomatic.Visiomatic', {
 
         if (me.getEnableScale()) {
             me.addScaleController();
+        }
+
+        console.warn('remover window.visiomatic');
+        if (me.getId()=='sky-visiomatic-1028') {
+            window.visiomatic_map = map;
+            window.visiomatic_wcs = map.options.crs;
+            /*
+            var me = this,
+                map = me.getMap(),
+                wcs = map.options.crs,
+                latlng = map.getCenter(),
+                fov;
+
+            fov = wcs.zoomToFov(map, map.getZoom(), latlng);*/
         }
     },
 
