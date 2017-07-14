@@ -61,6 +61,11 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
             ],
             buttons: [
                 {
+                    xtype: 'label',
+                    text: 'Right click "Save link as" to download files',
+                    flex: 1,
+                },
+                {
                     text: 'Cancel',
                     scope: me,
                     handler: 'onCancel'
