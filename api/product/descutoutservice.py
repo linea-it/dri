@@ -179,14 +179,16 @@ class DesCutoutService:
         Delete Jobs: Delete Job by its Id
 
         """
+        self.logger.info("Deleting job %s in DesCutout service" % jobid)
         req = requests.delete(
             self.host_jobs + "?token=" + token + "&jobid=" + jobid)
 
-        # print(req.text)
         data = req.json()
+        self.logger.debug(data)
 
         if data["status"] != "error" and data["status"] == "ok":
-            # print(data["message"])
+            self.logger.info("Deleted job!")
+
             return True
         else:
             return False
@@ -344,6 +346,13 @@ class DesCutoutService:
         for job in cutoutjobs:
             # TODO chamar o metodo start_job
             pass
+
+    def delete_job(self, cutoutjob):
+        if cutoutjob.cjb_job_id is not None:
+            token = self.generate_token()
+
+            self.delete_job_results(token, cutoutjob.cjb_job_id)
+
 
     def get_cutoutjobs_by_status(self, status):
 

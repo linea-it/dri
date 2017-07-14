@@ -69,12 +69,12 @@ Ext.define('Target.view.wizard.Wizard', {
 //            iconCls: 'x-fa fa-picture-o',
 //            disabled: true
 //        },
-//        {
-//            id: 'card-4',
-//            xtype: 'targets-system-members',
-//            title: 'System Members',
-//            iconCls: 'x-fa fa-dot-circle-o',
-//        },
+        {
+            id: 'card-4',
+            xtype: 'targets-system-members',
+            title: 'System Members',
+            iconCls: 'x-fa fa-dot-circle-o',
+        },
         {
             id: 'card-5',
             xtype: 'targets-permission',
@@ -144,7 +144,7 @@ Ext.define('Target.view.wizard.Wizard', {
         // if ((currentCatalog.get('id') > 0) && (currentCatalog.get('is_owner'))) {
         me.down('targets-association').enable();
         me.down('targets-permission').enable();
-        // me.down('targets-system-members').enable();
+//        me.down('targets-system-members').enable();
 
         // } else {
         //     me.down('targets-association').disable();
@@ -153,11 +153,11 @@ Ext.define('Target.view.wizard.Wizard', {
 
         // }
 
-//        if (currentCatalog.get('pcl_is_system')) {
-//            me.down('targets-system-members').enable();
-//        } else {
-//            me.down('targets-system-members').disable();
-//        }
+        if (currentCatalog.get('pcl_is_system')) {
+            me.down('targets-system-members').enable();
+        } else {
+            me.down('targets-system-members').disable();
+        }
     }
 
 });

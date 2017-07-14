@@ -116,6 +116,9 @@ def check_jobs_to_be_downloaded():
 
         result_file.close()
 
+        # Deletar o job no Servico
+        descutout.delete_job(cutoutjob)
+
         # Changing the CutoutJob Status for Done
         descutout.change_cutoutjob_status(cutoutjob, "ok")
 
