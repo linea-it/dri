@@ -7,6 +7,7 @@ from django.conf import settings
 import urllib.parse
 import time
 from .models import *
+import os
 
 from django.contrib.auth.models import User
 
@@ -369,14 +370,23 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
         )
 
     def get_ctt_file_source(self, obj):
+        try:
+            cutout_source = settings.DES_CUTOUT_SERVICE['CUTOUT_SOURCE']
 
-        data_dir = settings.DATA_DIR.split(settings.BASE_PROJECT, 1)[1]
-        path = obj.ctt_file_path
+            if obj.ctt_file_path is not None:
 
-        source = path.split(data_dir, 1)[1]
-        source = data_dir + source
+                source = os.path.join(cutout_source, obj.ctt_file_path)
 
-        return source
+                return source
+            else:
+                return None
+
+        except KeyError as e:
+            raise Exception("The CUTOUT_SOURCE parameter has not been configured, "
+                   " add this attribute to the DES_CUTOUT_SERVICE section.")
+
+        except Exception as e:
+            raise (e)
 
     def get_timestamp(self, obj):
         return time.time()

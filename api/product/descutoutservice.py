@@ -53,6 +53,7 @@ class DesCutoutService:
         self.password = params["PASSWORD"]
 
         # Diretorio raiz onde ficaram as imagens do cutout
+        self.data_dir = settings.DATA_DIR
         self.cutout_dir = params["CUTOUT_DIR"]
 
         self.host_token = self.host + "/api/token/"
@@ -457,7 +458,10 @@ class DesCutoutService:
 
         """
         cutout_dir = os.path.join(
-            self.cutout_dir, str(cutout_job.cjb_product_id), str(cutout_job.id))
+            self.data_dir,
+            self.cutout_dir,
+            str(cutout_job.cjb_product_id),
+            str(cutout_job.id))
 
         try:
             os.makedirs(cutout_dir)
@@ -634,6 +638,10 @@ class DesCutoutService:
                             cutoutjob, filename, thumbname, type, filter=None, object_id=None, object_ra=None,
                             object_dec=None, file_path=None, file_size=None, start=None, finish=None):
 
+        # Tratamento do file_path para remover o path absoluto guardando apenas o path configurado no settings cutoutdir
+        file_path = file_path.split(self.cutout_dir)[1]
+        file_path = os.path.join(self.cutout_dir, file_path.strip('/'))
+
         cutout, created = Cutout.objects.update_or_create(
             cjb_cutout_job=cutoutjob,
             ctt_file_name=filename,
@@ -642,9 +650,9 @@ class DesCutoutService:
             ctt_object_id=object_id,
             ctt_object_ra=object_ra,
             ctt_object_dec=object_dec,
-            ctt_file_path=file_path,
-            ctt_file_size=file_size,
             defaults={
+                "ctt_file_size": file_size,
+                "ctt_file_path": file_path,
                 "ctt_thumbname": thumbname,
                 "ctt_download_start_time": start,
                 "ctt_download_finish_time": finish
