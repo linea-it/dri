@@ -207,7 +207,6 @@ Ext.define('Target.view.objects.Panel', {
             ]
         },
         {
-            id: 'panel-targets-preview',
             xtype: 'targets-preview',
             reference: 'targetsPreviewPanel',
             flex: 1,
