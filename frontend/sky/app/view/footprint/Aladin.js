@@ -15,7 +15,6 @@ Ext.define('Sky.view.footprint.Aladin', {
             gotoSetPosition: false
         });
         
-        console.log('initComponent Aladin Sky', this.getId(), me.getAladinId(), this.getAladin());
         this.callParent(arguments);
     },
 
@@ -43,12 +42,8 @@ Ext.define('Sky.view.footprint.Aladin', {
         
         var aladin = me.getAladin();
 
-        //aladin.aladinDiv.setAttribute('aladin-div', 'true');
-        //aladin.aladinDiv._aladin = aladin;
-        console.log(coordinate, zoom);
         aladin.gotoPosition(coordinate[0], coordinate[1]);
         aladin.setZoom(zoom);
    }
-
 
 });

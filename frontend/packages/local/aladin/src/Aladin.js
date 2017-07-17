@@ -249,9 +249,6 @@ Ext.define('aladin.Aladin', {
             aladinOptions
         );
 
-        window.aladin = aladin;
-        window.aladinEx = this;
-        //console.log(aladin);
         me.setAladin(aladin);
 
         me.createImageSurveys();
@@ -270,7 +267,6 @@ Ext.define('aladin.Aladin', {
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);
         
-        console.log('onAfterrender Aladin package', this.getId(), me.getAladinId(), this.getAladin());
     },
 
     aladinIsReady: function () {

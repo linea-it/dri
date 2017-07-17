@@ -238,8 +238,7 @@ Ext.define('visiomatic.Visiomatic', {
         } else {
             console.log('window.L ainda nao esta carregada, incluir no app.json a biblioteca Leaflet');
         }
-
-        cmpVisiomatic = Ext.create('Ext.Component', {
+        this.cmpVisiomatic = cmpVisiomatic = Ext.create('Ext.Component', {
             id: me.getMapContainer(),
             width: '100%',
             height: '100%',

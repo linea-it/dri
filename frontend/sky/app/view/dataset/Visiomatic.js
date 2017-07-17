@@ -31,6 +31,5 @@ Ext.define('Sky.view.dataset.Visiomatic', {
         // Setar o titulo do Painel
         title = dataset.get('release_display_name') + ' - ' + dataset.get('tag_display_name') + ' - ' + dataset.get('tli_tilename');
         me.setTitle(title);
-
     }
 });

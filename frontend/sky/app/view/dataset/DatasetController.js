@@ -277,4 +277,3 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     }
 });
-
