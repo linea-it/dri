@@ -276,5 +276,5 @@ Ext.define('Sky.view.dataset.DatasetController', {
         visiomatic.showHideLayer(me.lMarker, state);
 
     }
-
 });
+

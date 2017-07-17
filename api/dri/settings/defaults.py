@@ -186,6 +186,17 @@ REST_FRAMEWORK = {
 
 SITE_ID = 1
 
+
+# CELERY SETTINGS
+# start celery with
+#  celery worker --workdir api --app dri -l info
+# or such configs will not be used
+CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+
 # Run Test with Django Nose http://django-testing-docs.readthedocs.io/en/latest/coverage.html#coverage-reports
 # Use nose to run all tests
 # TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'

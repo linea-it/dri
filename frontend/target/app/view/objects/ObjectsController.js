@@ -856,12 +856,25 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             cutoutJob = vm.get('currentCutoutJob'),
-            mosaic = me.lookup('TargetMosaic');
+            mosaic = me.lookup('TargetMosaic'),
+            cutouts = vm.getStore('cutouts');
 
         if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
-            // Setar no Mosaic o Cutout Job Selecionado
-            mosaic.setCutoutJob(cutoutJob);
+            cutouts.addFilter([{
+                property: 'cjb_cutout_job',
+                value: cutoutJob.get('id')
+            },
+            {
+                property: 'ctt_file_type',
+                value: 'png'
+            }]);
 
+            cutouts.load({
+                callback: function() {
+                    // Setar no Mosaic o Cutout Job Selecionado
+                    mosaic.setCutoutJob(cutoutJob, this);
+                }
+            });
         }
 
     }

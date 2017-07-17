@@ -33,7 +33,8 @@ Ext.define('visiomatic.Visiomatic', {
         map: null,
         mapOptions: {
             fullscreenControl: true,
-            zoom: 1
+            zoom: 1,
+            enableLineaOverlay: true
         },
 
         prefix: '',
@@ -43,8 +44,6 @@ Ext.define('visiomatic.Visiomatic', {
         // Catalog Overlays
         enableCatalogs: true,
         availableCatalogs: [
-            'Y3A1',
-            'Y1A1',
             'GALEX_AIS',
             '2MASS',
             'AllWISE',
@@ -171,70 +170,70 @@ Ext.define('visiomatic.Visiomatic', {
         if (window.L) {
             me.libL  = window.L;
 
-            // Registro do Catalogo
-            me.libL.Catalog.Y3A1 = me.libL.extend({}, me.libL.Catalog, {
-                name: 'Y3A1',
-                attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
-                color: 'blue',
-                maglim: 23.0,
-                service: 'ScienceServer',
-                regionType: 'box',
-                authenticate: 'csrftoken',
-                url: 'http://' + host + '/dri/api/visiomatic/coadd_objects/' +
-                '?mime=csv' +
-                '&source=Y3A1_COADD_OBJECT_SUMMARY' +
-                '&columns=coadd_object_id,ra,dec,mag_auto_g,mag_auto_r,mag_auto_i,mag_auto_z,mag_auto_y,a_image,b_image,theta_j2000' +
-                '&coordinate={lng},{lat}' +
-                '&bounding={dlng},{dlat}' +
-                '&maglim={maglim}' +
-                '&limit=2000',
-                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
-                units: [],
-                objurl: 'http://' + host + '/dri/apps/explorer/#coadd/Y3A1_COADD_OBJECT_SUMMARY/{id}',
-                draw: function (feature, latlng) {
-                    return me.libL.ellipse(latlng, {
-                        majAxis: feature.properties.items[5] / 3600.0,
-                        minAxis: feature.properties.items[6] / 3600.0,
-                        posAngle: 90 - feature.properties.items[7],
-                        // Path Options http://leafletjs.com/reference-1.0.3.html#path
-                        weight: 1, //largura da borda em pixel
-                        opacity: 0.5, // transparencia da borda
-                        fillOpacity: 0.01 // Transparencia nos marcadores.
-                    });
-                }
-            });
-
-            me.libL.Catalog.Y1A1 = me.libL.extend({}, me.libL.Catalog, {
-                name: 'Y1A1',
-                attribution: 'Des Y1A1 COADD OBJECT',
-                color: 'blue',
-                maglim: 23.0,
-                service: 'ScienceServer',
-                regionType: 'box',
-                authenticate: 'csrftoken',
-                url: 'http://' + host + '/dri/api/visiomatic/coadd_objects/' +
-                '?mime=csv' +
-                '&source=y1a1_coadd_objects' +
-                '&columns=coadd_objects_id,ra,dec,mag_auto_g,mag_auto_r,mag_auto_i,mag_auto_z,mag_auto_y,a_image,b_image,theta_image' +
-                '&coordinate={lng},{lat}' +
-                '&bounding={dlng},{dlat}' +
-                '&maglim={maglim}' +
-                '&limit=2000',
-                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
-                units: [],
-                objurl: 'http://' + host + '/dri/apps/explorer/#coadd/y1a1_coadd_objects/{id}',
-                draw: function (feature, latlng) {
-                    return me.libL.ellipse(latlng, {
-                        majAxis: feature.properties.items[5] / 3600.0,
-                        minAxis: feature.properties.items[6] / 3600.0,
-                        posAngle: feature.properties.items[7],
-                        // Path Options http://leafletjs.com/reference-1.0.3.html#path
-                        weight: 1, //largura da borda em pixel
-                        opacity: 0.5, // transparencia da borda
-                        fillOpacity: 0.01 // Transparencia nos marcadores.
-                    });
-                }
-            });
+//            // Registro do Catalogo
+//            me.libL.Catalog.Y3A1 = me.libL.extend({}, me.libL.Catalog, {
+//                name: 'Y3A1',
+//                attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
+//                color: 'blue',
+//                maglim: 23.0,
+//                service: 'ScienceServer',
+//                regionType: 'box',
+//                authenticate: 'csrftoken',
+//                url: 'http://' + host + '/dri/api/visiomatic/coadd_objects/' +
+//                '?mime=csv' +
+//                '&source=Y3A1_COADD_OBJECT_SUMMARY' +
+//                '&columns=coadd_object_id,ra,dec,mag_auto_g,mag_auto_r,mag_auto_i,mag_auto_z,mag_auto_y,a_image,b_image,theta_j2000' +
+//                '&coordinate={lng},{lat}' +
+//                '&bounding={dlng},{dlat}' +
+//                '&maglim={maglim}' +
+//                '&limit=2000',
+//                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
+//                units: [],
+//                objurl: 'http://' + host + '/dri/apps/explorer/#coadd/Y3A1_COADD_OBJECT_SUMMARY/{id}',
+//                draw: function (feature, latlng) {
+//                    return me.libL.ellipse(latlng, {
+//                        majAxis: feature.properties.items[5] / 3600.0,
+//                        minAxis: feature.properties.items[6] / 3600.0,
+//                        posAngle: 90 - feature.properties.items[7],
+//                        // Path Options http://leafletjs.com/reference-1.0.3.html#path
+//                        weight: 1, //largura da borda em pixel
+//                        opacity: 0.5, // transparencia da borda
+//                        fillOpacity: 0.01 // Transparencia nos marcadores.
+//                    });
+//                }
+//            });
+//
+//            me.libL.Catalog.Y1A1 = me.libL.extend({}, me.libL.Catalog, {
+//                name: 'Y1A1',
+//                attribution: 'Des Y1A1 COADD OBJECT',
+//                color: 'blue',
+//                maglim: 23.0,
+//                service: 'ScienceServer',
+//                regionType: 'box',
+//                authenticate: 'csrftoken',
+//                url: 'http://' + host + '/dri/api/visiomatic/coadd_objects/' +
+//                '?mime=csv' +
+//                '&source=y1a1_coadd_objects' +
+//                '&columns=coadd_objects_id,ra,dec,mag_auto_g,mag_auto_r,mag_auto_i,mag_auto_z,mag_auto_y,a_image,b_image,theta_image' +
+//                '&coordinate={lng},{lat}' +
+//                '&bounding={dlng},{dlat}' +
+//                '&maglim={maglim}' +
+//                '&limit=2000',
+//                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
+//                units: [],
+//                objurl: 'http://' + host + '/dri/apps/explorer/#coadd/y1a1_coadd_objects/{id}',
+//                draw: function (feature, latlng) {
+//                    return me.libL.ellipse(latlng, {
+//                        majAxis: feature.properties.items[5] / 3600.0,
+//                        minAxis: feature.properties.items[6] / 3600.0,
+//                        posAngle: feature.properties.items[7],
+//                        // Path Options http://leafletjs.com/reference-1.0.3.html#path
+//                        weight: 1, //largura da borda em pixel
+//                        opacity: 0.5, // transparencia da borda
+//                        fillOpacity: 0.01 // Transparencia nos marcadores.
+//                    });
+//                }
+//            });
 
         } else {
             console.log('window.L ainda nao esta carregada, incluir no app.json a biblioteca Leaflet');
@@ -243,7 +242,10 @@ Ext.define('visiomatic.Visiomatic', {
         cmpVisiomatic = Ext.create('Ext.Component', {
             id: me.getMapContainer(),
             width: '100%',
-            height: '100%'
+            height: '100%',
+            listeners: {
+                deactivate: me.onDeactivate
+            }
         });
 
         // Toolbar
@@ -294,6 +296,7 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('layeradd', me.onLayerAdd, me);
         map.on('move', me.onMove, me);
         map.on('mousemove', me.onMouseMove, me);
+        map.on('overlaycatalog', me.showCatalogOverlayWindow, me);
 
         // instancia de L.map
         me.setMap(map);
@@ -321,6 +324,18 @@ Ext.define('visiomatic.Visiomatic', {
         var map = this.getMap();
         if (map) {
             map.invalidateSize();
+        }
+    },
+
+    onDeactivate: function () {
+        console.log('onDeactivate');
+
+        var me = this;
+
+        // Fechar a Janela de Overlay Catalogs caso ela esteja aberta
+        if (me._winCatalogOverlay) {
+            me._winCatalogOverlay.close();
+
         }
     },
 
@@ -538,6 +553,93 @@ Ext.define('visiomatic.Visiomatic', {
 
     },
 
+    /**
+     * Retonar a posicao central e a distancia entre o centro e a borda
+     * o valor de bound e a distancia inteira.
+     */
+    getBounds: function () {
+        var me = this,
+            libL = me.libL,
+            map = me.getMap(),
+            wcs = map.options.crs,
+            sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
+		    center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(),
+		    lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
+		    b = map.getPixelBounds(),
+		    z = map.getZoom(),
+            c, lng, lat, dlng, dlat, box;
+
+        // Compute the search cone
+        c = sysflag ?
+              [wcs.celsysToEq(map.unproject(b.min, z)),
+              wcs.celsysToEq(map.unproject(libL.point(b.min.x, b.max.y), z)),
+              wcs.celsysToEq(map.unproject(b.max, z)),
+              wcs.celsysToEq(map.unproject(libLpoint(b.max.x, b.min.y), z))] :
+                        [map.unproject(b.min, z),
+                         map.unproject(libL.point(b.min.x, b.max.y), z),
+                         map.unproject(b.max, z),
+                         map.unproject(libL.point(b.max.x, b.min.y), z)];
+
+        lng = parseFloat(center.lng.toFixed(6));
+        lat = parseFloat(center.lat.toFixed(6));
+
+        // CDS box search
+        dlng = (Math.max(wcs._deltaLng(c[0], center),
+                               wcs._deltaLng(c[1], center),
+                               wcs._deltaLng(c[2], center),
+                               wcs._deltaLng(c[3], center)) -
+                    Math.min(wcs._deltaLng(c[0], center),
+                               wcs._deltaLng(c[1], center),
+                               wcs._deltaLng(c[2], center),
+                               wcs._deltaLng(c[3], center))) * lngfac;
+
+        dlat = Math.max(c[0].lat, c[1].lat, c[2].lat, c[3].lat) -
+              Math.min(c[0].lat, c[1].lat, c[2].lat, c[3].lat);
+
+        if (dlat < 0.0001) {
+            dlat = 0.0001;
+        }
+        if (dlng < 0.0001) {
+            dlng = 0.0001;
+        }
+
+        return {
+            lat: parseFloat(lat.toFixed(6)),
+            lng: parseFloat(lng.toFixed(6)),
+            dlat: parseFloat(dlat.toFixed(6)),
+            dlng: parseFloat(dlng.toFixed(6))
+        }
+    },
+
+    /**
+     * Retorna um box composto pela coordenada superior e inferior. da area visivel no mapa
+     * [[upper right ra, upper right dec], [lower left ra, lower left dec]]
+     * Dividir o bounding por 2 para ter o valor do raio.
+     * lng = RA, lat = Dec
+     */
+    getBox: function () {
+        var me = this,
+            box, urra, urdec, llra, lldec, ur, ll;
+
+        bounding = me.getBounds();
+
+        urra = parseFloat(bounding.lng + bounding.dlng/2).toFixed(6)
+        urdec = parseFloat(bounding.lat + bounding.dlat/2).toFixed(6)
+        llra = parseFloat(bounding.lng - bounding.dlng/2).toFixed(6)
+        lldec = parseFloat(bounding.lat - bounding.dlat/2).toFixed(6)
+
+        ur = [urra, urdec];
+        ll = [llra, lldec];
+
+        box = [ ur, ll ];
+
+        // Debugar o Box, desenha um retangulo representando a area visivel
+        // ldebugbox = me.drawRectangle(ur, ll, {color: '#1dff00', weight: 5});
+
+        return box;
+    },
+
+
     getFov: function () {
         var me = this,
             map = me.getMap(),
@@ -688,7 +790,7 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
-    overlayCatalog: function (id, store, options) {
+    overlayCatalog: function (title, store, options) {
         var me = this,
             l = me.libL,
             map = me.getMap(),
@@ -706,18 +808,23 @@ Ext.define('visiomatic.Visiomatic', {
 
         store.each(function (record) {
 
-            feature = {
-                type: 'Feature',
-                id: record.get('_meta_id'),
-                properties: record.data,
-                is_system: record.get('_meta_is_system'),
-                geometry: {
-                    type: 'Point',
-                    coordinates: [record.get('_meta_ra'), record.get('_meta_dec')]
-                }
-            };
+            // Checar se objeto esta dentro dos limites da tile
+            if (me.isInsideTile(record.get('_meta_ra'), record.get('_meta_dec'))) {
 
-            collection.features.push(feature);
+                feature = {
+                    type: 'Feature',
+                    id: record.get('_meta_id'),
+                    title: title,
+                    properties: record.data,
+                    is_system: record.get('_meta_is_system'),
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [record.get('_meta_ra'), record.get('_meta_dec')]
+                    }
+                };
+
+                collection.features.push(feature);
+            }
 
         }, me);
 
@@ -754,6 +861,9 @@ Ext.define('visiomatic.Visiomatic', {
                 });
                 
                 path_options = Ext.Object.merge(path_options, options);
+
+                // tornar o objeto clicavel
+                path_options.interactive = true
 
                 // Usei ellipse por ja estar em degrees a funcao circulo
                 // estava em pixels
@@ -807,6 +917,27 @@ Ext.define('visiomatic.Visiomatic', {
         map.addLayer(lCatalog);
 
         return lCatalog;
+    },
+
+    createOverlayPopup: function (layer) {
+        var feature = layer.feature,
+            popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
+               '<TABLE style="margin:auto;">' +
+               '<TBODY style="vertical-align:top;text-align:left;">' +
+                    '<TR><TD><spam>ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
+                    // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
+                    // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
+                    '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
+                        feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
+                    '</td></tr>' +
+                '</TBODY></TABLE>';
+
+        return popup;
+    },
+
+    onDblClickOverlay: function () {
+        console.log('onDblClickOverlay(%o)', arguments);
+
     },
 
     showHideLayer: function (layer, state) {
@@ -994,6 +1125,10 @@ Ext.define('visiomatic.Visiomatic', {
                     visiomatic: me,
                 });
 
+                // Adiciona a Window como parte do componente Visiomatic,
+                // Desta forma se o componete nao estiver mais visivel na tela a window tb nao estara.
+                me.add(win)
+
                 win.show();
 
                 me._winCatalogOverlay = win;
@@ -1059,6 +1194,61 @@ Ext.define('visiomatic.Visiomatic', {
         objectMenuItem.feature = event.layer ? event.layer.feature :  null;
         
         me.contextMenuObject.showAt(xy);
+    },
+
+    /**
+     * Desenha um retangulo
+     * @param upperRight = [ra, dec] coordenadas do canto superior direito
+     * @param lowerLeft = [ra, dec] coordenadas do canto inferior esquerdo
+     * @return layer, essa layer e uma group layer com as linhas que foram usadas para desenhar o retangulo
+     */
+    drawRectangle: function (upperRight, lowerLeft, options) {
+        var me = this,
+            l = me.libL,
+            map = me.getMap(),
+            urra = upperRight[0],
+            urdec = upperRight[1],
+            llra = lowerLeft[0],
+            lldec = lowerLeft[1],
+            lineTop, lineBotton, lineLeft, lineRight, lt, lb, ll, lr;
+
+
+        pathOptions = Ext.Object.merge(me.getCrosshairOptions(), options)
+
+        lineTop = [l.latLng(urdec, llra), l.latLng(urdec, urra)];
+        lineBotton = [l.latLng(lldec, llra), l.latLng(lldec, urra)];
+        lineLeft = [l.latLng(urdec, urra), l.latLng(lldec, urra)];
+        lineRight = [l.latLng(urdec, llra), l.latLng(lldec, llra)];
+
+
+        lt = l.polyline(lineTop, pathOptions);
+        lb = l.polyline(lineBotton, pathOptions);
+        ll = l.polyline(lineLeft, pathOptions);
+        lr = l.polyline(lineRight, pathOptions);
+
+        layer = new l.LayerGroup([lt, lb, ll, lr]);
+
+        map.addLayer(layer);
+
+        return layer
+    },
+
+
+    /**
+     * Verifica se uma dada coordenada esta dentro dos limites do dataset atual.
+     */
+    isInsideTile: function (ra, dec) {
+        var me = this,
+            currentDataset = me.getCurrentDataset();
+
+        if ((currentDataset != null) && (currentDataset.get('id') > 0)) {
+
+            // Usa um metodo do proprio model common.model.dataset para validar se a posicao esta dentro da tile
+            return currentDataset.isInsideTile(ra, dec);
+        } else {
+            // nao tem um dataset carregado nao da pra testar se esta dentro ou nao
+            return true
+        }
     }
 
 });

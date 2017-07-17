@@ -3,6 +3,10 @@ Ext.define('visiomatic.catalog.Submit', {
 
     xtype: 'visiomatic-catalogs-submit',
 
+    requires: [
+        'Ext.ux.colorpick.Field'
+    ],
+
     initComponent: function () {
         var me = this;
         Ext.apply(this, {
