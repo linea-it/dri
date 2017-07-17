@@ -68,6 +68,14 @@ Ext.define('Target.view.objects.Panel', {
                         handler: 'onClickDownload'
                     },
                     {
+                        xtype: 'button',
+                        iconCls: 'x-fa fa-commenting',
+                        bind: {
+                            //disabled: '{!currentRecord._meta_id}'
+                        },
+                        handler: 'onCommentButton'
+                    },
+                    {
                         iconCls: 'x-fa fa-picture-o',
                         tooltip: 'Create Mosaic',
                         handler: 'onClickCreateCutouts'
@@ -199,6 +207,7 @@ Ext.define('Target.view.objects.Panel', {
             ]
         },
         {
+            id: 'panel-targets-preview',
             xtype: 'targets-preview',
             reference: 'targetsPreviewPanel',
             flex: 1,

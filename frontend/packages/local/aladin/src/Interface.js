@@ -35,7 +35,8 @@ Ext.define('aladin.Interfaces', {
             tpl: [
                 '<spam>{release}</spam> <spam>{tag}</spam>',
                 '</br><spam>{tilename}</spam>',
-                '</br><spam>RA, Dec (deg): {location}</spam>'
+                '</br><spam>RA, Dec (deg): {location}</spam>'+
+                '</br><div style="white-space:nowrap;">Mouse RA, Dec (deg): {mlocation}</div>'
             ]
         });
 
@@ -65,6 +66,7 @@ Ext.define('aladin.Interfaces', {
 
         data = {
             location: vm.get('location'),
+            mlocation: vm.get('mlocation'),
             release: rl,
             tag: tg,
             tilename: tl
@@ -159,7 +161,7 @@ Ext.define('aladin.Interfaces', {
         }
 
         // Goto
-        if (me.getEnableGoto()) {
+        /*if (me.getEnableGoto()) {
             tools.push({
                 iconCls: 'x-fa fa-search',
                 tooltip: 'Go To position. 356.0085, 0.5168 or 23 44 2.040 +00 31 0.48',
@@ -188,7 +190,7 @@ Ext.define('aladin.Interfaces', {
                     }
                 ]
             });
-        }
+        }*/
 
         // Export Png
         if (me.getEnableExportPng()) {

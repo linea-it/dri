@@ -16,6 +16,14 @@
     color: #27313b;
 }
 
+.mapmaker-comment{
+    display: block;
+    background-image: url(common/images/mapmaker_comment.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 14px;
+    height: 16px;
+}
 
 /** Blink Class to use with fontAwesome Icons
  * https://stackoverflow.com/questions/13955163/imitating-a-blink-tag-with-css3-animations

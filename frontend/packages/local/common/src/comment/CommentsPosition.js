@@ -1,4 +1,4 @@
-Ext.define('common.comment.CommentsObject',{
+Ext.define('common.comment.CommentsPosition',{
     extend: 'Ext.Panel',
 
     requires:[
@@ -6,16 +6,16 @@ Ext.define('common.comment.CommentsObject',{
         'Ext.form.field.HtmlEditor',
         'Ext.ux.PreviewPlugin',
         'Ext.window.Toast',
-        'common.comment.CommentsObjectModel',
-        'common.comment.CommentsObjectController'
+        'common.comment.CommentsPositionModel',
+        'common.comment.CommentsPositionController'
     ],
 
-    xtype: 'comments-object',
+    xtype: 'comments-position',
     padding: '19',
     frame: true,
 
-    controller: 'comment-object',
-    viewModel: 'comment-object',
+    controller: 'comment-position',
+    viewModel: 'comment-position',
 
     layout: {
         type: 'vbox',
@@ -29,7 +29,7 @@ Ext.define('common.comment.CommentsObject',{
         me.rowEditing = new Ext.grid.plugin.RowEditing({
             listeners: {
                 edit: function(editor, e){    
-                    e.record.set('comments', e.newValues['comments']);
+                    e.record.set('pst_comment', e.newValues['pst_comment']);
                     me.getController().onSaveComment();
                 },
                 canceledit: function(editor, e){    
@@ -98,10 +98,6 @@ Ext.define('common.comment.CommentsObject',{
                                     }                                    
                                 }
                             }
-                            /*bind: {
-                                value: '{currentcomment.comments}',
-                                disabled: '{!currentcomment.is_owner}'
-                            }*/
                         },
                         {
                             xtype: 'button',
@@ -118,10 +114,7 @@ Ext.define('common.comment.CommentsObject',{
                                     txt.setValue('');
                                 }
                             }, 
-                            iconCls:'x-fa fa-floppy-o',
-                            /*bind: {
-                                disabled: '{!currentcomment.is_owner}'
-                            }*/
+                            iconCls:'x-fa fa-floppy-o'
                         }
                     ]
                 },
@@ -137,17 +130,10 @@ Ext.define('common.comment.CommentsObject',{
                         selection: '{currentcomment}'
                     },
                     plugins: [me.rowEditing],
-                    /*plugins: [
-                        {
-                            ptype: 'preview',
-                            bodyField: 'comments',
-                            expanded: true
-                        }
-                    ],*/
                     columns: [
                         {
                             text: '',
-                            dataIndex: 'comments',
+                            dataIndex: 'pst_comment',
                             renderer:this.formatUser,
                             flex:2,
                             menuDisabled: true,
@@ -164,30 +150,7 @@ Ext.define('common.comment.CommentsObject',{
                         }
                     ]
                 }
-            ],
-            /*tbar: [
-                {
-                    xtype: 'button',
-                    text: 'New',
-                    itemId:'btnNewComment',
-                    handler: 'onNewComment',
-                    iconCls:'x-fa fa-plus'
-                },
-                {
-                    xtype: 'button',
-                    itemId:'btnDeleteComment',
-                    text: 'Delete',
-                    handler: 'onDeleteComment',
-                    iconCls:'x-fa fa-minus',
-                    bind: {
-                        disabled: '{!currentcomment.is_owner}'
-                    }
-                }
-            ],*/
-            /*bbar: [
-                '->',
-                
-            ]*/
+            ]
         });
 
         me.callParent(arguments);
@@ -213,11 +176,10 @@ Ext.define('common.comment.CommentsObject',{
         Ext.widget('button', {
             renderTo: id,
             iconCls: 'x-fa fa-caret-down',
-            padding: '0',
-            margin:  '0 0 0 20',
+            style: 'padding:0;margin-left:20px',
             handler: function(data, event) {                
                 var xy = {x:event.event.clientX, y:event.event.clientY},
-                    menu = me.up('comments-object').contextMenu;
+                    menu = me.up('comments-position').contextMenu;
                 
                 menu.record = record;
                 menu.showAt(xy);
@@ -229,16 +191,7 @@ Ext.define('common.comment.CommentsObject',{
             record.get('owner'),               //{0} owner
             record.get('date') || 'Unknown',   //{1} date
             id,                                //{2} button
-            value                              //{3} comments
+            value                              //{3} pst_comment
         );
-
-        /*return Ext.String.format(
-            '<div class="user">'+
-                '<spam style="font-weight: bold;">{0}</spam>'+
-                ' comments on '+
-                '<span class="date">{1}</span>'+
-            '</div>', value,
-
-            record.get('date') || 'Unknown');*/
     }
 });

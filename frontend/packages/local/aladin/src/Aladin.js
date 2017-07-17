@@ -145,6 +145,7 @@ Ext.define('aladin.Aladin', {
 
         // String ra, dec da posicao atual do reticle.
         location: '',
+        mlocation: '',
 
         // FoV inicial tem preferencia sobre o FoV do survey.
         initialFov: null,
@@ -169,6 +170,7 @@ Ext.define('aladin.Aladin', {
     viewModel: {
         data: {
             location: '',
+            mlocation: '',
             tile: null,
             tag: null,
             release: null
@@ -210,7 +212,7 @@ Ext.define('aladin.Aladin', {
                 me.tbar = tollbar;
             }
         }
-
+        
         Ext.apply(this, {
             items: [
                 cmpAladin
@@ -221,6 +223,8 @@ Ext.define('aladin.Aladin', {
                 //onpanend: 'onPanEnd'
             }
         });
+        
+        console.log('initComponent Aladin package', this.getId(), me.getAladinId(), this.getAladin());
 
         me.callParent(arguments);
     },
@@ -245,6 +249,9 @@ Ext.define('aladin.Aladin', {
             aladinOptions
         );
 
+        window.aladin = aladin;
+        window.aladinEx = this;
+        //console.log(aladin);
         me.setAladin(aladin);
 
         me.createImageSurveys();
@@ -262,7 +269,8 @@ Ext.define('aladin.Aladin', {
 
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);
-
+        
+        console.log('onAfterrender Aladin package', this.getId(), me.getAladinId(), this.getAladin());
     },
 
     aladinIsReady: function () {
@@ -487,13 +495,15 @@ Ext.define('aladin.Aladin', {
         me.setAvailableFilters(filters);
     },
 
-    setLocation: function (location) {
+    setLocation: function (location, mlocation) {
         var me = this,
             vm = me.getViewModel();
 
         me.location = location;
+        me.mlocation = mlocation;
 
         vm.set('location', location);
+        vm.set('mlocation', mlocation);
 
         if (me.getAladin()) {
             me.onChangeLocation();
