@@ -196,6 +196,6 @@ def get_fits_files(request):
         if request.query_params.get('tilename') == None:
             return Response(dict({'error': "tilename can't be null"}))
 
-        url = DataDiscovery().get_fits_by_tilename(request.query_params.get('tilename'))
+        url = DataDiscovery({'tag': 'Y3A2_COADD'}).get_fits_by_tilename(request.query_params.get('tilename'))
 
         return Response(dict({'results': url}))
