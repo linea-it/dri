@@ -52,13 +52,13 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             name: 'job_type',
                             items: [
                                 {boxLabel: 'Coadd Images', inputValue: 'coadd', checked: true},
-                                {boxLabel: 'Single Epoch', inputValue: 'single', reference: 'rdSingleEpoch'}
+                                {boxLabel: 'Single Epoch', inputValue: 'single', reference: 'rdSingleEpoch', disabled: true}
                             ]
                         },
                         {
                             xtype: 'numberfield',
-                            fieldLabel: 'X Size (arcmin)',
-                            value: 1,
+                            fieldLabel: 'X Size (arcsec)',
+                            value: 60,
                             name: 'xsize',
                             hideTrigger: true
                             // minValue: 1,
@@ -66,8 +66,8 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                         },
                         {
                             xtype: 'numberfield',
-                            fieldLabel: 'Y Size (arcmin)',
-                            value: 1,
+                            fieldLabel: 'Y Size (arcsec)',
+                            value: 60,
                             name: 'ysize',
                             hideTrigger: true
                             // minValue: 1,
@@ -78,7 +78,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             name: 'tag',
                             fieldLabel: 'Release TAG',
                             emptyText: 'Release tag for coadd cutouts',
-                            publishes: 'name',
+                            valueField: 'name',
                             displayField: 'displayName',
                             minChars: 0,
                             queryMode: 'local',
@@ -140,8 +140,8 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     cls: 'x-check-group-alt',
                                     name: 'label_position',
                                     items: [
-                                        {boxLabel: 'Inside', inputValue: 'inside'},
-                                        {boxLabel: 'Outside', inputValue: 'outside', checked: true}
+                                        {boxLabel: 'Inside', inputValue: 'inside', checked: true},
+                                        {boxLabel: 'Outside', inputValue: 'outside'}
                                     ]
                                 },
                                 {

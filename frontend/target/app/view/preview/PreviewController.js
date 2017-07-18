@@ -27,6 +27,11 @@ Ext.define('Target.view.preview.PreviewController', {
         }
     },
 
+    //ao clicar em um item do menu de contexto de objeto do visiomatic
+    onImageMenuItemClickVisiomatic: function(event, dataset){
+        this.onCommentPosition(event.latlng, dataset);
+    },
+
     onChangeRecord: function (record) {
         var me = this,
             view = me.getView(),
@@ -111,10 +116,11 @@ Ext.define('Target.view.preview.PreviewController', {
         if (vm.get('is_system')) {
             refs.btnRadius.setVisible(true);
             refs.btnMembers.setVisible(true);
-
+            refs.btnComments.setVisible(true);
         } else {
             refs.btnRadius.setVisible(false);
             refs.btnMembers.setVisible(true);
+            refs.btnComments.setVisible(false);
         }
 
     },
@@ -132,6 +138,9 @@ Ext.define('Target.view.preview.PreviewController', {
             url;
 
         if (dataset) {
+            visiomatic.setDataset(dataset.get('id'));
+            visiomatic.setCurrentDataset(dataset);
+
             url = dataset.get('image_src_ptif');
             if (url !== '') {
                 visiomatic.setImage(url);
@@ -231,23 +240,32 @@ Ext.define('Target.view.preview.PreviewController', {
         visiomatic.showHideRadius(state);
     },
 
-    onComment: function () {
+    /**
+     * @description
+     * @param latlng Object Posição x,y referente a lat long da imagem
+     * @param feature Object Informações sobre o objeto
+     */
+    onComment: function (latlng, feature) {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
             object = vm.get('currentRecord'),
             catalog = vm.get('currentCatalog'),
-            id;
+            object_id, catalog_id;
 
         if ((!object) || (!object.get('_meta_id'))) {
             return false;
-
         }
 
-        catalog = catalog.get('id');
-        id = object.get('_meta_id');
+        if (feature && feature.properties){
+            catalog_id = feature.properties._meta_catalog_id;
+            object_id  = feature.id;
+        }else{
+            catalog_id = catalog.get('id');
+            object_id  = object.get('_meta_id');
+        }
 
-        if (id > 0) {
+        if (object_id > 0) {
 
             var comment = Ext.create('Ext.window.Window', {
                 title: 'Comments',
@@ -256,11 +274,13 @@ Ext.define('Target.view.preview.PreviewController', {
                 closeAction: 'destroy',
                 constrainHeader:true,
                 width: 500,
-                height: 500,
+                height: 300,
                 autoShow:true,
+                onEsc: Ext.emptyFn,
                 items: [
                     {
                         xtype: 'comments-object',
+                        reference: '',
                         listeners: {
                             scope: this,
                             changecomments: 'onChangeComments'
@@ -269,8 +289,61 @@ Ext.define('Target.view.preview.PreviewController', {
                 ]
             });
 
-            comment.down('comments-object').getController().loadComments(catalog, id);
+            //passar latlng e feature para ser caregado comentários de um objeto específico ou de uma posição específica
+            comment.down('comments-object').getController().loadComments(catalog_id, object_id, latlng, feature);
         }
+
+    },
+
+    /**
+     * @description
+     * @param latlng Object Posição x,y referente a lat long da imagem
+     */
+    onCommentPosition: function (latlng, dataset) {
+        /*var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            object = vm.get('currentRecord'),
+            catalog = vm.get('currentCatalog'),
+            object_id, catalog_id;
+
+        if ((!object) || (!object.get('_meta_id'))) {
+            return false;
+        }
+
+        if (feature && feature.properties){
+            catalog_id = feature.properties._meta_catalog_id;
+            object_id  = feature.id;
+        }else{
+            catalog_id = catalog.get('id');
+            object_id  = object.get('_meta_id');
+        }*/
+
+        //if (object_id > 0) {
+
+            var comment = Ext.create('Ext.window.Window', {
+                title: 'Position Comments',
+                iconCls: 'x-fa fa-comments',
+                layout: 'fit',
+                closeAction: 'destroy',
+                constrainHeader:true,
+                width: 500,
+                height: 300,
+                autoShow:true,
+                onEsc: Ext.emptyFn,
+                items: [
+                    {
+                        xtype: 'comments-position',
+                        listeners: {
+                            scope: this,
+                            changecomments: 'onChangeComments'
+                        }
+                    }
+                ]
+            });
+
+            comment.down('comments-position').getController().loadComments(/*dec*/latlng.lat, /*ra*/latlng.lng, dataset);
+        //}
 
     },
 
@@ -302,11 +375,20 @@ Ext.define('Target.view.preview.PreviewController', {
 
     },
 
-    onChangeComments: function () {
+    onChangeComments: function (event) {
         var me = this,
-           view = me.getView();
+           view = me.getView(),
+           visiomatic = me.lookupReference('visiomatic'),
+           vm = me.getViewModel(),
+           lmembers = vm.get('overlayMembers');
+
+        if (event && event.comment) {
+            //TODO: atualizar o número de comentários em lmembers.feature.properties.
+            visiomatic.updateComment(lmembers, event.comment, event.total);
+        }
 
         view.fireEvent('changeinobject');
+
     },
 
     loadSystemMembers: function () {
@@ -390,6 +472,16 @@ Ext.define('Target.view.preview.PreviewController', {
             lmembers = vm.get('overlayMembers');
 
         visiomatic.showHideLayer(lmembers, state);
+
+    },
+
+    showHideComments: function (btn, state) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic'),
+            vm = me.getViewModel(),
+            lmembers = vm.get('overlayMembers');
+
+        visiomatic.showHideComments(lmembers, state);
 
     },
 

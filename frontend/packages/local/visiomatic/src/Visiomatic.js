@@ -151,6 +151,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         showCrosshair: true,
 
+        mlocate:''
     },
 
     _winCatalogOverlay: null,
@@ -237,8 +238,7 @@ Ext.define('visiomatic.Visiomatic', {
         } else {
             console.log('window.L ainda nao esta carregada, incluir no app.json a biblioteca Leaflet');
         }
-
-        cmpVisiomatic = Ext.create('Ext.Component', {
+        this.cmpVisiomatic = cmpVisiomatic = Ext.create('Ext.Component', {
             id: me.getMapContainer(),
             width: '100%',
             height: '100%',
@@ -258,9 +258,12 @@ Ext.define('visiomatic.Visiomatic', {
 
         }
 
+        me.cmpMousePosition = me.makeMousePosition();
+
         Ext.apply(this, {
             items: [
-                cmpVisiomatic
+                cmpVisiomatic,
+                me.cmpMousePosition
             ]
         });
 
@@ -291,6 +294,7 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('contextmenu', me.onContextMenuClick, me);
         map.on('layeradd', me.onLayerAdd, me);
         map.on('move', me.onMove, me);
+        map.on('mousemove', me.onMouseMove, me);
         map.on('overlaycatalog', me.showCatalogOverlayWindow, me);
 
         // instancia de L.map
@@ -312,7 +316,6 @@ Ext.define('visiomatic.Visiomatic', {
         if (me.getEnableScale()) {
             me.addScaleController();
         }
-
     },
 
     onResize: function () {
@@ -334,7 +337,6 @@ Ext.define('visiomatic.Visiomatic', {
 
         }
     },
-
 
     getMapContainer: function () {
 
@@ -506,11 +508,17 @@ Ext.define('visiomatic.Visiomatic', {
         me.fireEvent('dblclick', event, me);
     },
 
-    onContextMenuClick: function (latlng) {
-        console.log('onContextMenuClick(%o)', latlng);
+    onContextMenuClick: function (event) {
         var me = this,
             map = me.getMap();
 
+        //evita chamar showContextMenu novamente, já foi chamada no evento contextmenu do objeto
+        if (!me.isObjectContextMenu){
+            me.showContextMenuImage(event);
+        }
+        me.isObjectContextMenu = false;
+
+        //console.log('onContextMenuClick(%o)', event);
     },
 
     removeImageLayer: function () {
@@ -647,8 +655,14 @@ Ext.define('visiomatic.Visiomatic', {
         var me = this,
             radec = me.getRaDec(),
             fov = me.getFov();
-
+            
         me.fireEvent('changeposition', radec, fov, me);
+    },
+
+    onMouseMove: function (event) {
+        var pos = String(event.latlng.lng.toFixed(5) + ', ' + event.latlng.lat.toFixed(5));
+        this.cmpMousePosition.el.dom.children[0].innerHTML = 'Mouse RA, Dec ('+(pos)+')';
+        //me.fireEvent('changemouseposition', event, me);
     },
 
     getLinkToPosition: function () {
@@ -673,12 +687,10 @@ Ext.define('visiomatic.Visiomatic', {
 
     onShift: function () {
         this.fireEvent('shift', this.getRaDec(), this);
-
     },
 
     isReady: function () {
         return this.getReady();
-
     },
 
 
@@ -737,7 +749,7 @@ Ext.define('visiomatic.Visiomatic', {
                 }
             },
             pointToLayer: function (feature, latlng) {
-
+                
                 path_options = Ext.Object.merge(radiusOptions, {
                     majAxis: radius,
                     minAxis: radius,
@@ -824,10 +836,11 @@ Ext.define('visiomatic.Visiomatic', {
                     return new l.LatLng(coords[1], coords[0], coords[2]);
                 }
             },
-            pointToLayer: function (feature, latlng) {
 
+            //Desenha os objetos (círculos pequenos)
+            pointToLayer: function (feature, latlng) {
                 var radius = pathOptions.radius,
-                    opts = pathOptions;
+                    opts = pathOptions, circle;
 
                 if (feature.is_system) {
                     // Se o Objeto for um sistema usar a propriedade radius em arcmin
@@ -842,9 +855,10 @@ Ext.define('visiomatic.Visiomatic', {
                 path_options = Ext.Object.merge(opts, {
                     majAxis: radius,
                     minAxis: radius,
-                    posAngle: 90
+                    posAngle: 90,
+                    //color: feature.properties._meta_comments ? '#FF9800' : '#4AAB46'
                 });
-
+                
                 path_options = Ext.Object.merge(path_options, options);
 
                 // tornar o objeto clicavel
@@ -854,19 +868,54 @@ Ext.define('visiomatic.Visiomatic', {
                 // estava em pixels
                 // usei o mesmo valor de raio para os lados da ellipse para
                 // gerar um circulo por ser um circulo o angulo tanto faz.
-                return l.ellipse(
-                    latlng,
-                    path_options);
+                circle = l.ellipse(latlng, path_options);
+                
+                //adiciona o ícone de comentário
+                if (feature.properties._meta_comments){
+                    //x-fa fa-map-marker fa-2x
+                    circle.commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker')
+                        .on('contextmenu', onLayerContextMenu);
+                    circle.commentMaker.targetObjet = circle;
+                }
 
+                return circle;
             }
+        }).bindPopup(function (layer) {
+            var feature = layer.feature,
+                popup = '<TABLE style="margin:auto;">' +
+                   '<TBODY style="vertical-align:top;text-align:left;">' +
+                        '<TR><TD><spam style="font-weight: bold;">ID </spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
+                        // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
+                        // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
+                        '<TR><TD><spam style="font-weight: bold;">RA, Dec (deg)</spam>: </TD><TD>' +
+                            feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
+                        '</td></tr>' +
+                    '</TBODY></TABLE>';
+
+            return popup;
+
+        }).on('dblclick', function () {
+            alert('TODO: OPEN IN EXPLORER!');
         })
-        .bindPopup(me.createOverlayPopup)
-        .on('dblclick', me.onDblClickOverlay);
+        /**
+         * @description Chama a função de exibição do menu de contexto
+         */
+        .on('contextmenu', onLayerContextMenu);
+
+        function onLayerContextMenu(event){
+            me.isObjectContextMenu = true; //diz para cancelar o evento em onContextMenuClick
+
+            if (event.target.targetObjet){
+                //o evento foi sobre um comentário de um objeto
+                event.layer = {feature: event.target.targetObjet.feature};
+            }
+
+            me.showContextMenuObject(event);
+        }
 
         map.addLayer(lCatalog);
 
         return lCatalog;
-
     },
 
     createOverlayPopup: function (layer) {
@@ -904,18 +953,64 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
+    showHideComments: function (layer, state) {
+        var me = this, l, q,
+            map = me.getMap();
+
+        if (layer !== null) {
+            for (i in layer._layers){
+                l = layer._layers[i];
+                q = l.feature.properties._meta_comments;
+
+                //se tem comentário(s), oculta ou exibe o ícone
+                if (q>0){
+                    l.commentMaker._icon.style.display = state ? '' : 'none';
+                }
+            }
+        }
+    },
+
+    updateComment: function (layer, comment, total) {
+        var me = this, l, id,
+            layers = layer._layers;
+
+        for (i in layers){
+            l  = layers[i];
+            id = l.feature.id;
+
+            if (id==comment.data.object_id){
+                l.feature.properties._meta_comments = total;
+                l._path.setAttribute('stroke', total ? '#FF9800' : '#4AAB46');
+            }
+            
+        }
+    
+    },
+
+    /**
+     * Adiciona um maker em uma determinada posição, podendo cher chamada de duas formas:
+     *      markPosition(ra, dec, iconCls);
+     *      markPosition(latlng, iconCls);
+     */
     markPosition: function (ra, dec, iconCls) {
         var me = this,
             l = me.libL,
             map = me.getMap(),
-            latlng, lmarkPosition, myIcon;
-
-        latlng = l.latLng(dec, ra);
+            latlng, lmarkPosition, myIcon, iconAnchor;
+        
+        if (arguments.length==2){
+            latlng = ra;
+            iconCls = dec;
+            iconAnchor = [6,22];//28];
+        }else{
+            latlng = l.latLng(dec, ra);
+            iconAnchor = [8,44];
+        }
 
         if (iconCls) {
             myIcon = l.divIcon({
                 className: 'visiomatic-marker-position',
-                iconAnchor: [8, 44],
+                iconAnchor: iconAnchor,
                 html:'<i class="' + iconCls + '"></i>'
             });
 
@@ -1049,7 +1144,56 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
+    /**
+     * @description Exibe um menu de contexto
+     */
+    showContextMenuImage: function(event){
+        var me = this,
+            xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
+        
+        if (event.originalEvent.target.classList.contains('comment-maker')){
+            return me.showContextMenuObject(event);
+        }
 
+        if (!this.contextMenuImage){
+            this.contextMenuImage = new Ext.menu.Menu({
+                items: [
+                    {
+                        id: 'comment-position',
+                        text: 'Comment Position',
+                        handler: function(item) {
+                            me.fireEvent('imageMenuItemClick', event, me.getCurrentDataset());
+                        }
+                    }]
+            });
+        }
+        
+        this.contextMenuImage.showAt(xy);
+    },
+
+    showContextMenuObject: function(event){
+        var objectMenuItem,
+            me = this,
+            xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
+
+        if (!this.contextMenuObject){
+            this.contextMenuObject = new Ext.menu.Menu({
+                items: [
+                    {
+                        id: 'comment-object',
+                        text: 'Comment Object',
+                        handler: function(item) {
+                            me.fireEvent('objectMenuItemClick', event, this.feature);
+                        }
+                    }]
+            });
+        }
+
+        objectMenuItem = me.contextMenuObject.items.get("comment-object");
+        objectMenuItem.feature = event.layer ? event.layer.feature :  null;
+        
+        me.contextMenuObject.showAt(xy);
+    },
 
     /**
      * Desenha um retangulo
@@ -1104,7 +1248,6 @@ Ext.define('visiomatic.Visiomatic', {
             // nao tem um dataset carregado nao da pra testar se esta dentro ou nao
             return true
         }
-
     }
 
 });

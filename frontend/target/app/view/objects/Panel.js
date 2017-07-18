@@ -68,6 +68,14 @@ Ext.define('Target.view.objects.Panel', {
                         handler: 'onClickDownload'
                     },
                     {
+                        xtype: 'button',
+                        iconCls: 'x-fa fa-commenting',
+                        bind: {
+                            //disabled: '{!currentRecord._meta_id}'
+                        },
+                        handler: 'onCommentButton'
+                    },
+                    {
                         iconCls: 'x-fa fa-picture-o',
                         tooltip: 'Create Mosaic',
                         handler: 'onClickCreateCutouts'
@@ -158,7 +166,10 @@ Ext.define('Target.view.objects.Panel', {
                     xtype: 'targets-objects-mosaic',
                     reference: 'TargetMosaic',
                     bind: {
-                        store: '{objects}'
+                        store: '{objects}',
+                    },
+                    listeners: {
+                        select: 'onSelectObject'
                     },
                     tbar: [
                         {

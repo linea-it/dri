@@ -205,6 +205,14 @@ class ProductRelated(models.Model):
 
 # ------------------------------ Cutouts ------------------------------
 class CutOutJob(models.Model):
+    """
+        Este Model possui um Signal conectado a ele
+        toda vez que este model disparar o evento post_save
+        o metodo start_des_cutout_job do arquivo .signals sera executado.
+        este metodo ira enviar o job para o servico do DesCutout
+
+        OBS: este signal esta no final do arquivo. para evitar erros de import.
+    """
     status_job = (
         # Jobs que ainda nao foram enviados
         ('st', 'Start'),
@@ -212,6 +220,10 @@ class CutOutJob(models.Model):
         ('bs', 'Submit Job'),
         # Cutout Job enviado e aguardando termino na API
         ('rn', 'Running'),
+        # Before Download o job terminou mais ainda nao comecou a ser baixado
+        ('bd', 'Before Download'),
+        # Downloading
+        ('dw', 'Downloading'),
         # Cutout Job Concluido
         ('ok', 'Done'),
         # Erro no nosso lado
@@ -251,7 +263,7 @@ class CutOutJob(models.Model):
         verbose_name='Blacklist', default=False, help_text='Exclude blacklisted ccds')
 
     cjb_status = models.CharField(
-        max_length=2,
+        max_length=25,
         choices=status_job,
         default='st',
         verbose_name='Status'
@@ -263,7 +275,7 @@ class CutOutJob(models.Model):
     # Fields Referentes as labels que serao aplicadas ao cutout
     cjb_label_position = models.CharField(
         max_length=10, verbose_name='Label Position', choices=(('inside', 'Inside'), ('outside', 'Outside')),
-        null=True, blank=True,
+        null=True, blank=True, default='outside',
         help_text="This field determines the position of the labels, 'inside' for labels on the image and 'outside' for labels outside the image.")
 
     cjb_label_properties = models.CharField(
@@ -276,9 +288,16 @@ class CutOutJob(models.Model):
     cjb_label_font_size = models.PositiveIntegerField(
         verbose_name='Label Font Size', default=10, null=True, blank=True, help_text='Font size in px.')
 
+    cjb_results_file = models.CharField(
+        max_length=4096, verbose_name='Result File',
+        null=True, blank=True, default=None, help_text="File that contains the links returned by the DesCutouts service")
+
+    cjb_matched_file = models.CharField(
+        max_length=4096, verbose_name='Matched File',
+        null=True, blank=True, default=None, help_text="File containing the relations between ra, dec with the image")
+
     def __str__(self):
         return str(self.cjb_display_name)
-
 
 class Cutout(models.Model):
     cjb_cutout_job = models.ForeignKey(
@@ -409,3 +428,11 @@ class BookmarkProduct(models.Model):
 
     def __str__(self):
         return str(self.pk)
+
+
+
+# -------------------------------- Signals --------------------------------------
+# Esses signals connect devem ficar no final do arquivo para nao dar problema de import.
+from django.db.models.signals import post_save
+from .signals import start_des_cutout_job
+post_save.connect(start_des_cutout_job, sender=CutOutJob)
