@@ -327,7 +327,7 @@ class DesCutoutService:
 
         # Recupera o Model CutoutJob pelo id
         try:
-            cutoutjob = CutOutJob.objects.get(pk=int(id))
+            cutoutjob = self.get_cutoutjobs_by_id(id)
 
             self.logger.debug("CutoutJob Name: %s" % cutoutjob.cjb_display_name)
 
@@ -365,6 +365,9 @@ class DesCutoutService:
         # Pegar todos os CutoutJobs com status = st (Start)
         return CutOutJob.objects.filter(cjb_status=str(status))
 
+    def get_cutoutjobs_by_id(self, id):
+        return CutOutJob.objects.get(pk=int(id))
+
     def change_cutoutjob_status(self, cutoutjob, status):
         self.logger.info("Changing the CutoutJob Status %s for %s" % (cutoutjob.cjb_status, status))
         cutoutjob.cjb_status = status
@@ -394,6 +397,7 @@ class DesCutoutService:
             if list_files is False:
                 # Changing the CutoutJob Status for Error in the DesCutout side.
                 self.change_cutoutjob_status(job, "je")
+                break
 
             if list_files is not None:
                 # Guardar o Arquivo de resultado com os links a serem baixados

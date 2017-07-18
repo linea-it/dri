@@ -38,89 +38,83 @@ def check_jobs_running():
     descutout.check_jobs()
 
 
-@periodic_task(
-    # run_every=(crontab(minute='*/1')),
-    run_every=30.0,
-    name="check_jobs_to_be_downloaded",
-    # ignore_result=True
-)
-def check_jobs_to_be_downloaded():
+# @periodic_task(
+#     # run_every=(crontab(minute='*/1')),
+#     run_every=30.0,
+#     name="check_jobs_to_be_downloaded",
+#     # ignore_result=True
+# )
+@task(name="download_cutoutjob")
+def download_cutoutjob(id):
     logger = descutout.logger
 
-    # Recuperar todos os jobs com status Before Downloading
-    cutoutjobs = descutout.get_cutoutjobs_by_status('bd')
+    logger.info("Start downloading Cutout Job [ %s ]" % id)
 
-    if cutoutjobs.count() > 0:
+    cutoutjob = descutout.get_cutoutjobs_by_id(id)
 
-        logger.info("There are %s jobs waiting to start downloading" % cutoutjobs.count())
+    # Changing the CutoutJob Status for Downloading
+    descutout.change_cutoutjob_status(cutoutjob, "dw")
 
-        cutoutjob = cutoutjobs.first()
+    cutoutdir = descutout.get_cutout_dir(cutoutjob)
 
-        logger.info("Start downloading Cutout Job [ %s ]" % cutoutjob.pk)
+    allarqs = list()
 
-        # Changing the CutoutJob Status for Downloading
-        descutout.change_cutoutjob_status(cutoutjob, "dw")
+    # Deixar na memoria a lista de objetos ja associada com os nomes dos arquivos
+    objects = descutout.get_objects_from_file(cutoutjob)
 
-        cutoutdir = descutout.get_cutout_dir(cutoutjob)
+    # Recuperar o arquivo de Results
+    with open(cutoutjob.cjb_results_file, 'r') as result_file:
+        lines = result_file.readlines()
+        for url in lines:
+            arq = descutout.parse_result_url(url)
 
-        allarqs = list()
+            # TODO adicionar um parametro para decidir se baixa somente os arquivos pngs.
+            if arq.get('file_type') == 'png':
+                allarqs.append(arq)
 
-        # Deixar na memoria a lista de objetos ja associada com os nomes dos arquivos
-        objects = descutout.get_objects_from_file(cutoutjob)
+                object_id = None
+                object_ra = None
+                object_dec = None
 
-        # Recuperar o arquivo de Results
-        with open(cutoutjob.cjb_results_file, 'r') as result_file:
-            lines = result_file.readlines()
-            for url in lines:
-                arq = descutout.parse_result_url(url)
+                for obj in objects:
+                    if arq.get("thumbname") == obj.get("thumbname"):
+                        object_id = obj.get("id")
+                        object_ra = obj.get("ra")
+                        object_dec = obj.get("dec")
 
-                # TODO adicionar um parametro para decidir se baixa somente os arquivos pngs.
-                if arq.get('file_type') == 'png':
-                    allarqs.append(arq)
+                start = timezone.now()
+                file_path = descutout.download_file(
+                    arq.get('url'),
+                    cutoutdir,
+                    arq.get('filename')
+                )
 
-                    object_id = None
-                    object_ra = None
-                    object_dec = None
+                file_size = os.path.getsize(file_path)
 
-                    for obj in objects:
-                        if arq.get("thumbname") == obj.get("thumbname"):
-                            object_id = obj.get("id")
-                            object_ra = obj.get("ra")
-                            object_dec = obj.get("dec")
+                finish = timezone.now()
 
-                    start = timezone.now()
-                    file_path = descutout.download_file(
-                        arq.get('url'),
-                        cutoutdir,
-                        arq.get('filename')
-                    )
-
-                    file_size = os.path.getsize(file_path)
-
-                    finish = timezone.now()
-
-                    cutout = descutout.create_cutout_model(
-                        cutoutjob,
-                        filename=arq.get('filename'),
-                        thumbname=arq.get('thumbname'),
-                        type=arq.get('file_type'),
-                        filter=None,
-                        object_id=object_id,
-                        object_ra=object_ra,
-                        object_dec=object_dec,
-                        file_path=file_path,
-                        file_size=file_size,
-                        start=start,
-                        finish=finish)
+                cutout = descutout.create_cutout_model(
+                    cutoutjob,
+                    filename=arq.get('filename'),
+                    thumbname=arq.get('thumbname'),
+                    type=arq.get('file_type'),
+                    filter=None,
+                    object_id=object_id,
+                    object_ra=object_ra,
+                    object_dec=object_dec,
+                    file_path=file_path,
+                    file_size=file_size,
+                    start=start,
+                    finish=finish)
 
 
-        result_file.close()
+    result_file.close()
 
-        # Deletar o job no Servico
-        descutout.delete_job(cutoutjob)
+    # Deletar o job no Servico
+    descutout.delete_job(cutoutjob)
 
-        # Changing the CutoutJob Status for Done
-        descutout.change_cutoutjob_status(cutoutjob, "ok")
+    # Changing the CutoutJob Status for Done
+    descutout.change_cutoutjob_status(cutoutjob, "ok")
 
 
 
