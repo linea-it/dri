@@ -17,7 +17,6 @@ from rest_framework import status
 import django_filters
 from rest_framework import filters
 
-
 class FilterViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows filters to be viewed or edited
@@ -124,20 +123,39 @@ def contact_us(request):
 
 
 @api_view(['GET'])
-def teste(request):
+def cutout_fits(request):
     if request.method == 'GET':
-        print('Teste---------------------')
-
-        # from product.tasks import start_des_cutout_job_by_id
-        # from pprint import pprint
-
-        # result = start_des_cutout_job_by_id.delay(37)
-        # pprint(result)
-        from product.descutoutservice import DesCutoutService
-        cutoutjobs = DesCutoutService()
-        a = cutoutjobs.start_job_by_id(46)
-        # a = cutoutjobs.check_jobs()
-        # a = cutoutjobs.start_job()
-        # a = cutoutjobs.test_api_help()
-
-        return Response(dict({'teste': ''}))
+        # print('Teste---------------------')
+        # from product.descutoutservice import CutoutJobs
+        # cutoutjobs = CutoutJobs()
+        # token = cutoutjobs.generate_token()
+        # print('Token---------------------')
+        # print(token)
+        # # a = cutoutjobs.check_job()
+        # # a = cutoutjobs.start_job()
+        # # a = cutoutjobs.test_api_help()
+        # # a = cutoutjobs.check_token_status('e37d1c43-7f65-4f6e-b735-5d22e830a6e8')
+        # print('jobId---------------------')
+        # # jobId = cutoutjobs.get_job_by_ra_dec([341.44103], [0.06931])
+        #
+        # jobId = 'e37d1c43-7f65-4f6e-b735-5d22e830a6e8'
+        # print('result---------------------')
+        # result = cutoutjobs.get_job(token, jobId)
+        # # print(result)
+        # fits = cutoutjobs.check_job_status(jobId)
+        # print(fits)
+        # # print(png_link.split('/')[len(png_link.split('/')) - 1])
+        #
+        # # file_path = cutoutjobs.download_file_png(result.get('links')[10], png_link.split('/')[len(png_link.split('/')) - 1])
+        # # print(file_path)
+        #
+        # # download = cutoutjobs.download_cutouts(jobId, results)
+        # # print(download)
+        # results = {
+        #     'status': fits,
+        #     'jobId': jobId,
+        #     'result': result,
+        # }
+        #
+        # return Response(dict({'result': results}))
+        return Response(dict({'result': {}}))

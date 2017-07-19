@@ -10,7 +10,8 @@
             splitModePropName="enable.split.mode"
             pageModePropName="app.page.mode"
             hasJsSdkPropName="app.has.js.sdk"
-            hasCssSdkPropName="app.has.css.sdk"/>
+            hasCssSdkPropName="app.has.css.sdk"
+            hasUsesPackagesPropName="app.has.uses" />
     </target>
 
     <!--    
@@ -20,6 +21,44 @@
         <if>
             <x-is-true value="${enable.split.mode}"/>
             <then>
+                <local name="build.js.framework.fwset" />
+                <local name="build.js.framework.rtl" />
+                <if>
+                    <or>
+                        <x-is-true value="${app.output.framework.all}" />
+                        <isset property="app.has.uses" />
+                    </or>
+                    <then>
+                        <property name="build.include.all.scss" value="true" />
+                        <property name="build.js.framework.fwset"> </property>
+                        <if>
+                            <x-is-false value="${app.output.framework.rtl}" />
+                            <then>
+                                <property name="build.js.framework.rtl">
+                                    <![CDATA[
+                                        exclude
+                                            -namespace=Ext.rtl
+                                        and
+                                    ]]>
+                                </property>
+                            </then>
+                            <else>
+                                <property name="build.js.framework.rtl"> </property>
+                            </else>
+                        </if>
+                    </then>
+                    <else>
+                        <property name="build.js.framework.fwset">
+                            <![CDATA[
+                                intersect
+                                    -set=page,allframework
+                                and
+                            ]]>
+                        </property>
+                        <property name="build.js.framework.rtl"> </property>
+                    </else>
+                </if>
+
                 <property name="app.output.framework.include"
                           value="package-sencha-core,framework,toolkit,package-core"/>
 
@@ -40,12 +79,11 @@
                         save
                             allframework
                         and
-                        intersect
-                            -set=page,allframework
-                        and
+                        ${build.js.framework.fwset}
                         save
                             frameworkdeps
                         and
+                        ${build.js.framework.rtl}
                         include
                             -tag=Ext.cmd.derive
                         and
@@ -80,6 +118,25 @@
                 </x-compile>
             </then>
             <else>
+                <local name="framework.include.filter"/>
+                <if>
+                    <isset property="app.has.uses"/>
+                    <then>
+                        <property name="app.output.framework.include"
+                                  value="package-sencha-core,framework,toolkit,package-core"/>
+                        
+                        <property name="framework.include.filter">
+                            include
+                                -tag=${app.output.framework.include}
+                            and
+                        </property>
+                    </then>
+                    <else>
+                        <property name="framework.include.filter">
+                            #no-op
+                        </property>
+                    </else>
+                </if>
                 <x-compile refid="${compiler.ref.id}">
                     <![CDATA[
                         # build an all-classes.js file that contains
@@ -87,6 +144,7 @@
                         restore
                             page
                         and
+                        ${framework.include.filter}
                         ${build.optimize}
                         and
                         concat
