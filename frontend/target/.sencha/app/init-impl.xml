@@ -19,13 +19,11 @@
         <script language="javascript">
             <![CDATA[
             var f = new java.io.File(project.getProperty("basedir"));
-            var sub = ".sencha/workspace/sencha.cfg"
-            var sub2 = "workspace.json";
+            var sub = ".sencha/workspace/sencha.cfg";
 
             for (var p = f; p; p = p.getParentFile()) {
                 var t = new java.io.File(p, sub);
-                var t2 = new java.io.File(p, sub2);
-                if (t.exists() || t2.exists()) {
+                if (t.exists()) {
                     // we found the workspace folder!
 
                     t = new java.io.File(p, "local.properties");
@@ -80,26 +78,19 @@
             <file path="${app.config.dir}/${build.environment}.properties" required="false"/>
             <file path="${app.config.dir}/build.properties" required="false"/>
             <!-- Pick up the defaults by framework/environment followed by general: -->
-            <file path="${framework.config.dir}/templates/App/.sencha/app/${framework.name}.properties" required="true"/>
-            <file path="${framework.config.dir}/templates/App/.sencha/app/${app.packager}.defaults.properties" required="false"/>
-            <file path="${framework.config.dir}/templates/App/.sencha/app/${build.environment}.defaults.properties" required="true"/>
+            <file path="${app.config.dir}/${framework.name}.properties" required="true"/>
+            <file path="${app.config.dir}/${app.packager}.defaults.properties" required="false"/>
+            <file path="${app.config.dir}/${build.environment}.defaults.properties" required="true"/>
             <file path="${app.config.dir}/defaults.properties" required="true"/>
         </x-load-properties>
 
         <!--
         calculate the appropriate build.compression value
         -->
-        <condition property="build.compression" value="-cmd">
+        <condition property="build.compression" value="-yui">
             <or>
                 <x-is-true value="${build.compression.yui}"/>
                 <equals arg1="yui" arg2="${app.compressor.type}"/>
-            </or>
-        </condition>
-
-        <condition property="build.compression" value="-cmd">
-            <or>
-                <x-is-true value="${build.compression.cmd}"/>
-                <equals arg1="cmd" arg2="${app.compressor.type}"/>
             </or>
         </condition>
 
@@ -153,8 +144,6 @@
         <property name="app.sass.fashion" value="false"/>
         <property name="app.sass.rhino" value="false"/>
         <property name="app.sass.dynamic" value="false"/>
-        <property name="app.sass.generated.var" value="${app.sass.save}"/>
-
     </target>
     <target name="-after-init"/>
 
@@ -250,18 +239,6 @@
             </then>
         </if>
 
-        <if>
-            <or>
-                <x-is-false value="${app.output.progressive.enable}"/>
-                <not>
-                    <isset property="${app.output.progressive.enable}"/>
-                </not>
-            </or>
-            <then>
-                <property name="${skip.progressive}" value="1"/>
-            </then>
-        </if>
-        
         <if>
             <!--If Deltas are FALSE, deltas do not exist, or caching is disabled then skip delta patching-->
             <or>
@@ -395,9 +372,6 @@
                 ${build.operations}
                 and
                 ${exclude.boot}
-                include
-                    -usedPackageDeps
-                and
                 save
                     page
             ]]>
@@ -417,9 +391,6 @@
                 ${build.operations}
                 and
                 ${exclude.boot}
-                include
-                    -usedPackageDeps
-                and
                 save
                     page
             ]]>
@@ -432,9 +403,7 @@
                   defaultSassFile="${app.out.scss}"
                   defaultCssFile="${app.out.css}"
                   refid="app.web.server"
-                  saveVariablesProp="app.sass.generated.var"
-                  uiDirProp="app.sass.generated.src"
-                  sassNamespaceProp="app.sass.namespace"
+                  saveVariablesProp="app.sass.save"
                   j2eeMode="${use.webxml}">
             <mapping name="~cmd" path="${cmd.dir}"/>
             <mapping name="" path="${build.web.root}"/>

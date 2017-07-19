@@ -30,6 +30,7 @@ from sqlalchemy import exc as sa_exc
 from sqlalchemy.sql import select
 from sqlalchemy.sql import column
 
+
 class DesCutoutService:
     db = None
 
@@ -627,22 +628,31 @@ class DesCutoutService:
 
         print(req)
         print(req.text)
-        print(req.json()['job'])
+        print(req.json()["job"])
 
-def sextodec(xyz, delimiter=None):
-    """Decimal value from numbers in sexagesimal system.
-    The input value can be either a floating point number or a string
-    such as "hh mm ss.ss" or "dd mm ss.ss". Delimiters other than " "
-    can be specified using the keyword ``delimiter``.
-    """
-    divisors = [1, 60.0, 3600.0]
+    def create_cutout_model(self,
+                            cutoutjob, filename, thumbname, type, filter=None, object_id=None, object_ra=None,
+                            object_dec=None, file_path=None, file_size=None, start=None, finish=None):
 
-    xyzlist = str(xyz).split(delimiter)
+        cutout, created = Cutout.objects.update_or_create(
+            cjb_cutout_job=cutoutjob,
+            ctt_file_name=filename,
+            ctt_file_type=type,
+            ctt_filter=filter,
+            ctt_object_id=object_id,
+            ctt_object_ra=object_ra,
+            ctt_object_dec=object_dec,
+            ctt_file_path=file_path,
+            ctt_file_size=file_size,
+            defaults={
+                "ctt_thumbname": thumbname,
+                "ctt_download_start_time": start,
+                "ctt_download_finish_time": finish
+            }
+        )
 
-    sign = 1
-
-    self.logger.debug("Cutout ID %s Registred" % cutout.pk)
-    return cutout
+        self.logger.debug("Cutout ID %s Registred" % cutout.pk)
+        return cutout
 
 
 class CutoutJobsDBHelper:

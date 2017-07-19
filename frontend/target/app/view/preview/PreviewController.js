@@ -7,8 +7,7 @@ Ext.define('Target.view.preview.PreviewController', {
     alias: 'controller.preview',
 
     requires: [
-        'common.comment.CommentsObject',
-        'Target.view.preview.DescutDownloadWindow'
+        'common.comment.CommentsObject'
     ],
 
     listen: {
@@ -28,10 +27,15 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     //ao clicar em um item do menu de contexto de objeto do visiomatic
+    onObjectMenuItemClickVisiomatic: function(event, feature){
+        this.onComment(event.latlng, feature);
+    },
+
+    //ao clicar em um item do menu de contexto de objeto do visiomatic
     onImageMenuItemClickVisiomatic: function(event, dataset){
         this.onCommentPosition(event.latlng, dataset);
     },
-
+    
     onChangeRecord: function (record) {
         var me = this,
             view = me.getView(),
@@ -344,34 +348,6 @@ Ext.define('Target.view.preview.PreviewController', {
 
             comment.down('comments-position').getController().loadComments(/*dec*/latlng.lat, /*ra*/latlng.lng, dataset);
         //}
-
-    },
-
-    onSave: function () {
-        var me = this,
-            view = me.getView(),
-            vm = view.getViewModel(),
-            object = vm.get('currentRecord'),
-            catalog = vm.get('currentCatalog'),
-            id;
-
-        if (object.get('tilename')) {
-
-          view.setLoading(true);
-          tilename = object.get('tilename');
-
-          var winDownload = Ext.create('Target.view.preview.DescutDownloadWindow');
-          winDownload.loadFits(tilename);
-          winDownload.show();
-          view.setLoading(false);
-        } else {
-
-          alert ('Please select an element.')
-
-        }
-
-        // me.winDownload = Ext.create('Target.view.preview.DescutDownloadWindow',{args: {id: '1'}});
-        // me.winDownload.show();
 
     },
 

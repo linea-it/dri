@@ -2,7 +2,6 @@ import cx_Oracle
 from coadd.models import Release, Dataset, Tile, Tag
 from django.conf import settings
 from pprint import pprint
-import copy
 
 
 # query and database change according with the release to register
@@ -56,7 +55,7 @@ class DataDiscovery:
             self.db = cx_Oracle.connect(dbparams.get('USER'), dbparams.get('PASSWORD'), dsn=dsn)
             self.cursor = self.db.cursor()
 
-            print ("Connected DESOPER")
+            print ("Connected")
 
         except Exception as e:
             print(e)
@@ -315,98 +314,6 @@ class DataDiscovery:
             #             except Tile.DoesNotExist:
             #                 count_fail = count_fail + 1
 
-    def get_tiles_by_tag_and_field(self, tag, field):
-        # Checar se a quantidade de tiles e diferente das registradas
-        sql = "SELECT COUNT(*) as count from pfw_attempt p,proctag t WHERE t.tag='%s' AND t.pfw_attempt_id=p.id" % tag
-        original_count = self.fetch_scalar(sql)
-
-        print("Tiles Available [ %s ]" % original_count)
-
-        dri_count = Dataset.objects.filter(tag=field).count()
-
-        last_tile = Dataset.objects.filter(tag=field).order_by('-date').first()
-
-        last_date = None
-        if last_tile:
-            last_date = last_tile.date
-
-            print("Tiles Installed [ %s ] Recent Date [ %s ]" % (dri_count, last_date))
-
-        if original_count != dri_count:
-            print ('Tiles to be installed [ %s ]' % (original_count - dri_count))
-
-            # sql = "SELECT unitname as tilename, archive_path, t.created_date FROM pfw_attempt p,proctag t WHERE t.tag='%s' AND t.pfw_attempt_id=p.id ORDER BY created_date" % tag
-            # sql = ("SELECT p.unitname as tilename, p.reqnum, p.attnum, f.path as archive_path, d.filename "
-            #        "FROM proctag t, pfw_attempt p, file_archive_info f, desfile d "
-            #        "WHERE d.id=f.desfile_id AND d.pfw_attempt_id = p.id AND t.pfw_attempt_id = p.id "
-            #        "AND t.tag='" + tag + "' AND f.filename like '%.ptif' AND ROWNUM < 5 ORDER by unitname")
-
-            sql = (
-                "SELECT m.tilename, f.path as archive_path, m.filename, t.created_date FROM proctag t, file_archive_info f, miscfile m "
-                "WHERE t.pfw_attempt_id = m.pfw_attempt_id AND t.tag='" + tag + "' AND m.filetype='coadd_ptif' "
-                                                                                "AND f.filename=m.filename")
-
-            if last_date:
-                # datetime = last_date.split('.')[0]
-                # sql = sql + " AND t.created_date >= TO_DATE('" + datetime + "', 'YYYY-MM-DD HH24:MI:SS') "
-                sql = sql + " AND t.created_date >= TO_DATE('%s', 'YYYY-MM-DD HH24:MI:SS') " % last_date.strftime('%Y-%m-%d %H:%M:%S')
-
-
-            sql = sql + " ORDER by t.created_date, m.tilename"
-
-            print("Query: %s" % sql)
-
-            tiles = self.fetchall_dict(sql)
-
-            for tile in tiles:
-                image_src_ptif = "https://desar2.cosmology.illinois.edu/DESFiles/desarchive/%s" % (
-                    tile.get('ARCHIVE_PATH'))
-
-                tile.update({
-                    'image_src_ptif': image_src_ptif.replace("+", "%2B")
-                })
-
-                tile.update({
-                    'image_src_fits': image_src_ptif.replace("+", "%2B").replace("qa", "coadd")
-                })
-
-            return tiles
-
-        else:
-            return list()
-
-    def get_fits_by_tilename(self, tilename):
-        if tilename != None:
-            sql = ("select c.tilename, c.filename, c.band, fai.PATH, c.FILETYPE from coadd c, FILE_ARCHIVE_INFO fai where c.filename = fai.filename and c.tilename='" + tilename + "'")
-
-            print("Query: %s" % sql)
-
-            tiles = self.fetchall_dict(sql)
-
-            fits_file = {}
-
-            result = []
-
-            for tile in tiles:
-
-                url = "https://desar2.cosmology.illinois.edu/DESFiles/desarchive/%s/%s.fz" % (tile.get('PATH').replace("+", "%2B"), tile.get('FILENAME').replace("+", "%2B"))
-
-                fits_file.update({'url': url})
-
-                fits_file.update({
-                    'tilename': tilename
-                })
-
-                fits_file.update({
-                    'band': tile.get('BAND')
-                })
-
-                result.append(copy.copy(fits_file))
-
-            return result
-
-        else:
-            return list()
 
 if __name__ == '__main__':
     print ("---------- stand alone -------------")

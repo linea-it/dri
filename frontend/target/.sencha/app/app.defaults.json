@@ -157,7 +157,7 @@
      *  to adjust the base path for all bootstrap objects, or expanded into object form:
      *
      *      "bootstrap": {
-     *          "base": "${app.dir}",
+     *          "base": "${app.dir},
      *          "manifest": "bootstrap.json",
      *          "microloader": "bootstrap.js",
      *          "css": "bootstrap.css"
@@ -201,10 +201,7 @@
      *                  "defines": true,
      *                  "callParent": true,
      *                  "requires": true,
-     *               },
-     *              // This setting constrols the output language level.  Set to 'ES6' to 
-     *              // disable the transpiler
-     *              "version": "ES5"
+     *               }
      *          },
      *          "microloader": {
      *              "path": "microloader.js",
@@ -368,7 +365,7 @@
         },
         "js": [
             {
-                "path": "cordova.js",
+                "path": "phonegap.js",
                 "remote": true,
                 "priority": 1000
             }

@@ -40,7 +40,6 @@
                     -all
                 and
                 sass
-                    +skipWatch
                     +class-name-vars
                     +etc
                     +vars
@@ -55,7 +54,6 @@
                     page
                 and
                 sass
-                    +skipWatch
                     +ruby
                     -output=${app.example.out.ruby}
             ]]>
@@ -70,7 +68,7 @@
             </then>
         </if>
 
-        <x-get-relative-path from="${app.example.build.dir}"
+        <x-get-relative-path from="${app.example.dir}"
                              to="${app.example.css}"
                              property="app.example.css.path"/>
         
@@ -99,15 +97,12 @@
                     <x-is-true value="${app.sass.rhino}"/>
                     <then>
                         <x-fashion-compile
-                                slicer="true"
                                 file="${app.example.build.dir}"
                                 toFile="${app.example.build.dir}"/>
                     </then>
                     <else>
                         <x-sencha-command>
                             fashion
-                            -config=${app.dir}/app.json
-                            -slicer=true
                             -compress=${build.css.compress}
                             -split=${build.css.selector.limit}
                             ${app.example.build.dir}
@@ -145,7 +140,7 @@
                      overrideExcludeTags="">
 <![CDATA[
 Ext.Boot.loadSync([
-    "${cmd.dir}/ant/build/slicer/render.js",
+    "render.js",
     "${relpath}/ext-theme-base/sass/example/manifest.js",
     "${relpath}/ext-theme-base/sass/example/shortcuts.js",
     "custom.js"
@@ -187,7 +182,6 @@ Ext.Boot.loadSync([
             <![CDATA[
                 slicer-manifest
                     -exclude=${manifest.root.excludes}
-                    -jsonp=Ext.Microloader.setManifest
                     -removeBootstrapCssEntries=${remove.slicer.css.bootstrap.entries}
                     +ignoreDisabled
                     -basePath=${bootstrap.base.path}
@@ -207,13 +201,12 @@ Ext.Boot.loadSync([
         <echo>Capture theme image to ${build.capture.png}</echo>
         <x-sencha-command>
             <![CDATA[
-                theme
-                    capture
-                        -base=${app.example.build.dir}
-                        -page=${app.example.theme.html}
-                        -image=${build.capture.png}
-                        -manifest=${build.capture.json}
-            ]]>
+                        theme
+                            capture
+                                -page=${app.example.theme.html}
+                                -image=${build.capture.png}
+                                -manifest=${build.capture.json}
+                    ]]>
         </x-sencha-command>
     </target>
 

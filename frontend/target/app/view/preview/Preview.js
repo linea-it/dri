@@ -103,19 +103,15 @@ Ext.define('Target.view.preview.Preview', {
                 iconCls: 'x-fa fa-info-circle',
                 handler: 'onExplorer'
             },
-            {
+            /*{
                 xtype: 'button',
                 iconCls: 'x-fa fa-comments',
                 bind: {
                     disabled: '{!currentRecord._meta_id}'
                 },
                 handler: 'onComment'
-            },
-            {
-                xtype: 'button',
-                iconCls: 'x-fa fa-download',
-                handler: 'onSave'
-            },
+            },*/
+
             '-',
             {
                 xtype: 'button',
