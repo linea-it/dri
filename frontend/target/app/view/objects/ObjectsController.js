@@ -121,7 +121,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             me.taskCutoutJob = {
                 run: me.reloadCutoutJobs,
-                interval: 10000,
+                interval: 600000,
                 scope: me
             };
 
