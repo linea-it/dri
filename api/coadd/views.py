@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from coadd.datadiscoveryOLD import DataDiscovery
+from coadd.desoperdatabase import DesoperDatabase
 
 # Create your views here.
 class ReleaseViewSet(viewsets.ModelViewSet):
@@ -196,6 +196,6 @@ def get_fits_files(request):
         if request.query_params.get('tilename') == None:
             return Response(dict({'error': "tilename can't be null"}))
 
-        url = DataDiscovery().get_fits_by_tilename(request.query_params.get('tilename'))
+        url = DesoperDatabase().get_fits_by_tilename(request.query_params.get('tilename'))
 
         return Response(dict({'results': url}))
