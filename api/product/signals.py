@@ -40,5 +40,4 @@ def purge_cutout_job_dir(sender, instance, using, **kwargs):
     Toda Vez que um CutoutJob for deletado deve remover o diretorio com as imagens
 
     """
-    print("PURGE CUTOUT JOB DIR")
     purge_cutoutjob_dir.delay(instance.pk, instance.cjb_product.pk)
