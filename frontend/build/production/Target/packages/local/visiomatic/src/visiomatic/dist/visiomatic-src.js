@@ -1,1 +1,6154 @@
-var $jscomp={};$jscomp.scope={};$jscomp.defineProperty=typeof Object.defineProperties=='function'?Object.defineProperty:function(b,c,a){a=(a);if(a.get||a.set){throw new TypeError('ES3 does not support getters and setters.')}if(b==Array.prototype||b==Object.prototype){return}b[c]=a.value};$jscomp.getGlobal=function(a){return typeof window!='undefined'&&window===a?a:typeof global!='undefined'&&global!=null?global:a};$jscomp.global=$jscomp.getGlobal(this);$jscomp.polyfill=function(i,f,j,k){if(!f){return}var a=$jscomp.global;var b=i.split('.');for(var e=0;e<b.length-1;e++){var d=b[e];if(!(d in a)){a[d]={}}a=a[d]}var g=b[b.length-1];var h=a[g];var c=f(h);if(c==h||c==null){return}$jscomp.defineProperty(a,g,{configurable:!0,writable:!0,value:c})};$jscomp.polyfill('Array.prototype.copyWithin',function(a){if(a){return a}var b=function(c,b,a){var d=this.length;c=Number(c);b=Number(b);a=Number(a!=null?a:d);if(c<b){a=Math.min(a,d);while(b<a){if(b in this){this[c++]=this[b++]}else {delete this[c++];b++}}}else {a=Math.min(a,d+b-c);c+=a-b;while(a>b){if(--a in this){this[--c]=this[a]}else {delete this[c]}}}return this};return b},'es6-impl','es3');$jscomp.SYMBOL_PREFIX='jscomp_symbol_';$jscomp.initSymbol=function(){$jscomp.initSymbol=function(){};if(!$jscomp.global.Symbol){$jscomp.global.Symbol=$jscomp.Symbol}};$jscomp.symbolCounter_=0;$jscomp.Symbol=function(a){return ($jscomp.SYMBOL_PREFIX+(a||'')+$jscomp.symbolCounter_++)};$jscomp.initSymbolIterator=function(){$jscomp.initSymbol();var a=$jscomp.global.Symbol.iterator;if(!a){a=$jscomp.global.Symbol.iterator=$jscomp.global.Symbol('iterator')}if(typeof Array.prototype[a]!='function'){$jscomp.defineProperty(Array.prototype,a,{configurable:!0,writable:!0,value:function(){return $jscomp.arrayIterator(this)}})}$jscomp.initSymbolIterator=function(){}};$jscomp.arrayIterator=function(a){var b=0;return $jscomp.iteratorPrototype(function(){if(b<a.length){return {done:!1,value:a[b++]}}else {return {done:!0}}})};$jscomp.iteratorPrototype=function(b){$jscomp.initSymbolIterator();var a={next:b};a[$jscomp.global.Symbol.iterator]=function(){return this};return (a)};$jscomp.array=$jscomp.array||{};$jscomp.iteratorFromArray=function(a,d){$jscomp.initSymbolIterator();if(a instanceof String){a=a+''}var c=0;var b={next:function(){if(c<a.length){var e=c++;return {value:d(e,a[e]),done:!1}}b.next=function(){return {done:!0,value:void 0}};return b.next()}};b[Symbol.iterator]=function(){return b};return b};$jscomp.polyfill('Array.prototype.entries',function(a){if(a){return a}var b=function(){return $jscomp.iteratorFromArray(this,function(a,b){return [a,b]})};return b},'es6-impl','es3');$jscomp.polyfill('Array.prototype.fill',function(a){if(a){return a}var b=function(e,b,a){var c=this.length||0;if(b<0){b=Math.max(0,c+(b))}if(a==null||a>c){a=c}a=Number(a);if(a<0){a=Math.max(0,c+a)}for(var d=Number(b||0);d<a;d++){this[d]=e}return this};return b},'es6-impl','es3');$jscomp.findInternal=function(a,d,e){if(a instanceof String){a=(String(a))}var f=a.length;for(var b=0;b<f;b++){var c=a[b];if(d.call(e,c,b,a)){return {i:b,v:c}}}return {i:-1,v:void 0}};$jscomp.polyfill('Array.prototype.find',function(a){if(a){return a}var b=function(b,a){return $jscomp.findInternal(this,b,a).v};return b},'es6-impl','es3');$jscomp.polyfill('Array.prototype.findIndex',function(a){if(a){return a}var b=function(b,a){return $jscomp.findInternal(this,b,a).i};return b},'es6-impl','es3');$jscomp.polyfill('Array.from',function(a){if(a){return a}var b=function(a,b,f){$jscomp.initSymbolIterator();b=b!=null?b:function(a){return a};var c=[];var e=(a)[Symbol.iterator];if(typeof e=='function'){a=e.call(a);var g;while(!(g=a.next()).done){c.push(b.call((f),g.value))}}else {var h=a.length;for(var d=0;d<h;d++){c.push(b.call((f),a[d]))}}return c};return b},'es6-impl','es3');$jscomp.polyfill('Array.prototype.keys',function(a){if(a){return a}var b=function(){return $jscomp.iteratorFromArray(this,function(a){return a})};return b},'es6-impl','es3');$jscomp.polyfill('Array.of',function(a){if(a){return a}var b=function(a){return Array.from(arguments)};return b},'es6-impl','es3');$jscomp.polyfill('Array.prototype.values',function(a){if(a){return a}var b=function(){return $jscomp.iteratorFromArray(this,function(b,a){return a})};return b},'es6','es3');$jscomp.executeAsyncGenerator=function(a){function passValueToGenerator(b){return a.next(b)}function passErrorToGenerator(b){return a['throw'](b)}return new Promise(function(b,c){function handleGeneratorRecord(a){if(a.done){b(a.value)}else {Promise.resolve(a.value).then(passValueToGenerator,passErrorToGenerator).then(handleGeneratorRecord,c)}}handleGeneratorRecord(a.next())})};$jscomp.makeIterator=function(a){$jscomp.initSymbolIterator();var b=(a)[Symbol.iterator];return b?b.call(a):$jscomp.arrayIterator((a))};$jscomp.owns=function(b,a){return Object.prototype.hasOwnProperty.call(b,a)};$jscomp.polyfill('WeakMap',function(c){function isConformant(){if(!c||!Object.seal){return !1}try{var b=Object.seal({});var d=Object.seal({});var a=new (c)([[b,2],[d,3]]);if(a.get(b)!=2||a.get(d)!=3){return !1}a['delete'](b);a.set(d,4);return !a.has(b)&&a.get(d)==4}catch(e){return !1}}if(isConformant()){return c}var a='$jscomp_hidden_'+Math.random().toString().substring(2);function insert(b){if(!$jscomp.owns(b,a)){var c={};$jscomp.defineProperty(b,a,{value:c})}}function patch(a){var b=Object[a];if(b){Object[a]=function(a){insert(a);return b(a)}}}patch('freeze');patch('preventExtensions');patch('seal');var d=0;var b=function(a){this.id_=(d+=Math.random()+1).toString();if(a){$jscomp.initSymbol();$jscomp.initSymbolIterator();var e=$jscomp.makeIterator(a);var b;while(!(b=e.next()).done){var c=b.value;this.set((c[0]),(c[1]))}}};b.prototype.set=function(b,c){insert(b);if(!$jscomp.owns(b,a)){throw new Error('WeakMap key fail: '+b)}b[a][this.id_]=c;return this};b.prototype.get=function(b){return $jscomp.owns(b,a)?b[a][this.id_]:undefined};b.prototype.has=function(b){return $jscomp.owns(b,a)&&$jscomp.owns(b[a],this.id_)};b.prototype['delete']=function(b){if(!$jscomp.owns(b,a)||!$jscomp.owns(b[a],this.id_)){return !1}return delete b[a][this.id_]};return b},'es6-impl','es3');$jscomp.ASSUME_NO_NATIVE_MAP=!1;$jscomp.polyfill('Map',function(b){var h=!$jscomp.ASSUME_NO_NATIVE_MAP&&function(){if(!b||!b.prototype.entries||typeof Object.seal!='function'){return !1}try{b=(b);var e=Object.seal({x:4});var c=new b($jscomp.makeIterator([[e,'s']]));if(c.get(e)!='s'||c.size!=1||c.get({x:4})||c.set({x:4},'t')!=c||c.size!=2){return !1}var d=c.entries();var a=d.next();if(a.done||a.value[0]!=e||a.value[1]!='s'){return !1}a=d.next();if(a.done||a.value[0].x!=4||a.value[1]!='t'||!d.next().done){return !1}return !0}catch(k){return !1}}();if(h){return b}$jscomp.initSymbol();$jscomp.initSymbolIterator();var f=new WeakMap();var c=function(){};c.prototype.previous;c.prototype.next;c.prototype.head;c.prototype.key;c.prototype.value;var a=function(a){this.data_={};this.head_=g();this.size=0;if(a){var d=$jscomp.makeIterator(a);var b;while(!(b=d.next()).done){var c=(b).value;this.set((c[0]),(c[1]))}}};a.prototype.set=function(c,b){var a=d(this,c);if(!a.list){a.list=this.data_[a.id]=[]}if(!a.entry){a.entry={next:this.head_,previous:this.head_.previous,head:this.head_,key:c,value:b};a.list.push(a.entry);this.head_.previous.next=a.entry;this.head_.previous=a.entry;this.size++}else {a.entry.value=b}return this};a.prototype['delete']=function(b){var a=d(this,b);if(a.entry&&a.list){a.list.splice(a.index,1);if(!a.list.length){delete this.data_[a.id]}a.entry.previous.next=a.entry.next;a.entry.next.previous=a.entry.previous;a.entry.head=null;this.size--;return !0}return !1};a.prototype.clear=function(){this.data_={};this.head_=this.head_.previous=g();this.size=0};a.prototype.has=function(a){return !!d(this,a).entry};a.prototype.get=function(b){var a=d(this,b).entry;return (a&&(a.value))};a.prototype.entries=function(){return e(this,function(a){return [a.key,a.value]})};a.prototype.keys=function(){return e(this,function(a){return a.key})};a.prototype.values=function(){return e(this,function(a){return a.value})};a.prototype.forEach=function(d,c){var e=this.entries();var b;while(!(b=e.next()).done){var a=b.value;d.call((c),(a[1]),(a[0]),this)}};(a.prototype)[Symbol.iterator]=a.prototype.entries;var d=function(f,d){var e=j(d);var a=f.data_[e];if(a&&$jscomp.owns(f.data_,e)){for(var c=0;c<a.length;c++){var b=a[c];if(d!==d&&b.key!==b.key||d===b.key){return {id:e,list:a,index:c,entry:b}}}}return {id:e,list:a,index:-1,entry:undefined}};var e=function(b,c){var a=b.head_;return $jscomp.iteratorPrototype(function(){if(a){while(a.head!=b.head_){a=a.previous}while(a.next!=a.head){a=a.next;return {done:!1,value:c(a)}}a=null}return {done:!0,value:void 0}})};var g=function(){var a={};a.previous=a.next=a.head=a;return a};var i=0;var j=function(a){var b=a&&typeof a;if(b=='object'||b=='function'){a=(a);if(!f.has(a)){var c=''+ ++i;f.set(a,c);return c}return f.get(a)}return 'p_'+a};return a},'es6-impl','es3');$jscomp.polyfill('Math.acosh',function(a){if(a){return a}var b=function(a){a=Number(a);return Math.log(a+Math.sqrt(a*a-1))};return b},'es6-impl','es3');$jscomp.polyfill('Math.asinh',function(a){if(a){return a}var b=function(a){a=Number(a);if(a===0){return a}var b=Math.log(Math.abs(a)+Math.sqrt(a*a+1));return a<0?-b:b};return b},'es6-impl','es3');$jscomp.polyfill('Math.log1p',function(a){if(a){return a}var b=function(a){a=Number(a);if(a<0.25&&a>-0.25){var e=a;var f=1;var b=a;var c=0;var d=1;while(c!=b){e*=a;d*=-1;b=(c=b)+d*e/++f}return b}return Math.log(1+a)};return b},'es6-impl','es3');$jscomp.polyfill('Math.atanh',function(b){if(b){return b}var a=Math.log1p;var c=function(b){b=Number(b);return (a(b)-a(-b))/2};return c},'es6-impl','es3');$jscomp.polyfill('Math.cbrt',function(a){if(a){return a}var b=function(a){if(a===0){return a}a=Number(a);var b=Math.pow(Math.abs(a),1/3);return a<0?-b:b};return b},'es6-impl','es3');$jscomp.polyfill('Math.clz32',function(a){if(a){return a}var b=function(a){a=Number(a)>>>0;if(a===0){return 32}var b=0;if((a&4.29490176E9)===0){a<<=16;b+=16}if((a&4.27819008E9)===0){a<<=8;b+=8}if((a&4.02653184E9)===0){a<<=4;b+=4}if((a&3.221225472E9)===0){a<<=2;b+=2}if((a&2.147483648E9)===0){b++}return b};return b},'es6-impl','es3');$jscomp.polyfill('Math.cosh',function(a){if(a){return a}var b=Math.exp;var c=function(a){a=Number(a);return (b(a)+b(-a))/2};return c},'es6-impl','es3');$jscomp.polyfill('Math.expm1',function(a){if(a){return a}var b=function(a){a=Number(a);if(a<0.25&&a>-0.25){var d=a;var e=1;var b=a;var c=0;while(c!=b){d*=a/++e;b=(c=b)+d}return b}return Math.exp(a)-1};return b},'es6-impl','es3');$jscomp.polyfill('Math.hypot',function(a){if(a){return a}var b=function(b,c,g){b=Number(b);c=Number(c);var a,f,e;var d=Math.max(Math.abs(b),Math.abs(c));for(a=2;a<arguments.length;a++){d=Math.max(d,Math.abs(arguments[a]))}if(d>1.0E100||d<1.0E-100){b=b/d;c=c/d;e=b*b+c*c;for(a=2;a<arguments.length;a++){f=Number(arguments[a])/d;e+=f*f}return Math.sqrt(e)*d}else {e=b*b+c*c;for(a=2;a<arguments.length;a++){f=Number(arguments[a]);e+=f*f}return Math.sqrt(e)}};return b},'es6-impl','es3');$jscomp.polyfill('Math.imul',function(a){if(a){return a}var b=function(a,b){a=Number(a);b=Number(b);var e=a>>>16&65535;var c=a&65535;var f=b>>>16&65535;var d=b&65535;var g=e*d+c*f<<16>>>0;return c*d+g|0};return b},'es6-impl','es3');$jscomp.polyfill('Math.log10',function(a){if(a){return a}var b=function(a){return Math.log(a)/Math.LN10};return b},'es6-impl','es3');$jscomp.polyfill('Math.log2',function(a){if(a){return a}var b=function(a){return Math.log(a)/Math.LN2};return b},'es6-impl','es3');$jscomp.polyfill('Math.sign',function(a){if(a){return a}var b=function(a){a=Number(a);return a===0||isNaN(a)?a:a>0?1:-1};return b},'es6-impl','es3');$jscomp.polyfill('Math.sinh',function(a){if(a){return a}var b=Math.exp;var c=function(a){a=Number(a);if(a===0){return a}return (b(a)-b(-a))/2};return c},'es6-impl','es3');$jscomp.polyfill('Math.tanh',function(a){if(a){return a}var b=function(a){a=Number(a);if(a===0){return a}var b=Math.exp(-2*Math.abs(a));var c=(1-b)/(1+b);return a<0?-c:c};return b},'es6-impl','es3');$jscomp.polyfill('Math.trunc',function(a){if(a){return a}var b=function(a){a=Number(a);if(isNaN(a)||a===Infinity||a===-Infinity||a===0){return a}var b=Math.floor(Math.abs(a));return a<0?-b:b};return b},'es6-impl','es3');$jscomp.polyfill('Number.EPSILON',function(a){return Math.pow(2,-52)},'es6-impl','es3');$jscomp.polyfill('Number.MAX_SAFE_INTEGER',function(){return 9.007199254740991E15},'es6-impl','es3');$jscomp.polyfill('Number.MIN_SAFE_INTEGER',function(){return -9.007199254740991E15},'es6-impl','es3');$jscomp.polyfill('Number.isFinite',function(a){if(a){return a}var b=function(a){if(typeof a!=='number'){return !1}return !isNaN(a)&&a!==Infinity&&a!==-Infinity};return b},'es6-impl','es3');$jscomp.polyfill('Number.isInteger',function(a){if(a){return a}var b=function(a){if(!Number.isFinite(a)){return !1}return a===Math.floor(a)};return b},'es6-impl','es3');$jscomp.polyfill('Number.isNaN',function(a){if(a){return a}var b=function(a){return typeof a==='number'&&isNaN(a)};return b},'es6-impl','es3');$jscomp.polyfill('Number.isSafeInteger',function(a){if(a){return a}var b=function(a){return Number.isInteger(a)&&Math.abs(a)<=Number.MAX_SAFE_INTEGER};return b},'es6-impl','es3');$jscomp.polyfill('Object.assign',function(a){if(a){return a}var b=function(d,e){for(var c=1;c<arguments.length;c++){var a=arguments[c];if(!a){continue}for(var b in a){if($jscomp.owns(a,b)){d[b]=a[b]}}}return d};return b},'es6-impl','es3');$jscomp.polyfill('Object.getOwnPropertySymbols',function(a){if(a){return a}return function(){return []}},'es6-impl','es5');$jscomp.polyfill('Object.is',function(a){if(a){return a}var b=function(a,b){if(a===b){return a!==0||1/a===1/(b)}else {return a!==a&&b!==b}};return b},'es6-impl','es3');$jscomp.polyfill('Object.setPrototypeOf',function(a){if(a){return a}if(typeof ''.__proto__!='object'){return null}var b=function(a,b){a.__proto__=b;if(a.__proto__!==b){throw new TypeError(a+' is not extensible')}return a};return b},'es6','es5');$jscomp.EXPOSE_ASYNC_EXECUTOR=!0;$jscomp.FORCE_POLYFILL_PROMISE=!1;$jscomp.polyfill('Promise',function(c){if(c&&!$jscomp.FORCE_POLYFILL_PROMISE){return c}function AsyncExecutor(){this.batch_=null}AsyncExecutor.prototype.asyncExecute=function(a){if(this.batch_==null){this.batch_=[];this.asyncExecuteBatch_()}this.batch_.push(a);return this};AsyncExecutor.prototype.asyncExecuteBatch_=function(){var a=this;this.asyncExecuteFunction(function(){a.executeBatch_()})};var e=$jscomp.global['setTimeout'];AsyncExecutor.prototype.asyncExecuteFunction=function(a){e(a,0)};AsyncExecutor.prototype.executeBatch_=function(){while(this.batch_&&this.batch_.length){var b=this.batch_;this.batch_=[];for(var a=0;a<b.length;++a){var c=b[a];delete b[a];try{c()}catch(f){this.asyncThrow_(f)}}}this.batch_=null};AsyncExecutor.prototype.asyncThrow_=function(a){this.asyncExecuteFunction(function(){throw a})};var b={PENDING:0,FULFILLED:1,REJECTED:2};var a=function(c){this.state_=b.PENDING;this.result_=undefined;this.onSettledCallbacks_=[];var a=this.createResolveAndReject_();try{c(a.resolve,a.reject)}catch(f){a.reject(f)}};a.prototype.createResolveAndReject_=function(){var b=this;var a=!1;function firstCallWins(c){return function(d){if(!a){a=!0;c.call(b,d)}}}return {resolve:firstCallWins(this.resolveTo_),reject:firstCallWins(this.reject_)}};a.prototype.resolveTo_=function(b){if(b===this){this.reject_(new TypeError('A Promise cannot resolve to itself'))}else {if(b instanceof a){this.settleSameAsPromise_((b))}else {if(isObject(b)){this.resolveToNonPromiseObj_((b))}else {this.fulfill_(b)}}}};a.prototype.resolveToNonPromiseObj_=function(b){var a=undefined;try{a=b.then}catch(f){this.reject_(f);return}if(typeof a=='function'){this.settleSameAsThenable_(a,(b))}else {this.fulfill_(b)}};function isObject(a){switch(typeof a){case 'object':return a!=null;case 'function':return !0;default:return !1;}}a.prototype.reject_=function(a){this.settle_(b.REJECTED,a)};a.prototype.fulfill_=function(a){this.settle_(b.FULFILLED,a)};a.prototype.settle_=function(c,a){if(this.state_!=b.PENDING){throw new Error('Cannot settle('+c+', '+a|'): Promise already settled in state'+this.state_)}this.state_=c;this.result_=a;this.executeOnSettledCallbacks_()};a.prototype.executeOnSettledCallbacks_=function(){if(this.onSettledCallbacks_!=null){var b=this.onSettledCallbacks_;for(var a=0;a<b.length;++a){(b[a]).call();b[a]=null}this.onSettledCallbacks_=null}};var d=new AsyncExecutor();a.prototype.settleSameAsPromise_=function(b){var a=this.createResolveAndReject_();b.callWhenSettled_(a.resolve,a.reject)};a.prototype.settleSameAsThenable_=function(b,c){var a=this.createResolveAndReject_();try{b.call(c,a.resolve,a.reject)}catch(f){a.reject(f)}};a.prototype.then=function(e,f){var b;var c;var d=new a(function(a,d){b=a;c=d});function createCallback(a,d){if(typeof a=='function'){return function(d){try{b(a(d))}catch(g){c(g)}}}else {return d}}this.callWhenSettled_(createCallback(e,b),createCallback(f,c));return d};a.prototype['catch']=function(a){return this.then(undefined,a)};a.prototype.callWhenSettled_=function(c,e){var a=this;function callback(){switch(a.state_){case b.FULFILLED:c(a.result_);break;case b.REJECTED:e(a.result_);break;default:throw new Error('Unexpected state: '+a.state_);}}if(this.onSettledCallbacks_==null){d.asyncExecute(callback)}else {this.onSettledCallbacks_.push(function(){d.asyncExecute(callback)})}};a.resolve=function(b){if(b instanceof a){return b}else {return new a(function(a,c){a(b)})}};a.reject=function(b){return new a(function(c,a){a(b)})};a.race=function(b){return new a(function(e,f){var d=$jscomp.makeIterator(b);for(var c=d.next();!c.done;c=d.next()){a.resolve(c.value).callWhenSettled_(e,f)}})};a.all=function(d){var c=$jscomp.makeIterator(d);var b=c.next();if(b.done){return a.resolve([])}else {return new a(function(f,g){var d=[];var e=0;function onFulfilled(a){return function(b){d[a]=b;e--;if(e==0){f(d)}}}do{d.push(undefined);e++;a.resolve(b.value).callWhenSettled_(onFulfilled(d.length-1),g);b=c.next()}while(!b.done)})}};if($jscomp.EXPOSE_ASYNC_EXECUTOR){a['$jscomp$new$AsyncExecutor']=function(){return new AsyncExecutor()}}return a},'es6-impl','es3');$jscomp.polyfill('Reflect.apply',function(a){if(a){return a}var c=Function.prototype.apply;var b=function(d,b,a){return c.call(d,b,a)};return b},'es6','es3');$jscomp.polyfill('Reflect.construct',function(a){if(a){return a}var b=function(b,d,a){if(a===undefined){a=b}var e=a.prototype||Object.prototype;var c=Object.create(e);var f=Reflect.apply(b,c,d);return f||c};return b},'es6','es5');$jscomp.polyfill('Reflect.defineProperty',function(a){if(a){return a}var b=function(d,c,b){try{Object.defineProperty(d,c,b);var a=Object.getOwnPropertyDescriptor(d,c);if(!a){return !1}return a.configurable===(b.configurable||!1)&&a.enumerable===(b.enumerable||!1)&&('value' in a?a.value===b.value&&a.writable===(b.writable||!1):a.get===b.get&&a.set===b.set)}catch(e){return !1}};return b},'es6','es5');$jscomp.polyfill('Reflect.deleteProperty',function(a){if(a){return a}var b=function(b,a){if(!$jscomp.owns(b,a)){return !0}try{return delete b[a]}catch(c){return !1}};return b},'es6','es3');$jscomp.polyfill('Reflect.getOwnPropertyDescriptor',function(a){return a||Object.getOwnPropertyDescriptor},'es6','es5');$jscomp.polyfill('Reflect.getPrototypeOf',function(a){return a||Object.getPrototypeOf},'es6','es5');$jscomp.findDescriptor=function(d,c){var a=d;while(a){var b=Reflect.getOwnPropertyDescriptor(a,c);if(b){return b}a=Reflect.getPrototypeOf(a)}return undefined};$jscomp.polyfill('Reflect.get',function(a){if(a){return a}var b=function(c,b,d){if(arguments.length<=2){return c[b]}var a=$jscomp.findDescriptor(c,b);if(a){return a.get?a.get.call(d):a.value}return undefined};return b},'es6','es5');$jscomp.polyfill('Reflect.has',function(a){if(a){return a}var b=function(b,a){return a in b};return b},'es6','es3');$jscomp.polyfill('Reflect.isExtensible',function(a){if(a){return a}if(typeof Object.isExtensible=='function'){return Object.isExtensible}return function(){return !0}},'es6','es3');$jscomp.polyfill('Reflect.ownKeys',function(b){if(b){return b}var a='jscomp_symbol_';function isSymbol(b){return b.substring(0,a.length)==a}var c=function(d){var e=[];var b=Object.getOwnPropertyNames(d);var c=Object.getOwnPropertySymbols(d);for(var a=0;a<b.length;a++){(isSymbol(b[a])?c:e).push(b[a])}return e.concat(c)};return c},'es6','es5');$jscomp.polyfill('Reflect.preventExtensions',function(a){if(a){return a}if(typeof Object.preventExtensions!='function'){return function(){return !1}}var b=function(a){Object.preventExtensions(a);return !Object.isExtensible(a)};return b},'es6','es3');$jscomp.polyfill('Reflect.set',function(a){if(a){return a}var b=function(a,c,d,e){var b=$jscomp.findDescriptor(a,c);if(!b){if(Reflect.isExtensible(a)){a[c]=d;return !0}return !1}if(b.set){b.set.call(arguments.length>3?e:a,d);return !0}else {if(b.writable&&!Object.isFrozen(a)){a[c]=d;return !0}}return !1};return b},'es6','es5');$jscomp.polyfill('Reflect.setPrototypeOf',function(a){if(a){return a}if(typeof ''.__proto__!='object'){return null}var b=function(a,b){try{a.__proto__=b;return a.__proto__===b}catch(c){return !1}};return b},'es6','es5');$jscomp.ASSUME_NO_NATIVE_SET=!1;$jscomp.polyfill('Set',function(b){var c=!$jscomp.ASSUME_NO_NATIVE_SET&&function(){if(!b||!b.prototype.entries||typeof Object.seal!='function'){return !1}try{b=(b);var d=Object.seal({x:4});var c=new b($jscomp.makeIterator([d]));if(!c.has(d)||c.size!=1||c.add(d)!=c||c.size!=1||c.add({x:4})!=c||c.size!=2){return !1}var e=c.entries();var a=e.next();if(a.done||a.value[0]!=d||a.value[1]!=d){return !1}a=e.next();if(a.done||a.value[0]==d||a.value[0].x!=4||a.value[1]!=a.value[0]){return !1}return e.next().done}catch(f){return !1}}();if(c){return b}$jscomp.initSymbol();$jscomp.initSymbolIterator();var a=function(a){this.map_=new Map();if(a){var d=$jscomp.makeIterator(a);var b;while(!(b=d.next()).done){var c=(b).value;this.add(c)}}this.size=this.map_.size};a.prototype.add=function(a){this.map_.set(a,a);this.size=this.map_.size;return this};a.prototype['delete']=function(b){var a=this.map_['delete'](b);this.size=this.map_.size;return a};a.prototype.clear=function(){this.map_.clear();this.size=0};a.prototype.has=function(a){return this.map_.has(a)};a.prototype.entries=function(){return this.map_.entries()};a.prototype.values=function(){return this.map_.values()};(a.prototype)[Symbol.iterator]=a.prototype.values;a.prototype.forEach=function(b,a){var c=this;this.map_.forEach(function(d){return b.call((a),d,d,c)})};return a},'es6-impl','es3');$jscomp.checkStringArgs=function(a,c,b){if(a==null){throw new TypeError("The 'this' value for String.prototype."+b+' must not be null or undefined')}if(c instanceof RegExp){throw new TypeError('First argument to String.prototype.'+b+' must not be a regular expression')}return a+''};$jscomp.polyfill('String.prototype.codePointAt',function(a){if(a){return a}var b=function(a){var d=$jscomp.checkStringArgs(this,null,'codePointAt');var e=d.length;a=Number(a)||0;if(!(a>=0&&a<e)){return void 0}a=a|0;var b=d.charCodeAt(a);if(b<55296||b>56319||a+1===e){return b}var c=d.charCodeAt(a+1);if(c<56320||c>57343){return b}return (b-55296)*1024+c+9216};return b},'es6-impl','es3');$jscomp.polyfill('String.prototype.endsWith',function(a){if(a){return a}var b=function(a,b){var c=$jscomp.checkStringArgs(this,a,'endsWith');a=a+'';if(b===void 0){b=c.length}var e=Math.max(0,Math.min(b|0,c.length));var d=a.length;while(d>0&&e>0){if(c[--e]!=a[--d]){return !1}}return d<=0};return b},'es6-impl','es3');$jscomp.polyfill('String.fromCodePoint',function(a){if(a){return a}var b=function(d){var b='';for(var c=0;c<arguments.length;c++){var a=Number(arguments[c]);if(a<0||a>1114111||a!==Math.floor(a)){throw new RangeError('invalid_code_point '+a)}if(a<=65535){b+=String.fromCharCode(a)}else {a-=65536;b+=String.fromCharCode(a>>>10&1023|55296);b+=String.fromCharCode(a&1023|56320)}}return b};return b},'es6-impl','es3');$jscomp.polyfill('String.prototype.includes',function(a){if(a){return a}var b=function(a,b){var c=$jscomp.checkStringArgs(this,a,'includes');return c.indexOf(a,b||0)!==-1};return b},'es6-impl','es3');$jscomp.polyfill('String.prototype.repeat',function(a){if(a){return a}var b=function(a){var b=$jscomp.checkStringArgs(this,null,'repeat');if(a<0||a>1342177279){throw new RangeError('Invalid count value')}a=a|0;var c='';while(a){if(a&1){c+=b}if(a>>>=1){b+=b}}return c};return b},'es6-impl','es3');$jscomp.polyfill('String.prototype.startsWith',function(a){if(a){return a}var b=function(a,f){var b=$jscomp.checkStringArgs(this,a,'startsWith');a=a+'';var g=b.length;var d=a.length;var e=Math.max(0,Math.min((f)|0,b.length));var c=0;while(c<d&&e<g){if(b[e++]!=a[c++]){return !1}}return c>=d};return b},'es6-impl','es3');$jscomp.arrayFromIterator=function(c){var b;var a=[];while(!(b=c.next()).done){a.push(b.value)}return a};$jscomp.arrayFromIterable=function(a){if(a instanceof Array){return a}else {return $jscomp.arrayFromIterator($jscomp.makeIterator(a))}};$jscomp.inherits=function(a,b){function tempCtor(){}tempCtor.prototype=b.prototype;a.prototype=new tempCtor();a.prototype.constructor=a;for(var c in b){if(Object.defineProperties){var d=Object.getOwnPropertyDescriptor(b,c);if(d){Object.defineProperty(a,c,d)}}else {a[c]=b[c]}}};$jscomp.polyfill('WeakSet',function(b){function isConformant(){if(!b||!Object.seal){return !1}try{var c=Object.seal({});var d=Object.seal({});var a=new (b)([c]);if(!a.has(c)||a.has(d)){return !1}a['delete'](c);a.add(d);return !a.has(c)&&a.has(d)}catch(e){return !1}}if(isConformant()){return b}var a=function(a){this.map_=new WeakMap();if(a){$jscomp.initSymbol();$jscomp.initSymbolIterator();var d=$jscomp.makeIterator(a);var b;while(!(b=d.next()).done){var c=b.value;this.add(c)}}};a.prototype.add=function(a){this.map_.set(a,!0);return this};a.prototype.has=function(a){return this.map_.has(a)};a.prototype['delete']=function(a){return this.map_['delete'](a)};return a},'es6-impl','es3');try{if(Array.prototype.values.toString().indexOf('[native code]')==-1){delete Array.prototype.values}}catch(a){}L.Projection.WCS=L.Class.extend({bounds:L.bounds([-0.5,-0.5],[0.5,0.5]),project:function(b){var a=this._raDecToPhiTheta(this.celsysflag?this.eqToCelsys(b):b);a.lat=this._thetaToR(a.lat);return this._redToPix(this._phiRToRed(a))},unproject:function(c){var b=this._redToPhiR(this._pixToRed(c));b.lat=this._rToTheta(b.lat);var a=this._phiThetaToRADec(b);if(a.lng<-180){a.lng+=360}return this.celsysflag?this.celsysToEq(a):a},_natpole:function(){var c=Math.PI/180,a=this.projparam,b=L.latLng(90,180);if(a.natrval.lat===90){if(a.natpole.lng===999){b.lng=180}b.lat=a.crval.lat}else {if(a.natpole.lng===999){b.lng=a.crval.lat<a.natrval.lat?180:0}}return b},_cpole:function(){var b=Math.PI/180,a=this.projparam,i=a.natpole.lng-a.natrval.lng,n=Math.cos(i*b),g=Math.sin(i*b),f=Math.cos(a.natrval.lat*b),l=Math.sin(a.natrval.lat*b),j=Math.cos(a.crval.lat*b),k=Math.sin(a.crval.lat*b),c=Math.atan2(l,f*n)/b,h=Math.acos(k/Math.sqrt(1-f*f*g*g))/b,d=c+h,e=c-h;if(d<-180){d+=360}else {if(d>180){d-=360}}if(e<-180){e+=360}else {if(e>180){e-=360}}if(d>90){c=e}else {if(e<-90){c=d}else {c=Math.abs(d-a.natpole.lat)<Math.abs(e-a.natpole.lat)?d:e}}var m=Math.abs(a.crval.lat)===90?a.crval.lng:c===90?a.crval.lng+a.natpole.lng-a.natrval.lng-180:c===-90?a.crval.lng-a.natpole.lng+a.natrval.lng:a.crval.lng-Math.atan2(g*f/j,(l-Math.sin(c*b)*k)/(Math.cos(c*b)*j))/b;return L.latLng(c,m)},_phiThetaToRADec:function(e){var b=this.projparam,c=Math.PI/180,i=180/Math.PI,m=e.lat*c,d=Math.cos(m),l=Math.sin(m),k=b.cpole.lat*c,h=Math.cos(k),j=Math.sin(k),g=(e.lng-b.natpole.lng)*c,f=Math.cos(g),a=l*j+d*h*f;if(a>1){a=1}else {if(a<-1){a=-1}}return L.latLng(Math.asin(a)*i,b.cpole.lng+Math.atan2(-d*Math.sin(g),l*h-d*j*f)*i)},_raDecToPhiTheta:function(f){var b=this.projparam,d=Math.PI/180,i=180/Math.PI,k=(f.lng-b.cpole.lng)*d,g=Math.cos(k),o=Math.sin(k),n=f.lat*d,e=Math.cos(n),m=Math.sin(n),l=b.cpole.lat*d,h=Math.cos(l),j=Math.sin(l),c=m*j+e*h*g,a=L.latLng(Math.asin(c>1?1:c<-1?-1:c)*i,b.natpole.lng+Math.atan2(-e*o,m*h-e*j*g)*i);if(a.lng>180){a.lng-=360}else {if(a.lng<-180){a.lng+=360}}return a},_pixToRed:function(d){var c=this.projparam,b=c.cd,a=d.subtract(c.crpix);return L.point(a.x*b[0][0]+a.y*b[0][1],a.x*b[1][0]+a.y*b[1][1])},_redToPix:function(b){var c=this.projparam,a=c.cdinv;return L.point(b.x*a[0][0]+b.y*a[0][1],b.x*a[1][0]+b.y*a[1][1]).add(c.crpix)},_invertCD:function(a){var b=1/(a[0][0]*a[1][1]-a[0][1]*a[1][0]);return [[a[1][1]*b,-a[0][1]*b],[-a[1][0]*b,a[0][0]*b]]}});L.Projection.WCS.PIX=L.Projection.WCS.extend({code:'PIX',_paramInit:function(a){this.projparam=a;a.cdinv=this._invertCD(a.cd);a.cpole=a.crval;this.bounds=L.bounds([0.5,this.projparam.naxis.y-0.5],[this.projparam.naxis.x-0.5,0.5])},project:function(a){return L.point(a.lng,a.lat)},unproject:function(a){return L.latLng(a.y,a.x)}});L.Projection.WCS.zenithal=L.Projection.WCS.extend({_paramInit:function(a){this.projparam=a;a.cdinv=this._invertCD(a.cd);a.natrval=L.latLng(90,0);a.natpole=this._natpole();a.cpole=this._cpole()},_redToPhiR:function(a){return L.latLng(Math.sqrt(a.x*a.x+a.y*a.y),Math.atan2(a.x,-a.y)*180/Math.PI)},_phiRToRed:function(a){var c=Math.PI/180,b=a.lng*c;return new L.Point(a.lat*Math.sin(b),-a.lat*Math.cos(b))}});L.Projection.WCS.TAN=L.Projection.WCS.zenithal.extend({code:'TAN',_rToTheta:function(a){return Math.atan2(180,Math.PI*a)*180/Math.PI},_thetaToR:function(a){return Math.tan((90-a)*Math.PI/180)*180/Math.PI}});L.Projection.WCS.ZEA=L.Projection.WCS.zenithal.extend({code:'ZEA',_rToTheta:function(b){var a=b*Math.PI/360;if(Math.abs(a)<1){return 90-2*Math.asin(a)*180/Math.PI}else {return 90}},_thetaToR:function(a){return Math.sin((90-a)*Math.PI/360)*360/Math.PI}});L.Projection.WCS.cylindrical=L.Projection.WCS.extend({_paramInit:function(a){var b=Math.PI/180;this.projparam=a;a.cdinv=this._invertCD(a.cd);a.lambda=a.pv[1][1];if(a.lambda===0){a.lambda=1}a.natrval=L.latLng(0,0);a.natpole=this._natpole();a.cpole=this._cpole()},_rToTheta:function(a){return a},_thetaToR:function(a){return a}});L.Projection.WCS.CAR=L.Projection.WCS.cylindrical.extend({_redToPhiR:function(a){return L.latLng(a.y,a.x)},_phiRToRed:function(a){return L.point(a.lng,a.lat)}});L.Projection.WCS.CEA=L.Projection.WCS.cylindrical.extend({_redToPhiR:function(c){var b=Math.PI/180,a=c.y*this.projparam.lambda*b;return L.latLng(a>-1?a<1?Math.asin(a)/b:90:-90,c.x)},_phiRToRed:function(a){var b=Math.PI/180;return L.point(a.lng,Math.sin(a.lat*b)/(this.projparam.lambda*b))}});L.Projection.WCS.conical=L.Projection.WCS.extend({_redToPhiR:function(a){var e=Math.PI/180,b=this.projparam,d=b.y0-a.y,c=b.sthetaA*Math.sqrt(a.x*a.x+d*d);return L.latLng(c,Math.atan2(a.x/c,d/c)/b.c/e)},_phiRToRed:function(a){var c=Math.PI/180,b=this.projparam.c*a.lng*c;return L.point(a.lat*Math.sin(b),-a.lat*Math.cos(b)+this.projparam.y0)}});L.Projection.WCS.COE=L.Projection.WCS.conical.extend({_paramInit:function(a){var b=Math.PI/180;this.projparam=a;a.cdinv=this._invertCD(a.cd);a.thetaA=a.pv[1][1];a.eta=a.pv[1][2];a.sthetaA=a.thetaA>=0?1:-1;var e=a.thetaA-a.eta,f=a.thetaA+a.eta,c=Math.sin(e*b),d=Math.sin(f*b);a.gamma=c+d;a.s1s2p1=c*d+1;a.c=a.gamma/2;a.y0=2/a.gamma*Math.sqrt(a.s1s2p1-a.gamma*Math.sin(a.thetaA*b))/b;a.natrval=L.latLng(a.thetaA,0);a.natpole=this._natpole();a.cpole=this._cpole()},_rToTheta:function(d){var b=Math.PI/180,c=this.projparam.gamma,a=this.projparam.s1s2p1/c-c*d*d*b*b/4;if(a<-1){a=-1}else {if(a>1){a=1}}return Math.asin(a)/b},_thetaToR:function(c){var b=Math.PI/180,a=this.projparam.gamma;return 2/a*Math.sqrt(this.projparam.s1s2p1-a*Math.sin(c*b))/b}});L.CRS.WCS=L.extend({},L.CRS,{code:'WCS',options:{nzoom:9,tileSize:[256,256],nativeCelsys:!1},defaultparam:{ctype:{x:'PIXEL',y:'PIXEL'},naxis:[256,256],crpix:[129,129],crval:[0,0],cd:[[1,0],[0,1]],natrval:[90,0],natpole:[90,999],pv:[[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]},initialize:function(c,a){a=L.setOptions(this,a);var b=this.defaultparam;this.tileSize=L.point(a.tileSize);this.nzoom=a.nzoom;this.ctype={x:b.ctype.x,y:b.ctype.y};this.naxis=L.point(b.naxis,!0);this.projparam=new this._paramInit(b);if(c){this._readWCS(c)}this._paramInit(a,this.projparam);switch(this.ctype.x.substr(5,3)){case 'ZEA':this.projection=new L.Projection.WCS.ZEA();this.pixelFlag=!1;this.infinite=!0;break;case 'TAN':this.projection=new L.Projection.WCS.TAN();this.pixelFlag=!1;this.infinite=!0;break;case 'CAR':this.projection=new L.Projection.WCS.CAR();this.pixelFlag=!1;this.infinite=!0;break;case 'CEA':this.projection=new L.Projection.WCS.CEA();this.pixelFlag=!1;this.infinite=!0;break;case 'COE':this.projection=new L.Projection.WCS.COE();this.pixelFlag=!1;this.infinite=!0;break;default:this.projection=new L.Projection.WCS.PIX();this.pixelFlag=!0;this.infinite=!1;if(!this.options.crval){this.projparam.crval=L.latLng((this.naxis.y+1)/2,(this.naxis.x+1)/2)};this.wrapLng=[0.5,this.naxis.x-0.5];this.wrapLat=[this.naxis.y-0.5,0.5];break;}if(!this.pixelFlag){switch(this.ctype.x.substr(0,1)){case 'G':this.celsyscode='galactic';break;case 'E':this.celsyscode='ecliptic';break;case 'S':this.celsyscode='supergalactic';break;default:this.celsyscode='equatorial';break;}if(this.celsyscode!=='equatorial'){this.projparam.celsysmat=this._celsysmatInit(this.celsyscode);this.projection.celsysToEq=this.celsysToEq;this.projection.eqToCelsys=this.eqToCelsys;this.forceNativeCelsys=this.options.nativeCelsys===!0;this.projection.celsysflag=!this.forceNativeCelsys}}this.transformation=new L.Transformation(1,-0.5,-1,this.naxis.y+0.5);this.projection._paramInit(this.projparam);this.code+=':'+this.projection.code},celsysToEq:function(c){var a=this.projparam.celsysmat,e=Math.PI/180,b=180/Math.PI,g=c.lng*e-a[1],h=c.lat*e,f=Math.sin(h),d=Math.cos(h)*a[2],i=f*a[3]-d*Math.cos(g);return L.latLng(Math.asin(i)*b,((Math.atan2(d*Math.sin(g),f-i*a[3])+a[0])*b+360)%360)},eqToCelsys:function(b){var a=this.projparam.celsysmat,c=Math.PI/180,d=180/Math.PI,h=b.lng*c-a[0],g=Math.sin(b.lat*c),e=Math.cos(b.lat*c)*a[2],f=g*a[3]+e*Math.cos(h);return L.latLng(Math.asin(f)*d,((Math.atan2(e*Math.sin(h),f*a[3]-g)+a[1])*d+360)%360)},scale:function(a){return Math.pow(2,a-this.nzoom+1)},zoom:function(a){return Math.log(a)/Math.LN2+this.nzoom-1},rawPixelScale:function(a){var f=this.projection.project(a),d=this.projection.unproject(f.add([10,0])),e=this.projection.unproject(f.add([0,10])),b=d.lng-a.lng,c=e.lng-a.lng;if(b>180){b-=360}else {if(b<-180){b+=360}}if(c>180){c-=360}else {if(c<-180){c+=360}}return 0.1*Math.sqrt(Math.abs(b*(e.lat-a.lat)-c*(d.lat-a.lat))*Math.cos(a.lat*Math.PI/180))},pixelScale:function(b,a){return this.rawPixelScale(a)/this.scale(b)},fovToZoom:function(e,c,d){var a=this.rawPixelScale(d),b=e.getSize();if(c<a){c=a}a*=Math.sqrt(b.x*b.x+b.y*b.y);return c>0?this.zoom(a/c):this.nzoom-1},zoomToFov:function(f,e,d){var a=f.getSize(),c=this.rawPixelScale(d)*Math.sqrt(a.x*a.x+a.y*a.y),b=this.scale(e);return b>0?c/b:c},distance:function(b,c){var a=Math.PI/180,d=b.lat*a,e=c.lat*a,f=Math.sin(d)*Math.sin(e)+Math.cos(d)*Math.cos(e)*Math.cos((c.lng-b.lng)*a);return 180/Math.PI*Math.acos(Math.min(f,1))},parseCoords:function(c,d){var a;if(d){a=/J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g.exec(c)}else {a=/(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g.exec(c)}if(a&&a.length>=3){var b=L.latLng(Number(a[2]),Number(a[1]));if(this.forceNativeCelsys){b=this.eqToCelsys(b)}return b}else {return undefined}},_paramInit:function(a,b){if(!b){b=this}if(a.naxis){b.naxis=L.point(a.naxis)}if(a.crval){b.crval=b.cpole=L.latLng(a.crval)}if(a.crpix){b.crpix=L.point(a.crpix)}if(a.cd){b.cd=[[a.cd[0][0],a.cd[0][1]],[a.cd[1][0],a.cd[1][1]]]}if(a.natrval){b.natrval=L.latLng(a.natrval)}if(a.natpole){b.natpole=L.latLng(a.natpole)}if(a.pv){b.pv=[];b.pv[0]=a.pv[0].slice();b.pv[1]=a.pv[1].slice()}},_celsysmatInit:function(e){var d=Math.PI/180,b,a,c=[];switch(e){case 'galactic':b=L.latLng(-28.93617242,266.40499625);a=L.latLng(27.1282512,192.85948123);break;case 'ecliptic':b=L.latLng(0,0);a=L.latLng(66.99111111,273.85261111);break;case 'supergalactic':b=L.latLng(59.52315,42.29235);a=L.latLng(15.7048,283.7514);break;default:b=L.latLng(0,0);a=L.latLng(0,0);break;}c[0]=a.lng*d;c[1]=Math.asin(Math.cos(b.lat*d)*Math.sin((a.lng-b.lng)*d));c[2]=Math.cos(a.lat*d);c[3]=Math.sin(a.lat*d);return c},_readWCS:function(b){var c=L.IIPUtils.readFITSKey,d=this.projparam,a;if(a=c('CTYPE1',b)){this.ctype.x=a}if(a=c('CTYPE2',b)){this.ctype.y=a}if(a=c('NAXIS1',b)){d.naxis.x=this.naxis.x=parseInt(a,10)}if(a=c('NAXIS2',b)){d.naxis.y=this.naxis.y=parseInt(a,10)}if(a=c('CRPIX1',b)){d.crpix.x=parseFloat(a,10)}if(a=c('CRPIX2',b)){d.crpix.y=parseFloat(a,10)}if(a=c('CRVAL1',b)){d.crval.lng=parseFloat(a,10)}if(a=c('CRVAL2',b)){d.crval.lat=parseFloat(a,10)}if(a=c('LONPOLE',b)){d.natpole.lng=parseFloat(a,10)}if(a=c('LATPOLE',b)){d.natpol.lat=parseFloat(a,10)}if(a=c('CD1_1',b)){d.cd[0][0]=parseFloat(a,10)}if(a=c('CD1_2',b)){d.cd[0][1]=parseFloat(a,10)}if(a=c('CD2_1',b)){d.cd[1][0]=parseFloat(a,10)}if(a=c('CD2_2',b)){d.cd[1][1]=parseFloat(a,10)}for(var e=0;e<2;e++){for(var f=0;f<20;f++){if(a=c('PV'+(e+1)+'_'+f,b)){d.pv[e][f]=parseFloat(a,10)}}}},_deltaLng:function(c,b){var a=c.lng-b.lng;return a>180?a-360:a<-180?a+360:a}});L.CRS.WCS=L.Class.extend(L.CRS.WCS);L.CRS.wcs=function(a){return new L.CRS.WCS(a)};L.IIPUtils={REG_PDEC:'(\\d+\\.\\d*)',REG_FLOAT:'([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)',requestURL:function(f,c,e,b,d){var a;if(window.XMLHttpRequest){a=new XMLHttpRequest()}else {if(window.ActiveXObject){try{a=new ActiveXObject('Msxml2.XMLHTTP')}catch(g){try{a=new ActiveXObject('Microsoft.XMLHTTP')}catch(h){}}}}if(!a){alert('Giving up: Cannot create an XMLHTTP instance for '+c);return !1}if(d){a.timeout=d*1000;a.ontimeout=function(){alert('Time out while '+c)}}a.open('GET',f);if(b&&b.options.credentials){a.withCredentials=!0}if(b&&b.options.authenticate==='csrftoken'){a.setRequestHeader('X-CSRFToken',this.getCookie('csrftoken'))}a.onreadystatechange=function(){e(b,a)};a.send()},parseURL:function(b){var a={};b.replace(new RegExp('([^?=&]+)(=([^&]*))?','g'),function(d,b,e,c){a[b]=c});return a},updateURL:function(a,b,c){var d=new RegExp('([?&])'+b+'=.*?(&|$)','i'),e=a.indexOf('?')!==-1?'&':'?';return a.match(d)?a.replace(d,'$1'+b+'='+c+'$2'):a+e+b+'='+c},checkDomain:function(a){if(a.indexOf('//')===0){a=location.protocol+a}return a.toLowerCase().replace(/([a-z])?:\/\//,'$1').split('/')[0]},isExternal:function(a){return (a.indexOf(':')>-1||a.indexOf('//')>-1)&&this.checkDomain(location.href)!==this.checkDomain(a)},copyToClipboard:function(b){if(document.queryCommandSupported&&document.queryCommandSupported('copy')){var a=document.createElement('textarea');a.textContent=b;a.style.position='fixed';document.body.appendChild(a);a.select();try{return document.execCommand('copy')}catch(c){console.warn('Copy to clipboard failed.',c);return !1}finally{document.body.removeChild(a)}}},flashElement:function(a){L.DomUtil.addClass(a,'leaflet-control-flash');setTimeout(function(){L.DomUtil.removeClass(a,'leaflet-control-flash')},400)},readFITSKey:function(d,f){var c=d.trim().toUpperCase().substr(0,8),b=8-c.length,e=new RegExp(c+(b>0?'\\ {'+b.toString()+'}':'')+"=\\ *(?:'((?:\\ *[^'\\ ]+)*)\\ *'|([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))"),a=e.exec(f);if(!a){return null}else {if(a[1]){return a[1]}else {return a[2]}}},distance:function(b,c){var a=Math.PI/180,d=b.lat*a,e=c.lat*a,i=e-d,j=(c.lng-b.lng)*a,f=Math.sin(i/2),g=Math.sin(j/2);var h=f*f+g*g*Math.cos(d)*Math.cos(e);return Math.atan2(Math.sqrt(h),Math.sqrt(1-h))*360/Math.PI},getCookie:function(e){var c=e+'=';var d=document.cookie.split(';');for(var b=0;b<d.length;b++){var a=d[b];while(a.charAt(0)===' '){a=a.substring(1)}if(a.indexOf(c)===0){return a.substring(c.length,a.length)}}return ''}};L.TileLayer.IIP=L.TileLayer.extend({options:{title:'',crs:null,nativeCelsys:!1,center:!1,fov:!1,minZoom:0,maxZoom:null,maxNativeZoom:18,noWrap:!0,contrast:1,colorSat:1,gamma:1,cMap:'grey',invertCMap:!1,quality:90,mixingMode:'color',channelColors:[],channelLabels:[],channelLabelMatch:'.*',channelUnits:[],minMaxValues:[],defaultChannel:0,credentials:!1},iipdefault:{contrast:1,gamma:1,cMap:'grey',invertCMap:!1,minValue:[],maxValue:[],channelColors:[[''],['#FFFFFF'],['#00BAFF','#FFBA00'],['#0000FF','#00FF00','#FF0000'],['#0000E0','#00BA88','#88BA00','#E00000'],['#0000CA','#007BA8','#00CA00','#A87B00','#CA0000'],['#0000BA','#00719B','#009B71','#719B00','#9B7100','#BA0000']],quality:90},initialize:function(b,a){this.type='tilelayer';this._url=b.replace(/\&.*$/g,'');a=L.setOptions(this,a);if(a.detectRetina&&L.Browser.retina&&a.maxZoom>0){a.tileSize=Math.floor(a.tileSize/2);a.zoomOffset++;a.minZoom=Math.max(0,a.minZoom);a.maxZoom--}if(typeof a.subdomains==='string'){a.subdomains=a.subdomains.split('')}this.iipTileSize={x:256,y:256};this.iipImageSize=[];this.iipImageSize[0]=this.iipTileSize;this.iipGridSize=[];this.iipGridSize[0]={x:1,y:1};this.iipBPP=8;this.iipMode=a.mixingMode;this.iipChannel=0;this.iipNChannel=1;this.iipMinZoom=a.minZoom;this.iipMaxZoom=a.maxZoom;this.iipContrast=a.contrast;this.iipColorSat=a.colorSat;this.iipGamma=a.gamma;this.iipCMap=a.cMap;this.iipInvertCMap=a.invertCMap;this.iipMinValue=[];this.iipMinValue[0]=0;this.iipMaxValue=[];this.iipMaxValue[0]=255;this.iipMix=[[]];this.iipRGB=[];this.iipChannelLabels=[];this.iipChannelFlags=[];this.iipChannelUnits=[];this.iipQuality=a.quality;this._title=a.title.length>0?a.title:this._url.match(/^.*\/(.*)\..*$/)[1];this.getIIPMetaData(this._url);if(!L.Browser.android){this.on('tileunload',this._onTileRemove)}return this},getIIPMetaData:function(a){L.IIPUtils.requestURL(a+'&obj=IIP,1.0&obj=max-size&obj=tile-size'+'&obj=resolution-number&obj=bits-per-channel'+'&obj=min-max-sample-values&obj=subject','getting IIP metadata',this._parseMetadata,this)},_parseMetadata:function(b,m){if(m.readyState===4){if(m.status===200){var g=m.responseText,d=b._readIIPKey(g,'IIP',L.IIPUtils.REG_PDEC);if(!d){alert('Error: Unexpected response from IIP server '+b._url.replace(/\?.*$/g,''))}var c=b.options,f=b.iipdefault;d=b._readIIPKey(g,'Max-size','(\\d+)\\s+(\\d+)');var v={x:parseInt(d[1],10),y:parseInt(d[2],10)};d=b._readIIPKey(g,'Tile-size','(\\d+)\\s+(\\d+)');b.iipTileSize={x:parseInt(d[1],10),y:parseInt(d[2],10)};c.tileSize=b.iipTileSize.x;d=b._readIIPKey(g,'Resolution-number','(\\d+)');b.iipMaxZoom=parseInt(d[1],10)-1;if(b.iipMinZoom>c.minZoom){c.minZoom=b.iipMinZoom}if(!c.maxZoom){c.maxZoom=b.iipMaxZoom+6}c.maxNativeZoom=b.iipMaxZoom;for(var e=0;e<=b.iipMaxZoom;e++){b.iipImageSize[e]={x:Math.floor(v.x/Math.pow(2,b.iipMaxZoom-e)),y:Math.floor(v.y/Math.pow(2,b.iipMaxZoom-e))};b.iipGridSize[e]={x:Math.ceil(b.iipImageSize[e].x/b.iipTileSize.x),y:Math.ceil(b.iipImageSize[e].y/b.iipTileSize.y)}}for(e=b.iipMaxZoom;e<=c.maxZoom;e++){b.iipGridSize[e]=b.iipGridSize[b.iipMaxZoom]}d=b._readIIPKey(g,'Bits-per-channel','(\\d+)');b.iipBPP=parseInt(d[1],10);if(b.iipGamma===b.iipdefault.gamma){b.iipGamma=b.iipBPP>=32?2.2:1}d=b._readIIPKey(g,'Min-Max-sample-values','\\s*(.*)');var r=d[1].split(/\s+/),h=b.iipNChannel=r.length/2,x=0;for(var a=0;a<h;a++){f.minValue[a]=parseFloat(r[x++]);f.maxValue[a]=parseFloat(r[x++])}var k=c.minMaxValues;if(k.length){for(a=0;a<h;a++){if(k[a]!==undefined&&k[a].length){b.iipMinValue[a]=k[a][0];b.iipMaxValue[a]=k[a][1]}else {b.iipMinValue[a]=f.minValue[a];b.iipMaxValue[a]=f.maxValue[a]}}}else {for(a=0;a<h;a++){b.iipMinValue[a]=f.minValue[a];b.iipMaxValue[a]=f.maxValue[a]}}b.iipChannel=c.defaultChannel;var s=c.channelLabels,z=s.length,n=b.iipChannelLabels,u=c.channelUnits,t=u.length,w=b.iipChannelUnits,A=L.IIPUtils.readFITSKey,o,p;for(a=0;a<h;a++){if(a<z){n[a]=s[a]}else {o=(a+1).toString();p=A('CHAN'+(a<9?'000':a<99?'00':a<999?'0':'')+o,g);n[a]=p?p:'Channel #'+o}}for(a=0;a<t;a++){w[a]=u[a]}for(a=t;a<h;a++){w[a]='ADUs'}var y=0,B=b.iipMix,i=c.channelColors,q=b.iipRGB,C=new RegExp(c.channelLabelMatch),j=0,l=b.iipChannelFlags;j=0;for(a=0;a<h;a++){l[a]=C.test(n[a]);if(l[a]){j++}}if(j>=f.channelColors.length){j=f.channelColors.length-1}for(a=0;a<h;a++){B[a]=[];var D=3;if(i.length&&i[a]&&i[a].length===3){q[a]=L.rgb(i[a][0],i[a][1],i[a][2])}else {q[a]=L.rgb(0,0,0)}if(i.length===0&&l[a]&&y<j){q[a]=L.rgb(f.channelColors[j][y++])}b.rgbToMix(a)}if(c.bounds){c.bounds=L.latLngBounds(c.bounds)}b.wcs=c.crs?c.crs:new L.CRS.WCS(g,{nativeCelsys:b.options.nativeCelsys,nzoom:b.iipMaxZoom+1,tileSize:b.iipTileSize});b.iipMetaReady=!0;b.fire('metaload')}else {alert('There was a problem with the IIP metadata request.')}}},rgbToMix:function(b,a){if(a){this.iipRGB[b]=a.clone()}else {a=this.iipRGB[b]}var e=this._gammaCorr(a.r),d=this._gammaCorr(a.g),c=this._gammaCorr(a.b),g=(e+d+c)/3,f=this.iipColorSat/3;this.iipMix[b][0]=g+f*(2*e-d-c);this.iipMix[b][1]=g+f*(2*d-e-c);this.iipMix[b][2]=g+f*(2*c-e-d);return},updateMono:function(){this.iipMode='mono'},updateMix:function(){var b=this.iipNChannel;this.iipMode='color';for(var a=0;a<b;a++){this.rgbToMix(a,this.iipRGB[a])}},_gammaCorr:function(a){return a>0?Math.pow(a,this.iipGamma):0},_readIIPKey:function(d,a,b){var c=new RegExp(a+':'+b);return c.exec(d)},addTo:function(a){if(this.iipMetaReady){this._addToMap(a)}else {this.once('metaload',function(){this._addToMap(a)},this)}return this},_addToMap:function(a){var c,b=this.wcs,e=a.options.crs,j=a._prevcrs,g=a._loaded,d=a.options.center?a.options.center:b.projparam.crval;if(g){e._prevLatLng=a.getCenter();e._prevZoom=a.getZoom()}a._prevcrs=a.options.crs=b;L.TileLayer.prototype.addTo.call(this,a);if(j&&b!==e&&g&&b.pixelFlag===e.pixelFlag){d=e._prevLatLng;c=e._prevZoom;var h=j.pixelScale(c,d),i=b.pixelScale(c,d);if(h>1.0E-20&&i>1.0E-20){c+=Math.round(Math.LOG2E*Math.log(i/h))}}else {if(b._prevLatLng){d=b._prevLatLng;c=b._prevZoom}else {if(this.options.center){var f=b.parseCoords(this.options.center);if(f){if(this.options.fov){c=b.fovToZoom(a,this.options.fov,f)}a.setView(f,c,{reset:!0,animate:!1})}else {L.IIPUtils.requestURL('http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?'+this.options.center,'getting coordinates for '+this.options.center,function(g,e){if(e.readyState===4){if(e.status===200){var h=e.responseText,f=b.parseCoords(h,!0);if(f){if(g.options.fov){c=b.fovToZoom(a,g.options.fov,f)}a.setView(f,c,{reset:!0,animate:!1})}else {a.setView(d,c,{reset:!0,animate:!1});alert(h+': Unknown location')}}else {a.setView(d,c,{reset:!0,animate:!1});alert('There was a problem with the request to the Sesame service at CDS')}}},this,10)}}else {a.setView(d,c,{reset:!0,animate:!1})}}}},_getTileSizeFac:function(){var c=this._map,b=this._tileZoom,a=this.options.maxNativeZoom;return a&&b>a?Math.round(c.getZoomScale(b)/c.getZoomScale(a)):1},_isValidTile:function(a){var d=this._map.options.crs;if(!d.infinite){var c=this._globalTileRange;if(!d.wrapLng&&(a.x<c.min.x||a.x>c.max.x)||!d.wrapLat&&(a.y<c.min.y||a.y>c.max.y)){return !1}}var e=this._getZoomForUrl(),b=a.clone();this._wrapCoords(b);if(b.x<0||b.x>=this.iipGridSize[e].x||b.y<0||b.y>=this.iipGridSize[e].y){return !1}if(!this.options.bounds){return !0}var f=this._tileCoordsToBounds(a);return L.latLngBounds(this.options.bounds).intersects(f)},createTile:function(a,c){var b=L.TileLayer.prototype.createTile.call(this,a,c);b.coords=a;return b},getTileUrl:function(h){var a=this._url,i=this._getZoomForUrl();if(this.iipCMap!==this.iipdefault.cMap){a+='&CMP='+this.iipCMap}if(this.iipInvertCMap!==this.iipdefault.invertCMap){a+='&INV'}if(this.iipContrast!==this.iipdefault.contrast){a+='&CNT='+this.iipContrast.toString()}if(this.iipGamma!==this.iipdefault.gamma){a+='&GAM='+(1/this.iipGamma).toFixed(4)}for(var c=0;c<this.iipNChannel;c++){if(this.iipMinValue[c]!==this.iipdefault.minValue[c]||this.iipMaxValue[c]!==this.iipdefault.maxValue[c]){a+='&MINMAX='+(c+1).toString()+':'+this.iipMinValue[c].toString()+','+this.iipMaxValue[c].toString()}}var f=this.iipNChannel,g=this.iipMix,d,b;a+='&CTW=';if(this.iipMode==='color'){for(b=0;b<3;b++){if(b){a+=';'}a+=g[0][b].toString();for(d=1;d<f;d++){if(g[d][b]!==undefined){a+=','+g[d][b].toString()}}}}else {var e=this.iipChannel;if(e>=f){e=0}if(e<f){f=e+1}for(b=0;b<3;b++){if(b){a+=';'}a+=e===0?'1':'0';for(d=1;d<f;d++){a+=','+(e===d?'1':'0')}}}if(this.iipQuality!==this.iipdefault.quality){a+='&QLT='+this.iipQuality.toString()}return a+'&JTL='+i.toString()+','+(h.x+this.iipGridSize[i].x*h.y).toString()},_initTile:function(a){L.DomUtil.addClass(a,'leaflet-tile');var e=this._getTileSizeFac();if(e>1){if(L.Browser.ie){a.style.msInterpolationMode='nearest-neighbor'}else {if(L.Browser.chrome){a.style.imageRendering='pixelated'}else {if(L.Browser.gecko){a.style.imageRendering='-moz-crisp-edges'}else {a.style.imageRendering='-webkit-optimize-contrast'}}}}var f=a.coords,b=f.z;if(b>this.iipMaxZoom){b=this.iipMaxZoom}var c=f.x+1===this.iipGridSize[b].x?this.iipImageSize[b].x%this.iipTileSize.x:this.iipTileSize.x,d=f.y+1===this.iipGridSize[b].y?this.iipImageSize[b].y%this.iipTileSize.y:this.iipTileSize.y;if(c===0){c=this.iipTileSize.x}if(d===0){d=this.iipTileSize.y}c*=e;d*=e;a.style.width=c+'px';a.style.height=d+'px';a.onselectstart=L.Util.falseFn;a.onmousemove=L.Util.falseFn;if(L.Browser.ielt9&&this.options.opacity<1){L.DomUtil.setOpacity(a,this.options.opacity)}if(L.Browser.android&&!L.Browser.android23){a.style.WebkitBackfaceVisibility='hidden'}}});L.tileLayer.iip=function(b,a){return new L.TileLayer.IIP(b,a)};L.RGB=function(c,b,a){this.r=c;this.g=b;this.b=a};L.RGB.prototype={clone:function(){return new L.RGB(this.r,this.g,this.b)},toStr:function(){var c=Math.round(this.r*255),b=Math.round(this.g*255),a=Math.round(this.b*255);if(c<0){c=0}else {if(c>255){c=255}}if(b<0){b=0}else {if(b>255){b=255}}if(a<0){a=0}else {if(a>255){a=255}}return '#'+((1<<24)+(c<<16)+(b<<8)+a).toString(16).slice(1)},isOn:function(){return this.r>0||this.g>0||this.b>0?!0:!1}};L.rgb=function(a,d,c){if(a instanceof L.RGB){return a}if(typeof a==='string'){var b=parseInt('0x'+a.slice(1),16);return new L.RGB((b>>16&255)/255,(b>>8&255)/255,(b&255)/255)}if(L.Util.isArray(a)){return new L.RGB(a[0],a[1],a[2])}if(a===undefined||a===null){return a}return new L.RGB(a,d,c)};L.EllipseMarker=L.Path.extend({CANVAS:!0,SVG:!1,options:{fill:!0,majAxis:10,minAxis:10,posAngle:0},initialize:function(m,l){L.setOptions(this,l);this._majAxis=this.options.majAxis;this._minAxis=this.options.majAxis;this._posAngle=this.options.posAngle;this._latlng=L.latLng(m);var k=Math.PI/180,e=Math.cos(this._posAngle*k),f=Math.sin(this._posAngle*k),i=e*e,j=f*f,g=this._majAxis*this._majAxis,h=this._minAxis*this._minAxis,a=g*i+h*j,c=g*j+h*i,b=(g-h)*e*f,d=a*c-b*b;this._limX=Math.sqrt(a);this._limY=Math.sqrt(c);if(d<=0){a+=1;c+=1;d=a*c-b*b}this._cXX=c/d;this._cYY=a/d;this._cXY=-2*b/d},setLatLng:function(a){this._latlng=L.latLng(a);this.redraw();return this.fire('move',{latlng:this._latlng})},getLatLng:function(){return this._latlng},setParams:function(a){this.options.majAxis=this._majAxis=a.majAxis;this.options.minAxis=this._minAxis=a.minAxis;this.options.posAngle=this._posAngle=a.posAngle;return this.redraw()},getParams:function(){var a;a.majAxis=this._majAxis;a.minAxis=this._minAxis;a.posAngle=this._posAngle;return a},setStyle:L.Path.prototype.setStyle,_project:function(){this._point=this._map.latLngToLayerPoint(this._latlng);this._updateBounds()},_updateBounds:function(){var b=this._clickTolerance(),a=[this._limX+b,this._limY+b];this._pxBounds=new L.Bounds(this._point.subtract(a),this._point.add(a))},_update:function(){if(this._map){this._updatePath()}},_updatePath:function(){this._renderer._updateEllipse(this)},_empty:function(){return this._majAxis&&!this._renderer._bounds.intersects(this._pxBounds)},_containsPoint:function(e){var a=e.subtract(this._point),d=this._clickTolerance(),b=Math.abs(a.x)-d,c=Math.abs(a.y)-d;return this._cXX*(b>0?b*b:0)+this._cYY*(c>0?c*c:0)+this._cXY*(a.x*a.y)<=1}});L.ellipseMarker=function(b,a){return new L.EllipseMarker(b,a)};L.Canvas.include({_updateEllipse:function(b){if(b._empty()){return}var c=b._point,a=this._ctx,d=b._minAxis,e=b._majAxis/b._minAxis;a.save();a.translate(c.x,c.y);a.rotate(b._posAngle*Math.PI/180);a.scale(1,e);a.beginPath();a.arc(0,0,d,0,Math.PI*2,!1);a.restore();this._fillStroke(a,b)}});L.SVG.include({_updateEllipse:function(a){var f=Math.PI/180,g=a._point,d=a._minAxis,h=a._majAxis,b=d*Math.cos(a._posAngle*f),c=d*Math.sin(a._posAngle*f),e='a'+d+','+h+' '+a._posAngle+' 1,0 ';var i=a._empty()?'M0 0':'M'+(g.x-b)+','+(g.y-c)+e+b*2+','+c*2+' '+e+-b*2+','+-c*2+' ';this._setPath(a,i)}});L.Ellipse=L.EllipseMarker.extend({options:{fill:!0},initialize:function(i,h){L.setOptions(this,h);var g=Math.PI/180,a=Math.cos(this.options.posAngle*g),b=Math.sin(this.options.posAngle*g),e=a*a,f=b*b,c=this.options.majAxis*this.options.majAxis,d=this.options.minAxis*this.options.minAxis;this._latlng=L.latLng(i);this._mLat2=c*e+d*f;this._mLng2=c*f+d*e;this._mLatLng=(c-d)*a*b},getBounds:function(){var a=[this._limX,this._limY];return new L.LatLngBounds(this._map.layerPointToLatLng(this._point.subtract(a)),this._map.layerPointToLatLng(this._point.add(a)))},_project:function(){var n=this._map,k=n.options.crs;this._point=n.latLngToLayerPoint(this._latlng);if(!this._majAxis1){var v=this._latlng.lng,l=this._latlng.lat,u=Math.PI/180,t=Math.cos(l*u),d=l<90?0.001:-0.001,s=k.project(this._latlng),q=k.project(L.latLng(l+d,v)).subtract(s),r=k.project(L.latLng(l,v+d*1/(t>d?t:d))).subtract(s),f=q.x/d,g=r.x/d,h=q.y/d,i=r.y/d,a=f*f*this._mLat2+g*g*this._mLng2+2*f*g*this._mLatLng,b=h*h*this._mLat2+i*i*this._mLng2+2*h*i*this._mLatLng,c=f*h*this._mLat2+g*i*this._mLng2+(f*i+g*h)*this._mLatLng,o=0.5*(a+b),p=Math.sqrt(0.25*(a-b)*(a-b)+c*c),j=a*b-c*c;this._majAxis=this._majAxis1=Math.sqrt(o+p);this._minAxis=this._minAxis1=o>p?Math.sqrt(o-p):0;this._posAngle=0.5*Math.atan2(2*c,a-b)/u;this._limX=this._limX1=Math.sqrt(a);this._limY=this._limY1=Math.sqrt(b);if(j<=0){a+=1;b+=1;j=a*b-c*c}this._cXX1=b/j;this._cYY1=a/j;this._cXY1=-2*c/j}var e=k.scale(n._zoom),m=1/(e*e);this._majAxis=this._majAxis1*e;this._minAxis=this._minAxis1*e;this._limX=this._limX1*e;this._limY=this._limY1*e;this._cXX=this._cXX1*m;this._cYY=this._cYY1*m;this._cXY=this._cXY1*m;this._updateBounds()}});L.ellipse=function(b,a){return new L.Ellipse(b,a)};L.Catalog={nmax:10000,_csvToGeoJSON:function(k){var j=new RegExp('#|--|^$'),f=k.split('\n'),h={type:'FeatureCollection',features:[]};for(var l in f){var g=f[l];if(j.test(g)===!1){var a={type:'Feature',id:'',properties:{items:[]},geometry:{type:'Point',coordinates:[0,0]}},d=a.geometry,i=a.properties;var b=g.split(/[,;\t]/);a.id=b[0];d.coordinates[0]=parseFloat(b[1]);d.coordinates[1]=parseFloat(b[2]);var e=b.slice(3),c;for(var m in e){c=parseFloat(e[m]);i.items.push(isNaN(c)?'--':c)}h.features.push(a)}}return h},toGeoJSON:function(a){return this._csvToGeoJSON(a)},popup:function(b){var a='<div>';if(this.objurl){a+='ID: <a href="'+L.Util.template(this.objurl,L.extend({id:b.id,ra:b.geometry.coordinates[0].toFixed(6),dec:b.geometry.coordinates[1].toFixed(6)}))+'" target="_blank">'+b.id+'</a>';a+='</br><spam>RA, Dec (deg): '+b.geometry.coordinates[0].toFixed(5)+', '+b.geometry.coordinates[1].toFixed(5)+'</spam>';a+='</div>'}else {a+='ID: '+b.id+'</div>'}a+='<TABLE style="margin:auto;">'+'<TBODY style="vertical-align:top;text-align:left;">';for(var c in this.properties){a+='<TR><TD>'+this.properties[c]+':</TD>'+'<TD>'+b.properties.items[c].toFixed(2).toString()+' ';if(this.units[c]){a+=this.units[c]}a+='</TD></TR>'}a+='</TBODY></TABLE>';return a},draw:function(b,c){var a=b.properties.items[this.magindex?this.magindex:0];return L.circleMarker(c,{radius:a?this.maglim+5-a:8})},vizierURL:'http://vizier.u-strasbg.fr/viz-bin'};L.Catalog['2MASS']=L.extend({},L.Catalog,{name:'2MASS',attribution:'2MASS All-Sky Catalog of Point Sources (Cutri et al. 2003)',color:'red',maglim:17,service:'Vizier@CDS',regionType:'box',url:L.Catalog.vizierURL+'/asu-tsv?&-mime=csv&-source=II/246&'+'-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&'+'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&'+'-out.max={nmax}',properties:['J','H','K'],units:['','',''],objurl:L.Catalog.vizierURL+'/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'});L.Catalog.SDSS=L.extend({},L.Catalog,{name:'SDSS release 9',attribution:'SDSS Photometric Catalog, Release 9 (Adelman-McCarthy et al. 2012)',color:'yellow',maglim:25,service:'Vizier@CDS',regionType:'box',url:L.Catalog.vizierURL+'/asu-tsv?&-mime=csv&-source=V/139&'+'-out=SDSS9,RAJ2000,DEJ2000,umag,gmag,rmag,imag,zmag&-out.meta=&'+'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-sort=imag&-out.max={nmax}',properties:['u','g','r','i','z'],units:['','','','',''],objurl:L.Catalog.vizierURL+'/VizieR-5?-source=V/139/sdss9&-c={ra},{dec},eq=J2000&-c.rs=0.01'});L.Catalog.PPMXL=L.extend({},L.Catalog,{name:'PPMXL',attribution:'PPM-Extended, positions and proper motions by Roeser et al. 2008',color:'green',maglim:20,service:'Vizier@CDS',regionType:'box',url:L.Catalog.vizierURL+'/asu-tsv?&-mime=csv&-source=I/317&'+'-out=PPMXL,RAJ2000,DEJ2000,Jmag,Hmag,Kmag,b1mag,b2mag,r1mag,r2mag,imag,pmRA,pmDE&-out.meta=&'+'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',properties:['J','H','K','b<sub>1</sub>','b<sub>2</sub>','r<sub>1</sub>','r<sub>2</sub>','i','&#956;<sub>&#593;</sub> cos &#948;','&#956;<sub>&#948;</sub>'],units:['','','','','','','','','mas/yr','mas/yr'],objurl:L.Catalog.vizierURL+'/VizieR-5?-source=I/317&-c={ra},{dec},eq=J2000&-c.rs=0.01'});L.Catalog.Abell=L.extend({},L.Catalog,{name:'Abell clusters',attribution:'Rich Clusters of Galaxies (Abell et al. 1989) ',color:'orange',maglim:30,service:'Vizier@CDS',regionType:'box',url:L.Catalog.vizierURL+'/asu-tsv?&-mime=csv&-source=VII/110A&'+'-out=ACO,_RAJ2000,_DEJ2000,m10,Rich,Dclass&-out.meta=&'+'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',properties:['m<sub>10</sub>','Richness','D<sub>class</sub>'],units:['','',''],objurl:L.Catalog.vizierURL+'/VizieR-5?-source=VII/110A&-c={ra},{dec},eq=J2000&-c.rs=0.2'});L.Catalog.NVSS=L.extend({},L.Catalog,{name:'NVSS',attribution:'1.4GHz NRAO VLA Sky Survey (NVSS) (Condon et al. 1998)',color:'magenta',maglim:30,service:'Vizier@CDS',regionType:'box',url:L.Catalog.vizierURL+'/asu-tsv?&-mime=csv&-source=VIII/65/NVSS&'+'-out=NVSS,_RAJ2000,_DEJ2000,S1.4,MajAxis,MinAxis,PA&-out.meta=&'+'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',properties:['S<sub>1.4GHz</sub>','Major axis','Minor axis','Position angle'],units:['mJy','&#8243;','&#8243;','&#176;'],objurl:L.Catalog.vizierURL+'/VizieR-5?-source=VIII/65/NVSS&-c={ra},{dec},eq=J2000&-c.rs=0.2',draw:function(a,b){return L.ellipse(b,{majAxis:a.properties.items[1]/7200,minAxis:a.properties.items[2]/7200,posAngle:a.properties.items[3]==='--'?90:90-a.properties.items[3]})}});L.Catalog.FIRST=L.extend({},L.Catalog,{name:'FIRST',attribution:'The FIRST Survey Catalog (Helfand et al. 2015)',color:'blue',maglim:30,service:'Vizier@CDS',regionType:'box',url:L.Catalog.vizierURL+'/asu-tsv?&-mime=csv&-source=VIII/92/first14&'+'-out=FIRST,_RAJ2000,_DEJ2000,Fpeak,fMaj,fMin,fPA&-out.meta=&'+'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',properties:['F<sub>peak</sub>(1.4GHz)','Major axis FWHM','Minor axis FWHM','Position angle'],units:['mJy','&#8243;','&#8243;','&#176;'],objurl:L.Catalog.vizierURL+'/VizieR-5?-source=VIII/92/first14&-c={ra},{dec},eq=J2000&-c.rs=0.2',draw:function(a,b){return L.ellipse(b,{majAxis:a.properties.items[1]/7200,minAxis:a.properties.items[2]/7200,posAngle:a.properties.items[3]==='--'?90:90-a.properties.items[3]})}});L.Catalog.AllWISE=L.extend({},L.Catalog,{name:'AllWISE',attribution:'AllWISE Data Release (Cutri et al. 2013)',color:'red',maglim:18,service:'Vizier@CDS',regionType:'box',url:L.Catalog.vizierURL+'/asu-tsv?&-mime=csv&-source=II/328/allwise&'+'-out=AllWISE,_RAJ2000,_DEJ2000,W1mag,W2mag,W3mag,W4mag&-out.meta=&'+'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',properties:['W1<sub>mag</sub> (3.4µm)','W2<sub>mag</sub> (4.6µm)','W3<sub>mag</sub> (12µm)','W4<sub>mag</sub> (22µm)'],units:['','','',''],objurl:L.Catalog.vizierURL+'/VizieR-5?-source=II/328/allwise&-c={ra},{dec},eq=J2000&-c.rs=0.2'});L.Catalog.GALEX_AIS=L.extend({},L.Catalog,{name:'GALEX AIS',attribution:'GALEX catalogs of UV sources: All-sky Imaging Survey (Bianchi et al. 2011)',color:'magenta',maglim:21,service:'Vizier@CDS',regionType:'box',url:L.Catalog.vizierURL+'/asu-tsv?&-mime=csv&-source=II/312/ais&'+'-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&'+'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',properties:['FUV<sub>AB</sub>','NUV<sub>AB</sub>'],units:['',''],objurl:L.Catalog.vizierURL+'/VizieR-5?-source=II/312/ais&-c={ra},{dec},eq=J2000&-c.rs=0.2'});L.Catalog.GAIA_DR1=L.extend({},L.Catalog,{name:'Gaia DR1',attribution:'First Gaia Data Release (2016)',color:'green',maglim:20,service:'Vizier@CDS',regionType:'box',url:L.Catalog.vizierURL+'/asu-tsv?&-mime=csv&-source=I/337&'+'-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&'+'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',properties:['G','&#956;<sub>&#593;</sub> cos &#948;','&#956;<sub>&#948;</sub>'],units:['','mas/yr','mas/yr'],objurl:L.Catalog.vizierURL+'/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'});L.FlipSwitch=L.Evented.extend({options:{checked:!1,title:'Click to switch',className:'leaflet-flipswitch',id:'leaflet-flipswitch'},initialize:function(f,a){a=L.setOptions(this,a);var g=this,b=a.className,c=L.DomUtil.create('div',b,f),d=this._input=L.DomUtil.create('input',b,c),e=L.DomUtil.create('label',b,c);d.type='checkbox';d.name=a.className;d.checked=a.checked;e.htmlFor=d.id=a.id;if(a.title){e.title=a.title}L.DomUtil.create('span',b+'-inner',e);L.DomUtil.create('span',b+'-button',e);L.DomEvent.disableClickPropagation(c).disableScrollPropagation(c);L.DomEvent.on(d,'change',function(){this.fire('change')},this);return c},value:function(a){if(a===undefined){return this._input.checked}else {this._input.checked=a?!0:!1;return this}}});L.flipswitch=function(b,a){return new L.FlipSwitch(b,a)};L.SpinBox=L.Evented.extend({options:{dmin:undefined,dmax:undefined,step:undefined,initValue:undefined,repButton:!0,clickEvent:'click',instantUpdate:!1,title:'Enter value',className:'leaflet-spinbox'},initialize:function(h,a){a=L.setOptions(this,a);var g=this,b=this._drag={startEvent:'touchstart mousedown',stopEvent:'touchend mouseup mouseout touchcancel',move:!1,start:!1,end:!1,pos:!1,target:!1,delta:!1,tmp:!1,cnt:0,step:a.step,prec:this._prec(a.step)},d=this._wrap=L.DomUtil.create('div',a.className,h),c=this._input=L.DomUtil.create('input',a.className+'-input',d),e=this._down=L.DomUtil.create('div',a.className+'-down',d),f=this._up=L.DomUtil.create('div',a.className+'-up',d);c.type='number';c.step=0.1;L.DomEvent.disableClickPropagation(d).disableScrollPropagation(d);if(c.disabled===!0){a.disabled=!0}if(a.dmin===undefined){a.dmin=-Number.MAX_VALUE}if(a.dmax===undefined){a.dmax=Number.MAX_VALUE}if(a.step===undefined){a.step=1}if(a.initValue===undefined){a.initValue=(a.dmin+a.dmax)/2}this.value(a.initValue);c.title=a.title;e.title='Decrease number by '+a.step;f.title='Increase number by '+a.step;L.DomEvent.on(this._input,'change',function(){this.fire('change')},this);if(a.repButton===!1){L.DomEvent.on(e,a.clickEvent,function(a){a.preventDefault();this._offset(a.currentTarget,-1)},this);L.DomEvent.on(f,a.clickEvent,function(a){a.preventDefault();this._offset(a.currentTarget,1)},this)}else {L.DomEvent.on(e,b.startEvent,function(d){c.blur();b.move=!0;b.cnt=0;b.step=a.step;b.prec=this._prec(b.step);b.delta=-1;this._offset(d.currentTarget,-1);if(!this.runButton){b.target=d.currentTarget;this.runButton=setTimeout(function(){g._sboxRun()},500)}},this);L.DomEvent.on(f,b.startEvent,function(d){c.blur();b.move=!0;b.cnt=0;b.step=a.step;b.prec=this._prec(b.step);b.delta=1;this._offset(d.currentTarget,1);if(!this.runButton){b.target=d.currentTarget;this.runButton=setTimeout(function(){g._sboxRun()},500)}},this);L.DomEvent.on(e,b.stopEvent,function(c){if(b.move){c.preventDefault();clearTimeout(this.runButton);this.runButton=!1;b.move=!1;if(a.instantUpdate===!1){this.fire('change')}}},this);L.DomEvent.on(f,b.stopEvent,function(c){if(b.move){c.preventDefault();clearTimeout(this.runButton);this.runButton=!1;b.move=!1;if(a.instantUpdate===!1){this.fire('change')}}},this)}if(a.disabled){this.disable()}return d},value:function(a){if(a===undefined){return parseFloat(this._input.value)}else {this._input.value=a;return this}},step:function(a){if(a===undefined){return this.options.step}else {this.options.step=a;return this}},disable:function(){var a='disabled';this._input.disabled=!0;this._input.blur();L.DomUtil.addClass(this._wrap,a);L.DomUtil.addClass(this._down,a);L.DomUtil.addClass(this._up,a);this.options.disabled=!0},enable:function(){var a='disabled';this._input.disabled=!1;L.DomUtil.removeClass(this._wrap,a);L.DomUtil.removeClass(this._down,a);L.DomUtil.removeClass(this._up,a);this.options.disabled=!1},_sboxRun:function(){var d=this,c=150,b=this.options,a=this._drag;if(a.cnt===20){c=50;a.step=10*b.step;a.prec=this._prec(a.step)}else {if(a.cnt===40){c=10;a.step=100*b.step;a.prec=this._prec(a.step)}else {if(a.cnt===60){a.step=1000*b.step;a.prec=this._prec(a.step)}else {if(a.cnt===80){a.step=10000*b.step;a.prec=this._prec(a.step)}}}}a.didRun=!0;this._offset(this,a.delta);a.cnt++;this.runButton=setTimeout(function(){d._sboxRun()},c)},_prec:function(b){var a=-0.4342944*Math.log(b);return a>0?Math.ceil(a):0},_offset:function(f,e){var a,b=this.options,c=this._input,d=this._drag;if(!this.disabled){if(e<1){a=(parseFloat(c.value)-d.step).toFixed(d.prec);if(a>=b.dmin){c.value=a;if(b.instantUpdate===!0){this.fire('change')}}}else {a=(parseFloat(c.value)+d.step).toFixed(d.prec);if(a<=b.dmax){c.value=a;if(b.instantUpdate===!0){this.fire('change')}}}}}});L.spinbox=function(b,a){return new L.SpinBox(b,a)};if(typeof require!=='undefined'){var $=require('jquery-browser')}$.extend($.fn,{fileTree:function(a,b){if(a.root===undefined){a.root='/'}if(a.script===undefined){a.script='dist/filetree.php'}if(a.folderEvent===undefined){a.folderEvent='click'}if(a.expandSpeed===undefined){a.expandSpeed=500}if(a.collapseSpeed===undefined){a.collapseSpeed=500}if(a.expandEasing===undefined){a.expandEasing=null}if(a.collapseEasing===undefined){a.collapseEasing=null}if(a.multiFolder===undefined){a.multiFolder=!0}if(a.loadMessage===undefined){a.loadMessage='Loading...'}$(this).each(function(){function showTree(b,c){$(b).addClass('wait');$('.filetree.start').remove();$.post(a.script,{dir:c},function(d){$(b).find('.start').html('');$(b).removeClass('wait').append(d);if(a.root===c){$(b).find('UL:hidden').show()}else {$(b).find('UL:hidden').slideDown({duration:a.expandSpeed,easing:a.expandEasing})}bindTree(b)})}function bindTree(c){$(c).find('LI A').on(a.folderEvent,function(){if($(this).parent().hasClass('directory')){if($(this).parent().hasClass('collapsed')){if(!a.multiFolder){$(this).parent().parent().find('UL').slideUp({duration:a.collapseSpeed,easing:a.collapseEasing});$(this).parent().parent().find('LI.directory').removeClass('expanded').addClass('collapsed')}$(this).parent().find('UL').remove();showTree($(this).parent(),encodeURI($(this).attr('rel').match(/.*\//)));$(this).parent().removeClass('collapsed').addClass('expanded')}else {$(this).parent().find('UL').slideUp({duration:a.collapseSpeed,easing:a.collapseEasing});$(this).parent().removeClass('expanded').addClass('collapsed')}}else {b($(this).attr('rel'))}return !1});if(a.folderEvent.toLowerCase!=='click'){$(c).find('LI A').on('click',function(){return !1})}}$(this).html('<ul class="filetree start"><li class="wait">'+a.loadMessage+'<li></ul>');showTree($(this),encodeURI(a.root))})}});L.Control.Attribution.include({_update:function(){if(!this._map){return}var b=[];for(var c in this._attributions){if(this._attributions[c]){b.push(c)}}var a=[];if(this.options.prefix){a.push(this.options.prefix)}if(b.length){a.push(b.join(', '))}this._container.innerHTML=a.join(' &#169; ')}});L.Map.addInitHook(function(){if(this.options.visiomaticLogo!==!1&&this.options.attributionControl){this.attributionControl.setPrefix('<a id="logo-visiomatic" class="leaflet-control-attribution-logo"'+'href="http://visiomatic.org">&nbsp;</a>'+'<a id="logo-iipimage" class="leaflet-control-attribution-logo"'+'href="http://iipimage.sourceforge.net">&nbsp;</a>'+'<a id="logo-leaflet" class="leaflet-control-attribution-logo"'+'href="http://leafletjs.com">&nbsp;</a>')}});L.Control.ExtraMap=L.Control.extend({options:{position:'bottomright',title:'Navigation mini-map. Grab to navigate',toggleDisplay:!0,zoomLevelFixed:!1,zoomLevelOffset:-5,zoomAnimation:!1,autoToggleDisplay:!1,width:150,height:150,collapsedWidth:24,collapsedHeight:24,aimingRectOptions:{color:'#FFFFFF',weight:1,clickable:!1},shadowRectOptions:{color:'#FDC82F',weight:1,clickable:!1,opacity:0,fillOpacity:0},strings:{hideText:'Hide map',showText:'Show map'}},initialize:function(b,a){L.Util.setOptions(this,a);this.options.aimingRectOptions.clickable=!1;this.options.shadowRectOptions.clickable=!1;this._layer=b},onAdd:function(a){this._mainMap=a;this._container=L.DomUtil.create('div','leaflet-control-extramap');this._container.style.width=this.options.width+'px';this._container.style.height=this.options.height+'px';this._container.title=this.options.title;L.DomEvent.disableClickPropagation(this._container);L.DomEvent.on(this._container,'mousewheel',L.DomEvent.stopPropagation);this._extraMap=new L.Map(this._container,{attributionControl:!1,zoomControl:!1,zoomAnimation:this.options.zoomAnimation,autoToggleDisplay:this.options.autoToggleDisplay,touchZoom:!this._isZoomLevelFixed(),scrollWheelZoom:!this._isZoomLevelFixed(),doubleClickZoom:!this._isZoomLevelFixed(),boxZoom:!this._isZoomLevelFixed()});this._layer.addTo(this._extraMap);this._userToggledDisplay=!1;this._minimized=!1;if(this.options.toggleDisplay){this._addToggleButton()}this._layer.once('metaload',function(){this._mainMap.whenReady(L.Util.bind(function(){this._extraMap.whenReady(L.Util.bind(function(){this._aimingRect=L.rectangle(this._mainMap.getBounds(),this.options.aimingRectOptions).addTo(this._extraMap);this._shadowRect=L.rectangle(this._mainMap.getBounds(),this.options.shadowRectOptions).addTo(this._extraMap);this._mainMap.on('moveend',this._onMainMapMoved,this);this._mainMap.on('move',this._onMainMapMoving,this);this._extraMap.on('movestart',this._onExtraMapMoveStarted,this);this._extraMap.on('move',this._onExtraMapMoving,this);this._extraMap.on('moveend',this._onExtraMapMoved,this);this._extraMap.setView(this._mainMap.getCenter(),this._decideZoom(!0));this._setDisplay(this._decideMinimized())},this))},this))},this);return this._container},addTo:function(a){L.Control.prototype.addTo.call(this,a);return this},onRemove:function(a){this._mainMap.off('moveend',this._onMainMapMoved,this);this._mainMap.off('move',this._onMainMapMoving,this);this._extraMap.off('moveend',this._onExtraMapMoved,this);this._extraMap.removeLayer(this._layer)},changeLayer:function(a){this._extraMap.removeLayer(this._layer);this._layer=a;this._extraMap.addLayer(this._layer)},_addToggleButton:function(){this._toggleDisplayButton=this.options.toggleDisplay?this._createButton('',this.options.strings.hideText,'leaflet-control-extramap-toggle-display '+'leaflet-control-extramap-toggle-display-'+this.options.position,this._container,this._toggleDisplayButtonClicked,this):undefined;this._toggleDisplayButton.style.width=this.options.collapsedWidth+'px';this._toggleDisplayButton.style.height=this.options.collapsedHeight+'px'},_createButton:function(g,f,c,d,h,e){var a=L.DomUtil.create('a',c,d);a.innerHTML=g;a.href='#';a.title=f;var b=L.DomEvent.stopPropagation;L.DomEvent.on(a,'click',b).on(a,'mousedown',b).on(a,'dblclick',b).on(a,'click',L.DomEvent.preventDefault).on(a,'click',h,e);return a},_toggleDisplayButtonClicked:function(){this._userToggledDisplay=!0;if(!this._minimized){this._minimize();this._toggleDisplayButton.title=this.options.strings.showText}else {this._restore();this._toggleDisplayButton.title=this.options.strings.hideText}},_setDisplay:function(a){if(a!==this._minimized){if(!this._minimized){this._minimize()}else {this._restore()}}},_minimize:function(){if(this.options.toggleDisplay){this._container.style.width=this.options.collapsedWidth+'px';this._container.style.height=this.options.collapsedHeight+'px';this._toggleDisplayButton.className+=' minimized-'+this.options.position}else {this._container.style.display='none'}this._minimized=!0},_restore:function(){if(this.options.toggleDisplay){this._container.style.width=this.options.width+'px';this._container.style.height=this.options.height+'px';this._toggleDisplayButton.className=this._toggleDisplayButton.className.replace('minimized-'+this.options.position,'')}else {this._container.style.display='block'}this._minimized=!1},_onMainMapMoved:function(a){if(!this._extraMapMoving){this._mainMapMoving=!0;this._extraMap.setView(this._mainMap.getCenter(),this._decideZoom(!0));this._setDisplay(this._decideMinimized())}else {this._extraMapMoving=!1}this._aimingRect.setBounds(this._mainMap.getBounds())},_onMainMapMoving:function(a){this._aimingRect.setBounds(this._mainMap.getBounds())},_onExtraMapMoveStarted:function(d){var a=this._aimingRect.getBounds();var c=this._extraMap.latLngToContainerPoint(a.getSouthWest());var b=this._extraMap.latLngToContainerPoint(a.getNorthEast());this._lastAimingRectPosition={sw:c,ne:b}},_onExtraMapMoving:function(a){if(!this._mainMapMoving&&this._lastAimingRectPosition){this._shadowRect.setBounds(new L.LatLngBounds(this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.sw),this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.ne)));this._shadowRect.setStyle({opacity:1,fillOpacity:0.3})}},_onExtraMapMoved:function(a){if(!this._mainMapMoving){this._extraMapMoving=!0;this._mainMap.setView(this._extraMap.getCenter(),this._decideZoom(!1));this._shadowRect.setStyle({opacity:0,fillOpacity:0})}else {this._mainMapMoving=!1}},_isZoomLevelFixed:function(){var a=this.options.zoomLevelFixed;return this._isDefined(a)&&this._isInteger(a)},_decideZoom:function(b){if(!this._isZoomLevelFixed()){if(b){return this._mainMap.getZoom()+this.options.zoomLevelOffset}else {var d=this._extraMap.getZoom()-this._mainMap.getZoom();var c=this._extraMap.getZoom()-this.options.zoomLevelOffset;var a;if(d>this.options.zoomLevelOffset&&this._mainMap.getZoom()<this._extraMap.getMinZoom()-this.options.zoomLevelOffset){if(this._extraMap.getZoom()>this._lastExtraMapZoom){a=this._mainMap.getZoom()+1;this._extraMap.setZoom(this._extraMap.getZoom()-1)}else {a=this._mainMap.getZoom()}}else {a=c}this._lastExtraMapZoom=this._extraMap.getZoom();return a}}else {if(b){return this.options.zoomLevelFixed}else {return this._mainMap.getZoom()}}},_decideMinimized:function(){if(this._userToggledDisplay){return this._minimized}if(this.options.autoToggleDisplay){if(this._mainMap.getBounds().contains(this._extraMap.getBounds())){return !0}return !1}return this._minimized},_isInteger:function(a){return typeof a==='number'},_isDefined:function(a){return typeof a!=='undefined'}});L.Map.mergeOptions({extraMapControl:!1});L.Map.addInitHook(function(){if(this.options.extraMapControl){this.extraMapControl=(new L.Control.ExtraMap()).addTo(this)}});L.control.extraMap=function(b,a){return new L.Control.ExtraMap(b,a)};if(typeof require!=='undefined'){var jQuery=require('jquery-browser')}(function(){L.Control.FullScreen=L.Control.extend({options:{position:'topleft',title:'Toggle full screen mode',forceSeparateButton:!1},onAdd:function(b){var c='leaflet-control-zoom-fullscreen',a;if(b.zoomControl&&!this.options.forceSeparateButton){a=b.zoomControl._container}else {a=L.DomUtil.create('div','leaflet-bar')}this._createButton(this.options.title,c,a,this.toogleFullScreen,b);return a},_createButton:function(f,e,c,g,d){var b=L.DomUtil.create('a',e,c);b.href='#';b.title=f;L.DomEvent.addListener(b,'click',L.DomEvent.stopPropagation).addListener(b,'click',L.DomEvent.preventDefault).addListener(b,'click',g,d);L.DomEvent.addListener(c,a.fullScreenEventName,L.DomEvent.stopPropagation).addListener(c,a.fullScreenEventName,L.DomEvent.preventDefault).addListener(c,a.fullScreenEventName,this._handleEscKey,d);L.DomEvent.addListener(document,a.fullScreenEventName,L.DomEvent.stopPropagation).addListener(document,a.fullScreenEventName,L.DomEvent.preventDefault).addListener(document,a.fullScreenEventName,this._handleEscKey,d);return b},toogleFullScreen:function(){this._exitFired=!1;var b=this._container;if(this._isFullscreen){if(a.supportsFullScreen){a.cancelFullScreen(b)}else {L.DomUtil.removeClass(b,'leaflet-pseudo-fullscreen')}this.invalidateSize();this.fire('exitFullscreen');this._exitFired=!0;this._isFullscreen=!1}else {if(a.supportsFullScreen){a.requestFullScreen(b)}else {L.DomUtil.addClass(b,'leaflet-pseudo-fullscreen')}this.invalidateSize();this.fire('enterFullscreen');this._isFullscreen=!0}},_handleEscKey:function(){if(!a.isFullScreen(this)&&!this._exitFired){this.fire('exitFullscreen');this._exitFired=!0;this._isFullscreen=!1}}});L.Map.addInitHook(function(){if(this.options.fullscreenControl){this.fullscreenControl=L.control.fullscreen(this.options.fullscreenControlOptions);this.addControl(this.fullscreenControl)}});L.control.fullscreen=function(a){return new L.Control.FullScreen(a)};var a={supportsFullScreen:!1,isFullScreen:function(){return !1},requestFullScreen:function(){},cancelFullScreen:function(){},fullScreenEventName:'',prefix:''},c='webkit moz o ms khtml'.split(' ');if(typeof document.exitFullscreen!=='undefined'){a.supportsFullScreen=!0}else {for(var b=0,d=c.length;b<d;b++){a.prefix=c[b];if(typeof document[a.prefix+'CancelFullScreen']!=='undefined'){a.supportsFullScreen=!0;break}}}if(a.supportsFullScreen){a.fullScreenEventName=a.prefix+'fullscreenchange';a.isFullScreen=function(){switch(this.prefix){case '':return document.fullScreen;case 'webkit':return document.webkitIsFullScreen;default:return document[this.prefix+'FullScreen'];}};a.requestFullScreen=function(a){return this.prefix===''?a.requestFullscreen():a[this.prefix+'RequestFullScreen']()};a.cancelFullScreen=function(a){return this.prefix===''?document.exitFullscreen():document[this.prefix+'CancelFullScreen']()}}if(typeof jQuery!=='undefined'){jQuery.fn.requestFullScreen=function(){return this.each(function(){var b=jQuery(this);if(a.supportsFullScreen){a.requestFullScreen(b)}})}}window.fullScreenApi=a})();if(typeof require!=='undefined'){var $=require('jquery')}L.Control.IIP=L.Control.extend({options:{title:'a control related to IIPImage',collapsed:!0,position:'topleft'},initialize:function(a,b){L.setOptions(this,b);this._className='leaflet-control-iip';this._id='leaflet-iipimage';this._layers=a},addTo:function(a){if(a._sidebar){this._sidebar=a;this._map=a._map;this._dialog=L.DomUtil.create('div',this._className+'-dialog');a.addTab(this._id,this._className,this.options.title,this._dialog,this._sideClass);this._map.on('layeradd',this._checkIIP,this);return a}else {return L.Control.prototype.addTo.call(this,a)}},onAdd:function(e){var c=this._className,d=this._id,a=this._container=L.DomUtil.create('div',c+' leaflet-bar');a.setAttribute('aria-haspopup',!0);L.DomEvent.disableClickPropagation(a).disableScrollPropagation(a);this._dialog=L.DomUtil.create('div',c+'-dialog',a);if(this.options.collapsed){if(!L.Browser.android){L.DomEvent.on(a,'mouseover',this._expand,this).on(a,'mouseout',this._collapse,this)}var b=this._toggle=L.DomUtil.create('a',c+'-toggle leaflet-bar',a);b.href='#';b.id=d+'-toggle';b.title=this.options.title;if(L.Browser.touch){L.DomEvent.on(b,'click',L.DomEvent.stop).on(b,'click',this._expand,this)}else {L.DomEvent.on(b,'focus',this._expand,this)}this._map.on('click',this._collapse,this)}else {this._expand()}this._map.on('layeradd',this._checkIIP,this);return this._container},_checkIIP:function(b){var a=b.layer;if(!a||!a.iipdefault){return}this._layer=a;if(this._reloadFlag){a.once('load',this._resetDialog,this)}else {this._initDialog();this._reloadFlag=!0}},_initDialog:function(){},_resetDialog:function(){this._dialog.innerHTML='';this._initDialog()},_addDialogBox:function(b){var a=L.DomUtil.create('div',this._className+'-box',this._dialog);if(b){a.id=b}return a},_addDialogLine:function(c,b){var a=L.DomUtil.create('div',this._className+'-line',b),d=L.DomUtil.create('div',this._className+'-label',a);d.innerHTML=c;return a},_addDialogElement:function(a){return L.DomUtil.create('div',this._className+'-element',a)},_expand:function(){L.DomUtil.addClass(this._container,this._className+'-expanded')},_collapse:function(){this._container.className=this._container.className.replace(' '+this._className+'-expanded','')},getActiveBaseLayer:function(){return this._activeBaseLayer},_findActiveBaseLayer:function(){var b=this._layers;this._prelayer=undefined;for(var c in b){var a=b[c];if(!a.overlay){if(!a._map){this._prelayer=a}else {if(this._map.hasLayer(a)&&a.iipdefault){return a}}}}return undefined},_createButton:function(c,f,b,e,d){var a=L.DomUtil.create('a',c,f);a.target='_blank';if(b){a.id=c+'-'+b}if(e){L.DomEvent.on(a,'click touch',e,this)}if(d){a.title=d}return a},_createRadioButton:function(b,d,c,h,g,f){var a=L.DomUtil.create('input',b,d);a.type='radio';a.name=b;a.value=c;a.checked=h;if(g){L.DomEvent.on(a,'click touch',g,c)}var e=L.DomUtil.create('label',b,d);e.htmlFor=a.id=b+'-'+c;if(f){e.title=f}return a},_createSelectMenu:function(f,l,h,g,e,k,i){var j=L.DomUtil.create('div',f,l),b=L.DomUtil.create('select',f,j),d=document.createElement('option'),c=b.opt=[],a;d.text='choose';d.disabled=!0;if(!e||e<0){d.selected=!0}b.add(d,null);for(var m in h){a=parseInt(m,10);c[a]=document.createElement('option');c[a].text=h[a];c[a].value=a;if(g&&g[a]){c[a].disabled=!0}else {if(a===e){c[a].selected=!0}}b.add(c[a],null)}if(this._container&&!L.Browser.android&&this.options.collapsed){L.DomEvent.on(b,'mousedown',function(){L.DomEvent.off(this._container,'mouseout',this._collapse,this);this.collapsedOff=!0},this);L.DomEvent.on(this._container,'mouseover',function(){if(this.collapsedOff){L.DomEvent.on(this._container,'mouseout',this._collapse,this);this.collapsedOff=!1}},this)}if(k){L.DomEvent.on(b,'change keyup',k,this)}if(i){j.title=i}return b},_createColorPicker:function(c,i,g,f,e,h,d){var b=this,a=L.DomUtil.create('input',c,i);a.type='color';a.value=f;a.id=c+'-'+g;$(document).ready(function(){$(a).spectrum({showInput:!0,appendTo:'#'+b._id,showPaletteOnly:!0,togglePaletteOnly:!0,localStorageKey:h,change:function(b){a.value=b.toHexString()}}).on('show.spectrum',function(){if(b._container){L.DomEvent.off(b._container,'mouseout',b._collapse)}});if(e){$(a).on('change',e)}if(d){$('#'+a.id+'+.sp-replacer').prop('title',d)}});return a},_addSwitchInput:function(e,i,d,g,f,j,c){var h=this._addDialogLine(d,i),a=this._addDialogElement(h),b=L.flipswitch(a,{checked:c,id:j,title:f});b.on('change',function(){this._onInputChange(e,g,b.value())},this);return a},_addNumericalInput:function(e,k,d,g,f,n,c,j,m,l,h){var i=this._addDialogLine(d,k),b=this._addDialogElement(i),a=b.spinbox=L.spinbox(b,{step:j,dmin:m,dmax:l,initValue:c,title:f});a.on('change',function(){L.IIPUtils.flashElement(a._input);this._onInputChange(e,g,a.value(),h)},this);return b},_spinboxStep:function(c,a){var b=parseFloat((Math.abs(a===c?a:a-c)*0.01).toPrecision(1));return b===0?1:b},_onInputChange:function(b,e,c,d){var a=e.split(/\[|\]/);if(a[1]){b[a[0]][parseInt(a[1],10)]=c}else {b[a[0]]=c}if(d){d(b)}b.redraw()},_updateLayerList:function(){if(!this._dialog){return this}if(this._layerList){L.DomUtil.empty(this._layerList)}else {this._layerList=L.DomUtil.create('div','leaflet-control-iip'+'-layerlist',this._dialog)}for(var a in this._layers){this._addLayerItem(this._layers[a])}return this},_addLayerItem:function(a){var e=this,c=L.DomUtil.create('div','leaflet-control-iip-layer'),d=L.DomUtil.create('div','leaflet-control-iip-layerswitch',c);if(a.layer.notReady){L.DomUtil.create('div','leaflet-control-iip-activity',d)}else {var b,g=this._map.hasLayer(a.layer);b=document.createElement('input');b.type='checkbox';b.className='leaflet-control-iip-selector';b.defaultChecked=g;b.layerId=L.stamp(a.layer);L.DomEvent.on(b,'click',function(){var c,a,b,d=this._layerList.getElementsByTagName('input'),e=d.length;this._handlingClick=!0;for(c=0;c<e;c++){a=d[c];if(!('layerId' in a)){continue}b=this._layers[a.layerId];if(a.checked&&!this._map.hasLayer(b.layer)){b.layer.addTo(this._map)}else {if(!a.checked&&this._map.hasLayer(b.layer)){this._map.removeLayer(b.layer)}}}this._handlingClick=!1},this);d.appendChild(b)}var f=L.DomUtil.create('div','leaflet-control-iip-layername',c);f.innerHTML=' '+a.name;f.style.textShadow='0px 0px 5px '+a.layer.nameColor;this._createButton('leaflet-control-iip-trash',c,undefined,function(){e.removeLayer(a.layer);if(!a.notReady){e._map.removeLayer(a.layer)}},'Delete layer');this._layerList.appendChild(c);return c},addLayer:function(a,c,b){a.on('add remove',this._onLayerChange,this);var d=L.stamp(a);this._layers[d]={layer:a,name:c,index:b};return this._updateLayerList()},removeLayer:function(a){a.off('add remove',this._onLayerChange,this);a.fire('trash',{index:this._layers[L.stamp(a)].index});a.off('trash');delete this._layers[L.stamp(a)];return this._updateLayerList()},_onLayerChange:function(a){if(!this._handlingClick){this._updateLayerList()}var c=this._layers[L.stamp(a.target)],b=a.type==='add'?'overlayadd':'overlayremove';this._map.fire(b,c)}});L.control.iip=function(a,b){return new L.Control.IIP(a,b)};if(typeof require!=='undefined'){var $=require('jquery')}L.Control.IIP.Catalog=L.Control.IIP.extend({defaultCatalogs:[L.Catalog.GAIA_DR1,L.Catalog['2MASS'],L.Catalog.SDSS,L.Catalog.PPMXL,L.Catalog.Abell],options:{title:'Catalog overlays',collapsed:!0,position:'topleft',nativeCelsys:!0,color:'#FFFF00',timeOut:30,authenticate:!1},initialize:function(a,b){L.setOptions(this,b);this._className='leaflet-control-iip';this._id='leaflet-iipcatalog';this._layers={};this._handlingClick=!1;this._sideClass='catalog';this._catalogs=a?a:this.defaultCatalogs},_initDialog:function(){var d=this._className,c=this._catalogs,g=this._addDialogBox(),e=this._addDialogLine('<a id="logo-cds" '+'href="http://cds.u-strasbg.fr">&nbsp;</a>',g),b=this._addDialogElement(e),f=this._createColorPicker(d+'-color',b,'catalog',this.options.color,!1,'iipCatalog','Click to set catalog color');var a=this._createSelectMenu(this._className+'-select',b,c.map(function(a){return a.name}),undefined,-1,undefined,'Select Catalog');L.DomEvent.on(a,'change keyup',function(){a.title=c[a.selectedIndex-1].attribution},this);b=this._addDialogElement(e);this._createButton(d+'-button',b,'catalog',function(){var d=a.selectedIndex-1;if(d>=0){var b=c[d];b.color=f.value;a.selectedIndex=0;a.title='Select Catalog';this._getCatalog(b,this.options.timeOut)}},'Query catalog')},_resetDialog:function(){},_getCatalog:function(d,n){var m=this,e=this._map,a=e.options.crs,l=a.forceNativeCelsys&&!this.options.nativeCelsys,c=l?a.celsysToEq(e.getCenter()):e.getCenter(),f=e.getPixelBounds(),g=e.getZoom(),i=new L.LayerGroup(null);i.notReady=!0;this.addLayer(i,d.name);if(d.authenticate){this.options.authenticate=d.authenticate}else {this.options.authenticate=!1}var o=Math.abs(Math.cos(c.lat*Math.PI/180)),b=l?[a.celsysToEq(e.unproject(f.min,g)),a.celsysToEq(e.unproject(L.point(f.min.x,f.max.y),g)),a.celsysToEq(e.unproject(f.max,g)),a.celsysToEq(e.unproject(L.point(f.max.x,f.min.y),g))]:[e.unproject(f.min,g),e.unproject(L.point(f.min.x,f.max.y),g),e.unproject(f.max,g),e.unproject(L.point(f.max.x,f.min.y),g)],h;if(a.forceNativeCelsys&&this.options.nativeCelsys){switch(a.celsyscode){case 'ecliptic':h='E2000.0';break;case 'galactic':h='G';break;case 'supergalactic':h='S';break;default:h='J2000.0';break;}}else {h='J2000.0'}if(d.regionType==='box'){var k=(Math.max(a._deltaLng(b[0],c),a._deltaLng(b[1],c),a._deltaLng(b[2],c),a._deltaLng(b[3],c))-Math.min(a._deltaLng(b[0],c),a._deltaLng(b[1],c),a._deltaLng(b[2],c),a._deltaLng(b[3],c)))*o,j=Math.max(b[0].lat,b[1].lat,b[2].lat,b[3].lat)-Math.min(b[0].lat,b[1].lat,b[2].lat,b[3].lat);if(j<1.0E-4){j=1.0E-4}if(k<1.0E-4){k=1.0E-4}L.IIPUtils.requestURL(L.Util.template(d.url,L.extend({sys:h,lng:c.lng.toFixed(6),lat:c.lat.toFixed(6),dlng:k.toFixed(4),dlat:j.toFixed(4),nmax:d.nmax+1,maglim:d.maglim})),'getting '+d.service+' data',function(b,a){m._loadCatalog(d,i,b,a)},this,n)}else {var p=Math.max(a.distance(b[0],c),a.distance(b[0],c),a.distance(b[0],c),a.distance(b[0],c));L.IIPUtils.requestURL(L.Util.template(d.url,L.extend({sys:h,lng:c.lng.toFixed(6),lat:c.lat.toFixed(6),dr:p.toFixed(4),nmax:d.nmax+1})),'querying '+d.service+' data',function(b,a){m._loadCatalog(d,i,b,a)},this,this.options.timeOut)}},_loadCatalog:function(a,f,g,b){if(b.readyState===4){if(b.status===200){var h=g._map.options.crs,i=b.responseText,c=a.toGeoJSON(i),e=L.geoJson(c,{onEachFeature:function(b,c){if(b.properties&&b.properties.items){c.bindPopup(a.popup(b))}},coordsToLatLng:function(a){if(h.forceNativeCelsys){var b=h.eqToCelsys(L.latLng(a[1],a[0]));return new L.LatLng(b.lat,b.lng,a[2])}else {return new L.LatLng(a[1],a[0],a[2])}},pointToLayer:function(b,c){return a.draw(b,c)},style:function(b){return {color:a.color,weight:2}}}),d;e.nameColor=a.color;e.addTo(g._map);this.removeLayer(f);if(c.features.length>a.nmax){c.features.pop();d=!0}this.addLayer(e,a.name+' ('+c.features.length.toString()+(d?'+ entries)':' entries)'));if(d){alert('Selected area is too large: '+a.name+' sample has been truncated to the first '+a.nmax+' sources.')}}else {if(b.status!==0){alert('Error '+b.status+' while querying '+a.service+'.')}this.removeLayer(f)}}}});L.control.iip.catalog=function(a,b){return new L.Control.IIP.Catalog(a,b)};if(typeof require!=='undefined'){var $=require('jquery')}L.Control.IIP.Channel=L.Control.IIP.extend({options:{title:'Channel mixing',collapsed:!0,cMap:'grey',mixingMode:null,position:'topleft'},initialize:function(b,a){L.setOptions(this,a);this._className='leaflet-control-iip';this._id='leaflet-iipchannel';this._sideClass='channel';this._settings=[];this._initsettings=[]},saveSettings:function(b,d,e){if(!d[e]){d[e]={}}var a=d[e],f=b.iipNChannel;a.channel=b.iipChannel;a.cMap=b.iipCMap;a.rgb=[];for(var c=0;c<f;c++){a.rgb[c]=b.iipRGB[c].clone()}},loadSettings:function(b,e,g,d){var a=e[g],f=b.iipNChannel;if(!a){return}if(!d){b.iipChannel=a.channel}b.iipCMap=a.cMap;for(var c=0;c<f;c++){b.iipRGB[c]=a.rgb[c].clone()}},_initDialog:function(){var a=this,c=this._layer,f=this._className,e=this._dialog;this.saveSettings(c,this._initsettings,'mono');this.saveSettings(c,this._initsettings,'color');this.saveSettings(c,this._settings,'mono');this.saveSettings(c,this._settings,'color');this._mode=this.options.mixingMode?this.options.mixingMode:c.iipMode;var d=this._addDialogBox(),g=this._addDialogLine('Mode:',d),j=this._addDialogElement(g),i=L.DomUtil.create('div',f+'-radios',j),b,h;h=this._createRadioButton(f+'-radio',i,'mono',this._mode==='mono',function(){a.saveSettings(c,a._settings,a._mode);for(b=d.lastChild;b!==g;b=d.lastChild){d.removeChild(b)}for(b=e.lastChild;b!==d;b=e.lastChild){e.removeChild(b)}a._channelList=undefined;a.loadSettings(c,a._settings,'mono');a._initMonoDialog(c,d);a._mode='mono'},'Select mono-channel palettized mode');h=this._createRadioButton(f+'-radio',i,'color',this._mode!=='mono',function(){a.saveSettings(c,a._settings,a._mode);for(b=d.lastChild;b!==g;b=d.lastChild){d.removeChild(b)}for(b=e.lastChild;b!==d;b=e.lastChild){e.removeChild(b)}a.loadSettings(c,a._settings,'color');a._channelList=undefined;a._initColorDialog(c,d);a._mode='color'},'Select color mixing mode');if(a._mode==='mono'){a._initMonoDialog(c,d)}else {a._initColorDialog(c,d)}},_initMonoDialog:function(a,f){var k=this,l=a.iipChannelLabels,h=this._className,e=this._addDialogLine('Channel:',f),d=this._addDialogElement(e);a.updateMono();this._chanSelect=this._createSelectMenu(this._className+'-select',d,a.iipChannelLabels,undefined,a.iipChannel,function(){a.iipChannel=parseInt(this._chanSelect.selectedIndex-1,10);this._updateChannel(a,a.iipChannel);a.redraw()},'Select image channel');e=this._addDialogLine('LUT:',f);d=this._addDialogElement(e);var i=L.DomUtil.create('div',h+'-cmaps',d),j=[],c=['grey','jet','cold','hot'],g=function(){k._onInputChange(a,'iipCMap',this)},b;for(b in c){j[b]=this._createRadioButton('leaflet-cmap',i,c[b],c[b]===this.options.cMap,g,'"'+c[b].charAt(0).toUpperCase()+c[b].substr(1)+'" color-map')}this._addMinMax(a,a.iipChannel,f);a.redraw()},_initColorDialog:function(a,f){var b=this,d=this._className,e=this._addDialogLine('Channel:',f),c=this._addDialogElement(e),g=this._chanColPick=this._createColorPicker(d+'-color',c,'channel',a.iipRGB[a.iipChannel].toStr(),function(){var c=a.iipChannel,d=$(g).val();b._updateMix(a,c,L.rgb(d));b.collapsedOff=!0},'iipChannel','Click to set channel color');this._onInputChange(a,'iipCMap','grey');a.updateMix();this._chanSelect=this._createSelectMenu(this._className+'-select',c,a.iipChannelLabels,undefined,a.iipChannel,function(){a.iipChannel=this._chanSelect.selectedIndex-1;this._updateChannel(a,a.iipChannel,g)},'Select image channel');this._addMinMax(a,a.iipChannel,f);e=this._addDialogLine('Colors:',f);c=this._addDialogElement(e);this._createButton(d+'-button',c,'colormix-reset',function(){b.loadSettings(a,b._initsettings,'color',!0);a.updateMix();this._updateColPick(a);this._updateChannelList(a);a.redraw()},'Reset color mix');this._createButton(d+'-button',c,'colormix-auto',function(){var f=a.iipNChannel,g=0,c=0,e=a.iipRGB,d=a.iipdefault.channelColors;for(var b=0;b<f;b++){if(e[b].isOn()){c++}}if(c>=d.length){c=d.length-1}for(b=0;b<f;b++){if(e[b].isOn()&&g<c){e[b]=L.rgb(d[c][g++])}}a.updateMix();this._updateColPick(a);this._updateChannelList(a);a.redraw()},'Re-color active channels');b._updateChannelList(a);a.redraw()},_addMinMax:function(a,b,d){var c=this._spinboxStep(a.iipMinValue[b],a.iipMaxValue[b]);this._minElem=this._addNumericalInput(a,d,'Min:','iipMinValue['+b+']','Lower clipping limit in '+a.iipChannelUnits[b]+'.','leaflet-channel-minvalue',a.iipMinValue[b],c);this._maxElem=this._addNumericalInput(a,d,'Max:','iipMaxValue['+b+']','Upper clipping limit in '+a.iipChannelUnits[b]+'.','leaflet-channel-maxvalue',a.iipMaxValue[b],c)},_updateChannel:function(b,a,d){var c=this,e=this._spinboxStep(b.iipMinValue[a],b.iipMaxValue[a]);c._chanSelect.selectedIndex=a+1;if(d){$(d).spectrum('set',b.iipRGB[a].toStr());$(d).val(b.iipRGB[a].toStr()).off('change').on('change',function(){c._updateMix(b,a,L.rgb($(d).val()))})}this._minElem.spinbox.value(b.iipMinValue[a]).step(e).off('change').on('change',function(){c._onInputChange(b,'iipMinValue['+a+']',c._minElem.spinbox.value())},this);this._maxElem.spinbox.value(b.iipMaxValue[a]).step(e).off('change').on('change',function(){c._onInputChange(b,'iipMaxValue['+a+']',c._maxElem.spinbox.value())},this)},_updateMix:function(a,b,c){a.rgbToMix(b,c);this._updateChannelList(a);a.redraw()},_updateChannelList:function(b){var j=b.iipChannelLabels,e=this._channelList,l=this._channelElems,k=this._trashElems,a,d,h,f,g,i,c;if(e){L.DomUtil.empty(this._channelList)}else {e=this._channelList=L.DomUtil.create('div',this._className+'-chanlist',this._dialog)}l=this._channelElems=[];k=this._trashElems=[];for(i in j){c=parseInt(i,10);h=b.iipRGB[c];if(h.isOn()){a=L.DomUtil.create('div',this._className+'-channel',e);f=L.DomUtil.create('div',this._className+'-chancolor',a);f.style.backgroundColor=h.toStr();this._activateChanElem(f,b,c);g=L.DomUtil.create('div',this._className+'-chanlabel',a);g.innerHTML=j[i];this._activateChanElem(g,b,c);d=this._createButton('leaflet-control-iip-trash',a,undefined,undefined,'Delete channel');this._activateTrashElem(d,b,c);l.push(a);k.push(d)}}},_updateColPick:function(a){$(this._chanColPick).spectrum('set',a.iipRGB[a.iipChannel].toStr());$(this._chanColPick).val(a.iipRGB[a.iipChannel].toStr())},_activateTrashElem:function(c,a,b){L.DomEvent.on(c,'click touch',function(){this._updateMix(a,b,L.rgb(0,0,0));if(a===this._layer&&b===a.iipChannel){this._updateColPick(a)}},this)},_activateChanElem:function(c,a,b){L.DomEvent.on(c,'click touch',function(){a.iipChannel=b;this._updateChannel(a,b,this._chanColPick)},this)}});L.control.iip.channel=function(a){return new L.Control.IIP.Channel(a)};if(typeof require!=='undefined'){var $=require('jquery')}L.Control.IIP.Doc=L.Control.IIP.extend({options:{title:'Documentation',collapsed:!0,position:'topleft',pdflink:undefined},initialize:function(b,a){L.setOptions(this,a);this._className='leaflet-control-iip';this._id='leaflet-iipdoc';this._sideClass='doc';this._url=b},_initDialog:function(){var h=this,a=this._className,i=this._layer,e=L.DomUtil.create('div',this._className+'-framebox',this._dialog),c=this._iframe=L.DomUtil.create('iframe',this._className+'-doc',e);c.src=this._url;c.frameborder=0;this._navHistory=[];this._navPos=0;this._ignore=!1;L.DomEvent.on(c,'load hashchange',this._onloadNav,this);var g=this._addDialogBox('leaflet-iipdoc-dialog'),f=this._addDialogLine('Navigate:',g),b=this._addDialogElement(f);this._homeButton=this._createButton(a+'-button',b,'home',this._homeNav,'Navigate home');this._backButton=this._createButton(a+'-button',b,'back',this._backNav,'Navigate backward');this._forwardButton=this._createButton(a+'-button',b,'forward',this._forwardNav,'Navigate forward');if(this.options.pdflink){var d=this._createButton(a+'-button',b,'pdf',undefined,'Download PDF version');d.href=this.options.pdflink}},_updateNav:function(a){if(a!==this._navPos){this._navPos=a;this._navIgnore=!0;this._iframe.src=this._navHistory[this._navPos-1];this._disableNav()}},_disableNav:function(){this._backButton.disabled=this._navPos===1;this._forwardButton.disabled=this._navPos>=this._navHistory.length},_backNav:function(){if(!this._backButton.disabled){this._updateNav(Math.max(1,this._navPos-1))}},_forwardNav:function(){if(!this._forwardButton.disabled){this._updateNav(Math.min(this._navHistory.length,this._navPos+1))}},_homeNav:function(){if(!this._backButton.disabled){this._updateNav(1)}},_onloadNav:function(){if(!0){var b=this._iframe.contentDocument.getElementsByTagName('a');for(var a=0;a<b.length;a++){if(L.IIPUtils.isExternal(b[a].href)){b[a].setAttribute('target','_blank')}}this._iframeLoad1=!0}if(!this._navIgnore){var c=this._iframe.contentWindow.location.href;if(c!==this._navHistory[this._navPos-1]){this._navHistory.splice(this._navPos,this._navHistory.length-this._navPos);this._navHistory.push(c);this._navPos=this._navHistory.length;this._disableNav()}}else {this._navIgnore=!1}}});L.control.iip.doc=function(b,a){return new L.Control.IIP.Doc(b,a)};if(typeof require!=='undefined'){var $=require('jquery')}L.Control.IIP.Image=L.Control.IIP.extend({options:{title:'Image preferences',collapsed:!0,position:'topleft'},initialize:function(a){L.setOptions(this,a);this._className='leaflet-control-iip';this._id='leaflet-iipimage';this._sideClass='image'},_initDialog:function(){var c=this,b=this._className,a=this._layer,d;this._addSwitchInput(a,this._dialog,'Invert:','iipInvertCMap','Invert color map(s)','leaflet-invertCMap',a.iipInvertCMap);this._addNumericalInput(a,this._dialog,'Contrast:','iipContrast','Adjust Contrast. 1.0: normal.','leaflet-contrastValue',a.iipContrast,0.05,0,10);this._addNumericalInput(a,this._dialog,'Color Sat.:','iipColorSat','Adjust Color Saturation. 0: B&W, 1.0: normal.','leaflet-colorsatvalue',a.iipColorSat,0.05,0,5,this._updateMix);this._addNumericalInput(a,this._dialog,'Gamma:','iipGamma','Adjust Gamma correction. The standard value is 2.2.','leaflet-gammavalue',a.iipGamma,0.05,0.5,5);this._addNumericalInput(a,this._dialog,'JPEG quality:','iipQuality','Adjust JPEG compression quality. 1: lowest, 100: highest','leaflet-qualvalue',a.iipQuality,1,1,100)},_updateMix:function(b){var c=b.iipNChannel;for(var a=0;a<c;a++){b.rgbToMix(a)}return}});L.control.iip.image=function(a){return new L.Control.IIP.Image(a)};if(typeof require!=='undefined'){var $=require('jquery')}L.Control.IIP.Profile=L.Control.IIP.extend({options:{title:'Profile overlays',collapsed:!0,position:'topleft',profile:!0,profileColor:'#FF00FF',spectrum:!0,spectrumColor:'#A000FF'},initialize:function(a){L.setOptions(this,a);this._className='leaflet-control-iip';this._id='leaflet-iipprofile';this._layers={};this._sideClass='profile';this._handlingClick=!1},_initDialog:function(){var f=this,c=this.options,b=this._className,g=this._addDialogBox(),d,a;if(c.profile){d=this._addDialogLine('Profile:',g);a=this._addDialogElement(d);var e=this._createColorPicker(b+'-color',a,'profile',c.profileColor,!1,'iipProfile','Click to set line color');this._createButton(b+'-button',a,'start',function(){if(this._currProfileLine){this._updateLine()}else {var a=f._map,b=a.getCenter(),c=this._currProfileLine=L.polyline([b,b],{color:e.value,weight:7,opacity:0.5});c.nameColor=e.value;c.addTo(a);a.on('drag',this._updateLine,this)}},'Start drawing a profile line');this._createButton(b+'-button',a,'end',this._profileEnd,'End line and plot')}if(c.spectrum){d=this._addDialogLine('Spectrum:',g);a=this._addDialogElement(d);var h=this._createColorPicker(b+'-color',a,'spectrum',c.spectrumColor,!1,'iipSpectra','Click to set marker color');this._createButton(b+'-button',a,'spectrum',function(){var b=f._map,g=b.getCenter(),d=b.options.crs.options.nzoom-1,a=b.project(g,d).round(),e=b.unproject(a,d),i=this._spectrumMarker=L.circleMarker(e,{color:h.value,radius:6,title:'Spectrum'}).addTo(b),c=L.DomUtil.create('div',this._className+'-popup'),j=L.DomUtil.create('div',this._className+'-activity',c);c.id='leaflet-spectrum-plot';i.bindPopup(c,{minWidth:16,maxWidth:1024,closeOnClick:!1}).openPopup();L.IIPUtils.requestURL(this._layer._url.replace(/\&.*$/g,'')+'&PFL='+d.toString()+':'+a.x.toFixed(0)+','+a.y.toFixed(0)+'-'+a.x.toFixed(0)+','+a.y.toFixed(0),'getting IIP layer spectrum',this._plotSpectrum,this)},'Plot a spectrum at the current map position')}},_updateLine:function(g){var a=this._map,f=a.getCenter(),d=a.options.crs.options.nzoom-1,e=this._currProfileLine.getLatLngs(),c=a.project(e[0],d),b=a.project(a.getCenter(),d);if(Math.abs(c.x-b.x)>Math.abs(c.y-b.y)){b.y=c.y}else {b.x=c.x}e[1]=a.unproject(b,d);this._currProfileLine.redraw()},_profileEnd:function(){var c=this._map,k=c.getCenter(),f=this._profileLine=this._currProfileLine;c.off('drag',this._updateLine,this);this._currProfileLine=undefined;var d=L.DomUtil.create('div',this._className+'-popup'),j=L.DomUtil.create('div',this._className+'-activity',d);d.id='leaflet-profile-plot';f.bindPopup(d,{minWidth:16,maxWidth:1024,closeOnClick:!1}).openPopup();var e=c.options.crs.options.nzoom-1,g=f.getLatLngs(),a=c.project(g[0],e),b=c.project(g[1],e),h,i;if(b.x<a.x){h=b.x;b.x=a.x;a.x=h}if(b.y<a.y){i=b.y;b.y=a.y;a.y=i}L.IIPUtils.requestURL(this._layer._url.replace(/\&.*$/g,'')+'&PFL='+e.toString()+':'+a.x.toFixed(0)+','+a.y.toFixed(0)+'-'+b.x.toFixed(0)+','+b.y.toFixed(0),'getting IIP layer profile',this._plotProfile,this)},_getMeasurementString:function(){var e=this._currentLatLng,d=this._markers[this._markers.length-1].getLatLng(),a,c,b;a=this._measurementRunningTotal+L.IIPUtils.distance(e,d);if(a>=1){b='&#176;'}else {a*=60;if(a>=1){b='&#39;'}else {a*=60;b='&#34;'}}c=a.toFixed(2)+b;return c},_plotProfile:function(c,d){if(d.readyState===4){if(d.status===200){var m=JSON.parse(d.responseText),i=m.profile,a=c._layer,k=c._profileLine,j=document.getElementById('leaflet-profile-plot'),h=[],e=[],g,f;c.addLayer(k,'Image profile');if(a.iipMode==='mono'){h.push(c._extractProfile(a,i,a.iipChannel));e.push({color:'black'});g='Image profile for '+a.iipChannelLabels[a.iipChannel];f='Pixel value in '+a.iipChannelUnits[a.iipChannel]}else {var l=a.iipRGB;for(var b=0;b<a.iipNChannel;b++){if(l[b].isOn()){h.push(c._extractProfile(a,i,b));e.push({color:l[b].toStr(),label:a.iipChannelLabels[b]})}}g='Image profiles';f='Pixel value'}$(document).ready(function(){$.jqplot.config.enablePlugins=!0;$.jqplot('leaflet-profile-plot',h,{title:g,grid:{backgroundColor:'#ddd',gridLineColor:'#eee'},axes:{xaxis:{label:'position along line',labelRenderer:$.jqplot.CanvasAxisLabelRenderer,pad:1},yaxis:{label:f,labelRenderer:$.jqplot.CanvasAxisLabelRenderer,pad:1}},legend:{show:a.iipMode!=='mono',location:'ne'},highlighter:{show:!0,sizeAdjust:2,tooltipLocation:'n',tooltipAxes:'y',tooltipFormatString:'%.6g '+a.iipChannelUnits[a.iipChannel],useAxesFormatters:!1,bringSeriesToFront:!0},cursor:{show:!0,zoom:!0},series:e,seriesDefaults:{lineWidth:2,showMarker:!1}})});j.removeChild(j.childNodes[0]);k._popup.update()}}},_extractProfile:function(e,b,f){var d=[],c=e.iipNChannel,g=b.length/c;for(var a=0;a<g;a++){d.push(b[a*c+f])}return d},_plotSpectrum:function(c,d){if(d.readyState===4){if(d.status===200){var k=JSON.parse(d.responseText),j=k.profile,a=c._layer,e=c._spectrumMarker,f=document.getElementById('leaflet-spectrum-plot'),i=[],l=[],h,g;c.addLayer(e,'Image spectrum');for(var b=0;b<a.iipNChannel;b++){i.push([a.iipChannelLabels[b],c._extractAverage(a,j,b)])}h='Image Spectrum';g='Average pixel value';$(document).ready(function(){$.jqplot.config.enablePlugins=!0;$.jqplot('leaflet-spectrum-plot',[i],{title:h,grid:{backgroundColor:'#F0F0F0',gridLineColor:'#F8F8F8'},axes:{xaxis:{renderer:$.jqplot.CategoryAxisRenderer,tickRenderer:$.jqplot.CanvasAxisTickRenderer,tickOptions:{angle:-30,fontSize:'6pt'}},yaxis:{label:g,labelRenderer:$.jqplot.CanvasAxisLabelRenderer}},highlighter:{show:!0,sizeAdjust:2,tooltipLocation:'n',tooltipAxes:'y',tooltipFormatString:'%.6g '+a.iipChannelUnits[a.iipChannel],useAxesFormatters:!1},cursor:{show:!0,zoom:!0},seriesDefaults:{lineWidth:2,showMarker:!1}})});f.removeChild(f.childNodes[0]);e._popup.update()}}},_extractAverage:function(f,c,g){var d=f.iipNChannel,a=c.length/d,e=0;if(a===0){return 0}for(var b=0;b<a;b++){e+=c[b*d+g]}return e/a}});L.control.iip.profile=function(a){return new L.Control.IIP.Profile(a)};L.Control.IIP.Region=L.Control.IIP.extend({options:{title:'Region overlays',collapsed:!0,position:'topleft',nativeCelsys:!0,color:'#00FFFF',timeOut:30},initialize:function(a,b){L.setOptions(this,b);this._className='leaflet-control-iip';this._id='leaflet-iipregion';this._layers={};this._handlingClick=!1;this._sideClass='region';this._regions=a&&a[0]?a:[]},_initDialog:function(){var f=this._className,a=this._regions,i=this._addDialogBox(),g=this._addDialogLine('Regions:',i),d=this._addDialogElement(g),h=this._createColorPicker(f+'-color',d,'region',this.options.color,!1,'iipRegion','Click to set region color');var e=this._regionSelect=this._createSelectMenu(this._className+'-select',d,a.map(function(a){return a.name}),a.map(function(a){return a.load?!0:!1}),-1,undefined,'Select region');d=this._addDialogElement(g);this._createButton(f+'-button',d,'region',function(){var a=e.selectedIndex-1;if(a>=0){var b=this._regions[a];b.color=h.value;e.selectedIndex=0;e.opt[a].disabled=!0;this._getRegion(b,this.options.timeOut)}},'Display region');var b;for(var c=0;c<a.length;c++){b=a[c];b.index=c;if(b.load===!0){if(!b.color){b.color=this.options.color}this._getRegion(a[c],this.options.timeOut)}}},_resetDialog:function(){},_getRegion:function(a,g){var c=this,d=this._map,e=d.options.crs,f=e.forceNativeCelsys&&!this.options.nativeCelsys,b=new L.LayerGroup(null);b.notReady=!0;this.addLayer(b,a.name);L.IIPUtils.requestURL(a.url,'loading '+a.name+' data',function(e,d){c._loadRegion(a,b,e,d)},this,this.options.timeOut)},_loadRegion:function(a,e,b,c){if(c.readyState===4){if(c.status===200){var f=b._map.options.crs,g=c.responseText,d=L.geoJson(JSON.parse(g),{onEachFeature:function(b,c){if(b.properties&&b.properties.description){c.bindPopup(b.properties.description)}else {if(a.description){c.bindPopup(a.description)}}},coordsToLatLng:function(a){if(f.forceNativeCelsys){var b=f.eqToCelsys(L.latLng(a[1],a[0]));return new L.LatLng(b.lat,b.lng,a[2])}else {return new L.LatLng(a[1],a[0],a[2])}},style:function(b){return {color:a.color,weight:2}},pointToLayer:function(c,b){return a.drawPoint?a.drawPoint(c,b):L.marker(b)}});d.nameColor=a.color;d.addTo(b._map);b.removeLayer(e);b.addLayer(d,a.name,a.index);L.DomEvent.on(d,'trash',function(a){if(a.index||a.index===0){b._regionSelect.opt[a.index].disabled=!1}},b)}else {if(c.status!==0){alert('Error '+c.status+' while downloading '+a.url+'.')}b.removeLayer(e);b._regionSelect.opt[a.index].disabled=!1}}}});L.control.iip.region=function(b,a){return new L.Control.IIP.Region(b,a)};if(typeof require!=='undefined'){var $=require('jquery-browser')}L.Control.Layers.IIP=L.Control.Layers.extend({options:{title:'overlay menu',collapsed:!0,position:'topright',autoZIndex:!0,fileMenu:!1,fileURL:'/fcgi-bin/iipsrv.fcgi?FIF=',fileRoot:'',fileTreeScript:'visiomatic/dist/filetree.php',fileProcessScript:'visiomatic/dist/processfits.php'},onAdd:function(a){a._layerControl=this;this._initLayout();this._update();return this._container},_initLayout:function(){var a='leaflet-control-layers',b=this._container=L.DomUtil.create('div',a);b.setAttribute('aria-haspopup',!0);if(!L.Browser.touch){L.DomEvent.disableClickPropagation(b).disableScrollPropagation(b)}else {L.DomEvent.on(b,'click',L.DomEvent.stopPropagation)}var c=this._form=L.DomUtil.create('form',a+'-list');if(this.options.collapsed){if(!L.Browser.android){L.DomEvent.on(b,{mouseover:this._expand,mouseout:this._collapse},this)}var d=this._layersLink=L.DomUtil.create('a',a+'-toggle',b);d.href='#';d.title='Layers';if(L.Browser.touch){L.DomEvent.on(d,'click',L.DomEvent.stop).on(d,'click',this._expand,this)}else {L.DomEvent.on(d,'focus',this._expand,this)}L.DomEvent.on(c,'click',function(){setTimeout(L.bind(this._onInputClick,this),0)},this);this._map.on('click',this._collapse,this)}else {this._expand()}this._baseLayersList=L.DomUtil.create('div',a+'-base',c);if(this.options.fileMenu){var e=this._addButton=L.DomUtil.create('input',a+'-add',c);e.type='button';e.value='Add...';L.DomEvent.on(e,'click',this._openFileMenu,this)}this._separator=L.DomUtil.create('div',a+'-separator',c);this._overlaysList=L.DomUtil.create('div',a+'-overlays',c);b.appendChild(c)},_addItem:function(a){var g=this,c=L.DomUtil.create('div','leaflet-control-layers-item'),e=L.DomUtil.create('div','leaflet-control-layers-select',c);if(a.layer.notReady){L.DomUtil.create('div','leaflet-control-activity',e)}else {var b,f=this._map.hasLayer(a.layer);if(a.overlay){b=document.createElement('input');b.type='checkbox';b.className='leaflet-control-layers-selector';b.defaultChecked=f}else {b=this._createRadioElement('leaflet-base-layers',f)}b.layerId=L.stamp(a.layer);L.DomEvent.on(b,'click',this._onInputClick,this);e.appendChild(b)}var h=L.DomUtil.create('div','leaflet-control-layers-name',c);h.innerHTML=' '+a.name;h.style.textShadow='0px 0px 5px '+a.layer.nameColor;var d=L.DomUtil.create('input','leaflet-control-layers-trash',c);d.type='button';L.DomEvent.on(d,'click',function(){g.removeLayer(a.layer);if(!a.notReady){g._map.removeLayer(a.layer)}},this);var i=a.overlay?this._overlaysList:this._baseLayersList;i.appendChild(c);return c},_onInputClick:function(){var c,a,b,d=this._form.getElementsByTagName('input'),e=d.length;this._handlingClick=!0;for(c=0;c<e;c++){a=d[c];if(!('layerId' in a)){continue}b=this._layers[a.layerId];if(a.checked&&!this._map.hasLayer(b.layer)){b.layer.addTo(this._map)}else {if(!a.checked&&this._map.hasLayer(b.layer)){this._map.removeLayer(b.layer)}}}this._handlingClick=!1},_addDialogLine:function(c,b){var a=L.DomUtil.create('div',this._className+'-element',b),d=L.DomUtil.create('span',this._className+'-label',a);d.innerHTML=c;return a},_openFileMenu:function(){var a=this,b=L.DomUtil.create('div','leaflet-control-filemenu',this._map._controlContainer);b.title='Open file';this._addButton.disabled=!0;L.DomEvent.disableClickPropagation(b).disableScrollPropagation(b);$('.leaflet-control-filemenu').dialog({appendTo:'body',close:function(c,d){L.DomUtil.remove(b);a._addButton.disabled=!1},show:{effect:'clip',duration:250},hide:{effect:'clip',duration:250},height:200});var c=L.DomUtil.create('div','leaflet-control-filetree',b);c.id='leaflet-filetree';$(document).ready(function(){$('#leaflet-filetree').fileTree({root:a.options.fileRoot,script:a.options.fileTreeScript},function(d){var c=a._map._layerControl,e=d.replace(/(^.*\/|\..*$)/g,''),b;if(c){b=new L.LayerGroup(null);b.notReady=!0;c.addBaseLayer(b,'converting '+e+'...');if(c.options.collapsed){c._expand()}}$.post(a.options.fileProcessScript,{fitsname:d},function(d){d=d.trim();var c=L.tileLayer.iip(a.options.fileURL+d,{title:e});if(c.iipMetaReady){a._updateBaseLayer(b,c)}else {c.once('metaload',function(){a._updateBaseLayer(b,c)})}})})})},_updateBaseLayer:function(d,c){var a=this._map,b=a._layerControl;b.removeLayer(d);a.eachLayer(a.removeLayer);c.addTo(a);b.addBaseLayer(c,c._title);a.fire('baselayerchange');if(b.options.collapsed){b._collapse()}}});L.control.layers.iip=function(a,b,c){return new L.Control.Layers.IIP(a,b,c)};L.Control.Reticle=L.Control.extend({options:{position:'bottomleft'},onAdd:function(d){var b=this._reticle=L.DomUtil.create('div','leaflet-reticle',this._map._controlContainer),a=b.style;a.position='absolute';a.left='50%';a.bottom='50%';a.textAlign='center';a.verticalAlign='middle';a.pointerEvents='none';b.innerHTML='';var c=this._container=L.DomUtil.create('div','leaflet-dummy');return c},onRemove:function(a){this._reticle.parentNode.removeChild(this._reticle)}});L.control.reticle=function(a){return new L.Control.Reticle(a)};L.Control.Scale.WCS=L.Control.Scale.extend({options:{position:'bottomleft',title:'Scale',maxWidth:128,metric:!1,imperial:!1,degrees:!0,pixels:!0,custom:!1,customScale:1,customUnits:'',planetRadius:6378137,updateWhenIdle:!1},_addScales:function(a,b,c){if(a.metric){this._mScale=L.DomUtil.create('div',b,c);this._mScale.title=a.metricTitle?a.metricTitle:a.title}if(a.imperial){this._iScale=L.DomUtil.create('div',b,c);this._iScale.title=a.imperialTitle?a.imperialTitle:a.title}if(a.degrees){this._dScale=L.DomUtil.create('div',b,c);this._dScale.title=a.degreesTitle?a.degreesTitle:a.title}if(a.pixels){this._pScale=L.DomUtil.create('div',b,c);this._pScale.title=a.pixelsTitle?a.pixelsTitle:a.title}if(a.custom){this._cScale=L.DomUtil.create('div',b,c);this._cScale.title=a.customTitle?a.customTitle:a.title}this.angular=a.metric||a.imperial||a.degrees},_update:function(){var a=this.options,c=this._map,b=c.options.crs;if(a.pixels&&b.options&&b.options.nzoom){var g=Math.pow(2,b.options.nzoom-1-c.getZoom());this._updatePixels(g*a.maxWidth)}if(a.custom&&b.options&&b.options.nzoom){var f=Math.pow(2,b.options.nzoom-1-c.getZoom())*a.customScale;this._updateCustom(f*a.maxWidth,a.customUnits)}if(this.angular){var e=c.getCenter(),h=Math.cos(e.lat*Math.PI/180),i=Math.sqrt(this._jacobian(e))*h,d=i*a.maxWidth;if(a.metric){this._updateMetric(d*Math.PI/180*a.planetRadius)}if(a.imperial){this._updateImperial(d*Math.PI/180*a.planetRadius)}if(a.degrees){this._updateDegrees(d)}}},_jacobian:function(a){var b=this._map,e=b.project(a),c=b.unproject(e.add([10,0])),d=b.unproject(e.add([0,10]));return 0.01*Math.abs((c.lng-a.lng)*(d.lat-a.lat)-(d.lng-a.lng)*(c.lat-a.lat))},_updateCustom:function(a,c){var b=this._cScale;if(a>1000000000){var d=a*1.0E-9,g=this._getRoundNum(d);this._updateScale(b,g+' G'+c,g/d)}else {if(a>1000000){var f=a*1.0E-6,i=this._getRoundNum(f);this._updateScale(b,i+' M'+c,i/f)}else {if(a>1000){var e=a*0.001,h=this._getRoundNum(e);this._updateScale(b,h+' k'+c,h/e)}else {var j=this._getRoundNum(a);this._updateScale(b,j+' '+c,j/a)}}}},_updatePixels:function(a){var b=this._pScale;if(a>1000000){var d=a*1.0E-6,f=this._getRoundNum(d);this._updateScale(b,f+' Mpx',f/d)}else {if(a>1000){var c=a*0.001,e=this._getRoundNum(c);this._updateScale(b,e+' kpx',e/c)}else {var g=this._getRoundNum(a);this._updateScale(b,g+' px',g/a)}}},_updateDegrees:function(b){var a=b*3600,c=this._dScale;if(a<1){var h=a*1000,i=this._getRoundNum(h);this._updateScale(c,i+' mas',i/h)}else {if(a<60){var g=this._getRoundNum(a);this._updateScale(c,g+' &#34;',g/a)}else {if(a<3600){var d=b*60,f=this._getRoundNum(d);this._updateScale(c,f+' &#39;',f/d)}else {var e=this._getRoundNum(b);this._updateScale(c,e+' &#176;',e/b)}}}}});L.control.scale.wcs=function(a){return new L.Control.Scale.WCS(a)};L.Control.Sidebar=L.Control.extend({includes:L.Mixin.Events,options:{position:'left',title:'Toggle advanced menu',collapsed:!0,forceSeparateButton:!1},initialize:function(a){var c,b;L.setOptions(this,a);this._sidebar=L.DomUtil.create('div','leaflet-container sidebar');if(this.options.collapsed){L.DomUtil.addClass(this._sidebar,'collapsed')}else {L.DomUtil.addClass(this._sidebar,'closed')}L.DomUtil.addClass(this._sidebar,'sidebar-'+this.options.position);if(L.Browser.touch){L.DomUtil.addClass(this._sidebar,'leaflet-touch')}this._tabs=L.DomUtil.create('div','sidebar-tabs',this._sidebar);this._tabitems=[];this._container=L.DomUtil.create('div','sidebar-content',this._sidebar);this._panes=[];this._closeButtons=[]},addTo:function(a){var d='leaflet-control-zoom-sidebar',c=a._controlContainer,b;L.DomUtil.addClass(a._container,'sidebar-map');c.insertBefore(this._sidebar,c.firstChild);L.DomEvent.disableClickPropagation(this._sidebar).disableScrollPropagation(this._sidebar);this._map=a;if(a.zoomControl&&!this.options.forceSeparateButton){b=a.zoomControl._container}else {b=L.DomUtil.create('div','leaflet-bar')}this._toggleButton=this._createButton(this.options.title,d+(this.options.collapsed?' collapsed':''),b);return this},addTabList:function(){this._tablist=L.DomUtil.create('ul','',this._tabs);this._tablist.setAttribute('role','tablist');return this._tablist},addTab:function(d,i,h,j,f){var k=this._tablist?this._tablist:this.addTabList(),a=L.DomUtil.create('li','',k),c=L.DomUtil.create('a',i,a);a.setAttribute('role','tab');a._sidebar=this;c.href='#'+d;c.id=d+'-toggle';c.title=h;L.DomEvent.on(c,'click',L.DomEvent.preventDefault);L.DomEvent.on(c,'click',this._onClick,a);a.sideClass=f;this._tabitems.push(a);var b=L.DomUtil.create('div','sidebar-pane',this._container),g=L.DomUtil.create('h1','sidebar-header',b);g.innerHTML=h;var e=L.DomUtil.create('div','sidebar-close',g);this._closeButtons.push(e);L.DomEvent.on(e,'click',this._onCloseClick,this);b.id=d;b.sideClass=f;b.appendChild(j);this._panes.push(b);return b},removeFrom:function(c){var a,b;this._map=null;for(a=this._tabitems.length-1;a>=0;a--){b=this._tabitems[a];L.DomEvent.off(b.querySelector('a'),'click',this._onClick)}for(a=this._closeButtons.length-1;a>=0;a--){b=this._closeButtons[a];L.DomEvent.off(b,'click',this._onCloseClick,this)}return this},open:function(c){var b,a;for(b=this._panes.length-1;b>=0;b--){a=this._panes[b];if(a.id===c){L.DomUtil.addClass(a,'active');if(a.sideClass){L.DomUtil.addClass(this._sidebar,a.sideClass)}}else {if(L.DomUtil.hasClass(a,'active')){L.DomUtil.removeClass(a,'active');if(a.sideClass){L.DomUtil.removeClass(this._sidebar,a.sideClass)}}}}for(b=this._tabitems.length-1;b>=0;b--){a=this._tabitems[b];if(a.querySelector('a').hash==='#'+c){L.DomUtil.addClass(a,'active')}else {if(L.DomUtil.hasClass(a,'active')){L.DomUtil.removeClass(a,'active')}}}this.fire('content',{id:c});if(L.DomUtil.hasClass(this._sidebar,'closed')){this.fire('opening');L.DomUtil.removeClass(this._sidebar,'closed')}return this},close:function(){for(var b=this._tabitems.length-1;b>=0;b--){var a=this._tabitems[b];if(L.DomUtil.hasClass(a,'active')){L.DomUtil.removeClass(a,'active');if(a.sideClass){L.DomUtil.removeClass(this._sidebar,a.sideClass)}}}if(!L.DomUtil.hasClass(this._sidebar,'closed')){this.fire('closing');L.DomUtil.addClass(this._sidebar,'closed')}return this},toggle:function(){this.close();if(L.DomUtil.hasClass(this._sidebar,'collapsed')){L.DomUtil.addClass(this._sidebar,'closed');this.fire('expanding');L.DomUtil.removeClass(this._sidebar,'collapsed');L.DomUtil.removeClass(this._toggleButton,'collapsed')}else {L.DomUtil.removeClass(this._sidebar,'closed');this.fire('collapsing');L.DomUtil.addClass(this._sidebar,'collapsed');L.DomUtil.addClass(this._toggleButton,'collapsed')}},_onClick:function(){if(L.DomUtil.hasClass(this,'active')){this._sidebar.close()}else {if(!L.DomUtil.hasClass(this,'disabled')){this._sidebar.open(this.querySelector('a').hash.slice(1))}}},_onCloseClick:function(){this.close()},_createButton:function(d,b,c){var a=L.DomUtil.create('a',b,c);a.href='#';a.title=d;L.DomEvent.addListener(a,'click',L.DomEvent.stopPropagation).addListener(a,'click',L.DomEvent.preventDefault).addListener(a,'click',this.toggle,this);return a}});L.control.sidebar=function(b,a){return new L.Control.Sidebar(b,a)};L.Control.WCS=L.Control.extend({options:{position:'bottomleft',title:'Center coordinates. Click to change',coordinates:[{label:'RA, Dec',units:'HMS',nativeCelsys:!1}],centerQueryKey:'center',fovQueryKey:'fov'},onAdd:function(f){var k=this,e='leaflet-control-wcs',h=this._wcsdialog=L.DomUtil.create('div',e+'-dialog'),c=L.DomUtil.create('select',e+'-select',h),l=document.createElement('option'),j=this.options.coordinates,d=[],g;L.DomEvent.disableClickPropagation(c);this._currentCoord=0;c.id='leaflet-coord-select';c.title='Switch coordinate system';for(var b in j){d[b]=document.createElement('option');d[b].text=j[b].label;g=parseInt(b,10);d[b].value=g;if(g===0){d[b].selected=!0}c.add(d[b],null)}L.DomEvent.on(c,'change',function(a){k._currentCoord=c.value;k._onDrag()});var a=this._wcsinput=L.DomUtil.create('input',e+'-input',h);L.DomEvent.disableClickPropagation(a);a.type='text';a.title=this.options.title;if('webkitSpeechRecognition' in window){a.setAttribute('x-webkit-speech','x-webkit-speech')}f.on('move zoomend',this._onDrag,this);L.DomEvent.on(a,'focus',function(){this.setSelectionRange(0,this.value.length)},a);L.DomEvent.on(a,'change',function(){this.panTo(this._wcsinput.value)},this);var i=L.DomUtil.create('div',e+'-clipboard',h);i.title='Copy to clipboard';L.DomEvent.on(i,'click',function(){var c={},a=location.href,d=this._map.options.crs,b=f.getCenter();L.IIPUtils.flashElement(this._wcsinput);a=L.IIPUtils.updateURL(a,this.options.centerQueryKey,this._latLngToHMSDMS(b));a=L.IIPUtils.updateURL(a,this.options.fovQueryKey,d.zoomToFov(f,f.getZoom(),b).toPrecision(4));history.pushState(c,'',a);L.IIPUtils.copyToClipboard(a)},this);return this._wcsdialog},onRemove:function(a){a.off('drag',this._onDrag)},_onDrag:function(d){var a=this._map.getCenter(),b=this._map.options.crs,c=this.options.coordinates[this._currentCoord];if(b.pixelFlag){this._wcsinput.value=a.lng.toFixed(0)+' , '+a.lat.toFixed(0)}else {if(!c.nativeCelsys&&b.forceNativeCelsys){a=b.celsysToEq(a)}else {if(c.nativeCelsys&&b.forceNativeCelsys===!1){a=b.eqToCelsys(a)}}switch(c.units){case 'HMS':this._wcsinput.value=this._latLngToHMSDMS(a);break;case 'deg':this._wcsinput.value=a.lng.toFixed(5)+' , '+a.lat.toFixed(5);break;default:this._wcsinput.value=a.lng.toFixed(1)+' , '+a.lat.toFixed(1);break;}}},_latLngToHMSDMS:function(f){var c=(f.lng+360)/360;c=(c-Math.floor(c))*24;var e=Math.floor(c),d=(c-e)*60,a=Math.floor(d),b=(d-a)*60;if(b>=60){a++;b=0}if(a===60){e++;a=0}var j=(e<10?'0':'')+e.toString()+':'+(a<10?'0':'')+a.toString()+':'+(b<10?'0':'')+b.toFixed(3),h=Math.abs(f.lat),i=f.lat<0?'-':'+',g=Math.floor(h);d=(h-g)*60;a=Math.floor(d);b=(d-a)*60;if(b>=60){a++;b=0}if(a===60){e++;a=0}return j+' '+i+(g<10?'0':'')+g.toString()+':'+(a<10?'0':'')+a.toString()+':'+(b<10?'0':'')+b.toFixed(2)},panTo:function(c){var e=/^(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g,f=e.exec(c),b=this._map.options.crs,d=this.options.coordinates[this._currentCoord],a=b.parseCoords(c);if(a){if(b.pixelFlag){this._map.panTo(a)}else {if(!d.nativeCelsys&&b.forceNativeCelsys){a=b.eqToCelsys(a)}else {if(d.nativeCelsys&&b.forceNativeCelsys===!1){a=b.celsysToEq(a)}}this._map.panTo(a)}}else {L.IIPUtils.requestURL('http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?'+c,'getting coordinates for '+c,this._getCoordinates,this,10)}},_getCoordinates:function(b,a){if(a.readyState===4){if(a.status===200){var d=a.responseText,c=b._map.options.crs.parseCoords(d,!0);if(c){b._map.panTo(c);b._onDrag()}else {alert(d+': Unknown location')}}else {alert('There was a problem with the request to the Sesame service at CDS')}}}});L.Map.mergeOptions({positionControl:!1});L.Map.addInitHook(function(){if(this.options.positionControl){this.positionControl=new L.Control.MousePosition();this.addControl(this.positionControl)}});L.control.wcs=function(a){return new L.Control.WCS(a)};L.Control.LineaOverlay=L.Control.extend({options:{position:'topleft',title:'Catalog Overlay',forceSeparateButton:!1},onAdd:function(b){var c='leaflet-control-linea-overlay-catalog',a;if(b.zoomControl&&!this.options.forceSeparateButton){a=b.zoomControl._container}else {a=L.DomUtil.create('div','leaflet-bar')}this._createButton(this.options.title,c,a,this.onClickLineaOverlayCatalog,b);return a},_createButton:function(e,b,c,f,d){var a=L.DomUtil.create('a',b,c);a.href='#';a.title=e;L.DomEvent.addListener(a,'click',L.DomEvent.stopPropagation).addListener(a,'click',L.DomEvent.preventDefault).addListener(a,'click',f,d);return a},onClickLineaOverlayCatalog:function(){this.fire('overlaycatalog')}});L.Map.addInitHook(function(){if(this.options.enableLineaOverlay){this.lineaoverlayControl=L.control.lineaoverlay();this.addControl(this.lineaoverlayControl)}});L.control.lineaoverlay=function(a){return new L.Control.LineaOverlay(a)};
+/*
+Copyright:    (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+                            Chiara Marmo - IDES/Paris-Sud,
+                            Ruven Pillay - C2RMF/CNRS
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are
+permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, this list of
+      conditions and the following disclaimer.
+
+   2. Redistributions in binary form must reproduce the above copyright notice, this list
+      of conditions and the following disclaimer in the documentation and/or other materials
+      provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*
+# L.Projection.WCS computes a list of FITS WCS (World Coordinate System)
+# (de-)projections (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 14/11/2015
+*/
+
+L.Projection.WCS = L.Class.extend({
+
+	bounds: L.bounds([-0.5, -0.5], [0.5, 0.5]),
+
+	// LatLng [deg] -> Point
+	project: function (latlng) {
+		var phiTheta = this._raDecToPhiTheta(this.celsysflag ?
+			this.eqToCelsys(latlng) : latlng);
+		phiTheta.lat = this._thetaToR(phiTheta.lat);
+		return this._redToPix(this._phiRToRed(phiTheta));
+	},
+
+	// Point -> LatLng [deg]
+	unproject: function (point) {
+		var  phiTheta = this._redToPhiR(this._pixToRed(point));
+		phiTheta.lat = this._rToTheta(phiTheta.lat);
+		var latlng = this._phiThetaToRADec(phiTheta);
+		if (latlng.lng < -180.0) {
+			latlng.lng += 360.0;
+		}
+		return this.celsysflag ? this.celsysToEq(latlng) : latlng;
+	},
+
+	// Set up native pole
+	_natpole: function () {
+		var	deg = Math.PI / 180.0,
+		    projparam = this.projparam,
+				natpole = L.latLng(90.0, 180.0);
+		// Special case of fiducial point lying at the native pole
+		if (projparam.natrval.lat === 90.0) {
+			if (projparam.natpole.lng === 999.0) {
+				natpole.lng = 180.0;
+			}
+			natpole.lat = projparam.crval.lat;
+		} else if (projparam.natpole.lng === 999.0) {
+			natpole.lng = (projparam.crval.lat < projparam.natrval.lat) ? 180.0 : 0.0;
+		}
+
+		return natpole;
+	},
+
+	// Set up celestial pole
+	_cpole: function () {
+		var	deg = Math.PI / 180.0,
+		    projparam = this.projparam,
+		    dphip = projparam.natpole.lng - projparam.natrval.lng,
+		    cdphip = Math.cos(dphip * deg),
+		    sdphip = Math.sin(dphip * deg),
+		    ct0 = Math.cos(projparam.natrval.lat * deg),
+		    st0 = Math.sin(projparam.natrval.lat * deg),
+		    cd0 = Math.cos(projparam.crval.lat * deg),
+		    sd0 = Math.sin(projparam.crval.lat * deg),
+		    deltap = Math.atan2(st0, ct0 * cdphip) / deg,
+		    ddeltap = Math.acos(sd0 / Math.sqrt(1.0 - ct0 * ct0 * sdphip * sdphip)) / deg,
+		    deltap1 = deltap + ddeltap,
+		    deltap2 = deltap - ddeltap;
+		if (deltap1 < -180.0) {
+			deltap1 += 360.0;
+		} else if (deltap1 > 180.0) {
+			deltap1 -= 360.0;
+		}
+		if (deltap2 < -180.0) {
+			deltap2 += 360.0;
+		} else if (deltap2 > 180.0) {
+			deltap2 -= 360.0;
+		}
+		if (deltap1 > 90.0) {
+			deltap = deltap2;
+		} else if (deltap2 < -90.0) {
+			deltap = deltap1;
+		} else {
+			deltap = (Math.abs(deltap1 - projparam.natpole.lat) <
+			   Math.abs(deltap2 - projparam.natpole.lat)) ? deltap1 : deltap2;
+		}
+		var alphap = Math.abs(projparam.crval.lat) === 90.0 ? projparam.crval.lng
+		      : (deltap === 90.0 ? projparam.crval.lng + projparam.natpole.lng -
+		          projparam.natrval.lng - 180.0
+		        : (deltap === -90.0 ? projparam.crval.lng - projparam.natpole.lng +
+		           projparam.natrval.lng
+		          : projparam.crval.lng - Math.atan2(sdphip * ct0 / cd0,
+		             (st0 - Math.sin(deltap * deg) * sd0) /
+                   (Math.cos(deltap * deg) * cd0)) / deg));
+		return L.latLng(deltap, alphap);
+	},
+
+	// (phi,theta) [rad] -> RA, Dec [deg] for zenithal projections.
+	_phiThetaToRADec: function (phiTheta) {
+		var	projparam = this.projparam,
+		    deg = Math.PI / 180.0,
+			  rad = 180.0 / Math.PI,
+			  t = phiTheta.lat * deg,
+			  ct = Math.cos(t),
+			  st = Math.sin(t),
+			  dp = projparam.cpole.lat * deg,
+			  cdp = Math.cos(dp),
+			  sdp = Math.sin(dp),
+			  dphi = (phiTheta.lng - projparam.natpole.lng) * deg,
+			  cdphi = Math.cos(dphi),
+			  asinarg = st * sdp + ct * cdp * cdphi;
+		if (asinarg > 1.0) {
+			asinarg = 1.0;
+		} else if (asinarg < -1.0) {
+			asinarg = -1.0;
+		}
+		return L.latLng(Math.asin(asinarg) * rad,
+		 projparam.cpole.lng + Math.atan2(- ct * Math.sin(dphi),
+		  st * cdp  - ct * sdp * cdphi) * rad);
+	},
+
+	// (RA, Dec) [deg] -> (phi,theta) [rad] for zenithal projections.
+	_raDecToPhiTheta: function (raDec) {
+		var	projparam = this.projparam,
+		    deg = Math.PI / 180.0,
+			  rad = 180.0 / Math.PI,
+			  da = (raDec.lng - projparam.cpole.lng) * deg,
+			  cda = Math.cos(da),
+			  sda = Math.sin(da),
+			  d = raDec.lat * deg,
+			  cd = Math.cos(d),
+			  sd = Math.sin(d),
+			  dp = projparam.cpole.lat * deg,
+			  cdp = Math.cos(dp),
+			  sdp = Math.sin(dp),
+			  asinarg = sd * sdp + cd * cdp * cda,
+				phitheta = L.latLng(Math.asin(asinarg > 1.0 ? 1.0
+		       : (asinarg < -1.0 ? -1.0 : asinarg)) * rad,
+		         projparam.natpole.lng + Math.atan2(- cd * sda,
+		         sd * cdp  - cd * sdp * cda) * rad);
+		if (phitheta.lng > 180.0) {
+			phitheta.lng -= 360.0;
+		} else if (phitheta.lng < -180.0) {
+			phitheta.lng += 360.0;
+		}
+		return phitheta;
+	},
+
+	// Convert from pixel to reduced coordinates.
+	_pixToRed: function (pix) {
+		var	projparam = this.projparam,
+		    cd = projparam.cd,
+		    red = pix.subtract(projparam.crpix);
+		return L.point(red.x * cd[0][0] + red.y * cd[0][1],
+			red.x * cd[1][0] + red.y * cd[1][1]);
+	},
+
+	// Convert from reduced to pixel coordinates.
+	_redToPix: function (red) {
+		var projparam = this.projparam,
+		    cdinv = projparam.cdinv;
+		return L.point(red.x * cdinv[0][0] + red.y * cdinv[0][1],
+		 red.x * cdinv[1][0] + red.y * cdinv[1][1]).add(projparam.crpix);
+	},
+
+	// Compute the CD matrix invert.
+	_invertCD: function (cd) {
+		var detinv = 1.0 / (cd[0][0] * cd[1][1] - cd[0][1] * cd[1][0]);
+		return [[cd[1][1] * detinv, -cd[0][1] * detinv],
+		 [-cd[1][0] * detinv, cd[0][0] * detinv]];
+	}
+});
+
+L.Projection.WCS.PIX = L.Projection.WCS.extend({
+	code: 'PIX',
+
+	_paramInit: function (projparam) {
+		this.projparam = projparam;
+		projparam.cdinv = this._invertCD(projparam.cd);
+		projparam.cpole = projparam.crval;
+		this.bounds = L.bounds([0.5, this.projparam.naxis.y - 0.5], [this.projparam.naxis.x - 0.5, 0.5]);
+	},
+
+	project: function (latlng) {
+		return L.point(latlng.lng, latlng.lat);
+	},
+
+	unproject: function (point) {
+		return L.latLng(point.y, point.x);
+	}
+});
+
+L.Projection.WCS.zenithal = L.Projection.WCS.extend({
+
+	_paramInit: function (projparam) {
+		this.projparam = projparam;
+		projparam.cdinv = this._invertCD(projparam.cd);
+		projparam.natrval = L.latLng(90.0, 0.0);
+		projparam.natpole = this._natpole();
+		projparam.cpole = this._cpole();
+	},
+
+	// (x, y) ["deg"] -> \phi, r [deg] for zenithal projections.
+	_redToPhiR: function (red) {
+		return L.latLng(Math.sqrt(red.x * red.x + red.y * red.y),
+		 Math.atan2(red.x, - red.y) * 180.0 / Math.PI);
+	},
+
+	// \phi, r [deg] -> (x, y) ["deg"] for zenithal projections.
+	_phiRToRed: function (phiR) {
+		var	deg = Math.PI / 180.0,
+			p = phiR.lng * deg;
+		return new L.Point(phiR.lat * Math.sin(p), - phiR.lat * Math.cos(p));
+	}
+});
+
+L.Projection.WCS.TAN = L.Projection.WCS.zenithal.extend({
+	code: 'TAN',
+
+	_rToTheta: function (r) {
+		return Math.atan2(180.0, Math.PI * r) * 180.0 / Math.PI;
+	},
+
+	_thetaToR: function (theta) {
+		return Math.tan((90.0 - theta) * Math.PI / 180.0) * 180.0 / Math.PI;
+	}
+});
+
+L.Projection.WCS.ZEA = L.Projection.WCS.zenithal.extend({
+	code: 'ZEA',
+
+	_rToTheta: function (r) {
+		var rr = r * Math.PI / 360.0;
+		if (Math.abs(rr) < 1.0) {
+			return 90.0 - 2.0 * Math.asin(rr) * 180.0 / Math.PI;
+		} else {
+			return 90.0;
+		}
+	},
+
+	_thetaToR: function (theta) {
+		return Math.sin((90.0 - theta) * Math.PI / 360.0) * 360.0 / Math.PI;
+	}
+
+});
+
+L.Projection.WCS.cylindrical = L.Projection.WCS.extend({
+
+	_paramInit: function (projparam) {
+		var	deg = Math.PI / 180.0;
+		this.projparam = projparam;
+		projparam.cdinv = this._invertCD(projparam.cd);
+		projparam.lambda = projparam.pv[1][1];
+		if (projparam.lambda === 0.0) { projparam.lambda = 1.0; }
+		projparam.natrval = L.latLng(0.0, 0.0);
+		projparam.natpole = this._natpole();
+		projparam.cpole = this._cpole();
+	},
+
+	_rToTheta: function (r) {
+		return r;
+	},
+
+	_thetaToR: function (theta) {
+		return theta;
+	}
+
+});
+
+L.Projection.WCS.CAR = L.Projection.WCS.cylindrical.extend({
+
+	// (x, y) ["deg"] -> \phi, r [deg] for CAR projections.
+	_redToPhiR: function (red) {
+		return L.latLng(red.y, red.x);
+	},
+
+	// \phi, r [deg] -> (x, y) ["deg"] for CAR projections.
+	_phiRToRed: function (phiR) {
+		return L.point(phiR.lng, phiR.lat);
+	}
+});
+
+L.Projection.WCS.CEA = L.Projection.WCS.cylindrical.extend({
+
+	// (x, y) ["deg"] -> \phi, r [deg] for CEA projections.
+	_redToPhiR: function (red) {
+		var deg = Math.PI / 180.0,
+				slat = red.y * this.projparam.lambda * deg;
+		return L.latLng(slat > -1.0 ?
+		  (slat < 1.0 ? Math.asin(slat) / deg : 90.0) : -90.0, red.x);
+	},
+
+	// \phi, r [deg] -> (x, y) ["deg"] for CEA projections.
+	_phiRToRed: function (phiR) {
+		var deg = Math.PI / 180.0;
+		return L.point(phiR.lng,
+		               Math.sin(phiR.lat * deg) / (this.projparam.lambda * deg));
+	}
+});
+
+L.Projection.WCS.conical = L.Projection.WCS.extend({
+
+	// (x, y) ["deg"] -> \phi, r [deg] for conical projections.
+	_redToPhiR: function (red) {
+		var deg = Math.PI / 180.0,
+		    projparam = this.projparam,
+		    dy = projparam.y0 - red.y,
+				rTheta = projparam.sthetaA * Math.sqrt(red.x * red.x + dy * dy);
+		return L.latLng(rTheta, Math.atan2(red.x / rTheta, dy / rTheta) / projparam.c / deg);
+	},
+
+	// \phi, r [deg] -> (x, y) ["deg"] for conical projections.
+	_phiRToRed: function (phiR) {
+		var	deg = Math.PI / 180.0,
+		     p = this.projparam.c * phiR.lng * deg;
+		return L.point(phiR.lat * Math.sin(p), - phiR.lat * Math.cos(p) + this.projparam.y0);
+	}
+});
+
+L.Projection.WCS.COE = L.Projection.WCS.conical.extend({
+
+	_paramInit: function (projparam) {
+		var	deg = Math.PI / 180.0;
+		this.projparam = projparam;
+		projparam.cdinv = this._invertCD(projparam.cd);
+		projparam.thetaA = projparam.pv[1][1];
+		projparam.eta = projparam.pv[1][2];
+		projparam.sthetaA = projparam.thetaA >= 0.0 ? 1.0 : -1.0;
+		var theta1 = projparam.thetaA - projparam.eta,
+	      theta2 = projparam.thetaA + projparam.eta,
+		    s1 = Math.sin(theta1 * deg),
+		    s2 = Math.sin(theta2 * deg);
+		projparam.gamma = s1 + s2;
+		projparam.s1s2p1 = s1 * s2 + 1.0;
+		projparam.c = projparam.gamma / 2.0;
+		projparam.y0 = 2.0 / projparam.gamma * Math.sqrt(projparam.s1s2p1 -
+		   projparam.gamma * Math.sin(projparam.thetaA * deg)) / deg;
+		projparam.natrval = L.latLng(projparam.thetaA, 0.0);
+		projparam.natpole = this._natpole();
+		projparam.cpole = this._cpole();
+	},
+
+	_rToTheta: function (r) {
+		var deg = Math.PI / 180.0,
+		    gamma = this.projparam.gamma,
+		    sinarg = this.projparam.s1s2p1 / gamma - gamma * r * r * deg * deg / 4.0;
+		if (sinarg < -1.0) {
+			sinarg = -1.0;
+		} else if (sinarg > 1.0) {
+			sinarg = 1.0;
+		}
+		return Math.asin(sinarg) / deg;
+	},
+
+	_thetaToR: function (theta) {
+		var	deg = Math.PI / 180.0,
+		    gamma = this.projparam.gamma;
+		return 2.0 / gamma * Math.sqrt(this.projparam.s1s2p1 - gamma * Math.sin(theta * deg)) / deg;
+	}
+
+});
+
+
+
+/*
+# L.WCS emulates the FITS WCS (World Coordinate System) popular among
+# the astronomical community (see http://www.atnf.csiro.au/people/mcalabre/WCS/)
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 05/09/2016
+*/
+
+L.CRS.WCS = L.extend({}, L.CRS, {
+	code: 'WCS',
+
+	options: {
+		nzoom: 9,
+		tileSize: [256, 256],
+		nativeCelsys: false			// If true, world coordinates are returned
+			                      // in the native celestial system
+	},
+
+	defaultparam: {
+		ctype: {x: 'PIXEL', y: 'PIXEL'},
+		naxis: [256, 256],
+		crpix: [129, 129],
+		crval: [0.0, 0.0],										// (\delta_0, \alpha_0)
+//	cpole: (equal to crval by default)		// (\delta_p, \alpha_p)
+		cd: [[1.0, 0.0], [0.0, 1.0]],
+		natrval: [90.0, 0.0],										// (\theta_0. \phi_0)
+		natpole: [90.0, 999.0],								// (\theta_p, \phi_p)
+		pv: [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+		     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
+	},
+
+	initialize: function (hdr, options) {
+		options = L.setOptions(this, options);
+		var	defaultparam = this.defaultparam;
+
+		this.tileSize = L.point(options.tileSize);
+		this.nzoom = options.nzoom;
+		this.ctype = {x: defaultparam.ctype.x, y: defaultparam.ctype.y};
+		this.naxis = L.point(defaultparam.naxis, true);
+		this.projparam = new this._paramInit(defaultparam);
+		if (hdr) {
+			this._readWCS(hdr);
+		}
+		this._paramInit(options, this.projparam);
+
+		// Identify the WCS projection type
+		switch (this.ctype.x.substr(5, 3)) {
+		case 'ZEA':
+			this.projection = new L.Projection.WCS.ZEA();
+			this.pixelFlag = false;
+			this.infinite = true;
+			break;
+		case 'TAN':
+			this.projection = new L.Projection.WCS.TAN();
+			this.pixelFlag = false;
+			this.infinite = true;
+			break;
+		case 'CAR':
+			this.projection = new L.Projection.WCS.CAR();
+			this.pixelFlag = false;
+			this.infinite = true;
+			break;
+		case 'CEA':
+			this.projection = new L.Projection.WCS.CEA();
+			this.pixelFlag = false;
+			this.infinite = true;
+			break;
+		case 'COE':
+			this.projection = new L.Projection.WCS.COE();
+			this.pixelFlag = false;
+			this.infinite = true;
+			break;
+		default:
+			this.projection = new L.Projection.WCS.PIX();
+			this.pixelFlag = true;
+			this.infinite = false;
+			// Center on image if WCS is in pixels
+			if (!this.options.crval) {
+				this.projparam.crval = L.latLng((this.naxis.y + 1.0) / 2.0,
+				                                (this.naxis.x + 1.0) / 2.0);
+			}
+			this.wrapLng = [0.5, this.naxis.x - 0.5];
+			this.wrapLat = [this.naxis.y - 0.5, 0.5];
+			break;
+		}
+
+		if (!this.pixelFlag) {
+			// Identify the native celestial coordinate system
+			switch (this.ctype.x.substr(0, 1)) {
+			case 'G':
+				this.celsyscode = 'galactic';
+				break;
+			case 'E':
+				this.celsyscode = 'ecliptic';
+				break;
+			case 'S':
+				this.celsyscode = 'supergalactic';
+				break;
+			default:
+				this.celsyscode = 'equatorial';
+				break;
+			}
+
+			if (this.celsyscode !== 'equatorial') {
+				this.projparam.celsysmat = this._celsysmatInit(this.celsyscode);
+				this.projection.celsysToEq = this.celsysToEq;
+				this.projection.eqToCelsys = this.eqToCelsys;
+				this.forceNativeCelsys = (this.options.nativeCelsys === true);
+				this.projection.celsysflag = !this.forceNativeCelsys;
+			}
+		}
+
+		this.transformation = new L.Transformation(1.0, -0.5, -1.0, this.naxis.y + 0.5);
+		this.projection._paramInit(this.projparam);
+		this.code += ':' + this.projection.code;
+	},
+
+	// convert celestial (angular) coordinates to equatorial
+	celsysToEq: function (latlng) {
+		var	cmat = this.projparam.celsysmat,
+		    deg = Math.PI / 180.0,
+				invdeg = 180.0 / Math.PI,
+			  a2 = latlng.lng * deg - cmat[1],
+			  d2 = latlng.lat * deg,
+				sd2 = Math.sin(d2),
+				cd2cp = Math.cos(d2) * cmat[2],
+				sd = sd2 * cmat[3] - cd2cp * Math.cos(a2);
+		return L.latLng(Math.asin(sd) * invdeg,
+		                ((Math.atan2(cd2cp * Math.sin(a2), sd2 - sd * cmat[3]) +
+		                 cmat[0]) * invdeg + 360.0) % 360.0);
+	},
+
+	// convert equatorial (angular) coordinates to celestial
+	eqToCelsys: function (latlng) {
+		var	cmat = this.projparam.celsysmat,
+		    deg = Math.PI / 180.0,
+				invdeg = 180.0 / Math.PI,
+			  a = latlng.lng * deg - cmat[0],
+			  sd = Math.sin(latlng.lat * deg),
+				cdcp = Math.cos(latlng.lat * deg) * cmat[2],
+				sd2 = sd * cmat[3] + cdcp * Math.cos(a);
+		return L.latLng(Math.asin(sd2) * invdeg,
+		                ((Math.atan2(cdcp * Math.sin(a), sd2 * cmat[3] - sd) +
+		                 cmat[1]) * invdeg + 360.0) % 360.0);
+	},
+
+
+	scale: function (zoom) {
+		return Math.pow(2, zoom - this.nzoom + 1);
+	},
+
+	zoom: function (scale) {
+		return Math.log(scale) / Math.LN2 + this.nzoom - 1;
+	},
+
+	// return the raw pixel scale in degrees
+	rawPixelScale: function (latlng) {
+		var p0 = this.projection.project(latlng),
+		    latlngdx = this.projection.unproject(p0.add([10.0, 0.0])),
+		    latlngdy = this.projection.unproject(p0.add([0.0, 10.0])),
+				dlngdx = latlngdx.lng - latlng.lng,
+				dlngdy = latlngdy.lng - latlng.lng;
+
+		if (dlngdx > 180.0) { dlngdx -= 360.0; }
+		else if (dlngdx < -180.0) { dlngdx += 360.0; }
+		if (dlngdy > 180.0) { dlngdy -= 360.0; }
+		else if (dlngdy < -180.0) { dlngdy += 360.0; }
+
+		return 0.1 * Math.sqrt(Math.abs((dlngdx * (latlngdy.lat - latlng.lat) -
+		  dlngdy * (latlngdx.lat - latlng.lat))) *
+		  Math.cos(latlng.lat * Math.PI / 180.0));
+	},
+
+	// return the current pixel scale in degrees
+	pixelScale: function (zoom, latlng) {
+		return this.rawPixelScale(latlng) / this.scale(zoom);
+	},
+
+	// return the zoom level that corresponds to the given FoV in degrees
+	fovToZoom: function (map, fov, latlng) {
+		var scale = this.rawPixelScale(latlng),
+			size = map.getSize();
+
+		if (fov < scale) { fov = scale; }
+		scale *= Math.sqrt(size.x * size.x + size.y * size.y);
+		return fov > 0.0 ? this.zoom(scale / fov) : this.nzoom - 1;
+	},
+
+	// return the FoV in degrees that corresponds to the given zoom level
+	zoomToFov: function (map, zoom, latlng) {
+		var size = map.getSize(),
+			scale = this.rawPixelScale(latlng) *
+			  Math.sqrt(size.x * size.x + size.y * size.y),
+			zscale = this.scale(zoom);
+		return  zscale > 0.0 ? scale / zscale : scale;
+	},
+
+	distance: function (latlng1, latlng2) {
+		var rad = Math.PI / 180.0,
+		    lat1 = latlng1.lat * rad,
+		    lat2 = latlng2.lat * rad,
+		    a = Math.sin(lat1) * Math.sin(lat2) +
+		        Math.cos(lat1) * Math.cos(lat2) * Math.cos((latlng2.lng - latlng1.lng) * rad);
+
+		return 180.0 / Math.PI * Math.acos(Math.min(a, 1));
+	},
+
+	// Parse a string of coordinates. Return undefined if parsing failed
+	parseCoords: function (str, cdsflag) {
+		var result;
+		if (cdsflag) {
+			// Special parsing for Sesame@CDS
+			result = /J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g.exec(str);
+		} else {
+			result = /(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g.exec(str);
+		}
+
+		if (result && result.length >= 3) {
+			var latlng = L.latLng(Number(result[2]), Number(result[1]));
+
+			if (this.forceNativeCelsys) {
+				latlng = this.eqToCelsys(latlng);
+			}
+			return latlng;
+		} else {
+			return undefined;
+		}
+	},
+
+	// Initialize WCS parameters
+	_paramInit: function (newparam, param) {
+		if (!param) {
+			param = this;
+		}
+		if (newparam.naxis) {
+			param.naxis = L.point(newparam.naxis);
+		}
+		if (newparam.crval) {
+			param.crval = param.cpole = L.latLng(newparam.crval);
+		}
+		if (newparam.crpix) {
+			param.crpix = L.point(newparam.crpix);
+		}
+		if (newparam.cd) {
+			param.cd = [[newparam.cd[0][0], newparam.cd[0][1]],
+		           [newparam.cd[1][0], newparam.cd[1][1]]];
+		}
+		if (newparam.natrval) {
+			param.natrval = L.latLng(newparam.natrval);
+		}
+		if (newparam.natpole) {
+			param.natpole = L.latLng(newparam.natpole);
+		}
+		if (newparam.pv) {
+			param.pv = [];
+			param.pv[0] = newparam.pv[0].slice();
+			param.pv[1] = newparam.pv[1].slice();
+		}
+	},
+
+	// Generate a celestial coordinate system transformation matrix
+	_celsysmatInit: function (celcode) {
+		var	deg = Math.PI / 180.0,
+				corig, cpole,
+				cmat = [];
+		switch (celcode) {
+		case 'galactic':
+			corig = L.latLng(-28.93617242, 266.40499625);
+			cpole = L.latLng(27.12825120, 192.85948123);
+			break;
+		case 'ecliptic':
+			corig = L.latLng(0.0, 0.0);
+			cpole = L.latLng(66.99111111, 273.85261111);
+			break;
+		case 'supergalactic':
+			corig = L.latLng(59.52315, 42.29235);
+			cpole = L.latLng(15.70480, 283.7514);
+			break;
+		default:
+			corig = L.latLng(0.0, 0.0);
+			cpole = L.latLng(0.0, 0.0);
+			break;
+		}
+		cmat[0] = cpole.lng * deg;
+		cmat[1] = Math.asin(Math.cos(corig.lat * deg) * Math.sin((cpole.lng - corig.lng) * deg));
+		cmat[2] = Math.cos(cpole.lat * deg);
+		cmat[3] = Math.sin(cpole.lat * deg);
+
+		return cmat;
+	},
+
+	// Read WCS information from a FITS header
+	_readWCS: function (hdr) {
+		var key = L.IIPUtils.readFITSKey,
+		    projparam = this.projparam,
+		    v;
+		if ((v = key('CTYPE1', hdr))) { this.ctype.x = v; }
+		if ((v = key('CTYPE2', hdr))) { this.ctype.y = v; }
+		if ((v = key('NAXIS1', hdr))) { projparam.naxis.x = this.naxis.x = parseInt(v, 10); }
+		if ((v = key('NAXIS2', hdr))) { projparam.naxis.y = this.naxis.y = parseInt(v, 10); }
+		if ((v = key('CRPIX1', hdr))) { projparam.crpix.x = parseFloat(v, 10); }
+		if ((v = key('CRPIX2', hdr))) { projparam.crpix.y = parseFloat(v, 10); }
+		if ((v = key('CRVAL1', hdr))) { projparam.crval.lng = parseFloat(v, 10); }
+		if ((v = key('CRVAL2', hdr))) { projparam.crval.lat = parseFloat(v, 10); }
+		if ((v = key('LONPOLE', hdr))) { projparam.natpole.lng = parseFloat(v, 10); }
+		if ((v = key('LATPOLE', hdr))) { projparam.natpol.lat = parseFloat(v, 10); }
+		if ((v = key('CD1_1', hdr))) { projparam.cd[0][0] = parseFloat(v, 10); }
+		if ((v = key('CD1_2', hdr))) { projparam.cd[0][1] = parseFloat(v, 10); }
+		if ((v = key('CD2_1', hdr))) { projparam.cd[1][0] = parseFloat(v, 10); }
+		if ((v = key('CD2_2', hdr))) { projparam.cd[1][1] = parseFloat(v, 10); }
+		for (var d = 0; d < 2; d++) {
+			for (var j = 0; j < 20; j++) {
+				if ((v = key('PV' + (d + 1) + '_' + j, hdr))) {
+					projparam.pv[d][j] = parseFloat(v, 10);
+				}
+			}
+		}
+	},
+
+	_deltaLng: function (latLng, latLng0) {
+		var	dlng = latLng.lng - latLng0.lng;
+
+		return dlng > 180.0 ? dlng - 360.0 : (dlng < -180.0 ? dlng + 360.0 : dlng);
+	}
+});
+
+L.CRS.WCS = L.Class.extend(L.CRS.WCS);
+
+L.CRS.wcs = function (options) {
+	return new L.CRS.WCS(options);
+};
+
+
+/*
+# L.IIPUtils contains general utility methods
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                         Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 29/11/2016
+*/
+L.IIPUtils = {
+// Definitions for RegExp
+	REG_PDEC: '(\\d+\\.\\d*)',
+	REG_FLOAT: '([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)',
+
+// Ajax call to server
+	requestURL: function (url, purpose, action, context, timeout) {
+		var	httpRequest;
+
+		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
+			httpRequest = new XMLHttpRequest();
+		} else if (window.ActiveXObject) { // IE
+			try {
+				httpRequest = new ActiveXObject('Msxml2.XMLHTTP');
+			}
+			catch (e) {
+				try {
+					httpRequest = new ActiveXObject('Microsoft.XMLHTTP');
+				}
+				catch (e) {}
+			}
+		}
+		if (!httpRequest) {
+			alert('Giving up: Cannot create an XMLHTTP instance for ' + purpose);
+			return false;
+		}
+		if (timeout) {
+			httpRequest.timeout = timeout * 1000;	// seconds -> milliseconds
+			httpRequest.ontimeout = function () {
+				alert('Time out while ' + purpose);
+			};
+		}
+		httpRequest.open('GET', url);
+
+		// Send Credrentials
+		if ((context) && (context.options.credentials)) {
+			httpRequest.withCredentials = true;
+
+		}
+
+		// if request catalog need authenticate
+		if ((context) && (context.options.authenticate === 'csrftoken')) {
+			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
+		}
+
+		httpRequest.onreadystatechange = function () {
+			action(context, httpRequest);
+		};
+		httpRequest.send();
+	},
+
+	// Return a dictionary of name/value pairs from a URL string, from
+	// http://stevenbenner.com/2010/03/javascript-regex-trick-parse-a-query-string-into-an-object/
+	parseURL: function (url) {
+		var dict = {};
+		url.replace(
+			new RegExp('([^?=&]+)(=([^&]*))?', 'g'),
+			function ($0, $1, $2, $3) { dict[$1] = $3; }
+		);
+		return dict;
+	},
+
+	// Return a URL with an updated keyword/value queryString(from http://stackoverflow.com/a/5999118)
+	updateURL: function (url, keyword, value) {
+		var re = new RegExp('([?&])' + keyword + '=.*?(&|$)', 'i'),
+			separator = url.indexOf('?') !== -1 ? '&' : '?';
+
+		return url.match(re) ? url.replace(re, '$1' + keyword + '=' + value + '$2') :
+		  url + separator + keyword + '=' + value;
+	},
+
+	// Return the domain of a given URL (from http://stackoverflow.com/a/28054735)
+	checkDomain: function (url) {
+		if (url.indexOf('//') === 0) {
+			url = location.protocol + url;
+		}
+		return url.toLowerCase().replace(/([a-z])?:\/\//, '$1').split('/')[0];
+	},
+
+	// Check if a given URL is external (from http://stackoverflow.com/a/28054735)
+	isExternal: function (url) {
+		return ((url.indexOf(':') > -1 || url.indexOf('//') > -1) &&
+			this.checkDomain(location.href) !== this.checkDomain(url));
+	},
+
+	// Copy string to clipboard (from http://stackoverflow.com/a/33928558)
+	// Chrome 43+, Firefox 42+, Edge and Safari 10+ supported
+	copyToClipboard: function (text) {
+		if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
+			var textarea = document.createElement('textarea');
+			textarea.textContent = text;
+			textarea.style.position = 'fixed';  // Prevent scrolling to bottom of page in MS Edge.
+			document.body.appendChild(textarea);
+			textarea.select();
+			try {
+				return document.execCommand('copy');  // Security exception may be thrown by some browsers.
+			} catch (ex) {
+				console.warn('Copy to clipboard failed.', ex);
+				return false;
+			} finally {
+				document.body.removeChild(textarea);
+			}
+		}
+	},
+
+	// Add a short (<400ms) "flash" animation to an element
+	flashElement: function (elem) {
+		L.DomUtil.addClass(elem, 'leaflet-control-flash');
+		setTimeout(function () {
+			L.DomUtil.removeClass(elem, 'leaflet-control-flash');
+		}, 400);
+
+	},
+
+	// Read content of a FITS header keyword
+	readFITSKey: function (keyword, str) {
+		var key = keyword.trim().toUpperCase().substr(0, 8),
+			nspace = 8 - key.length,
+			keyreg = new RegExp(key + (nspace > 0 ? '\\ {' + nspace.toString() + '}' : '') +
+			 '=\\ *(?:\'((?:\\ *[^\'\\ ]+)*)\\ *\'|([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))'),
+			match = keyreg.exec(str);
+		if (!match) {
+			return null;
+		} else if (match[1]) {
+			return match[1];
+		} else {
+			return match[2];
+		}
+	},
+
+// Return the distance between two world coords latLng1 and latLng2 in degrees
+	distance: function (latlng1, latlng2) {
+		var d2r = Math.PI / 180.0,
+		 lat1 = latlng1.lat * d2r,
+		 lat2 = latlng2.lat * d2r,
+		 dLat = lat2 - lat1,
+		 dLon = (latlng2.lng - latlng1.lng) * d2r,
+		 sin1 = Math.sin(dLat / 2),
+		 sin2 = Math.sin(dLon / 2);
+
+		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
+
+		return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 360.0 / Math.PI;
+	},
+
+	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
+	getCookie: function (cname) {
+	    var name = cname + '=';
+	    var ca = document.cookie.split(';');
+	    for (var i = 0; i < ca.length; i++) {
+	        var c = ca[i];
+	        while (c.charAt(0) === ' ') {
+	            c = c.substring(1);
+	        }
+	        if (c.indexOf(name) === 0) {
+	            return c.substring(name.length, c.length);
+	        }
+	    }
+	    return '';
+	}
+
+};
+
+
+
+/*
+# L.TileLayer.IIP adds support for IIP layers to Leaflet
+# (see http://iipimage.sourceforge.net/documentation/protocol/)
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
+#
+#	Last modified:		23/05/2017
+*/
+
+L.TileLayer.IIP = L.TileLayer.extend({
+	options: {
+		title: '',
+		crs: null,
+		nativeCelsys: false,
+		center: false,
+		fov: false,
+		minZoom: 0,
+		maxZoom: null,
+		maxNativeZoom: 18,
+		noWrap: true,
+		contrast: 1.0,
+		colorSat: 1.0,
+		gamma: 1.0,
+		cMap: 'grey',
+		invertCMap: false,
+		quality: 90,
+		mixingMode: 'color',
+		channelColors: [],
+		channelLabels: [],
+		channelLabelMatch: '.*',
+		channelUnits: [],
+		minMaxValues: [],
+		defaultChannel: 0,
+		credentials: false,
+		/*
+		pane: 'tilePane',
+		opacity: 1,
+		attribution: <String>,
+		maxNativeZoom: <Number>,
+		zIndex: <Number>,
+		bounds: <LatLngBounds>
+		unloadInvisibleTiles: L.Browser.mobile,
+		updateWhenIdle: L.Browser.mobile,
+		updateInterval: 150,
+		tms: <Boolean>,
+		zoomReverse: <Number>,
+		detectRetina: <Number>,
+		*/
+	},
+
+	// Default IIPImage rendering parameters
+	iipdefault: {
+		contrast: 1,
+		gamma: 1,
+		cMap: 'grey',
+		invertCMap: false,
+		minValue: [],
+		maxValue: [],
+		channelColors: [
+			[''],
+			['#FFFFFF'],
+			['#00BAFF', '#FFBA00'],
+			['#0000FF', '#00FF00', '#FF0000'],
+			['#0000E0', '#00BA88', '#88BA00', '#E00000'],
+			['#0000CA', '#007BA8', '#00CA00', '#A87B00', '#CA0000'],
+			['#0000BA', '#00719B', '#009B71', '#719B00', '#9B7100', '#BA0000']
+		],
+		quality: 90
+	},
+
+	initialize: function (url, options) {
+		this.type = 'tilelayer';
+		this._url = url.replace(/\&.*$/g, '');
+
+		options = L.setOptions(this, options);
+
+		// detecting retina displays, adjusting tileSize and zoom levels
+		if (options.detectRetina && L.Browser.retina && options.maxZoom > 0) {
+
+			options.tileSize = Math.floor(options.tileSize / 2);
+			options.zoomOffset++;
+
+			options.minZoom = Math.max(0, options.minZoom);
+			options.maxZoom--;
+		}
+
+		if (typeof options.subdomains === 'string') {
+			options.subdomains = options.subdomains.split('');
+		}
+
+		this.iipTileSize = {x: 256, y: 256};
+		this.iipImageSize = [];
+		this.iipImageSize[0] = this.iipTileSize;
+		this.iipGridSize = [];
+		this.iipGridSize[0] = {x: 1, y: 1};
+		this.iipBPP = 8;
+		this.iipMode = options.mixingMode;		// Image rendering mode: 'mono' or 'color'
+		this.iipChannel = 0;
+		this.iipNChannel = 1;
+		this.iipMinZoom = options.minZoom;
+		this.iipMaxZoom = options.maxZoom;
+		this.iipContrast = options.contrast;
+		this.iipColorSat = options.colorSat;
+		this.iipGamma = options.gamma;
+		this.iipCMap = options.cMap;
+		this.iipInvertCMap = options.invertCMap;
+		this.iipMinValue = [];
+		this.iipMinValue[0] = 0.0;
+		this.iipMaxValue = [];
+		this.iipMaxValue[0] = 255.0;
+		this.iipMix = [[]];
+		this.iipRGB = [];
+		this.iipChannelLabels = [];
+		this.iipChannelFlags = [];
+		this.iipChannelUnits = [];
+		this.iipQuality = options.quality;
+
+		this._title = options.title.length > 0 ? options.title :
+		                this._url.match(/^.*\/(.*)\..*$/)[1];
+		this.getIIPMetaData(this._url);
+
+		// for https://github.com/Leaflet/Leaflet/issues/137
+		if (!L.Browser.android) {
+			this.on('tileunload', this._onTileRemove);
+		}
+		return this;
+	},
+
+	getIIPMetaData: function (url) {
+		L.IIPUtils.requestURL(url +
+			'&obj=IIP,1.0&obj=max-size&obj=tile-size' +
+			'&obj=resolution-number&obj=bits-per-channel' +
+			'&obj=min-max-sample-values&obj=subject',
+			'getting IIP metadata',
+			this._parseMetadata, this);
+	},
+
+	_parseMetadata: function (layer, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var response = httpRequest.responseText,
+				 matches = layer._readIIPKey(response, 'IIP', L.IIPUtils.REG_PDEC);
+				if (!matches) {
+					alert('Error: Unexpected response from IIP server ' +
+					 layer._url.replace(/\?.*$/g, ''));
+				}
+				var options = layer.options,
+				    iipdefault = layer.iipdefault;
+
+				matches = layer._readIIPKey(response, 'Max-size', '(\\d+)\\s+(\\d+)');
+				var maxsize = {
+					x: parseInt(matches[1], 10),
+					y: parseInt(matches[2], 10)
+				};
+				matches = layer._readIIPKey(response, 'Tile-size', '(\\d+)\\s+(\\d+)');
+				layer.iipTileSize = {
+					x: parseInt(matches[1], 10),
+					y: parseInt(matches[2], 10)
+				};
+
+				options.tileSize = layer.iipTileSize.x;
+
+				// Find the lowest and highest zoom levels
+				matches = layer._readIIPKey(response, 'Resolution-number', '(\\d+)');
+				layer.iipMaxZoom = parseInt(matches[1], 10) - 1;
+				if (layer.iipMinZoom > options.minZoom) {
+					options.minZoom = layer.iipMinZoom;
+				}
+				if (!options.maxZoom) {
+					options.maxZoom = layer.iipMaxZoom + 6;
+				}
+				options.maxNativeZoom = layer.iipMaxZoom;
+
+				// Set grid sizes
+				for (var z = 0; z <= layer.iipMaxZoom; z++) {
+					layer.iipImageSize[z] = {
+						x: Math.floor(maxsize.x / Math.pow(2, layer.iipMaxZoom - z)),
+						y: Math.floor(maxsize.y / Math.pow(2, layer.iipMaxZoom - z))
+					};
+					layer.iipGridSize[z] = {
+						x: Math.ceil(layer.iipImageSize[z].x / layer.iipTileSize.x),
+						y: Math.ceil(layer.iipImageSize[z].y / layer.iipTileSize.y)
+					};
+				}
+				// (Virtual) grid sizes for extra zooming
+				for (z = layer.iipMaxZoom; z <= options.maxZoom; z++) {
+					layer.iipGridSize[z] = layer.iipGridSize[layer.iipMaxZoom];
+				}
+
+				// Set pixel bpp
+				matches = layer._readIIPKey(response, 'Bits-per-channel', '(\\d+)');
+				layer.iipBPP = parseInt(matches[1], 10);
+				// Only 32bit data are likely to be linearly quantized
+				if (layer.iipGamma === layer.iipdefault.gamma) {
+					layer.iipGamma = layer.iipBPP >= 32 ? 2.2 : 1.0;
+				}
+
+				// Pre-computed min and max pixel values, as well as number of channels
+				matches = layer._readIIPKey(response, 'Min-Max-sample-values',
+				 '\\s*(.*)');
+				var str = matches[1].split(/\s+/),
+				    nchannel = layer.iipNChannel = (str.length / 2),
+				    mmc = 0;
+				for (var c = 0; c < nchannel; c++) {
+					iipdefault.minValue[c] = parseFloat(str[mmc++]);
+					iipdefault.maxValue[c] = parseFloat(str[mmc++]);
+				}
+
+				// Override min and max pixel values based on user provided options
+				var minmax = options.minMaxValues;
+				if (minmax.length) {
+					for (c = 0; c < nchannel; c++) {
+						if (minmax[c] !== undefined && minmax[c].length) {
+							layer.iipMinValue[c] = minmax[c][0];
+							layer.iipMaxValue[c] = minmax[c][1];
+						} else {
+							layer.iipMinValue[c] = iipdefault.minValue[c];
+							layer.iipMaxValue[c] = iipdefault.maxValue[c];
+						}
+					}
+				} else {
+					for (c = 0; c < nchannel; c++) {
+						layer.iipMinValue[c] = iipdefault.minValue[c];
+						layer.iipMaxValue[c] = iipdefault.maxValue[c];
+					}
+				}
+
+				// Default channel
+				layer.iipChannel = options.defaultChannel;
+
+				// Channel labels
+				var inlabels = options.channelLabels,
+				    ninlabel = inlabels.length,
+				    labels = layer.iipChannelLabels,
+				    inunits = options.channelUnits,
+				    ninunits = inunits.length,
+				    units = layer.iipChannelUnits,
+						key = L.IIPUtils.readFITSKey,
+						numstr, value;
+
+				for (c = 0; c < nchannel; c++) {
+					if (c < ninlabel) {
+						labels[c] = inlabels[c];
+					} else {
+						numstr = (c + 1).toString();
+						value = key('CHAN' +
+						  (c < 9 ? '000' : (c < 99 ? '00' : (c < 999 ? '0' : ''))) + numstr,
+						  response);
+						labels[c] = value ? value : 'Channel #' + numstr;
+					}
+				}
+
+				// Copy those units that have been provided
+				for (c = 0; c < ninunits; c++) {
+					units[c] = inunits[c];
+				}
+				// Fill out units that are not provided with a default string
+				for (c = ninunits; c < nchannel; c++) {
+					units[c] = 'ADUs';
+				}
+
+				// Initialize mixing matrix depending on arguments and the number of channels
+				var cc = 0,
+				    mix = layer.iipMix,
+						omix = options.channelColors,
+						rgb = layer.iipRGB,
+						re = new RegExp(options.channelLabelMatch),
+						nchanon = 0,
+						channelflags = layer.iipChannelFlags;
+
+				nchanon = 0;
+				for (c = 0; c < nchannel; c++) {
+					channelflags[c] = re.test(labels[c]);
+					if (channelflags[c]) {
+						nchanon++;
+					}
+				}
+				if (nchanon >= iipdefault.channelColors.length) {
+					nchanon = iipdefault.channelColors.length - 1;
+				}
+
+				for (c = 0; c < nchannel; c++) {
+					mix[c] = [];
+					var	col = 3;
+					if (omix.length && omix[c] && omix[c].length === 3) {
+						// Copy RGB triplet
+						rgb[c] = L.rgb(omix[c][0], omix[c][1], omix[c][2]);
+					} else {
+						rgb[c] = L.rgb(0.0, 0.0, 0.0);
+					}
+					if (omix.length === 0 && channelflags[c] && cc < nchanon) {
+						rgb[c] = L.rgb(iipdefault.channelColors[nchanon][cc++]);
+					}
+					// Compute the current row of the mixing matrix
+					layer.rgbToMix(c);
+				}
+
+				if (options.bounds) {
+					options.bounds = L.latLngBounds(options.bounds);
+				}
+				layer.wcs = options.crs ? options.crs : new L.CRS.WCS(response, {
+					nativeCelsys: layer.options.nativeCelsys,
+					nzoom: layer.iipMaxZoom + 1,
+					tileSize: layer.iipTileSize
+				});
+				layer.iipMetaReady = true;
+				layer.fire('metaload');
+			} else {
+				alert('There was a problem with the IIP metadata request.');
+			}
+		}
+	},
+
+	// Convert an RGB colour and saturation settings to mixing matrix elements
+	rgbToMix: function (chan, rgb) {
+		if (rgb) {
+			this.iipRGB[chan] = rgb.clone();
+		} else {
+			rgb = this.iipRGB[chan];
+		}
+
+		var	cr = this._gammaCorr(rgb.r),
+			  cg = this._gammaCorr(rgb.g),
+				cb = this._gammaCorr(rgb.b),
+			  lum = (cr + cg + cb) / 3.0,
+			  alpha = this.iipColorSat / 3.0;
+
+		this.iipMix[chan][0] = lum + alpha * (2.0 * cr - cg - cb);
+		this.iipMix[chan][1] = lum + alpha * (2.0 * cg - cr - cb);
+		this.iipMix[chan][2] = lum + alpha * (2.0 * cb - cr - cg);
+
+		return;
+	},
+
+	// Current channel index defines mixing matrix elements in "mono" mode
+	updateMono: function () {
+		this.iipMode = 'mono';
+	},
+
+	// RGB colours and saturation settings define mixing matrix elements in "color" mode
+	updateMix: function () {
+		var nchannel = this.iipNChannel;
+
+		this.iipMode = 'color';
+		for (var c = 0; c < nchannel; c++) {
+			this.rgbToMix(c, this.iipRGB[c]);
+		}
+	},
+
+	// Apply gamma correction
+	_gammaCorr: function (val) {
+		return val > 0.0 ? Math.pow(val, this.iipGamma) : 0.0;
+	},
+
+	_readIIPKey: function (str, keyword, regexp) {
+		var reg = new RegExp(keyword + ':' + regexp);
+		return reg.exec(str);
+	},
+
+	addTo: function (map) {
+		if (this.iipMetaReady) {
+			// IIP data are ready so we can go
+			this._addToMap(map);
+		}
+		else {
+			// Wait for metadata request to complete
+			this.once('metaload', function () {
+				this._addToMap(map);
+			}, this);
+		}
+		return this;
+	},
+
+	_addToMap: function (map) {
+		var zoom,
+		    newcrs = this.wcs,
+				curcrs = map.options.crs,
+				prevcrs = map._prevcrs,
+				maploadedflag = map._loaded,
+				// Default center coordinates
+				center = map.options.center ? map.options.center : newcrs.projparam.crval;
+
+		if (maploadedflag) {
+			curcrs._prevLatLng = map.getCenter();
+			curcrs._prevZoom = map.getZoom();
+		}
+
+		map._prevcrs = map.options.crs = newcrs;
+		L.TileLayer.prototype.addTo.call(this, map);
+
+		// Go to previous layers' coordinates if applicable
+		if (prevcrs && newcrs !== curcrs && maploadedflag &&
+		    newcrs.pixelFlag === curcrs.pixelFlag) {
+			center = curcrs._prevLatLng;
+			zoom = curcrs._prevZoom;
+			var prevpixscale = prevcrs.pixelScale(zoom, center),
+			    newpixscale = newcrs.pixelScale(zoom, center);
+			if (prevpixscale > 1e-20 && newpixscale > 1e-20) {
+				zoom += Math.round(Math.LOG2E *
+				  Math.log(newpixscale / prevpixscale));
+			}
+		// Else go back to previous recorded position for the new layer
+		} else if (newcrs._prevLatLng) {
+			center = newcrs._prevLatLng;
+			zoom = newcrs._prevZoom;
+		} else {
+			// Default center coordinates and zoom
+			if (this.options.center) {
+				var	latlng = newcrs.parseCoords(this.options.center);
+
+				if (latlng) {
+					if (this.options.fov) {
+						zoom = newcrs.fovToZoom(map, this.options.fov, latlng);
+					}
+					map.setView(latlng, zoom, {reset: true, animate: false});
+				} else {
+					// If not, ask Sesame@CDS!
+					L.IIPUtils.requestURL(
+						'http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' +
+						  this.options.center,
+						'getting coordinates for ' + this.options.center,
+						function (_this, httpRequest) {
+							if (httpRequest.readyState === 4) {
+								if (httpRequest.status === 200) {
+									var str = httpRequest.responseText,
+										latlng = newcrs.parseCoords(str, true);
+
+									if (latlng) {
+										if (_this.options.fov) {
+											zoom = newcrs.fovToZoom(map, _this.options.fov, latlng);
+										}
+										map.setView(latlng, zoom, {reset: true, animate: false});
+									} else {
+										map.setView(center, zoom, {reset: true, animate: false});
+										alert(str + ': Unknown location');
+									}
+								} else {
+									map.setView(center, zoom, {reset: true, animate: false});
+									alert('There was a problem with the request to the Sesame service at CDS');
+								}
+							}
+						}, this, 10
+					);
+				}
+			} else {
+				map.setView(center, zoom, {reset: true, animate: false});
+			}
+		}
+	},
+
+	_getTileSizeFac: function () {
+		var	map = this._map,
+			zoom = this._tileZoom,
+			zoomN = this.options.maxNativeZoom;
+		return (zoomN && zoom > zoomN) ?
+				Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN)) : 1;
+	},
+
+	_isValidTile: function (coords) {
+		var crs = this._map.options.crs;
+
+		if (!crs.infinite) {
+			// don't load tile if it's out of bounds and not wrapped
+			var bounds = this._globalTileRange;
+			if ((!crs.wrapLng && (coords.x < bounds.min.x || coords.x > bounds.max.x)) ||
+			    (!crs.wrapLat && (coords.y < bounds.min.y || coords.y > bounds.max.y))) { return false; }
+		}
+
+		// don't load tile if it's out of the tile grid
+		var z = this._getZoomForUrl(),
+		    wcoords = coords.clone();
+		this._wrapCoords(wcoords);
+		if (wcoords.x < 0 || wcoords.x >= this.iipGridSize[z].x ||
+			wcoords.y < 0 || wcoords.y >= this.iipGridSize[z].y) {
+			return false;
+		}
+
+		if (!this.options.bounds) { return true; }
+
+		// don't load tile if it doesn't intersect the bounds in options
+		var tileBounds = this._tileCoordsToBounds(coords);
+		return L.latLngBounds(this.options.bounds).intersects(tileBounds);
+	},
+
+	createTile: function (coords, done) {
+		var	tile = L.TileLayer.prototype.createTile.call(this, coords, done);
+
+		tile.coords = coords;
+
+		return tile;
+	},
+
+	getTileUrl: function (coords) {
+		var str = this._url,
+				z = this._getZoomForUrl();
+		if (this.iipCMap !== this.iipdefault.cMap) {
+			str += '&CMP=' + this.iipCMap;
+		}
+		if (this.iipInvertCMap !== this.iipdefault.invertCMap) {
+			str += '&INV';
+		}
+		if (this.iipContrast !== this.iipdefault.contrast) {
+			str += '&CNT=' + this.iipContrast.toString();
+		}
+		if (this.iipGamma !== this.iipdefault.gamma) {
+			str += '&GAM=' + (1.0 / this.iipGamma).toFixed(4);
+		}
+		for (var c = 0; c < this.iipNChannel; c++) {
+			if (this.iipMinValue[c] !== this.iipdefault.minValue[c] ||
+			   this.iipMaxValue[c] !== this.iipdefault.maxValue[c]) {
+				str += '&MINMAX=' + (c + 1).toString() + ':' +
+				   this.iipMinValue[c].toString() + ',' + this.iipMaxValue[c].toString();
+			}
+		}
+
+		var nchannel = this.iipNChannel,
+		    mix = this.iipMix,
+		    m, n;
+
+		str += '&CTW=';
+
+		if (this.iipMode === 'color') {
+			for (n = 0; n < 3; n++) {
+				if (n) { str += ';'; }
+				str += mix[0][n].toString();
+				for (m = 1; m < nchannel; m++) {
+					if (mix[m][n] !== undefined) {
+						str += ',' + mix[m][n].toString();
+					}
+				}
+			}
+		} else {
+			var	cc = this.iipChannel;
+
+			if (cc >= nchannel) { cc = 0; }
+			if (cc < nchannel) { nchannel = cc + 1; }
+			for (n = 0; n < 3; n++) {
+				if (n) { str += ';'; }
+				str += (cc === 0 ? '1' : '0');
+				for (m = 1; m < nchannel; m++) {
+					str += ',' + (cc === m ? '1' : '0');
+				}
+			}
+		}
+
+		if (this.iipQuality !== this.iipdefault.quality) {
+			str += '&QLT=' + this.iipQuality.toString();
+		}
+		return str + '&JTL=' + z.toString() + ',' +
+		 (coords.x + this.iipGridSize[z].x * coords.y).toString();
+	},
+
+	_initTile: function (tile) {
+		L.DomUtil.addClass(tile, 'leaflet-tile');
+		var	tileSizeFac = this._getTileSizeFac();
+
+		// Force pixels to be visible at high zoom factos whenever possible
+		if (tileSizeFac > 1) {
+			if (L.Browser.ie) {
+				tile.style.msInterpolationMode = 'nearest-neighbor';
+			} else if (L.Browser.chrome) {
+				tile.style.imageRendering = 'pixelated';
+			} else if (L.Browser.gecko) {
+				tile.style.imageRendering = '-moz-crisp-edges';
+			} else {
+				tile.style.imageRendering = '-webkit-optimize-contrast';
+			}
+		}
+
+		// Compute tile size (IIP tile size can be less at image borders)
+		var	coords = tile.coords,
+			  z = coords.z;
+		if (z > this.iipMaxZoom) { z = this.iipMaxZoom; }
+		var sizeX = coords.x + 1 === this.iipGridSize[z].x ?
+			    this.iipImageSize[z].x % this.iipTileSize.x : this.iipTileSize.x,
+			  sizeY = coords.y + 1 === this.iipGridSize[z].y ?
+			    this.iipImageSize[z].y % this.iipTileSize.y : this.iipTileSize.y;
+
+		if (sizeX === 0) {
+			sizeX = this.iipTileSize.x;
+		}
+		if (sizeY === 0) {
+			sizeY = this.iipTileSize.y;
+		}
+
+		sizeX *= tileSizeFac;
+		sizeY *= tileSizeFac;
+/*
+		// Add an extra 1/2 pixel as an ugly fix to the tile gap pb in some browsers
+		if (L.Browser.chrome || L.Browser.safari) {
+			sizeX += 0.5;
+			sizeY += 0.5;
+		}
+*/
+		tile.style.width = sizeX  + 'px';
+		tile.style.height = sizeY + 'px';
+
+		tile.onselectstart = L.Util.falseFn;
+		tile.onmousemove = L.Util.falseFn;
+
+		// update opacity on tiles in IE7-8 because of filter inheritance problems
+		if (L.Browser.ielt9 && this.options.opacity < 1) {
+			L.DomUtil.setOpacity(tile, this.options.opacity);
+		}
+
+		// without this hack, tiles disappear after zoom on Chrome for Android
+		// https://github.com/Leaflet/Leaflet/issues/2078
+		if (L.Browser.android && !L.Browser.android23) {
+			tile.style.WebkitBackfaceVisibility = 'hidden';
+		}
+	}
+
+});
+
+L.tileLayer.iip = function (url, options) {
+	return new L.TileLayer.IIP(url, options);
+};
+
+
+/*
+# L.RGB.js manages RGB triplets
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright:		(C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC
+#
+#	Last modified:		04/11/2015
+*/
+
+L.RGB = function (r, g, b) {
+	this.r = r;
+	this.g = g;
+	this.b = b;
+};
+
+L.RGB.prototype = {
+
+	clone: function () {
+		return new L.RGB(this.r, this.g, this.b);
+	},
+
+	toStr: function () {
+		var r = Math.round(this.r * 255.0),
+		    g = Math.round(this.g * 255.0),
+		    b = Math.round(this.b * 255.0);
+
+		if (r < 0.0) { r = 0.0; } else if (r > 255.0) { r = 255.0; }
+		if (g < 0.0) { g = 0.0; } else if (g > 255.0) { g = 255.0; }
+		if (b < 0.0) { b = 0.0; } else if (b > 255.0) { b = 255.0; }
+
+		return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+	},
+
+	isOn: function () {
+		return (this.r > 0.0 || this.g > 0.0 || this.b > 0.0) ? true : false;
+	}
+};
+
+L.rgb = function (r, g, b) {
+	if (r instanceof L.RGB) {
+		return r;
+	}
+	if (typeof r === 'string') {
+		var bigint = parseInt('0x' + r.slice(1), 16);
+
+		return new L.RGB(((bigint >> 16) & 255) / 255.0,
+			((bigint >> 8) & 255) / 255.0,
+			(bigint & 255) / 255.0);
+	}
+	if (L.Util.isArray(r)) {
+		return new L.RGB(r[0], r[1], r[2]);
+	}
+	if (r === undefined || r === null) {
+		return r;
+	}
+	return new L.RGB(r, g, b);
+};
+
+
+/*
+# Add an ellipse defined by its semi-major and semi-minor axes (in pixels), as
+# well as a position angle in degrees (CCW from x axis).
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#
+#	Last modified: 15/10/2015
+*/
+
+L.EllipseMarker = L.Path.extend({
+	CANVAS: true,
+	SVG: false,
+
+	options: {
+		fill: true,
+		majAxis: 10,
+		minAxis: 10,
+		posAngle: 0
+	},
+
+	initialize: function (latlng, options) {
+		L.setOptions(this, options);
+
+		this._majAxis = this.options.majAxis;
+		this._minAxis = this.options.majAxis;
+		this._posAngle = this.options.posAngle;
+		this._latlng = L.latLng(latlng);
+
+		var	deg = Math.PI / 180.0,
+			  cpa = Math.cos(this._posAngle * deg),
+			  spa = Math.sin(this._posAngle * deg),
+			  cpa2 = cpa * cpa,
+			  spa2 = spa * spa,
+			  a2 = this._majAxis * this._majAxis,
+			  b2 = this._minAxis * this._minAxis,
+			  mx2 = a2 * cpa2 + b2 * spa2,
+			  my2 = a2 * spa2 + b2 * cpa2,
+			  mxy = (a2 - b2) * cpa * spa,
+			  c = mx2 * my2 - mxy * mxy;
+
+		this._limX = Math.sqrt(mx2);
+		this._limY = Math.sqrt(my2);
+		// Manage ellipses with minor axis = 0
+		if (c <= 0.0) {
+			mx2 += 1.0;
+			my2 += 1.0;
+			c = mx2 * my2 - mxy * mxy;
+		}
+		// Necessary for computing the exact ellipse boundaries
+		this._cXX = my2 / c;
+		this._cYY = mx2 / c;
+		this._cXY = -2.0 * mxy / c;
+	},
+
+	setLatLng: function (latlng) {
+		this._latlng = L.latLng(latlng);
+		this.redraw();
+		return this.fire('move', {latlng: this._latlng});
+	},
+
+	getLatLng: function () {
+		return this._latlng;
+	},
+
+	setParams: function (ellipseParams) {
+		this.options.majAxis = this._majAxis = ellipseParams.majAxis;
+		this.options.minAxis = this._minAxis = ellipseParams.minAxis;
+		this.options.posAngle = this._posAngle = ellipseParams.posAngle;
+		return this.redraw();
+	},
+
+	getParams: function () {
+		var	ellipseParams;
+
+		ellipseParams.majAxis = this._majAxis;
+		ellipseParams.minAxis = this._minAxis;
+		ellipseParams.posAngle = this._posAngle;
+		return ellipseParams;
+	},
+
+	setStyle: L.Path.prototype.setStyle,
+
+	_project: function () {
+		this._point = this._map.latLngToLayerPoint(this._latlng);
+		this._updateBounds();
+	},
+
+	_updateBounds: function () {
+		var w = this._clickTolerance(),
+		    p = [this._limX + w, this._limY + w];
+		this._pxBounds = new L.Bounds(this._point.subtract(p), this._point.add(p));
+	},
+
+	_update: function () {
+		if (this._map) {
+			this._updatePath();
+		}
+	},
+
+	_updatePath: function () {
+		this._renderer._updateEllipse(this);
+	},
+
+	_empty: function () {
+		return this._majAxis && !this._renderer._bounds.intersects(this._pxBounds);
+	},
+
+	_containsPoint: function (p) {
+		var	dp = p.subtract(this._point),
+			  ct = this._clickTolerance(),
+			  dx = Math.abs(dp.x) - ct,
+			  dy = Math.abs(dp.y) - ct;
+
+		return this._cXX * (dx > 0.0 ? dx * dx : 0.0) +
+		  this._cYY * (dy > 0.0 ? dy * dy : 0.0) + this._cXY * (dp.x * dp.y) <= 1.0;
+	}
+});
+
+L.ellipseMarker = function (latlng, options) {
+	return new L.EllipseMarker(latlng, options);
+};
+
+L.Canvas.include({
+	_updateEllipse: function (layer) {
+
+		if (layer._empty()) { return; }
+
+		var p = layer._point,
+		    ctx = this._ctx,
+		    r = layer._minAxis,
+		    s = layer._majAxis / layer._minAxis;
+
+		ctx.save();
+		ctx.translate(p.x, p.y);
+		ctx.rotate(layer._posAngle * Math.PI / 180.0);
+		ctx.scale(1, s);
+
+		ctx.beginPath();
+		ctx.arc(0, 0, r, 0, Math.PI * 2, false);
+		ctx.restore();
+
+		this._fillStroke(ctx, layer);
+	}
+});
+
+L.SVG.include({
+	_updateEllipse: function (layer) {
+		var deg = Math.PI / 180.0,
+		    p = layer._point,
+		    r = layer._minAxis,
+		    r2 = layer._majAxis,
+		    dx = r * Math.cos(layer._posAngle * deg),
+				dy = r * Math.sin(layer._posAngle * deg),
+		    arc = 'a' + r + ',' + r2 + ' ' + layer._posAngle + ' 1,0 ';
+
+		// drawing a circle with two half-arcs
+		var d = layer._empty() ? 'M0 0' :
+				'M' + (p.x - dx) + ',' + (p.y - dy) +
+				arc + (dx * 2) + ',' + (dy * 2) + ' ' +
+				arc + (-dx * 2) + ',' + (-dy * 2) + ' ';
+
+		this._setPath(layer, d);
+	}
+});
+
+
+
+/*
+# Add an ellipse defined by its semi-major and semi-minor axes (in degrees), as
+# well as a position angle in degrees (east of north).
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#
+#	Last modified: 15/10/2015
+*/
+
+L.Ellipse = L.EllipseMarker.extend({
+
+	options: {
+		fill: true
+	},
+
+	initialize: function (latlng, options) {
+		L.setOptions(this, options);
+
+		var	deg = Math.PI / 180.0,
+			  cpa = Math.cos(this.options.posAngle * deg),
+			  spa = Math.sin(this.options.posAngle * deg),
+			  cpa2 = cpa * cpa,
+			  spa2 = spa * spa,
+			  a2 = this.options.majAxis * this.options.majAxis,
+			  b2 = this.options.minAxis * this.options.minAxis;
+		this._latlng = L.latLng(latlng);
+		// Compute quadratic forms to be used for coordinate transforms
+		this._mLat2 = a2 * cpa2 + b2 * spa2;
+		this._mLng2 = a2 * spa2 + b2 * cpa2;
+		this._mLatLng = (a2 - b2) * cpa * spa;
+	},
+
+	getBounds: function () {
+		var half = [this._limX, this._limY];
+
+		return new L.LatLngBounds(
+			this._map.layerPointToLatLng(this._point.subtract(half)),
+			this._map.layerPointToLatLng(this._point.add(half)));
+	},
+
+	_project: function () {
+		var	map = this._map,
+			  crs = map.options.crs;
+
+		this._point = map.latLngToLayerPoint(this._latlng);
+		if (!this._majAxis1) {
+			var lng = this._latlng.lng,
+			    lat = this._latlng.lat,
+					deg = Math.PI / 180.0,
+					clat = Math.cos(lat * deg),
+					dl = lat < 90.0 ? 0.001 : -0.001,
+					point = crs.project(this._latlng),
+			    dpointdlat = crs.project(L.latLng(lat + dl, lng)).subtract(point),
+			    dpointdlng = crs.project(L.latLng(lat, lng + dl * 1.0 /
+					  (clat > dl ? clat : dl))).subtract(point),
+					c11 = dpointdlat.x / dl,
+					c12 = dpointdlng.x / dl,
+					c21 = dpointdlat.y / dl,
+					c22 = dpointdlng.y / dl,
+				  mx2 = c11 * c11 * this._mLat2 + c12 * c12 * this._mLng2 +
+			  2.0 * c11 * c12 * this._mLatLng,
+				  my2 = c21 * c21 * this._mLat2 + c22 * c22 * this._mLng2 +
+			  2.0 * c21 * c22 * this._mLatLng,
+				  mxy = c11 * c21 * this._mLat2 + c12 * c22 * this._mLng2 +
+			  (c11 * c22 + c12 * c21) * this._mLatLng,
+				  a1 = 0.5 * (mx2 + my2),
+				  a2 = Math.sqrt(0.25 * (mx2 - my2) * (mx2 - my2) + mxy * mxy),
+				  a3 = mx2 * my2 - mxy * mxy;
+			this._majAxis = this._majAxis1 = Math.sqrt(a1 + a2);
+			this._minAxis = this._minAxis1 = a1 > a2 ? Math.sqrt(a1 - a2) : 0.0;
+			this._posAngle = 0.5 * Math.atan2(2.0 * mxy, mx2 - my2) / deg;
+			this._limX = this._limX1 = Math.sqrt(mx2);
+			this._limY = this._limY1 = Math.sqrt(my2);
+			// Manage ellipses with minor axis = 0
+			if (a3 <= 0.0) {
+				mx2 += 1.0;
+				my2 += 1.0;
+				a3 = mx2 * my2 - mxy * mxy;
+			}
+			// Necessary for computing the exact ellipse boundaries
+			this._cXX1 = my2 / a3;
+			this._cYY1 = mx2 / a3;
+			this._cXY1 = -2.0 * mxy / a3;
+		}
+
+		var scale = crs.scale(map._zoom),
+			  invscale2 = 1.0 / (scale * scale);
+		// Ellipse parameters have already
+		this._majAxis = this._majAxis1 * scale;
+		this._minAxis = this._minAxis1 * scale;
+		this._limX = this._limX1 * scale;
+		this._limY = this._limY1 * scale;
+		this._cXX = this._cXX1 * invscale2;
+		this._cYY = this._cYY1 * invscale2;
+		this._cXY = this._cXY1 * invscale2;
+
+		this._updateBounds();
+	}
+});
+
+L.ellipse = function (latlng, options) {
+	return new L.Ellipse(latlng, options);
+};
+
+
+
+/*
+# L.Catalog contains specific catalog settings and conversion tools.
+#
+#	This file part of:       VisiOmatic
+#
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	                         Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 07/01/2017
+*/
+
+L.Catalog = {
+	nmax: 10000,	// Sets the maximum number of sources per query
+
+	_csvToGeoJSON: function (str) {
+		// Check to see if the delimiter is defined. If not, then default to comma.
+		var badreg = new RegExp('#|--|^$'),
+		 lines = str.split('\n'),
+		 geo = {type: 'FeatureCollection', features: []};
+
+		for (var i in lines) {
+			var line = lines[i];
+			if (badreg.test(line) === false) {
+				var feature = {
+					type: 'Feature',
+					id: '',
+					properties: {
+						items: []
+					},
+					geometry: {
+						type: 'Point',
+						coordinates: [0.0, 0.0]
+					}
+				},
+				geometry = feature.geometry,
+				properties = feature.properties;
+
+				var cell = line.split(/[,;\t]/);
+				feature.id = cell[0];
+				geometry.coordinates[0] = parseFloat(cell[1]);
+				geometry.coordinates[1] = parseFloat(cell[2]);
+				var items = cell.slice(3),
+				    item;
+				for (var j in items) {
+					item = parseFloat(items[j]);
+					properties.items.push(isNaN(item) ? '--' : item);
+				}
+				geo.features.push(feature);
+			}
+		}
+		return geo;
+	},
+
+	toGeoJSON: function (str) {
+		return this._csvToGeoJSON(str);
+	},
+
+	popup: function (feature) {
+		var str = '<div>';
+		if (this.objurl) {
+			str += 'ID: <a href=\"' +  L.Util.template(this.objurl, L.extend({
+                                id: feature.id,
+				ra: feature.geometry.coordinates[0].toFixed(6),
+				dec: feature.geometry.coordinates[1].toFixed(6)
+			})) + '\" target=\"_blank\">' + feature.id + '</a>';
+
+			str += '</br><spam>RA, Dec (deg): ' + feature.geometry.coordinates[0].toFixed(5) + ', ' +
+			        feature.geometry.coordinates[1].toFixed(5) + '</spam>';
+
+			str += '</div>';
+		} else {
+			str += 'ID: ' + feature.id + '</div>';
+		}
+		str += '<TABLE style="margin:auto;">' +
+		       '<TBODY style="vertical-align:top;text-align:left;">';
+		for	(var i in this.properties) {
+			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
+			       '<TD>' + feature.properties.items[i].toFixed(2).toString() + ' ';
+			if (this.units[i]) {
+				str += this.units[i];
+			}
+			str += '</TD></TR>';
+		}
+		str += '</TBODY></TABLE>';
+		return str;
+
+	},
+
+	draw: function (feature, latlng) {
+		var refmag = feature.properties.items[this.magindex ? this.magindex : 0];
+		return L.circleMarker(latlng, {
+			radius: refmag ? this.maglim + 5 - refmag : 8
+		});
+	},
+
+	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin'
+
+};
+
+L.Catalog['2MASS'] = L.extend({}, L.Catalog, {
+	name: '2MASS',
+	attribution: '2MASS All-Sky Catalog of Point Sources (Cutri et al. 2003)',
+	color: 'red',
+	maglim: 17.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/246&' +
+	 '-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&' +
+	 '-out.max={nmax}',
+	properties: ['J', 'H', 'K'],
+	units: ['', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.SDSS = L.extend({}, L.Catalog, {
+	name: 'SDSS release 9',
+	attribution: 'SDSS Photometric Catalog, Release 9 (Adelman-McCarthy et al. 2012)',
+	color: 'yellow',
+	maglim: 25.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=V/139&' +
+	 '-out=SDSS9,RAJ2000,DEJ2000,umag,gmag,rmag,imag,zmag&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-sort=imag&-out.max={nmax}',
+	properties: ['u', 'g', 'r', 'i', 'z'],
+	units: ['', '', '', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/139/sdss9&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.PPMXL = L.extend({}, L.Catalog, {
+	name: 'PPMXL',
+	attribution: 'PPM-Extended, positions and proper motions by Roeser et al. 2008',
+	color: 'green',
+	maglim: 20.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/317&' +
+	 '-out=PPMXL,RAJ2000,DEJ2000,Jmag,Hmag,Kmag,b1mag,b2mag,r1mag,r2mag,imag,pmRA,pmDE&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['J', 'H', 'K', 'b<sub>1</sub>', 'b<sub>2</sub>', 'r<sub>1</sub>',
+	             'r<sub>2</sub>', 'i',
+	             '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
+	units: ['', '', '', '', '', '', '', '', 'mas/yr', 'mas/yr'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/317&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.Abell = L.extend({}, L.Catalog, {
+	name: 'Abell clusters',
+	attribution: 'Rich Clusters of Galaxies (Abell et al. 1989) ',
+	color: 'orange',
+	maglim: 30.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VII/110A&' +
+	 '-out=ACO,_RAJ2000,_DEJ2000,m10,Rich,Dclass&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['m<sub>10</sub>', 'Richness', 'D<sub>class</sub>'],
+	units: ['', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VII/110A&-c={ra},{dec},eq=J2000&-c.rs=0.2'
+});
+
+L.Catalog.NVSS = L.extend({}, L.Catalog, {
+	name: 'NVSS',
+	attribution: '1.4GHz NRAO VLA Sky Survey (NVSS) (Condon et al. 1998)',
+	color: 'magenta',
+	maglim: 30.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/65/NVSS&' +
+	 '-out=NVSS,_RAJ2000,_DEJ2000,S1.4,MajAxis,MinAxis,PA&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['S<sub>1.4GHz</sub>', 'Major axis', 'Minor axis', 'Position angle'],
+	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VIII/65/NVSS&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	draw: function (feature, latlng) {
+		return L.ellipse(latlng, {
+			majAxis: feature.properties.items[1] / 7200.0,
+			minAxis: feature.properties.items[2] / 7200.0,
+			posAngle: feature.properties.items[3] === '--' ? 90.0 : 90.0 - feature.properties.items[3]
+		});
+	}
+});
+
+L.Catalog.FIRST = L.extend({}, L.Catalog, {
+	name: 'FIRST',
+	attribution: 'The FIRST Survey Catalog (Helfand et al. 2015)',
+	color: 'blue',
+	maglim: 30.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/92/first14&' +
+	 '-out=FIRST,_RAJ2000,_DEJ2000,Fpeak,fMaj,fMin,fPA&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['F<sub>peak</sub>(1.4GHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
+	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VIII/92/first14&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	draw: function (feature, latlng) {
+		return L.ellipse(latlng, {
+			majAxis: feature.properties.items[1] / 7200.0,
+			minAxis: feature.properties.items[2] / 7200.0,
+			posAngle: feature.properties.items[3] === '--' ? 90.0 : 90.0 - feature.properties.items[3]
+		});
+	}
+});
+
+L.Catalog.AllWISE = L.extend({}, L.Catalog, {
+	name: 'AllWISE',
+	attribution: 'AllWISE Data Release (Cutri et al. 2013)',
+	color: 'red',
+	maglim: 18.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/328/allwise&' +
+	 '-out=AllWISE,_RAJ2000,_DEJ2000,W1mag,W2mag,W3mag,W4mag&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['W1<sub>mag</sub> (3.4µm)', 'W2<sub>mag</sub> (4.6µm)',
+	  'W3<sub>mag</sub> (12µm)', 'W4<sub>mag</sub> (22µm)'],
+	units: ['', '', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/328/allwise&-c={ra},{dec},eq=J2000&-c.rs=0.2'
+});
+
+L.Catalog.GALEX_AIS = L.extend({}, L.Catalog, {
+	name: 'GALEX AIS',
+	attribution: 'GALEX catalogs of UV sources: All-sky Imaging Survey (Bianchi et al. 2011)',
+	color: 'magenta',
+	maglim: 21.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/312/ais&' +
+	 '-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['FUV<sub>AB</sub>', 'NUV<sub>AB</sub>'],
+	units: ['', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/312/ais&-c={ra},{dec},eq=J2000&-c.rs=0.2'
+});
+
+L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
+	name: 'Gaia DR1',
+	attribution: 'First Gaia Data Release (2016)',
+	color: 'green',
+	maglim: 20.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/337&' +
+	 '-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['G', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
+	units: ['', 'mas/yr', 'mas/yr'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+
+/*
+# SpinBox implements a number spinbox with adaptive step increment
+# Adapted from Proto.io On/Off FlipSwitch designed by Anna Mitsinga:
+# https://proto.io/freebies/onoff/
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC
+#
+*/
+
+L.FlipSwitch = L.Evented.extend({
+	options: {
+		// All widget options
+		checked: false,
+		title: 'Click to switch',
+		className: 'leaflet-flipswitch',
+		id: 'leaflet-flipswitch'
+	},
+
+	initialize: function (parent, options) {
+		options = L.setOptions(this, options);
+		var _this = this,
+			  className = options.className,
+			  button = L.DomUtil.create('div', className, parent),
+				input = this._input = L.DomUtil.create('input', className, button),
+				label = L.DomUtil.create('label', className, button);
+
+		input.type = 'checkbox';
+		input.name = options.className;
+		input.checked = options.checked;
+		label.htmlFor = input.id = options.id;
+		if (options.title) {
+			label.title = options.title;
+		}
+
+		L.DomUtil.create('span', className + '-inner', label);
+		L.DomUtil.create('span', className + '-button', label);
+
+		L.DomEvent
+				.disableClickPropagation(button)
+				.disableScrollPropagation(button);
+		L.DomEvent.on(input, 'change', function () {
+			this.fire('change');
+		}, this);
+
+		return button;
+	},
+
+	value: function (val) {
+		if (val === undefined) {
+			return this._input.checked;
+		}
+		else {
+			this._input.checked = val ? true : false;
+			return this;
+		}
+	}
+
+});
+
+L.flipswitch = function (parent, options) {
+	return new L.FlipSwitch(parent, options);
+};
+
+
+/*
+# SpinBox implements a number spinbox with adaptive step increment
+# Adapted from JTSage's spinbox (original attribution below), with all the
+# jQuery and jQuery Mobile stuff removed.
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC
+#
+#	Last modified: 13/11/2015
+/*
+ * jQuery Mobile Framework : plugin to provide number spinbox.
+ * Copyright (c) JTSage
+ * CC 3.0 Attribution.  May be relicensed without permission/notification.
+ * https://github.com/jtsage/jquery-mobile-spinbox
+ */
+
+L.SpinBox = L.Evented.extend({
+	options: {
+		// All widget options
+		dmin: undefined,
+		dmax: undefined,
+		step: undefined,
+		initValue: undefined,
+		repButton: true,
+		clickEvent: 'click',
+		instantUpdate: false,
+		title: 'Enter value',
+		className: 'leaflet-spinbox'
+	},
+
+	initialize: function (parent, options) {
+		options = L.setOptions(this, options);
+		var _this = this,
+			drag = this._drag = {
+				startEvent: 'touchstart mousedown',
+				stopEvent : 'touchend mouseup mouseout touchcancel',
+				move      : false,
+				start     : false,
+				end       : false,
+				pos       : false,
+				target    : false,
+				delta     : false,
+				tmp       : false,
+				cnt       : 0,
+				step      : options.step,
+				prec      : this._prec(options.step)
+			},
+			wrap = this._wrap = L.DomUtil.create('div', options.className, parent),
+			input = this._input = L.DomUtil.create('input', options.className + '-input', wrap),
+			down = this._down = L.DomUtil.create('div', options.className + '-down', wrap),
+			up = this._up = L.DomUtil.create('div', options.className + '-up', wrap);
+
+		input.type = 'number';
+		input.step = 0.1;	// Tells input that decimal numbers are valid
+		L.DomEvent
+				.disableClickPropagation(wrap)
+				.disableScrollPropagation(wrap);
+
+		if (input.disabled === true) {
+			options.disabled = true;
+		}
+
+		if (options.dmin === undefined) {
+			options.dmin = - Number.MAX_VALUE;
+		}
+		if (options.dmax === undefined) {
+			options.dmax = Number.MAX_VALUE;
+		}
+		if (options.step === undefined) {
+			options.step = 1;
+		}
+
+		if (options.initValue === undefined) {
+			options.initValue = (options.dmin + options.dmax) / 2.0;
+		}
+
+		this.value(options.initValue);
+
+		input.title = options.title;
+		down.title = 'Decrease number by ' + options.step;
+		up.title = 'Increase number by ' + options.step;
+
+		L.DomEvent.on(this._input, 'change', function () {
+			this.fire('change');
+		}, this);
+
+		if (options.repButton === false) {
+			L.DomEvent.on(down, options.clickEvent, function (e) {
+				e.preventDefault();
+				this._offset(e.currentTarget, -1);
+			}, this);
+			L.DomEvent.on(up, options.clickEvent, function (e) {
+				e.preventDefault();
+				this._offset(e.currentTarget, 1);
+			}, this);
+		} else {
+			L.DomEvent.on(down, drag.startEvent, function (e) {
+				input.blur();
+				drag.move = true;
+				drag.cnt = 0;
+				drag.step = options.step;
+				drag.prec = this._prec(drag.step);
+				drag.delta = -1;
+				this._offset(e.currentTarget, -1);
+				if (!this.runButton) {
+					drag.target = e.currentTarget;
+					this.runButton = setTimeout(function () {
+						_this._sboxRun();
+					}, 500);
+				}
+			}, this);
+			L.DomEvent.on(up, drag.startEvent, function (e) {
+				input.blur();
+				drag.move = true;
+				drag.cnt = 0;
+				drag.step = options.step;
+				drag.prec = this._prec(drag.step);
+				drag.delta = 1;
+				this._offset(e.currentTarget, 1);
+				if (!this.runButton) {
+					drag.target = e.currentTarget;
+					this.runButton = setTimeout(function () {
+						_this._sboxRun();
+					}, 500);
+				}
+			}, this);
+			L.DomEvent.on(down, drag.stopEvent, function (e) {
+				if (drag.move) {
+					e.preventDefault();
+					clearTimeout(this.runButton);
+					this.runButton = false;
+					drag.move = false;
+					if (options.instantUpdate === false) {
+						this.fire('change');
+					}
+				}
+			}, this);
+			L.DomEvent.on(up, drag.stopEvent, function (e) {
+				if (drag.move) {
+					e.preventDefault();
+					clearTimeout(this.runButton);
+					this.runButton = false;
+					drag.move = false;
+					if (options.instantUpdate === false) {
+						this.fire('change');
+					}
+				}
+			}, this);
+		}
+
+		if (options.disabled) {
+			this.disable();
+		}
+
+		return wrap;
+	},
+
+	value: function (val) {
+		if (val === undefined) {
+			return parseFloat(this._input.value);
+		}
+		else {
+			this._input.value = val;
+			return this;
+		}
+	},
+
+	step: function (val) {
+		if (val === undefined) {
+			return this.options.step;
+		}
+		else {
+			this.options.step = val;
+			return this;
+		}
+	},
+
+	disable: function () {
+		// Disable the element
+		var cname = 'disabled';
+
+		this._input.disabled = true;
+		this._input.blur();
+		L.DomUtil.addClass(this._wrap, cname);
+		L.DomUtil.addClass(this._down, cname);
+		L.DomUtil.addClass(this._up, cname);
+		this.options.disabled = true;
+	},
+
+	enable: function () {
+		// Enable the element
+		var cname = 'disabled';
+
+		this._input.disabled = false;
+		L.DomUtil.removeClass(this._wrap, cname);
+		L.DomUtil.removeClass(this._down, cname);
+		L.DomUtil.removeClass(this._up, cname);
+		this.options.disabled = false;
+	},
+
+	_sboxRun: function () {
+		var	_this = this,
+				timer = 150,
+				options = this.options,
+				drag = this._drag;
+
+		if (drag.cnt === 20) {
+			timer = 50;
+			drag.step = 10.0 * options.step;
+			drag.prec = this._prec(drag.step);
+		} else if (drag.cnt === 40) {
+			timer = 10;
+			drag.step = 100.0 * options.step;
+			drag.prec = this._prec(drag.step);
+		} else if (drag.cnt === 60) {
+			drag.step = 1000.0 * options.step;
+			drag.prec = this._prec(drag.step);
+		} else if (drag.cnt === 80) {
+			drag.step = 10000.0 * options.step;
+			drag.prec = this._prec(drag.step);
+		}
+		drag.didRun = true;
+		this._offset(this, drag.delta);
+		drag.cnt++;
+		this.runButton = setTimeout(function () {
+			_this._sboxRun();
+		}, timer);
+	},
+
+	_prec: function (step) {
+		var dprec = -0.4342944 * Math.log(step);
+		return dprec > 0.0 ? Math.ceil(dprec) : 0;
+	},
+
+	_offset: function (obj, direction) {
+		var tmp,
+				options = this.options,
+				input = this._input,
+				drag = this._drag;
+
+		if (!this.disabled) {
+			if (direction < 1) {
+				tmp = (parseFloat(input.value) - drag.step).toFixed(drag.prec);
+				if (tmp >= options.dmin) {
+					input.value = tmp;
+					if (options.instantUpdate === true) {
+						this.fire('change');
+					}
+				}
+			} else {
+				tmp = (parseFloat(input.value) + drag.step).toFixed(drag.prec);
+				if (tmp <= options.dmax) {
+					input.value = tmp;
+					if (options.instantUpdate === true) {
+						this.fire('change');
+					}
+				}
+			}
+		}
+	}
+});
+
+L.spinbox = function (parent, options) {
+	return new L.SpinBox(parent, options);
+};
+
+
+/*
+# FileTree parses directory trees serverside.
+# Adapted from the jQuery File Tree Plugin (original copyright notice reproduced
+# below).
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 11/02/2014
+// Originally authored by Cory S.N. LaViska
+// A Beautiful Site (http://abeautifulsite.net/)
+// 24 March 2008
+//
+// Usage: $('.fileTreeDemo').fileTree( options, callback )
+//
+// Options:  root           - root folder to display; default = /
+//           script         - location of the serverside AJAX file to use; default = jqueryFileTree.php
+//           folderEvent    - event to trigger expand/collapse; default = click
+//           expandSpeed    - default = 500 (ms); use -1 for no animation
+//           collapseSpeed  - default = 500 (ms); use -1 for no animation
+//           expandEasing   - easing function to use on expand (optional)
+//           collapseEasing - easing function to use on collapse (optional)
+//           multiFolder    - whether or not to limit the browser to one subfolder at a time
+//           loadMessage    - Message to display while initial tree loads (can be HTML)
+//
+// TERMS OF USE
+//
+// This plugin is dual-licensed under the GNU General Public License and the MIT License and
+// is copyright 2008 A Beautiful Site, LLC.
+//
+*/
+
+if (typeof require !== 'undefined') {
+	var $ = require('jquery-browser');
+}
+
+$.extend($.fn, {
+	fileTree: function (options, file) {
+		// Default options
+		if (options.root === undefined) {options.root = '/'; }
+		if (options.script === undefined) {options.script			= 'dist/filetree.php'; }
+		if (options.folderEvent === undefined) {options.folderEvent = 'click'; }
+		if (options.expandSpeed === undefined) {options.expandSpeed = 500; }
+		if (options.collapseSpeed === undefined) {options.collapseSpeed = 500; }
+		if (options.expandEasing === undefined) {options.expandEasing = null; }
+		if (options.collapseEasing === undefined) {options.collapseEasing = null; }
+		if (options.multiFolder === undefined) {options.multiFolder = true; }
+		if (options.loadMessage === undefined) {options.loadMessage	= 'Loading...'; }
+
+		$(this).each(function () {
+
+			function showTree(element, dir) {
+				$(element).addClass('wait');
+				$('.filetree.start').remove();
+				$.post(options.script, { dir: dir }, function (data) {
+					$(element).find('.start').html('');
+					$(element).removeClass('wait').append(data);
+					if (options.root === dir) {
+						$(element).find('UL:hidden').show();
+					} else {
+						$(element).find('UL:hidden').slideDown({
+							duration: options.expandSpeed,
+							easing: options.expandEasing
+						});
+					}
+					bindTree(element);
+				});
+			}
+
+			function bindTree(element) {
+				$(element).find('LI A').on(options.folderEvent, function () {
+					if ($(this).parent().hasClass('directory')) {
+						if ($(this).parent().hasClass('collapsed')) {
+							// Expand
+							if (!options.multiFolder) {
+								$(this).parent().parent().find('UL').slideUp({
+									duration: options.collapseSpeed,
+									easing: options.collapseEasing
+								});
+								$(this).parent().parent().find('LI.directory')
+								  .removeClass('expanded')
+								  .addClass('collapsed');
+							}
+							$(this).parent().find('UL').remove(); // cleanup
+							showTree($(this).parent(), encodeURI($(this).attr('rel').match(/.*\//)));
+							$(this).parent().removeClass('collapsed').addClass('expanded');
+						} else {
+							// Collapse
+							$(this).parent().find('UL').slideUp({
+								duration: options.collapseSpeed,
+								easing: options.collapseEasing
+							});
+							$(this).parent().removeClass('expanded').addClass('collapsed');
+						}
+					} else {
+						file($(this).attr('rel'));
+					}
+					return false;
+				});
+				// Prevent A from triggering the # on non-click events
+				if (options.folderEvent.toLowerCase !== 'click') {
+					$(element).find('LI A').on('click', function () {return false; });
+				}
+			}
+			// Loading message
+			$(this).html('<ul class="filetree start"><li class="wait">' + options.loadMessage + '<li></ul>');
+			// Get the initial file list
+			showTree($(this), encodeURI(options.root));
+		});
+	}
+});
+
+
+
+/*
+# L.Control.Attribution.Logos adds a VisiOmatic logo to the map.
+#
+#  This file part of: VisiOmatic
+#
+#  Copyright:         (C) 2013-2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                   Chiara Marmo - IDES/Paris-Sud,
+#
+#  Last modified: 07/03/2014
+*/
+
+// Remove this ugly Pipe sign
+L.Control.Attribution.include({
+	_update: function () {
+		if (!this._map) { return; }
+
+		var attribs = [];
+
+		for (var i in this._attributions) {
+			if (this._attributions[i]) {
+				attribs.push(i);
+			}
+		}
+
+		var prefixAndAttribs = [];
+
+		if (this.options.prefix) {
+			prefixAndAttribs.push(this.options.prefix);
+		}
+		if (attribs.length) {
+			prefixAndAttribs.push(attribs.join(', '));
+		}
+
+		this._container.innerHTML = prefixAndAttribs.join(' &#169; ');
+	}
+});
+
+// Set Attribution prefix to a series of clickable logos
+L.Map.addInitHook(function () {
+	if (this.options.visiomaticLogo !== false &&
+	 this.options.attributionControl) {
+		this.attributionControl.setPrefix(
+			'<a id="logo-visiomatic" class="leaflet-control-attribution-logo"' +
+			 'href="http://visiomatic.org">&nbsp;</a>' +
+			 '<a id="logo-iipimage" class="leaflet-control-attribution-logo"' +
+			 'href="http://iipimage.sourceforge.net">&nbsp;</a>' +
+			 '<a id="logo-leaflet" class="leaflet-control-attribution-logo"' +
+			 'href="http://leafletjs.com">&nbsp;</a>'
+		);
+	}
+});
+
+
+
+
+/*
+# L.Control.ExtraMap adds support for extra synchronized maps
+# (Picture-in-Picture style). Adapted from L.Control.MiniMap by Norkart
+# (original copyright notice reproduced below).
+#
+#	This file part of:	VisiOmatic
+#	Copyright:		(C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                             Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 08/09/2016
+
+Original code Copyright (c) 2012-2015, Norkart AS
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are
+permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, this list of
+      conditions and the following disclaimer.
+
+   2. Redistributions in binary form must reproduce the above copyright notice, this list
+      of conditions and the following disclaimer in the documentation and/or other materials
+      provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+L.Control.ExtraMap = L.Control.extend({
+	options: {
+		position: 'bottomright',
+		title: 'Navigation mini-map. Grab to navigate',
+		toggleDisplay: true,
+		zoomLevelFixed: false,
+		zoomLevelOffset: -5,
+		zoomAnimation: false,
+		autoToggleDisplay: false,
+		width: 150,
+		height: 150,
+		collapsedWidth: 24,
+		collapsedHeight: 24,
+		aimingRectOptions: {
+			color:  '#FFFFFF',
+			weight: 1,
+			clickable: false
+		},
+		shadowRectOptions: {
+			color: '#FDC82F',
+			weight: 1,
+			clickable: false,
+			opacity: 0,
+			fillOpacity: 0
+		},
+		strings: {hideText: 'Hide map', showText: 'Show map'}
+	},
+
+	// Layer is the map layer to be shown in the minimap
+	initialize: function (layer, options) {
+		L.Util.setOptions(this, options);
+		// Make sure the aiming rects are non-clickable even if the user tries to set
+		// them clickable (most likely by forgetting to specify them false)
+		this.options.aimingRectOptions.clickable = false;
+		this.options.shadowRectOptions.clickable = false;
+		this._layer = layer;
+	},
+
+	onAdd: function (map) {
+
+		this._mainMap = map;
+
+		// Creating the container and stopping events from spilling through to the main map.
+		this._container = L.DomUtil.create('div', 'leaflet-control-extramap');
+		this._container.style.width = this.options.width + 'px';
+		this._container.style.height = this.options.height + 'px';
+		this._container.title = this.options.title;
+		L.DomEvent.disableClickPropagation(this._container);
+		L.DomEvent.on(this._container, 'mousewheel', L.DomEvent.stopPropagation);
+
+		this._extraMap = new L.Map(this._container, {
+			attributionControl: false,
+			zoomControl: false,
+			zoomAnimation: this.options.zoomAnimation,
+			autoToggleDisplay: this.options.autoToggleDisplay,
+			touchZoom: !this._isZoomLevelFixed(),
+			scrollWheelZoom: !this._isZoomLevelFixed(),
+			doubleClickZoom: !this._isZoomLevelFixed(),
+			boxZoom: !this._isZoomLevelFixed()
+		});
+
+		this._layer.addTo(this._extraMap);
+
+		// These bools are used to prevent infinite loops of the two maps notifying
+		// each other that they've moved.
+		// this._mainMapMoving = false;
+		// this._extraMapMoving = false;
+
+		//Keep a record of this to prevent auto toggling when the user explicitly doesn't want it.
+		this._userToggledDisplay = false;
+		this._minimized = false;
+
+		if (this.options.toggleDisplay) {
+			this._addToggleButton();
+		}
+
+		this._layer.once('metaload', function () {
+			this._mainMap.whenReady(L.Util.bind(function () {
+				this._extraMap.whenReady(L.Util.bind(function () {
+					this._aimingRect = L.rectangle(this._mainMap.getBounds(),
+					  this.options.aimingRectOptions).addTo(this._extraMap);
+					this._shadowRect = L.rectangle(this._mainMap.getBounds(),
+					  this.options.shadowRectOptions).addTo(this._extraMap);
+					this._mainMap.on('moveend', this._onMainMapMoved, this);
+					this._mainMap.on('move', this._onMainMapMoving, this);
+					this._extraMap.on('movestart', this._onExtraMapMoveStarted, this);
+					this._extraMap.on('move', this._onExtraMapMoving, this);
+					this._extraMap.on('moveend', this._onExtraMapMoved, this);
+					this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
+					this._setDisplay(this._decideMinimized());
+				}, this));
+			}, this));
+		}, this);
+
+		return this._container;
+	},
+
+	addTo: function (map) {
+		L.Control.prototype.addTo.call(this, map);
+		return this;
+	},
+
+	onRemove: function (map) {
+		this._mainMap.off('moveend', this._onMainMapMoved, this);
+		this._mainMap.off('move', this._onMainMapMoving, this);
+		this._extraMap.off('moveend', this._onExtraMapMoved, this);
+
+		this._extraMap.removeLayer(this._layer);
+	},
+
+	changeLayer: function (layer) {
+		this._extraMap.removeLayer(this._layer);
+		this._layer = layer;
+		this._extraMap.addLayer(this._layer);
+	},
+
+	_addToggleButton: function () {
+		this._toggleDisplayButton = this.options.toggleDisplay ? this._createButton(
+			'', this.options.strings.hideText, (
+				'leaflet-control-extramap-toggle-display ' +
+			  'leaflet-control-extramap-toggle-display-' + this.options.position
+			),
+			this._container, this._toggleDisplayButtonClicked, this
+		) : undefined;
+
+		this._toggleDisplayButton.style.width = this.options.collapsedWidth + 'px';
+		this._toggleDisplayButton.style.height = this.options.collapsedHeight + 'px';
+	},
+
+	_createButton: function (html, title, className, container, fn, context) {
+		var link = L.DomUtil.create('a', className, container);
+		link.innerHTML = html;
+		link.href = '#';
+		link.title = title;
+
+		var stop = L.DomEvent.stopPropagation;
+
+		L.DomEvent
+			.on(link, 'click', stop)
+			.on(link, 'mousedown', stop)
+			.on(link, 'dblclick', stop)
+			.on(link, 'click', L.DomEvent.preventDefault)
+			.on(link, 'click', fn, context);
+
+		return link;
+	},
+
+	_toggleDisplayButtonClicked: function () {
+		this._userToggledDisplay = true;
+		if (!this._minimized) {
+			this._minimize();
+			this._toggleDisplayButton.title = this.options.strings.showText;
+		} else {
+			this._restore();
+			this._toggleDisplayButton.title = this.options.strings.hideText;
+		}
+	},
+
+	_setDisplay: function (minimize) {
+		if (minimize !== this._minimized) {
+			if (!this._minimized) {
+				this._minimize();
+			} else {
+				this._restore();
+			}
+		}
+	},
+
+	_minimize: function () {
+		// hide the minimap
+		if (this.options.toggleDisplay) {
+			this._container.style.width = this.options.collapsedWidth + 'px';
+			this._container.style.height = this.options.collapsedHeight + 'px';
+			this._toggleDisplayButton.className += (' minimized-' + this.options.position);
+		} else {
+			this._container.style.display = 'none';
+		}
+		this._minimized = true;
+	},
+
+	_restore: function () {
+		if (this.options.toggleDisplay) {
+			this._container.style.width = this.options.width + 'px';
+			this._container.style.height = this.options.height + 'px';
+			this._toggleDisplayButton.className = this._toggleDisplayButton.className
+				.replace('minimized-'  + this.options.position, '');
+		} else {
+			this._container.style.display = 'block';
+		}
+		this._minimized = false;
+	},
+
+	_onMainMapMoved: function (e) {
+		if (!this._extraMapMoving) {
+			this._mainMapMoving = true;
+			this._extraMap.setView(this._mainMap.getCenter(), this._decideZoom(true));
+			this._setDisplay(this._decideMinimized());
+		} else {
+			this._extraMapMoving = false;
+		}
+		this._aimingRect.setBounds(this._mainMap.getBounds());
+	},
+
+	_onMainMapMoving: function (e) {
+		this._aimingRect.setBounds(this._mainMap.getBounds());
+	},
+
+	_onExtraMapMoveStarted: function (e) {
+		var lastAimingRect = this._aimingRect.getBounds();
+		var sw = this._extraMap.latLngToContainerPoint(lastAimingRect.getSouthWest());
+		var ne = this._extraMap.latLngToContainerPoint(lastAimingRect.getNorthEast());
+		this._lastAimingRectPosition = {sw: sw, ne: ne};
+	},
+
+	_onExtraMapMoving: function (e) {
+		if (!this._mainMapMoving && this._lastAimingRectPosition) {
+			this._shadowRect.setBounds(new L.LatLngBounds(
+				this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.sw),
+				this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.ne)
+			));
+			this._shadowRect.setStyle({opacity: 1, fillOpacity: 0.3});
+		}
+	},
+
+	_onExtraMapMoved: function (e) {
+		if (!this._mainMapMoving) {
+			this._extraMapMoving = true;
+			this._mainMap.setView(this._extraMap.getCenter(), this._decideZoom(false));
+			this._shadowRect.setStyle({opacity: 0, fillOpacity: 0});
+		} else {
+			this._mainMapMoving = false;
+		}
+	},
+
+	_isZoomLevelFixed: function () {
+		var zoomLevelFixed = this.options.zoomLevelFixed;
+		return this._isDefined(zoomLevelFixed) && this._isInteger(zoomLevelFixed);
+	},
+
+	_decideZoom: function (fromMaintoExtra) {
+		if (!this._isZoomLevelFixed()) {
+			if (fromMaintoExtra) {
+				return this._mainMap.getZoom() + this.options.zoomLevelOffset;
+			} else {
+				var currentDiff = this._extraMap.getZoom() - this._mainMap.getZoom();
+				var proposedZoom = this._extraMap.getZoom() - this.options.zoomLevelOffset;
+				var toRet;
+
+				if (currentDiff > this.options.zoomLevelOffset &&
+				  this._mainMap.getZoom() < this._extraMap.getMinZoom() - this.options.zoomLevelOffset) {
+					// This means the extraMap is zoomed out to the minimum zoom level and
+					// can't zoom any more.
+					if (this._extraMap.getZoom() > this._lastExtraMapZoom) {
+						// This means the user is trying to zoom in by using the minimap, zoom the main map.
+						toRet = this._mainMap.getZoom() + 1;
+						// Also we cheat and zoom the minimap out again to keep it visually consistent.
+						this._extraMap.setZoom(this._extraMap.getZoom() - 1);
+					} else {
+						// Either the user is trying to zoom out past the minimap's min zoom or
+						// has just panned using it, we can't tell the difference. Therefore, we ignore it!
+						toRet = this._mainMap.getZoom();
+					}
+				} else {
+					// This is what happens in the majority of cases, and always if you
+					// configure the min levels + offset in a sane fashion.
+					toRet = proposedZoom;
+				}
+				this._lastExtraMapZoom = this._extraMap.getZoom();
+				return toRet;
+			}
+		} else {
+			if (fromMaintoExtra) {
+				return this.options.zoomLevelFixed;
+			} else {
+				return this._mainMap.getZoom();
+			}
+		}
+	},
+
+	_decideMinimized: function () {
+		if (this._userToggledDisplay) {
+			return this._minimized;
+		}
+
+		if (this.options.autoToggleDisplay) {
+			if (this._mainMap.getBounds().contains(this._extraMap.getBounds())) {
+				return true;
+			}
+			return false;
+		}
+
+		return this._minimized;
+	},
+
+	_isInteger: function (value) {
+		return typeof value === 'number';
+	},
+
+	_isDefined: function (value) {
+		return typeof value !== 'undefined';
+	}
+});
+
+L.Map.mergeOptions({
+	extraMapControl: false
+});
+
+L.Map.addInitHook(function () {
+	if (this.options.extraMapControl) {
+		this.extraMapControl = (new L.Control.ExtraMap()).addTo(this);
+	}
+});
+
+L.control.extraMap = function (layer, options) {
+	return new L.Control.ExtraMap(layer, options);
+};
+
+
+/*
+# L.Control.FullScreen adds a full screen toggle button to the map.
+# Adapted from the leaflet.fullscreen plugin by Bruno Bergot (fixed jake errors)
+# (original copyright notice reproduced below).
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright:		(C) 2013-2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                             Chiara Marmo - IDES/Paris-Sud.
+#
+#	Last modified: 10/02/2014
+
+original code Copyright (c) 2013, Bruno Bergot
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification, are
+permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the above copyright notice, this list of
+      conditions and the following disclaimer.
+
+   2. Redistributions in binary form must reproduce the above copyright notice, this list
+      of conditions and the following disclaimer in the documentation and/or other materials
+      provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
+EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+if (typeof require !== 'undefined') {
+	var jQuery = require('jquery-browser');
+}
+
+
+(function () {
+
+	L.Control.FullScreen = L.Control.extend({
+		options: {
+			position: 'topleft',
+			title: 'Toggle full screen mode',
+			forceSeparateButton: false
+		},
+
+		onAdd: function (map) {
+			var className = 'leaflet-control-zoom-fullscreen', container;
+
+			if (map.zoomControl && !this.options.forceSeparateButton) {
+				container = map.zoomControl._container;
+			} else {
+				container = L.DomUtil.create('div', 'leaflet-bar');
+			}
+
+			this._createButton(this.options.title, className, container, this.toogleFullScreen, map);
+
+			return container;
+		},
+
+		_createButton: function (title, className, container, fn, context) {
+			var link = L.DomUtil.create('a', className, container);
+			link.href = '#';
+			link.title = title;
+
+			L.DomEvent
+				.addListener(link, 'click', L.DomEvent.stopPropagation)
+				.addListener(link, 'click', L.DomEvent.preventDefault)
+				.addListener(link, 'click', fn, context);
+
+			L.DomEvent
+				.addListener(container, fullScreenApi.fullScreenEventName, L.DomEvent.stopPropagation)
+				.addListener(container, fullScreenApi.fullScreenEventName, L.DomEvent.preventDefault)
+				.addListener(container, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
+
+			L.DomEvent
+				.addListener(document, fullScreenApi.fullScreenEventName, L.DomEvent.stopPropagation)
+				.addListener(document, fullScreenApi.fullScreenEventName, L.DomEvent.preventDefault)
+				.addListener(document, fullScreenApi.fullScreenEventName, this._handleEscKey, context);
+
+			return link;
+		},
+
+		toogleFullScreen: function () {
+			this._exitFired = false;
+			var container = this._container;
+			if (this._isFullscreen) {
+				if (fullScreenApi.supportsFullScreen) {
+					fullScreenApi.cancelFullScreen(container);
+				} else {
+					L.DomUtil.removeClass(container, 'leaflet-pseudo-fullscreen');
+				}
+				this.invalidateSize();
+				this.fire('exitFullscreen');
+				this._exitFired = true;
+				this._isFullscreen = false;
+			} else {
+				if (fullScreenApi.supportsFullScreen) {
+					fullScreenApi.requestFullScreen(container);
+				} else {
+					L.DomUtil.addClass(container, 'leaflet-pseudo-fullscreen');
+				}
+				this.invalidateSize();
+				this.fire('enterFullscreen');
+				this._isFullscreen = true;
+			}
+		},
+
+		_handleEscKey: function () {
+			if (!fullScreenApi.isFullScreen(this) && !this._exitFired) {
+				this.fire('exitFullscreen');
+				this._exitFired = true;
+				this._isFullscreen = false;
+			}
+		}
+	});
+
+	L.Map.addInitHook(function () {
+		if (this.options.fullscreenControl) {
+			this.fullscreenControl = L.control.fullscreen(this.options.fullscreenControlOptions);
+			this.addControl(this.fullscreenControl);
+		}
+	});
+
+	L.control.fullscreen = function (options) {
+		return new L.Control.FullScreen(options);
+	};
+
+/*
+Native FullScreen JavaScript API
+-------------
+Assumes Mozilla naming conventions instead of W3C for now
+
+source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
+
+*/
+
+	var fullScreenApi = {
+			supportsFullScreen: false,
+			isFullScreen: function () { return false; },
+			requestFullScreen: function () {},
+			cancelFullScreen: function () {},
+			fullScreenEventName: '',
+			prefix: ''
+		},
+		browserPrefixes = 'webkit moz o ms khtml'.split(' ');
+
+	// check for native support
+	if (typeof document.exitFullscreen !== 'undefined') {
+		fullScreenApi.supportsFullScreen = true;
+	} else {
+		// check for fullscreen support by vendor prefix
+		for (var i = 0, il = browserPrefixes.length; i < il; i++) {
+			fullScreenApi.prefix = browserPrefixes[i];
+			if (typeof document[fullScreenApi.prefix + 'CancelFullScreen'] !== 'undefined') {
+				fullScreenApi.supportsFullScreen = true;
+				break;
+			}
+		}
+	}
+
+	// update methods to do something useful
+	if (fullScreenApi.supportsFullScreen) {
+		fullScreenApi.fullScreenEventName = fullScreenApi.prefix + 'fullscreenchange';
+		fullScreenApi.isFullScreen = function () {
+			switch (this.prefix) {
+			case '':
+				return document.fullScreen;
+			case 'webkit':
+				return document.webkitIsFullScreen;
+			default:
+				return document[this.prefix + 'FullScreen'];
+			}
+		};
+		fullScreenApi.requestFullScreen = function (el) {
+			return (this.prefix === '') ? el.requestFullscreen() : el[this.prefix + 'RequestFullScreen']();
+		};
+		fullScreenApi.cancelFullScreen = function (el) {
+			return (this.prefix === '') ? document.exitFullscreen() : document[this.prefix + 'CancelFullScreen']();
+		};
+	}
+
+	// jQuery plugin
+	if (typeof jQuery !== 'undefined') {
+		jQuery.fn.requestFullScreen = function () {
+			return this.each(function () {
+				var el = jQuery(this);
+				if (fullScreenApi.supportsFullScreen) {
+					fullScreenApi.requestFullScreen(el);
+				}
+			});
+		};
+	}
+
+	// export api
+	window.fullScreenApi = fullScreenApi;
+})();
+
+
+/*
+# L.Control.IIP adjusts the rendering of an IIP layer
+# (see http://iipimage.sourceforge.net/documentation/protocol/)
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 08/09/2016
+*/
+
+if (typeof require !== 'undefined') {
+	var $ = require('jquery');
+}
+
+L.Control.IIP = L.Control.extend({
+	options: {
+		title: 'a control related to IIPImage',
+		collapsed: true,
+		position: 'topleft'
+	},
+
+	initialize: function (baseLayers,  options) {
+		L.setOptions(this, options);
+		this._className = 'leaflet-control-iip';
+		this._id = 'leaflet-iipimage';
+		this._layers = baseLayers;
+	},
+
+	// addTo can be used to add the regular leaflet controls or to the sidebar
+	addTo: function (dest) {
+		if (dest._sidebar) {
+			this._sidebar = dest;
+		// dest is a sidebar class instance
+			this._map = dest._map;
+			this._dialog = L.DomUtil.create('div', this._className + '-dialog');
+			dest.addTab(this._id, this._className, this.options.title, this._dialog,
+			   this._sideClass);
+			this._map.on('layeradd', this._checkIIP, this);
+			return dest;
+		} else {
+			return L.Control.prototype.addTo.call(this, dest);
+		}
+	},
+
+	onAdd: function (map) {
+		var className = this._className,
+		 id = this._id,
+		 container = this._container = L.DomUtil.create('div', className + ' leaflet-bar');
+		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
+		container.setAttribute('aria-haspopup', true);
+
+		L.DomEvent
+				.disableClickPropagation(container)
+				.disableScrollPropagation(container);
+
+		this._dialog = L.DomUtil.create('div', className + '-dialog', container);
+		if (this.options.collapsed) {
+			if (!L.Browser.android) {
+				L.DomEvent
+					.on(container, 'mouseover', this._expand, this)
+					.on(container, 'mouseout', this._collapse, this);
+			}
+
+			var toggle = this._toggle = L.DomUtil.create('a', className + '-toggle leaflet-bar', container);
+			toggle.href = '#';
+			toggle.id = id + '-toggle';
+			toggle.title = this.options.title;
+
+			if (L.Browser.touch) {
+				L.DomEvent
+				    .on(toggle, 'click', L.DomEvent.stop)
+				    .on(toggle, 'click', this._expand, this);
+			}
+			else {
+				L.DomEvent.on(toggle, 'focus', this._expand, this);
+			}
+
+			this._map.on('click', this._collapse, this);
+			// TODO keyboard accessibility
+		} else {
+			this._expand();
+		}
+
+//		this._checkIIP();
+		this._map.on('layeradd', this._checkIIP, this);
+
+		return	this._container;
+	},
+
+	_checkIIP: function (e) {
+		var layer = e.layer;
+
+		// Exit if not an IIP layer
+		if (!layer || !layer.iipdefault) {
+			return;
+		}
+		this._layer = layer;
+		if (this._reloadFlag) {
+			layer.once('load', this._resetDialog, this);
+		} else {
+			this._initDialog();
+			this._reloadFlag = true;
+		}
+	},
+
+	_initDialog: function () {
+/*
+		var className = this._className,
+			container = this._container,
+			dialog = this._dialog,
+			toggle = this._toggle,
+			layer = this._layer;
+		dialog.innerHTML = '';
+*/
+    // Setup the rest of the dialog window here
+	},
+
+	_resetDialog: function () {
+		this._dialog.innerHTML = '';
+		this._initDialog();
+	},
+
+	_addDialogBox: function (id) {
+		var box = L.DomUtil.create('div', this._className + '-box', this._dialog);
+		if (id) {
+			box.id = id;
+		}
+		return box;
+	},
+
+	_addDialogLine: function (label, dialogBox) {
+		var line = L.DomUtil.create('div', this._className + '-line', dialogBox),
+		 text = L.DomUtil.create('div', this._className + '-label', line);
+		text.innerHTML = label;
+		return line;
+	},
+
+	_addDialogElement: function (line) {
+		return L.DomUtil.create('div', this._className + '-element', line);
+	},
+
+	_expand: function () {
+		L.DomUtil.addClass(this._container, this._className + '-expanded');
+	},
+
+	_collapse: function () {
+		this._container.className = this._container.className.replace(' ' + this._className + '-expanded', '');
+	},
+
+  /**
+* Get currently active base layer on the map
+* @return {Object} l where l.name - layer name on the control,
+* l.layer is L.TileLayer, l.overlay is overlay layer.
+*/
+	getActiveBaseLayer: function () {
+		return this._activeBaseLayer;
+	},
+
+  /**
+* Get currently active overlay layers on the map
+* @return {{layerId: l}} where layerId is <code>L.stamp(l.layer)</code>
+* and l @see #getActiveBaseLayer jsdoc.
+*/
+
+	_findActiveBaseLayer: function () {
+		var layers = this._layers;
+		this._prelayer = undefined;
+		for (var layername in layers) {
+			var layer = layers[layername];
+			if (!layer.overlay) {
+				if (!layer._map) {
+					this._prelayer = layer;
+				} else if (this._map.hasLayer(layer) && layer.iipdefault) {
+					return layer;
+				}
+			}
+		}
+		return undefined;
+	},
+
+	_createButton: function (className, parent, subClassName, fn, title) {
+		var button = L.DomUtil.create('a', className, parent);
+		button.target = '_blank';
+		if (subClassName) {
+			button.id = className + '-' + subClassName;
+		}
+		if (fn) {
+			L.DomEvent.on(button, 'click touch', fn, this);
+		}
+		if (title) {
+			button.title = title;
+		}
+		return button;
+	},
+
+	_createRadioButton: function (className, parent, value, checked, fn, title) {
+		var button = L.DomUtil.create('input', className, parent);
+
+		button.type = 'radio';
+		button.name = className;
+		button.value = value;
+		button.checked = checked;
+		if (fn) {
+			L.DomEvent.on(button, 'click touch', fn, value);
+		}
+
+		var label =  L.DomUtil.create('label', className, parent);
+
+		label.htmlFor = button.id = className + '-' + value;
+		if (title) {
+			label.title = title;
+		}
+		return button;
+	},
+
+	_createSelectMenu: function (className, parent, items, disabled, selected, fn, title) {
+		// Wrapper around the select element for better positioning and sizing
+		var	div =  L.DomUtil.create('div', className, parent),
+			select = L.DomUtil.create('select', className, div),
+			choose = document.createElement('option'),
+			opt = select.opt = [],
+			index;
+
+		choose.text = 'choose';
+		choose.disabled = true;
+		if (!selected || selected < 0) {
+			choose.selected = true;
+		}
+		select.add(choose, null);
+		for (var i in items) {
+			index = parseInt(i, 10);
+			opt[index] = document.createElement('option');
+			opt[index].text = items[index];
+			opt[index].value = index;
+			if (disabled && disabled[index]) {
+				opt[index].disabled = true;
+			} else if (index === selected) {
+				opt[index].selected = true;
+			}
+			select.add(opt[index], null);
+		}
+
+		// Fix collapsing dialog issue when selecting a channel
+		if (this._container && !L.Browser.android && this.options.collapsed) {
+			L.DomEvent.on(select, 'mousedown', function () {
+				L.DomEvent.off(this._container, 'mouseout', this._collapse, this);
+				this.collapsedOff = true;
+			}, this);
+
+			L.DomEvent.on(this._container, 'mouseover', function () {
+				if (this.collapsedOff) {
+					L.DomEvent.on(this._container, 'mouseout', this._collapse, this);
+					this.collapsedOff = false;
+				}
+			}, this);
+		}
+
+		if (fn) {
+			L.DomEvent.on(select, 'change keyup', fn, this);
+		}
+		if (title) {
+			div.title = title;
+		}
+
+		return select;
+	},
+
+
+	_createColorPicker: function (className, parent, subClassName, defaultColor,
+	    fn, storageKey, title) {
+		var _this = this,
+			colpick = L.DomUtil.create('input', className, parent);
+
+		colpick.type = 'color';
+		colpick.value = defaultColor;
+		colpick.id = className + '-' + subClassName;
+
+		$(document).ready(function () {
+			$(colpick).spectrum({
+				showInput: true,
+				appendTo: '#' + _this._id,
+				showPaletteOnly: true,
+				togglePaletteOnly: true,
+				localStorageKey: storageKey,
+				change: function (color) {
+					colpick.value = color.toHexString();
+				}
+			}).on('show.spectrum', function () {
+				if (_this._container) {
+					L.DomEvent.off(_this._container, 'mouseout', _this._collapse);
+				}
+			});
+			if (fn) {
+				$(colpick).on('change', fn);
+			}
+			if (title) {
+				$('#' + colpick.id + '+.sp-replacer').prop('title', title);
+			}
+		});
+
+		return colpick;
+	},
+
+
+	_addSwitchInput:	function (layer, box, label, attr, title, id, checked) {
+		var line = this._addDialogLine(label, box),
+			elem = this._addDialogElement(line),
+			flip = L.flipswitch(elem, {
+				checked: checked,
+				id: id,
+				title: title
+			});
+
+		flip.on('change', function () {
+			this._onInputChange(layer, attr, flip.value());
+		}, this);
+
+		return elem;
+	},
+
+	_addNumericalInput:	function (layer, box, label, attr, title, id, initValue,
+	  step, min, max, func) {
+		var line = this._addDialogLine(label, box),
+			elem = this._addDialogElement(line),
+			spinbox = elem.spinbox = L.spinbox(elem, {
+				step: step,
+				dmin:  min,
+				dmax:  max,
+				initValue: initValue,
+				title: title
+			});
+
+		spinbox.on('change', function () {
+			L.IIPUtils.flashElement(spinbox._input);
+			this._onInputChange(layer, attr, spinbox.value(), func);
+		}, this);
+
+		return elem;
+	},
+
+	_spinboxStep: function (min, max) {
+		var step = parseFloat((Math.abs(max === min ? max : max - min) *
+			         0.01).toPrecision(1));
+
+		return step === 0.0 ? 1.0 : step;
+	},
+
+	_onInputChange:	function (layer, pname, value, func) {
+
+		var pnamearr = pname.split(/\[|\]/);
+		if (pnamearr[1]) {
+			layer[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
+		}	else {
+			layer[pnamearr[0]] = value;
+		}
+		if (func) {
+			func(layer);
+		}
+		layer.redraw();
+	},
+
+	_updateLayerList: function () {
+		if (!this._dialog) {
+			return this;
+		}
+
+		if (this._layerList) {
+			L.DomUtil.empty(this._layerList);
+		} else {
+			this._layerList = L.DomUtil.create('div', 'leaflet-control-iip' + '-layerlist',
+			  this._dialog);
+		}
+
+		for (var i in this._layers) {
+			this._addLayerItem(this._layers[i]);
+		}
+
+		return this;
+	},
+
+	_addLayerItem: function (obj) {
+		var _this = this,
+		 layerItem = L.DomUtil.create('div', 'leaflet-control-iip-layer'),
+		 inputdiv = L.DomUtil.create('div', 'leaflet-control-iip-layerswitch', layerItem);
+
+		if (obj.layer.notReady) {
+			L.DomUtil.create('div', 'leaflet-control-iip-activity', inputdiv);
+		} else {
+			var input,
+			    checked = this._map.hasLayer(obj.layer);
+			input = document.createElement('input');
+			input.type = 'checkbox';
+			input.className = 'leaflet-control-iip-selector';
+			input.defaultChecked = checked;
+			input.layerId = L.stamp(obj.layer);
+			L.DomEvent.on(input, 'click', function () {
+				var i, input, obj,
+			      inputs = this._layerList.getElementsByTagName('input'),
+				    inputsLen = inputs.length;
+
+				this._handlingClick = true;
+
+				for (i = 0; i < inputsLen; i++) {
+					input = inputs[i];
+					if (!('layerId' in input)) {
+						continue;
+					}
+					obj = this._layers[input.layerId];
+					if (input.checked && !this._map.hasLayer(obj.layer)) {
+						obj.layer.addTo(this._map);
+					} else if (!input.checked && this._map.hasLayer(obj.layer)) {
+						this._map.removeLayer(obj.layer);
+					}
+				}
+
+				this._handlingClick = false;
+			}, this);
+			inputdiv.appendChild(input);
+		}
+
+		var name = L.DomUtil.create('div', 'leaflet-control-iip-layername', layerItem);
+		name.innerHTML = ' ' + obj.name;
+		name.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
+
+		this._createButton('leaflet-control-iip-trash',
+			layerItem,
+			undefined,
+			function () {
+				_this.removeLayer(obj.layer);
+				if (!obj.notReady) {
+					_this._map.removeLayer(obj.layer);
+				}
+			},
+			'Delete layer'
+		);
+
+		this._layerList.appendChild(layerItem);
+
+		return layerItem;
+	},
+
+	addLayer: function (layer, name, index) {
+		layer.on('add remove', this._onLayerChange, this);
+
+		var id = L.stamp(layer);
+
+		this._layers[id] = {
+			layer: layer,
+			name: name,
+			index: index
+		};
+
+		return this._updateLayerList();
+	},
+
+	removeLayer: function (layer) {
+		layer.off('add remove', this._onLayerChange, this);
+		layer.fire('trash', {index: this._layers[L.stamp(layer)].index});
+		layer.off('trash');
+
+		delete this._layers[L.stamp(layer)];
+		return this._updateLayerList();
+	},
+
+	_onLayerChange: function (e) {
+		if (!this._handlingClick) {
+			this._updateLayerList();
+		}
+
+		var obj = this._layers[L.stamp(e.target)],
+		    type = e.type === 'add' ? 'overlayadd' : 'overlayremove';
+
+		this._map.fire(type, obj);
+	}
+
+});
+
+L.control.iip = function (baseLayers, options) {
+	return new L.Control.IIP(baseLayers, options);
+};
+
+
+
+/*
+# L.Control.IIP.Catalog manages catalog overlays
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 29/11/2016
+*/
+
+if (typeof require !== 'undefined') {
+	var $ = require('jquery');
+}
+
+L.Control.IIP.Catalog = L.Control.IIP.extend({
+
+	defaultCatalogs: [
+		L.Catalog.GAIA_DR1,
+		L.Catalog['2MASS'],
+		L.Catalog.SDSS,
+		L.Catalog.PPMXL,
+		L.Catalog.Abell
+	],
+
+	options: {
+		title: 'Catalog overlays',
+		collapsed: true,
+		position: 'topleft',
+		nativeCelsys: true,
+		color: '#FFFF00',
+		timeOut: 30,	// seconds
+		authenticate: false // string define a method used to authenticate
+	},
+
+	initialize: function (catalogs, options) {
+		L.setOptions(this, options);
+		this._className = 'leaflet-control-iip';
+		this._id = 'leaflet-iipcatalog';
+		this._layers = {};
+		this._handlingClick = false;
+		this._sideClass = 'catalog';
+		this._catalogs =	catalogs ? catalogs : this.defaultCatalogs;
+	},
+
+	_initDialog: function () {
+		var	className = this._className,
+			catalogs = this._catalogs,
+			box = this._addDialogBox(),
+			// CDS catalog overlay
+			line = this._addDialogLine('<a id="logo-cds" ' +
+			  'href="http://cds.u-strasbg.fr">&nbsp;</a>', box),
+			elem = this._addDialogElement(line),
+			colpick = this._createColorPicker(
+				className + '-color',
+				elem,
+				'catalog',
+			  this.options.color,
+				false,
+				'iipCatalog',
+				'Click to set catalog color'
+			);
+
+		var catselect = this._createSelectMenu(
+			this._className + '-select',
+			elem,
+			catalogs.map(function (catalog) { return catalog.name; }),
+			undefined,
+			-1,
+			undefined,
+			'Select Catalog'
+		);
+
+		L.DomEvent.on(catselect, 'change keyup', function () {
+			catselect.title = catalogs[catselect.selectedIndex - 1].attribution;
+		}, this);
+
+		elem = this._addDialogElement(line);
+
+		this._createButton(className + '-button', elem, 'catalog', function () {
+			var	index = catselect.selectedIndex - 1;	// Ignore dummy 'Choose catalog' entry
+			if (index >= 0) {
+				var catalog = catalogs[index];
+				catalog.color = colpick.value;
+				catselect.selectedIndex = 0;
+				catselect.title = 'Select Catalog';
+				this._getCatalog(catalog, this.options.timeOut);
+			}
+		}, 'Query catalog');
+	},
+
+	_resetDialog: function () {
+	// Do nothing: no need to reset with layer changes
+	},
+
+	_getCatalog: function (catalog, timeout) {
+		var _this = this,
+		    map = this._map,
+				wcs = map.options.crs,
+				sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
+		    center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(),
+		    b = map.getPixelBounds(),
+		    z = map.getZoom(),
+		    templayer = new L.LayerGroup(null);
+
+		// Add a temporary "dummy" layer to activate a spinner sign
+		templayer.notReady = true;
+		this.addLayer(templayer, catalog.name);
+
+		if (catalog.authenticate) {
+			this.options.authenticate = catalog.authenticate;
+		} else {
+			this.options.authenticate = false;
+		}
+
+		// Compute the search cone
+		var lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
+			  c = sysflag ?
+				   [wcs.celsysToEq(map.unproject(b.min, z)),
+			      wcs.celsysToEq(map.unproject(L.point(b.min.x, b.max.y), z)),
+			      wcs.celsysToEq(map.unproject(b.max, z)),
+			      wcs.celsysToEq(map.unproject(L.point(b.max.x, b.min.y), z))] :
+			                    [map.unproject(b.min, z),
+			                     map.unproject(L.point(b.min.x, b.max.y), z),
+			                     map.unproject(b.max, z),
+			                     map.unproject(L.point(b.max.x, b.min.y), z)],
+			  sys;
+		if (wcs.forceNativeCelsys && this.options.nativeCelsys) {
+			switch (wcs.celsyscode) {
+			case 'ecliptic':
+				sys = 'E2000.0';
+				break;
+			case 'galactic':
+				sys = 'G';
+				break;
+			case 'supergalactic':
+				sys = 'S';
+				break;
+			default:
+				sys = 'J2000.0';
+				break;
+			}
+		} else {
+			sys = 'J2000.0';
+		}
+
+		if (catalog.regionType === 'box') {
+			// CDS box search
+			var	dlng = (Math.max(wcs._deltaLng(c[0], center),
+				                   wcs._deltaLng(c[1], center),
+				                   wcs._deltaLng(c[2], center),
+				                   wcs._deltaLng(c[3], center)) -
+			            Math.min(wcs._deltaLng(c[0], center),
+				                   wcs._deltaLng(c[1], center),
+				                   wcs._deltaLng(c[2], center),
+				                   wcs._deltaLng(c[3], center))) * lngfac,
+		       dlat = Math.max(c[0].lat, c[1].lat, c[2].lat, c[3].lat) -
+		              Math.min(c[0].lat, c[1].lat, c[2].lat, c[3].lat);
+			if (dlat < 0.0001) {
+				dlat = 0.0001;
+			}
+			if (dlng < 0.0001) {
+				dlng = 0.0001;
+			}
+
+			L.IIPUtils.requestURL(
+				L.Util.template(catalog.url, L.extend({
+					sys: sys,
+					lng: center.lng.toFixed(6),
+					lat: center.lat.toFixed(6),
+					dlng: dlng.toFixed(4),
+					dlat: dlat.toFixed(4),
+					nmax: catalog.nmax + 1,
+					maglim: catalog.maglim
+				})),
+				'getting ' + catalog.service + ' data',
+				function (context, httpRequest) {
+					_this._loadCatalog(catalog, templayer, context, httpRequest);
+				},
+				this,
+				timeout
+			);
+		} else {
+			// Regular cone search
+			var	dr = Math.max(wcs.distance(c[0], center),
+				                wcs.distance(c[0], center),
+				                wcs.distance(c[0], center),
+				                wcs.distance(c[0], center));
+			L.IIPUtils.requestURL(
+				L.Util.template(catalog.url, L.extend({
+					sys: sys,
+					lng: center.lng.toFixed(6),
+					lat: center.lat.toFixed(6),
+					dr: dr.toFixed(4),
+					nmax: catalog.nmax + 1
+				})), 'querying ' + catalog.service + ' data', function (context, httpRequest) {
+					_this._loadCatalog(catalog, templayer, context, httpRequest);
+				}, this, this.options.timeOut);
+		}
+	},
+
+	_loadCatalog: function (catalog, templayer, _this, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var wcs = _this._map.options.crs,
+				 response = httpRequest.responseText,
+				 geo = catalog.toGeoJSON(response),
+				 geocatalog = L.geoJson(geo, {
+					onEachFeature: function (feature, layer) {
+						if (feature.properties && feature.properties.items) {
+							layer.bindPopup(catalog.popup(feature));
+						}
+					},
+					coordsToLatLng: function (coords) {
+						if (wcs.forceNativeCelsys) {
+							var latLng = wcs.eqToCelsys(L.latLng(coords[1], coords[0]));
+							return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
+						} else {
+							return new L.LatLng(coords[1], coords[0], coords[2]);
+						}
+					},
+					pointToLayer: function (feature, latlng) {
+						return catalog.draw(feature, latlng);
+					},
+					style: function (feature) {
+						return {color: catalog.color, weight: 2};
+					}
+				}),
+				 excessflag;
+				geocatalog.nameColor = catalog.color;
+				geocatalog.addTo(_this._map);
+				this.removeLayer(templayer);
+				if (geo.features.length > catalog.nmax) {
+					geo.features.pop();
+					excessflag = true;
+				}
+				this.addLayer(geocatalog, catalog.name +
+				  ' (' + geo.features.length.toString() +
+				  (excessflag ? '+ entries)' : ' entries)'));
+				if (excessflag) {
+					alert('Selected area is too large: ' + catalog.name +
+					  ' sample has been truncated to the first ' + catalog.nmax + ' sources.');
+				}
+			} else {
+				if (httpRequest.status !== 0) {
+					alert('Error ' + httpRequest.status + ' while querying ' +
+					  catalog.service + '.');
+				}
+				this.removeLayer(templayer);
+			}
+		}
+	}
+
+});
+
+L.control.iip.catalog = function (catalogs, options) {
+	return new L.Control.IIP.Catalog(catalogs, options);
+};
+
+
+
+/*
+# L.Control.IIP.Channel manages the channel mixing of an IIP layer
+# (see http://iipimage.sourceforge.net/documentation/protocol/)
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC and GEOPS/Paris-Sud
+#
+#	Last modified:		17/05/2017
+*/
+
+if (typeof require !== 'undefined') {
+	var $ = require('jquery');
+}
+
+L.Control.IIP.Channel = L.Control.IIP.extend({
+	options: {
+		title: 'Channel mixing',
+		collapsed: true,
+		cMap: 'grey',
+		mixingMode : null,	//	'color' or 'mono' (or null for layer settings)
+		position: 'topleft',
+	},
+
+	initialize: function (mode, options) {
+		L.setOptions(this, options);
+
+		this._className = 'leaflet-control-iip';
+		this._id = 'leaflet-iipchannel';
+		this._sideClass = 'channel';
+		this._settings = [];
+		this._initsettings = [];
+	},
+
+	// Copy channel mixing settings from layer
+	saveSettings: function (layer, settings, mode) {
+		if (!settings[mode]) {
+			settings[mode] = {};
+		}
+
+		var setting = settings[mode],
+			nchan = layer.iipNChannel;
+
+		setting.channel = layer.iipChannel;
+		setting.cMap = layer.iipCMap;
+		setting.rgb = [];
+		for (var c = 0; c < nchan; c++) {
+			setting.rgb[c] = layer.iipRGB[c].clone();
+		}
+	},
+
+	// Copy channel mixing settings to layer
+	loadSettings: function (layer, settings, mode, keepchanflag) {
+		var setting = settings[mode],
+			nchan = layer.iipNChannel;
+
+		if (!setting) {
+			return;
+		}
+
+		if (!keepchanflag) {
+			layer.iipChannel = setting.channel;
+		}
+		layer.iipCMap = setting.cMap;
+		for (var c = 0; c < nchan; c++) {
+			layer.iipRGB[c] = setting.rgb[c].clone();
+		}
+	},
+
+	_initDialog: function () {
+		var _this = this,
+			layer = this._layer,
+			className = this._className,
+			dialog = this._dialog;
+
+		// copy initial IIP mixing parameters from the layer object
+		this.saveSettings(layer, this._initsettings, 'mono');
+		this.saveSettings(layer, this._initsettings, 'color');
+
+		// copy current IIP mixing parameters from the layer object
+		this.saveSettings(layer, this._settings, 'mono');
+		this.saveSettings(layer, this._settings, 'color');
+
+		this._mode = this.options.mixingMode ?
+		  this.options.mixingMode : layer.iipMode;
+
+		var	box = this._addDialogBox(),
+			modeline = this._addDialogLine('Mode:', box),
+			modelem = this._addDialogElement(modeline),
+			modeinput = L.DomUtil.create('div', className + '-radios', modelem),
+			elem, modebutton;
+
+		// Create Mode selection control section
+		modebutton = this._createRadioButton(className + '-radio', modeinput, 'mono',
+		  (this._mode === 'mono'), function () {
+			// Save previous settings
+			_this.saveSettings(layer, _this._settings, _this._mode);
+
+			// Remove previous dialogs
+			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
+				box.removeChild(elem);
+			}
+			for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
+				dialog.removeChild(elem);
+			}
+			_this._channelList = undefined;
+			_this.loadSettings(layer, _this._settings, 'mono');
+			_this._initMonoDialog(layer, box);
+			_this._mode = 'mono';
+		}, 'Select mono-channel palettized mode');
+
+		modebutton = this._createRadioButton(className + '-radio', modeinput, 'color',
+		  (this._mode !== 'mono'), function () {
+			// Save previous settings
+			_this.saveSettings(layer, _this._settings, _this._mode);
+			// Remove previous dialogs
+			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
+				box.removeChild(elem);
+			}
+			for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
+				dialog.removeChild(elem);
+			}
+			_this.loadSettings(layer, _this._settings, 'color');
+			_this._channelList = undefined;
+			_this._initColorDialog(layer, box);
+			_this._mode = 'color';
+		}, 'Select color mixing mode');
+
+		if (_this._mode === 'mono') {
+			_this._initMonoDialog(layer, box);
+		} else {
+			_this._initColorDialog(layer, box);
+		}
+	},
+
+	_initMonoDialog: function (layer, box) {
+		// Single Channels with colour map
+		var _this = this,
+			channels = layer.iipChannelLabels,
+			className = this._className,
+			line = this._addDialogLine('Channel:', box),
+			elem = this._addDialogElement(line);
+
+		layer.updateMono();
+
+		this._chanSelect = this._createSelectMenu(
+			this._className + '-select',
+			elem,
+			layer.iipChannelLabels,
+			undefined,
+			layer.iipChannel,
+			function () {
+				layer.iipChannel = parseInt(this._chanSelect.selectedIndex - 1, 10);
+				this._updateChannel(layer, layer.iipChannel);
+				layer.redraw();
+			},
+			'Select image channel'
+		);
+
+		line = this._addDialogLine('LUT:', box);
+		elem = this._addDialogElement(line);
+
+		var	cmapinput = L.DomUtil.create('div', className + '-cmaps', elem),
+			cbutton = [],
+			cmaps = ['grey', 'jet', 'cold', 'hot'],
+			_changeMap = function () {
+				_this._onInputChange(layer, 'iipCMap', this);
+			},
+			i;
+		for (i in cmaps) {
+			cbutton[i] = this._createRadioButton('leaflet-cmap', cmapinput, cmaps[i],
+			  (cmaps[i] === this.options.cMap), _changeMap,
+			  '"' + cmaps[i].charAt(0).toUpperCase() + cmaps[i].substr(1) +  '" color-map');
+		}
+
+		this._addMinMax(layer, layer.iipChannel, box);
+		layer.redraw();
+	},
+
+	_initColorDialog: function (layer, box) {
+		// Multiple Channels with mixing matrix
+
+		var _this = this,
+			className = this._className,
+			line = this._addDialogLine('Channel:', box),
+			elem = this._addDialogElement(line),
+			colpick = this._chanColPick = this._createColorPicker(
+				className + '-color',
+				elem,
+				'channel',
+			  layer.iipRGB[layer.iipChannel].toStr(),
+				function () {
+					var chan = layer.iipChannel,
+				    hex = $(colpick).val();
+					_this._updateMix(layer, chan, L.rgb(hex));
+					_this.collapsedOff = true;
+				},
+				'iipChannel',
+				'Click to set channel color'
+			);
+
+		this._onInputChange(layer, 'iipCMap', 'grey');
+		layer.updateMix();
+
+		this._chanSelect = this._createSelectMenu(
+			this._className + '-select',
+			elem,
+			layer.iipChannelLabels,
+			undefined,
+			layer.iipChannel,
+			function () {
+				layer.iipChannel =  this._chanSelect.selectedIndex - 1;
+				this._updateChannel(layer, layer.iipChannel, colpick);
+			},
+			'Select image channel'
+		);
+
+		this._addMinMax(layer, layer.iipChannel, box);
+
+		line = this._addDialogLine('Colors:', box);
+		elem = this._addDialogElement(line);
+
+		// Create reset color settings button
+		this._createButton(className + '-button', elem, 'colormix-reset', function () {
+			_this.loadSettings(layer, _this._initsettings, 'color', true);
+			layer.updateMix();
+			this._updateColPick(layer);
+			this._updateChannelList(layer);
+			layer.redraw();
+		}, 'Reset color mix');
+
+		// Create automated color settings button
+		this._createButton(className + '-button', elem, 'colormix-auto', function () {
+			var	nchan = layer.iipNChannel,
+				cc = 0,
+				nchanon = 0,
+				rgb = layer.iipRGB,
+				defcol = layer.iipdefault.channelColors;
+
+			for (var c = 0; c < nchan; c++) {
+				if (rgb[c].isOn()) {
+					nchanon++;
+				}
+			}
+			if (nchanon >= defcol.length) {
+				nchanon = defcol.length - 1;
+			}
+
+			for (c = 0; c < nchan; c++) {
+				if (rgb[c].isOn() && cc < nchanon) {
+					rgb[c] = L.rgb(defcol[nchanon][cc++]);
+				}
+			}
+			layer.updateMix();
+			this._updateColPick(layer);
+			this._updateChannelList(layer);
+			layer.redraw();
+
+		}, 'Re-color active channels');
+
+
+		_this._updateChannelList(layer);
+		layer.redraw();
+	},
+
+	// Add Spinboxes for setting the min and max clipping limits of pixel values
+	_addMinMax: function (layer, chan, box) {
+		var	step = this._spinboxStep(layer.iipMinValue[chan], layer.iipMaxValue[chan]);
+
+		// Min
+		this._minElem = this._addNumericalInput(layer, box, 'Min:',
+		  'iipMinValue[' + chan + ']',
+		  'Lower clipping limit in ' + layer.iipChannelUnits[chan] + '.',
+		  'leaflet-channel-minvalue', layer.iipMinValue[chan], step);
+
+		// Max
+		this._maxElem = this._addNumericalInput(layer, box, 'Max:',
+			'iipMaxValue[' + chan + ']',
+		  'Upper clipping limit in ' + layer.iipChannelUnits[chan] + '.',
+		  'leaflet-channel-maxvalue', layer.iipMaxValue[chan], step);
+	},
+
+	_updateChannel: function (layer, chan, colorElem) {
+		var _this = this,
+			  step = this._spinboxStep(layer.iipMinValue[chan], layer.iipMaxValue[chan]);
+		_this._chanSelect.selectedIndex = chan + 1;
+		if (colorElem) {
+			$(colorElem).spectrum('set', layer.iipRGB[chan].toStr());
+			$(colorElem)
+				.val(layer.iipRGB[chan].toStr())
+				.off('change')
+				.on('change', function () {
+					_this._updateMix(layer, chan, L.rgb($(colorElem).val()));
+				});
+		}
+
+		this._minElem.spinbox
+			.value(layer.iipMinValue[chan])
+			.step(step)
+			.off('change')
+			.on('change', function () {
+				_this._onInputChange(layer, 'iipMinValue[' + chan + ']',
+				_this._minElem.spinbox.value());
+			}, this);
+
+		this._maxElem.spinbox
+			.value(layer.iipMaxValue[chan])
+			.step(step)
+			.off('change')
+			.on('change', function () {
+				_this._onInputChange(layer, 'iipMaxValue[' + chan + ']',
+				_this._maxElem.spinbox.value());
+			}, this);
+	},
+
+	_updateMix: function (layer, chan, rgb) {
+		layer.rgbToMix(chan, rgb);
+		this._updateChannelList(layer);
+		layer.redraw();
+	},
+
+	_updateChannelList: function (layer) {
+		var chanLabels = layer.iipChannelLabels,
+		    chanList = this._channelList,
+				chanElems = this._channelElems,
+				trashElems = this._trashElems,
+		    chanElem, trashElem, rgb, color, label, c, chan;
+		if (chanList) {
+/*
+			for (c in chanElems) {
+				L.DomEvent.off(chanElems[c], 'click touch');
+				L.DomEvent.off(trashElems[c], 'click touch');
+			}
+*/
+			L.DomUtil.empty(this._channelList);
+		} else {
+			chanList = this._channelList = L.DomUtil.create('div', this._className + '-chanlist',
+			  this._dialog);
+		}
+
+		chanElems = this._channelElems = [];
+		trashElems = this._trashElems = [];
+
+		for (c in chanLabels) {
+			chan = parseInt(c, 10);
+			rgb = layer.iipRGB[chan];
+			if (rgb.isOn()) {
+				chanElem = L.DomUtil.create('div', this._className + '-channel', chanList);
+				color = L.DomUtil.create('div', this._className + '-chancolor', chanElem);
+				color.style.backgroundColor = rgb.toStr();
+				this._activateChanElem(color, layer, chan);
+				label = L.DomUtil.create('div', this._className + '-chanlabel', chanElem);
+				label.innerHTML = chanLabels[c];
+				this._activateChanElem(label, layer, chan);
+				trashElem = this._createButton('leaflet-control-iip-trash', chanElem,
+					undefined, undefined, 'Delete channel');
+				this._activateTrashElem(trashElem, layer, chan);
+				chanElems.push(chanElem);
+				trashElems.push(trashElem);
+			}
+		}
+	},
+
+	_updateColPick: function (layer) {
+		$(this._chanColPick).spectrum('set', layer.iipRGB[layer.iipChannel].toStr());
+		$(this._chanColPick).val(layer.iipRGB[layer.iipChannel].toStr());
+	},
+
+	_activateTrashElem: function (trashElem, layer, chan) {
+		L.DomEvent.on(trashElem, 'click touch', function () {
+			this._updateMix(layer, chan, L.rgb(0.0, 0.0, 0.0));
+			if (layer === this._layer && chan === layer.iipChannel) {
+				this._updateColPick(layer);
+			}
+		}, this);
+	},
+
+	_activateChanElem: function (chanElem, layer, chan) {
+		L.DomEvent.on(chanElem, 'click touch', function () {
+			layer.iipChannel = chan;
+			this._updateChannel(layer, chan, this._chanColPick);
+		}, this);
+	}
+
+});
+
+L.control.iip.channel = function (options) {
+	return new L.Control.IIP.Channel(options);
+};
+
+
+
+/*
+# L.Control.IIP.Doc adds online documentation to the VisiOmatic interface
+# (see http://iipimage.sourceforge.net/documentation/protocol/)
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright:		(C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#				                 Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified:		10/11/2015
+*/
+
+if (typeof require !== 'undefined') {
+	var $ = require('jquery');
+}
+
+L.Control.IIP.Doc = L.Control.IIP.extend({
+	options: {
+		title: 'Documentation',
+		collapsed: true,
+		position: 'topleft',
+		pdflink: undefined
+	},
+
+	initialize: function (url, options) {
+		L.setOptions(this, options);
+
+		this._className = 'leaflet-control-iip';
+		this._id = 'leaflet-iipdoc';
+		this._sideClass = 'doc';
+		this._url = url;
+	},
+
+	_initDialog: function () {
+		var _this = this,
+			className = this._className,
+			layer = this._layer,
+			frameBox = L.DomUtil.create('div',
+		    this._className + '-framebox', this._dialog),
+			iframe = this._iframe = L.DomUtil.create('iframe',
+			  this._className + '-doc', frameBox);
+		iframe.src = this._url;
+		iframe.frameborder = 0;
+
+		this._navHistory = [];
+		this._navPos = 0;
+		this._ignore = false;
+
+		L.DomEvent.on(iframe, 'load hashchange', this._onloadNav, this);
+
+		var	box = this._addDialogBox('leaflet-iipdoc-dialog'),
+			line = this._addDialogLine('Navigate:', box),
+			elem = this._addDialogElement(line);
+
+		this._homeButton = this._createButton(className + '-button', elem,
+		  'home', this._homeNav, 'Navigate home');
+		this._backButton = this._createButton(className + '-button', elem,
+		  'back', this._backNav, 'Navigate backward');
+		this._forwardButton = this._createButton(className + '-button', elem,
+		  'forward', this._forwardNav, 'Navigate forward');
+
+		if (this.options.pdflink) {
+			var pdfButton = this._createButton(className + '-button', elem,
+			  'pdf', undefined, 'Download PDF version');
+			pdfButton.href = this.options.pdflink;
+		}
+	},
+
+	// Update navigation buttons, based on http://stackoverflow.com/a/7704305
+	_updateNav: function (newPos) {
+		if (newPos !== this._navPos) {
+			this._navPos = newPos;
+			this._navIgnore = true;
+			this._iframe.src = this._navHistory[this._navPos - 1];
+			this._disableNav();
+		}
+	},
+
+	_disableNav: function () {
+		// Enable / disable back button?
+		this._backButton.disabled = (this._navPos === 1);
+		// Enable / disable forward button?
+		this._forwardButton.disabled = (this._navPos >= this._navHistory.length);
+	},
+
+	// Navigate back in IFrame, based on http://stackoverflow.com/a/7704305
+	_backNav: function () {
+		if (!this._backButton.disabled) {
+			this._updateNav(Math.max(1, this._navPos - 1));
+		}
+	},
+
+	// Navigate forward in IFrame, based on http://stackoverflow.com/a/7704305
+	_forwardNav: function () {
+		if (!this._forwardButton.disabled) {
+			this._updateNav(Math.min(this._navHistory.length, this._navPos + 1));
+		}
+	},
+
+	// Navigate home in IFrame
+	_homeNav: function () {
+		if (!this._backButton.disabled) {
+			this._updateNav(1);
+		}
+	},
+
+	// Triggered on IFrame load, based on http://stackoverflow.com/a/7704305
+	_onloadNav: function () {
+		if (true) {
+			// Force all external iframe links to open in new tab/window
+			// from
+			var	as = this._iframe.contentDocument.getElementsByTagName('a');
+			for (var i = 0; i < as.length; i++) {
+				if (L.IIPUtils.isExternal(as[i].href)) {
+					as[i].setAttribute('target', '_blank');
+				}
+			}
+			this._iframeLoad1 = true;
+		}
+
+		if (!this._navIgnore) {
+			var href = this._iframe.contentWindow.location.href;
+			if (href !== this._navHistory[this._navPos - 1]) {
+				this._navHistory.splice(this._navPos, this._navHistory.length - this._navPos);
+				this._navHistory.push(href);
+				this._navPos = this._navHistory.length;
+				this._disableNav();
+			}
+		} else {
+			this._navIgnore = false;
+		}
+	}
+
+});
+
+L.control.iip.doc = function (url, options) {
+	return new L.Control.IIP.Doc(url, options);
+};
+
+
+
+/*
+# L.Control.IIP.image adjusts the basic rendering options of an IIP layer
+# (see http://iipimage.sourceforge.net/documentation/protocol/)
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#				                      Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified:		15/12/2015
+*/
+
+if (typeof require !== 'undefined') {
+	var $ = require('jquery');
+}
+
+L.Control.IIP.Image = L.Control.IIP.extend({
+	options: {
+		title: 'Image preferences',
+		collapsed: true,
+		position: 'topleft'
+	},
+
+	initialize: function (options) {
+		L.setOptions(this, options);
+
+		this._className = 'leaflet-control-iip';
+		this._id = 'leaflet-iipimage';
+		this._sideClass = 'image';
+	},
+
+	_initDialog: function () {
+		var _this = this,
+			className = this._className,
+			layer = this._layer,
+			elem;
+
+		// Invert
+		this._addSwitchInput(layer, this._dialog, 'Invert:', 'iipInvertCMap',
+		  'Invert color map(s)', 'leaflet-invertCMap', layer.iipInvertCMap);
+
+		// Contrast
+		this._addNumericalInput(layer, this._dialog, 'Contrast:', 'iipContrast',
+		  'Adjust Contrast. 1.0: normal.', 'leaflet-contrastValue',
+		  layer.iipContrast, 0.05, 0.0, 10.0);
+
+		// Colour saturation
+		this._addNumericalInput(layer, this._dialog, 'Color Sat.:', 'iipColorSat',
+		  'Adjust Color Saturation. 0: B&W, 1.0: normal.', 'leaflet-colorsatvalue',
+		  layer.iipColorSat, 0.05, 0.0, 5.0, this._updateMix);
+
+		// Gamma
+		this._addNumericalInput(layer, this._dialog,  'Gamma:', 'iipGamma',
+		  'Adjust Gamma correction. The standard value is 2.2.',
+		  'leaflet-gammavalue', layer.iipGamma, 0.05, 0.5, 5.0);
+
+		// JPEG quality
+		this._addNumericalInput(layer, this._dialog,  'JPEG quality:', 'iipQuality',
+		  'Adjust JPEG compression quality. 1: lowest, 100: highest',
+		  'leaflet-qualvalue', layer.iipQuality, 1, 1, 100);
+	},
+
+	_updateMix: function (layer) {
+		var nchannel = layer.iipNChannel;
+		for (var c = 0; c < nchannel; c++) {
+			layer.rgbToMix(c);
+		}
+		return;
+	}
+
+});
+
+L.control.iip.image = function (options) {
+	return new L.Control.IIP.Image(options);
+};
+
+
+
+/*
+# L.Control.IIP.Profile manages image profile diagrams
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 24/11/2015
+*/
+
+if (typeof require !== 'undefined') {
+	var $ = require('jquery');
+}
+
+L.Control.IIP.Profile = L.Control.IIP.extend({
+
+	options: {
+		title: 'Profile overlays',
+		collapsed: true,
+		position: 'topleft',
+		profile: true,
+		profileColor: '#FF00FF',
+		spectrum: true,
+		spectrumColor: '#A000FF'
+	},
+
+	initialize: function (options) {
+		L.setOptions(this, options);
+		this._className = 'leaflet-control-iip';
+		this._id = 'leaflet-iipprofile';
+		this._layers = {};
+		this._sideClass = 'profile';
+		this._handlingClick = false;
+	},
+
+	_initDialog: function () {
+		var _this = this,
+			options = this.options,
+			className = this._className,
+			box = this._addDialogBox(),
+			line, elem;
+
+		if (options.profile) {
+			line = this._addDialogLine('Profile:', box);
+			elem = this._addDialogElement(line);
+			var	linecolpick = this._createColorPicker(
+				className + '-color',
+				elem,
+				'profile',
+			  options.profileColor,
+				false,
+				'iipProfile',
+				'Click to set line color'
+				);
+
+			// Create start profile line button
+			this._createButton(className + '-button', elem, 'start', function () {
+				if (this._currProfileLine) {
+					this._updateLine();
+				} else {
+					var map = _this._map,
+					 point = map.getCenter(),
+					 line = this._currProfileLine = L.polyline([point, point], {
+						color: linecolpick.value,
+						weight: 7,
+						opacity: 0.5
+					});
+					line.nameColor = linecolpick.value;
+					line.addTo(map);
+					map.on('drag', this._updateLine, this);
+				}
+			}, 'Start drawing a profile line');
+
+			// Create end profile line button
+			this._createButton(className + '-button', elem, 'end',
+			  this._profileEnd, 'End line and plot');
+		}
+
+		if (options.spectrum) {
+			// Create Spectrum dialog line
+			line = this._addDialogLine('Spectrum:', box);
+			elem = this._addDialogElement(line);
+
+			// Create Spectrum color picker
+			var speccolpick = this._createColorPicker(
+					className + '-color',
+					elem,
+					'spectrum',
+				  options.spectrumColor,
+					false,
+					'iipSpectra',
+					'Click to set marker color'
+				);
+
+			// Create Spectrum button
+			this._createButton(className + '-button', elem, 'spectrum', function () {
+				var map = _this._map,
+					latLng = map.getCenter(),
+					zoom = map.options.crs.options.nzoom - 1,
+				  point = map.project(latLng, zoom).round(),
+					rLatLng = map.unproject(point, zoom),
+					marker = this._spectrumMarker = L.circleMarker(rLatLng, {
+						color: speccolpick.value,
+						radius: 6,
+						title: 'Spectrum'
+					}).addTo(map),
+					popdiv = L.DomUtil.create('div', this._className + '-popup'),
+			    activity = L.DomUtil.create('div', this._className + '-activity', popdiv);
+
+				popdiv.id = 'leaflet-spectrum-plot';
+				marker.bindPopup(popdiv,
+				  {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
+				L.IIPUtils.requestURL(this._layer._url.replace(/\&.*$/g, '') +
+				  '&PFL=' + zoom.toString() + ':' +
+				  point.x.toFixed(0) + ',' + point.y.toFixed(0) + '-' +
+				  point.x.toFixed(0) + ',' + point.y.toFixed(0),
+				  'getting IIP layer spectrum', this._plotSpectrum, this);
+			}, 'Plot a spectrum at the current map position');
+		}
+	},
+
+	_updateLine: function (e) {
+		var map = this._map,
+		 latLng = map.getCenter(),
+		 maxzoom = map.options.crs.options.nzoom - 1,
+		 path = this._currProfileLine.getLatLngs(),
+		 point1 = map.project(path[0], maxzoom),
+		 point2 = map.project(map.getCenter(), maxzoom);
+		if (Math.abs(point1.x - point2.x) > Math.abs(point1.y - point2.y)) {
+			point2.y = point1.y;
+		} else {
+			point2.x = point1.x;
+		}
+
+		path[1] = map.unproject(point2, maxzoom);
+		this._currProfileLine.redraw();
+	},
+
+	_profileEnd: function () {
+		var map = this._map,
+		    point = map.getCenter(),
+		    line = this._profileLine = this._currProfileLine;
+
+		map.off('drag', this._updateLine, this);
+		this._currProfileLine = undefined;
+
+		var popdiv = L.DomUtil.create('div', this._className + '-popup'),
+		    activity = L.DomUtil.create('div', this._className + '-activity', popdiv);
+
+		popdiv.id = 'leaflet-profile-plot';
+		line.bindPopup(popdiv,
+			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
+		var zoom = map.options.crs.options.nzoom - 1,
+			  path = line.getLatLngs(),
+			  point1 = map.project(path[0], zoom),
+			  point2 = map.project(path[1], zoom),
+				x, y;
+
+		if (point2.x < point1.x) {
+			x = point2.x;
+			point2.x = point1.x;
+			point1.x = x;
+		}
+		if (point2.y < point1.y) {
+			y = point2.y;
+			point2.y = point1.y;
+			point1.y = y;
+		}
+
+		L.IIPUtils.requestURL(this._layer._url.replace(/\&.*$/g, '') +
+			'&PFL=' + zoom.toString() + ':' + point1.x.toFixed(0) + ',' +
+			 point1.y.toFixed(0) + '-' + point2.x.toFixed(0) + ',' +
+			 point2.y.toFixed(0),
+			'getting IIP layer profile',
+			this._plotProfile, this);
+	},
+
+	_getMeasurementString: function () {
+		var currentLatLng = this._currentLatLng,
+		 previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
+		 distance, distanceStr, unit;
+
+		// calculate the distance from the last fixed point to the mouse position
+		distance = this._measurementRunningTotal + L.IIPUtils.distance(currentLatLng, previousLatLng);
+
+		if (distance >= 1.0) {
+			unit = '&#176;';
+		} else {
+			distance *= 60.0;
+			if (distance >= 1.0) {
+				unit = '&#39;';
+			} else {
+				distance *= 60.0;
+				unit = '&#34;';
+			}
+		}
+		distanceStr = distance.toFixed(2) + unit;
+
+		return distanceStr;
+	},
+
+	_plotProfile: function (self, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var json = JSON.parse(httpRequest.responseText),
+				    rawprof = json.profile,
+						layer = self._layer,
+						line = self._profileLine,
+						popdiv = document.getElementById('leaflet-profile-plot'),
+						prof = [],
+						series = [],
+						title, ylabel;
+
+				self.addLayer(line, 'Image profile');
+
+				if (layer.iipMode === 'mono') {
+					prof.push(self._extractProfile(layer, rawprof, layer.iipChannel));
+					series.push({
+						color: 'black',
+					});
+					title = 'Image profile for ' + layer.iipChannelLabels[layer.iipChannel];
+					ylabel = 'Pixel value in ' + layer.iipChannelUnits[layer.iipChannel];
+				} else {
+					var rgb = layer.iipRGB;
+					for (var chan = 0; chan < layer.iipNChannel; chan++) {
+						if (rgb[chan].isOn()) {
+							prof.push(self._extractProfile(layer, rawprof, chan));
+							series.push({
+								color: rgb[chan].toStr(),
+								label: layer.iipChannelLabels[chan]
+							});
+						}
+					}
+					title = 'Image profiles';
+					ylabel = 'Pixel value';
+				}
+
+				$(document).ready(function () {
+					$.jqplot.config.enablePlugins = true;
+					$.jqplot('leaflet-profile-plot', prof, {
+						title: title,
+						grid: {
+							backgroundColor: '#ddd',
+							gridLineColor: '#eee'
+						},
+						axes: {
+							xaxis: {
+								label: 'position along line',
+								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+								pad: 1.0
+							},
+							yaxis: {
+								label: ylabel,
+								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+								pad: 1.0
+							}
+						},
+						legend: {
+							show: (layer.iipMode !== 'mono'),
+							location: 'ne',
+						},
+						highlighter: {
+							show: true,
+							sizeAdjust: 2,
+							tooltipLocation: 'n',
+							tooltipAxes: 'y',
+							tooltipFormatString: '%.6g ' + layer.iipChannelUnits[layer.iipChannel],
+							useAxesFormatters: false,
+							bringSeriesToFront: true
+						},
+						cursor: {
+							show: true,
+							zoom: true
+						},
+						series: series,
+						seriesDefaults: {
+							lineWidth: 2.0,
+							showMarker: false
+						}
+					});
+				});
+
+				popdiv.removeChild(popdiv.childNodes[0]);	// Remove activity spinner
+
+				line._popup.update();	// TODO: avoid private method
+			}
+		}
+	},
+
+	// Extract the image profile in a given channel
+	_extractProfile: function (layer, rawprof, chan) {
+		var	prof = [],
+			nchan = layer.iipNChannel,
+			npix = rawprof.length / nchan;
+
+		for (var i = 0; i < npix; i++) {
+			prof.push(rawprof[i * nchan + chan]);
+		}
+
+		return prof;
+	},
+
+	_plotSpectrum: function (self, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var json = JSON.parse(httpRequest.responseText),
+				    rawprof = json.profile,
+						layer = self._layer,
+						marker = self._spectrumMarker,
+						popdiv = document.getElementById('leaflet-spectrum-plot'),
+						spec = [],
+						series = [],
+						title, ylabel;
+				self.addLayer(marker, 'Image spectrum');
+
+				for (var chan = 0; chan < layer.iipNChannel; chan++) {
+					spec.push([
+						layer.iipChannelLabels[chan],
+						self._extractAverage(layer, rawprof, chan)
+					]);
+				}
+				title = 'Image Spectrum';
+				ylabel = 'Average pixel value';
+				$(document).ready(function () {
+					$.jqplot.config.enablePlugins = true;
+					$.jqplot('leaflet-spectrum-plot', [spec], {
+						title: title,
+						grid: {
+							backgroundColor: '#F0F0F0',
+							gridLineColor: '#F8F8F8'
+						},
+						axes: {
+							xaxis: {
+								renderer: $.jqplot.CategoryAxisRenderer,
+								tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+								tickOptions: {
+									angle: -30,
+									fontSize: '6pt'
+								}
+							},
+							yaxis: {
+								label: ylabel,
+								labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+							}
+						},
+						highlighter: {
+							show: true,
+							sizeAdjust: 2,
+							tooltipLocation: 'n',
+							tooltipAxes: 'y',
+							tooltipFormatString: '%.6g ' + layer.iipChannelUnits[layer.iipChannel],
+							useAxesFormatters: false
+						},
+						cursor: {
+							show: true,
+							zoom: true
+						},
+						seriesDefaults: {
+							lineWidth: 2.0,
+							showMarker: false
+						}
+					});
+				});
+
+				popdiv.removeChild(popdiv.childNodes[0]);	// Remove activity spinner
+
+				marker._popup.update();	// TODO: avoid private method
+			}
+		}
+	},
+
+	// Extract the average of a series of pixels in a given channel
+	_extractAverage: function (layer, rawprof, chan) {
+		var	nchan = layer.iipNChannel,
+			npix = rawprof.length / nchan,
+			val = 0.0;
+
+		if (npix === 0) { return 0.0; }
+
+		for (var i = 0; i < npix; i++) {
+			val += rawprof[i * nchan + chan];
+		}
+
+		return val / npix;
+	}
+
+});
+
+L.control.iip.profile = function (options) {
+	return new L.Control.IIP.Profile(options);
+};
+
+
+
+/*
+# L.Control.IIP.Regions manages overlays of regions or points of interest
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC
+#
+#
+#	Last modified: 24/11/2015
+*/
+
+L.Control.IIP.Region = L.Control.IIP.extend({
+
+	options: {
+		title: 'Region overlays',
+		collapsed: true,
+		position: 'topleft',
+		nativeCelsys: true,
+		color: '#00FFFF',
+		timeOut: 30	// seconds
+	},
+
+	initialize: function (regions, options) {
+		// Regions is an array of {url, name [, description]} objects
+		L.setOptions(this, options);
+		this._className = 'leaflet-control-iip';
+		this._id = 'leaflet-iipregion';
+		this._layers = {};
+		this._handlingClick = false;
+		this._sideClass = 'region';
+		this._regions =	regions && regions[0] ? regions : [];
+	},
+
+	_initDialog: function () {
+		var	className = this._className,
+			regions = this._regions,
+			box = this._addDialogBox(),
+			line = this._addDialogLine('Regions:', box),
+			elem = this._addDialogElement(line),
+			colpick = this._createColorPicker(
+				className + '-color',
+				elem,
+				'region',
+			  this.options.color,
+				false,
+				'iipRegion',
+				'Click to set region color'
+			);
+
+		var	select = this._regionSelect = this._createSelectMenu(
+				this._className + '-select',
+				elem,
+				regions.map(function (o) { return o.name; }),
+				regions.map(function (o) { return (o.load ? true : false); }),
+				-1,
+				undefined,
+				'Select region'
+			);
+
+		elem = this._addDialogElement(line);
+		this._createButton(className + '-button',
+			elem,
+			'region',
+			function () {
+				var	index = select.selectedIndex - 1;	// Ignore 'Choose region' entry
+				if (index >= 0) {
+					var region = this._regions[index];
+					region.color = colpick.value;
+					select.selectedIndex = 0;
+					select.opt[index].disabled = true;
+					this._getRegion(region, this.options.timeOut);
+				}
+			},
+			'Display region'
+		);
+
+		// Load regions that have the 'load' option set.
+		var region;
+		for (var index = 0; index < regions.length; index++) {
+			region = regions[index];
+			region.index = index;
+			if (region.load === true) {
+				if (!region.color) {
+					region.color = this.options.color;
+				}
+				this._getRegion(regions[index], this.options.timeOut);
+			}
+		}
+	},
+
+	_resetDialog: function () {
+	// Do nothing: no need to reset with layer changes
+	},
+
+	_getRegion: function (region, timeout) {
+		var _this = this,
+		    map = this._map,
+				wcs = map.options.crs,
+				sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
+		    templayer = new L.LayerGroup(null);
+
+		// Add a temporary "dummy" layer to activate a spinner sign
+		templayer.notReady = true;
+		this.addLayer(templayer, region.name);
+
+		L.IIPUtils.requestURL(region.url, 'loading ' + region.name + ' data',
+			function (context, httpRequest) {
+				_this._loadRegion(region, templayer, context, httpRequest);
+			}, this, this.options.timeOut);
+	},
+
+	_loadRegion: function (region, templayer, _this, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var wcs = _this._map.options.crs,
+				 response = httpRequest.responseText,
+				 geoRegion = L.geoJson(JSON.parse(response), {
+					onEachFeature: function (feature, layer) {
+						if (feature.properties && feature.properties.description) {
+							layer.bindPopup(feature.properties.description);
+						} else if (region.description) {
+							layer.bindPopup(region.description);
+						}
+					},
+					coordsToLatLng: function (coords) {
+						if (wcs.forceNativeCelsys) {
+							var latLng = wcs.eqToCelsys(L.latLng(coords[1], coords[0]));
+							return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
+						} else {
+							return new L.LatLng(coords[1], coords[0], coords[2]);
+						}
+					},
+					style: function (feature) {
+						return {color: region.color, weight: 2};
+					},
+					pointToLayer: function (feature, latlng) {
+						return region.drawPoint ?
+						  region.drawPoint(feature, latlng) : L.marker(latlng);
+					}
+				});
+				geoRegion.nameColor = region.color;
+				geoRegion.addTo(_this._map);
+				_this.removeLayer(templayer);
+				_this.addLayer(geoRegion, region.name, region.index);
+				L.DomEvent.on(geoRegion, 'trash', function (e) {
+					if (e.index || e.index === 0) {
+						_this._regionSelect.opt[e.index].disabled = false;
+					}
+				}, _this);
+			} else {
+				if (httpRequest.status !== 0) {
+					alert('Error ' + httpRequest.status + ' while downloading ' +
+					  region.url + '.');
+				}
+				_this.removeLayer(templayer);
+				_this._regionSelect.opt[region.index].disabled = false;
+			}
+		}
+	}
+
+});
+
+L.control.iip.region = function (regions, options) {
+	return new L.Control.IIP.Region(regions, options);
+};
+
+
+
+/*
+# L.Control.Layers.IIP adds new features to the standard L.Control.Layers
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 22/03/2014
+*/
+
+if (typeof require !== 'undefined') {
+	var $ = require('jquery-browser');
+}
+
+L.Control.Layers.IIP = L.Control.Layers.extend({
+	options: {
+		title: 'overlay menu',
+		collapsed: true,
+		position: 'topright',
+		autoZIndex: true,
+		fileMenu: false,
+		fileURL: '/fcgi-bin/iipsrv.fcgi?FIF=',
+		fileRoot: '',
+		fileTreeScript: 'visiomatic/dist/filetree.php',
+		fileProcessScript: 'visiomatic/dist/processfits.php'
+	},
+
+	onAdd: function (map) {
+		map._layerControl = this;
+		this._initLayout();
+		this._update();
+
+//		map
+//		    .on('layeradd', this._onLayerChange, this)
+//		    .on('layerremove', this._onLayerChange, this);
+
+		return this._container;
+	},
+
+	_initLayout: function () {
+		var className = 'leaflet-control-layers',
+		    container = this._container = L.DomUtil.create('div', className);
+
+		// makes this work on IE touch devices by stopping it from firing a mouseout event when the touch is released
+		container.setAttribute('aria-haspopup', true);
+
+		if (!L.Browser.touch) {
+			L.DomEvent
+				.disableClickPropagation(container)
+				.disableScrollPropagation(container);
+		} else {
+			L.DomEvent.on(container, 'click', L.DomEvent.stopPropagation);
+		}
+
+		var form = this._form = L.DomUtil.create('form', className + '-list');
+
+		if (this.options.collapsed) {
+			if (!L.Browser.android) {
+				L.DomEvent.on(container, {
+					mouseover: this._expand,
+				    mouseout: this._collapse
+				}, this);
+			}
+
+			var link = this._layersLink = L.DomUtil.create('a', className + '-toggle', container);
+			link.href = '#';
+			link.title = 'Layers';
+
+			if (L.Browser.touch) {
+				L.DomEvent
+				    .on(link, 'click', L.DomEvent.stop)
+				    .on(link, 'click', this._expand, this);
+			} else {
+				L.DomEvent.on(link, 'focus', this._expand, this);
+			}
+
+			// work around for Firefox Android issue https://github.com/Leaflet/Leaflet/issues/2033
+			L.DomEvent.on(form, 'click', function () {
+				setTimeout(L.bind(this._onInputClick, this), 0);
+			}, this);
+
+			this._map.on('click', this._collapse, this);
+			// TODO keyboard accessibility
+		} else {
+			this._expand();
+		}
+
+		this._baseLayersList = L.DomUtil.create('div', className + '-base', form);
+
+		if (this.options.fileMenu) {
+			var addbutton = this._addButton = L.DomUtil.create('input', className + '-add', form);
+			addbutton.type = 'button';
+			addbutton.value = 'Add...';
+			L.DomEvent.on(addbutton, 'click', this._openFileMenu, this);
+		}
+
+		this._separator = L.DomUtil.create('div', className + '-separator', form);
+		this._overlaysList = L.DomUtil.create('div', className + '-overlays', form);
+
+		container.appendChild(form);
+	},
+
+	_addItem: function (obj) {
+		var _this = this,
+		 item = L.DomUtil.create('div', 'leaflet-control-layers-item'),
+		 inputdiv = L.DomUtil.create('div', 'leaflet-control-layers-select', item);
+
+		if (obj.layer.notReady) {
+			L.DomUtil.create('div', 'leaflet-control-activity', inputdiv);
+		} else {
+			var input,
+				checked = this._map.hasLayer(obj.layer);
+			if (obj.overlay) {
+				input = document.createElement('input');
+				input.type = 'checkbox';
+				input.className = 'leaflet-control-layers-selector';
+				input.defaultChecked = checked;
+			}
+			else {
+				input = this._createRadioElement('leaflet-base-layers', checked);
+			}
+			input.layerId = L.stamp(obj.layer);
+			L.DomEvent.on(input, 'click', this._onInputClick, this);
+			inputdiv.appendChild(input);
+		}
+
+		var name = L.DomUtil.create('div', 'leaflet-control-layers-name', item);
+		name.innerHTML = ' ' + obj.name;
+		name.style.textShadow = '0px 0px 5px ' + obj.layer.nameColor;
+
+		var trashbutton = L.DomUtil.create('input', 'leaflet-control-layers-trash', item);
+		trashbutton.type = 'button';
+		L.DomEvent.on(trashbutton, 'click', function () {
+			_this.removeLayer(obj.layer);
+			if (!obj.notReady) {
+				_this._map.removeLayer(obj.layer);
+			}
+		}, this);
+
+		var container = obj.overlay ? this._overlaysList : this._baseLayersList;
+		container.appendChild(item);
+
+		return item;
+	},
+
+	_onInputClick: function () {
+		var i, input, obj,
+		    inputs = this._form.getElementsByTagName('input'),
+		    inputsLen = inputs.length;
+
+		this._handlingClick = true;
+
+		for (i = 0; i < inputsLen; i++) {
+			input = inputs[i];
+			if (!('layerId' in input)) {
+				continue;
+			}
+			obj = this._layers[input.layerId];
+			if (input.checked && !this._map.hasLayer(obj.layer)) {
+				obj.layer.addTo(this._map);
+			} else if (!input.checked && this._map.hasLayer(obj.layer)) {
+				this._map.removeLayer(obj.layer);
+			}
+		}
+
+		this._handlingClick = false;
+	},
+
+	_addDialogLine: function (label, dialog) {
+		var elem = L.DomUtil.create('div', this._className + '-element', dialog),
+		 text = L.DomUtil.create('span', this._className + '-label', elem);
+		text.innerHTML = label;
+		return elem;
+	},
+
+	_openFileMenu: function () {
+		var _this = this,
+		    fileMenu = L.DomUtil.create('div', 'leaflet-control-filemenu',
+		                 this._map._controlContainer);
+		fileMenu.title = 'Open file';
+		this._addButton.disabled = true;
+		L.DomEvent
+				.disableClickPropagation(fileMenu)
+				.disableScrollPropagation(fileMenu);
+
+		$('.leaflet-control-filemenu').dialog({
+			appendTo: 'body',
+			close: function (event, ui) {
+				L.DomUtil.remove(fileMenu);
+				_this._addButton.disabled = false;
+			},
+			show: {
+				effect: 'clip',
+				duration: 250
+			},
+			hide: {
+				effect: 'clip',
+				duration: 250
+			},
+			height: 200
+		});
+		var fileTree = L.DomUtil.create('div', 'leaflet-control-filetree',
+		                 fileMenu);
+		fileTree.id = 'leaflet-filetree';
+
+		$(document).ready(function () {
+			$('#leaflet-filetree').fileTree({
+				root: _this.options.fileRoot,
+				script: _this.options.fileTreeScript
+			},
+			function (fitsname) {
+				var layercontrol = _this._map._layerControl,
+				    redname = fitsname.replace(/(^.*\/|\..*$)/g, ''),
+				    templayer;
+				if (layercontrol) {
+					templayer = new L.LayerGroup(null);
+
+					templayer.notReady = true;
+					layercontrol.addBaseLayer(templayer, 'converting ' + redname + '...');
+					if (layercontrol.options.collapsed) {
+						layercontrol._expand();
+					}
+				}
+				$.post(_this.options.fileProcessScript, {
+					fitsname: fitsname
+				}, function (ptifname) {
+					ptifname = ptifname.trim();
+					var layer = L.tileLayer.iip(_this.options.fileURL + ptifname, {title: redname});
+					if (layer.iipMetaReady) {
+						_this._updateBaseLayer(templayer, layer);
+					} else {
+						layer.once('metaload', function () {
+							_this._updateBaseLayer(templayer, layer);
+						});
+					}
+				});
+			});
+		});
+	},
+
+	_updateBaseLayer: function (templayer, layer) {
+		var map = this._map,
+		    layercontrol = map._layerControl;
+		layercontrol.removeLayer(templayer);
+		map.eachLayer(map.removeLayer);
+		layer.addTo(map);
+		layercontrol.addBaseLayer(layer, layer._title);
+		map.fire('baselayerchange');
+		if (layercontrol.options.collapsed) {
+			layercontrol._collapse();
+		}
+	}
+});
+
+L.control.layers.iip = function (baselayers, overlays, options) {
+	return new L.Control.Layers.IIP(baselayers, overlays, options);
+};
+
+
+
+/*
+# L.Control.Reticle adds a reticle at the center of the map container
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                     Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified:		10/02/2014
+*/
+L.Control.Reticle = L.Control.extend({
+	options: {
+		position: 'bottomleft'
+	},
+
+	onAdd: function (map) {
+		// Create central reticle
+		var reticle = this._reticle = L.DomUtil.create('div', 'leaflet-reticle', this._map._controlContainer),
+			style = reticle.style;
+		style.position = 'absolute';
+		style.left = '50%';
+		style.bottom = '50%';
+		style.textAlign = 'center';
+		style.verticalAlign = 'middle';
+		style.pointerEvents = 'none';
+		reticle.innerHTML = '';
+
+		var container = this._container = L.DomUtil.create('div', 'leaflet-dummy');
+
+		return container;
+	},
+
+	onRemove: function (map) {
+		this._reticle.parentNode.removeChild(this._reticle);
+	}
+
+});
+
+L.control.reticle = function (options) {
+    return new L.Control.Reticle(options);
+};
+
+
+/*
+# L.Control.Scale.WCS adds degree and pixel units to the standard L.Control.Scale
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                          Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 20/10/2015
+*/
+
+L.Control.Scale.WCS = L.Control.Scale.extend({
+	options: {
+		position: 'bottomleft',
+		title: 'Scale',
+		maxWidth: 128,
+		metric: false,
+		imperial: false,
+		degrees: true,
+		pixels: true,
+		custom: false,
+		customScale: 1.0,
+		customUnits: '',
+		planetRadius: 6378137.0,
+		updateWhenIdle: false
+	},
+
+	_addScales: function (options, className, container) {
+		if (options.metric) {
+			this._mScale = L.DomUtil.create('div', className, container);
+			this._mScale.title = options.metricTitle ? options.metricTitle : options.title;
+		}
+		if (options.imperial) {
+			this._iScale = L.DomUtil.create('div', className, container);
+			this._iScale.title = options.imperialTitle ? options.imperialTitle : options.title;
+		}
+		if (options.degrees) {
+			this._dScale = L.DomUtil.create('div', className, container);
+			this._dScale.title = options.degreesTitle ? options.degreesTitle : options.title;
+		}
+		if (options.pixels) {
+			this._pScale = L.DomUtil.create('div', className, container);
+			this._pScale.title = options.pixelsTitle ? options.pixelsTitle : options.title;
+		}
+		if (options.custom) {
+			this._cScale = L.DomUtil.create('div', className, container);
+			this._cScale.title = options.customTitle ? options.customTitle : options.title;
+		}
+
+		this.angular = options.metric || options.imperial || options.degrees;
+	},
+
+	_update: function () {
+		var options = this.options,
+		    map = this._map,
+		    crs = map.options.crs;
+
+		if (options.pixels && crs.options && crs.options.nzoom) {
+			var pixelScale = Math.pow(2.0, crs.options.nzoom - 1 - map.getZoom());
+			this._updatePixels(pixelScale * options.maxWidth);
+		}
+
+		if (options.custom && crs.options && crs.options.nzoom) {
+			var customScale = Math.pow(2.0,
+			      crs.options.nzoom - 1 - map.getZoom()) * options.customScale;
+			this._updateCustom(customScale * options.maxWidth, options.customUnits);
+		}
+
+		if (this.angular) {
+			var center = map.getCenter(),
+			    cosLat = Math.cos(center.lat * Math.PI / 180),
+			    dist = Math.sqrt(this._jacobian(center)) * cosLat,
+			    maxDegrees = dist * options.maxWidth;
+
+			if (options.metric) {
+				this._updateMetric(maxDegrees * Math.PI / 180.0 * options.planetRadius);
+			}
+			if (options.imperial) {
+				this._updateImperial(maxDegrees * Math.PI / 180.0 * options.planetRadius);
+			}
+			if (options.degrees) {
+				this._updateDegrees(maxDegrees);
+			}
+		}
+	},
+
+// Return the Jacobian determinant of the astrometric transformation at latLng
+	_jacobian: function (latlng) {
+		var map = this._map,
+		    p0 = map.project(latlng),
+		    latlngdx = map.unproject(p0.add([10.0, 0.0])),
+		    latlngdy = map.unproject(p0.add([0.0, 10.0]));
+		return 0.01 * Math.abs((latlngdx.lng - latlng.lng) *
+		                        (latlngdy.lat - latlng.lat) -
+		                       (latlngdy.lng - latlng.lng) *
+		                        (latlngdx.lat - latlng.lat));
+	},
+
+	_updateCustom: function (maxCust, units) {
+		var scale = this._cScale;
+
+		if (maxCust > 1.0e9) {
+			var maxGCust = maxCust * 1.0e-9,
+			gCust = this._getRoundNum(maxGCust);
+			this._updateScale(scale, gCust + ' G' + units, gCust / maxGCust);
+		} else if (maxCust > 1.0e6) {
+			var maxMCust = maxCust * 1.0e-6,
+			mCust = this._getRoundNum(maxMCust);
+			this._updateScale(scale, mCust + ' M' + units, mCust / maxMCust);
+		} else if (maxCust > 1.0e3) {
+			var maxKCust = maxCust * 1.0e-3,
+			kCust = this._getRoundNum(maxKCust);
+			this._updateScale(scale, kCust + ' k' + units, kCust / maxKCust);
+		} else {
+			var cust = this._getRoundNum(maxCust);
+			this._updateScale(scale, cust + ' ' + units, cust / maxCust);
+		}
+	},
+
+	_updatePixels: function (maxPix) {
+		var scale = this._pScale;
+
+		if (maxPix > 1.0e6) {
+			var maxMPix = maxPix * 1.0e-6,
+			mPix = this._getRoundNum(maxMPix);
+			this._updateScale(scale, mPix + ' Mpx', mPix / maxMPix);
+		} else if (maxPix > 1.0e3) {
+			var maxKPix = maxPix * 1.0e-3,
+			kPix = this._getRoundNum(maxKPix);
+			this._updateScale(scale, kPix + ' kpx', kPix / maxKPix);
+		} else {
+			var pix = this._getRoundNum(maxPix);
+			this._updateScale(scale, pix + ' px', pix / maxPix);
+		}
+	},
+
+	_updateDegrees: function (maxDegrees) {
+		var maxSeconds = maxDegrees * 3600.0,
+		    scale = this._dScale;
+
+		if (maxSeconds < 1.0) {
+			var maxMas = maxSeconds * 1000.0,
+			mas = this._getRoundNum(maxMas);
+			this._updateScale(scale, mas + ' mas', mas / maxMas);
+		} else if (maxSeconds < 60.0) {
+			var seconds = this._getRoundNum(maxSeconds);
+			this._updateScale(scale, seconds + ' &#34;', seconds / maxSeconds);
+		} else if (maxSeconds < 3600.0) {
+			var maxMinutes = maxDegrees * 60.0,
+			    minutes = this._getRoundNum(maxMinutes);
+			this._updateScale(scale, minutes + ' &#39;', minutes / maxMinutes);
+		} else {
+			var degrees = this._getRoundNum(maxDegrees);
+			this._updateScale(scale, degrees + ' &#176;', degrees / maxDegrees);
+		}
+	}
+
+});
+
+L.control.scale.wcs = function (options) {
+	return new L.Control.Scale.WCS(options);
+};
+
+
+
+/*
+# L.Control.Sidebar adds support for responsive side bars
+# Adapted from the leaflet-sidebar plugin by Tobias Bieniek
+# (original copyright notice reproduced below).
+#
+#	This file part of:	VisiOmatic
+#	Copyright:		(C) 2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                        Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 20/11/2015
+
+The MIT License (MIT)
+
+Copyright (c) 2013 Tobias Bieniek
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
+L.Control.Sidebar = L.Control.extend({
+	includes: L.Mixin.Events,
+
+	options: {
+		position: 'left',
+		title: 'Toggle advanced menu',
+		collapsed: true,
+		forceSeparateButton: false
+	},
+
+	/**
+	 * Create a new sidebar on this jQuery object.
+	 *
+	 * @constructor
+	 * @param {string} id - The id of the sidebar element (without the # character)
+	 * @param {Object} [options] - Optional options object
+	 * @param {string} [options.position=left] - Position of the sidebar: 'left' or 'right'
+	 */
+	initialize: function (options) {
+		var i, child;
+
+		L.setOptions(this, options);
+
+		// Create sidebar
+		this._sidebar = L.DomUtil.create('div', 'leaflet-container sidebar');
+		if (this.options.collapsed) {
+			L.DomUtil.addClass(this._sidebar, 'collapsed');
+		} else {
+			L.DomUtil.addClass(this._sidebar, 'closed');
+		}
+		// Attach .sidebar-left/right class
+		L.DomUtil.addClass(this._sidebar, 'sidebar-' + this.options.position);
+
+		// Attach touch styling if necessary
+		if (L.Browser.touch) {
+			L.DomUtil.addClass(this._sidebar, 'leaflet-touch');
+		}
+
+		// Create containers for tabs and their contents (panes)
+		this._tabs = L.DomUtil.create('div', 'sidebar-tabs', this._sidebar);
+		this._tabitems = [];
+
+		this._container = L.DomUtil.create('div', 'sidebar-content', this._sidebar);
+		this._panes = [];
+		this._closeButtons = [];
+	},
+
+	/**
+	 * Add this sidebar to the specified map.
+	 *
+	 * @param {L.Map} map
+	 * @returns {L.Control.Sidebar}
+	 */
+	addTo: function (map) {
+		var className = 'leaflet-control-zoom-sidebar',
+				parent = map._controlContainer,
+		    buttonContainer;
+
+		// Create sidebar
+		L.DomUtil.addClass(map._container, 'sidebar-map');
+		parent.insertBefore(this._sidebar, parent.firstChild);
+		L.DomEvent
+				.disableClickPropagation(this._sidebar)
+				.disableScrollPropagation(this._sidebar);
+
+		this._map = map;
+
+		// Create sidebar toggle button
+		if (map.zoomControl && !this.options.forceSeparateButton) {
+			buttonContainer = map.zoomControl._container;
+		} else {
+			buttonContainer = L.DomUtil.create('div', 'leaflet-bar');
+		}
+
+		this._toggleButton = this._createButton(this.options.title,
+		  className + (this.options.collapsed ? ' collapsed' : ''), buttonContainer);
+
+		return this;
+	},
+
+	// Add sidebar tab list
+	addTabList: function () {
+		this._tablist = L.DomUtil.create('ul', '', this._tabs);
+		this._tablist.setAttribute('role', 'tablist');
+		return this._tablist;
+	},
+
+	// Add sidebar tab
+	addTab: function (id, tabClass, title, content, sideClass) {
+		var	tablist = this._tablist ? this._tablist : this.addTabList(),
+		    item = L.DomUtil.create('li', '', tablist),
+		    button = L.DomUtil.create('a', tabClass, item);
+		item.setAttribute('role', 'tab');
+		item._sidebar = this;
+		button.href = '#' + id;
+		button.id = id + '-toggle';
+		button.title = title;
+		L.DomEvent.on(button, 'click', L.DomEvent.preventDefault);
+		L.DomEvent.on(button, 'click', this._onClick, item);
+		item.sideClass = sideClass;
+		this._tabitems.push(item);
+
+		// Sidebar pane
+		var	pane = L.DomUtil.create('div', 'sidebar-pane', this._container),
+		    header = L.DomUtil.create('h1', 'sidebar-header', pane);
+
+		header.innerHTML = title;
+
+		var closeButton = L.DomUtil.create('div', 'sidebar-close', header);
+		this._closeButtons.push(closeButton);
+		L.DomEvent.on(closeButton, 'click', this._onCloseClick, this);
+		pane.id = id;
+		pane.sideClass = sideClass;
+		pane.appendChild(content);
+		this._panes.push(pane);
+		return pane;
+	},
+
+	/**
+	 * Remove this sidebar from the map.
+	 *
+	 * @param {L.Map} map
+	 * @returns {L.Control.Sidebar}
+	 */
+	removeFrom: function (map) {
+		var i, child;
+
+		this._map = null;
+
+		for (i = this._tabitems.length - 1; i >= 0; i--) {
+			child = this._tabitems[i];
+			L.DomEvent.off(child.querySelector('a'), 'click', this._onClick);
+		}
+
+		for (i = this._closeButtons.length - 1; i >= 0; i--) {
+			child = this._closeButtons[i];
+			L.DomEvent.off(child, 'click', this._onCloseClick, this);
+		}
+
+		return this;
+	},
+
+	/**
+	 * Open sidebar (if necessary) and show the specified tab.
+	 *
+	 * @param {string} id - The id of the tab to show (without the # character)
+	 */
+	open: function (id) {
+		var i, child;
+
+		// hide old active contents and show new content
+		for (i = this._panes.length - 1; i >= 0; i--) {
+			child = this._panes[i];
+			if (child.id === id) {
+				L.DomUtil.addClass(child, 'active');
+				if (child.sideClass) {
+					L.DomUtil.addClass(this._sidebar, child.sideClass);
+				}
+			} else if (L.DomUtil.hasClass(child, 'active')) {
+				L.DomUtil.removeClass(child, 'active');
+				if (child.sideClass) {
+					L.DomUtil.removeClass(this._sidebar, child.sideClass);
+				}
+			}
+		}
+
+		// remove old active highlights and set new highlight
+		for (i = this._tabitems.length - 1; i >= 0; i--) {
+			child = this._tabitems[i];
+			if (child.querySelector('a').hash === '#' + id) {
+				L.DomUtil.addClass(child, 'active');
+			} else if (L.DomUtil.hasClass(child, 'active')) {
+				L.DomUtil.removeClass(child, 'active');
+			}
+		}
+
+		this.fire('content', {id: id});
+
+		// open sidebar (if necessary)
+		if (L.DomUtil.hasClass(this._sidebar, 'closed')) {
+			this.fire('opening');
+			L.DomUtil.removeClass(this._sidebar, 'closed');
+		}
+
+		return this;
+	},
+
+	/**
+	 * Close the sidebar (if necessary).
+	 */
+	close: function () {
+		// remove old active highlights
+		for (var i = this._tabitems.length - 1; i >= 0; i--) {
+			var child = this._tabitems[i];
+			if (L.DomUtil.hasClass(child, 'active')) {
+				L.DomUtil.removeClass(child, 'active');
+				if (child.sideClass) {
+					L.DomUtil.removeClass(this._sidebar, child.sideClass);
+				}
+			}
+		}
+
+		// close sidebar
+		if (!L.DomUtil.hasClass(this._sidebar, 'closed')) {
+			this.fire('closing');
+			L.DomUtil.addClass(this._sidebar, 'closed');
+		}
+
+		return this;
+	},
+
+	/**
+	 * Collapse/Expanding the sidebar.
+	 */
+	toggle: function () {
+		this.close();
+		if (L.DomUtil.hasClass(this._sidebar, 'collapsed')) {
+			L.DomUtil.addClass(this._sidebar, 'closed');
+			this.fire('expanding');
+			L.DomUtil.removeClass(this._sidebar, 'collapsed');
+			L.DomUtil.removeClass(this._toggleButton, 'collapsed');
+		} else {
+			L.DomUtil.removeClass(this._sidebar, 'closed');
+			this.fire('collapsing');
+			L.DomUtil.addClass(this._sidebar, 'collapsed');
+			L.DomUtil.addClass(this._toggleButton, 'collapsed');
+		}
+	},
+
+	/**
+	 * @private
+	 */
+	_onClick: function () {
+		if (L.DomUtil.hasClass(this, 'active')) {
+			this._sidebar.close();
+		} else if (!L.DomUtil.hasClass(this, 'disabled')) {
+			this._sidebar.open(this.querySelector('a').hash.slice(1));
+		}
+	},
+
+	/**
+	 * @private
+	 */
+	_onCloseClick: function () {
+		this.close();
+	},
+
+	/**
+	 * @private
+	 */
+	_createButton: function (title, className, container) {
+		var link = L.DomUtil.create('a', className, container);
+		link.href = '#';
+		link.title = title;
+
+		L.DomEvent
+			.addListener(link, 'click', L.DomEvent.stopPropagation)
+			.addListener(link, 'click', L.DomEvent.preventDefault)
+			.addListener(link, 'click', this.toggle, this);
+
+		return link;
+	}
+
+});
+
+/**
+ * Create a new sidebar on this jQuery object.
+ *
+ * @example
+ * var sidebar = L.control.sidebar('sidebar').addTo(map);
+ *
+ * @param {string} id - The id of the sidebar element (without the # character)
+ * @param {Object} [options] - Optional options object
+ * @param {string} [options.position=left] - Position of the sidebar: 'left' or 'right'
+ * @returns {L.Control.Sidebar} A new sidebar instance
+ */
+L.control.sidebar = function (map, options) {
+	return new L.Control.Sidebar(map, options);
+};
+
+
+/*
+# L.Control.WCS Manage coordinate display and input
+#
+#	This file part of:	VisiOmatic
+#
+#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified: 07/09/2016
+*/
+L.Control.WCS = L.Control.extend({
+	options: {
+		position: 'bottomleft',
+		title: 'Center coordinates. Click to change',
+		coordinates: [{
+			label: 'RA, Dec',
+			units: 'HMS',
+			nativeCelsys: false
+		}],
+		centerQueryKey: 'center',
+		fovQueryKey: 'fov'
+	},
+
+	onAdd: function (map) {
+		// Create coordinate input/display box
+		var _this = this,
+			  className = 'leaflet-control-wcs',
+			  dialog = this._wcsdialog =  L.DomUtil.create('div', className + '-dialog'),
+			  coordSelect = L.DomUtil.create('select', className + '-select', dialog),
+			  choose = document.createElement('option'),
+			  coords = this.options.coordinates,
+			  opt = [],
+			  coordIndex;
+
+		L.DomEvent.disableClickPropagation(coordSelect);
+		this._currentCoord = 0;
+		coordSelect.id = 'leaflet-coord-select';
+		coordSelect.title = 'Switch coordinate system';
+		for (var c in coords) {
+			opt[c] = document.createElement('option');
+			opt[c].text = coords[c].label;
+			coordIndex = parseInt(c, 10);
+			opt[c].value = coordIndex;
+			if (coordIndex === 0) {
+				opt[c].selected = true;
+			}
+			coordSelect.add(opt[c], null);
+		}
+
+		L.DomEvent.on(coordSelect, 'change', function (e) {
+			_this._currentCoord = coordSelect.value;
+			_this._onDrag();
+		});
+
+		var	input = this._wcsinput = L.DomUtil.create('input', className + '-input', dialog);
+
+		L.DomEvent.disableClickPropagation(input);
+		input.type = 'text';
+		input.title = this.options.title;
+
+		// Speech recognition on WebKit engine
+		if ('webkitSpeechRecognition' in window) {
+			input.setAttribute('x-webkit-speech', 'x-webkit-speech');
+		}
+
+		map.on('move zoomend', this._onDrag, this);
+		L.DomEvent.on(input, 'focus', function () {
+			this.setSelectionRange(0, this.value.length);
+		}, input);
+		L.DomEvent.on(input, 'change', function () {
+			this.panTo(this._wcsinput.value);
+		}, this);
+
+		var	clipboardbutton = L.DomUtil.create('div', className + '-clipboard', dialog);
+		clipboardbutton.title = 'Copy to clipboard';
+		L.DomEvent.on(clipboardbutton, 'click', function () {
+			var stateObj = {},
+				url = location.href,
+				wcs = this._map.options.crs,
+				latlng = map.getCenter();
+			L.IIPUtils.flashElement(this._wcsinput);
+			url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
+			  this._latLngToHMSDMS(latlng));
+			url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,
+			  wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
+			history.pushState(stateObj, '', url);
+			L.IIPUtils.copyToClipboard(url);
+		}, this);
+
+		return this._wcsdialog;
+	},
+
+	onRemove: function (map) {
+		map.off('drag', this._onDrag);
+	},
+
+	_onDrag: function (e) {
+		var latlng = this._map.getCenter(),
+		    wcs = this._map.options.crs,
+				coord = this.options.coordinates[this._currentCoord];
+
+		if (wcs.pixelFlag) {
+			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' + latlng.lat.toFixed(0);
+		} else {
+			if (!coord.nativeCelsys && wcs.forceNativeCelsys) {
+				latlng = wcs.celsysToEq(latlng);
+			} else if (coord.nativeCelsys && wcs.forceNativeCelsys === false) {
+				latlng = wcs.eqToCelsys(latlng);
+			}
+			switch (coord.units) {
+			case 'HMS':
+				this._wcsinput.value = this._latLngToHMSDMS(latlng);
+				break;
+			case 'deg':
+				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
+				break;
+			default:
+				this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' + latlng.lat.toFixed(1);
+				break;
+			}
+		}
+	},
+
+	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
+	_latLngToHMSDMS : function (latlng) {
+		var lng = (latlng.lng + 360.0) / 360.0;
+		lng = (lng - Math.floor(lng)) * 24.0;
+		var h = Math.floor(lng),
+		 mf = (lng - h) * 60.0,
+		 m = Math.floor(mf),
+		 sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
+		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
+		 lat = Math.abs(latlng.lat),
+		 sgn = latlng.lat < 0.0 ? '-' : '+',
+		 d = Math.floor(lat);
+		mf = (lat - d) * 60.0;
+		m = Math.floor(mf);
+		sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
+		 (m < 10 ? '0' : '') + m.toString() + ':' +
+		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
+	},
+
+	panTo: function (str) {
+		var re = /^(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g,
+				result = re.exec(str),
+				wcs = this._map.options.crs,
+				coord = this.options.coordinates[this._currentCoord],
+				latlng = wcs.parseCoords(str);
+		if (latlng) {
+			if (wcs.pixelFlag) {
+				this._map.panTo(latlng);
+			} else {
+				if (!coord.nativeCelsys && wcs.forceNativeCelsys) {
+					latlng = wcs.eqToCelsys(latlng);
+				} else if (coord.nativeCelsys && wcs.forceNativeCelsys === false) {
+					latlng = wcs.celsysToEq(latlng);
+				}
+				this._map.panTo(latlng);
+			}
+		} else {
+			// If not, ask Sesame@CDS!
+			L.IIPUtils.requestURL('http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' + str,
+			 'getting coordinates for ' + str, this._getCoordinates, this, 10);
+		}
+	},
+
+	_getCoordinates: function (_this, httpRequest) {
+		if (httpRequest.readyState === 4) {
+			if (httpRequest.status === 200) {
+				var str = httpRequest.responseText,
+					latlng = _this._map.options.crs.parseCoords(str, true);
+
+				if (latlng) {
+					_this._map.panTo(latlng);
+					_this._onDrag();
+				} else {
+					alert(str + ': Unknown location');
+				}
+			} else {
+				alert('There was a problem with the request to the Sesame service at CDS');
+			}
+		}
+	}
+});
+
+L.Map.mergeOptions({
+    positionControl: false
+});
+
+L.Map.addInitHook(function () {
+    if (this.options.positionControl) {
+        this.positionControl = new L.Control.MousePosition();
+        this.addControl(this.positionControl);
+    }
+});
+
+L.control.wcs = function (options) {
+    return new L.Control.WCS(options);
+};
+
+
+/**
+ * This control is just a button that triggers the overlaycatalog event that will be used with the
+ * LIneA - DRI integration
+ */
+L.Control.LineaOverlay = L.Control.extend({
+    options: {
+        position: 'topleft',
+        title: 'Catalog Overlay',
+        forceSeparateButton: false
+    },
+
+    onAdd: function (map) {
+        var className = 'leaflet-control-linea-overlay-catalog', container;
+
+        if (map.zoomControl && !this.options.forceSeparateButton) {
+            container = map.zoomControl._container;
+        } else {
+            container = L.DomUtil.create('div', 'leaflet-bar');
+        }
+
+        this._createButton(this.options.title, className, container, this.onClickLineaOverlayCatalog, map);
+
+        return container;
+    },
+
+    _createButton: function (title, className, container, fn, context) {
+        var link = L.DomUtil.create('a', className, container);
+        link.href = '#';
+        link.title = title;
+
+        L.DomEvent
+            .addListener(link, 'click', L.DomEvent.stopPropagation)
+            .addListener(link, 'click', L.DomEvent.preventDefault)
+            .addListener(link, 'click', fn, context);
+
+
+        return link;
+    },
+
+    onClickLineaOverlayCatalog: function () {
+
+        this.fire('overlaycatalog');
+
+    },
+
+});
+
+L.Map.addInitHook(function () {
+    if (this.options.enableLineaOverlay) {
+        this.lineaoverlayControl = L.control.lineaoverlay();
+        this.addControl(this.lineaoverlayControl);
+    }
+});
+
+L.control.lineaoverlay = function (options) {
+    return new L.Control.LineaOverlay(options);
+};
