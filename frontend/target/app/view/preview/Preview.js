@@ -137,6 +137,13 @@ Ext.define('Target.view.preview.Preview', {
                 pressed: true,
                 hidden: true
             },
+            {
+                xtype: 'button',
+                reference: 'btnSave',
+                iconCls: 'x-fa fa-download',
+                handler: 'onSave',
+                tooltip: 'Show/Hide Download Files',
+            },
             '-',
             {
                 xtype: 'button',
