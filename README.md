@@ -15,7 +15,7 @@ i386 or amd64
 ```
 sudo apt-get update
 sudo apt-get dist-upgrade
-sudo apt-get install python3-pip python3-dev virtualenv git
+sudo apt-get install python3-pip python3-dev virtualenv git   ## use 'python-virtualenv' if 'virtualenv' does not exists
 ```
 
 ## Installation
@@ -35,14 +35,10 @@ chmod 777 dri/log
 
 Create a virtualenv
 
-* In Debian Jessie / Ubuntu OS 14:
-
 ```
 cd ~/dri
 virtualenv --no-site-packages --always-copy --python python3 env
 ```
-
-* Common steps
 
 Activation virtualenv
 
@@ -151,6 +147,7 @@ cd ~/dri
 cat dri.conf | sed -e "s|#BASEPROJECT#|`pwd`|g" -e "s|#PROJECTUSER#|`whoami`|g" > dri.conf_apache
 sudo cp dri.conf_apache /etc/apache2/sites-available/dri.conf
 sudo chmod 644 /etc/apache2/sites-available/dri.conf
+sudo rm -f /etc/apache2/sites-available/000-default.conf
 rm -f dri.conf_apache
 sudo a2ensite dri.conf
 sudo service apache2 restart
