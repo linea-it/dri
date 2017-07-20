@@ -186,3 +186,13 @@ class SurveyViewSet(viewsets.ModelViewSet):
 #             })
 #
 #             return content
+
+@api_view(['GET'])
+def get_fits_files(request):
+    if request.method == 'GET':
+        if request.query_params.get('tilename') == None:
+            return Response(dict({'error': "tilename can't be null"}))
+
+        url = DesoperDatabase().get_fits_by_tilename(request.query_params.get('tilename'))
+
+        return Response(dict({'results': url}))
