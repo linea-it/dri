@@ -726,7 +726,16 @@ class CutoutJobNotify:
     def generate_success_email(self, cutoutjob):
         print("Criando email de sucesso")
 
-        return "<p>This is an <strong>Success</strong> message.</p>"
+
+
+        header = ("<header style=\"background-color: #003466; max-height: 120px;\">"
+                  "<a style=\"color: #e1e1e1; display: flex; justify-content: space-between; align-items: center; max-width: 90%; margin: 0 auto; text-decoration: none\" href=\"http://dri-dev.linea.gov.br/\" title=\"LIneA Science Server\" rel=\"home\">"
+                  "<h1 style=\"font-family: Bitter, Georgia, serif; font-size: 50px; font-weight: bold\">LIneA Science Server</h1>"
+                  "<img style=\"height: 90px\" src=\"http://dri-dev.linea.gov.br/wp-content/uploads/2017/07/des-logo-rev-lg_170x170.png\">"
+                  "</a></header>")
+
+
+        return header
 
 
     def generate_failure_email(self, cutoutjob):
