@@ -35,7 +35,7 @@ Ext.define('Target.view.preview.PreviewController', {
     onImageMenuItemClickVisiomatic: function(event, dataset){
         this.onCommentPosition(event.latlng, dataset);
     },
-    
+
     onChangeRecord: function (record) {
         var me = this,
             view = me.getView(),
@@ -480,6 +480,31 @@ Ext.define('Target.view.preview.PreviewController', {
         } else {
             console.log('Explorer single object');
         }
-    }
+    },
+
+    onSave: function () {
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            object = vm.get('currentRecord'),
+            catalog = vm.get('currentCatalog'),
+            id;
+
+        if (object.get('tilename')) {
+
+          view.setLoading(true);
+          tilename = object.get('tilename');
+
+          var winDownload = Ext.create('Target.view.preview.DescutDownloadWindow');
+          winDownload.loadFits(tilename);
+          winDownload.show();
+          view.setLoading(false);
+        } else {
+
+          alert ('Please select an element.')
+
+        }
+
+    },
 
 });
