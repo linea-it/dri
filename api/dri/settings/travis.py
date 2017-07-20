@@ -23,3 +23,12 @@ DATABASES = {
         'NAME': os.path.join(BASE_PROJECT, 'db/catalog.db'),
     }
 }
+
+DES_CUTOUT_SERVICE = {
+    'HOST': 'http://descut.cosmology.illinois.edu',
+    'USER': None,
+    'PASSWORD': None,
+    'CUTOUT_DIR': 'targets/cutouts',
+    'CUTOUT_SOURCE': '/data',
+    'CUTOUT_TASK_CHECK_JOBS_DELAY': 1
+}
