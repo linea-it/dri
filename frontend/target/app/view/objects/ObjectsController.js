@@ -113,7 +113,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             cutoutsJobs.load()
 
-            // Cria uma Task para verificar se existe cutoutjob
+            // Task para verificar se existe cutoutjob
             if (me.taskCutoutJob !== null) {
                 Ext.TaskManager.stop(me.taskCutoutJob);
                 me.taskCutoutJob = null;
@@ -613,6 +613,11 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.wizard.close();
             me.wizard = null;
         }
+
+        if (me.taskCutoutJob !== null) {
+            Ext.TaskManager.stop(me.taskCutoutJob);
+            me.taskCutoutJob = null;
+        }
     },
 
     onClickFilter: function () {
@@ -888,7 +893,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             if (me.taskCutoutJob === null) {
                 me.taskCutoutJob = {
                     run: me.reloadCutoutJobs,
-                    interval: 10000,
+                    interval: 60000,
                     scope: me
                 };
                 Ext.TaskManager.start(me.taskCutoutJob);
