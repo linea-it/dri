@@ -42,7 +42,7 @@ DES_CUTOUT_SERVICE = {
     'PASSWORD': '<password required for cutout>',
     # Path onde ficaram os arquivos de cutout, esse parametro sera usado em conjunto com DATA_DIR para criar o path
     # absoluto para os arquivos.
-    'CUTOUT_DIR': 'targets/cutouts'
+    'CUTOUT_DIR': 'targets/cutouts',
     # Url base que sera usada para exibir as imagens geradas esse parametro deve ser mapeado no dri.conf no apache
     'CUTOUT_SOURCE': '/data',
     # Tempo de delay para a task check_jobs em minutos
