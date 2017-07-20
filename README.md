@@ -158,10 +158,6 @@ NOTE: using a old system like Ubuntu 14 (or may be an i386), change the WSGI con
 ```
         #### WSGIDaemonProcess dri home=${BASEDIR}/api python-home=${BASEDIR}/env user=${EXECUSER}
         WSGIDaemonProcess dri python-path=${BASEDIR}/api:${BASEDIR}/env/lib/python3.4/site-packages user=${EXECUSER}
-        #### WSGIProcessGroup dri
-        WSGIApplicationGroup dri
-        WSGIProcessGroup dri
-        WSGIPassAuthorization On
 ```
 
 This site alias is configured to dri.com
