@@ -1,17 +1,21 @@
 from __future__ import absolute_import, unicode_literals
+
+from smtplib import SMTPException
+
 from celery import task
 from celery.task.schedules import crontab
 from celery.decorators import periodic_task
 from celery import group
-from product.descutoutservice import DesCutoutService
+from product.descutoutservice import DesCutoutService, CutoutJobNotify
 import math
 from django.utils import timezone
 import os
 import shutil
 from common.download import Download
+from django.core.mail import EmailMessage
 
 descutout = DesCutoutService()
-
+cutoutJobNotify = CutoutJobNotify()
 
 @task(name="start_des_cutout_job_by_id")
 def start_des_cutout_job_by_id(cutoutjob_id):
@@ -153,6 +157,43 @@ def purge_cutoutjob_dir(cutoutjob_id, product=None):
 
     except Exception as e:
         raise e
+
+@task(name="notify_user_by_email")
+def notify_user_by_email(cutoutjob_id):
+    print("Notify user ")
+    logger = descutout.logger
+
+    logger.info("Notify user about Cutout Job [ %s ]" % cutoutjob_id)
+
+    cutoutjob = descutout.get_cutoutjobs_by_id(cutoutjob_id)
+
+    user = cutoutjob.owner
+    logger.debug("User: %s" % user.username)
+
+    try:
+
+        # Dados da Mensagem
+        from_email = "glauber.vila.verde@gmail.com"
+        to_email = "glauber.vila.verde@gmail.com"
+        subject = "Mosaic Finish"
+
+        message = cutoutJobNotify.create_email_message(cutoutjob)
+
+        msg = EmailMessage(
+            subject=subject,
+            body=message,
+            from_email=from_email,
+            to=[to_email],
+            # headers={'Message-ID': 'foo'},
+        )
+        msg.content_subtype = "html"
+        msg.send(fail_silently=False)
+
+        logger.info("Notification send successfull")
+
+    except SMTPException as e:
+        logger.error(e)
+
 
 # @task(name="download_files")
 # def download_files(arq, dir):

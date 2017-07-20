@@ -706,6 +706,35 @@ class CutoutJobsDBHelper:
 
         return self.db.fetchall_dict(stm)
 
+
+
+class CutoutJobNotify:
+
+
+    def create_email_message(self, cutoutjob):
+        print("Criando email")
+
+        if cutoutjob.cjb_status == 'ok':
+            message = self.generate_success_email(cutoutjob)
+
+        elif cutoutjob.cjb_status == 'er':
+            message = self.generate_failure_email(cutoutjob)
+
+        return message
+
+
+    def generate_success_email(self, cutoutjob):
+        print("Criando email de sucesso")
+
+        return "<p>This is an <strong>Success</strong> message.</p>"
+
+
+    def generate_failure_email(self, cutoutjob):
+        print("Criando email de Falha")
+
+        return "<p>This is an <strong>Failure</strong> message.</p>"
+
+
 # def sextodec(xyz, delimiter=None):
 #     """Decimal value from numbers in sexagesimal system.
 #     The input value can be either a floating point number or a string

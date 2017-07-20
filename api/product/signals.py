@@ -4,7 +4,7 @@ from product.models import CutOutJob
 from product.tasks import start_des_cutout_job_by_id
 from product.tasks import download_cutoutjob
 from product.tasks import purge_cutoutjob_dir
-
+from product.tasks import notify_user_by_email
 
 @receiver(post_save, sender=CutOutJob)
 def start_des_cutout_job(sender, instance, created, **kwargs):
@@ -25,12 +25,16 @@ def start_des_cutout_job(sender, instance, created, **kwargs):
             # Quando um Model Cutout Job for marcado como deletado
             purge_cutoutjob_dir.delay(instance.pk)
 
+        elif instance.cjb_status == 'ok':
+            notify_user_by_email.delay(instance.pk)
+
         elif instance.cjb_status == 'je':
             # TODO avisar o usuario que o job deu erro no lado da API.
             pass
 
         elif instance.cjb_status == 'er':
             # TODO avisar o usuario que o job deu erro e talvez abrir um tickect.
+            notify_user_by_email.delay(instance.pk)
             pass
 
 
