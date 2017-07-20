@@ -55,7 +55,8 @@ Ext.define('Target.view.objects.ObjectsModel', {
         },
         cutoutsJobs: {
             type: 'cutoutjobs',
-            autoLoad: false
+            autoLoad: false,
+            storeId: 'CutoutJobs'
         },
         cutouts: {
             type: 'cutouts',

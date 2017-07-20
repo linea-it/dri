@@ -29,6 +29,7 @@ import warnings
 from sqlalchemy import exc as sa_exc
 from sqlalchemy.sql import select
 from sqlalchemy.sql import column
+from common.download import Download
 
 
 class DesCutoutService:
@@ -42,18 +43,24 @@ class DesCutoutService:
 
         self.logger.info("Retrieving settings for des cutout service")
 
-        params = settings.DES_CUTOUT_SERVICE
+        try:
+            params = settings.DES_CUTOUT_SERVICE
+            self.logger.debug(params)
 
-        self.logger.debug(params)
+            self.host = params["HOST"]
+            self.user = params["USER"]
+            self.password = params["PASSWORD"]
 
-        # TODO checar se existem os parametros no settings.
+            self.check_jobs_task_delay = params["CUTOUT_TASK_CHECK_JOBS_DELAY"]
 
-        self.host = params["HOST"]
-        self.user = params["USER"]
-        self.password = params["PASSWORD"]
+            # Diretorio raiz onde ficaram as imagens do cutout
+            self.data_dir = settings.DATA_DIR
+            self.cutout_dir = params["CUTOUT_DIR"]
 
-        # Diretorio raiz onde ficaram as imagens do cutout
-        self.cutout_dir = params["CUTOUT_DIR"]
+        except Exception as e:
+            msg = ("Error in the Cutouts parameters in the settings. "
+                   "Check the DES_CUTOUT_SERVICE section if it is configured correctly. ERROR: %s" % e)
+            raise Exception(msg)
 
         self.host_token = self.host + "/api/token/"
         self.host_jobs = self.host + "/api/jobs/"
@@ -326,7 +333,7 @@ class DesCutoutService:
 
         # Recupera o Model CutoutJob pelo id
         try:
-            cutoutjob = CutOutJob.objects.get(pk=int(id))
+            cutoutjob = self.get_cutoutjobs_by_id(id)
 
             self.logger.debug("CutoutJob Name: %s" % cutoutjob.cjb_display_name)
 
@@ -364,6 +371,9 @@ class DesCutoutService:
         # Pegar todos os CutoutJobs com status = st (Start)
         return CutOutJob.objects.filter(cjb_status=str(status))
 
+    def get_cutoutjobs_by_id(self, id):
+        return CutOutJob.objects.get(pk=int(id))
+
     def change_cutoutjob_status(self, cutoutjob, status):
         self.logger.info("Changing the CutoutJob Status %s for %s" % (cutoutjob.cjb_status, status))
         cutoutjob.cjb_status = status
@@ -393,6 +403,7 @@ class DesCutoutService:
             if list_files is False:
                 # Changing the CutoutJob Status for Error in the DesCutout side.
                 self.change_cutoutjob_status(job, "je")
+                break
 
             if list_files is not None:
                 # Guardar o Arquivo de resultado com os links a serem baixados
@@ -410,7 +421,10 @@ class DesCutoutService:
                 if matched is not None:
                     cutoutdir = self.get_cutout_dir(job)
                     print(matched)
-                    matched_file = self.download_file(matched.get("url"), cutoutdir, matched.get("filename"))
+                    matched_file = Download().download_file_from_url(
+                        matched.get("url"),
+                        cutoutdir,
+                        matched.get("filename"))
 
                     job.cjb_matched_file = matched_file
 
@@ -445,21 +459,33 @@ class DesCutoutService:
                 # Changing the CutoutJob Status for Before Download
                 self.change_cutoutjob_status(job, "bd")
 
-    def get_cutout_dir(self, cutout_job):
+    def get_cutout_dir(self, cutout_job=None, product=None, jobid=None):
         """
         Criar um Diretorio agrupando os jobs de cutouts por produtos
         <product_id>/<cutout_job_id>/*
 
         Args:
-            cutout_job:
+            cutout_job: instancia do model CutoutJob
+            OR
+            product: chave pk do model Product em conjunto com
+            jobid: chave pk do model CutoutJob
 
         Returns: str(<product_id>/<cutout_job_id>/)
-
         """
-        cutout_dir = os.path.join(
-            self.cutout_dir, str(cutout_job.cjb_product_id), str(cutout_job.id))
-
         try:
+            if cutout_job is not None:
+                cutout_dir = os.path.join(
+                    self.data_dir,
+                    self.cutout_dir,
+                    str(cutout_job.cjb_product_id),
+                    str(cutout_job.id))
+            else:
+                cutout_dir = os.path.join(
+                    self.data_dir,
+                    self.cutout_dir,
+                    str(product),
+                    str(jobid))
+
             os.makedirs(cutout_dir)
             return cutout_dir
 
@@ -467,20 +493,6 @@ class DesCutoutService:
             # Cutout path already exists
             return cutout_dir
 
-    def download_file(self, url, cutout_dir, filename):
-        self.logger.info("Downloading File %s From %s" % (filename, url))
-
-        file_path = os.path.join(cutout_dir, filename)
-
-        if not os.path.exists(file_path):
-            urllib.request.urlretrieve(url, file_path)
-            size = os.path.getsize(file_path)
-
-            self.logger.info("Downloading Done! File: %s Size: %s bytes" % (file_path, size))
-        else:
-            self.logger.debug("File %s exists" % filename)
-
-        return file_path
 
     def save_result_links_file(self, cutoutjob, links):
         self.logger.info("Save result links to a file")
@@ -498,8 +510,6 @@ class DesCutoutService:
         return f
 
     def get_catalog_objects(self, job):
-        # print("get_catalog_objects(product_id=%s)" % product_id)
-
         product_id = job.cjb_product_id
         cutoutdir = self.get_cutout_dir(job)
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
@@ -514,13 +524,6 @@ class DesCutoutService:
                 properties.update({property.get("pcc_ucd"): property.get("pcn_column_name").lower().strip()})
                 columns.append(property.get("pcn_column_name"))
 
-        # db_helper = CatalogObjectsViewSetDBHelper(
-        #         catalog.tbl_name,
-        #         schema=catalog.tbl_schema,
-        #         database=catalog.tbl_database,
-        #         columns=columns)
-        #
-        # rows, count = db_helper.query_result(request, properties)
         db_helper = CutoutJobsDBHelper(
             catalog.tbl_name,
             schema=catalog.tbl_schema,
@@ -634,6 +637,11 @@ class DesCutoutService:
                             cutoutjob, filename, thumbname, type, filter=None, object_id=None, object_ra=None,
                             object_dec=None, file_path=None, file_size=None, start=None, finish=None):
 
+        # Tratamento do file_path para remover o path absoluto guardando apenas o path configurado no settings cutoutdir
+        if file_path is not None:
+            file_path = file_path.split(self.cutout_dir)[1]
+            file_path = os.path.join(self.cutout_dir, file_path.strip('/'))
+
         cutout, created = Cutout.objects.update_or_create(
             cjb_cutout_job=cutoutjob,
             ctt_file_name=filename,
@@ -642,9 +650,9 @@ class DesCutoutService:
             ctt_object_id=object_id,
             ctt_object_ra=object_ra,
             ctt_object_dec=object_dec,
-            ctt_file_path=file_path,
-            ctt_file_size=file_size,
             defaults={
+                "ctt_file_size": file_size,
+                "ctt_file_path": file_path,
                 "ctt_thumbname": thumbname,
                 "ctt_download_start_time": start,
                 "ctt_download_finish_time": finish

@@ -331,6 +331,10 @@ class Cutout(models.Model):
     class Meta:
         unique_together = ('cjb_cutout_job', 'ctt_file_name')
 
+        index_together = [
+            ["cjb_cutout_job", "ctt_object_id"],
+        ]
+
     def __str__(self):
         return str(self.pk)
 

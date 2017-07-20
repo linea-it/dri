@@ -6,25 +6,28 @@ from celery import group
 from product.descutoutservice import DesCutoutService
 import math
 from django.utils import timezone
+import os
+import shutil
+from common.download import Download
 
 descutout = DesCutoutService()
-import os
 
 
 @task(name="start_des_cutout_job_by_id")
-def start_des_cutout_job_by_id(id):
+def start_des_cutout_job_by_id(cutoutjob_id):
     """
         Esta Task vai instanciar a Classe DesCutoutService,
         executar o methodo start_job_by_id
         esse job vai enviar o job para o servico do des.
 
-        :param id: Chave pk do model product.CutOutModel
+        :param cutoutjob_id: Chave pk do model product.CutOutModel
     """
-    descutout.start_job_by_id(int(id))
+    descutout.start_job_by_id(int(cutoutjob_id))
 
 
 @periodic_task(
-    run_every=(crontab(minute='*/1')),
+    # run_every=(crontab(minute='*/1')),
+    run_every=(crontab(minute='*/%s' % descutout.check_jobs_task_delay)),
     # run_every=10.0,
     name="check_jobs_running",
     ignore_result=True
@@ -38,111 +41,137 @@ def check_jobs_running():
     descutout.check_jobs()
 
 
-@periodic_task(
-    # run_every=(crontab(minute='*/1')),
-    run_every=30.0,
-    name="check_jobs_to_be_downloaded",
-    # ignore_result=True
-)
-def check_jobs_to_be_downloaded():
+@task(name="download_cutoutjob")
+def download_cutoutjob(id):
     logger = descutout.logger
 
-    # Recuperar todos os jobs com status Before Downloading
-    cutoutjobs = descutout.get_cutoutjobs_by_status('bd')
+    logger.info("Start downloading Cutout Job [ %s ]" % id)
 
-    if cutoutjobs.count() > 0:
+    cutoutjob = descutout.get_cutoutjobs_by_id(id)
 
-        logger.info("There are %s jobs waiting to start downloading" % cutoutjobs.count())
+    # Changing the CutoutJob Status for Downloading
+    descutout.change_cutoutjob_status(cutoutjob, "dw")
 
-        cutoutjob = cutoutjobs.first()
+    cutoutdir = descutout.get_cutout_dir(cutoutjob)
 
-        logger.info("Start downloading Cutout Job [ %s ]" % cutoutjob.pk)
+    allarqs = list()
 
-        # Changing the CutoutJob Status for Downloading
-        descutout.change_cutoutjob_status(cutoutjob, "dw")
+    # Deixar na memoria a lista de objetos ja associada com os nomes dos arquivos
+    objects = descutout.get_objects_from_file(cutoutjob)
 
-        cutoutdir = descutout.get_cutout_dir(cutoutjob)
+    # Recuperar o arquivo de Results
+    with open(cutoutjob.cjb_results_file, 'r') as result_file:
+        lines = result_file.readlines()
+        for url in lines:
+            arq = descutout.parse_result_url(url)
 
-        allarqs = list()
+            # TODO adicionar um parametro para decidir se baixa somente os arquivos pngs.
+            if arq.get('file_type') == 'png':
+                allarqs.append(arq)
 
-        # Deixar na memoria a lista de objetos ja associada com os nomes dos arquivos
-        objects = descutout.get_objects_from_file(cutoutjob)
+                object_id = None
+                object_ra = None
+                object_dec = None
+                file_size = None
+                finish = None
 
-        # Recuperar o arquivo de Results
-        with open(cutoutjob.cjb_results_file, 'r') as result_file:
-            lines = result_file.readlines()
-            for url in lines:
-                arq = descutout.parse_result_url(url)
+                logger.info("Downloading [ %s ]" % arq.get('filename'))
 
-                # TODO adicionar um parametro para decidir se baixa somente os arquivos pngs.
-                if arq.get('file_type') == 'png':
-                    allarqs.append(arq)
+                for obj in objects:
+                    if arq.get("thumbname") == obj.get("thumbname"):
+                        object_id = obj.get("id")
+                        object_ra = obj.get("ra")
+                        object_dec = obj.get("dec")
 
-                    object_id = None
-                    object_ra = None
-                    object_dec = None
+                start = timezone.now()
+                file_path = Download().download_file_from_url(
+                    arq.get('url'),
+                    cutoutdir,
+                    arq.get('filename'),
+                    ignore_errors=True
+                )
 
-                    for obj in objects:
-                        if arq.get("thumbname") == obj.get("thumbname"):
-                            object_id = obj.get("id")
-                            object_ra = obj.get("ra")
-                            object_dec = obj.get("dec")
-
-                    start = timezone.now()
-                    file_path = descutout.download_file(
-                        arq.get('url'),
-                        cutoutdir,
-                        arq.get('filename')
-                    )
-
+                if file_path is not None:
                     file_size = os.path.getsize(file_path)
-
                     finish = timezone.now()
 
-                    cutout = descutout.create_cutout_model(
-                        cutoutjob,
-                        filename=arq.get('filename'),
-                        thumbname=arq.get('thumbname'),
-                        type=arq.get('file_type'),
-                        filter=None,
-                        object_id=object_id,
-                        object_ra=object_ra,
-                        object_dec=object_dec,
-                        file_path=file_path,
-                        file_size=file_size,
-                        start=start,
-                        finish=finish)
+                cutout = descutout.create_cutout_model(
+                    cutoutjob,
+                    filename=arq.get('filename'),
+                    thumbname=arq.get('thumbname'),
+                    type=arq.get('file_type'),
+                    filter=None,
+                    object_id=object_id,
+                    object_ra=object_ra,
+                    object_dec=object_dec,
+                    file_path=file_path,
+                    file_size=file_size,
+                    start=start,
+                    finish=finish)
+
+    result_file.close()
+
+    # Deletar o job no Servico
+    descutout.delete_job(cutoutjob)
+
+    # Changing the CutoutJob Status for Done
+    descutout.change_cutoutjob_status(cutoutjob, "ok")
 
 
-        result_file.close()
+@task(name="purge_cutoutjob_dir")
+def purge_cutoutjob_dir(cutoutjob_id, product=None):
+    """
+        :param cutoutjob_id: Chave pk do model product.CutOutModel
+    """
+    logger = descutout.logger
 
-        # Deletar o job no Servico
-        descutout.delete_job(cutoutjob)
+    logger.info("Purge a Cutout Job [ %s ]" % cutoutjob_id)
 
-        # Changing the CutoutJob Status for Done
-        descutout.change_cutoutjob_status(cutoutjob, "ok")
+    cutoutjob = None
 
+    try:
+        if product is None:
+            cutoutjob = descutout.get_cutoutjobs_by_id(cutoutjob_id)
+            cutout_dir = descutout.get_cutout_dir(cutoutjob)
 
+        else:
+            cutout_dir = descutout.get_cutout_dir(product=product, jobid=cutoutjob_id)
 
+        logger.debug(cutout_dir)
 
-        # @task(name="download_files")
-        # def download_files(arq, dir):
-        #     logger = descutout.logger
-        #     import time
-        #     import random
-        #     # for arq in arqs:
-        #     logger.debug("Iniciando task [ %s ] " % arq['id'])
-        #     # logger.debug("Download Group [ %s ] File: %s" % (group_id, arq.get('filename')))
-        #
-        #     time.sleep(random.randint(1,10))
-        #
-        #     logger.debug("Terminada task [ %s ] " % arq['id'])
-        #         # descutout.download_file(
-        #         #     arq.get('url'),
-        #         #     dir,
-        #         #     arq.get('filename')
-        #         # )
-        #
-        # @task(name="test_callback")
-        # def test_callback():
-        #     print("TESTE CALLBACK")
+        shutil.rmtree(cutout_dir)
+        # shutil.rmtree(cutout_dir, ignore_errors=True)
+
+        logger.info("Removed Dir [ %s ]" % cutout_dir)
+
+        logger.info("Deleting a Cutout Job [ %s ]" % cutoutjob_id)
+
+        if cutoutjob is not None:
+            cutoutjob.delete()
+
+        logger.info("Purge Done!")
+
+    except Exception as e:
+        raise e
+
+# @task(name="download_files")
+# def download_files(arq, dir):
+#     logger = descutout.logger
+#     import time
+#     import random
+#     # for arq in arqs:
+#     logger.debug("Iniciando task [ %s ] " % arq['id'])
+#     # logger.debug("Download Group [ %s ] File: %s" % (group_id, arq.get('filename')))
+#
+#     time.sleep(random.randint(1,10))
+#
+#     logger.debug("Terminada task [ %s ] " % arq['id'])
+#         # descutout.download_file(
+#         #     arq.get('url'),
+#         #     dir,
+#         #     arq.get('filename')
+#         # )
+#
+# @task(name="test_callback")
+# def test_callback():
+#     print("TESTE CALLBACK")

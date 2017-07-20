@@ -36,6 +36,9 @@ Ext.define('Target.view.objects.ObjectsController', {
             },
             '#objects': {
                 update: 'onUpdateObject'
+            },
+            '#CutoutJobs': {
+                load: 'onLoadCutoutJobs'
             }
         }
     },
@@ -46,6 +49,9 @@ Ext.define('Target.view.objects.ObjectsController', {
     wizard: null,
     winDownload: null,
     winCutout: null,
+
+    taskCutoutJob: null,
+
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
         var me = this,
@@ -94,13 +100,25 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             // Adicionar Filtro a store CutoutJobs
             // combobox Mosaic-cutoutJobs
-            cutoutsJobs.addFilter([{
-                property: 'cjb_product',
-                value: currentCatalog.get('id')
-            },{
-                property: 'cjb_status',
-                value: 'ok'
-            }]);
+            cutoutsJobs.addFilter([
+                {
+                    property: 'cjb_product',
+                    value: currentCatalog.get('id')
+                },
+                {
+                    property: 'cjb_status',
+                    value: 'ok'
+                }
+            ]);
+
+            cutoutsJobs.load()
+
+            // Task para verificar se existe cutoutjob
+            if (me.taskCutoutJob !== null) {
+                Ext.TaskManager.stop(me.taskCutoutJob);
+                me.taskCutoutJob = null;
+            }
+
         }
     },
 
@@ -595,6 +613,11 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.wizard.close();
             me.wizard = null;
         }
+
+        if (me.taskCutoutJob !== null) {
+            Ext.TaskManager.stop(me.taskCutoutJob);
+            me.taskCutoutJob = null;
+        }
     },
 
     onClickFilter: function () {
@@ -850,6 +873,45 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.winDownload.setCurrentCatalog(currentCatalog);
 
         me.winDownload.show();
+
+    },
+
+    reloadCutoutJobs: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('cutoutsJobs');
+
+        store.load();
+    },
+
+    onLoadCutoutJobs: function (store) {
+        var me = this,
+            cmb = me.lookup('cmbCutoutJob');
+
+        if (store.count() === 0) {
+            // Start a task que vai ficar verificando se tem jobs com o status ok
+            if (me.taskCutoutJob === null) {
+                me.taskCutoutJob = {
+                    run: me.reloadCutoutJobs,
+                    interval: 60000,
+                    scope: me
+                };
+                Ext.TaskManager.start(me.taskCutoutJob);
+            }
+
+        } else if (store.count() === 1 ){
+            // Como so existe um cutout job setar ele como selecionado na combo box.
+            if (me.taskCutoutJob !== null) {
+                Ext.TaskManager.stop(me.taskCutoutJob);
+            }
+            cmb.select(store.first());
+            me.onSelectCutoutJob();
+
+        } else {
+            if (me.taskCutoutJob !== null) {
+                Ext.TaskManager.stop(me.taskCutoutJob);
+            }
+        }
 
     },
 

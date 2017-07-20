@@ -49,12 +49,14 @@ Ext.define('Target.view.objects.Mosaic', {
 
                     me.createView();
                 }
+            } else {
+                me.createView();
             }
         }
     },
 
     createView: function () {
-        // console.log("Targets Mosaic - createView()");
+        //console.log("Targets Mosaic - createView()");
         var me = this,
             store = me.getStore(),
             labelProperties = me.getLabelProperties(),

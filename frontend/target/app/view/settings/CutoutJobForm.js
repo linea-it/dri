@@ -164,7 +164,6 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     name: 'label_properties',
                                     fieldLabel: 'Properties',
                                     displayField: 'display_name',
-                                    publishes: 'id',
                                     valueField: 'column_name',
                                     queryMode: 'local',
                                     allowBlank: true,

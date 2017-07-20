@@ -289,11 +289,13 @@ Ext.define('Target.view.objects.Panel', {
     clearPanel: function () {
         var me = this,
             vm = me.getViewModel(),
-            gridPanel = me.down('targets-objects-grid');
-        //         refs = me.getReferences(),
-        //         grids = refs.targetsGrid,
-        //         preview = refs.targetsPreviewPanel;
+            gridPanel = me.down('targets-objects-grid'),
+            cardPanel = me.lookup('ObjectCardPanel');
 
+        // Ativar o painel list como default
+        cardPanel.setActiveItem(gridPanel);
+
+        // Limpar as Stores
         vm.getStore('catalogs').removeAll();
         vm.getStore('catalogs').clearFilter(true);
 
@@ -306,13 +308,12 @@ Ext.define('Target.view.objects.Panel', {
         vm.getStore('displayContents').removeAll();
         vm.getStore('displayContents').clearFilter(true);
 
-        // // Desabilitar os botoes
-        // btns.each(function (button) {
-        //     button.disable();
-        // }, this);
+        vm.getStore('cutoutsJobs').removeAll();
+        vm.getStore('cutoutsJobs').clearFilter(true);
 
-        //     // Limpar o painel de preview
-        //     preview.clearPanel();
+        vm.getStore('cutouts').removeAll();
+        vm.getStore('cutouts').clearFilter(true);
+
     }
 });
 

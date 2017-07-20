@@ -24,6 +24,9 @@ Ext.define('Target.view.settings.CutoutJobController', {
 
         vm.set('currentProduct', product);
 
+        contents.removeAll();
+        contents.clearFilter(true);
+
         contents.addFilter({
             property: 'pcn_product_id',
             value: product.get('id')
@@ -94,8 +97,6 @@ Ext.define('Target.view.settings.CutoutJobController', {
 
             values = form.getValues();
 
-            console.log(values);
-
             job = Ext.create('Target.model.CutoutJob', {
                 cjb_product: product.get('id'),
                 cjb_display_name: values.job_name,
@@ -140,8 +141,6 @@ Ext.define('Target.view.settings.CutoutJobController', {
                 job.set('cjb_label_properties', values.label_properties.join().toLowerCase());
 
             }
-
-            console.log('job', '=', job);
 
             // adicionar o record a store e fazer o sync
             cutoutjobs.add(job);
