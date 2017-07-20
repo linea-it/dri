@@ -42,7 +42,7 @@ DES_CUTOUT_SERVICE = {
     'PASSWORD': '<password required for cutout>',
     # Path onde ficaram os arquivos de cutout, esse parametro sera usado em conjunto com DATA_DIR para criar o path
     # absoluto para os arquivos.
-    'CUTOUT_DIR': 'targets/cutouts'
+    'CUTOUT_DIR': 'targets/cutouts',
     # Url base que sera usada para exibir as imagens geradas esse parametro deve ser mapeado no dri.conf no apache
     'CUTOUT_SOURCE': '/data',
     # Tempo de delay para a task check_jobs em minutos
@@ -54,14 +54,51 @@ DES_CUTOUT_SERVICE = {
 SCHEMA_RATING_REJECT = None
 
 
-# Exemple using Mysql need mysqlclient in requiments.txt
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'dri',
-#         'USER': 'driapi',
-#         'PASSWORD': 'driapi',
-#         'HOST': 'localhost',
-#         'PORT': ''
-#     }
-# }
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(asctime)s [%(levelname)s] %(message)s'
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'django.log'),
+        },
+        'descutoutservice': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'cutout.log'),
+            'formatter': 'simple'
+        },
+        'downloads': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOG_DIR, 'downloads.log'),
+            'formatter': 'simple'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'descutoutservice': {
+            'handlers': ['descutoutservice'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'downloads': {
+            'handlers': ['downloads'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    }
+}
