@@ -172,10 +172,10 @@ Due some recent changes, dri login and home does not work in a fresh installed e
 ```
 cd ~/dri/db
 rm -f *
-wget -c http://devel2.linea.gov.br/~riccardo.campisano/dri_db/db_glauber_2017-07-20/dri.db.bz2
-bzip2 -d dri.db.bz2
-wget -c http://devel2.linea.gov.br/~riccardo.campisano/dri_db/db_glauber_2017-07-20/catalog.db.bz2
-bzip2 -d catalog.db.bz2
+wget -c http://devel2.linea.gov.br/~riccardo.campisano/dri_db/db_glauber_2017-07-20/dri.db.gz
+gzip -d dri.db.gz
+wget -c http://devel2.linea.gov.br/~riccardo.campisano/dri_db/db_glauber_2017-07-20/catalog.db.gz
+gzip -d catalog.db.gz
 cd ~/dri/api
 python manage.py migrate
 python manage.py migrate catalog --database=catalog
