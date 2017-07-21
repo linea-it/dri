@@ -296,6 +296,12 @@ class CutOutJob(models.Model):
         max_length=4096, verbose_name='Matched File',
         null=True, blank=True, default=None, help_text="File containing the relations between ra, dec with the image")
 
+    cjb_start_time = models.DateTimeField(
+        auto_now_add=True, null=True, blank=True, verbose_name='Start')
+
+    cjb_finish_time = models.DateTimeField(
+        auto_now_add=False, null=True, blank=True, verbose_name='Finish')
+
     def __str__(self):
         return str(self.cjb_display_name)
 

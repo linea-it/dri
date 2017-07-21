@@ -118,6 +118,10 @@ def download_cutoutjob(id):
     # Deletar o job no Servico
     descutout.delete_job(cutoutjob)
 
+    # Adicionar o tempo de termino
+    cutoutjob.cjb_finish_time = timezone.now()
+    cutoutjob.save()
+
     # Changing the CutoutJob Status for Done
     descutout.change_cutoutjob_status(cutoutjob, "ok")
 
@@ -160,7 +164,6 @@ def purge_cutoutjob_dir(cutoutjob_id, product=None):
 
 @task(name="notify_user_by_email")
 def notify_user_by_email(cutoutjob_id):
-    print("Notify user ")
     logger = descutout.logger
 
     logger.info("Notify user about Cutout Job [ %s ]" % cutoutjob_id)
@@ -171,25 +174,8 @@ def notify_user_by_email(cutoutjob_id):
     logger.debug("User: %s" % user.username)
 
     try:
-
-        # Dados da Mensagem
-        from_email = "glauber.vila.verde@gmail.com"
-        to_email = "glauber.vila.verde@gmail.com"
-        subject = "Mosaic Finish"
-
         message = cutoutJobNotify.create_email_message(cutoutjob)
 
-        msg = EmailMessage(
-            subject=subject,
-            body=message,
-            from_email=from_email,
-            to=[to_email],
-            # headers={'Message-ID': 'foo'},
-        )
-        msg.content_subtype = "html"
-        msg.send(fail_silently=False)
-
-        logger.info("Notification send successfull")
 
     except SMTPException as e:
         logger.error(e)
