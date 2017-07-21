@@ -1,16 +1,18 @@
 from __future__ import absolute_import, unicode_literals
-from celery import task
-from celery.task.schedules import crontab
-from celery.decorators import periodic_task
-from celery import group
-from product.descutoutservice import DesCutoutService
-import math
-from django.utils import timezone
+
 import os
 import shutil
+from smtplib import SMTPException
+
+from celery import task
+from celery.decorators import periodic_task
+from celery.task.schedules import crontab
 from common.download import Download
+from django.utils import timezone
+from product.descutoutservice import DesCutoutService, CutoutJobNotify
 
 descutout = DesCutoutService()
+cutoutJobNotify = CutoutJobNotify()
 
 
 @task(name="start_des_cutout_job_by_id")
@@ -114,6 +116,10 @@ def download_cutoutjob(id):
     # Deletar o job no Servico
     descutout.delete_job(cutoutjob)
 
+    # Adicionar o tempo de termino
+    cutoutjob.cjb_finish_time = timezone.now()
+    cutoutjob.save()
+
     # Changing the CutoutJob Status for Done
     descutout.change_cutoutjob_status(cutoutjob, "ok")
 
@@ -153,6 +159,25 @@ def purge_cutoutjob_dir(cutoutjob_id, product=None):
 
     except Exception as e:
         raise e
+
+
+@task(name="notify_user_by_email")
+def notify_user_by_email(cutoutjob_id):
+    logger = descutout.logger
+
+    logger.info("Notify user about Cutout Job [ %s ]" % cutoutjob_id)
+
+    cutoutjob = descutout.get_cutoutjobs_by_id(cutoutjob_id)
+
+    user = cutoutjob.owner
+    logger.debug("User: %s" % user.username)
+
+    try:
+        cutoutJobNotify.create_email_message(cutoutjob)
+
+
+    except SMTPException as e:
+        logger.error(e)
 
 # @task(name="download_files")
 # def download_files(arq, dir):

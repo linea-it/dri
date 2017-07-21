@@ -12,3 +12,4 @@ sqlparse==0.1.19
 django-allauth==0.31.0
 SQLAlchemy==1.1.9
 celery==4.0.2
+humanize==0.5.1

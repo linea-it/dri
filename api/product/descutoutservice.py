@@ -1,35 +1,26 @@
+import csv
+import datetime
+import logging
 import os
+import warnings
+from pprint import pformat
 
-import shutil
-import urllib
-from django.utils import timezone
-from pprint import pprint, pformat
-
-from coadd.models import Release, Tag
-from common.models import Filter
-from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation
-from product_classifier.models import ProductClass, ProductClassContent
-from product_register.models import ProcessRelease
-from rest_framework import status
-from rest_framework.response import Response
-from django.db.models import Q
-from django.conf import settings
+import humanize
 import requests
+from common.download import Download
+from django.conf import settings
+from django.core.mail import EmailMessage
+from django.db.models import Sum
+from django.template.loader import render_to_string
+from django.utils import timezone
+from lib.CatalogDB import CatalogDB
+from product.models import Catalog, ProductContentAssociation
 from product.models import CutOutJob
 from product.models import Cutout
-from common.models import Filter
 from product.serializers import AssociationSerializer
-from os import mkdir, path
-import csv
-# from .views_db import CutoutJobsDBHelper
-import logging
-from lib.CatalogDB import CatalogDB
-from lib.CatalogDB import DBBase
-import warnings
 from sqlalchemy import exc as sa_exc
-from sqlalchemy.sql import select
 from sqlalchemy.sql import column
-from common.download import Download
+from sqlalchemy.sql import select
 
 
 class DesCutoutService:
@@ -337,8 +328,10 @@ class DesCutoutService:
 
             self.logger.debug("CutoutJob Name: %s" % cutoutjob.cjb_display_name)
 
-            self.start_job(cutoutjob)
+            # Notificacao por email
+            CutoutJobNotify().create_email_message(cutoutjob)
 
+            self.start_job(cutoutjob)
 
         except CutOutJob.DoesNotExist as e:
             self.logger.critical(e)
@@ -492,7 +485,6 @@ class DesCutoutService:
         except OSError:
             # Cutout path already exists
             return cutout_dir
-
 
     def save_result_links_file(self, cutoutjob, links):
         self.logger.info("Save result links to a file")
@@ -706,29 +698,130 @@ class CutoutJobsDBHelper:
 
         return self.db.fetchall_dict(stm)
 
-# def sextodec(xyz, delimiter=None):
-#     """Decimal value from numbers in sexagesimal system.
-#     The input value can be either a floating point number or a string
-#     such as "hh mm ss.ss" or "dd mm ss.ss". Delimiters other than " "
-#     can be specified using the keyword ``delimiter``.
-#     """
-#     divisors = [1, 60.0, 3600.0]
-#
-#     xyzlist = str(xyz).split(delimiter)
-#
-#     sign = 1
-#
-#     if "-" in xyzlist[0]:
-#         sign = -1
-#
-#     xyzlist = [abs(float(x)) for x in xyzlist]
-#
-#     decimal_value = 0
-#
-#     for i, j in zip(xyzlist, divisors):  # if xyzlist has <3 values then
-#         # divisors gets clipped.
-#         decimal_value += i / j
-#
-#     decimal_value = -decimal_value if sign == -1 else decimal_value
-#
-#     return decimal_value
+
+class CutoutJobNotify:
+    def __init__(self):
+        # Get an instance of a logger
+        self.logger = logging.getLogger("descutoutservice")
+
+    def send_email(self, subject, body, from_email, to):
+
+        self.logger.info("Sending mail notification.")
+
+        try:
+            msg = EmailMessage(
+                subject=subject,
+                body=body,
+                from_email=from_email,
+                to=[to],
+            )
+            msg.content_subtype = "html"
+            msg.send(fail_silently=False)
+
+        except Exception as e:
+            self.logger.error(e)
+
+    def create_email_message(self, cutoutjob):
+
+        if cutoutjob.owner.email:
+            to_email = cutoutjob.owner.email
+            try:
+                from_email = settings.EMAIL_NOTIFICATION
+            except:
+                raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
+
+            if cutoutjob.cjb_status == 'st':
+                subject = "LIneA Science Server - Mosaic in progress"
+                message = self.generate_start_email(cutoutjob)
+
+            elif cutoutjob.cjb_status == 'ok':
+                subject = "LIneA Science Server - Mosaic Finish"
+                message = self.generate_success_email(cutoutjob)
+
+            elif cutoutjob.cjb_status == 'er':
+                subject = "LIneA Science Server - Mosaic Failed"
+                message = self.generate_failure_email(cutoutjob)
+
+            elif cutoutjob.cjb_status == 'je':
+                subject = "LIneA Science Server - Mosaic Failed"
+                message = self.generate_failure_email(cutoutjob)
+
+            if message:
+                self.send_email(subject, message, from_email, to_email)
+
+        else:
+            self.logger.info("It was not possible to notify the user, for not having the email registered.")
+
+    def generate_success_email(self, cutoutjob):
+        try:
+
+            tag = None
+            files_size = None
+            start = cutoutjob.cjb_start_time
+            finish = cutoutjob.cjb_finish_time
+
+            if cutoutjob.cjb_tag:
+                tag = cutoutjob.cjb_tag.upper()
+
+            if cutoutjob.cutout_set.count():
+                sum_sizes = cutoutjob.cutout_set.aggregate(sum_size=Sum('ctt_file_size'))
+                files_size = humanize.naturalsize(sum_sizes.get("sum_size"))
+
+            tdelta = finish - start
+            seconds = tdelta.total_seconds()
+            execution_time = str(datetime.timedelta(seconds=seconds)).split('.')[0]
+            execution_time_humanized = humanize.naturaldelta(datetime.timedelta(seconds=seconds))
+
+            context = dict({
+                "username": cutoutjob.owner.username,
+                "target_display_name": cutoutjob.cjb_product.prd_display_name,
+                "cutoutjob_display_name": cutoutjob.cjb_display_name,
+                "cutoutjob_type:": cutoutjob.cjb_job_type,
+                "cutoutjob_tag": tag,
+                "cutoutjob_xsize": int((float(cutoutjob.cjb_xsize) * 60)),  # converter para arcsec
+                "cutoutjob_ysize": int((float(cutoutjob.cjb_ysize) * 60)),
+                "n_objects": cutoutjob.cjb_product.table.catalog.ctl_num_objects,
+                "n_files": cutoutjob.cutout_set.count(),
+                "files_size": files_size,
+                "start": str(start.strftime("%Y-%m-%d %H:%M")),
+                "finish": str(finish.strftime("%Y-%m-%d %H:%M")),
+                "execution_time": execution_time,
+                "execution_time_humanized": execution_time_humanized
+
+            })
+
+            return render_to_string("cutout_notification_finish.html", context)
+
+        except Exception as e:
+            self.logger.error(e)
+
+    def generate_start_email(self, cutoutjob):
+        try:
+            context = dict({
+                "username": cutoutjob.owner.username,
+                "target_display_name": cutoutjob.cjb_product.prd_display_name
+            })
+
+            return render_to_string("cutout_notification_start.html", context)
+
+        except Exception as e:
+            self.logger.error(e)
+
+    def generate_failure_email(self, cutoutjob):
+        try:
+            start = cutoutjob.cjb_start_time
+            finish = timezone.now()
+            tdelta = finish - start
+            seconds = tdelta.total_seconds()
+            execution_time_humanized = humanize.naturaldelta(datetime.timedelta(seconds=seconds))
+
+            context = dict({
+                "username": cutoutjob.owner.username,
+                "target_display_name": cutoutjob.cjb_product.prd_display_name,
+                "execution_time_humanized": execution_time_humanized
+            })
+
+            return render_to_string("cutout_notification_error.html", context)
+
+        except Exception as e:
+            self.logger.error(e)
