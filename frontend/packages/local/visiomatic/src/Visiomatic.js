@@ -1001,7 +1001,7 @@ Ext.define('visiomatic.Visiomatic', {
         if (arguments.length==2){
             latlng = ra;
             iconCls = dec;
-            iconAnchor = [6,22];//28];
+            iconAnchor = [10,22];//28];
         }else{
             latlng = l.latLng(dec, ra);
             iconAnchor = [8,44];
