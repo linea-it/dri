@@ -1,4 +1,4 @@
-import cx_Oracle
+#import cx_Oracle
 from coadd.models import Release, Dataset, Tile, Tag
 from django.conf import settings
 from pprint import pprint
