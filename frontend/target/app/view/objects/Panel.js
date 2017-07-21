@@ -70,6 +70,7 @@ Ext.define('Target.view.objects.Panel', {
                     {
                         xtype: 'button',
                         iconCls: 'x-fa fa-commenting',
+                        tooltip: 'Open Comments',
                         bind: {
                             //disabled: '{!currentRecord._meta_id}'
                         },
