@@ -29,13 +29,10 @@ def start_des_cutout_job(sender, instance, created, **kwargs):
             notify_user_by_email.delay(instance.pk)
 
         elif instance.cjb_status == 'je':
-            # TODO avisar o usuario que o job deu erro no lado da API.
-            pass
+            notify_user_by_email.delay(instance.pk)
 
         elif instance.cjb_status == 'er':
-            # TODO avisar o usuario que o job deu erro e talvez abrir um tickect.
             notify_user_by_email.delay(instance.pk)
-            pass
 
 
 @receiver(post_delete, sender=CutOutJob)

@@ -1,21 +1,19 @@
 from __future__ import absolute_import, unicode_literals
 
+import os
+import shutil
 from smtplib import SMTPException
 
 from celery import task
-from celery.task.schedules import crontab
 from celery.decorators import periodic_task
-from celery import group
-from product.descutoutservice import DesCutoutService, CutoutJobNotify
-import math
-from django.utils import timezone
-import os
-import shutil
+from celery.task.schedules import crontab
 from common.download import Download
-from django.core.mail import EmailMessage
+from django.utils import timezone
+from product.descutoutservice import DesCutoutService, CutoutJobNotify
 
 descutout = DesCutoutService()
 cutoutJobNotify = CutoutJobNotify()
+
 
 @task(name="start_des_cutout_job_by_id")
 def start_des_cutout_job_by_id(cutoutjob_id):
@@ -162,6 +160,7 @@ def purge_cutoutjob_dir(cutoutjob_id, product=None):
     except Exception as e:
         raise e
 
+
 @task(name="notify_user_by_email")
 def notify_user_by_email(cutoutjob_id):
     logger = descutout.logger
@@ -174,12 +173,11 @@ def notify_user_by_email(cutoutjob_id):
     logger.debug("User: %s" % user.username)
 
     try:
-        message = cutoutJobNotify.create_email_message(cutoutjob)
+        cutoutJobNotify.create_email_message(cutoutjob)
 
 
     except SMTPException as e:
         logger.error(e)
-
 
 # @task(name="download_files")
 # def download_files(arq, dir):

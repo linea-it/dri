@@ -1,42 +1,26 @@
-import os
-
-import shutil
-import urllib
-from django.utils import timezone
-from pprint import pprint, pformat
-
-from coadd.models import Release, Tag
-from common.models import Filter
-from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation
-from product_classifier.models import ProductClass, ProductClassContent
-from product_register.models import ProcessRelease
-from rest_framework import status
-from rest_framework.response import Response
-from django.db.models import Q
-from django.conf import settings
-import requests
-from product.models import CutOutJob
-from product.models import Cutout
-from common.models import Filter
-from product.serializers import AssociationSerializer
-from os import mkdir, path
 import csv
-# from .views_db import CutoutJobsDBHelper
+import datetime
 import logging
-from lib.CatalogDB import CatalogDB
-from lib.CatalogDB import DBBase
+import os
 import warnings
-from sqlalchemy import exc as sa_exc
-from sqlalchemy.sql import select
-from sqlalchemy.sql import column
+from pprint import pformat
+
+import humanize
+import requests
 from common.download import Download
-from django.template.loader import render_to_string
-from django.template import Context
+from django.conf import settings
 from django.core.mail import EmailMessage
 from django.db.models import Sum
-from common.download import Download
-import datetime
-import humanize
+from django.template.loader import render_to_string
+from django.utils import timezone
+from lib.CatalogDB import CatalogDB
+from product.models import Catalog, ProductContentAssociation
+from product.models import CutOutJob
+from product.models import Cutout
+from product.serializers import AssociationSerializer
+from sqlalchemy import exc as sa_exc
+from sqlalchemy.sql import column
+from sqlalchemy.sql import select
 
 
 class DesCutoutService:
@@ -344,8 +328,10 @@ class DesCutoutService:
 
             self.logger.debug("CutoutJob Name: %s" % cutoutjob.cjb_display_name)
 
-            self.start_job(cutoutjob)
+            # Notificacao por email
+            CutoutJobNotify().create_email_message(cutoutjob)
 
+            self.start_job(cutoutjob)
 
         except CutOutJob.DoesNotExist as e:
             self.logger.critical(e)
@@ -744,7 +730,11 @@ class CutoutJobNotify:
             except:
                 raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
-            if cutoutjob.cjb_status == 'ok':
+            if cutoutjob.cjb_status == 'st':
+                subject = "LIneA Science Server - Mosaic in progress"
+                message = self.generate_start_email(cutoutjob)
+
+            elif cutoutjob.cjb_status == 'ok':
                 subject = "LIneA Science Server - Mosaic Finish"
                 message = self.generate_success_email(cutoutjob)
 
@@ -752,11 +742,15 @@ class CutoutJobNotify:
                 subject = "LIneA Science Server - Mosaic Failed"
                 message = self.generate_failure_email(cutoutjob)
 
-            self.send_email(subject, message, from_email, to_email)
+            elif cutoutjob.cjb_status == 'je':
+                subject = "LIneA Science Server - Mosaic Failed"
+                message = self.generate_failure_email(cutoutjob)
+
+            if message:
+                self.send_email(subject, message, from_email, to_email)
 
         else:
             self.logger.info("It was not possible to notify the user, for not having the email registered.")
-
 
     def generate_success_email(self, cutoutjob):
         try:
@@ -801,11 +795,33 @@ class CutoutJobNotify:
         except Exception as e:
             self.logger.error(e)
 
+    def generate_start_email(self, cutoutjob):
+        try:
+            context = dict({
+                "username": cutoutjob.owner.username,
+                "target_display_name": cutoutjob.cjb_product.prd_display_name
+            })
+
+            return render_to_string("cutout_notification_start.html", context)
+
+        except Exception as e:
+            self.logger.error(e)
+
     def generate_failure_email(self, cutoutjob):
         try:
-            template = render_to_string("cutout_notification_finish.html", {"test": "Glauber"})
+            start = cutoutjob.cjb_start_time
+            finish = timezone.now()
+            tdelta = finish - start
+            seconds = tdelta.total_seconds()
+            execution_time_humanized = humanize.naturaldelta(datetime.timedelta(seconds=seconds))
 
-            # print(template)
+            context = dict({
+                "username": cutoutjob.owner.username,
+                "target_display_name": cutoutjob.cjb_product.prd_display_name,
+                "execution_time_humanized": execution_time_humanized
+            })
+
+            return render_to_string("cutout_notification_error.html", context)
+
         except Exception as e:
-            print("DEU ERRO ")
-            raise (e)
+            self.logger.error(e)
