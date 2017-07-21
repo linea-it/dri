@@ -26,7 +26,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
-USE_OAUTH = False
+USE_OAUTH = True
 
 # Application definition
 
