@@ -880,21 +880,7 @@ Ext.define('visiomatic.Visiomatic', {
 
                 return circle;
             }
-        }).bindPopup(function (layer) {
-            var feature = layer.feature,
-                popup = '<TABLE style="margin:auto;">' +
-                   '<TBODY style="vertical-align:top;text-align:left;">' +
-                        '<TR><TD><spam style="font-weight: bold;">ID </spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
-                        // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
-                        // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
-                        '<TR><TD><spam style="font-weight: bold;">RA, Dec (deg)</spam>: </TD><TD>' +
-                            feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
-                        '</td></tr>' +
-                    '</TBODY></TABLE>';
-
-            return popup;
-
-        }).on('dblclick', function () {
+        }).bindPopup(me.createOverlayPopup).on('dblclick', function () {
             alert('TODO: OPEN IN EXPLORER!');
         })
         /**
@@ -920,16 +906,28 @@ Ext.define('visiomatic.Visiomatic', {
 
     createOverlayPopup: function (layer) {
         var feature = layer.feature,
-            popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
-               '<TABLE style="margin:auto;">' +
-               '<TBODY style="vertical-align:top;text-align:left;">' +
-                    '<TR><TD><spam>ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
-                    // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
-                    // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
-                    '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
-                        feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
-                    '</td></tr>' +
-                '</TBODY></TABLE>';
+            popup,
+            mags;
+
+        mags = ["_meta_mag_auto_g", "_meta_mag_auto_r", "_meta_mag_auto_i", "_meta_mag_auto_z", "_meta_mag_auto_y"];
+
+        Ext.each(mags, function(prop_mag){
+            console.log(prop_mag)
+            if (prop_mag in feature.properties){
+                console.log("FUNCIONA")
+            }
+        });
+
+        popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
+           '<TABLE style="margin:auto;">' +
+           '<TBODY style="vertical-align:top;text-align:left;">' +
+                '<TR><TD><spam>ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
+                // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
+                // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
+                '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
+                    feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
+                '</td></tr>' +
+            '</TBODY></TABLE>';
 
         return popup;
     },
