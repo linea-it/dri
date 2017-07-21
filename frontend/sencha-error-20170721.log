@@ -1,0 +1,94 @@
+Sencha Cmd 6.5.0.180 - Crash report
+================================================
+An error occurred while executing the following command: ant sass
+
+Diagnostic information:
+=======================
+                    buildenvironment.dir : /home/fabio/dri/frontend                          
+               buildenvironment.load.dir : /home/fabio/dri/frontend                          
+                          cmd.config.dir : /root/bin/Sencha/Cmd/6.5.0.180                    
+                                 cmd.dir : /root/bin/Sencha/Cmd/6.5.0.180                    
+              cmd.merge.tool.args.araxis : -wait -merge -3 -a1 {base} {user} {generated} {out}
+              cmd.merge.tool.args.kdiff3 : {base} {user} {generated} -o {out}                
+             cmd.merge.tool.args.p4merge : {base} {user} {generated} {out}                   
+           cmd.merge.tool.args.smartsync : {user} {generated} {base}                         
+          cmd.merge.tool.args.sourcegear : --merge --result={out} {user} {base} {generated}  
+            cmd.merge.tool.args.tortoise : -base:{base} -theirs:{generated} -mine:{user} -merged:{out}
+                              cmd.minver : 3.0.0.0                                           
+                            cmd.platform : linux                                             
+                     cmd.unicode.escapes : /root/bin/Sencha/Cmd/6.5.0.180/unicode-escapes.json
+                             cmd.version : 6.5.0.180                                         
+                            cmd.web.port : 1841                                              
+                                 ext.dir : /home/fabio/dri/frontend/ext                      
+                       inspector.address : http://localhost:1839/                            
+                          repo.local.dir : /root/bin/Sencha/Cmd/repo                         
+                       shared.sencha.dir : false                                             
+        system.java.net.useSystemProxies : true                                              
+                          workspace.apps : tile,tiles,sky,eyeballing,catalogserver,target,home,products,explorer
+                        workspace.apps.0 : tile                                              
+                        workspace.apps.1 : tiles                                             
+                        workspace.apps.2 : sky                                               
+                        workspace.apps.3 : eyeballing                                        
+                        workspace.apps.4 : catalogserver                                     
+                        workspace.apps.5 : target                                            
+                        workspace.apps.6 : home                                              
+                        workspace.apps.7 : products                                          
+                        workspace.apps.8 : explorer                                          
+                   workspace.apps.length : 9                                                 
+                     workspace.build.dir : /home/fabio/dri/frontend/build                    
+                   workspace.cmd.version : 6.0.2.14                                          
+                    workspace.config.dir : /home/fabio/dri/frontend/.sencha/workspace        
+                           workspace.dir : /home/fabio/dri/frontend                          
+           workspace.frameworks.ext.path : /home/fabio/dri/frontend/ext                      
+                  workspace.packages.dir : /home/fabio/dri/frontend/packages/local,/home/fabio/dri/frontend/packages
+              workspace.packages.extract : /home/fabio/dri/frontend/packages/remote          
+                     workspace.theme.dir : /home/fabio/dri/frontend/packages/local,/home/fabio/dri/frontend/packages/${args.themeName}
+
+Exception information:
+=======================
+java.io.FileNotFoundException: /home/fabio/dri/frontend/build.xml (Arquivo ou diretório não encontrado)
+     at org.apache.tools.ant.helper.ProjectHelper2.parse(ProjectHelper2.java:328)
+     at org.apache.tools.ant.helper.ProjectHelper2.parse(ProjectHelper2.java:178)
+     at org.apache.tools.ant.ProjectHelper.configureProject(ProjectHelper.java:82)
+     at com.sencha.ant.AntScript.init(AntScript.java:222)
+     at com.sencha.command.ant.AntCommand.execute(AntCommand.java:106)
+     at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+     at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+     at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+     at java.lang.reflect.Method.invoke(Method.java:498)
+     at com.sencha.util.MethodInvoker$Arguments.invoke(MethodInvoker.java:175)
+     at com.sencha.cli.Command.dispatch(Command.java:43)
+     at com.sencha.cli.Commands.dispatch(Commands.java:64)
+     at com.sencha.command.Sencha.dispatch(Sencha.java:79)
+     at com.sencha.command.Sencha.main(Sencha.java:146)
+     at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+     at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+     at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+     at java.lang.reflect.Method.invoke(Method.java:498)
+     at com.exe4j.runtime.LauncherEngine.launch(LauncherEngine.java:65)
+     at com.install4j.runtime.launcher.UnixLauncher.main(UnixLauncher.java:57)
+   Caused by: /home/fabio/dri/frontend/build.xml (Arquivo ou diretório não encontrado)
+     at java.io.FileInputStream.open0(Native Method)
+     at java.io.FileInputStream.open(FileInputStream.java:195)
+     at java.io.FileInputStream.<init>(FileInputStream.java:138)
+     at org.apache.tools.ant.helper.ProjectHelper2.parse(ProjectHelper2.java:278)
+     at org.apache.tools.ant.helper.ProjectHelper2.parse(ProjectHelper2.java:178)
+     at org.apache.tools.ant.ProjectHelper.configureProject(ProjectHelper.java:82)
+     at com.sencha.ant.AntScript.init(AntScript.java:222)
+     at com.sencha.command.ant.AntCommand.execute(AntCommand.java:106)
+     at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+     at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+     at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+     at java.lang.reflect.Method.invoke(Method.java:498)
+     at com.sencha.util.MethodInvoker$Arguments.invoke(MethodInvoker.java:175)
+     at com.sencha.cli.Command.dispatch(Command.java:43)
+     at com.sencha.cli.Commands.dispatch(Commands.java:64)
+     at com.sencha.command.Sencha.dispatch(Sencha.java:79)
+     at com.sencha.command.Sencha.main(Sencha.java:146)
+     at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+     at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+     at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+     at java.lang.reflect.Method.invoke(Method.java:498)
+     at com.exe4j.runtime.LauncherEngine.launch(LauncherEngine.java:65)
+     at com.install4j.runtime.launcher.UnixLauncher.main(UnixLauncher.java:57)
+
