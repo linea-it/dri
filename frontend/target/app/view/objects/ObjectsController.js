@@ -700,8 +700,8 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onCommentButton: function(event){
-        var refs = me.getReferences();
-        refs.targetsPreviewPanel.getController().onObjectMenuItemClickVisiomatic({});
+        this.getReferences()
+            .targetsPreviewPanel.getController().onObjectMenuItemClickVisiomatic({});
     },
 
     /**
