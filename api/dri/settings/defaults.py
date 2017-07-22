@@ -186,8 +186,24 @@ REST_FRAMEWORK = {
 
 SITE_ID = 1
 
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS=True
 LOGIN_REDIRECT_URL = '/'
 SOCIALACCOUNT_QUERY_EMAIL = True
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'SCOPE': ['email'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'METHOD': 'oauth2',
+        'VERIFIED_EMAIL': False
+    },
+    'google': {
+        'SCOPE': ['email'],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
 
 # CELERY SETTINGS
 # start celery with
