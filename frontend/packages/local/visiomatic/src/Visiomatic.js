@@ -662,8 +662,33 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     onMouseMove: function (event) {
-        var pos = String(event.latlng.lng.toFixed(5) + ', ' + event.latlng.lat.toFixed(5));
+        var pos = String(event.latlng.lng.toFixed(5) + ', ' + event.latlng.lat.toFixed(5)),
+            me = this,
+            map = me.getMap();
         this.cmpMousePosition.el.dom.children[0].innerHTML = 'Mouse RA, Dec ('+(pos)+')';
+
+        me.currentPosition = {
+            radec: [
+                event.latlng.lng.toFixed(5),
+                event.latlng.lat.toFixed(5)
+            ],
+            container: [
+                event.containerPoint.x,
+                event.containerPoint.y
+            ]
+        };
+
+        if (me.cropInit && me.cropInit == me.cropEnd) {
+            if (me.cropRectangle) {
+                map.removeLayer(me.cropRectangle);
+            }
+
+            me.cropRectangle = me.drawRectangle(
+                me.cropInit['radec'],
+                me.currentPosition['radec']
+            );
+        }
+
         //me.fireEvent('changemouseposition', event, me);
     },
 
@@ -1166,11 +1191,81 @@ Ext.define('visiomatic.Visiomatic', {
                         handler: function(item) {
                             me.fireEvent('imageMenuItemClick', event, me.getCurrentDataset());
                         }
-                    }]
+                    },
+                    {
+                        id: 'crop-image',
+                        text: 'Crop Image',
+                        handler: function(item) {
+                            me.startCrop(event);
+                        }
+                    }
+                  ]
             });
         }
 
         this.contextMenuImage.showAt(xy);
+    },
+
+    startCrop: function(event){
+        var me = this,
+            map = me.getMap();
+
+        me.cropInit = me.currentPosition
+        me.cropEnd = me.cropInit;
+
+        map.on('click', me.endCrop, me);
+    },
+
+    endCrop: function(event){
+        var me = this,
+            map = me.getMap();
+
+        me.cropEnd = me.currentPosition
+        map.removeLayer(me.cropRectangle);
+        map.off('click', me.endCrop, me);
+        me.downloadCrop(me.cropInit, me.cropEnd);
+    },
+
+    downloadCrop: function(init, end){
+        var me = this,
+            libL = me.libL,
+            map = me.getMap(),
+            hiddenlink = document.createElement('a'),
+            layer = me.getImageLayer();
+
+        var	latlng = map.getCenter(),
+            bounds = map.getPixelBounds(),
+            z = map.getZoom(),
+            zfac;
+
+        if (z > layer.iipMaxZoom) {
+            zfac = Math.pow(2, z - layer.iipMaxZoom);
+            z = layer.iipMaxZoom;
+        } else {
+            zfac = 1;
+        }
+
+        var	sizex = layer.iipImageSize[z].x * zfac,
+            sizey = layer.iipImageSize[z].y * zfac,
+            dx = Math.abs(init.container[0] - end.container[0]),
+            dy = Math.abs(init.container[1] - end.container[1]);
+
+        var origin = {
+            x: bounds.min.x + Math.min(init.container[0], end.container[0]),
+            y: bounds.min.y + Math.min(init.container[1], end.container[1])
+        }
+
+        hiddenlink.href = layer.getTileUrl({x: 1, y: 1}
+          ).replace(/JTL\=\d+\,\d+/g,
+          'RGN=' + origin.x / sizex + ',' +
+          origin.y / sizey + ',' +
+          dx / sizex + ',' + dy / sizey +
+          '&WID=' + (this._snapType === 0 ?
+            Math.floor(dx / zfac) :
+            Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
+        hiddenlink.download = layer._title + '_' + libL.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
+          '.jpg';
+        hiddenlink.click();
     },
 
     showContextMenuObject: function(event){
