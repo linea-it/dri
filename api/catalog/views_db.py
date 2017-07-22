@@ -399,5 +399,3 @@ class CatalogObjectsViewSetDBHelper:
         count = self.db.stm_count(stm)
 
         return result, count
-
-
