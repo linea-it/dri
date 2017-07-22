@@ -377,6 +377,8 @@ Ext.define('visiomatic.Visiomatic', {
         // Profile Overlays
         libL.control.iip.profile().addTo(sidebar);
 
+        libL.control.iip.snapshot().addTo(sidebar);
+
         sidebar.addTabList();
 
     },
@@ -655,7 +657,7 @@ Ext.define('visiomatic.Visiomatic', {
         var me = this,
             radec = me.getRaDec(),
             fov = me.getFov();
-            
+
         me.fireEvent('changeposition', radec, fov, me);
     },
 
@@ -749,7 +751,7 @@ Ext.define('visiomatic.Visiomatic', {
                 }
             },
             pointToLayer: function (feature, latlng) {
-                
+
                 path_options = Ext.Object.merge(radiusOptions, {
                     majAxis: radius,
                     minAxis: radius,
@@ -858,7 +860,7 @@ Ext.define('visiomatic.Visiomatic', {
                     posAngle: 90,
                     //color: feature.properties._meta_comments ? '#FF9800' : '#4AAB46'
                 });
-                
+
                 path_options = Ext.Object.merge(path_options, options);
 
                 // tornar o objeto clicavel
@@ -869,7 +871,7 @@ Ext.define('visiomatic.Visiomatic', {
                 // usei o mesmo valor de raio para os lados da ellipse para
                 // gerar um circulo por ser um circulo o angulo tanto faz.
                 circle = l.ellipse(latlng, path_options);
-                
+
                 //adiciona o ícone de comentário
                 if (feature.properties._meta_comments){
                     //x-fa fa-map-marker fa-2x
@@ -982,9 +984,9 @@ Ext.define('visiomatic.Visiomatic', {
                 l.feature.properties._meta_comments = total;
                 l._path.setAttribute('stroke', total ? '#FF9800' : '#4AAB46');
             }
-            
+
         }
-    
+
     },
 
     /**
@@ -997,7 +999,7 @@ Ext.define('visiomatic.Visiomatic', {
             l = me.libL,
             map = me.getMap(),
             latlng, lmarkPosition, myIcon, iconAnchor;
-        
+
         if (arguments.length==2){
             latlng = ra;
             iconCls = dec;
@@ -1150,7 +1152,7 @@ Ext.define('visiomatic.Visiomatic', {
     showContextMenuImage: function(event){
         var me = this,
             xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
-        
+
         if (event.originalEvent.target.classList.contains('comment-maker')){
             return me.showContextMenuObject(event);
         }
@@ -1167,7 +1169,7 @@ Ext.define('visiomatic.Visiomatic', {
                     }]
             });
         }
-        
+
         this.contextMenuImage.showAt(xy);
     },
 
@@ -1191,7 +1193,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         objectMenuItem = me.contextMenuObject.items.get("comment-object");
         objectMenuItem.feature = event.layer ? event.layer.feature :  null;
-        
+
         me.contextMenuObject.showAt(xy);
     },
 
