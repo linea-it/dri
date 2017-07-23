@@ -65,6 +65,10 @@ Ext.define('Sky.view.home.HomeController', {
         } else {
             field.getTrigger('clear').hide();
         }
+    },
+
+    onActivate: function(){
+        //console.log('home is active')
     }
 
 });
