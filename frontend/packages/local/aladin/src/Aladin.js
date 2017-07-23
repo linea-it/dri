@@ -224,8 +224,6 @@ Ext.define('aladin.Aladin', {
             }
         });
         
-        console.log('initComponent Aladin package', this.getId(), me.getAladinId(), this.getAladin());
-
         me.callParent(arguments);
     },
 
@@ -464,9 +462,7 @@ Ext.define('aladin.Aladin', {
 
         if (store.count() === 0) {
             console.log('NAO TEM SURVEY');
-
             me.setImageSurvey(empty);
-
         }
 
         // criar um array com os elementos da store

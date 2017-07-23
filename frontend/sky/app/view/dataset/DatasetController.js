@@ -38,6 +38,54 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     lMarker: null,
 
+    //ao clicar em um item do menu de contexto de objeto do visiomatic
+    onObjectMenuItemClickVisiomatic: function(event, feature){
+        //this.onComment(event.latlng, feature);
+        console.log('comment object');
+    },
+
+    //ao clicar em um item do menu de contexto de objeto do visiomatic
+    onImageMenuItemClickVisiomatic: function(event, dataset){
+        var latlng = event.latlng;        
+        var comment = Ext.create('Ext.window.Window', {
+            title: 'Position Comments',
+            iconCls: 'x-fa fa-comments',
+            layout: 'fit',
+            closeAction: 'destroy',
+            constrainHeader:true,
+            width: 500,
+            height: 300,
+            autoShow:true,
+            onEsc: Ext.emptyFn,
+            items: [
+                {
+                    xtype: 'comments-position',
+                    listeners: {
+                        scope: this,
+                        changecomments: 'onChangeComments'
+                    }
+                }
+            ]
+        });
+
+        comment.down('comments-position').getController().loadComments(/*dec*/latlng.lat, /*ra*/latlng.lng, dataset);
+    },
+
+    onChangeComments: function (event) {
+        var me = this,
+           view = me.getView(),
+           visiomatic = me.lookupReference('visiomatic'),
+           vm = me.getViewModel(),
+           lmembers = vm.get('overlayMembers');
+
+        if (event && event.comment) {
+            //TODO: atualizar o número de comentários em lmembers.feature.properties.
+            //visiomatic.updateComment(lmembers, event.comment, event.total);
+        }
+
+        //view.fireEvent('changeinobject');
+    },
+
     onLoadPanel: function (dataset) {
         var me = this;
 
@@ -275,5 +323,24 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
         visiomatic.showHideLayer(me.lMarker, state);
 
+    },
+
+    gotoPosition: function(value){
+        var visiomatic = this.lookupReference('visiomatic');        
+        visiomatic.panTo(value);
+    },
+
+    onActivate: function(){
+        var me = this, coordinate, zoom, aladin,
+            visiomatic = me.lookupReference('visiomatic');
+
+        //obtém as coordenadas e o zoom da url
+        coordinate = ((location.hash.split('/')[2] || '').replace(/%2C/g, '.').split('%2B')) || null;
+        zoom = ((location.hash.split('/')[3] || '').replace(/,/g, '.')) || null;
+
+        /*if (visiomatic.isReady()){
+            visiomatic.panTo(coordinate[0] + ',' + coordinate[1]);
+            visiomatic.getMap().setZoom(zoom);
+        }*/
     }
 });
