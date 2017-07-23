@@ -1,2 +1,2 @@
 // @tag full-page
-// @require /home/fabio/dri/frontend/sky/app.js
+// @require /Users/felipemachado/Documents/linea/dri/frontend/sky/app.js
