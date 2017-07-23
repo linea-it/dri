@@ -715,6 +715,10 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.loadObjects();
     },
 
+    rejectedFilter: function(){
+      console.log('test');
+    },
+
     /**
      * Executado toda vez que e selecionado um filterset
      * na combo box, apenas executa a funcao applyFilter.

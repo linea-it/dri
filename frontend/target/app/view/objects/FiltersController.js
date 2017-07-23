@@ -28,7 +28,7 @@ Ext.define('Target.view.objects.FiltersController', {
             vm = me.getViewModel(),
             contents = vm.getStore('contents');
 
-        me.clearImputs();
+        me.clearInputs();
 
         contents.addFilter({
             property: 'pcn_product_id',
@@ -49,13 +49,21 @@ Ext.define('Target.view.objects.FiltersController', {
 
         contents.add(rating);
 
-        reject = Ext.create('Target.model.CatalogContent', {
+        reject_true = Ext.create('Target.model.CatalogContent', {
             id: null,
             column_name: '_meta_reject',
-            display_name: 'Reject'
+            display_name: 'Rejected'
         });
 
-        contents.add(reject);
+        contents.add(reject_true);
+
+        reject_false = Ext.create('Target.model.CatalogContent', {
+            id: null,
+            column_name: '_meta_reject',
+            display_name: 'Not Rejected'
+        });
+
+        contents.add(reject_false);
 
     },
 
@@ -92,7 +100,7 @@ Ext.define('Target.view.objects.FiltersController', {
 
         filters.add(filter);
 
-        me.clearImputs();
+        me.clearInputs();
 
         me.checkHaveFilters();
 
@@ -135,7 +143,7 @@ Ext.define('Target.view.objects.FiltersController', {
             filters = vm.getStore('filters'),
             filter;
 
-        if (property.get('column_name') === '_meta_reject') {
+        if (property.get('display_name') === 'Rejected') {
 
             // Criar um Model com os dados do filtro
             filter = Ext.create('Target.model.FilterCondition', {
@@ -154,7 +162,32 @@ Ext.define('Target.view.objects.FiltersController', {
 
             filters.add(filter);
 
-            me.clearImputs();
+            me.clearInputs();
+
+            me.checkHaveFilters();
+
+        }
+
+        if (property.get('display_name') === 'Not Rejected') {
+
+            // Criar um Model com os dados do filtro
+            filter = Ext.create('Target.model.FilterCondition', {
+                fcd_property: property.get('id'),
+                fcd_property_name: property.get('column_name'),
+                fcd_operation: '=',
+                fcd_value: false,
+                property_display_name: property.get('display_name'),
+                operator_display_name: 'is equal to'
+            });
+
+            if ((filterSet) && (filterSet.get('id') > 0)) {
+                filter.set('filterset', filterSet.get('id'));
+
+            }
+
+            filters.add(filter);
+
+            me.clearInputs();
 
             me.checkHaveFilters();
 
@@ -300,7 +333,7 @@ Ext.define('Target.view.objects.FiltersController', {
         view.close();
     },
 
-    clearImputs: function () {
+    clearInputs: function () {
         var me = this,
             refs = me.getReferences(),
             property = refs.cmbProperty,

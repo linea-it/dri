@@ -300,4 +300,3 @@ Ext.define('Target.view.objects.Grid', {
         return value;
     }
 });
-

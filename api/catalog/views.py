@@ -119,7 +119,7 @@ class TargetViewSet(ViewSet):
                 "_meta_rating_id": None,
                 "_meta_rating": None,
                 "_meta_reject_id": None,
-                "_meta_reject": False,
+                "_meta_reject": None,
             })
 
             row.update({
@@ -149,7 +149,7 @@ class TargetViewSet(ViewSet):
                 "_meta_reject_id": row.get('meta_reject_id', None)
             })
             row.update({
-                "_meta_reject": bool(row.get('meta_reject', False))
+                "_meta_reject": bool(row.get('meta_reject', None))
             })
 
             row.pop("meta_rating_id", None)
