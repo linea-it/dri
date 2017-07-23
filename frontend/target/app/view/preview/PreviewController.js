@@ -139,7 +139,14 @@ Ext.define('Target.view.preview.PreviewController', {
     changeImage: function (dataset) {
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
-            url;
+            url,
+            options;
+
+        if (!visiomatic.imageLayer) {
+            options = JSON.parse(
+                localStorage.getItem("imageOptions")
+            );
+        }
 
         if (dataset) {
             visiomatic.setDataset(dataset.get('id'));
@@ -147,7 +154,7 @@ Ext.define('Target.view.preview.PreviewController', {
 
             url = dataset.get('image_src_ptif');
             if (url !== '') {
-                visiomatic.setImage(url);
+                visiomatic.setImage(url, options);
 
             } else {
                 visiomatic.removeImageLayer();
@@ -164,7 +171,6 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
             visiomatic = me.lookupReference('visiomatic');
-
 
         // Checar se o catalogo representa single objects ou sistemas
         if (vm.get('is_system')) {
