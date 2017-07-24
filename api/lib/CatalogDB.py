@@ -1,4 +1,4 @@
-from dri.settings.local_vars import *
+from django.conf import settings
 from lib.sqlalchemy_wrapper import DBBase
 
 
@@ -9,10 +9,10 @@ class CatalogDB:
     def prepare_connection(self, db):
         connection_data = {}
 
-        if db not in DATABASES:
+        if db not in settings.DATABASES:
             raise Exception('This configuration does not exist.')
 
-        db_settings_django = DATABASES[db]
+        db_settings_django = settings.DATABASES[db]
         connection_data['ENGINE'] = db_settings_django['ENGINE'].split('.')[-1]
 
         if connection_data['ENGINE'] == 'sqlite3':

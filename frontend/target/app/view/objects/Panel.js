@@ -59,27 +59,32 @@ Ext.define('Target.view.objects.Panel', {
                     {
                         xtype: 'button',
                         iconCls: 'x-fa fa-floppy-o',
-                        // tooltip: 'Save As',
-                        tooltip: 'Under Construction',
+                        tooltip: 'Save As',
                         handler: 'onClickSaveAs'
                     },
                     {
                         iconCls: 'x-fa fa-download',
-                        // tooltip: 'Download',
-                        tooltip: 'Under Construction',
+                        tooltip: 'Download',
                         handler: 'onClickDownload'
                     },
                     {
+                        xtype: 'button',
+                        iconCls: 'x-fa fa-commenting',
+                        tooltip: 'Open Comments',
+                        bind: {
+                            //disabled: '{!currentRecord._meta_id}'
+                        },
+                        handler: 'onCommentButton'
+                    },
+                    {
                         iconCls: 'x-fa fa-picture-o',
-                        // tooltip: 'Create cutouts',
-                        tooltip: 'Under Construction',
+                        tooltip: 'Create Mosaic',
                         handler: 'onClickCreateCutouts'
                     },
                     {
                         xtype: 'button',
                         iconCls: 'x-fa fa-th-large',
-                        // tooltip: 'Switching between Mosaic and Data Grid',
-                        tooltip: 'Under Construction',
+                        tooltip: 'Switching between Mosaic and Data Grid',
                         enableToggle: true,
                         toggleHandler: 'switchMosaicGrid',
                         bind: {
@@ -162,7 +167,10 @@ Ext.define('Target.view.objects.Panel', {
                     xtype: 'targets-objects-mosaic',
                     reference: 'TargetMosaic',
                     bind: {
-                        store: '{objects}'
+                        store: '{objects}',
+                    },
+                    listeners: {
+                        select: 'onSelectObject'
                     },
                     tbar: [
                         {
@@ -282,11 +290,13 @@ Ext.define('Target.view.objects.Panel', {
     clearPanel: function () {
         var me = this,
             vm = me.getViewModel(),
-            gridPanel = me.down('targets-objects-grid');
-        //         refs = me.getReferences(),
-        //         grids = refs.targetsGrid,
-        //         preview = refs.targetsPreviewPanel;
+            gridPanel = me.down('targets-objects-grid'),
+            cardPanel = me.lookup('ObjectCardPanel');
 
+        // Ativar o painel list como default
+        cardPanel.setActiveItem(gridPanel);
+
+        // Limpar as Stores
         vm.getStore('catalogs').removeAll();
         vm.getStore('catalogs').clearFilter(true);
 
@@ -299,13 +309,12 @@ Ext.define('Target.view.objects.Panel', {
         vm.getStore('displayContents').removeAll();
         vm.getStore('displayContents').clearFilter(true);
 
-        // // Desabilitar os botoes
-        // btns.each(function (button) {
-        //     button.disable();
-        // }, this);
+        vm.getStore('cutoutsJobs').removeAll();
+        vm.getStore('cutoutsJobs').clearFilter(true);
 
-        //     // Limpar o painel de preview
-        //     preview.clearPanel();
+        vm.getStore('cutouts').removeAll();
+        vm.getStore('cutouts').clearFilter(true);
+
     }
 });
 

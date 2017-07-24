@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<table border="0" align="center" width="680" valign="top" cellspacing="0" cellpadding="0" align="center"
+       style="background-color: #f0f0f0">
+    <tbody>
+    <tr>
+        <!-- Margin Right -->
+        <td width="40"></td>
+        <!-- Center -->
+        <td width="600">
+            <table border="0" width="600" cellpadding="0" cellspacing="0" align="center">
+                <tbody>
+                <!-- Margin Top -->
+                <tr>
+                    <td height="30"></td>
+                </tr>
+                <!-- Header -->
+                <tr style="background-color: #fafafa">
+                    <td>
+                        <header style="background-color: #003466; max-height: 60px;">
+                            <a style="color: #e1e1e1; display: flex; justify-content: space-between; align-items: center; max-width: 90%; margin: 0 auto; text-decoration: none"
+                               href="http://dri-dev.linea.gov.br/" title="LIneA Science Server" rel="home">
+
+                                <h1 style="font-family: Bitter, Georgia, serif; font-size: 16px; font-weight: bold">
+                                    LIneA Science Server</h1>
+
+                                <img style="height: 30px"
+                                     src="http://dri-dev.linea.gov.br/wp-content/uploads/2017/07/des-logo-rev-lg_170x170.png">
+                            </a>
+                        </header>
+                    </td>
+                </tr>
+                <!-- Padding -->
+                <tr>
+                    <td height="20" style="background-color: #FFF"></td>
+                </tr>
+                <!-- Content -->
+                <tr>
+                    <td style="background-color: #FFF">
+                        <!-- Aqui ja entra o que vai ser substituido no template -->
+                        <table border="0" width="600" cellpadding="0" cellspacing="0" align="center" valign="top">
+                            <tbody>
+                            <!-- Nome do Usuario -->
+                            <tr>
+                                <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                    Dear {{username}},
+                                </td>
+                            </tr>
+                            <!-- Quebra de Linha -->
+                            <tr>
+                                <td height="20"></td>
+                            </tr>
+                            <!-- Tabela com informacoes do job -->
+                            <tr>
+                                <td>
+                                    <table border="0" cellspacing="0" cellpadding="0" align="center">
+                                        <tbody>
+
+                                        <tr style="padding:0px;border:0px;font-weight:700;font-size:18px;background-color:#fdcdce;color:#df192a">
+                                            <!-- Icone de Status -->
+                                            <td style="border:0px;padding:0px 20px 0px 0px;border-top:1px solid #808080;border-bottom:1px solid #adadad;width:50px;padding:0px;text-align:center;vertical-align:middle;padding-top:5px;border-left:1px solid #606060;border-top-left-radius:5px">
+                                                <div style="width:25px;background-size:25px;height:30px;margin-left:15px;margin-top:0px;vertical-align:middle">
+                                                    <img src="https://ci6.googleusercontent.com/proxy/G_NdLgNKrdsOTtby-Uc5odelrLzSSQJczsFue5CgdbwlyOBithEISoYlwDKOtPC2G-wV4WzW-GJSEc3E0oY8K5VBHkU=s0-d-e1-ft#https://travis-ci.org/images/mailer/failed.png" width="25" height="25">
+                                                </div>
+                                            </td>
+                                            <!-- Status Text -->
+                                            <td style="padding:0px;border:0px;padding:0px 20px 0px 0px;vertical-align:middle;border-top:1px solid #808080;border-bottom:1px solid #adadad">
+                                                <span style="display:inline-block;margin-top:12px;vertical-align:middle"><a
+                                                        href="https://travis-ci.org/linea-it/dri/builds/251202782?utm_source=email&amp;utm_medium=notification"
+                                                        style="text-decoration:none;font-weight:bold;color:#57769d;text-decoration:underline;color:#df192a"
+                                                        target="_blank" href="">Mosaic has Finished</a></span>
+                                                <img src="https://ci6.googleusercontent.com/proxy/Cf3-ATm57dtZzpLTUCd2pddx-aZblo9zN5rHmMCxVhDBOJxEJJlp0RjrkTP508zoVIWtgXf9fvj3F1jhrNmTTZymfFFFY5u9mn8=s0-d-e1-ft#https://travis-ci.org/images/mailer/arrow-failed.png" style="float:right" height="45">
+                                            </td>
+                                            <!-- Duration -->
+                                            <td style="padding:0px;border:0px;font-weight:normal;font-size:12px;padding:0px 20px 0px 0px;vertical-align:middle;border-top:1px solid #808080;border-bottom:1px solid #adadad;border-right:1px solid #606060;border-top-right-radius:5px"
+                                                align="right">
+                                                <div style="vertical-align:middle;padding:0px;background-size:20px;display:inline-block;width:20px;height:20px">
+                                                    <img src="https://ci6.googleusercontent.com/proxy/Q2qWWtauDeQt09N1NeStOO5x0O3g9CGTshaJeDntTyvAM_6TZZYJ7-U9cKwwG7VAgl71Ojmti8N04inFZpdLTZVNJAz7s4P7wnBe6jLh=s0-d-e1-ft#https://travis-ci.org/images/mailer/stopwatch-failed.png" width="20" height="20">
+                                                </div>
+                                                <span style="vertical-align:middle">{{ execution_time_humanized }}</span>
+                                            </td>
+                                        </tr>
+                                        <!-- Informacoes -->
+                                        <tr>
+                                            <td colspan="3"
+                                                style="padding: 0px; border-left: 1px solid #adadad; border-right: 1px solid #adadad">
+                                                <table width="100%" style="color: #777">
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>creation mosaics for target {{ target_display_name }} Failed</td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr style="padding:0px;border:0px">
+                                            <td style="border:0px;height:5px;width:50px;padding:0px;border-left:1px solid #adadad;border-bottom-left-radius:5px;border-bottom:1px solid #adadad">
+                                                &nbsp;
+                                            </td>
+                                            <td colspan="2"
+                                                style="padding:0px;border:0px;color:#808080;height:5px;border-right:1px solid #adadad;padding-bottom:20px;padding-top:0px;border-bottom:1px solid #adadad;border-bottom-right-radius:5px">
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <!-- Quebra de Linha -->
+                            <tr>
+                                <td height="20"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                    </td>
+                </tr>
+                <!-- Footer -->
+                <tr>
+                    <td height="30"
+                        style="background-color: #003466;color:#FFF;font-size:13px;line-height:15px;font-family:arial,Arial,sans-serif;letter-spacing:0px;text-decoration:none"
+                        align="center">
+                        Powered by LIneA | Dark Energy Survey | NCSA
+                    </td>
+                </tr>
+                <!-- Margin botton -->
+                <tr>
+                    <td height="30"></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+        <!-- Margin Left -->
+        <td width="40"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
+

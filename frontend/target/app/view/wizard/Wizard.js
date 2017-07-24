@@ -62,18 +62,18 @@ Ext.define('Target.view.wizard.Wizard', {
             iconCls: 'x-fa fa-columns',
             disabled: true
         },
-        {
-            id: 'card-3',
-            xtype: 'targets-cutout',
-            title: 'Cutouts',
-            iconCls: 'x-fa fa-picture-o'
-        },
+//        {
+//            id: 'card-3',
+//            xtype: 'targets-cutout',
+//            title: 'Cutouts',
+//            iconCls: 'x-fa fa-picture-o',
+//            disabled: true
+//        },
         {
             id: 'card-4',
             xtype: 'targets-system-members',
             title: 'System Members',
             iconCls: 'x-fa fa-dot-circle-o',
-            disabled: true
         },
         {
             id: 'card-5',
@@ -144,7 +144,7 @@ Ext.define('Target.view.wizard.Wizard', {
         // if ((currentCatalog.get('id') > 0) && (currentCatalog.get('is_owner'))) {
         me.down('targets-association').enable();
         me.down('targets-permission').enable();
-        // me.down('targets-system-members').enable();
+        //me.down('targets-system-members').enable();
 
         // } else {
         //     me.down('targets-association').disable();

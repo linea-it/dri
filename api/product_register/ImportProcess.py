@@ -297,7 +297,7 @@ class Import():
             for column in columns:
                 content = ProductContent.objects.create(
                     pcn_product_id=catalog,
-                    pcn_column_name=column
+                    pcn_column_name=column.strip()
                 )
 
         self.product_content_association(catalog, data, created)

@@ -35,7 +35,6 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
     onLoadPanel: function (release) {
         var me = this;
-
         me.loadReleaseById(release);
     },
 
@@ -209,17 +208,16 @@ Ext.define('Sky.view.footprint.FootprintController', {
     },
 
     onDblClickAladin: function (radec) {
-        console.log('onDblClickAladin(%o)', radec);
+        this.toVisiomatic(radec);
+        //console.log('onDblClickAladin(%o)', radec);
 
     },
 
     onShift: function (radec) {
         this.toVisiomatic(radec);
-
     },
 
     toVisiomatic: function (radec) {
-
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('tiles'),
@@ -245,16 +243,53 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
             hash = 'dataset/' + dataset.get('id') + '/' + coordinate + '/' + fov;
 
-            me.redirectTo(hash);
+            me.redirectTo(hash, true);
 
+        }else{
+            Ext.MessageBox.alert('Alert', 'There is no DES tile in the current release on this position.');
         }
 
     },
 
     onAladinGoToPosition: function (position, aladin) {
         var me = this;
-
         me.toVisiomatic(position);
+    },
+
+    gotoPosition: function(value){
+        var me = this,
+            o = visiomatic.Visiomatic.strToSystem(value);
+
+        if (visiomatic.processing) return;
+
+        if (o){
+            //converte para ra/dec, se estiver em HMG
+            if (o.system=='HMS'){
+                visiomatic.processing = true;
+                return visiomatic.Visiomatic.hmsToLatLng(value, function(latlng){
+                    visiomatic.processing = false;
+                    me.toVisiomatic([latlng.lng, latlng.lat]);
+                });
+            }else{
+                me.toVisiomatic([o.value.lng, o.value.lat]);
+            }
+        }
+    },
+
+    onActivate: function(){
+        var me = this, coodinate, zoom, aladin, footprint;
+
+        //obtém as coordenadas e o zoom da url
+        coordinate = ((location.hash.split('/')[2] || '').replace(/,/g, '.').split('|')) || null;
+        zoom = ((location.hash.split('/')[3] || '').replace(/,/g, '.')) || null;
+        
+        //define no aladin as coordenadas e o zoom
+        if (coordinate[0] && zoom){
+            footprint = this.getView().down('footprint-aladin');
+            aladin = footprint.getAladin();
+            aladin.gotoPosition(coordinate[0], coordinate[1]);
+            aladin.setZoom(zoom);
+        }
     }
 
 });

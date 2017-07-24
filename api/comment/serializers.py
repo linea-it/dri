@@ -8,9 +8,6 @@ class PositionSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.SerializerMethodField()
     pst_dataset = serializers.PrimaryKeyRelatedField(
         queryset=Dataset.objects.all(), many=False)
-    pst_filter = serializers.PrimaryKeyRelatedField(
-        queryset=Filter.objects.all(), many=False)
-
     pst_date = serializers.SerializerMethodField()
 
     is_owner = serializers.SerializerMethodField()
@@ -22,7 +19,6 @@ class PositionSerializer(serializers.HyperlinkedModelSerializer):
             'id',
             'owner',
             'pst_dataset',
-            'pst_filter',
             'pst_ra',
             'pst_dec',
             'pst_date',

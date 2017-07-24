@@ -17,8 +17,8 @@ Ext.define('Target.view.objects.ObjectsModel', {
         'Target.store.ProductDisplayContents',
         'Target.store.FilterSets',
         'Target.store.FilterConditions',
-        'Target.store.CutoutJobs'
-
+        'Target.store.CutoutJobs',
+        'Target.store.Cutouts'
     ],
 
     data: {
@@ -55,6 +55,11 @@ Ext.define('Target.view.objects.ObjectsModel', {
         },
         cutoutsJobs: {
             type: 'cutoutjobs',
+            autoLoad: false,
+            storeId: 'CutoutJobs'
+        },
+        cutouts: {
+            type: 'cutouts',
             autoLoad: false
         }
     },

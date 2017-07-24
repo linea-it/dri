@@ -36,6 +36,9 @@ Ext.define('Target.view.objects.ObjectsController', {
             },
             '#objects': {
                 update: 'onUpdateObject'
+            },
+            '#CutoutJobs': {
+                load: 'onLoadCutoutJobs'
             }
         }
     },
@@ -46,6 +49,9 @@ Ext.define('Target.view.objects.ObjectsController', {
     wizard: null,
     winDownload: null,
     winCutout: null,
+
+    taskCutoutJob: null,
+
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
         var me = this,
@@ -94,13 +100,32 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             // Adicionar Filtro a store CutoutJobs
             // combobox Mosaic-cutoutJobs
-            cutoutsJobs.addFilter([{
-                property: 'cjb_product',
-                value: currentCatalog.get('id')
-            },{
-                property: 'cjb_status',
-                value: 'ok'
-            }]);
+            cutoutsJobs.addFilter([
+                {
+                    property: 'cjb_product',
+                    value: currentCatalog.get('id')
+                },
+                {
+                    property: 'cjb_status',
+                    value: 'ok'
+                }
+            ]);
+
+//            cutoutsJobs.load()
+
+            // Task para verificar se existe cutoutjob
+            if (me.taskCutoutJob !== null) {
+                Ext.TaskManager.stop(me.taskCutoutJob);
+                me.taskCutoutJob = null;
+            }
+
+            me.taskCutoutJob = {
+                run: me.reloadCutoutJobs,
+                interval: 60000,
+                scope: me
+            };
+            Ext.TaskManager.start(me.taskCutoutJob);
+
         }
     },
 
@@ -595,6 +620,11 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.wizard.close();
             me.wizard = null;
         }
+
+        if (me.taskCutoutJob !== null) {
+            Ext.TaskManager.stop(me.taskCutoutJob);
+            me.taskCutoutJob = null;
+        }
     },
 
     onClickFilter: function () {
@@ -667,6 +697,11 @@ Ext.define('Target.view.objects.ObjectsController', {
         combo.getTrigger('clear').hide();
 
         me.loadObjects();
+    },
+
+    onCommentButton: function(event){
+        this.getReferences()
+            .targetsPreviewPanel.getController().onObjectMenuItemClickVisiomatic({});
     },
 
     /**
@@ -848,16 +883,52 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     },
 
+    reloadCutoutJobs: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('cutoutsJobs');
+
+        store.load();
+    },
+
+    onLoadCutoutJobs: function (store) {
+        var me = this,
+            cmb = me.lookup('cmbCutoutJob');
+
+        if (store.count() === 1) {
+            record = cmb.selection;
+
+            if (record === null) {
+                cmb.select(store.first());
+                me.onSelectCutoutJob();
+            }
+        }
+
+    },
+
     onSelectCutoutJob: function () {
         var me = this,
             vm = me.getViewModel(),
             cutoutJob = vm.get('currentCutoutJob'),
-            mosaic = me.lookup('TargetMosaic');
+            mosaic = me.lookup('TargetMosaic'),
+            cutouts = vm.getStore('cutouts');
 
         if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
-            // Setar no Mosaic o Cutout Job Selecionado
-            mosaic.setCutoutJob(cutoutJob);
+            cutouts.addFilter([{
+                property: 'cjb_cutout_job',
+                value: cutoutJob.get('id')
+            },
+            {
+                property: 'ctt_file_type',
+                value: 'png'
+            }]);
 
+            cutouts.load({
+                callback: function() {
+                    // Setar no Mosaic o Cutout Job Selecionado
+                    mosaic.setCutoutJob(cutoutJob, this);
+                }
+            });
         }
 
     }

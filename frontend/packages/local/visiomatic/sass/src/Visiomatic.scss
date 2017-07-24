@@ -7,3 +7,53 @@
 .visiomatic-marker-position {
     color: #C8ED00;
 }
+
+.color-overlay-grid-icon {
+    color: #27313b;
+}
+
+.color-icon-starred {
+    color: #27313b;
+}
+
+.mapmaker-comment{
+    display: block;
+    background-image: url(common/images/mapmaker_comment.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 24px;
+    height: 24px;
+}
+
+.visiomatic-mouse-position{
+    position: absolute!important;
+    top: 50px;
+    right: 10px;
+    z-index: 1000;
+    background: #F4F4F4!important;
+    padding: 7px 0px;
+}
+.visiomatic-mouse-position-label{
+    padding:0 6px;
+    color: #000000;
+    font-size: 14px;
+    font-family: Arial;
+}
+
+/** Blink Class to use with fontAwesome Icons
+ * https://stackoverflow.com/questions/13955163/imitating-a-blink-tag-with-css3-animations
+ */
+.blink {
+  animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}

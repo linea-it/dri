@@ -14,8 +14,7 @@ Ext.define('Sky.view.footprint.Aladin', {
             hideFootprint: false,
             gotoSetPosition: false
         });
-
-        me.callParent(arguments);
+        
+        this.callParent(arguments);
     }
-
 });
