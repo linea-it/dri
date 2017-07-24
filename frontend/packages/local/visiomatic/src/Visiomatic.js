@@ -880,7 +880,11 @@ Ext.define('visiomatic.Visiomatic', {
 
                 return circle;
             }
-        }).bindPopup(me.createOverlayPopup).on('dblclick', function () {
+        })
+        .bindPopup(
+            me.createOverlayPopup)
+
+        .on('dblclick', function () {
             alert('TODO: OPEN IN EXPLORER!');
         })
         /**
@@ -906,15 +910,25 @@ Ext.define('visiomatic.Visiomatic', {
 
     createOverlayPopup: function (layer) {
         var feature = layer.feature,
-            popup,
-            mags;
+            properties = feature.properties,
+            mags = ['_meta_mag_auto_g','_meta_mag_auto_r','_meta_mag_auto_i', '_meta_mag_auto_z', '_meta_mag_auto_y'],
+            mag_tags = [],
+            popup;            
 
-        mags = ["_meta_mag_auto_g", "_meta_mag_auto_r", "_meta_mag_auto_i", "_meta_mag_auto_z", "_meta_mag_auto_y"];
+        Ext.each(mags, function (mag) {
+            try {
+                mag_name = mag.slice(-1);
+                if (mag_name == 'y'){
+                    mag_name = 'Y';
 
-        Ext.each(mags, function(prop_mag){
-            console.log(prop_mag)
-            if (prop_mag in feature.properties){
-                console.log("FUNCIONA")
+                }
+                mag_value = properties[mag];
+
+                tag = '<TR><TD><spam>' + mag_name + '</spam>: </TD><TD>' + mag_value.toFixed(2) + '</td></tr>';
+                mag_tags.push(tag)               
+
+            } catch(err) {
+
             }
         });
 
@@ -922,11 +936,10 @@ Ext.define('visiomatic.Visiomatic', {
            '<TABLE style="margin:auto;">' +
            '<TBODY style="vertical-align:top;text-align:left;">' +
                 '<TR><TD><spam>ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
-                // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
-                // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
                 '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
                     feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
                 '</td></tr>' +
+                mag_tags.join('') +
             '</TBODY></TABLE>';
 
         return popup;
