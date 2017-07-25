@@ -190,14 +190,11 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     onDblClickVisiomatic: function () {
-        this.toAladin();
-        //console.log('onDblClickVisiomatic()');
-
+        this.toAladin(true);
     },
 
     onShift: function () {
-        this.toAladin();
-
+        this.toAladin(true);
     },
 
     onGetLink: function (coordinate, fov) {
@@ -222,7 +219,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     },
 
-    toAladin: function () {
+    toAladin: function (clearSearch) {
         var me = this,
             vm = me.getViewModel(),
             current = vm.get('currentDataset'),
@@ -241,6 +238,10 @@ Ext.define('Sky.view.dataset.DatasetController', {
         hash       = 'sky/' + release + '/' + coordinate + '/' + fov;
 
         me.redirectTo(hash);
+
+        //Limpa a caixa de texto global search
+        if (clearSearch) me.getView().txtCoordinateSearch.setValue('');
+
     },
 
     getDatasetInOtherReleases: function (current) {
