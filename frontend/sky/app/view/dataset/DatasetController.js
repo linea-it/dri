@@ -40,8 +40,52 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     //ao clicar em um item do menu de contexto de objeto do visiomatic
     onObjectMenuItemClickVisiomatic: function(event, feature){
-        //this.onComment(event.latlng, feature);
-        console.log('comment object');
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            object = vm.get('currentRecord'),
+            catalog = vm.get('currentCatalog'),
+            object_id, catalog_id;
+
+        if ((!object) || (!object.get('_meta_id'))) {
+            return false;
+        }
+
+        if (feature && feature.properties){
+            catalog_id = feature.properties._meta_catalog_id;
+            object_id  = feature.id;
+        }else{
+            catalog_id = catalog.get('id');
+            object_id  = object.get('_meta_id');
+        }
+
+        if (object_id > 0) {
+
+            var comment = Ext.create('Ext.window.Window', {
+                title: 'Comments',
+                iconCls: 'x-fa fa-comments',
+                layout: 'fit',
+                closeAction: 'destroy',
+                constrainHeader:true,
+                width: 500,
+                height: 300,
+                autoShow:true,
+                onEsc: Ext.emptyFn,
+                items: [
+                    {
+                        xtype: 'comments-object',
+                        reference: '',
+                        listeners: {
+                            scope: this,
+                            changecomments: 'onChangeComments'
+                        }
+                    }
+                ]
+            });
+
+            //passar latlng e feature para ser caregado comentários de um objeto específico ou de uma posição específica
+            comment.down('comments-object').getController().loadComments(catalog_id, object_id, latlng, feature);
+        }
     },
 
     //ao clicar em um item do menu de contexto de objeto do visiomatic
@@ -324,6 +368,15 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
         visiomatic.showHideLayer(me.lMarker, state);
 
+    },
+
+    showHideComments: function (btn, state) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic'),
+            vm = me.getViewModel(),
+            lmembers = vm.get('overlayMembers');
+
+        visiomatic.showHideComments(lmembers, state);
     },
 
     gotoPosition: function(value){
