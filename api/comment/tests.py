@@ -57,7 +57,7 @@ class CommentPositionAPITestCase(APITestCase):
         response = self.client.get(self.route)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(data['pst_comment'], self.data['pst_comment'])
+        self.assertEqual(response.data[0]['pst_comment'], self.data['pst_comment'])
 
         # Update
         patch_data = dict({
