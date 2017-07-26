@@ -36,9 +36,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             },
             '#objects': {
                 update: 'onUpdateObject'
-            },
-            '#CutoutJobs': {
-                load: 'onLoadCutoutJobs'
             }
         }
     },
@@ -79,7 +76,8 @@ Ext.define('Target.view.objects.ObjectsController', {
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid,
             filtersets = vm.getStore('filterSets'),
-            cutoutsJobs = vm.getStore('cutoutsJobs');
+            combo = me.lookup('cmbCutoutJob'),
+            cutoutsJobs = combo.getStore();
 
         if (store.count() === 1) {
             currentCatalog = store.first();
@@ -111,7 +109,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }
             ]);
 
-//            cutoutsJobs.load()
+            cutoutsJobs.load()
 
             // Task para verificar se existe cutoutjob
             if (me.taskCutoutJob !== null) {
@@ -609,6 +607,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onBeforeDeactivate: function () {
+        console.log('onBeforeDeactivate')
         var me = this;
         // Fix AlertSetting quando usa funcao voltar do navegador
         if (me.winAlertSetting !== null) {
@@ -886,30 +885,17 @@ Ext.define('Target.view.objects.ObjectsController', {
     reloadCutoutJobs: function () {
         var me = this,
             vm = me.getViewModel(),
-            store = vm.getStore('cutoutsJobs');
+            combo = me.lookup('cmbCutoutJob'),
+            store = combo.getStore();
 
         store.load();
     },
 
-    onLoadCutoutJobs: function (store) {
-        var me = this,
-            cmb = me.lookup('cmbCutoutJob');
 
-        if (store.count() === 1) {
-            record = cmb.selection;
-
-            if (record === null) {
-                cmb.select(store.first());
-                me.onSelectCutoutJob();
-            }
-        }
-
-    },
-
-    onSelectCutoutJob: function () {
+    onSelectCutoutJob: function (cmb) {
         var me = this,
             vm = me.getViewModel(),
-            cutoutJob = vm.get('currentCutoutJob'),
+            cutoutJob = cmb.selection,
             mosaic = me.lookup('TargetMosaic'),
             cutouts = vm.getStore('cutouts');
 
