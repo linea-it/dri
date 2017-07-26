@@ -38,6 +38,98 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     lMarker: null,
 
+    //ao clicar em um item do menu de contexto de objeto do visiomatic
+    onObjectMenuItemClickVisiomatic: function(event, feature){
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            object = vm.get('currentRecord'),
+            catalog = vm.get('currentCatalog'),
+            object_id, catalog_id;
+
+        if ((!object) || (!object.get('_meta_id'))) {
+            return false;
+        }
+
+        if (feature && feature.properties){
+            catalog_id = feature.properties._meta_catalog_id;
+            object_id  = feature.id;
+        }else{
+            catalog_id = catalog.get('id');
+            object_id  = object.get('_meta_id');
+        }
+
+        if (object_id > 0) {
+
+            var comment = Ext.create('Ext.window.Window', {
+                title: 'Comments',
+                iconCls: 'x-fa fa-comments',
+                layout: 'fit',
+                closeAction: 'destroy',
+                constrainHeader:true,
+                width: 500,
+                height: 300,
+                autoShow:true,
+                onEsc: Ext.emptyFn,
+                items: [
+                    {
+                        xtype: 'comments-object',
+                        reference: '',
+                        listeners: {
+                            scope: this,
+                            changecomments: 'onChangeComments'
+                        }
+                    }
+                ]
+            });
+
+            //passar latlng e feature para ser caregado comentários de um objeto específico ou de uma posição específica
+            comment.down('comments-object').getController().loadComments(catalog_id, object_id, latlng, feature);
+        }
+    },
+
+    //ao clicar em um item do menu de contexto de objeto do visiomatic
+    onImageMenuItemClickVisiomatic: function(event, dataset){
+        var latlng = event.latlng;        
+        var comment = Ext.create('Ext.window.Window', {
+            title: 'Position Comments',
+            iconCls: 'x-fa fa-comments',
+            layout: 'fit',
+            closeAction: 'destroy',
+            constrainHeader:true,
+            width: 500,
+            height: 300,
+            autoShow:true,
+            onEsc: Ext.emptyFn,
+            items: [
+                {
+                    xtype: 'comments-position',
+                    listeners: {
+                        scope: this,
+                        changecomments: 'onChangeComments'
+                    }
+                }
+            ]
+        });
+
+        comment.down('comments-position').getController().loadComments(/*dec*/latlng.lat, /*ra*/latlng.lng, dataset);
+    },
+
+    onChangeComments: function (event) {
+        var me = this,
+           view = me.getView(),
+           visiomatic = me.lookupReference('visiomatic'),
+           vm = me.getViewModel(),
+           lmembers = vm.get('overlayMembers');
+
+        if (event && event.comment) {
+            //TODO: atualizar o número de comentários em lmembers.feature.properties.
+            //visiomatic.updateComment(lmembers, event.comment, event.total);
+        }
+
+        //view.fireEvent('changeinobject');
+    },
+
     onLoadPanel: function (dataset) {
         var me = this;
 
@@ -142,14 +234,11 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     onDblClickVisiomatic: function () {
-        this.toAladin();
-        //console.log('onDblClickVisiomatic()');
-
+        this.toAladin(true);
     },
 
     onShift: function () {
-        this.toAladin();
-
+        this.toAladin(true);
     },
 
     onGetLink: function (coordinate, fov) {
@@ -174,7 +263,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     },
 
-    toAladin: function () {
+    toAladin: function (clearSearch) {
         var me = this,
             vm = me.getViewModel(),
             current = vm.get('currentDataset'),
@@ -193,6 +282,10 @@ Ext.define('Sky.view.dataset.DatasetController', {
         hash       = 'sky/' + release + '/' + coordinate + '/' + fov;
 
         me.redirectTo(hash);
+
+        //Limpa a caixa de texto global search
+        if (clearSearch) me.getView().txtCoordinateSearch.setValue('');
+
     },
 
     getDatasetInOtherReleases: function (current) {
@@ -275,5 +368,33 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
         visiomatic.showHideLayer(me.lMarker, state);
 
+    },
+
+    showHideComments: function (btn, state) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic'),
+            vm = me.getViewModel(),
+            lmembers = vm.get('overlayMembers');
+
+        visiomatic.showHideComments(lmembers, state);
+    },
+
+    gotoPosition: function(value){
+        var visiomatic = this.lookupReference('visiomatic');        
+        visiomatic.panTo(value);
+    },
+
+    onActivate: function(){
+        var me = this, coordinate, zoom, aladin,
+            visiomatic = me.lookupReference('visiomatic');
+
+        //obtém as coordenadas e o zoom da url
+        coordinate = ((location.hash.split('/')[2] || '').replace(/%2C/g, '.').split('%2B')) || null;
+        zoom = ((location.hash.split('/')[3] || '').replace(/,/g, '.')) || null;
+
+        /*if (visiomatic.isReady()){
+            visiomatic.panTo(coordinate[0] + ',' + coordinate[1]);
+            visiomatic.getMap().setZoom(zoom);
+        }*/
     }
 });
