@@ -1420,6 +1420,8 @@ Ext.define('visiomatic.Visiomatic', {
          * Retorna o sistema de métrica do valor
          */
         strToSystem: function(value){
+            var a;
+            
             if (value){
                 //remove excesso de espaços, à direita, à esquerda e no meio
                 value = value.trim().replace(/( )+/g, ' ');
