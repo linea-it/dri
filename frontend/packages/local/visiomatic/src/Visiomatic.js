@@ -950,7 +950,7 @@ Ext.define('visiomatic.Visiomatic', {
             properties = feature.properties,
             mags = ['_meta_mag_auto_g','_meta_mag_auto_r','_meta_mag_auto_i', '_meta_mag_auto_z', '_meta_mag_auto_y'],
             mag_tags = [],
-            popup;            
+            popup;
 
         Ext.each(mags, function (mag) {
             try {
@@ -962,7 +962,7 @@ Ext.define('visiomatic.Visiomatic', {
                 mag_value = properties[mag];
 
                 tag = '<TR><TD><spam>' + mag_name + '</spam>: </TD><TD>' + mag_value.toFixed(2) + '</td></tr>';
-                mag_tags.push(tag)               
+                mag_tags.push(tag)
 
             } catch(err) {
 
@@ -1030,7 +1030,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         me.showContextMenuObject(event);
     },
-    
+
     createCommentIcon: function(circle, latlng){
         var me = this;
 
@@ -1246,13 +1246,6 @@ Ext.define('visiomatic.Visiomatic', {
                         handler: function(item) {
                             me.fireEvent('imageMenuItemClick', event, me.getCurrentDataset());
                         }
-                    },
-                    {
-                        id: 'crop-image',
-                        text: 'Crop Image',
-                        handler: function(item) {
-                            me.startCrop(event);
-                        }
                     }
                   ]
             });
@@ -1261,13 +1254,20 @@ Ext.define('visiomatic.Visiomatic', {
         this.contextMenuImage.showAt(xy);
     },
 
-    startCrop: function(event){
+    initCrop: function() {
+        var me = this,
+            map = me.getMap();
+        map.on('click', me.startCrop, me);
+    },
+
+    startCrop: function(){
         var me = this,
             map = me.getMap();
 
         me.cropInit = me.currentPosition
         me.cropEnd = me.cropInit;
 
+        map.off('click', me.startCrop, me);
         map.on('click', me.endCrop, me);
     },
 
@@ -1424,7 +1424,7 @@ Ext.define('visiomatic.Visiomatic', {
 
             fn(null);
         },
-        
+
         /**
          * Converte de forma assícrona HMG para latlng
          * by https://github.com/astromatic/visiomatic/blob/master/src/Control.WCS.js#L143
@@ -1437,7 +1437,7 @@ Ext.define('visiomatic.Visiomatic', {
                 if (fn) fn(latlng);
             });
         },
-        
+
         // Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
         latLngToHMSDMS: function (latlng) {
             var lng = (latlng.lng + 360.0) / 360.0;
@@ -1474,13 +1474,13 @@ Ext.define('visiomatic.Visiomatic', {
             (m < 10 ? '0' : '') + m.toString() + ':' +
             (sf < 10.0 ? '0' : '') + sf.toFixed(2);
         },
-        
+
         /**
          * Retorna o sistema de métrica do valor
          */
         strToSystem: function(value){
             var a;
-            
+
             if (value){
                 //remove excesso de espaços, à direita, à esquerda e no meio
                 value = value.trim().replace(/( )+/g, ' ');
@@ -1511,13 +1511,13 @@ Ext.define('visiomatic.Visiomatic', {
         // by VisioMatic
         parseCoords: function (str) {
             var result = /J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g.exec(str);
-            
+
             if (result && result.length >= 3) {
                 return L.latLng(Number(result[2]), Number(result[1]));
             }
 
             return null;
         }
-    } 
+    }
 
 });

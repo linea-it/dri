@@ -139,6 +139,16 @@ Ext.define('Target.view.preview.Preview', {
             },
             {
                 xtype: 'button',
+                reference: 'btnCrop',
+                iconCls: 'x-fa fa-crop',
+                enableToggle: true,
+                toggleHandler: 'showHideCrop',
+                tooltip: 'Toggle Crop Image',
+                hidden: true,
+                pressed: true,
+            },
+            {
+                xtype: 'button',
                 reference: 'btnSave',
                 iconCls: 'x-fa fa-download',
                 handler: 'onSave',
