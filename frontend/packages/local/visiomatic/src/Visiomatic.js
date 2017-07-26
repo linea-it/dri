@@ -149,7 +149,7 @@ Ext.define('visiomatic.Visiomatic', {
         // Layer usada para exibir ou ocultar a crosshair
         lcrosshair: null,
 
-        showCrosshair: true,
+        showCrosshair: false,
 
         mlocate:''
     },
@@ -325,13 +325,14 @@ Ext.define('visiomatic.Visiomatic', {
             imageLayer = me.getImageLayer();
 
         var imageOptions = {
-            mixingMode: imageLayer.iipMode,
-            defaultChannel: imageLayer.iipChannel,
-            contrast: imageLayer.iipContrast,
-            gamma: imageLayer.iipGamma,
-            invertCMap: imageLayer.iipInvertCMap,
-            colorSat: imageLayer.iipColorSat,
-            quality: imageLayer.iipQuality,
+              credentials: true,
+              channelLabelMatch: "[ugrizY]",
+              mixingMode: imageLayer.iipMode,
+              contrast: imageLayer.iipContrast,
+              gamma: imageLayer.iipGamma,
+              invertCMap: imageLayer.iipInvertCMap,
+              colorSat: imageLayer.iipColorSat,
+              quality: imageLayer.iipQuality,
         }
 
         localStorage.removeItem("imageOptions")
@@ -449,6 +450,8 @@ Ext.define('visiomatic.Visiomatic', {
 
         if (imageLayer) {
               imageOptions = {
+                  credentials: true,
+                  channelLabelMatch: "[ugrizY]",
                   mixingMode: imageLayer.iipMode,
                   contrast: imageLayer.iipContrast,
                   gamma: imageLayer.iipGamma,
@@ -958,7 +961,7 @@ Ext.define('visiomatic.Visiomatic', {
             properties = feature.properties,
             mags = ['_meta_mag_auto_g','_meta_mag_auto_r','_meta_mag_auto_i', '_meta_mag_auto_z', '_meta_mag_auto_y'],
             mag_tags = [],
-            popup;            
+            popup;
 
         Ext.each(mags, function (mag) {
             try {
@@ -970,7 +973,7 @@ Ext.define('visiomatic.Visiomatic', {
                 mag_value = properties[mag];
 
                 tag = '<TR><TD><spam>' + mag_name + '</spam>: </TD><TD>' + mag_value.toFixed(2) + '</td></tr>';
-                mag_tags.push(tag)               
+                mag_tags.push(tag)
 
             } catch(err) {
 
@@ -1038,7 +1041,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         me.showContextMenuObject(event);
     },
-    
+
     createCommentIcon: function(circle, latlng){
         var me = this;
 
@@ -1362,7 +1365,7 @@ Ext.define('visiomatic.Visiomatic', {
 
             fn(null);
         },
-        
+
         /**
          * Converte de forma assícrona HMG para latlng
          * by https://github.com/astromatic/visiomatic/blob/master/src/Control.WCS.js#L143
@@ -1375,7 +1378,7 @@ Ext.define('visiomatic.Visiomatic', {
                 if (fn) fn(latlng);
             });
         },
-        
+
         // Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
         latLngToHMSDMS: function (latlng) {
             var lng = (latlng.lng + 360.0) / 360.0;
@@ -1412,7 +1415,7 @@ Ext.define('visiomatic.Visiomatic', {
             (m < 10 ? '0' : '') + m.toString() + ':' +
             (sf < 10.0 ? '0' : '') + sf.toFixed(2);
         },
-        
+
         /**
          * Retorna o sistema de métrica do valor
          */
@@ -1447,13 +1450,13 @@ Ext.define('visiomatic.Visiomatic', {
         // by VisioMatic
         parseCoords: function (str) {
             var result = /J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g.exec(str);
-            
+
             if (result && result.length >= 3) {
                 return L.latLng(Number(result[2]), Number(result[1]));
             }
 
             return null;
         }
-    } 
+    }
 
 });
