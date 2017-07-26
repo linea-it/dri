@@ -720,6 +720,25 @@ Ext.define('visiomatic.Visiomatic', {
         return this.getReady();
     },
 
+    /**
+     * Define a posição do centro
+     * @param value String lat, lng ou h:m:s h:m:s
+     */
+    panTo: function(value){
+        var map = this.getMap();
+
+        this.coordinatesToLatLng(value, function(latlng){
+            if (latlng) map.panTo(latlng);
+        })
+    },
+
+    coordinatesToLatLng: function(value, fn){
+        visiomatic.Visiomatic.coordinatesToLatLng(value, fn);
+    },
+
+    hmsToLatLng: function(value, fn){
+        visiomatic.Visiomatic.hmsToLatLng(value, fn);
+    },
 
     /**
      * Essa funcao e usada para densenhar o raio de um cluster
@@ -900,63 +919,65 @@ Ext.define('visiomatic.Visiomatic', {
                 //adiciona o ícone de comentário
                 if (feature.properties._meta_comments){
                     //x-fa fa-map-marker fa-2x
-                    circle.commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker')
+                    me.createCommentIcon(circle, latlng);
+                    /*circle.commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker')
                         .on('contextmenu', onLayerContextMenu);
-                    circle.commentMaker.targetObjet = circle;
+                    circle.commentMaker.targetObjet = circle;*/
                 }
 
                 return circle;
             }
-        }).bindPopup(function (layer) {
-            var feature = layer.feature,
-                popup = '<TABLE style="margin:auto;">' +
-                   '<TBODY style="vertical-align:top;text-align:left;">' +
-                        '<TR><TD><spam style="font-weight: bold;">ID </spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
-                        // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
-                        // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
-                        '<TR><TD><spam style="font-weight: bold;">RA, Dec (deg)</spam>: </TD><TD>' +
-                            feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
-                        '</td></tr>' +
-                    '</TBODY></TABLE>';
+        })
+        .bindPopup(
+            me.createOverlayPopup)
 
-            return popup;
-
-        }).on('dblclick', function () {
+        .on('dblclick', function () {
             alert('TODO: OPEN IN EXPLORER!');
         })
         /**
          * @description Chama a função de exibição do menu de contexto
          */
-        .on('contextmenu', onLayerContextMenu);
-
-        function onLayerContextMenu(event){
-            me.isObjectContextMenu = true; //diz para cancelar o evento em onContextMenuClick
-
-            if (event.target.targetObjet){
-                //o evento foi sobre um comentário de um objeto
-                event.layer = {feature: event.target.targetObjet.feature};
-            }
-
-            me.showContextMenuObject(event);
-        }
+        .on('contextmenu', me.onLayerContextMenu, me);
 
         map.addLayer(lCatalog);
 
         return lCatalog;
     },
 
+
     createOverlayPopup: function (layer) {
         var feature = layer.feature,
-            popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
-               '<TABLE style="margin:auto;">' +
-               '<TBODY style="vertical-align:top;text-align:left;">' +
-                    '<TR><TD><spam>ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
-                    // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
-                    // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
-                    '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
-                        feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
-                    '</td></tr>' +
-                '</TBODY></TABLE>';
+            properties = feature.properties,
+            mags = ['_meta_mag_auto_g','_meta_mag_auto_r','_meta_mag_auto_i', '_meta_mag_auto_z', '_meta_mag_auto_y'],
+            mag_tags = [],
+            popup;            
+
+        Ext.each(mags, function (mag) {
+            try {
+                mag_name = mag.slice(-1);
+                if (mag_name == 'y'){
+                    mag_name = 'Y';
+
+                }
+                mag_value = properties[mag];
+
+                tag = '<TR><TD><spam>' + mag_name + '</spam>: </TD><TD>' + mag_value.toFixed(2) + '</td></tr>';
+                mag_tags.push(tag)               
+
+            } catch(err) {
+
+            }
+        });
+
+        popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
+           '<TABLE style="margin:auto;">' +
+           '<TBODY style="vertical-align:top;text-align:left;">' +
+                '<TR><TD><spam>ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
+                '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
+                    feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
+                '</td></tr>' +
+                mag_tags.join('') +
+            '</TBODY></TABLE>';
 
         return popup;
     },
@@ -997,17 +1018,51 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
+    onLayerContextMenu: function(event){
+        var me = this;
+
+        me.isObjectContextMenu = true; //diz para cancelar o evento em onContextMenuClick
+
+        if (event.target.targetObjet){
+            //o evento foi sobre um comentário de um objeto
+            event.layer = {feature: event.target.targetObjet.feature};
+        }
+
+        me.showContextMenuObject(event);
+    },
+    
+    createCommentIcon: function(circle, latlng){
+        var me = this;
+
+        circle.commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker')
+            .on('contextmenu', me.onLayerContextMenu, me);
+
+        circle.commentMaker.targetObjet = circle;
+    },
+
     updateComment: function (layer, comment, total) {
-        var me = this, l, id,
+        var me = this, circle, id,
             layers = layer._layers;
 
         for (i in layers){
-            l  = layers[i];
-            id = l.feature.id;
+            circle  = layers[i];
+            id = circle.feature.id;
 
             if (id==comment.data.object_id){
-                l.feature.properties._meta_comments = total;
-                l._path.setAttribute('stroke', total ? '#FF9800' : '#4AAB46');
+                //já tem o ícone
+                if (circle.commentMaker){
+                    //remove se não tem mais comentário
+                    circle.commentMaker._icon.style.display = total==0 ? 'none' : '';
+                }
+                //não tem o ícone
+                else{
+                    //adiciona se tem comentário
+                    if (total>0){
+                        me.createCommentIcon(circle, circle._latlng);
+                    }
+                }
+
+                circle.feature.properties._meta_comments = total;
             }
 
         }
@@ -1015,7 +1070,7 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     /**
-     * Adiciona um maker em uma determinada posição, podendo cher chamada de duas formas:
+     * Adiciona um maker em uma determinada posição, podendo ser chamada de duas formas:
      *      markPosition(ra, dec, iconCls);
      *      markPosition(latlng, iconCls);
      */
@@ -1028,7 +1083,7 @@ Ext.define('visiomatic.Visiomatic', {
         if (arguments.length==2){
             latlng = ra;
             iconCls = dec;
-            iconAnchor = [10,22];//28];
+            iconAnchor = [12,25];//28];
         }else{
             latlng = l.latLng(dec, ra);
             iconAnchor = [8,44];
@@ -1345,6 +1400,124 @@ Ext.define('visiomatic.Visiomatic', {
             // nao tem um dataset carregado nao da pra testar se esta dentro ou nao
             return true
         }
-    }
+    },
+
+    statics : {
+        /**
+         * Retorna de forma assíncrona as coordeandas latlng a partir de value
+         * @param value String valor no formato "H:M:S"" ou "lat, lng"
+         * @param fn Function função de retorno com o valor convertido em latlng
+         */
+        coordinatesToLatLng: function(value, fn){
+            var a, n = visiomatic.Visiomatic.strToSystem(value);
+
+            value = value.trim().replace(/( )+/g, ' ');
+            a = value.split(',');
+
+            if (n && n.system=='latlng'){
+                return fn(n.value);
+
+            }else if (n && n.system=='HMS'){
+                //converte para latlng
+                return visiomatic.Visiomatic.hmsToLatLng(value, fn);
+            }
+
+            fn(null);
+        },
+        
+        /**
+         * Converte de forma assícrona HMG para latlng
+         * by https://github.com/astromatic/visiomatic/blob/master/src/Control.WCS.js#L143
+         */
+        hmsToLatLng: function(value, fn){
+            var url = 'http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?'+value;
+
+            $.get(url, function(response){
+                var latlng = visiomatic.Visiomatic.parseCoords(response, true);
+                if (fn) fn(latlng);
+            });
+        },
+        
+        // Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
+        latLngToHMSDMS: function (latlng) {
+            var lng = (latlng.lng + 360.0) / 360.0;
+            lng = (lng - Math.floor(lng)) * 24.0;
+            var h = Math.floor(lng),
+            mf = (lng - h) * 60.0,
+            m = Math.floor(mf),
+            sf = (mf - m) * 60.0;
+            if (sf >= 60.0) {
+                m++;
+                sf = 0.0;
+            }
+            if (m === 60) {
+                h++;
+                m = 0;
+            }
+            var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
+            ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
+            lat = Math.abs(latlng.lat),
+            sgn = latlng.lat < 0.0 ? '-' : '+',
+            d = Math.floor(lat);
+            mf = (lat - d) * 60.0;
+            m = Math.floor(mf);
+            sf = (mf - m) * 60.0;
+            if (sf >= 60.0) {
+                m++;
+                sf = 0.0;
+            }
+            if (m === 60) {
+                h++;
+                m = 0;
+            }
+            return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
+            (m < 10 ? '0' : '') + m.toString() + ':' +
+            (sf < 10.0 ? '0' : '') + sf.toFixed(2);
+        },
+        
+        /**
+         * Retorna o sistema de métrica do valor
+         */
+        strToSystem: function(value){
+            var a;
+            
+            if (value){
+                //remove excesso de espaços, à direita, à esquerda e no meio
+                value = value.trim().replace(/( )+/g, ' ');
+
+                //lnt, lng
+                a = value.split(',');
+                if (a.length==2 && value.split(':').length==1){
+                    return {
+                        value: {lng:Number(a[0]), lat:Number(a[1])},
+                        system: 'latlng'
+                    }
+                }
+
+                //h:m:s h:m:s
+                a = value.split(' ');
+                if (a.length==2 && value.split(':').length==5){
+                    return {
+                        value: value,
+                        system: 'HMS'
+                    }
+                }
+            }
+
+            return null;
+        },
+
+        // Parse a string of coordinates. Return undefined if parsing failed
+        // by VisioMatic
+        parseCoords: function (str) {
+            var result = /J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g.exec(str);
+            
+            if (result && result.length >= 3) {
+                return L.latLng(Number(result[2]), Number(result[1]));
+            }
+
+            return null;
+        }
+    } 
 
 });
