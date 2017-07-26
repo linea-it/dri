@@ -47,10 +47,6 @@ Ext.define('Sky.view.dataset.DatasetController', {
             catalog = vm.get('currentCatalog'),
             object_id, catalog_id;
 
-        if ((!object) || (!object.get('_meta_id'))) {
-            return false;
-        }
-
         if (feature && feature.properties){
             catalog_id = feature.properties._meta_catalog_id;
             object_id  = feature.id;
@@ -82,9 +78,9 @@ Ext.define('Sky.view.dataset.DatasetController', {
                     }
                 ]
             });
-
+            
             //passar latlng e feature para ser caregado comentários de um objeto específico ou de uma posição específica
-            comment.down('comments-object').getController().loadComments(catalog_id, object_id, latlng, feature);
+            comment.down('comments-object').getController().loadComments(catalog_id, object_id, event.latlng, feature);
         }
     },
 
