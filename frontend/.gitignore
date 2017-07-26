@@ -1,6 +1,5 @@
 bootstrap.json
 build/development/
-build/temp/development/
-build/temp/production/
+build/temp
 LOCAL.txt
 
