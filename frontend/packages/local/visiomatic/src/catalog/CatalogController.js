@@ -5,7 +5,8 @@ Ext.define('visiomatic.catalog.CatalogController', {
 
     requires: [
         'visiomatic.store.Objects',
-        'visiomatic.model.Overlay'
+        'visiomatic.model.Overlay',
+        'visiomatic.filter.FiltersWindow'
     ],
 
     listen: {
@@ -17,6 +18,8 @@ Ext.define('visiomatic.catalog.CatalogController', {
     },
 
     baseFilters: [],
+
+    winFilter: null,
 
     onChangeDataset: function (dataset) {
         var me = this,
@@ -49,6 +52,16 @@ Ext.define('visiomatic.catalog.CatalogController', {
         catalogs.addFilter(baseFilters);
 
         catalogs.load();
+
+    },
+
+    onSelectCatalog: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            filters = vm.get('currentFilters');
+
+        // Toda vez que troca de catalogo zera os filtros so para garantir.
+        filters = [];
 
     },
 
@@ -134,6 +147,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
             tree = me.lookup('CatalogsTree'),
             catalog = tree.selection,
             color = vm.get('currentColor'),
+            filters = vm.get('currentFilters'),
             overlays = vm.getStore('overlays'),
             overlay;
 
@@ -143,6 +157,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
             name: catalog.get('prd_display_name'),
             catalog: catalog,
             color: Ext.String.format('#{0}', color),
+            filters: filters,
             visible: true,
             count: null,
             layers: null,
@@ -162,11 +177,12 @@ Ext.define('visiomatic.catalog.CatalogController', {
             vm = me.getViewModel(),
             visiomatic = vm.get('visiomatic'),
             store = overlay.get('objects'),
+            filters = overlay.get('filters'),
+            conditions = [],
             box;
 
         // Recuperar as Coordenadas da area visivel no visiomatic
         box = visiomatic.getBox();
-
 
         store.addFilter([
             {
@@ -176,7 +192,24 @@ Ext.define('visiomatic.catalog.CatalogController', {
                 property: 'coordinates',
                 value: JSON.stringify(box)
             }
-        ])
+        ]);
+
+
+        // Adicionar os Filtros selecionados pelo usuario
+        if (filters !== null) {
+
+            Ext.each(filters, function(condition) {
+
+                conditions.push({
+                    property: condition.get('fcd_property_name'),
+                    operator: condition.get('fcd_operation'),
+                    value: condition.get('fcd_value')
+                });
+            })
+
+            store.addFilter(conditions);
+        }
+
 
         store.load({
             callback: function (store, operation, successful) {
@@ -284,6 +317,36 @@ Ext.define('visiomatic.catalog.CatalogController', {
         }
 
     },
+
+    onClickBtnFilter: function(){
+        var me = this,
+            vm = me.getViewModel(),
+            tree = me.lookup('CatalogsTree'),
+            catalog = tree.selection;
+
+        if ((catalog) && (catalog.get('id') > 0)) {
+
+            me.winFilter = Ext.create('visiomatic.filter.FiltersWindow',{
+                listeners: {
+                    scope: me,
+                    applyfilters: 'onApplyFilters',
+                }
+            });
+
+            me.winFilter.setCurrentCatalog(catalog);
+
+            me.winFilter.show();
+        }
+    },
+
+    onApplyFilters: function(filters, currentCatalog) {
+        var me = this,
+            vm = me.getViewModel();
+
+        if (filters.length > 0) {
+            vm.set('currentFilters', filters);
+        }
+    }
 
 });
 
