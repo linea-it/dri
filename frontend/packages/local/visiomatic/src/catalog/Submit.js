@@ -19,13 +19,17 @@ Ext.define('visiomatic.catalog.Submit', {
                 {
                     xtype: 'fieldset',
                     flex: 1,
-//                    layout: 'anchor',
                     items: [
                         {
                             xtype: 'colorfield',
                             fieldLabel: 'Color',
                             labelAlign: 'top',
                             bind: '{currentColor}'
+                        },
+                        {
+                            xtype: 'button',
+                            text: 'Filter',
+                            handler: 'onClickBtnFilter'
                         }
                     ]
                 }
