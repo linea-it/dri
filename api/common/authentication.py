@@ -12,25 +12,30 @@ class NcsaBackend(object):
         portalusername = db.get('USER')
         portalpass = db.get('PASSWORD')
 
-        url = ("oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
-               "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
-               "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
-               "SERVICE_NAME=%(database)s)))") % \
-               {"username": portalusername, 'password': portalpass,
-               'host': host, 'port': port,
-               'database': name}
+        url = (
+            "oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
+            "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
+            "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
+            "SERVICE_NAME=%(database)s)))"
+        ) % {
+            "username": portalusername, "password": portalpass,
+            "host": host, "port": port,
+            "database": name
+        }
         engine = create_engine(url)
         connection = engine.connect()
-    
-        rs = connection.execute("SELECT email, firstname, lastname from des_users where username = '" + username +"'")
+
+        rs = connection.execute(
+            "SELECT email, firstname, lastname" +
+            " FROM des_users where username = '" + username + "'"
+        )
         row = rs.fetchone()
-        email = row[0]    
-        first_name = row[1]   
-        last_name = row[2]     
+        email = row[0]
+        first_name = row[1]
+        last_name = row[2]
         connection.close()
 
         return (email, first_name, last_name)
-        
 
     def authenticate(self, username=None, password=None):
 
@@ -41,7 +46,7 @@ class NcsaBackend(object):
                 user.email = email
                 user.first_name = first_name
                 user.last_name = last_name
-                user.save()         
+                user.save()
             except User.DoesNotExist:
                 group = self.get_group('NCSA')
                 user = User(username=username)
@@ -51,9 +56,9 @@ class NcsaBackend(object):
                 user.last_name = last_name
                 user.save()
                 user.groups.add(group)
-            
+
             return user
-        
+
         return None
 
     def get_user(self, user_id):
@@ -69,21 +74,23 @@ class NcsaBackend(object):
             host, name = db.get('NAME').split('/')
             host, port = host.split(':')
 
-            url = ("oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
-                   "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
-                   "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
-                   "SERVICE_NAME=%(database)s)))") % \
-                  {"username": username, 'password': password,
-                   'host': host, 'port': port,
-                   'database': name}
-
+            url = (
+                "oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
+                "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
+                "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
+                "SERVICE_NAME=%(database)s)))"
+            ) % {
+                "username": username, "password": password,
+                "host": host, "port": port,
+                "database": name
+            }
             engine = create_engine(url)
             connection = engine.connect()
             connection.close()
 
             return True
 
-        except Exception as e:
+        except Exception:
             return False
 
     def get_group(self, name):
