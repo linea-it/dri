@@ -1,3 +1,4 @@
+import urllib
 from django.test import TestCase
 from django.core.urlresolvers import reverse, resolve
 from django.contrib.auth.models import AnonymousUser, User
@@ -9,6 +10,7 @@ from rest_framework.test import force_authenticate
 from model_mommy import mommy
 
 from coadd.models import Dataset
+
 
 # ----------------------------------------- < Comments By Position > -----------------------------------------
 class CommentPositionAPITestCase(APITestCase):
@@ -57,7 +59,7 @@ class CommentPositionAPITestCase(APITestCase):
         response = self.client.get(self.route)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(data['pst_comment'], self.data['pst_comment'])
+        self.assertEqual(response.data[0]['pst_comment'], self.data['pst_comment'])
 
         # Update
         patch_data = dict({
@@ -90,3 +92,76 @@ class CommentPositionAPITestCase(APITestCase):
         response = self.client.get(self.route)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0)
+
+    def test_filter_comment_position(self):
+
+        ll = dict(
+            owner=self.user.pk,
+            pst_dataset=self.dataset.pk,
+            pst_ra="-0.1",
+            pst_dec="-0.1",
+            pst_comment="my comment at -0.1,-0.1",
+        )
+        lr = dict(
+            owner=self.user.pk,
+            pst_dataset=self.dataset.pk,
+            pst_ra="0.1",
+            pst_dec="-0.1",
+            pst_comment="my comment at 0.1,-0.1",
+        )
+        cc = dict(
+            owner=self.user.pk,
+            pst_dataset=self.dataset.pk,
+            pst_ra="0.0",
+            pst_dec="0.0",
+            pst_comment="my comment at 0.0,0.0",
+        )
+        ul = dict(
+            owner=self.user.pk,
+            pst_dataset=self.dataset.pk,
+            pst_ra="-0.1",
+            pst_dec="0.1",
+            pst_comment="my comment at -0.1,0.1",
+        )
+        ur = dict(
+            owner=self.user.pk,
+            pst_dataset=self.dataset.pk,
+            pst_ra="0.1",
+            pst_dec="0.1",
+            pst_comment="my comment at 0.1,0.1",
+        )
+
+        input_data = list()
+        input_data.append(ll)
+        input_data.append(lr)
+        input_data.append(cc)
+        input_data.append(ul)
+        input_data.append(ur)
+
+        # Create
+        for d in input_data:
+            response = self.client.post(
+                self.route,
+                d,
+                format='json')
+
+            self.assertEqual(response.status_code, 201)
+
+        # Filter center comment only, using a rectangle just bigger
+        response = self.client.get('/comment/position/?coordinates=' + urllib.parse.quote('[[-0.01, -0.01], [0.01, 0.01]]'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data), 1)
+        self.assertEqual(str(response.data[0]['pst_ra']), str(cc['pst_ra']))
+        self.assertEqual(str(response.data[0]['pst_dec']), str(cc['pst_dec']))
+        self.assertEqual(str(response.data[0]['pst_comment']), str(cc['pst_comment']))
+
+        # Filter each input
+        for t in input_data:
+            response = self.client.get(
+                '/comment/position/?coordinates=' + urllib.parse.quote(
+                    '[[%s, %s], [%s, %s]]' % (t['pst_ra'], t['pst_dec'], t['pst_ra'], t['pst_dec'])))
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(response.data), 1)
+            self.assertEqual(str(response.data[0]['pst_ra']), str(t['pst_ra']))
+            self.assertEqual(str(response.data[0]['pst_dec']), str(t['pst_dec']))
+            self.assertEqual(str(response.data[0]['pst_comment']), str(t['pst_comment']))
