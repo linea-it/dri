@@ -17,8 +17,8 @@ Ext.define('Target.view.objects.ObjectsModel', {
         'Target.store.ProductDisplayContents',
         'Target.store.FilterSets',
         'Target.store.FilterConditions',
-        'Target.store.CutoutJobs'
-
+        'Target.store.CutoutJobs',
+        'Target.store.Cutouts'
     ],
 
     data: {
@@ -53,8 +53,8 @@ Ext.define('Target.view.objects.ObjectsModel', {
             type: 'target-filter-conditions',
             autoLoad: false
         },
-        cutoutsJobs: {
-            type: 'cutoutjobs',
+        cutouts: {
+            type: 'cutouts',
             autoLoad: false
         }
     },
@@ -70,10 +70,6 @@ Ext.define('Target.view.objects.ObjectsModel', {
         },
         filterSet: {
             type: 'Target.model.FilterSet',
-            create: true
-        },
-        currentCutoutJob: {
-            type: 'Target.model.CutoutJob',
             create: true
         }
     }

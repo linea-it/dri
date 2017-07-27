@@ -92,8 +92,11 @@ Ext.define('aladin.Events', {
             xymouse = view.imageCanvas.relMouseCoords(e);
 
             radec = me.mousePositionToSky(xymouse);
-
+            
             if (radec) {
+                // Atualizar a string com a posicao do reticle
+                me.updateLocation(me.getRaDec(), radec);
+
                 // Se o mouse estiver pressionado passa a ser uma acao de pan.
                 if (me.mouseIsDown) {
 
@@ -101,8 +104,7 @@ Ext.define('aladin.Events', {
                     me.mouseLastPosition = radec;
 
                     // Atualizar a string com a posicao do reticle
-                    me.updateLocation(me.getRaDec());
-
+                    //me.updateLocation(me.getRaDec());
 
                     // Evento reticlemove deve retornar a coordeana atual do reticle no movimento do mouse.
                     me.fireEvent('reticlemove', me.getRaDec(), me);
@@ -173,20 +175,22 @@ Ext.define('aladin.Events', {
         return radec;
     },
 
+    //converte radec para o formato string "ra, dec"
     skyToString: function (radec) {
 
         if ((radec) && (radec[0]) && (radec[1])) {
-            return String(radec[0].toFixed(4) + ', ' + radec[1].toFixed(4));
+            return String(radec[0].toFixed(5) + ', ' + radec[1].toFixed(5));
         }
     },
 
-    updateLocation: function (radec) {
+    updateLocation: function (radec, mradec) {
         var me = this,
-            location;
-
+            location, mlocation;
+            
         location = me.skyToString(radec);
-
-        me.setLocation(location);
+        mlocation = me.skyToString(mradec);
+        
+        me.setLocation(location, mlocation);
     }
 
 });

@@ -47,6 +47,9 @@ Ext.define('Target.view.objects.ObjectsController', {
     winDownload: null,
     winCutout: null,
 
+    taskCutoutJob: null,
+
+
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
         var me = this,
             vm = objectsPanel.getViewModel(),
@@ -73,7 +76,8 @@ Ext.define('Target.view.objects.ObjectsController', {
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid,
             filtersets = vm.getStore('filterSets'),
-            cutoutsJobs = vm.getStore('cutoutsJobs');
+            combo = me.lookup('cmbCutoutJob'),
+            cutoutsJobs = combo.getStore();
 
         if (store.count() === 1) {
             currentCatalog = store.first();
@@ -94,13 +98,32 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             // Adicionar Filtro a store CutoutJobs
             // combobox Mosaic-cutoutJobs
-            cutoutsJobs.addFilter([{
-                property: 'cjb_product',
-                value: currentCatalog.get('id')
-            },{
-                property: 'cjb_status',
-                value: 'ok'
-            }]);
+            cutoutsJobs.addFilter([
+                {
+                    property: 'cjb_product',
+                    value: currentCatalog.get('id')
+                },
+                {
+                    property: 'cjb_status',
+                    value: 'ok'
+                }
+            ]);
+
+            cutoutsJobs.load()
+
+            // Task para verificar se existe cutoutjob
+            if (me.taskCutoutJob !== null) {
+                Ext.TaskManager.stop(me.taskCutoutJob);
+                me.taskCutoutJob = null;
+            }
+
+            me.taskCutoutJob = {
+                run: me.reloadCutoutJobs,
+                interval: 60000,
+                scope: me
+            };
+            Ext.TaskManager.start(me.taskCutoutJob);
+
         }
     },
 
@@ -584,6 +607,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onBeforeDeactivate: function () {
+        console.log('onBeforeDeactivate')
         var me = this;
         // Fix AlertSetting quando usa funcao voltar do navegador
         if (me.winAlertSetting !== null) {
@@ -594,6 +618,11 @@ Ext.define('Target.view.objects.ObjectsController', {
         if (me.wizard !== null) {
             me.wizard.close();
             me.wizard = null;
+        }
+
+        if (me.taskCutoutJob !== null) {
+            Ext.TaskManager.stop(me.taskCutoutJob);
+            me.taskCutoutJob = null;
         }
     },
 
@@ -667,6 +696,11 @@ Ext.define('Target.view.objects.ObjectsController', {
         combo.getTrigger('clear').hide();
 
         me.loadObjects();
+    },
+
+    onCommentButton: function(event){
+        this.getReferences()
+            .targetsPreviewPanel.getController().onObjectMenuItemClickVisiomatic({});
     },
 
     /**
@@ -848,16 +882,39 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     },
 
-    onSelectCutoutJob: function () {
+    reloadCutoutJobs: function () {
         var me = this,
             vm = me.getViewModel(),
-            cutoutJob = vm.get('currentCutoutJob'),
-            mosaic = me.lookup('TargetMosaic');
+            combo = me.lookup('cmbCutoutJob'),
+            store = combo.getStore();
+
+        store.load();
+    },
+
+
+    onSelectCutoutJob: function (cmb) {
+        var me = this,
+            vm = me.getViewModel(),
+            cutoutJob = cmb.selection,
+            mosaic = me.lookup('TargetMosaic'),
+            cutouts = vm.getStore('cutouts');
 
         if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
-            // Setar no Mosaic o Cutout Job Selecionado
-            mosaic.setCutoutJob(cutoutJob);
+            cutouts.addFilter([{
+                property: 'cjb_cutout_job',
+                value: cutoutJob.get('id')
+            },
+            {
+                property: 'ctt_file_type',
+                value: 'png'
+            }]);
 
+            cutouts.load({
+                callback: function() {
+                    // Setar no Mosaic o Cutout Job Selecionado
+                    mosaic.setCutoutJob(cutoutJob, this);
+                }
+            });
         }
 
     }

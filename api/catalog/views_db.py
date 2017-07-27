@@ -8,7 +8,7 @@ from sqlalchemy import desc
 import warnings
 from sqlalchemy import exc as sa_exc
 from django.conf import settings
-
+import json
 
 class CoaddObjectsDBHelper:
     def __init__(self, table, schema=None, database=None):
@@ -120,86 +120,6 @@ class CoaddObjectsDBHelper:
         return self.db.fetchall_dict(stm)
 
 
-class VisiomaticCoaddObjectsDBHelper:
-    def __init__(self, table, schema=None, database=None):
-        self.schema = schema
-
-        if database:
-            com = CatalogDB(db=database)
-        else:
-            com = CatalogDB()
-
-        self.db = com.database
-        if not self.db.table_exists(table, schema=self.schema):
-            raise Exception("Table or view  %s.%s does not exist" %
-                            (self.schema, table))
-
-        # Desabilitar os warnings na criacao da tabela
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
-
-            self.table = self.db.get_table_obj(table, schema=self.schema)
-            self.columns = None
-
-    def _create_stm(self, params):
-        # Parametros de Paginacao
-        limit = params.get('limit', 1000)
-
-        # Parametros de Ordenacao
-        ordering = params.get('ordering', None)
-
-        # Parametro Columns
-        self.str_columns = list()
-        if params.get('columns', None) is not None:
-            clmns = params.get('columns', None).split(',')
-            for clmn in clmns:
-                self.str_columns.append(clmn.lower())
-
-        columns = DBBase.create_columns_sql_format(self.table, self.str_columns)
-
-        coordinate = params.get('coordinate', None).split(',')
-        bounding = params.get('bounding', None).split(',')
-
-        filters = list()
-        if coordinate and bounding:
-            property_ra_t = DBBase.get_column_obj(self.table, 'ra')
-            property_dec_t = DBBase.get_column_obj(self.table, 'dec')
-
-            ra = float(coordinate[0])
-            dec = float(coordinate[1])
-            bra = float(bounding[0])
-            bdec = float(bounding[1])
-
-            _filters = list()
-            _filters.append(between(literal_column(str(property_ra_t)),
-                                    literal_column(str(ra - bra)),
-                                    literal_column(str(ra + bra))))
-            _filters.append(between(literal_column(str(property_dec_t)),
-                                    literal_column(str(dec - bdec)),
-                                    literal_column(str(dec + bdec))))
-            filters.append(and_(*_filters))
-
-        maglim = params.get('maglim', None)
-        if maglim is not None:
-            # TODO a magnitude continua com a propriedade hardcoded
-            maglim = float(maglim)
-            mag_t = DBBase.get_column_obj(self.table, 'mag_auto_i')
-            filters.append(
-                literal_column(str(mag_t)) <= literal_column(str(maglim)))
-
-        stm = select(columns).select_from(self.table).where(and_(*filters))
-
-        if limit:
-            stm = stm.limit(literal_column(str(limit)))
-
-        return stm
-
-    def query_result(self, params):
-        stm = self._create_stm(params)
-
-        return self.db.fetchall_dict(stm)
-
-
 class TargetViewSetDBHelper:
     def __init__(self, table, schema=None, database=None):
         self.schema = schema
@@ -266,6 +186,7 @@ class TargetViewSetDBHelper:
         filters = list()
         rating_filter = list()
         reject_filter = list()
+        coordinates_filter = list()
 
         params = params.dict()
         for param in params:
@@ -294,10 +215,32 @@ class TargetViewSetDBHelper:
                         column='reject',
                         op=op,
                         value=value)])
+                # Coordenadas query por quadrado
+                elif col == 'coordinates':
+                    value = json.loads(params.get(param))
+                    # Upper Right
+                    ur = value[0]
+                    # Lower Left
+                    ll = value[1]
+                    coordinates_filter.append(
+                        and_(between(
+                            literal_column(str('ra')),
+                            literal_column(str(ll[0])),
+                            literal_column(str(ur[0]))
+                        ), between(
+                            literal_column(str('dec')),
+                            literal_column(str(ll[1])),
+                            literal_column(str(ur[1]))
+                        ))
+                    )
 
         stm = stm.where(and_(*DBBase.do_filter(self.table, filters) +
                               DBBase.do_filter(catalog_rating_id, rating_filter) +
-                              DBBase.do_filter(catalog_reject_id, reject_filter)))
+                              DBBase.do_filter(catalog_reject_id, reject_filter) +
+                              coordinates_filter
+                             ))
+
+        print(str(stm))
 
         # Parametros de Paginacao
         limit = params.get('limit', None)
@@ -342,3 +285,119 @@ class TargetViewSetDBHelper:
         count = self.db.stm_count(stm)
 
         return result, count
+
+
+
+class CatalogObjectsViewSetDBHelper:
+    def __init__(self, table, schema=None, database=None, columns=list(), limit=None, start=None):
+        self.schema = schema
+        self.query_columns = list()
+        self.limit = limit
+        self.start = start
+
+
+        if database:
+            com = CatalogDB(db=database)
+
+        else:
+            com = CatalogDB()
+
+        self.db = com.database
+        if not self.db.table_exists(table, schema=self.schema):
+            raise Exception("Table or view  %s.%s does not exist" %
+                            (self.schema, table))
+
+        # Desabilitar os warnings na criacao da tabela
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
+
+            table = self.db.get_table_obj(table, schema=self.schema)
+
+            # Nome das colunas originais na tabela
+            self.columns = [column.key.strip() for column in table.columns]
+
+            if len(columns) > 0:
+                for col in columns:
+                    if col in self.columns:
+                        self.query_columns.append(literal_column(str(col)))
+
+            else:
+                self.query_columns = self.columns
+
+            self.table = table.alias('a')
+
+    def _create_stm(self, request, properties):
+        params = request.query_params
+        owner = request.user.pk
+
+        product_id = request.query_params.get('product', None)
+        try:
+            property_id = properties.get("meta.id;meta.main").lower()
+        except:
+            raise ("Need association for ID column with meta.id;meta.main ucd.")
+
+        # Aqui pode entrar o parametro para escolher as colunas
+        stm = select(self.query_columns).select_from(self.table)
+
+        # Filtros
+        filters = list()
+        coordinates_filter = list()
+
+        params = params.dict()
+        for param in params:
+            if '__' in param:
+                col, op = param.split('__')
+            else:
+                col = param
+                op = 'eq'
+
+            if col.lower() in self.columns:
+                filters.append(dict(
+                    column=col.lower(),
+                    op=op,
+                    value=params.get(param)))
+            else:
+                # Coordenadas query por quadrado
+                if col == 'coordinates':
+                    value = json.loads(params.get(param))
+                    # Upper Right
+                    ur = value[0]
+                    # Lower Left
+                    ll = value[1]
+                    coordinates_filter.append(
+                        and_(between(
+                            literal_column(str('ra')),
+                            literal_column(str(ll[0])),
+                            literal_column(str(ur[0]))
+                        ), between(
+                            literal_column(str('dec')),
+                            literal_column(str(ll[1])),
+                            literal_column(str(ur[1]))
+                        ))
+                    )
+
+        stm = stm.where(and_(*DBBase.do_filter(self.table, filters) +
+                              coordinates_filter
+                             ))
+
+        print(str(stm))
+
+        if self.limit:
+            stm = stm.limit(literal_column(str(self.limit)))
+
+            if self.start:
+                stm = stm.offset(literal_column(str(self.start)))
+
+        return stm
+
+
+    def query_result(self, request, properties):
+        stm = self._create_stm(request, properties)
+
+        result = self.db.fetchall_dict(stm)
+
+        count = self.db.stm_count(stm)
+
+        return result, count
+
+

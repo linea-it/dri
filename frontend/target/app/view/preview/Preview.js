@@ -26,6 +26,10 @@ Ext.define('Target.view.preview.Preview', {
             reference: 'visiomatic',
             bind: {
                 showCrosshair: '{BtnCrosshair.pressed}'
+            },
+            listeners: {
+                objectMenuItemClick: 'onObjectMenuItemClickVisiomatic',
+                imageMenuItemClick : 'onImageMenuItemClickVisiomatic'
             }
         }
     ],
@@ -61,14 +65,6 @@ Ext.define('Target.view.preview.Preview', {
                 bind: {
                     value: '{currentDataset.tli_tilename}'
                 }
-            },
-            {
-                xtype: 'button',
-                text: 'Explorer',
-                tooltip: 'See more information about this object in Explorer app',
-                ui: 'soft-blue',
-                iconCls: 'x-fa fa-info-circle',
-                handler: 'onExplorer'
             }
         ]
     },
@@ -101,12 +97,21 @@ Ext.define('Target.view.preview.Preview', {
             },
             {
                 xtype: 'button',
+                text: 'Explorer',
+                tooltip: 'See more information about this object in Explorer app',
+                ui: 'soft-blue',
+                iconCls: 'x-fa fa-info-circle',
+                handler: 'onExplorer'
+            },
+            /*{
+                xtype: 'button',
                 iconCls: 'x-fa fa-comments',
                 bind: {
                     disabled: '{!currentRecord._meta_id}'
                 },
                 handler: 'onComment'
-            },
+            },*/
+
             '-',
             {
                 xtype: 'button',
@@ -122,6 +127,35 @@ Ext.define('Target.view.preview.Preview', {
                 pressed: true,
                 reference: 'BtnCrosshair'
             },
+            {
+                xtype: 'button',
+                reference: 'btnComments',
+                iconCls: 'x-fa fa-comments',
+                enableToggle: true,
+                toggleHandler: 'showHideComments',
+                tooltip: 'Show/Hide Comments',
+                pressed: true,
+                hidden: true
+            },
+            {
+                xtype: 'button',
+                reference: 'btnCrop',
+                iconCls: 'x-fa fa-crop',
+                enableToggle: true,
+                toggleHandler: 'showHideCrop',
+                tooltip: 'Show/Hide Crop',
+                hidden: true,
+                pressed: true,
+            },
+            {
+                xtype: 'button',
+                reference: 'btnSave',
+                iconCls: 'x-fa fa-download',
+                handler: 'onSave',
+                hidden: true,
+                tooltip: 'Show/Hide Download Files',
+            },
+            '-',
             {
                 xtype: 'button',
                 reference: 'btnRadius',

@@ -205,7 +205,10 @@ class Import():
                             (data.get('schema', None), data.get('table')))
 
         # Recuperar a quantidade de linhas da tabela
-        count = self.db.get_count(data.get('table'), schema=data.get('schema', None))
+        count = 0
+        if data.get('class') is not 'coadd_objects':
+            count = self.db.get_count(data.get('table'), schema=data.get('schema', None))
+
 
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))
@@ -297,7 +300,7 @@ class Import():
             for column in columns:
                 content = ProductContent.objects.create(
                     pcn_product_id=catalog,
-                    pcn_column_name=column
+                    pcn_column_name=column.strip()
                 )
 
         self.product_content_association(catalog, data, created)
@@ -322,6 +325,11 @@ class Import():
                     dict({'property': 'a_image', 'ucd': 'phys.size.smajAxis;instr.det;meta.main'}),
                     dict({'property': 'b_image', 'ucd': 'phys.size.sminAxis;instr.det;meta.main'}),
                     dict({'property': 'theta_j2000', 'ucd': 'pos.posAng;instr.det;meta.main'}),
+                    dict({'property': 'mag_auto_g', 'ucd': 'phot.mag;meta.main;em.opt.g'}),
+                    dict({'property': 'mag_auto_r', 'ucd': 'phot.mag;meta.main;em.opt.r'}),
+                    dict({'property': 'mag_auto_i', 'ucd': 'phot.mag;meta.main;em.opt.i'}),
+                    dict({'property': 'mag_auto_z', 'ucd': 'phot.mag;meta.main;em.opt.z'}),
+                    dict({'property': 'mag_auto_y', 'ucd': 'phot.mag;meta.main;em.opt.Y'})
                 ])
 
         # Se for um update do produto
