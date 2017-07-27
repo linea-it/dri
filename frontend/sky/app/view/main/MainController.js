@@ -148,6 +148,7 @@ Ext.define('Sky.view.main.MainController', {
         var headerRefs = this.getView().down('dri-header-sky').getReferences();
         headerRefs.searchGlobal.show();
 
+        newView.txtCoordinateSearch = headerRefs.txtCoordinateSearch;
         this.setActivePanel(newView, release, coordinate, fov);
     },
 
@@ -165,6 +166,7 @@ Ext.define('Sky.view.main.MainController', {
         var headerRefs = this.getView().down('dri-header-sky').getReferences();
         headerRefs.searchGlobal.show();
 
+        newView.txtCoordinateSearch = headerRefs.txtCoordinateSearch;
         this.setActivePanel(newView, dataset, coordinate, fov);
     }
 

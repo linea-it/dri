@@ -285,14 +285,14 @@ Ext.define('aladin.Aladin', {
         return Ext.clone(this.emptySurvey);
     },
 
-    onResize: function () {
-        var me = this,
-            aladin = me.getAladin();
-
-        if (me.getAutoSize()) {
-            aladin.view.fixLayoutDimensions();
-        }
-    },
+//    onResize: function () {
+//        var me = this,
+//            aladin = me.getAladin();
+//
+//        if (me.getAutoSize()) {
+//            aladin.view.fixLayoutDimensions();
+//        }
+//    },
 
     setSurveys: function (surveys) {
         this.surveys = null;

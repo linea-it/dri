@@ -25,7 +25,7 @@ Ext.define('Target.view.objects.Grid', {
         columnComments: true
     },
 
-    emptyText: 'No data to dysplay.',
+    emptyText: 'No data to display.',
 
     initComponent: function () {
         var me = this;

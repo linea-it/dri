@@ -53,11 +53,6 @@ Ext.define('Target.view.objects.ObjectsModel', {
             type: 'target-filter-conditions',
             autoLoad: false
         },
-        cutoutsJobs: {
-            type: 'cutoutjobs',
-            autoLoad: false,
-            storeId: 'CutoutJobs'
-        },
         cutouts: {
             type: 'cutouts',
             autoLoad: false
@@ -75,10 +70,6 @@ Ext.define('Target.view.objects.ObjectsModel', {
         },
         filterSet: {
             type: 'Target.model.FilterSet',
-            create: true
-        },
-        currentCutoutJob: {
-            type: 'Target.model.CutoutJob',
             create: true
         }
     }

@@ -149,7 +149,7 @@ Ext.define('visiomatic.Visiomatic', {
         // Layer usada para exibir ou ocultar a crosshair
         lcrosshair: null,
 
-        showCrosshair: true,
+        showCrosshair: false,
 
         mlocate:''
     },
@@ -296,6 +296,8 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('move', me.onMove, me);
         map.on('mousemove', me.onMouseMove, me);
         map.on('overlaycatalog', me.showCatalogOverlayWindow, me);
+        map.on('mouseup', me.savePreferences, me);
+        map.on('keypress', me.savePreferences, me);
 
         // instancia de L.map
         me.setMap(map);
@@ -316,6 +318,29 @@ Ext.define('visiomatic.Visiomatic', {
         if (me.getEnableScale()) {
             me.addScaleController();
         }
+    },
+
+    savePreferences: function () {
+        var me= this,
+            imageLayer = me.getImageLayer();
+
+        var imageOptions = {
+              credentials: true,
+              channelLabelMatch: "[ugrizY]",
+              mixingMode: imageLayer.iipMode,
+              contrast: imageLayer.iipContrast,
+              gamma: imageLayer.iipGamma,
+              invertCMap: imageLayer.iipInvertCMap,
+              colorSat: imageLayer.iipColorSat,
+              quality: imageLayer.iipQuality,
+        }
+
+        localStorage.removeItem("imageOptions")
+
+        localStorage.setItem(
+            "imageOptions",
+            JSON.stringify(imageOptions)
+        );
     },
 
     onResize: function () {
@@ -377,6 +402,8 @@ Ext.define('visiomatic.Visiomatic', {
         // Profile Overlays
         libL.control.iip.profile().addTo(sidebar);
 
+        libL.control.iip.snapshot().addTo(sidebar);
+
         sidebar.addTabList();
 
     },
@@ -423,9 +450,22 @@ Ext.define('visiomatic.Visiomatic', {
 
         options = options || {};
 
-        me.image = image;
+        if (imageLayer) {
+              imageOptions = {
+                  credentials: true,
+                  channelLabelMatch: "[ugrizY]",
+                  mixingMode: imageLayer.iipMode,
+                  contrast: imageLayer.iipContrast,
+                  gamma: imageLayer.iipGamma,
+                  invertCMap: imageLayer.iipInvertCMap,
+                  colorSat: imageLayer.iipColorSat,
+                  quality: imageLayer.iipQuality,
+            }
+        }
 
         args = Ext.Object.merge(imageOptions, options);
+
+        me.image = image;
 
         if (!imageLayer) {
             imageLayer = libL.tileLayer.iip(image, args).addTo(map);
@@ -655,13 +695,38 @@ Ext.define('visiomatic.Visiomatic', {
         var me = this,
             radec = me.getRaDec(),
             fov = me.getFov();
-            
+
         me.fireEvent('changeposition', radec, fov, me);
     },
 
     onMouseMove: function (event) {
-        var pos = String(event.latlng.lng.toFixed(5) + ', ' + event.latlng.lat.toFixed(5));
+        var pos = String(event.latlng.lng.toFixed(5) + ', ' + event.latlng.lat.toFixed(5)),
+            me = this,
+            map = me.getMap();
         this.cmpMousePosition.el.dom.children[0].innerHTML = 'Mouse RA, Dec ('+(pos)+')';
+
+        me.currentPosition = {
+            radec: [
+                event.latlng.lng.toFixed(5),
+                event.latlng.lat.toFixed(5)
+            ],
+            container: [
+                event.containerPoint.x,
+                event.containerPoint.y
+            ]
+        };
+
+        if (me.cropInit && me.cropInit == me.cropEnd) {
+            if (me.cropRectangle) {
+                map.removeLayer(me.cropRectangle);
+            }
+
+            me.cropRectangle = me.drawRectangle(
+                me.cropInit['radec'],
+                me.currentPosition['radec']
+            );
+        }
+
         //me.fireEvent('changemouseposition', event, me);
     },
 
@@ -768,7 +833,7 @@ Ext.define('visiomatic.Visiomatic', {
                 }
             },
             pointToLayer: function (feature, latlng) {
-                
+
                 path_options = Ext.Object.merge(radiusOptions, {
                     majAxis: radius,
                     minAxis: radius,
@@ -877,7 +942,7 @@ Ext.define('visiomatic.Visiomatic', {
                     posAngle: 90,
                     //color: feature.properties._meta_comments ? '#FF9800' : '#4AAB46'
                 });
-                
+
                 path_options = Ext.Object.merge(path_options, options);
 
                 // tornar o objeto clicavel
@@ -888,7 +953,7 @@ Ext.define('visiomatic.Visiomatic', {
                 // usei o mesmo valor de raio para os lados da ellipse para
                 // gerar um circulo por ser um circulo o angulo tanto faz.
                 circle = l.ellipse(latlng, path_options);
-                
+
                 //adiciona o ícone de comentário
                 if (feature.properties._meta_comments){
                     //x-fa fa-map-marker fa-2x
@@ -900,21 +965,11 @@ Ext.define('visiomatic.Visiomatic', {
 
                 return circle;
             }
-        }).bindPopup(function (layer) {
-            var feature = layer.feature,
-                popup = '<TABLE style="margin:auto;">' +
-                   '<TBODY style="vertical-align:top;text-align:left;">' +
-                        '<TR><TD><spam style="font-weight: bold;">ID </spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
-                        // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
-                        // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
-                        '<TR><TD><spam style="font-weight: bold;">RA, Dec (deg)</spam>: </TD><TD>' +
-                            feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
-                        '</td></tr>' +
-                    '</TBODY></TABLE>';
+        })
+        .bindPopup(
+            me.createOverlayPopup)
 
-            return popup;
-
-        }).on('dblclick', function () {
+        .on('dblclick', function () {
             alert('TODO: OPEN IN EXPLORER!');
         })
         /**
@@ -930,16 +985,37 @@ Ext.define('visiomatic.Visiomatic', {
 
     createOverlayPopup: function (layer) {
         var feature = layer.feature,
-            popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
-               '<TABLE style="margin:auto;">' +
-               '<TBODY style="vertical-align:top;text-align:left;">' +
-                    '<TR><TD><spam>ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
-                    // '<TR><TD><spam style="font-weight: bold;">RA </spam>: </TD><TD>' + feature.properties._meta_ra.toFixed(3)  + '</td></tr>' +
-                    // '<TR><TD><spam style="font-weight: bold;">DEC</spam>: </TD><TD>' + feature.properties._meta_dec.toFixed(3) + '</td></tr>' +
-                    '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
-                        feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
-                    '</td></tr>' +
-                '</TBODY></TABLE>';
+            properties = feature.properties,
+            mags = ['_meta_mag_auto_g','_meta_mag_auto_r','_meta_mag_auto_i', '_meta_mag_auto_z', '_meta_mag_auto_y'],
+            mag_tags = [],
+            popup;
+
+        Ext.each(mags, function (mag) {
+            try {
+                mag_name = mag.slice(-1);
+                if (mag_name == 'y'){
+                    mag_name = 'Y';
+
+                }
+                mag_value = properties[mag];
+
+                tag = '<TR><TD><spam>' + mag_name + '</spam>: </TD><TD>' + mag_value.toFixed(2) + '</td></tr>';
+                mag_tags.push(tag)
+
+            } catch(err) {
+
+            }
+        });
+
+        popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
+           '<TABLE style="margin:auto;">' +
+           '<TBODY style="vertical-align:top;text-align:left;">' +
+                '<TR><TD><spam>ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
+                '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
+                    feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
+                '</td></tr>' +
+                mag_tags.join('') +
+            '</TBODY></TABLE>';
 
         return popup;
     },
@@ -992,7 +1068,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         me.showContextMenuObject(event);
     },
-    
+
     createCommentIcon: function(circle, latlng){
         var me = this;
 
@@ -1026,9 +1102,9 @@ Ext.define('visiomatic.Visiomatic', {
 
                 circle.feature.properties._meta_comments = total;
             }
-            
+
         }
-    
+
     },
 
     /**
@@ -1041,11 +1117,11 @@ Ext.define('visiomatic.Visiomatic', {
             l = me.libL,
             map = me.getMap(),
             latlng, lmarkPosition, myIcon, iconAnchor;
-        
+
         if (arguments.length==2){
             latlng = ra;
             iconCls = dec;
-            iconAnchor = [10,22];//28];
+            iconAnchor = [12,25];//28];
         }else{
             latlng = l.latLng(dec, ra);
             iconAnchor = [8,44];
@@ -1194,7 +1270,7 @@ Ext.define('visiomatic.Visiomatic', {
     showContextMenuImage: function(event){
         var me = this,
             xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
-        
+
         if (event.originalEvent.target.classList.contains('comment-maker')){
             return me.showContextMenuObject(event);
         }
@@ -1208,11 +1284,81 @@ Ext.define('visiomatic.Visiomatic', {
                         handler: function(item) {
                             me.fireEvent('imageMenuItemClick', event, me.getCurrentDataset());
                         }
-                    }]
+                    }
+                  ]
             });
         }
-        
+
         this.contextMenuImage.showAt(xy);
+    },
+
+    initCrop: function() {
+        var me = this,
+            map = me.getMap();
+        map.on('click', me.startCrop, me);
+    },
+
+    startCrop: function(){
+        var me = this,
+            map = me.getMap();
+
+        me.cropInit = me.currentPosition
+        me.cropEnd = me.cropInit;
+
+        map.off('click', me.startCrop, me);
+        map.on('click', me.endCrop, me);
+    },
+
+    endCrop: function(event){
+        var me = this,
+            map = me.getMap();
+
+        me.cropEnd = me.currentPosition
+        map.removeLayer(me.cropRectangle);
+        map.off('click', me.endCrop, me);
+        me.downloadCrop(me.cropInit, me.cropEnd);
+    },
+
+    downloadCrop: function(init, end){
+        var me = this,
+            libL = me.libL,
+            map = me.getMap(),
+            hiddenlink = document.createElement('a'),
+            layer = me.getImageLayer();
+
+        var	latlng = map.getCenter(),
+            bounds = map.getPixelBounds(),
+            z = map.getZoom(),
+            zfac;
+
+        if (z > layer.iipMaxZoom) {
+            zfac = Math.pow(2, z - layer.iipMaxZoom);
+            z = layer.iipMaxZoom;
+        } else {
+            zfac = 1;
+        }
+
+        var	sizex = layer.iipImageSize[z].x * zfac,
+            sizey = layer.iipImageSize[z].y * zfac,
+            dx = Math.abs(init.container[0] - end.container[0]),
+            dy = Math.abs(init.container[1] - end.container[1]);
+
+        var origin = {
+            x: bounds.min.x + Math.min(init.container[0], end.container[0]),
+            y: bounds.min.y + Math.min(init.container[1], end.container[1])
+        }
+
+        hiddenlink.href = layer.getTileUrl({x: 1, y: 1}
+          ).replace(/JTL\=\d+\,\d+/g,
+          'RGN=' + origin.x / sizex + ',' +
+          origin.y / sizey + ',' +
+          dx / sizex + ',' + dy / sizey +
+          '&WID=' + (this._snapType === 0 ?
+            Math.floor(dx / zfac) :
+            Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
+        hiddenlink.download = layer._title + '_' + libL.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
+          '.jpg';
+        hiddenlink.click();
     },
 
     showContextMenuObject: function(event){
@@ -1235,7 +1381,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         objectMenuItem = me.contextMenuObject.items.get("comment-object");
         objectMenuItem.feature = event.layer ? event.layer.feature :  null;
-        
+
         me.contextMenuObject.showAt(xy);
     },
 
@@ -1316,7 +1462,7 @@ Ext.define('visiomatic.Visiomatic', {
 
             fn(null);
         },
-        
+
         /**
          * Converte de forma assícrona HMG para latlng
          * by https://github.com/astromatic/visiomatic/blob/master/src/Control.WCS.js#L143
@@ -1329,7 +1475,7 @@ Ext.define('visiomatic.Visiomatic', {
                 if (fn) fn(latlng);
             });
         },
-        
+
         // Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
         latLngToHMSDMS: function (latlng) {
             var lng = (latlng.lng + 360.0) / 360.0;
@@ -1366,11 +1512,13 @@ Ext.define('visiomatic.Visiomatic', {
             (m < 10 ? '0' : '') + m.toString() + ':' +
             (sf < 10.0 ? '0' : '') + sf.toFixed(2);
         },
-        
+
         /**
          * Retorna o sistema de métrica do valor
          */
         strToSystem: function(value){
+            var a;
+
             if (value){
                 //remove excesso de espaços, à direita, à esquerda e no meio
                 value = value.trim().replace(/( )+/g, ' ');
@@ -1401,13 +1549,13 @@ Ext.define('visiomatic.Visiomatic', {
         // by VisioMatic
         parseCoords: function (str) {
             var result = /J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g.exec(str);
-            
+
             if (result && result.length >= 3) {
                 return L.latLng(Number(result[2]), Number(result[1]));
             }
 
             return null;
         }
-    } 
+    }
 
 });
