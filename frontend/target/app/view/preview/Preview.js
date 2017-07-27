@@ -143,7 +143,7 @@ Ext.define('Target.view.preview.Preview', {
                 iconCls: 'x-fa fa-crop',
                 enableToggle: true,
                 toggleHandler: 'showHideCrop',
-                tooltip: 'Toggle Crop Image',
+                tooltip: 'Show/Hide Crop',
                 hidden: true,
                 pressed: true,
             },
