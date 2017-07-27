@@ -4,16 +4,21 @@ import logging
 from django.core.exceptions import ObjectDoesNotExist
 
 import django_filters
+from django.http import HttpResponse
 from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework import mixins
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.decorators import list_route
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.db.models import Q
 from common.filters import IsOwnerFilterBackend
 from .models import Product, Catalog, Map, Mask, CutOutJob, ProductContent, ProductContentAssociation, ProductSetting, \
     CurrentSetting, ProductContentSetting, Permission, WorkgroupUser
 from .serializers import *
+
+from .export import *
 
 from .filters import ProductPermissionFilterBackend
 import operator
@@ -632,3 +637,60 @@ class BookmarkedViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+# ---------------------------------- Export ----------------------------------
+class ExportViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Export a Product in file formats
+    """
+    http_method_names = ['post', ]
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
+
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        from pprint import pprint
+
+        data = request.data
+
+        pprint(data)
+        product_id = data.get("product", None)
+
+        if product_id is None:
+            raise Exception("Product Id is mandatory")
+
+        product = Product.objects.select_related().get(pk=product_id)
+
+        Export(product)
+
+        # response = Import().start_import(request)
+        print("Export Products")
+
+        return HttpResponse(status=200)
+
+        # if response is not None:
+        #     return response
+        # else:
+        #     raise Exception('was a failure to create the record.')
+
+
+# @require_http_methods(["POST"])
+# def export_product(request):
+#     filter_id = request.POST.get("filter", None)
+#     typefile = request.POST.get("type", "csv")
+#
+#     print("------------------- Export ------------------")
+
+    # exporter = ExporteFilter(filter_id)
+    # try:
+    #     if typefile == 'csv':
+    #         filename = DOWNLOAD_DIR + str(uuid.uuid4()) + '.csv'
+    #         exporter.export2CSV(filename)
+    #
+    #         return HttpResponse(content=filename, status=200)
+    #     else:
+    #         return HttpResponse(content="type not implemented")
+    #
+    # except Exception as e:
+    #     return HttpResponse(status=405)
