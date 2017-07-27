@@ -121,10 +121,12 @@ Ext.define('Target.view.preview.PreviewController', {
             refs.btnRadius.setVisible(true);
             refs.btnMembers.setVisible(true);
             refs.btnComments.setVisible(true);
+            refs.btnCrop.setVisible(true);
         } else {
             refs.btnRadius.setVisible(false);
             refs.btnMembers.setVisible(true);
             refs.btnComments.setVisible(false);
+            refs.btnCrop.setVisible(false);
         }
 
     },
@@ -464,6 +466,14 @@ Ext.define('Target.view.preview.PreviewController', {
             lmembers = vm.get('overlayMembers');
 
         visiomatic.showHideComments(lmembers, state);
+
+    },
+
+    showHideCrop: function (btn, state) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
+
+        visiomatic.initCrop();
 
     },
 
