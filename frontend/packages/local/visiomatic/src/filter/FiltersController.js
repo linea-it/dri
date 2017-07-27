@@ -72,11 +72,32 @@ Ext.define('visiomatic.filter.FiltersController', {
                 if (btn === 'yes') {
                     record.drop();
 
+                    me.createAFilters();
+
                     me.checkHaveFilters();
                 }
 
             }, this);
 
+    },
+
+    createAFilters: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            grid = me.lookup('gridFilters'),
+            store = grid.getStore(),
+            afilters = [];
+
+        console.log(store);
+
+        store.each(function(record){
+            console.log(record);
+
+            afilters.push(record);
+
+        }, this);
+
+        vm.set('afilters', afilters);
     },
 
     checkHaveFilters: function () {

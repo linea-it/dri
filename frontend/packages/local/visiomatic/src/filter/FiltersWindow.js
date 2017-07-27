@@ -110,7 +110,6 @@ Ext.define('visiomatic.filter.FiltersWindow', {
                                 {
                                     xtype: 'button',
                                     iconCls: 'x-fa fa-plus',
-                                    // ui: 'soft-green',
                                     width: 40,
                                     flex: false,
                                     handler: 'onAddFilter'
@@ -174,9 +173,8 @@ Ext.define('visiomatic.filter.FiltersWindow', {
             handler: 'onCancelFilter'
         },
         {
-            text: 'Apply',
+            text: 'Ok',
             reference: 'BtnApply',
-//            ui: 'soft-green',
             handler: 'onApplyFilter',
             bind: {
                 disabled: '{!haveFilters}'

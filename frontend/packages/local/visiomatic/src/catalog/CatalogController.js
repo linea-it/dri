@@ -55,6 +55,16 @@ Ext.define('visiomatic.catalog.CatalogController', {
 
     },
 
+    onSelectCatalog: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            filters = vm.get('currentFilters');
+
+        // Toda vez que troca de catalogo zera os filtros so para garantir.
+        filters = [];
+
+    },
+
     filterCatalogByname: function () {
         var me = this,
             tree = me.lookup('CatalogsTree'),
