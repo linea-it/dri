@@ -41,7 +41,11 @@ Ext.define('Sky.view.dataset.Dataset', {
                     xtype: 'sky-visiomatic',
                     reference: 'visiomatic',
                     region: 'center',
-                    split: true
+                    split: true,
+                    listeners: {
+                        objectMenuItemClick: 'onObjectMenuItemClickVisiomatic',
+                        imageMenuItemClick : 'onImageMenuItemClickVisiomatic'
+                    },
                     // bind: {
                     // showCrosshair: '{BtnCrosshair.pressed}'
                     // }
@@ -94,6 +98,14 @@ Ext.define('Sky.view.dataset.Dataset', {
                             enableToggle: true,
                             pressed: true,
                             toggleHandler: 'showHideMarker'
+                        },
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-comments',
+                            tooltip: 'Show/Hide Comments',
+                            enableToggle: true,
+                            pressed: true,
+                            toggleHandler: 'showHideComments'
                         }
                     ]
                 }

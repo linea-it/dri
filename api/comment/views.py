@@ -1,7 +1,46 @@
+import django_filters
+import json
 from django.shortcuts import render
 from rest_framework import viewsets
+from rest_framework import filters
 from .models import Position
 from .serializers import PositionSerializer
+
+
+class PositionFilter(django_filters.FilterSet):
+    coordinates = django_filters.MethodFilter(action='filter_coordinates')
+
+    class Meta:
+        model = Position
+        filter_fields = ('id', 'owner', 'pst_dataset', 'pst_ra', 'pst_dec', 'pst_date', 'pst_comment',)
+
+        fields = ['id']
+        order_by = True
+
+    def filter_coordinates(self, queryset, value):
+
+        corners = json.loads(value)
+
+        if len(corners) != 2 or len(corners[0]) != 2 or len(corners[1]) != 2:
+            raise Exception(
+                'Invalid format for coordinates. Expected value is an array of two arrays, each one with two items (RA,Dec).'
+                '\nExpected format must contains the lower-left and the upper-right positions.'
+                '\nExample: \'[[314.635648,-35.320833],[315.506761,-34.606944]]\'.'
+                '\nNote: remember to encode the URL (the previous string became \'%5B%5B314.635648%2C-35.320833%5D%2C%5B315.506761%2C-34.606944%5D%5D\').')
+
+        rall = float(corners[0][0])
+        decll = float(corners[0][1])
+        raur = float(corners[1][0])
+        decur = float(corners[1][1])
+
+        q = queryset.filter(
+            pst_ra__gte=rall,
+            pst_ra__lte=raur,
+            pst_dec__gte=decll,
+            pst_dec__lte=decur,
+        )
+
+        return q
 
 
 class PositionViewSet(viewsets.ModelViewSet):
@@ -12,7 +51,6 @@ class PositionViewSet(viewsets.ModelViewSet):
 
     serializer_class = PositionSerializer
 
-    filter_fields = ('id', 'owner', 'pst_dataset', 'pst_filter', 'pst_ra',
-                     'pst_dec', 'pst_date', 'pst_comment',)
-
     ordering_fields = ('pst_date',)
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = PositionFilter

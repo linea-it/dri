@@ -9,7 +9,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
     xtype: 'target-cutoutjob-form',
 
     title: 'Create Mosaic',
-    width: 600,
+    width: 450,
     height: 450,
     layout: 'fit',
     modal: true,
@@ -52,31 +52,33 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             name: 'job_type',
                             items: [
                                 {boxLabel: 'Coadd Images', inputValue: 'coadd', checked: true},
-                                {boxLabel: 'Single Epoch', inputValue: 'single', reference: 'rdSingleEpoch'}
+                                {boxLabel: 'Single Epoch', inputValue: 'single', reference: 'rdSingleEpoch', disabled: true}
                             ]
                         },
                         {
                             xtype: 'numberfield',
-                            fieldLabel: 'X Size (arcmin)',
-                            value: 1,
+                            fieldLabel: 'X Size (arcsec)',
+                            value: 60,
                             name: 'xsize',
-                            minValue: 1,
-                            maxValue: 10
+                            hideTrigger: true
+                            // minValue: 1,
+                            // maxValue: 10
                         },
                         {
                             xtype: 'numberfield',
-                            fieldLabel: 'Y Size (arcmin)',
-                            value: 1,
+                            fieldLabel: 'Y Size (arcsec)',
+                            value: 60,
                             name: 'ysize',
-                            minValue: 1,
-                            maxValue: 10
+                            hideTrigger: true
+                            // minValue: 1,
+                            // maxValue: 10
                         },
                         {
                             xtype: 'combobox',
                             name: 'tag',
                             fieldLabel: 'Release TAG',
-                            emptyText: 'Release tag for coadd cutouts jobs',
-                            publishes: 'name',
+                            emptyText: 'Release tag for coadd cutouts',
+                            valueField: 'name',
                             displayField: 'displayName',
                             minChars: 0,
                             queryMode: 'local',
@@ -138,8 +140,8 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     cls: 'x-check-group-alt',
                                     name: 'label_position',
                                     items: [
-                                        {boxLabel: 'Inside', inputValue: 'inside'},
-                                        {boxLabel: 'Outside', inputValue: 'outside', checked: true}
+                                        {boxLabel: 'Inside', inputValue: 'inside', checked: true},
+                                        {boxLabel: 'Outside', inputValue: 'outside'}
                                     ]
                                 },
                                 {
@@ -153,6 +155,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     fieldLabel: 'Font Size',
                                     name: 'label_font_size',
                                     value: 10,
+                                    // hideTrigger: true,
                                     minValue: 6,
                                     maxValue: 18
                                 },
@@ -161,7 +164,6 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     name: 'label_properties',
                                     fieldLabel: 'Properties',
                                     displayField: 'display_name',
-                                    publishes: 'id',
                                     valueField: 'column_name',
                                     queryMode: 'local',
                                     allowBlank: true,

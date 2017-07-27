@@ -3,8 +3,11 @@ import logging
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ExternalProcess
 from rest_framework import serializers
-
+from django.conf import settings
+import urllib.parse
+import time
 from .models import *
+import os
 
 from django.contrib.auth.models import User
 
@@ -337,6 +340,56 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
     def get_owner(self, obj):
         return obj.owner.username
 
+
+class CutoutSerializer(serializers.HyperlinkedModelSerializer):
+    cjb_cutout_job = serializers.PrimaryKeyRelatedField(
+        queryset=CutOutJob.objects.all(), many=False)
+
+    ctt_file_source = serializers.SerializerMethodField()
+    timestamp = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Cutout
+
+        fields = (
+            'id',
+            'cjb_cutout_job',
+            'ctt_object_id',
+            'ctt_object_ra',
+            'ctt_object_dec',
+            'ctt_filter',
+            'ctt_thumbname',
+            # 'ctt_file_path',
+            'ctt_file_name',
+            'ctt_file_type',
+            'ctt_file_size',
+            'ctt_download_start_time',
+            'ctt_download_finish_time',
+            'ctt_file_source',
+            'timestamp'
+        )
+
+    def get_ctt_file_source(self, obj):
+        try:
+            cutout_source = settings.DES_CUTOUT_SERVICE['CUTOUT_SOURCE']
+
+            if obj.ctt_file_path is not None:
+
+                source = os.path.join(cutout_source, obj.ctt_file_path)
+
+                return source
+            else:
+                return None
+
+        except KeyError as e:
+            raise Exception("The CUTOUT_SOURCE parameter has not been configured, "
+                   " add this attribute to the DES_CUTOUT_SERVICE section.")
+
+        except Exception as e:
+            raise (e)
+
+    def get_timestamp(self, obj):
+        return time.time()
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
