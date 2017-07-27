@@ -1406,3 +1406,11 @@ cursor: default;
 	left: 0px;
 }
 
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.LineaOverlay %%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+a.leaflet-control-linea-overlay-catalog {
+    background-image: url(images/icon-make-group.svg);
+	/*background-repeat: no-repeat;
+	background-position: center;**/
+}
