@@ -493,9 +493,14 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	getTileUrl: function (coords) {
+<<<<<<< HEAD
 		var	str = this._url,
 			z = this._getZoomForUrl();
 
+=======
+		var str = this._url,
+				z = this._getZoomForUrl();
+>>>>>>> develop
 		if (this.iipCMap !== this.iipdefault.cMap) {
 			str += '&CMP=' + this.iipCMap;
 		}

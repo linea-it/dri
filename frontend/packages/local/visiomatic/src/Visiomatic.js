@@ -149,7 +149,7 @@ Ext.define('visiomatic.Visiomatic', {
         // Layer usada para exibir ou ocultar a crosshair
         lcrosshair: null,
 
-        showCrosshair: true,
+        showCrosshair: false,
 
         mlocate:''
     },
@@ -296,6 +296,8 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('move', me.onMove, me);
         map.on('mousemove', me.onMouseMove, me);
         map.on('overlaycatalog', me.showCatalogOverlayWindow, me);
+        map.on('mouseup', me.savePreferences, me);
+        map.on('keypress', me.savePreferences, me);
 
         // instancia de L.map
         me.setMap(map);
@@ -316,6 +318,29 @@ Ext.define('visiomatic.Visiomatic', {
         if (me.getEnableScale()) {
             me.addScaleController();
         }
+    },
+
+    savePreferences: function () {
+        var me= this,
+            imageLayer = me.getImageLayer();
+
+        var imageOptions = {
+              credentials: true,
+              channelLabelMatch: "[ugrizY]",
+              mixingMode: imageLayer.iipMode,
+              contrast: imageLayer.iipContrast,
+              gamma: imageLayer.iipGamma,
+              invertCMap: imageLayer.iipInvertCMap,
+              colorSat: imageLayer.iipColorSat,
+              quality: imageLayer.iipQuality,
+        }
+
+        localStorage.removeItem("imageOptions")
+
+        localStorage.setItem(
+            "imageOptions",
+            JSON.stringify(imageOptions)
+        );
     },
 
     onResize: function () {
@@ -425,9 +450,22 @@ Ext.define('visiomatic.Visiomatic', {
 
         options = options || {};
 
-        me.image = image;
+        if (imageLayer) {
+              imageOptions = {
+                  credentials: true,
+                  channelLabelMatch: "[ugrizY]",
+                  mixingMode: imageLayer.iipMode,
+                  contrast: imageLayer.iipContrast,
+                  gamma: imageLayer.iipGamma,
+                  invertCMap: imageLayer.iipInvertCMap,
+                  colorSat: imageLayer.iipColorSat,
+                  quality: imageLayer.iipQuality,
+            }
+        }
 
         args = Ext.Object.merge(imageOptions, options);
+
+        me.image = image;
 
         if (!imageLayer) {
             imageLayer = libL.tileLayer.iip(image, args).addTo(map);
