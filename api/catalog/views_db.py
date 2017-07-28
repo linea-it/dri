@@ -208,9 +208,9 @@ class TargetViewSetDBHelper:
                         op=op,
                         value=params.get(param))])
                 elif col == '_meta_reject':
-                    reject_query = or_(catalog_reject_id.c.reject.is_(None), catalog_reject_id.c.reject == 0)
+                    reject_filters = or_(catalog_reject_id.c.reject.is_(None), catalog_reject_id.c.reject == 0)
                     if params.get(param) in ['True', 'true', '1', 't', 'y', 'yes']:
-                        reject_query = catalog_reject_id.c.reject == 1
+                        reject_filters = catalog_reject_id.c.reject == 1
                 # Coordenadas query por quadrado
                 elif col == 'coordinates':
                     value = json.loads(params.get(param))
@@ -229,11 +229,10 @@ class TargetViewSetDBHelper:
                             literal_column(str(ur[1]))
                         ))
                     )
-
-        stm = stm.where(and_(and_(*DBBase.do_filter(self.table, filters) +
+        rating_filters = and_(*DBBase.do_filter(self.table, filters) +
                               DBBase.do_filter(catalog_rating_id, rating_filter) +
-                              coordinates_filter
-                             ), reject_query))
+                              coordinates_filter)
+        stm = stm.where(and_(rating_filters, reject_filters))
 
         print(str(stm))
 
