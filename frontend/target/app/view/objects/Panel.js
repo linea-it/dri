@@ -83,6 +83,7 @@ Ext.define('Target.view.objects.Panel', {
                     },
                     {
                         xtype: 'button',
+                        reference: 'BtnSwitchMosaic',
                         iconCls: 'x-fa fa-th-large',
                         tooltip: 'Switching between Mosaic and Data Grid',
                         enableToggle: true,
@@ -99,6 +100,12 @@ Ext.define('Target.view.objects.Panel', {
                         },
                         items: [
                             {
+                                xtype    : 'textfield',
+                                reference: 'txtFilterSet',
+                                emptyText: 'No filter',
+                                editable : false
+                            }
+                            /*{
                                 xtype: 'button',
                                 reference: 'btnFilterApply',
                                 iconCls: 'x-fa fa-bolt',
@@ -133,7 +140,7 @@ Ext.define('Target.view.objects.Panel', {
                                 minChars: 0,
                                 queryMode: 'local',
                                 editable: false
-                            }
+                            }*/
                         ]
                     },
                     {
@@ -178,16 +185,12 @@ Ext.define('Target.view.objects.Panel', {
                             reference: 'cmbCutoutJob',
                             emptyText: 'Choose Cutout',
                             displayField: 'cjb_display_name',
-                            publishes: 'id',
-                            bind: {
-                                store: '{cutoutsJobs}',
-                                selection: '{currentCutoutJob}'
+                            store: {
+                                type: 'cutoutjobs'
                             },
                             listeners: {
                                 select: 'onSelectCutoutJob'
                             },
-                            minChars: 0,
-                            queryMode: 'local',
                             editable: false
                         }
                     ]
@@ -229,6 +232,9 @@ Ext.define('Target.view.objects.Panel', {
             console.log('Necessario um catalog id.');
             return false;
         }
+
+        // Limpar o painel e as stores antes de carregar um catalogo novo
+        me.clearPanel();
 
         vm.set('catalog', catalog);
 
@@ -291,10 +297,12 @@ Ext.define('Target.view.objects.Panel', {
         var me = this,
             vm = me.getViewModel(),
             gridPanel = me.down('targets-objects-grid'),
-            cardPanel = me.lookup('ObjectCardPanel');
-
-        // Ativar o painel list como default
-        cardPanel.setActiveItem(gridPanel);
+            cardPanel = me.lookup('ObjectCardPanel'),
+            combo = me.lookup('cmbCutoutJob'),
+            btn = me.lookup('BtnSwitchMosaic'),
+            mosaic = me.lookup('TargetMosaic'),
+            cutoutjobs = combo.getStore(),
+            cutouts = vm.getStore('cutouts');
 
         // Limpar as Stores
         vm.getStore('catalogs').removeAll();
@@ -309,12 +317,20 @@ Ext.define('Target.view.objects.Panel', {
         vm.getStore('displayContents').removeAll();
         vm.getStore('displayContents').clearFilter(true);
 
-        vm.getStore('cutoutsJobs').removeAll();
-        vm.getStore('cutoutsJobs').clearFilter(true);
+        cutoutjobs.removeAll();
+        cutoutjobs.clearFilter(true);
 
-        vm.getStore('cutouts').removeAll();
-        vm.getStore('cutouts').clearFilter(true);
+        cutouts.removeAll();
+        cutouts.clearFilter(true);
+        mosaic.removeAll(true)
+
+
+        if(combo.selection !== null) {
+            combo.reset()
+        }
+
+        // Ativar o painel list como default
+        btn.setPressed(false);
 
     }
 });
-

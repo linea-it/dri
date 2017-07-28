@@ -35,8 +35,10 @@ Ext.define('Sky.view.main.Main', {
     items: [
         {
             xtype: 'dri-header-sky',
+            reference: 'driHeaderSky',
             listeners: {
-                doSearch: 'doSearch'
+                doSearch: 'doSearch',
+                changeCoordinateSystem: 'changeCoordinateSystem'
             }
             // items: [
             // '->',

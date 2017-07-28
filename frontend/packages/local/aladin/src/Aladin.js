@@ -224,8 +224,6 @@ Ext.define('aladin.Aladin', {
             }
         });
         
-        console.log('initComponent Aladin package', this.getId(), me.getAladinId(), this.getAladin());
-
         me.callParent(arguments);
     },
 
@@ -287,14 +285,14 @@ Ext.define('aladin.Aladin', {
         return Ext.clone(this.emptySurvey);
     },
 
-    onResize: function () {
-        var me = this,
-            aladin = me.getAladin();
-
-        if (me.getAutoSize()) {
-            aladin.view.fixLayoutDimensions();
-        }
-    },
+//    onResize: function () {
+//        var me = this,
+//            aladin = me.getAladin();
+//
+//        if (me.getAutoSize()) {
+//            aladin.view.fixLayoutDimensions();
+//        }
+//    },
 
     setSurveys: function (surveys) {
         this.surveys = null;
@@ -464,9 +462,7 @@ Ext.define('aladin.Aladin', {
 
         if (store.count() === 0) {
             console.log('NAO TEM SURVEY');
-
             me.setImageSurvey(empty);
-
         }
 
         // criar um array com os elementos da store

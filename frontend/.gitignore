@@ -1,6 +1,5 @@
 bootstrap.json
-build/development/
-build/temp/development/
-build/temp/production/
-LOCAL.txt
-
+/build/development/
+/build/temp/
+/LOCAL.txt
+/*/sass/example/

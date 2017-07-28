@@ -120,7 +120,7 @@ class TargetViewSet(ViewSet):
                 "_meta_rating_id": None,
                 "_meta_rating": None,
                 "_meta_reject_id": None,
-                "_meta_reject": False,
+                "_meta_reject": None,
             })
 
             row.update({
@@ -150,7 +150,7 @@ class TargetViewSet(ViewSet):
                 "_meta_reject_id": row.get('meta_reject_id', None)
             })
             row.update({
-                "_meta_reject": bool(row.get('meta_reject', False))
+                "_meta_reject": bool(row.get('meta_reject', None))
             })
 
             row.pop("meta_rating_id", None)
@@ -287,6 +287,24 @@ class CatalogObjectsViewSet(ViewSet):
 
         rows, count = db_helper.query_result(request, properties)
 
+        essential_props = dict({
+            # Id
+            'meta.id;meta.main': '_meta_id',
+            # Coordinates
+            'pos.eq.ra;meta.main': '_meta_ra',
+            'pos.eq.dec;meta.main': '_meta_dec',
+            # Elipse
+            'phys.size.smajAxis;instr.det;meta.main': '_meta_a_image',
+            'phys.size.sminAxis;instr.det;meta.main': '_meta_b_image',
+            'pos.posAng;instr.det;meta.main': '_meta_theta_image',
+            # Magnitudes
+            'phot.mag;meta.main;em.opt.g': '_meta_mag_auto_g',
+            'phot.mag;meta.main;em.opt.r': '_meta_mag_auto_r',
+            'phot.mag;meta.main;em.opt.i': '_meta_mag_auto_i',
+            'phot.mag;meta.main;em.opt.z': '_meta_mag_auto_z',
+            'phot.mag;meta.main;em.opt.Y': '_meta_mag_auto_y',
+        })
+
         for row in rows:
             row.update({
                 "_meta_catalog_id": catalog.pk,
@@ -297,17 +315,11 @@ class CatalogObjectsViewSet(ViewSet):
             })
 
             row.update({
-                "_meta_id": row.get(properties.get("meta.id;meta.main")),
-                "_meta_property_id": properties.get("meta.id;meta.main")
-            })
-            row.update({
-                "_meta_ra": float(row.get(properties.get("pos.eq.ra;meta.main"))),
-                "_meta_property_ra": properties.get("pos.eq.ra;meta.main")
-            })
-            row.update({
-                "_meta_dec": float(row.get(properties.get("pos.eq.dec;meta.main"))),
+                "_meta_property_id": properties.get("meta.id;meta.main"),
+                "_meta_property_ra": properties.get("pos.eq.ra;meta.main"),
                 "_meta_property_dec": properties.get("pos.eq.dec;meta.main")
             })
+
             try:
                 # Raio so e obrigatorio para catalogo do tipo sistema
                 row.update({
@@ -317,6 +329,17 @@ class CatalogObjectsViewSet(ViewSet):
             except:
                 pass
 
+
+            for ucd in properties:
+                try:
+                    meta_prop = essential_props.get(ucd)
+                    if meta_prop:
+                        row.update({
+                            meta_prop: row.get(properties.get(ucd))
+                        })
+
+                except:
+                    pass
         return Response(dict({
             'count': count,
             'results': rows

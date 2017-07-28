@@ -15,3 +15,19 @@ from django.contrib import admin
 #
 #
 # admin.site.register(Rating, RatingAdmin)
+
+from .models import Reject
+
+
+class RejectAdmin(admin.ModelAdmin):
+
+
+    list_display = (
+        'id', 'catalog_id', 'object_id', 'reject'
+    )
+
+    search_fields = ('catalog_id', 'object_id')
+
+
+
+admin.site.register(Reject, RejectAdmin)
