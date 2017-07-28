@@ -100,6 +100,12 @@ Ext.define('Target.view.objects.Panel', {
                         },
                         items: [
                             {
+                                xtype    : 'textfield',
+                                reference: 'txtFilterSet',
+                                emptyText: 'No filter',
+                                editable : false
+                            }
+                            /*{
                                 xtype: 'button',
                                 reference: 'btnFilterApply',
                                 iconCls: 'x-fa fa-bolt',
@@ -134,7 +140,7 @@ Ext.define('Target.view.objects.Panel', {
                                 minChars: 0,
                                 queryMode: 'local',
                                 editable: false
-                            }
+                            }*/
                         ]
                     },
                     {
