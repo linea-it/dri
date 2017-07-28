@@ -1,7 +1,8 @@
+from django.conf import settings
 from sqlalchemy import create_engine, inspect, MetaData, func, Table
+from sqlalchemy import exc as sa_exc
 from sqlalchemy.sql import select
 import warnings
-from sqlalchemy import exc as sa_exc
 
 
 class DBOracle:
@@ -9,13 +10,16 @@ class DBOracle:
         self.db = db
 
     def get_string_connection(self):
-        url = ("oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
-               "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
-               "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
-               "SERVICE_NAME=%(database)s)))") % \
-              {"username": self.db['USER'], 'password': self.db['PASSWORD'],
-               'host': self.db['HOST'], 'port': self.db['PORT'],
-               'database': self.db['DATABASE']}
+        url = (
+            "oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
+            "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
+            "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
+            "SERVICE_NAME=%(database)s)))"
+        ) % {
+            'username': self.db['USER'], 'password': self.db['PASSWORD'],
+            'host': self.db['HOST'], 'port': self.db['PORT'],
+            'database': self.db['DATABASE']
+        }
         return url
 
     def get_engine(self):
@@ -45,6 +49,34 @@ class DBBase:
 
         with self.engine.connect():
             self.metadata = MetaData(self.engine)
+
+    @staticmethod
+    def prepare_connection(db_name):
+        connection_data = {}
+
+        if db_name not in settings.DATABASES:
+            raise Exception('This configuration does not exist.')
+
+        db_settings_django = settings.DATABASES[db_name]
+        connection_data['ENGINE'] = db_settings_django['ENGINE'].split('.')[-1]
+
+        if connection_data['ENGINE'] == 'sqlite3':
+            connection_data['PATH_FILE'] = db_settings_django['NAME']
+
+        elif connection_data['ENGINE'] == 'oracle':
+            aux = db_settings_django['NAME'].split('/')
+            connection_data['DATABASE'] = aux[1]
+
+            aux = aux[0].split(':')
+            connection_data['HOST'] = aux[0]
+            connection_data['PORT'] = aux[1]
+            connection_data['USER'] = db_settings_django['USER']
+            connection_data['PASSWORD'] = db_settings_django['PASSWORD']
+
+        else:
+            raise Exception('Unknown database')
+
+        return connection_data
 
     def set_database(self, db_settings):
         if db_settings['ENGINE'] not in self.available_engines:
