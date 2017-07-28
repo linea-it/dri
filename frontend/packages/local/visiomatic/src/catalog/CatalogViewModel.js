@@ -8,6 +8,7 @@ Ext.define('visiomatic.catalog.CatalogViewModel', {
         'visiomatic.store.CatalogsTree',
         'visiomatic.model.CatalogTree',
         'visiomatic.store.Overlays',
+        'visiomatic.store.FilterConditions',
         'common.model.Dataset'
     ],
 
@@ -25,6 +26,7 @@ Ext.define('visiomatic.catalog.CatalogViewModel', {
     data: {
         visiomatic: null,
         currentColor: '1dff00',
+        currentFilters: null
     },
 
     links: {

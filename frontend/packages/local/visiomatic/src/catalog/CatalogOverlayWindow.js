@@ -51,12 +51,15 @@ Ext.define('visiomatic.catalog.CatalogOverlayWindow', {
                             split: true,
                             bind: {
                                 store: '{catalogs}'
+                            },
+                            listeners: {
+                                select: 'onSelectCatalog',
                             }
                         },
                         {
                             xtype: 'visiomatic-catalogs-submit',
                             split: true,
-                            height: 150,
+                            height: 110,
                             bind: {
                                 disabled: '{!CatalogsTree.selection}'
                             }
