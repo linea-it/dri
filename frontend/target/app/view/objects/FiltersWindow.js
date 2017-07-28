@@ -10,7 +10,7 @@ Ext.define('Target.view.objects.FiltersWindow', {
 
     title: 'Filters',
     width: 600,
-    height: 350,
+    height: 400,
     modal: true,
     autoShow: true,
     controller: 'filters',
@@ -54,29 +54,33 @@ Ext.define('Target.view.objects.FiltersWindow', {
                             items:[
                                 {
                                     xtype: 'button',
+                                    reference : 'btnClear',
                                     iconCls: 'x-fa fa-file-o',
-                                    tooltip: 'Clear filter',
+                                    tooltip: 'Clear',
                                     handler: 'onFilterWindow_ClearFilterSet'
                                 },
                                 {
                                     xtype: 'button',
+                                    reference : 'btnSave',
                                     iconCls: 'x-fa fa-floppy-o',
                                     tooltip: 'Save',
                                     handler: 'onSaveFilterSet'
                                 },
                                 {
                                     xtype: 'button',
+                                    reference : 'btnCopy',
                                     iconCls: 'x-fa fa-files-o',
                                     handler: 'onFilterWindow_ButtonCopyClick',
-                                    tooltip: 'Copy filter'
+                                    tooltip: 'Copy'
                                 },
                                 {
                                     xtype: 'tbseparator'
                                 },
                                 {
                                     xtype: 'button',
+                                    reference : 'btnDelete',
                                     iconCls: 'x-fa fa-trash',
-                                    tooltip: 'Delete filter',
+                                    tooltip: 'Delete',
                                     handler: 'onDeleteFilterSet'
                                 },
                             ]
@@ -85,31 +89,55 @@ Ext.define('Target.view.objects.FiltersWindow', {
                             xtype: 'combobox',
                             reference: 'cmbName',                            
                             displayField: 'fst_name',
-                            emptyText: 'No filter',
+                            emptyText: 'Unamed filter',
                             publishes: 'id',
                             bind: {
                                 store: '{filterSets}',
                                 selection: '{filterSet}'
                             },
                             listeners: {
-                                select: 'onFilterWindow_SelectFilterSet'
+                                select: 'onFilterWindow_SelectFilterSet',
+                                keyup: 'onFilterWindow_ChangeFilterSetValue'
                             },
-                            //minChars: 0,
-                            //queryMode: 'local',
+                            enableKeyEvents: true,
+                            minChars: 1000, //quantidade de caracteres para iniciar busca automática (autocomplete)
                             editable: true,
-                            //readOnly: false,
                             width: 558
                         },
                         {
-                            xtype:'container',
-                            items:[
+                            xtype: 'fieldset',
+                            checkboxToggle:true,
+                            title: 'Rejected',
+                            reference : 'chkRejected',
+                            listeners:{
+                                collapse: 'onFilterWindow_CheckboxRejectedChange',
+                                expand: 'onFilterWindow_CheckboxRejectedChange',
+                            },
+                            items: [
                                 {
-                                    xtype     : 'checkbox',
-                                    boxLabel  : 'Rejected',
-                                    reference : 'chkRejected',
-                                    listeners:{
-                                        change: 'onFilterWindow_CheckboxRejectedChange'
-                                    }
+                                    layout: 'hbox',
+                                    items:[
+                                        {
+                                            xtype     : 'radio',
+                                            boxLabel  : 'Yes',
+                                            reference : 'rtrue',
+                                            name      : 'rejectGroup',
+                                            checked   : false,
+                                            listeners :{
+                                                change: 'onFilterWindow_RadioRejectedChange'
+                                            }
+                                        }, {
+                                            xtype     : 'radio',
+                                            padding   : '0 0 0 40',
+                                            boxLabel  : 'No',
+                                            reference : 'rfalse',
+                                            name      : 'rejectGroup',
+                                            checked   : false,
+                                            listeners :{
+                                                change: 'onFilterWindow_RadioRejectedChange'
+                                            }                                            
+                                        }
+                                    ]
                                 }
                             ]
                         }
@@ -269,12 +297,21 @@ Ext.define('Target.view.objects.FiltersWindow', {
             handler: 'onCancelFilter'
         },
         {
+            text: 'Remove',
+            margin: '0 10 0 20',
+            reference : 'btnRemove',
+            handler: 'onRemoveFilter',
+            tooltip: 'Remove applied filter'
+        },
+        {
             text: 'Apply',
+            reference : 'btnApply',
             ui: 'soft-green',
             handler: 'onApplyFilter',
-            bind: {
+            tooltip: 'Apply defined filter'
+            /*bind: {
                 disabled: '{!haveFilters}'
-            }
+            }*/
         }
     ],
 
@@ -295,12 +332,7 @@ Ext.define('Target.view.objects.FiltersWindow', {
     setActiveFilter: function (filter) {
         var me = this,
             vm = me.getViewModel(),
-            filters = vm.getStore('filters'),
-            filterSet = vm.getStore('filterSet'),
-            btnDelete = me.lookup('btnDeleteFilterSet'),
-            txtFilter = me.lookup('txtFilter'),
-            chkRejected = me.lookup('chkRejected'),
-            filterRejectExists=false;
+            filters = vm.getStore('filters');
 
         if (filter){
             if (filter.modelFilterSet) {
@@ -308,55 +340,54 @@ Ext.define('Target.view.objects.FiltersWindow', {
                 vm.set('filterName', filter.modelFilterSet.get('fst_name'));
             }
 
-            filter.conditions.forEach(function(item){
-                if (item.fcd_property_name=="_meta_reject"){
-                    filterRejectExists = true;
-                }
-            });
+            me.activeAppliedFilter = filter;
 
             filters.setData(filter.conditions);
 
-            chkRejected.setValue(filterRejectExists);
+            //setData não dispara onload, por isso chamo aqui
+            me.getController().onLoadFilterConditions();
         }
 
-        /*if ((filterset) && (filterset.get('fst_name') != '')) {
+        me.renderUIStatus();
+    },
 
-            vm.set('filterSet',  filterset);
-            vm.set('filterName', filterset.get('fst_name'));
+    //Define os status dos componentes visuais, habilitado, desabilitado
+    renderUIStatus: function(){
+        var me          = this,
+            vm          = me.getViewModel(),
+            storeFilters    = vm.getStore('filters'),
+            storeFilterSets = vm.getStore('filterSets'),
+            modelFilterSet  = vm.get('filterSet'),
+            btnClear    = me.lookup('btnClear'),
+            btnSave     = me.lookup('btnSave'),
+            btnCopy     = me.lookup('btnCopy'),
+            btnDelete   = me.lookup('btnDelete'),
+            btnApply    = me.lookup('btnApply'),
+            btnRemove   = me.lookup('btnRemove'),
+            chkRejected = me.lookup('chkRejected'),
+            cmbName     = me.lookup('cmbName'),
+            flag, conditionExists, conditionChangeds, nameExists, nameChanged;
+        
+        //checkbox Rejected
+        flag = false;
+        storeFilters.each(function (filter) {
+            if (filter.get('fcd_property_name')=="_meta_reject"){
+                flag = true;
+            }
+        });
+        chkRejected.setExpanded(flag);
 
-            // Filter name como readonly
-            //txtFilter.setReadOnly(true);
-
-            // Habilitar o botao de Delete FilterSet
-            //btnDelete.enable();
-
-            filters.addFilter({
-                property: 'filterset',
-                value: filterset.get('id')
-            });
-
-            filters.load();
-
-        } else { */
-
-            //Um filterSet vazio significa que é um filtro temporário, ainda não salvo
-
-            //vm.set('filterName', null);
-            
-            // Filter name
-            //txtFilter.setReadOnly(false);
-
-            // Habilitar o botao de Delete FilterSet
-            //btnDelete.disable();
-
-            //filters.clearFilter();
-            //filters.removeAll(true);
-
-            //if (filterDataConditions){
-                //if (filter)  filters.setData(filter.conditions);
-            //}
-        //}
-
+        conditionExists   = storeFilters.count() > 0;
+        conditionChangeds = storeFilters.getModifiedRecords().length>0 || storeFilters.getRemovedRecords().length>0;
+        nameExists        = cmbName.getValue() ? true : false;
+        nameChanged       = modelFilterSet && (cmbName.getValue() != modelFilterSet.get('fst_name'));
+        
+        //estado dos botões
+        btnSave.setDisabled  ( !((conditionExists && nameExists) && (!modelFilterSet || (modelFilterSet && nameChanged) || (modelFilterSet && conditionChangeds))) );
+        btnCopy.setDisabled  ( !(modelFilterSet && modelFilterSet.get('fst_name')!='' && nameExists && conditionExists) );
+        btnDelete.setDisabled( !(modelFilterSet && modelFilterSet.get('fst_name')!='') );
+        btnApply.setDisabled ( !(conditionExists) );
+        btnRemove.setDisabled( !me.activeAppliedFilter );
     }
 
 });
