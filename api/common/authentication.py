@@ -7,6 +7,13 @@ from sqlalchemy.sql import column
 
 class NcsaBackend(object):
 
+    # this method is needed by Django auth backend
+    def get_user(self, user_id):
+        try:
+            return User.objects.get(pk=user_id)
+        except User.DoesNotExist:
+            return None
+
     def authenticate(self, username=None, password=None):
         if self.check_user(username, password):
             return self.ensure_user(username)
