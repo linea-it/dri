@@ -36,8 +36,7 @@ var deps = {
 if (typeof exports !== 'undefined') {
 	exports.deps = deps;
 }
-=======
->>>>>>> develop
+
 var deps = {
 	Core: {
 		src: [
