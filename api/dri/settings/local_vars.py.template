@@ -12,8 +12,8 @@ LOG_DIR = os.path.join(BASE_PROJECT, 'log')
 # ter uma url acessivel para download.
 DATA_DIR = os.path.join(BASE_PROJECT, 'data')
 
-# Path onde ficaram os arquivos que serao gerados para download
-DOWNLOAD_DIR = os.path.join(DATA_DIR, 'download')
+# Diretorio para arquivos temporarios, gerados pelo sistema e que ficaram disponiveis para o usuario fazer o download.
+DATA_TMP_DIR = os.path.join(DATA_DIR, 'tmp')
 
 DATABASES = {
     'default': {

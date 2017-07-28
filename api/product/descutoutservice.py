@@ -399,9 +399,12 @@ class DesCutoutService:
                 break
 
             if list_files is not None:
+                #  Path onde ficaram os arquivos de cutout
+                cutoutdir = self.get_cutout_dir(job)
+
                 # Guardar o Arquivo de resultado com os links a serem baixados
                 result_file = self.save_result_links_file(job, list_files)
-                job.cjb_results_file = result_file
+                job.cjb_results_file = result_file.split(self.data_dir)[1].strip("/")
 
                 # Baixar o Arquivo Matched que sera usado para associar os arquivos baixados com os objetos.
                 matched = None
@@ -412,14 +415,10 @@ class DesCutoutService:
                         break
 
                 if matched is not None:
-                    cutoutdir = self.get_cutout_dir(job)
-                    print(matched)
                     matched_file = Download().download_file_from_url(
                         matched.get("url"),
                         cutoutdir,
                         matched.get("filename"))
-
-                    job.cjb_matched_file = matched_file
 
                     # Criar um arquivo associando os arquivos ao seu objeto
                     objects = self.get_objects_from_file(job)
@@ -436,6 +435,7 @@ class DesCutoutService:
                                     break
 
                     matched_csv.close()
+                    job.cjb_matched_file = matched_file.split(self.data_dir)[1].strip("/")
 
                     # Escrever o novo arquivo de objetos com o nome do arquivo
                     with open(os.path.join(cutoutdir, "objects.csv"), "w") as new_objects_csv:
@@ -448,6 +448,10 @@ class DesCutoutService:
                             writer.writerow(obj)
 
                     new_objects_csv.close()
+
+
+                job.cjb_cutouts_path = cutoutdir.split(self.data_dir)[1].strip("/")
+
 
                 # Changing the CutoutJob Status for Before Download
                 self.change_cutoutjob_status(job, "bd")

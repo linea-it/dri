@@ -62,7 +62,9 @@ def download_cutoutjob(id):
     objects = descutout.get_objects_from_file(cutoutjob)
 
     # Recuperar o arquivo de Results
-    with open(cutoutjob.cjb_results_file, 'r') as result_file:
+    result_file_path = os.path.join(descutout.data_dir, cutoutjob.cjb_results_file)
+    logger.debug("Result File Path: %s" % result_file_path)
+    with open(result_file_path, 'r') as result_file:
         lines = result_file.readlines()
         for url in lines:
             arq = descutout.parse_result_url(url)

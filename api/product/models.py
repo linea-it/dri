@@ -288,6 +288,10 @@ class CutOutJob(models.Model):
     cjb_label_font_size = models.PositiveIntegerField(
         verbose_name='Label Font Size', default=10, null=True, blank=True, help_text='Font size in px.')
 
+    cjb_cutouts_path = models.CharField(
+        max_length=4096, verbose_name='Cutout Paths',
+        null=True, blank=True, default=None, help_text="Path of the directory where the cutouts of this job are.")
+
     cjb_results_file = models.CharField(
         max_length=4096, verbose_name='Result File',
         null=True, blank=True, default=None, help_text="File that contains the links returned by the DesCutouts service")

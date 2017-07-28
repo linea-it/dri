@@ -284,7 +284,7 @@ class CatalogObjectsViewSet(ViewSet):
             start=start)
 
 
-        rows, count = db_helper.query_result(request, properties)
+        rows, count = db_helper.query_result(request.query_params)
 
         essential_props = dict({
             # Id

@@ -1,27 +1,24 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import logging
-from django.core.exceptions import ObjectDoesNotExist
+import operator
 
 import django_filters
+from common.filters import IsOwnerFilterBackend
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
 from django.http import HttpResponse
 from rest_framework import filters
-from rest_framework import viewsets
 from rest_framework import mixins
+from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from django.db.models import Q
-from common.filters import IsOwnerFilterBackend
-from .models import Product, Catalog, Map, Mask, CutOutJob, ProductContent, ProductContentAssociation, ProductSetting, \
-    CurrentSetting, ProductContentSetting, Permission, WorkgroupUser
-from .serializers import *
-
+from django.conf import settings
 from .export import *
-
 from .filters import ProductPermissionFilterBackend
-import operator
+from .serializers import *
 
 logger = logging.getLogger(__name__)
 
@@ -638,6 +635,7 @@ class BookmarkedViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+
 # ---------------------------------- Export ----------------------------------
 class ExportViewSet(viewsets.ModelViewSet):
     """
@@ -656,41 +654,75 @@ class ExportViewSet(viewsets.ModelViewSet):
 
         pprint(data)
         product_id = data.get("product", None)
+        filetype = data.get("filetype", "csv")
+        filter_id = data.get("filter", None)
+        cutoutjob_id = data.get("cutout", None)
 
         if product_id is None:
             raise Exception("Product Id is mandatory")
 
-        product = Product.objects.select_related().get(pk=product_id)
+        product = Product.objects.select_related().get(pk=int(product_id))
 
-        Export(product)
+        conditions = list()
+        if filter_id is not None:
+            print("Entrou no Filtro")
+            queryset = FilterCondition.objects.filter(filterset=int(filter_id))
 
-        # response = Import().start_import(request)
-        print("Export Products")
+            for row in queryset:
+                serializer = FConditionSerializer(row)
+                conditions.append(serializer.data)
+
+            pprint(conditions)
+
+        data_tmp_dir = settings.DATA_TMP_DIR
+
+        export_dir = os.path.join(data_tmp_dir, product.prd_name)
+
+        if not os.path.exists(export_dir):
+            os.makedirs(export_dir)
+
+        for ft in filetype:
+
+            if filetype == "csv":
+
+                Export().table_to_csv(
+                    database=product.table.tbl_database,
+                    schema=product.table.tbl_schema,
+                    table=product.table.tbl_name,
+                    filters=conditions,
+                    export_dir=export_dir
+                )
+
+            elif filetype == "fits":
+                # TODO generate fits file using a csv.
+                pass
+
+        if cutoutjob_id is not None:
+
+            try:
+                cutoutjob = CutOutJob.objects.get(pk=cutoutjob_id)
+
+                path = cutoutjob.cjb_cutouts_path
+                # Mantendo compatibilidade com Jobs anteriores ao path ser guardado
+                # Todo Pode ser removido se todos os cutouts com o campo cjb_cutouts_path forem removidos
+                if path is None or path == "":
+                    path = cutoutjob.cjb_results_file
+                    path = os.path.dirname(path)
+                    path = path.split(settings.DATA_DIR)[1]
+                    print(path)
+
+
+                Export().product_cutouts(
+                    name=cutoutjob.cjb_display_name,
+                    path_origin=path.strip("/"),
+                    path_destination=export_dir
+
+                )
+
+            except:
+                #TODO tratar execao caso nao exista
+                pass
+
 
         return HttpResponse(status=200)
 
-        # if response is not None:
-        #     return response
-        # else:
-        #     raise Exception('was a failure to create the record.')
-
-
-# @require_http_methods(["POST"])
-# def export_product(request):
-#     filter_id = request.POST.get("filter", None)
-#     typefile = request.POST.get("type", "csv")
-#
-#     print("------------------- Export ------------------")
-
-    # exporter = ExporteFilter(filter_id)
-    # try:
-    #     if typefile == 'csv':
-    #         filename = DOWNLOAD_DIR + str(uuid.uuid4()) + '.csv'
-    #         exporter.export2CSV(filename)
-    #
-    #         return HttpResponse(content=filename, status=200)
-    #     else:
-    #         return HttpResponse(content="type not implemented")
-    #
-    # except Exception as e:
-    #     return HttpResponse(status=405)

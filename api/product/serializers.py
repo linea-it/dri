@@ -946,6 +946,62 @@ class FilterConditionSerializer(serializers.ModelSerializer):
         except:
             return None
 
+class FConditionSerializer(serializers.ModelSerializer):
+    """
+    Este serializer e uma versao menor  do FilterConditionSerializer
+    contendo apenas os atributos para criar a clausula where no formato SQLAlchemy
+    https://github.com/zzzeek/sqlalchemy/blob/master/lib/sqlalchemy/sql/operators.py#L16
+    """
+    column = serializers.SerializerMethodField()
+    op = serializers.SerializerMethodField()
+    value = serializers.SerializerMethodField()
+    class Meta:
+        model = FilterCondition
+
+        fields = (
+            'column',
+            'op',
+            'value',
+        )
+
+    def get_column(self, obj):
+        property = ""
+        try:
+            property = obj.fcd_property.pcn_column_name
+        except:
+            property = obj.fcd_property_name
+
+        property.lower().strip()
+
+        return property
+
+    def get_op(self, obj):
+
+        op = obj.fcd_operation
+        if op == "=":
+            op = "eq"
+
+        elif op == "!=":
+            op = "ne"
+
+        elif op == "<":
+            op = "lt"
+
+        elif op == "<=":
+            op = "le"
+
+        elif op == ">=":
+            op = "gt"
+
+        elif op == ">=":
+            op = "ge"
+
+        return op
+
+    def get_value(self, obj):
+        return obj.fcd_value
+
+
 # ---------------------------------- Bookmark ----------------------------------
 
 class BookmarkedSerializer(serializers.ModelSerializer):
