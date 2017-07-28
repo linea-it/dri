@@ -1,23 +1,23 @@
-Ext.define('Target.view.objects.FiltersWindow', {
+Ext.define('visiomatic.filter.FiltersWindow', {
     extend: 'Ext.window.Window',
 
     requires: [
-        'Target.view.objects.FiltersController',
-        'Target.view.objects.FiltersModel'
+        'visiomatic.filter.FiltersController',
+        'visiomatic.filter.FiltersModel'
     ],
 
-    xtype: 'target-filters-window',
+    xtype: 'overlay-filters-window',
 
     title: 'Filters',
-    width: 600,
-    height: 350,
+    width: 500,
+    height: 300,
     modal: true,
     autoShow: true,
-    controller: 'filters',
-    viewModel: 'filters',
+    controller: 'overlay_filters',
+    viewModel: 'overlay_filters',
     closeAction: 'destroy',
 
-    bodyPadding: '6 20 6 20',
+    bodyPadding: 20,
 
     layout: {
         type: 'vbox',
@@ -45,86 +45,6 @@ Ext.define('Target.view.objects.FiltersWindow', {
                 labelStyle: 'font-weight:bold'
             },
             items: [
-                {
-                    xtype: 'container',
-                    items:[                   
-                        {
-                            xtype: 'toolbar',
-                            padding: '0 0 8 0',
-                            items:[
-                                {
-                                    xtype: 'button',
-                                    iconCls: 'x-fa fa-file-o',
-                                    tooltip: 'Clear filter',
-                                    handler: 'onFilterWindow_ClearFilterSet'
-                                },
-                                {
-                                    xtype: 'button',
-                                    iconCls: 'x-fa fa-floppy-o',
-                                    tooltip: 'Save',
-                                    handler: 'onSaveFilterSet'
-                                },
-                                {
-                                    xtype: 'button',
-                                    iconCls: 'x-fa fa-files-o',
-                                    handler: 'onFilterWindow_ButtonCopyClick',
-                                    tooltip: 'Copy filter'
-                                },
-                                {
-                                    xtype: 'tbseparator'
-                                },
-                                {
-                                    xtype: 'button',
-                                    iconCls: 'x-fa fa-trash',
-                                    tooltip: 'Delete filter',
-                                    handler: 'onDeleteFilterSet'
-                                },
-                            ]
-                        },
-                        {
-                            xtype: 'combobox',
-                            reference: 'cmbName',                            
-                            displayField: 'fst_name',
-                            emptyText: 'No filter',
-                            publishes: 'id',
-                            bind: {
-                                store: '{filterSets}',
-                                selection: '{filterSet}'
-                            },
-                            listeners: {
-                                select: 'onFilterWindow_SelectFilterSet'
-                            },
-                            //minChars: 0,
-                            //queryMode: 'local',
-                            editable: true,
-                            //readOnly: false,
-                            width: 558
-                        },
-                        {
-                            xtype:'container',
-                            items:[
-                                {
-                                    xtype     : 'checkbox',
-                                    boxLabel  : 'Rejected',
-                                    reference : 'chkRejected',
-                                    listeners:{
-                                        change: 'onFilterWindow_CheckboxRejectedChange'
-                                    }
-                                }
-                            ]
-                        }
-                        /*{
-                            xtype: 'textfield',
-                            fieldLabel: 'Name',
-                            reference: 'txtFilter',
-                            width: 535,
-                            emptyText: 'Filter name (Optional)',
-                            bind: {
-                                value: '{filterName}'
-                            }
-                        }*/
-                    ]
-                },
                 {
                     xtype: 'fieldset',
                     title: 'Add condition',
@@ -190,7 +110,6 @@ Ext.define('Target.view.objects.FiltersWindow', {
                                 {
                                     xtype: 'button',
                                     iconCls: 'x-fa fa-plus',
-                                    // ui: 'soft-green',
                                     width: 40,
                                     flex: false,
                                     handler: 'onAddFilter'
@@ -213,13 +132,7 @@ Ext.define('Target.view.objects.FiltersWindow', {
                 store: '{filters}'
             },
             viewConfig: {
-                markDirty: false,
-                getRowClass : function(record,id){
-                    if(record.get('fcd_property_name') == '_meta_reject'){
-                        return 'hide-row';
-                    }
-                    return 'row';
-                }
+                markDirty: false
             },
             columns: [
                 {
@@ -255,22 +168,13 @@ Ext.define('Target.view.objects.FiltersWindow', {
         }
     ],
     buttons: [
-        /*{
-            iconCls: 'x-fa fa-trash',
-            ui: 'soft-red',
-            handler: 'onDeleteFilterSet',
-            width: 40,
-            tooltip: 'Delete Filter',
-            disabled: true,
-            reference: 'btnDeleteFilterSet'
-        },*/
         {
             text: 'Cancel',
             handler: 'onCancelFilter'
         },
         {
-            text: 'Apply',
-            ui: 'soft-green',
+            text: 'Ok',
+            reference: 'BtnApply',
             handler: 'onApplyFilter',
             bind: {
                 disabled: '{!haveFilters}'
@@ -292,43 +196,24 @@ Ext.define('Target.view.objects.FiltersWindow', {
         }
     },
 
-    setActiveFilter: function (filter) {
+    setFilterSet: function (filterset) {
         var me = this,
             vm = me.getViewModel(),
             filters = vm.getStore('filters'),
-            filterSet = vm.getStore('filterSet'),
             btnDelete = me.lookup('btnDeleteFilterSet'),
-            txtFilter = me.lookup('txtFilter'),
-            chkRejected = me.lookup('chkRejected'),
-            filterRejectExists=false;
+            txtFilter = me.lookup('txtFilter');
 
-        if (filter){
-            if (filter.modelFilterSet) {
-                vm.set('filterSet',  filter.modelFilterSet);
-                vm.set('filterName', filter.modelFilterSet.get('fst_name'));
-            }
+        if ((filterset) && (filterset.get('id') > 0)) {
 
-            filter.conditions.forEach(function(item){
-                if (item.fcd_property_name=="_meta_reject"){
-                    filterRejectExists = true;
-                }
-            });
+            vm.set('filterSet', filterset);
 
-            filters.setData(filter.conditions);
-
-            chkRejected.setValue(filterRejectExists);
-        }
-
-        /*if ((filterset) && (filterset.get('fst_name') != '')) {
-
-            vm.set('filterSet',  filterset);
             vm.set('filterName', filterset.get('fst_name'));
 
             // Filter name como readonly
-            //txtFilter.setReadOnly(true);
+            txtFilter.setReadOnly(true);
 
             // Habilitar o botao de Delete FilterSet
-            //btnDelete.enable();
+            btnDelete.enable();
 
             filters.addFilter({
                 property: 'filterset',
@@ -337,25 +222,21 @@ Ext.define('Target.view.objects.FiltersWindow', {
 
             filters.load();
 
-        } else { */
+        } else {
+            // Um filterSet vazio
 
-            //Um filterSet vazio significa que é um filtro temporário, ainda não salvo
+            vm.set('filterName', null);
 
-            //vm.set('filterName', null);
-            
             // Filter name
-            //txtFilter.setReadOnly(false);
+            txtFilter.setReadOnly(false);
 
             // Habilitar o botao de Delete FilterSet
-            //btnDelete.disable();
+            btnDelete.disable();
 
-            //filters.clearFilter();
-            //filters.removeAll(true);
+            filters.clearFilter();
+            filters.removeAll(true);
 
-            //if (filterDataConditions){
-                //if (filter)  filters.setData(filter.conditions);
-            //}
-        //}
+        }
 
     }
 

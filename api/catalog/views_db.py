@@ -342,6 +342,10 @@ class CatalogObjectsViewSetDBHelper:
         for param in params:
             if '__' in param:
                 col, op = param.split('__')
+                if op == 'gte':
+                    op = 'ge'
+                if op == 'lte':
+                    op = 'le'
             else:
                 col = param
                 op = 'eq'

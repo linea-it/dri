@@ -92,13 +92,39 @@ Ext.define('visiomatic.catalog.OverlayGrid', {
     * Retornar a mensagem de tooltip baseada no conteudo do overlay.
     */
    getTooltipName: function(record) {
+        var me = this,
+            filters = record.get('filters'),
+            msg, str_filter, filter;
 
         if (record.get('status') !== 'error') {
-            return Ext.String.format(
-                        '<spam>{0}</spam></br>'+
-                        '<spam>Entries: {1}</spam>',
-                        record.get('name'),
-                        record.get('count'));
+
+            msg = Ext.String.format(
+                '<spam>{0}</spam></br>'+
+                '<spam>Entries: {1}</spam>',
+                record.get('name'),
+                record.get('count'));
+
+            // Adiciona a descricao dos filtros aplicados
+            if ((filters !== null) && (filters.length >0)) {
+
+                filter ='</br><spam>Filters:</spam></br>'
+
+                Ext.each(filters, function(f){
+                    str_filter = Ext.String.format(
+                        '<spam>{0} {1} {2}</spam></br>',
+                        f.get('fcd_property_name'),
+                        f.get('operator_display_name'),
+                        f.get('fcd_value')
+                    );
+
+                    filter += str_filter;
+                })
+
+                msg += filter;
+
+            }
+
+            return msg;
         } else {
             return record.get('status_message');
 
