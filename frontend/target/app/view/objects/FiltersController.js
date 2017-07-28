@@ -28,7 +28,7 @@ Ext.define('Target.view.objects.FiltersController', {
             vm = me.getViewModel(),
             contents = vm.getStore('contents');
 
-        me.clearImputs();
+        me.clearInputs();
 
         contents.addFilter({
             property: 'pcn_product_id',
@@ -49,10 +49,10 @@ Ext.define('Target.view.objects.FiltersController', {
 
         contents.add(rating);
 
-        reject = Ext.create('Target.model.CatalogContent', {
+        reject_true = Ext.create('Target.model.CatalogContent', {
             id: null,
             column_name: '_meta_reject',
-            display_name: 'Reject'
+            display_name: 'Rejected'
         });
 
         contents.add(reject);
@@ -88,7 +88,7 @@ Ext.define('Target.view.objects.FiltersController', {
             filterSet = vm.get('filterSet'),
             filters = vm.getStore('filters'),
             filter;
-        
+
         if (!content) return;
 
         // Criar um Model com os dados do filtro
@@ -108,7 +108,7 @@ Ext.define('Target.view.objects.FiltersController', {
 
         filters.add(filter);
 
-        me.clearImputs();
+        me.clearInputs();
 
         me.checkHaveFilters();
 
@@ -168,7 +168,7 @@ Ext.define('Target.view.objects.FiltersController', {
 
             filters.add(filter);
 
-            me.clearImputs();
+            me.clearInputs();
 
             me.checkHaveFilters();
 
@@ -201,7 +201,7 @@ Ext.define('Target.view.objects.FiltersController', {
             filterSet = vm.get('filterSet'),
             view = me.getView(),
             filterName = refs.cmbName.getValue();
-        
+
         fn = fn || function(){};
 
         if (filterName!==''){
@@ -211,7 +211,7 @@ Ext.define('Target.view.objects.FiltersController', {
             if ((filterSet) && (filterSet.get('id') > 0)) {
                 doSave(filterSet, true);
             }
-            
+
             //novo filterset
             else{
                 doSave(Ext.create('Target.model.FilterSet', {
@@ -234,7 +234,7 @@ Ext.define('Target.view.objects.FiltersController', {
                         var obj = Ext.decode(operation.getResponse().responseText);
 
                         fset.set(obj);
-                        
+
                         if (!update){
                             vm.set('filterSet', fset);
 
@@ -281,7 +281,7 @@ Ext.define('Target.view.objects.FiltersController', {
             filters = vm.getStore('filters'),
             filterSet = vm.get('filterSet'),
             view = me.getView();
-        
+
         Ext.MessageBox.confirm('', 'The Filter will be deleted. Do you want continue?', function (btn) {
             if (btn === 'yes') {
                 doRemove();
@@ -318,10 +318,10 @@ Ext.define('Target.view.objects.FiltersController', {
             storeFilters   = vm.getStore('filters'),
             filterName     = refs.cmbName.getValue(),
             fset;
-        
+
         //filtro sem nenhuma condição, retorna
         if (storeFilters.count() == 0) return;
-        
+
         //filtro remoto (salvo no banco de dados)
         if (filterSet && filterSet.get('fst_name')!='') {
 
@@ -364,7 +364,7 @@ Ext.define('Target.view.objects.FiltersController', {
                 });*/
             }
         }
-        
+
         //filtro local (não salvo)
         else {
 
@@ -419,7 +419,7 @@ Ext.define('Target.view.objects.FiltersController', {
 
             filter.conditions = [];
             filter.storeFilters = storeFilters;
-            
+
             storeFilters.getData().each(function(item){
                 if (typeof(item.data.id)=='string') delete(item.data.id);
                 filter.conditions.push(item.data);
@@ -439,12 +439,12 @@ Ext.define('Target.view.objects.FiltersController', {
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
-            refs = me.getReferences(),            
+            refs = me.getReferences(),
             storeFilters = vm.getStore('filters'),
             filterSet = vm.get('filterSet'),
             filterName = refs.cmbName.getValue(),
             changed = false;
-        
+
         if (filterName !== filterSet.get('fst_name')){
             return true;
         }
@@ -468,7 +468,7 @@ Ext.define('Target.view.objects.FiltersController', {
         return changed;
     },
 
-    clearImputs: function () {
+    clearInputs: function () {
         var me = this,
             refs = me.getReferences(),
             property = refs.cmbProperty,
@@ -506,7 +506,7 @@ Ext.define('Target.view.objects.FiltersController', {
             filters = vm.getStore('filters'),
             filterSet = vm.get('filterSet'),
             view = me.getView();
-        
+
             //limpa a combobox, a lista de condições do filtro e o checkbox reject
             refs.cmbName.clearValue();
             filters.loadData([]);
@@ -548,7 +548,7 @@ Ext.define('Target.view.objects.FiltersController', {
         else if (index>-1){
             storeFilters.removeAt(index);
         }
-    
+
         me.checkHaveFilters();
     },
 
@@ -576,7 +576,7 @@ Ext.define('Target.view.objects.FiltersController', {
 
             //define o nome da cópia
             refs.cmbName.setValue('Copy of '+modelFilterSet.get('fst_name'));
-            
+
             //define as condições do filtro copiado
             storeFilters.setData(conditions);
         }

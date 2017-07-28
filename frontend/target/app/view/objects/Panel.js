@@ -334,4 +334,3 @@ Ext.define('Target.view.objects.Panel', {
 
     }
 });
-

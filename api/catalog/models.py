@@ -15,7 +15,7 @@ class Rating(models.Model):
         verbose_name='Rating', null=False, blank=False)
 
     def __str__(self):
-        return self.pk
+        return str(self.pk)
 
 
 class Reject(models.Model):
@@ -32,7 +32,7 @@ class Reject(models.Model):
         verbose_name='Reject', default=False, null=False, blank=False)
 
     def __str__(self):
-        return self.pk
+        return str(self.pk)
 
 
 class Comments(models.Model):
@@ -52,4 +52,4 @@ class Comments(models.Model):
         verbose_name='Comments', null=False, blank=False)
 
     def __str__(self):
-        return self.pk
+        return str(self.pk)
