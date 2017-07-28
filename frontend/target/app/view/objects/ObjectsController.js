@@ -292,13 +292,15 @@ Ext.define('Target.view.objects.ObjectsController', {
                 filters = vm.get('filters');
             }
 
-
             // Aplicar Filtros ao Produto
             if ((filters) && (filters.count() > 0)) {
                 filters.each(function (filter) {
+                    //Assim só filtra igual, não filtra maior que nem menor que, etc.
+                    //store.filter(filter.get('fcd_property_name'), filter.get('fcd_value'));
+                    //store.addFilter('id', filter.get('fcd_value'));
 
                     aFilters.push({
-                        property: filter.get('property_name'),
+                        property: filter.get('fcd_property_name'),//property_name'),
                         operator: filter.get('fcd_operation'),
                         value: filter.get('fcd_value')
                     });
@@ -306,21 +308,17 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }, me);
 
                 // Se tiver filtros para aplicar e o botão de filtro estiver precionado
+                /*&& (btnFilterApply.pressed)*/
 
-                if ((aFilters.length > 0) && (btnFilterApply.pressed))  {
-                    // Aplicar os Filtros
+                // Aplicar os Filtros
+                if ((aFilters.length > 0))  {
                     store.addFilter(aFilters);
-
                 }
-
             }
 
             store.load({
                 callback: function () {
-
-                    // remover a mensagem de load do painel
                     objectsGrid.setLoading(false);
-
                 },
                 scope: this
             });
@@ -631,6 +629,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             filterset = vm.get('filterSet'),
+            filters = vm.get('filters'),
+            store = vm.getStore('objects'),
             currentCatalog = vm.get('currentCatalog');
 
         if (me.winFilters !== null) {
@@ -647,54 +647,39 @@ Ext.define('Target.view.objects.ObjectsController', {
         });
 
         me.winFilters.setCurrentCatalog(currentCatalog);
-
-        me.winFilters.setFilterSet(filterset);
+        me.winFilters.setActiveFilter(me.activeFilter);
 
         me.winFilters.show();
-
     },
 
-    onWindowApplyFilters: function (filterset, filters) {
-        var me = this,
-            vm = me.getViewModel(),
-            filtersets = vm.getStore('filterSets'),
-            combo = me.lookup('cmbFilterSet'),
+    /**
+     * Ao aplicar filtro na window filters
+     */
+    onWindowApplyFilters: function (filter){//filterset, filters) {
+        var me = this, a=[],
+            vm = me.getViewModel(),  //
+            txtFilterSet = me.lookup('txtFilterSet'),
             currentCatalog = vm.get('currentCatalog');
+        
+        me.activeFilter = filter;
 
-        if ((filterset) && (filterset.get('id') > 0)) {
-            // Selecionar a Combo com o Filterset escolhido
-            filtersets.load({
-                callback: function () {
-                    combo.select(filterset);
-
-                    // applicar os filtros
-                    me.applyFilter(filterset);
-                }
-            });
-
-        } else {
-            // Aplicar Filtro Local
-            vm.set('filterSet', filterset);
-            vm.set('filters', filters);
-
-            combo.getTrigger('clear').show();
-
-            me.loadObjects(currentCatalog.get('id'), filters);
-        }
+        txtFilterSet.setValue(filter.fst_name);
+        vm.set('filters', filter.storeFilters);
+        me.loadObjects(currentCatalog.get('id'), filter.storeFilters);
     },
 
     onWindowDisapplyFilters: function () {
         var me = this,
             vm = me.getViewModel(),
-            combo = me.lookup('cmbFilterSet'),
+            txtFilterSet = me.lookup('txtFilterSet'),
             filterset;
 
         filterset = Ext.create('Target.model.FilterSet',{});
 
+        txtFilterSet.setValue('');
+
         vm.set('filterSet', filterset);
         vm.set('filters', null);
-
-        combo.getTrigger('clear').hide();
 
         me.loadObjects();
     },
