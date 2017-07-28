@@ -46,16 +46,14 @@ Ext.define('Target.view.objects.FiltersController', {
             column_name: '_meta_rating',
             display_name: 'Rating'
         });
-
         contents.add(rating);
 
-        reject_true = Ext.create('Target.model.CatalogContent', {
+        /*reject_true = Ext.create('Target.model.CatalogContent', {
             id: null,
             column_name: '_meta_reject',
             display_name: 'Rejected'
         });
-
-        contents.add(reject);
+        contents.add(reject);*/
     },
 
     onLoadFilterConditions: function () {
@@ -64,19 +62,31 @@ Ext.define('Target.view.objects.FiltersController', {
             refs = me.getReferences(),
             storefilters = vm.getStore('filters'),
             aFilters = [],
-            filterRejectExists = false;
+            filterRejectExists = false,
+            filterRejectOption;
 
         storefilters.each(function(item){
             if (item.data.fcd_property_name=="_meta_reject"){
                 filterRejectExists = true;
+                filterRejectOption = item.data.fcd_value;
             }
             aFilters.push(item.data);
         });
 
         me.arrayFilterConditions = aFilters;
-        refs.chkRejected.setValue(filterRejectExists);
 
-        me.checkHaveFilters();
+        //marqca o checkbox de rejeitado se for o caso
+        refs.chkRejected.setExpanded(filterRejectExists);
+        if (filterRejectExists){
+            //marca o radio segundo a opção definida no filtro
+            refs.chkRejected.query('radio').forEach(function(radio){
+                if (radio.getReference()==('r'+filterRejectOption)){
+                    radio.setValue(true);
+                }
+            });
+        }
+        
+        me.viewRenderUIStatus();
     },
 
     onAddFilter: function () {
@@ -110,7 +120,7 @@ Ext.define('Target.view.objects.FiltersController', {
 
         me.clearInputs();
 
-        me.checkHaveFilters();
+        me.viewRenderUIStatus();
 
     },
 
@@ -122,24 +132,14 @@ Ext.define('Target.view.objects.FiltersController', {
             function (btn) {
                 if (btn === 'yes') {
                     record.drop();
-                    me.checkHaveFilters();
+                    me.viewRenderUIStatus();
                 }
             }, this);
     },
 
-    checkHaveFilters: function () {
-        var me = this,
-            vm = me.getViewModel(),
-            refs = me.getReferences(),
-            filters = vm.getStore('filters');
-
-        if (filters.count() > 0) {
-            vm.set('haveFilters', true);
-
-        } else {
-            vm.set('haveFilters', false);
-
-        }
+    viewRenderUIStatus: function () {
+        //atualiza os botões da janela
+        this.getView().renderUIStatus();
     },
 
     onSelectProperty: function (combo, property) {
@@ -170,20 +170,17 @@ Ext.define('Target.view.objects.FiltersController', {
 
             me.clearInputs();
 
-            me.checkHaveFilters();
-
+            me.viewRenderUIStatus();
         }
 
     },
 
     onSelectOperator: function (combo, operator) {
         // TODO baseado no tipo de operador escolher um tipo de campo para entrada difente
-
     },
 
     onCancelFilter: function () {
         this.getView().close();
-
     },
 
     onSaveFilterSet: function(){
@@ -499,6 +496,10 @@ Ext.define('Target.view.objects.FiltersController', {
         }
     },
 
+    onFilterWindow_ChangeFilterSetValue: function(combo, value){
+        this.viewRenderUIStatus();
+    },
+
     onFilterWindow_ClearFilterSet:  function () {
         var me = this,
             refs = me.getReferences(),
@@ -510,46 +511,76 @@ Ext.define('Target.view.objects.FiltersController', {
             //limpa a combobox, a lista de condições do filtro e o checkbox reject
             refs.cmbName.clearValue();
             filters.loadData([]);
-            refs.chkRejected.setValue(false);
+            //FABIO refs.chkRejected.setValue(false);
 
-            me.checkHaveFilters();
-            view.fireEvent('disapplyfilters', me);
+            me.viewRenderUIStatus();
     },
 
-    onFilterWindow_CheckboxRejectedChange: function(checkbox, checked){
+    onRemoveFilter: function(){
         var me = this,
+            vm = me.getViewModel(),
+            filterSet = vm.get('filterSet'),
+            view = me.getView();
+
+        //limpa a janela de filtro, se o filtro atual da combo for o mesmo atualmente aplicado
+        if (filterSet && view.activeAppliedFilter && filterSet.id == view.activeAppliedFilter.id){
+            me.onFilterWindow_ClearFilterSet();
+        }
+
+        view.activeAppliedFilter = null;
+        view.fireEvent('disapplyfilters', this);
+
+        me.viewRenderUIStatus();
+    },
+
+    onFilterWindow_CheckboxRejectedChange: function(fieldset){
+        var me           = this,
+            vm           = me.getViewModel(),
+            storeFilters = vm.getStore('filters'),
+            index;
+
+        if (fieldset.collapsed){
+            //remove a condição reject
+            index = storeFilters.find('fcd_property_name', '_meta_reject');
+            if (index>-1) storeFilters.removeAt(index);
+
+            fieldset.query('radio').forEach(function(radio){
+                radio.setValue(false);
+            });
+        }
+    },
+
+    onFilterWindow_RadioRejectedChange: function(radio){
+         var me = this,
             view         = me.getView(),
             vm           = me.getViewModel(),
             filterSet    = vm.get('filterSet'),
             storeFilters = vm.getStore('filters'),
             rejectFilter, index;
 
-        index = storeFilters.find('fcd_property_name', '_meta_reject');
+        //adiciona a condição caso esteja marcado (checked)
+        if (radio.getValue()){
+            //remove a condição reject
+            index = storeFilters.find('fcd_property_name', '_meta_reject');
+            if (index>-1) storeFilters.removeAt(index);
 
-        //se checkbox marcado, cria o filtro
-        if (checked){
-            if (index==-1){
-
-                rejectFilter = Ext.create('Target.model.FilterCondition', {
+            rejectFilter = Ext.create('Target.model.FilterCondition', {
                     fcd_property: NaN,
                     fcd_property_name: '_meta_reject',
                     fcd_operation: '=',
-                    fcd_value: 'true'
-                });
+                    fcd_value: radio.getReference()=='rtrue' ? 'true' : 'false'
+            });
 
-                if ((filterSet) && (filterSet.get('id') > 0)) {
-                    rejectFilter.set('filterset', filterSet.get('id'));
-                }
-                storeFilters.add(rejectFilter);
+            if ((filterSet) && (filterSet.get('id') > 0)) {
+                rejectFilter.set('filterset', filterSet.get('id'));
             }
+            storeFilters.add(rejectFilter);
+
+            setTimeout(function(){
+                me.viewRenderUIStatus();
+            },10)
         }
 
-        //se checkbox desmarcado, remove o filtro
-        else if (index>-1){
-            storeFilters.removeAt(index);
-        }
-
-        me.checkHaveFilters();
     },
 
     onFilterWindow_ButtonCopyClick: function(){
@@ -579,6 +610,9 @@ Ext.define('Target.view.objects.FiltersController', {
 
             //define as condições do filtro copiado
             storeFilters.setData(conditions);
+
+            //setData não dispara onload, por isso chamo aqui
+            me.onLoadFilterConditions();
         }
     }
 
