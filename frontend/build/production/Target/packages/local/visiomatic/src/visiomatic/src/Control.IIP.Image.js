@@ -4,23 +4,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-#	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
-#				                      Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified:		05/07/2017
-=======
->>>>>>> develop
 #	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				                      Chiara Marmo - IDES/Paris-Sud
 #
 #	Last modified:		15/12/2015
-<<<<<<< HEAD
-=======
->>>>>>> develop
->>>>>>> develop
 */
 
 if (typeof require !== 'undefined') {
@@ -46,15 +33,8 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		var _this = this,
 			className = this._className,
 			layer = this._layer,
-<<<<<<< HEAD
-			elem;
-=======
-<<<<<<< HEAD
 			map = this._map;
-=======
 			elem;
->>>>>>> develop
->>>>>>> develop
 
 		// Invert
 		this._addSwitchInput(layer, this._dialog, 'Invert:', 'iipInvertCMap',
@@ -94,4 +74,3 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 L.control.iip.image = function (options) {
 	return new L.Control.IIP.Image(options);
 };
-

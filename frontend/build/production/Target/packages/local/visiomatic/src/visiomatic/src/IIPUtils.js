@@ -3,23 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 #	Copyright: (C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
 #	Last modified: 27/06/2017
-=======
->>>>>>> develop
-#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-#	                         Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified: 29/11/2016
-<<<<<<< HEAD
-=======
->>>>>>> develop
->>>>>>> develop
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -66,23 +53,9 @@ L.IIPUtils = {
 			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
 		}
 
-<<<<<<< HEAD
 		httpRequest.onreadystatechange = function () {
 			action(context, httpRequest);
 		};
-=======
-<<<<<<< HEAD
-		if ((action)) {
-			httpRequest.onreadystatechange = function () {
-				action(context, httpRequest);
-			};
-		}
-=======
-		httpRequest.onreadystatechange = function () {
-			action(context, httpRequest);
-		};
->>>>>>> develop
->>>>>>> develop
 		httpRequest.send();
 	},
 
@@ -180,9 +153,6 @@ L.IIPUtils = {
 		return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 360.0 / Math.PI;
 	},
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
 	latLngToHMSDMS : function (latlng) {
 		var lng = (latlng.lng + 360.0) / 360.0;
@@ -220,9 +190,6 @@ L.IIPUtils = {
 		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
-=======
->>>>>>> develop
->>>>>>> develop
 	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
 	getCookie: function (cname) {
 	    var name = cname + '=';
@@ -240,4 +207,3 @@ L.IIPUtils = {
 	}
 
 };
-

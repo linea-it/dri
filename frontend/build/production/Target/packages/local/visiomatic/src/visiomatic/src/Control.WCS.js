@@ -3,23 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                                Chiara Marmo - IDES/Paris-Sud
-#
-#	Last modified: 27/06/2017
-=======
->>>>>>> develop
 #	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                                Chiara Marmo - IDES/Paris-Sud
 #
 #	Last modified: 07/09/2016
-<<<<<<< HEAD
-=======
->>>>>>> develop
->>>>>>> develop
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -93,15 +80,7 @@ L.Control.WCS = L.Control.extend({
 				latlng = map.getCenter();
 			L.IIPUtils.flashElement(this._wcsinput);
 			url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
-<<<<<<< HEAD
 			  this._latLngToHMSDMS(latlng));
-=======
-<<<<<<< HEAD
-			  L.IIPUtils.latLngToHMSDMS(latlng));
-=======
-			  this._latLngToHMSDMS(latlng));
->>>>>>> develop
->>>>>>> develop
 			url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,
 			  wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
 			history.pushState(stateObj, '', url);
@@ -130,15 +109,7 @@ L.Control.WCS = L.Control.extend({
 			}
 			switch (coord.units) {
 			case 'HMS':
-<<<<<<< HEAD
 				this._wcsinput.value = this._latLngToHMSDMS(latlng);
-=======
-<<<<<<< HEAD
-				this._wcsinput.value = L.IIPUtils.latLngToHMSDMS(latlng);
-=======
-				this._wcsinput.value = this._latLngToHMSDMS(latlng);
->>>>>>> develop
->>>>>>> develop
 				break;
 			case 'deg':
 				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
@@ -150,11 +121,6 @@ L.Control.WCS = L.Control.extend({
 		}
 	},
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-=======
->>>>>>> develop
 	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
 	_latLngToHMSDMS : function (latlng) {
 		var lng = (latlng.lng + 360.0) / 360.0;
@@ -192,10 +158,6 @@ L.Control.WCS = L.Control.extend({
 		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
-<<<<<<< HEAD
-=======
->>>>>>> develop
->>>>>>> develop
 	panTo: function (str) {
 		var re = /^(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g,
 				result = re.exec(str),

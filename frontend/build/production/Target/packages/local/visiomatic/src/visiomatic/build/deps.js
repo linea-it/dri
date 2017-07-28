@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 var deps = {
 	Core: {
 		src: [
@@ -78,7 +75,3 @@ var deps = {
 if (typeof exports !== 'undefined') {
 	exports.deps = deps;
 }
-<<<<<<< HEAD
-=======
->>>>>>> develop
->>>>>>> develop
