@@ -30,7 +30,7 @@ Ext.define('aladin.Interfaces', {
             cls: 'aladin-location-info',
             style: {
                 position: 'absolute',
-                zIndex: 999
+                zIndex: 29
             },
             tpl: [
                 '<spam>{release}</spam> <spam>{tag}</spam>',
@@ -100,7 +100,8 @@ Ext.define('aladin.Interfaces', {
         }
 
         return Ext.create('Ext.toolbar.Toolbar', {
-            vertical: vertical
+            vertical: vertical,
+            reference: 'aladinToolbar'
             //enableOverflow: true
         });
 
@@ -134,7 +135,7 @@ Ext.define('aladin.Interfaces', {
         if (me.getShowFilters()) {
 
             var bandFilter = Ext.create('common.BandFilter', {
-                filters: ['g', 'r', 'i', 'z', 'Y', 'irg'],
+                filters:[],// ['g', 'r', 'i', 'z', 'Y', 'irg'],
                 defaultFilter: 'irg',
                 vertical: vertical,
                 listeners: {
