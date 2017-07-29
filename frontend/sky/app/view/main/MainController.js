@@ -136,38 +136,46 @@ Ext.define('Sky.view.main.MainController', {
 
     //exibindo o Aladin
     onSky: function (release, coordinate, fov) {
-        var newView = Ext.create('Sky.view.footprint.Footprint', {
-            hideMode: 'offsets',
-            routeId: 'sky',
-            layout: 'fit',
-            release: release,
-            coordinate: coordinate,
-            foc: fov
-        });
+        var headerBar = this.getView().down('dri-header-sky'),
+            newView = Ext.create('Sky.view.footprint.Footprint', {
+                hideMode: 'offsets',
+                routeId: 'sky',
+                layout: 'fit',
+                release: release,
+                coordinate: coordinate,
+                foc: fov
+            }),
+            headerRefs = headerBar.getReferences();
 
-        var headerRefs = this.getView().down('dri-header-sky').getReferences();
         headerRefs.searchGlobal.show();
 
         newView.txtCoordinateSearch = headerRefs.txtCoordinateSearch;
         this.setActivePanel(newView, release, coordinate, fov);
+
+        //define o título da barra superior
+        headerBar.getViewModel().set('name', 'Sky Viewer');
     },
 
     //exibindo o VisiOmatic
     onDataset: function (dataset, coordinate, fov) {
-        var newView = Ext.create('Sky.view.dataset.Dataset', {
-            hideMode: 'offsets',
-            routeId: 'tile',
-            layout: 'fit',
-            dataset: dataset,
-            coordinate: coordinate,
-            fov: fov
-        });
+        var headerBar = this.getView().down('dri-header-sky'),
+            newView = Ext.create('Sky.view.dataset.Dataset', {
+                hideMode: 'offsets',
+                routeId: 'tile',
+                layout: 'fit',
+                dataset: dataset,
+                coordinate: coordinate,
+                fov: fov
+            }),
+            headerRefs = headerBar.getReferences();
 
-        var headerRefs = this.getView().down('dri-header-sky').getReferences();
         headerRefs.searchGlobal.show();
 
         newView.txtCoordinateSearch = headerRefs.txtCoordinateSearch;
         this.setActivePanel(newView, dataset, coordinate, fov);
+
+        //define o título da barra superior
+        headerBar.getViewModel().set('name', 'Image Viewer');
     }
 
 });

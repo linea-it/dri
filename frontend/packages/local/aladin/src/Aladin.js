@@ -88,7 +88,7 @@ Ext.define('aladin.Aladin', {
         },
 
         // LayersControl
-        enableLayersControl: false,
+        enableLayersControl: true,
 
         // Barra com botoes para escolher a banda da imagem
         showFilters: true,
@@ -154,7 +154,7 @@ Ext.define('aladin.Aladin', {
         enableMaps: false,
 
         // habilitar botao que permite troca entre Visiomatic / Aladin
-        enableShift: true,
+        enableShift: false,
 
         // toolbar position (left or top)
         toolbarPosition: 'left'
@@ -202,7 +202,7 @@ Ext.define('aladin.Aladin', {
         });
 
         if (me.getShowFilters()) {
-            tollbar = me.makeToolbar();
+            tollbar = me.leftToolBar = me.makeToolbar();
             btns = me.makeToolbarButtons();
             tollbar.add(btns);
 
@@ -234,7 +234,7 @@ Ext.define('aladin.Aladin', {
             aladinId = '#' + me.getAladinId(),
             libA = me.libA,
             aladinOptions = me.getAladinOptions(),
-            aladin;
+            aladin, el;
 
         if (me.getEnableLayersControl()) {
             aladinOptions.showLayersControl = me.getEnableLayersControl();
@@ -246,7 +246,7 @@ Ext.define('aladin.Aladin', {
             // opcoes do aladin
             aladinOptions
         );
-
+        
         me.setAladin(aladin);
 
         me.createImageSurveys();
@@ -261,6 +261,11 @@ Ext.define('aladin.Aladin', {
 
         // Custon events
         me.addCustonEvents();
+
+        //adiciona o botão manager layers do aladin na toolbar esquerda
+        el = document.querySelector('.aladin-layersControl-container');
+        el.style.top = '50px';
+        me.leftToolBar.getEl().dom.appendChild(el);
 
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);

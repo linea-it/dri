@@ -98,7 +98,8 @@ Ext.define('Sky.view.dataset.Dataset', {
                             enableToggle: true,
                             pressed: true,
                             toggleHandler: 'showHideMarker'
-                        },
+                        }
+                        /*,
                         {
                             xtype: 'button',
                             iconCls: 'x-fa fa-comments',
@@ -106,7 +107,7 @@ Ext.define('Sky.view.dataset.Dataset', {
                             enableToggle: true,
                             pressed: true,
                             toggleHandler: 'showHideComments'
-                        }
+                        }*/
                     ]
                 }
             ]
