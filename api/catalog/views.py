@@ -344,17 +344,3 @@ class CatalogObjectsViewSet(ViewSet):
             'count': count,
             'results': rows
         }))
-
-@api_view(['GET'])
-def test_sqlalchemy(request):
-    if request.method == 'GET':
-        catalog = Catalog.objects.select_related().get(product_ptr_id='25')
-        db_helper = CoaddObjectsDBHelper(catalog.tbl_name,
-                                         schema=catalog.tbl_schema,
-                                         database=catalog.tbl_database)
-        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=catalog.pk)
-        serializer = AssociationSerializer(queryset, many=True)
-        associations = serializer.data
-        catalogOne = Catalog.objects.select_related().first()
-        print(vars(associations))
-        return Response(dict({'results': 'catalog'}))
