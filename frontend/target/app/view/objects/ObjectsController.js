@@ -680,6 +680,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         vm.set('filterSet', filterset);
         vm.set('filters', null);
 
+        me.activeFilter = null;
+
         me.loadObjects();
     },
 

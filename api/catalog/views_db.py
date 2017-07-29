@@ -185,7 +185,7 @@ class TargetViewSetDBHelper:
         # Filtros
         filters = list()
         rating_filter = list()
-        reject_filter = list()
+        reject_filters = ''
         coordinates_filter = list()
         reject_query = True
         params = params.dict()
