@@ -15,6 +15,7 @@ from .views_db import CoaddObjectsDBHelper
 from .views_db import TargetViewSetDBHelper
 from .views_db import CatalogObjectsViewSetDBHelper
 
+from rest_framework.decorators import api_view
 
 class RatingViewSet(viewsets.ModelViewSet):
     """

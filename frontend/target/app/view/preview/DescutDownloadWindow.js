@@ -19,8 +19,6 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
 
     closeAction: 'destroy',
 
-    bodyPadding: 20,
-
     layout: {
         type: 'vbox',
         align: 'stretch'
@@ -50,7 +48,7 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
                             dataIndex: 'band',
                         },
                         {
-                            text: 'FITS',
+                            text: 'URL',
                             dataIndex: 'url',
                             renderer: function (value, metadata, record) {
                                 return '<a href=' + value + '><i class="fa fa-download"> </i></a>';

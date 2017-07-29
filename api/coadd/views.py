@@ -8,6 +8,9 @@ from .models import Release, Tag, Tile, Dataset, Survey
 from .serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, \
     SurveySerializer, DatasetFootprintSerializer
 
+from lib.CatalogDB import DBBase
+import copy
+
 logger = logging.getLogger(__name__)
 
 from rest_framework.decorators import api_view
@@ -199,3 +202,30 @@ class SurveyViewSet(viewsets.ModelViewSet):
 #         url = DesoperDatabase().get_fits_by_tilename(request.query_params.get('tilename'))
 #
 #         return Response(dict({'results': url}))
+
+@api_view(['GET'])
+def get_fits_by_tilename(request):
+    if request.method == 'GET':
+        tilename = request.query_params.get('tilename', None)
+        sql = ("SELECT m.filename, m.filetype, m.band, f.path FROM proctag t, file_archive_info f, miscfile m WHERE t.pfw_attempt_id = m.pfw_attempt_id AND t.tag='Y3A1_COADD' AND f.filename=m.filename AND m.filetype NOT IN ('coadd_head_scamp', 'mangle_molys', 'mangle_polygons', 'mangle_csv_ccdgon', 'mangle_csv_cobjmoly', 'mangle_csv_molyccd', 'mangle_csv_molyccd', 'mangle_csv_molygon', 'coadd_psfex_model', 'coadd_qa_scamp', 'coadd_xml_scamp', 'coadd_xml_psfex', 'coadd_det_psfex_model') AND m.tilename = '" + tilename + "' ORDER BY m.filetype, m.filename")
+        conn_parameters = DBBase.prepare_connection('desoper')
+        db = DBBase(conn_parameters)
+        tiles = db.engine.execute(sql)
+        fits_file = {}
+        result = []
+        for tile in tiles:
+            print(tile)
+            url = "https://desar2.cosmology.illinois.edu/DESFiles/desarchive/%s/%s.fz" % (tile[3].replace("+", "%2B"), tile[0].replace("+", "%2B"))
+            fits_file.update({'url': url})
+
+            fits_file.update({
+                'tilename': tile[0]
+            })
+
+            fits_file.update({
+                'band': tile[2]
+            })
+
+            result.append(copy.copy(fits_file))
+
+        return Response(dict({'results': result}))
