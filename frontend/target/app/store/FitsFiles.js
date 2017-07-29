@@ -14,7 +14,7 @@ Ext.define('Target.store.FitsFiles', {
     pageSize: 0,
 
     proxy: {
-        url: '/dri/api/get_fits_files'
+        url: '/dri/api/get_fits_by_tilename'
     },
 
     sorters: [
