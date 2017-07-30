@@ -27,6 +27,11 @@ DEBUG = False
 ALLOWED_HOSTS = []
 
 USE_OAUTH = True
+SHOW_OAUTH = False
+
+SETTINGS_EXPORT = [
+    'SHOW_OAUTH',
+]
 
 # Application definition
 
@@ -101,6 +106,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_settings_export.settings_export',
             ],
         },
     },
