@@ -36,9 +36,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             },
             '#objects': {
                 update: 'onUpdateObject'
-            },
-            '#CutoutJobs': {
-                load: 'onLoadCutoutJobs'
             }
         }
     },
@@ -79,7 +76,8 @@ Ext.define('Target.view.objects.ObjectsController', {
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid,
             filtersets = vm.getStore('filterSets'),
-            cutoutsJobs = vm.getStore('cutoutsJobs');
+            combo = me.lookup('cmbCutoutJob'),
+            cutoutsJobs = combo.getStore();
 
         if (store.count() === 1) {
             currentCatalog = store.first();
@@ -111,7 +109,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }
             ]);
 
-//            cutoutsJobs.load()
+            cutoutsJobs.load()
 
             // Task para verificar se existe cutoutjob
             if (me.taskCutoutJob !== null) {
@@ -292,13 +290,15 @@ Ext.define('Target.view.objects.ObjectsController', {
                 filters = vm.get('filters');
             }
 
-
             // Aplicar Filtros ao Produto
             if ((filters) && (filters.count() > 0)) {
                 filters.each(function (filter) {
+                    //Assim só filtra igual, não filtra maior que nem menor que, etc.
+                    //store.filter(filter.get('fcd_property_name'), filter.get('fcd_value'));
+                    //store.addFilter('id', filter.get('fcd_value'));
 
                     aFilters.push({
-                        property: filter.get('property_name'),
+                        property: filter.get('fcd_property_name'),//property_name'),
                         operator: filter.get('fcd_operation'),
                         value: filter.get('fcd_value')
                     });
@@ -306,21 +306,17 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }, me);
 
                 // Se tiver filtros para aplicar e o botão de filtro estiver precionado
+                /*&& (btnFilterApply.pressed)*/
 
-                if ((aFilters.length > 0) && (btnFilterApply.pressed))  {
-                    // Aplicar os Filtros
+                // Aplicar os Filtros
+                if ((aFilters.length > 0))  {
                     store.addFilter(aFilters);
-
                 }
-
             }
 
             store.load({
                 callback: function () {
-
-                    // remover a mensagem de load do painel
                     objectsGrid.setLoading(false);
-
                 },
                 scope: this
             });
@@ -609,6 +605,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onBeforeDeactivate: function () {
+        console.log('onBeforeDeactivate')
         var me = this;
         // Fix AlertSetting quando usa funcao voltar do navegador
         if (me.winAlertSetting !== null) {
@@ -631,6 +628,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             filterset = vm.get('filterSet'),
+            filters = vm.get('filters'),
+            store = vm.getStore('objects'),
             currentCatalog = vm.get('currentCatalog');
 
         if (me.winFilters !== null) {
@@ -647,54 +646,41 @@ Ext.define('Target.view.objects.ObjectsController', {
         });
 
         me.winFilters.setCurrentCatalog(currentCatalog);
-
-        me.winFilters.setFilterSet(filterset);
+        me.winFilters.setActiveFilter(me.activeFilter);
 
         me.winFilters.show();
-
     },
 
-    onWindowApplyFilters: function (filterset, filters) {
-        var me = this,
-            vm = me.getViewModel(),
-            filtersets = vm.getStore('filterSets'),
-            combo = me.lookup('cmbFilterSet'),
+    /**
+     * Ao aplicar filtro na window filters
+     */
+    onWindowApplyFilters: function (filter){//filterset, filters) {
+        var me = this, a=[],
+            vm = me.getViewModel(),  //
+            txtFilterSet = me.lookup('txtFilterSet'),
             currentCatalog = vm.get('currentCatalog');
+        
+        me.activeFilter = filter;
 
-        if ((filterset) && (filterset.get('id') > 0)) {
-            // Selecionar a Combo com o Filterset escolhido
-            filtersets.load({
-                callback: function () {
-                    combo.select(filterset);
-
-                    // applicar os filtros
-                    me.applyFilter(filterset);
-                }
-            });
-
-        } else {
-            // Aplicar Filtro Local
-            vm.set('filterSet', filterset);
-            vm.set('filters', filters);
-
-            combo.getTrigger('clear').show();
-
-            me.loadObjects(currentCatalog.get('id'), filters);
-        }
+        txtFilterSet.setValue(filter.fst_name);
+        vm.set('filters', filter.storeFilters);
+        me.loadObjects(currentCatalog.get('id'), filter.storeFilters);
     },
 
     onWindowDisapplyFilters: function () {
         var me = this,
             vm = me.getViewModel(),
-            combo = me.lookup('cmbFilterSet'),
+            txtFilterSet = me.lookup('txtFilterSet'),
             filterset;
 
         filterset = Ext.create('Target.model.FilterSet',{});
 
+        txtFilterSet.setValue('');
+
         vm.set('filterSet', filterset);
         vm.set('filters', null);
 
-        combo.getTrigger('clear').hide();
+        me.activeFilter = null;
 
         me.loadObjects();
     },
@@ -713,6 +699,10 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this;
 
         me.loadObjects();
+    },
+
+    rejectedFilter: function(){
+      console.log('test');
     },
 
     /**
@@ -886,30 +876,17 @@ Ext.define('Target.view.objects.ObjectsController', {
     reloadCutoutJobs: function () {
         var me = this,
             vm = me.getViewModel(),
-            store = vm.getStore('cutoutsJobs');
+            combo = me.lookup('cmbCutoutJob'),
+            store = combo.getStore();
 
         store.load();
     },
 
-    onLoadCutoutJobs: function (store) {
-        var me = this,
-            cmb = me.lookup('cmbCutoutJob');
 
-        if (store.count() === 1) {
-            record = cmb.selection;
-
-            if (record === null) {
-                cmb.select(store.first());
-                me.onSelectCutoutJob();
-            }
-        }
-
-    },
-
-    onSelectCutoutJob: function () {
+    onSelectCutoutJob: function (cmb) {
         var me = this,
             vm = me.getViewModel(),
-            cutoutJob = vm.get('currentCutoutJob'),
+            cutoutJob = cmb.selection,
             mosaic = me.lookup('TargetMosaic'),
             cutouts = vm.getStore('cutouts');
 

@@ -2,7 +2,7 @@ from lib.CatalogDB import CatalogDB
 from lib.CatalogDB import DBBase
 
 from sqlalchemy.sql.expression import literal_column, between
-from sqlalchemy.sql import select, and_
+from sqlalchemy.sql import select, and_, or_
 from sqlalchemy import desc
 
 import warnings
@@ -172,8 +172,8 @@ class TargetViewSetDBHelper:
                                  DBBase.get_column_obj(self.table, property_id) ==
                                  catalog_rating_id.c.object_id, isouter=True)
         stm_join = stm_join.join(catalog_reject_id,
-                                 DBBase.get_column_obj(self.table, property_id) ==
-                                 catalog_reject_id.c.object_id, isouter=True)
+                                 or_(DBBase.get_column_obj(self.table, property_id) ==
+                                 catalog_reject_id.c.object_id, catalog_reject_id.c.id.is_(None)), isouter=True)
 
         stm = select([self.table,
                       catalog_rating_id.c.id.label('meta_rating_id'),
@@ -185,9 +185,9 @@ class TargetViewSetDBHelper:
         # Filtros
         filters = list()
         rating_filter = list()
-        reject_filter = list()
+        reject_filters = ''
         coordinates_filter = list()
-
+        reject_query = True
         params = params.dict()
         for param in params:
             if '__' in param:
@@ -208,13 +208,9 @@ class TargetViewSetDBHelper:
                         op=op,
                         value=params.get(param))])
                 elif col == '_meta_reject':
-                    value = False
+                    reject_filters = or_(catalog_reject_id.c.reject.is_(None), catalog_reject_id.c.reject == 0)
                     if params.get(param) in ['True', 'true', '1', 't', 'y', 'yes']:
-                        value = True
-                    reject_filter = list([dict(
-                        column='reject',
-                        op=op,
-                        value=value)])
+                        reject_filters = catalog_reject_id.c.reject == 1
                 # Coordenadas query por quadrado
                 elif col == 'coordinates':
                     value = json.loads(params.get(param))
@@ -233,12 +229,10 @@ class TargetViewSetDBHelper:
                             literal_column(str(ur[1]))
                         ))
                     )
-
-        stm = stm.where(and_(*DBBase.do_filter(self.table, filters) +
+        rating_filters = and_(*DBBase.do_filter(self.table, filters) +
                               DBBase.do_filter(catalog_rating_id, rating_filter) +
-                              DBBase.do_filter(catalog_reject_id, reject_filter) +
-                              coordinates_filter
-                             ))
+                              coordinates_filter)
+        stm = stm.where(and_(rating_filters, reject_filters))
 
         print(str(stm))
 
@@ -347,6 +341,10 @@ class CatalogObjectsViewSetDBHelper:
         for param in params:
             if '__' in param:
                 col, op = param.split('__')
+                if op == 'gte':
+                    op = 'ge'
+                if op == 'lte':
+                    op = 'le'
             else:
                 col = param
                 op = 'eq'
@@ -399,5 +397,3 @@ class CatalogObjectsViewSetDBHelper:
         count = self.db.stm_count(stm)
 
         return result, count
-
-
