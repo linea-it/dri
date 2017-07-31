@@ -9,8 +9,9 @@ djangorestframework==3.3.2
 requests==2.10.0
 six==1.10.0
 sqlparse==0.1.19
-django-allauth==0.31.0
+django-allauth==0.32.0
 SQLAlchemy==1.1.9
 celery==4.0.2
 amqp==2.1.4
 humanize==0.5.1
+django-settings-export==1.2.1
