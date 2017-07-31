@@ -54,6 +54,7 @@ THIRD_PARTY_APPS = [
     'corsheaders',
     'django_filters',
     'url_filter',
+    'django_celery_results',
     # 'django_nose'
 ]
 
@@ -192,6 +193,7 @@ SITE_ID = 1
 #  celery worker --workdir api --app dri -l info
 # or such configs will not be used
 CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_RESULT_BACKEND = 'django-db'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

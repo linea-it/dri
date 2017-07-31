@@ -4,15 +4,24 @@ import os
 import shutil
 from smtplib import SMTPException
 
+from celery import chord
+from celery import shared_task
 from celery import task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 from common.download import Download
 from django.utils import timezone
 from product.descutoutservice import DesCutoutService, CutoutJobNotify
+from product.export import Export
+from product.models import CutOutJob
+from product.models import FilterCondition
+from product.models import Product
+from product.serializers import FConditionSerializer
+from django.conf import settings
 
 descutout = DesCutoutService()
 cutoutJobNotify = CutoutJobNotify()
+export = Export()
 
 
 @task(name="start_des_cutout_job_by_id")
@@ -181,24 +190,167 @@ def notify_user_by_email(cutoutjob_id):
     except SMTPException as e:
         logger.error(e)
 
-# @task(name="download_files")
-# def download_files(arq, dir):
-#     logger = descutout.logger
-#     import time
-#     import random
-#     # for arq in arqs:
-#     logger.debug("Iniciando task [ %s ] " % arq['id'])
-#     # logger.debug("Download Group [ %s ] File: %s" % (group_id, arq.get('filename')))
-#
-#     time.sleep(random.randint(1,10))
-#
-#     logger.debug("Terminada task [ %s ] " % arq['id'])
-#         # descutout.download_file(
-#         #     arq.get('url'),
-#         #     dir,
-#         #     arq.get('filename')
-#         # )
-#
-# @task(name="test_callback")
-# def test_callback():
-#     print("TESTE CALLBACK")
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Export Product Tasks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
+
+@task(name="export_target_by_filter")
+@shared_task
+def export_target_by_filter(product_id, filetypes, user, filter_id=None, cutoutjob_id=None):
+    """
+    Este metodo vai exportar um produto do tipo Target,
+    a tabela para formatos como csv e fits. e caso tenha cutouts
+    vai criar um zip com o cutoutjob. todos os arquivos resultantes
+    serao compactados e disponibilizados e ficaram no diretorio DATA_DIR/DATA_TMP_DIR
+    :param cutoutjob_id:
+    :return:
+    """
+
+    logger = export.logger
+
+    logger.info("Starting Export Task for the product %s" % product_id)
+    logger.debug("User: %s UserId: %s" % (user.username, user.pk))
+    logger.debug("Product: %s" % product_id)
+    logger.debug("Filetypes: %s" % ", ".join(filetypes))
+    logger.debug("Filter: %s" % filter_id)
+    logger.debug("CutoutJob: %s" % cutoutjob_id)
+
+    # Chords Task http://docs.celeryproject.org/en/latest/userguide/canvas.html#chords
+    # callback = export_notify_user.s(user.pk).set(link_error=['export_notify_user_failure'])
+    callback = export_notify_user.s(user)
+    header = list()
+
+    # Criar o Diretorio de export
+    try:
+
+        # Recuperar o Model Product
+        product = Product.objects.select_related().get(pk=int(product_id))
+
+    except Product.DoesNotExist as e:
+        logger.error("Product matching query does not exist. Product Id: %s" % product_id)
+        # TODO enviar email de error
+
+
+    try:
+        # Criar o diretorio de export
+        export_dir = export.create_export_dir(name=product.prd_name)
+
+        # Recuperar as condicoes a serem aplicadas como filtros
+        conditions = list()
+        if filter_id is not None:
+            queryset = FilterCondition.objects.filter(filterset=int(filter_id))
+
+            for row in queryset:
+                serializer = FConditionSerializer(row)
+                conditions.append(serializer.data)
+
+
+        # Para cada formato de arquivo executar uma task separada
+        for filetype in filetypes:
+
+            if filetype == "csv":
+                # Task To CSV
+                header.append(
+                    export_target_to_csv.s(
+                        product.table.tbl_database,
+                        product.table.tbl_schema,
+                        product.table.tbl_name,
+                        conditions,
+                        export_dir
+                    )
+                )
+                pass
+
+            elif filetype == "fits":
+                # TODO generate fits file using a csv.
+                pass
+
+        # Cutouts
+        if cutoutjob_id is not None:
+            header.append(
+                export_cutoutjob.s(
+                    cutoutjob_id,
+                    export_dir))
+
+        result = chord(header)(callback)
+
+        result.get()
+
+    except Exception as e:
+        # Notify User about error
+        # TODO enviar email de error
+        logger.error(e)
+
+        export_notify_user_failure(user, product)
+
+
+@task(name="export_target_to_csv")
+@shared_task
+def export_target_to_csv(database, schema, table, conditions, export_dir):
+    logger = export.logger
+
+    logger.info("Starting Task target_to_csv")
+
+    # time.sleep(5)
+
+    export.table_to_csv(
+        database=database,
+        schema=schema,
+        table=table,
+        filters=conditions,
+        export_dir=export_dir
+    )
+
+    logger.info("Finished Task target_to_csv")
+
+
+@task(name="export_cutoutjob")
+@shared_task
+def export_cutoutjob(cutoutjob_id, export_dir):
+    logger = export.logger
+
+    logger.info("Starting Task export_cutoutjob")
+
+    cutoutjob = CutOutJob.objects.get(pk=cutoutjob_id)
+
+    path = cutoutjob.cjb_cutouts_path
+
+    # Mantendo compatibilidade com Jobs anteriores ao path ser guardado
+    # TODO: Pode ser removido se todos os cutouts com o campo cjb_cutouts_path forem removidos
+    if path is None or path == "":
+        logger.warning("CutoutJob does not have the path field, the path will be generated using the result_file field.")
+        path = cutoutjob.cjb_results_file
+        path = os.path.dirname(path)
+        path = path.split(settings.DATA_DIR)[1]
+
+
+    export.product_cutouts(
+        name=cutoutjob.cjb_display_name,
+        path_origin=path.strip("/"),
+        path_destination=export_dir
+    )
+    raise Exception("TESTE DEU RUIM EM TUDO")
+
+    logger.info("Finished Task export_cutoutjob")
+
+
+@task(name="export_notify_user")
+@shared_task
+def export_notify_user(self, user):
+    logger = export.logger
+
+    logger.info("-----------------------")
+    logger.debug("Status: SUCCESS")
+    logger.info("Finished Export")
+    logger.info("-----------------------")
+
+@task(name="export_notify_user_failure")
+def export_notify_user_failure(user, product):
+    logger = export.logger
+
+    logger = descutout.logger
+
+    logger.info("Notify user about Export Failure")
+
+    export.notify_user_export_failure(user, product)
+
+

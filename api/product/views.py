@@ -19,6 +19,7 @@ from django.conf import settings
 from .export import *
 from .filters import ProductPermissionFilterBackend
 from .serializers import *
+from product.tasks import export_target_by_filter
 
 logger = logging.getLogger(__name__)
 
@@ -654,74 +655,87 @@ class ExportViewSet(viewsets.ModelViewSet):
 
         pprint(data)
         product_id = data.get("product", None)
-        filetype = data.get("filetype", "csv")
+        filetypes = data.get("filetypes", "csv")
         filter_id = data.get("filter", None)
         cutoutjob_id = data.get("cutout", None)
 
         if product_id is None:
             raise Exception("Product Id is mandatory")
 
-        product = Product.objects.select_related().get(pk=int(product_id))
-
-        conditions = list()
-        if filter_id is not None:
-            print("Entrou no Filtro")
-            queryset = FilterCondition.objects.filter(filterset=int(filter_id))
-
-            for row in queryset:
-                serializer = FConditionSerializer(row)
-                conditions.append(serializer.data)
-
-            pprint(conditions)
-
-        data_tmp_dir = settings.DATA_TMP_DIR
-
-        export_dir = os.path.join(data_tmp_dir, product.prd_name)
-
-        if not os.path.exists(export_dir):
-            os.makedirs(export_dir)
-
-        for ft in filetype:
-
-            if filetype == "csv":
-
-                Export().table_to_csv(
-                    database=product.table.tbl_database,
-                    schema=product.table.tbl_schema,
-                    table=product.table.tbl_name,
-                    filters=conditions,
-                    export_dir=export_dir
-                )
-
-            elif filetype == "fits":
-                # TODO generate fits file using a csv.
-                pass
-
-        if cutoutjob_id is not None:
-
-            try:
-                cutoutjob = CutOutJob.objects.get(pk=cutoutjob_id)
-
-                path = cutoutjob.cjb_cutouts_path
-                # Mantendo compatibilidade com Jobs anteriores ao path ser guardado
-                # Todo Pode ser removido se todos os cutouts com o campo cjb_cutouts_path forem removidos
-                if path is None or path == "":
-                    path = cutoutjob.cjb_results_file
-                    path = os.path.dirname(path)
-                    path = path.split(settings.DATA_DIR)[1]
-                    print(path)
+        # Executar a Task Assincrona que fara o Export
+        try:
+            export_target_by_filter(
+                product_id=product_id,
+                filetypes=filetypes,
+                filter_id=filter_id,
+                cutoutjob_id=cutoutjob_id,
+                user=request.user
+            )
+        except Exception as e:
+            pprint(e)
 
 
-                Export().product_cutouts(
-                    name=cutoutjob.cjb_display_name,
-                    path_origin=path.strip("/"),
-                    path_destination=export_dir
-
-                )
-
-            except:
-                #TODO tratar execao caso nao exista
-                pass
+        # product = Product.objects.select_related().get(pk=int(product_id))
+        #
+        # conditions = list()
+        # if filter_id is not None:
+        #     print("Entrou no Filtro")
+        #     queryset = FilterCondition.objects.filter(filterset=int(filter_id))
+        #
+        #     for row in queryset:
+        #         serializer = FConditionSerializer(row)
+        #         conditions.append(serializer.data)
+        #
+        #     pprint(conditions)
+        #
+        # data_tmp_dir = settings.DATA_TMP_DIR
+        #
+        # export_dir = os.path.join(data_tmp_dir, product.prd_name)
+        #
+        # if not os.path.exists(export_dir):
+        #     os.makedirs(export_dir)
+        #
+        # for ft in filetype:
+        #
+        #     if filetype == "csv":
+        #
+        #         Export().table_to_csv(
+        #             database=product.table.tbl_database,
+        #             schema=product.table.tbl_schema,
+        #             table=product.table.tbl_name,
+        #             filters=conditions,
+        #             export_dir=export_dir
+        #         )
+        #
+        #     elif filetype == "fits":
+        #         # TODO generate fits file using a csv.
+        #         pass
+        #
+        # if cutoutjob_id is not None:
+        #
+        #     try:
+        #         cutoutjob = CutOutJob.objects.get(pk=cutoutjob_id)
+        #
+        #         path = cutoutjob.cjb_cutouts_path
+        #         # Mantendo compatibilidade com Jobs anteriores ao path ser guardado
+        #         # Todo Pode ser removido se todos os cutouts com o campo cjb_cutouts_path forem removidos
+        #         if path is None or path == "":
+        #             path = cutoutjob.cjb_results_file
+        #             path = os.path.dirname(path)
+        #             path = path.split(settings.DATA_DIR)[1]
+        #             print(path)
+        #
+        #
+        #         Export().product_cutouts(
+        #             name=cutoutjob.cjb_display_name,
+        #             path_origin=path.strip("/"),
+        #             path_destination=export_dir
+        #
+        #         )
+        #
+        #     except:
+        #         #TODO tratar execao caso nao exista
+        #         pass
 
 
         return HttpResponse(status=200)
