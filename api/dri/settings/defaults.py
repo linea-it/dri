@@ -27,7 +27,7 @@ DEBUG = False
 ALLOWED_HOSTS = []
 
 USE_OAUTH = True
-SHOW_OAUTH = False
+SHOW_OAUTH = True
 
 SETTINGS_EXPORT = [
     'SHOW_OAUTH',
