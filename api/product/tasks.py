@@ -264,8 +264,16 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
                 )
 
             elif filetype == "fits":
-                # TODO generate fits file using a csv.
-                pass
+                # Task To Fits
+                header.append(
+                    export_target_to_fits.s(
+                        product.table.tbl_database,
+                        product.table.tbl_schema,
+                        product.table.tbl_name,
+                        conditions,
+                        export_dir
+                    )
+                )
 
         # Cutouts
         if cutoutjob_id is not None:
@@ -307,6 +315,36 @@ def export_target_to_csv(database, schema, table, conditions, export_dir):
 
     logger.info("Finished Task target_to_csv")
 
+@task(name="export_target_to_fits")
+@shared_task
+def export_target_to_fits(database, schema, table, conditions, export_dir):
+    """
+        gera o arquivo fits do produto.
+    """
+    logger = export.logger
+
+    logger.info("Starting Task target_to_fits")
+
+    # Primeiro deve gerar um csv para depois converter para fits.
+    csvfile = export.table_to_csv(
+        database=database,
+        schema=schema,
+        table=table,
+        filters=conditions,
+        export_dir=export_dir
+    )
+
+    fname, extension = os.path.splitext(csvfile)
+
+    fitsfile = "%s.fits" % fname
+    logger.debug("FITS FILE %s" % fitsfile)
+
+    fits = export.csv_to_fits(
+        csv=csvfile,
+        fits=fitsfile
+    )
+
+    logger.info("Finished Task target_to_fits")
 
 @task(name="export_cutoutjob")
 @shared_task

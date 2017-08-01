@@ -2,11 +2,13 @@ import csv
 import logging
 import os
 import shutil
+import time
 import zipfile
 from smtplib import SMTPException
 from urllib.parse import urljoin
-import time
+
 import humanize
+from astropy.table import Table
 from catalog.views_db import CatalogObjectsViewSetDBHelper
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -120,8 +122,29 @@ class Export:
             file_size = humanize.naturalsize(os.path.getsize(filename))
             self.logger.debug("File Size %s" % file_size)
 
+            return filename
         else:
             self.logger.error("Query returned no results")
+
+    def csv_to_fits(self, csv, fits):
+        self.logger.info("Export csv \"%s\" to fits" % csv)
+
+        try:
+
+            t = Table.read(csv, format='ascii.csv')
+
+            t.write(fits)
+
+            self.logger.debug("Fits %s" % fits)
+
+            file_size = humanize.naturalsize(os.path.getsize(fits))
+            self.logger.debug("File Size %s" % file_size)
+
+            return fits
+
+        except Exception as e:
+            self.logger.error(e)
+            raise (e)
 
     def get_catalog_objects(self, table, schema=None, database=None, limit=None, start=None, filters=None):
         """
