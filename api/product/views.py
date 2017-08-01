@@ -7,19 +7,17 @@ from common.filters import IsOwnerFilterBackend
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.http import HttpResponse
+from product.tasks import export_target_by_filter
 from rest_framework import filters
 from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
 from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
-from django.conf import settings
-from .export import *
+
 from .filters import ProductPermissionFilterBackend
 from .serializers import *
-from product.tasks import export_target_by_filter
 
 logger = logging.getLogger(__name__)
 
@@ -649,13 +647,12 @@ class ExportViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def create(self, request):
-        from pprint import pprint
 
         data = request.data
 
-        pprint(data)
         product_id = data.get("product", None)
-        filetypes = data.get("filetypes", "csv")
+        sfiletypes = data.get("filetypes")
+        filetypes = sfiletypes.split(",")
         filter_id = data.get("filter", None)
         cutoutjob_id = data.get("cutout", None)
 
@@ -663,80 +660,14 @@ class ExportViewSet(viewsets.ModelViewSet):
             raise Exception("Product Id is mandatory")
 
         # Executar a Task Assincrona que fara o Export
-        try:
-            export_target_by_filter(
-                product_id=product_id,
-                filetypes=filetypes,
-                filter_id=filter_id,
-                cutoutjob_id=cutoutjob_id,
-                user=request.user
-            )
-        except Exception as e:
-            pprint(e)
-
-
-        # product = Product.objects.select_related().get(pk=int(product_id))
-        #
-        # conditions = list()
-        # if filter_id is not None:
-        #     print("Entrou no Filtro")
-        #     queryset = FilterCondition.objects.filter(filterset=int(filter_id))
-        #
-        #     for row in queryset:
-        #         serializer = FConditionSerializer(row)
-        #         conditions.append(serializer.data)
-        #
-        #     pprint(conditions)
-        #
-        # data_tmp_dir = settings.DATA_TMP_DIR
-        #
-        # export_dir = os.path.join(data_tmp_dir, product.prd_name)
-        #
-        # if not os.path.exists(export_dir):
-        #     os.makedirs(export_dir)
-        #
-        # for ft in filetype:
-        #
-        #     if filetype == "csv":
-        #
-        #         Export().table_to_csv(
-        #             database=product.table.tbl_database,
-        #             schema=product.table.tbl_schema,
-        #             table=product.table.tbl_name,
-        #             filters=conditions,
-        #             export_dir=export_dir
-        #         )
-        #
-        #     elif filetype == "fits":
-        #         # TODO generate fits file using a csv.
-        #         pass
-        #
-        # if cutoutjob_id is not None:
-        #
-        #     try:
-        #         cutoutjob = CutOutJob.objects.get(pk=cutoutjob_id)
-        #
-        #         path = cutoutjob.cjb_cutouts_path
-        #         # Mantendo compatibilidade com Jobs anteriores ao path ser guardado
-        #         # Todo Pode ser removido se todos os cutouts com o campo cjb_cutouts_path forem removidos
-        #         if path is None or path == "":
-        #             path = cutoutjob.cjb_results_file
-        #             path = os.path.dirname(path)
-        #             path = path.split(settings.DATA_DIR)[1]
-        #             print(path)
-        #
-        #
-        #         Export().product_cutouts(
-        #             name=cutoutjob.cjb_display_name,
-        #             path_origin=path.strip("/"),
-        #             path_destination=export_dir
-        #
-        #         )
-        #
-        #     except:
-        #         #TODO tratar execao caso nao exista
-        #         pass
-
-
+        export_target_by_filter.delay(
+            product_id,
+            filetypes,
+            request.user.pk,
+            filter_id,
+            cutoutjob_id
+        )
         return HttpResponse(status=200)
+
+
 

@@ -5,7 +5,7 @@ import shutil
 import zipfile
 from smtplib import SMTPException
 from urllib.parse import urljoin
-
+import time
 import humanize
 from catalog.views_db import CatalogObjectsViewSetDBHelper
 from django.conf import settings
@@ -32,6 +32,10 @@ class Export:
             data_tmp_dir = settings.DATA_TMP_DIR
 
             name = name.strip().replace(" ", "_").lower()
+
+            # Adicionar timestamp ao nome para que possa haver exports diferentes para o mesmo produto
+            ts = int(time.time())
+            name = "%s_%s" % (name, ts)
 
             export_dir = os.path.join(data_dir, data_tmp_dir, name)
 
@@ -248,7 +252,7 @@ class Export:
         """
         try:
             if user.email:
-                self.logger.info("Sending mail notification.")
+                self.logger.info("Sending mail notification START.")
 
                 try:
                     from_email = settings.EMAIL_NOTIFICATION
@@ -285,7 +289,7 @@ class Export:
             user = User.objects.get(pk=user_id)
 
             if user.email:
-                self.logger.info("Sending mail notification.")
+                self.logger.info("Sending mail notification SUCCESS.")
 
                 try:
                     from_email = settings.EMAIL_NOTIFICATION
@@ -320,7 +324,7 @@ class Export:
         """
         try:
             if user.email:
-                self.logger.info("Sending mail notification.")
+                self.logger.info("Sending mail notification FAILURE.")
 
                 try:
                     from_email = settings.EMAIL_NOTIFICATION

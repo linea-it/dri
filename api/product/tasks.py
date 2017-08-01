@@ -5,12 +5,13 @@ import shutil
 from smtplib import SMTPException
 
 from celery import chord
-from celery import shared_task
 from celery import task
+from celery import shared_task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 from common.download import Download
 from django.conf import settings
+from django.contrib.auth.models import User
 from django.utils import timezone
 from product.descutoutservice import DesCutoutService, CutoutJobNotify
 from product.export import Export
@@ -195,7 +196,7 @@ def notify_user_by_email(cutoutjob_id):
 
 @task(name="export_target_by_filter")
 @shared_task
-def export_target_by_filter(product_id, filetypes, user, filter_id=None, cutoutjob_id=None):
+def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cutoutjob_id=None):
     """
     Este metodo vai exportar um produto do tipo Target,
     a tabela para formatos como csv e fits. e caso tenha cutouts
@@ -208,7 +209,7 @@ def export_target_by_filter(product_id, filetypes, user, filter_id=None, cutoutj
     logger = export.logger
 
     logger.info("Starting Export Task for the product %s" % product_id)
-    logger.debug("User: %s UserId: %s" % (user.username, user.pk))
+    logger.debug("User: %s" % user_id)
     logger.debug("Product: %s" % product_id)
     logger.debug("Filetypes: %s" % ", ".join(filetypes))
     logger.debug("Filter: %s" % filter_id)
@@ -224,6 +225,8 @@ def export_target_by_filter(product_id, filetypes, user, filter_id=None, cutoutj
         logger.error("Product matching query does not exist. Product Id: %s" % product_id)
         # TODO enviar email de error
 
+    user = User.objects.get(pk=int(user_id))
+
     # Chords Task http://docs.celeryproject.org/en/latest/userguide/canvas.html#chords
     header = list()
 
@@ -237,7 +240,7 @@ def export_target_by_filter(product_id, filetypes, user, filter_id=None, cutoutj
 
         # Recuperar as condicoes a serem aplicadas como filtros
         conditions = list()
-        if filter_id is not None:
+        if filter_id is not None and filter_id is not "":
             queryset = FilterCondition.objects.filter(filterset=int(filter_id))
 
             for row in queryset:
@@ -246,6 +249,7 @@ def export_target_by_filter(product_id, filetypes, user, filter_id=None, cutoutj
 
         # Para cada formato de arquivo executar uma task separada
         for filetype in filetypes:
+            filetype = filetype.strip()
 
             if filetype == "csv":
                 # Task To CSV
@@ -258,7 +262,6 @@ def export_target_by_filter(product_id, filetypes, user, filter_id=None, cutoutj
                         export_dir
                     )
                 )
-                pass
 
             elif filetype == "fits":
                 # TODO generate fits file using a csv.
