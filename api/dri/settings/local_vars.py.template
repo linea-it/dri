@@ -5,6 +5,8 @@ import os
 
 # Substituir #BASEPROJECT# pelo diretorio de intalacao do projeto.
 BASE_PROJECT = "#BASEPROJECT#"
+# the hostname and port number of the current Server
+BASE_HOST = "http://dri.com"
 
 LOG_DIR = os.path.join(BASE_PROJECT, 'log')
 
@@ -13,7 +15,11 @@ LOG_DIR = os.path.join(BASE_PROJECT, 'log')
 DATA_DIR = os.path.join(BASE_PROJECT, 'data')
 
 # Diretorio para arquivos temporarios, gerados pelo sistema e que ficaram disponiveis para o usuario fazer o download.
-DATA_TMP_DIR = os.path.join(DATA_DIR, 'tmp')
+# esse diretorio deve ser usado junto com o DATA_DIR, deve OBRIGATORIAMENTE ser um diretorio dentro do DATA_DIR
+DATA_TMP_DIR = 'tmp'
+
+# Url base para o diretorio onde os arquivos gerados pela aplicacao podem ser acessados pelo servidor web
+DATA_SOURCE = "/data"
 
 DATABASES = {
     'default': {
