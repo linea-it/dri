@@ -3,6 +3,8 @@ from sqlalchemy import create_engine, inspect, MetaData, func, Table
 from sqlalchemy import exc as sa_exc
 from sqlalchemy.sql import select
 import warnings
+from sqlalchemy.sql.expression import Executable, ClauseElement
+from sqlalchemy.ext.compiler import compiles
 
 
 class DBOracle:
@@ -11,15 +13,15 @@ class DBOracle:
 
     def get_string_connection(self):
         url = (
-            "oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
-            "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
-            "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
-            "SERVICE_NAME=%(database)s)))"
-        ) % {
-            'username': self.db['USER'], 'password': self.db['PASSWORD'],
-            'host': self.db['HOST'], 'port': self.db['PORT'],
-            'database': self.db['DATABASE']
-        }
+                  "oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
+                  "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
+                  "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
+                  "SERVICE_NAME=%(database)s)))"
+              ) % {
+                  'username': self.db['USER'], 'password': self.db['PASSWORD'],
+                  'host': self.db['HOST'], 'port': self.db['PORT'],
+                  'database': self.db['DATABASE']
+              }
         return url
 
     def get_engine(self):
@@ -172,3 +174,21 @@ class DBBase:
             for col in columns:
                 t_columns.append(DBBase.get_column_obj(table, col))
         return t_columns
+
+
+    def create_table_as(self, table, stm, schema=None):
+
+        if schema is not None and schema is not "":
+            tablename = "%s.%s" % (table, schema)
+        else:
+            tablename = table
+
+        create_table_stm = "CREATE TABLE %s AS %s" % (
+            tablename,
+            str(stm)
+        )
+
+        print("CREATE TABLE AS STM: %s " % create_table_stm)
+        with self.engine.connect() as con:
+            return con.execute(create_table_stm)
+

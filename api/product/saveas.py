@@ -1,0 +1,111 @@
+import logging
+
+from lib.CatalogDB import CatalogDB
+from lib.CatalogDB import CatalogObjectsDBHelper
+from django.contrib.auth.models import User
+from .models import Product
+from datetime import datetime
+from product_register.ImportProcess import Import
+
+class SaveAs:
+    def __init__(self):
+        # Get an instance of a logger
+        self.logger = logging.getLogger()
+
+    def parse_name(self, name):
+
+        return name.lower().replace(" ", "_").strip()
+
+    def create_table_by_product_id(self, user_id, product_id, name, filter_id, description):
+
+        # Recuperar o produto
+        try:
+            product = Product.objects.get(pk=int(product_id))
+            self.logger.debug("Origin Product: %s" % product.prd_display_name)
+
+        except Product.DoesNotExist as e:
+            self.logger.error("Product matching query does not exist. Product Id: %s" % product_id)
+
+        user = User.objects.get(pk=user_id)
+
+        # Nome da tabela a ser criada
+        tablename = self.parse_name(name)
+        self.logger.debug("Tablename: %s" % tablename)
+
+        # Criar o Statement
+        stm = CatalogObjectsDBHelper(
+            table=product.table.tbl_name,
+            schema=product.table.tbl_schema,
+            database=product.table.tbl_database
+        ).create_stm()
+
+
+        # Criar a Tabela
+        # self.create_table_as(
+        #     database=product.table.tbl_database,
+        #     schema=product.table.tbl_schema,
+        #     table=tablename,
+        #     stm=stm
+        # )
+
+        # Registar a tabela como produto
+        self.register_new_table_as_product(user, product, tablename, name, description)
+
+    def create_table_as(self, database, table, stm, schema=None):
+        self.logger.info("Create new table %s" % table)
+
+        self.logger.debug("Database: %s" % database)
+        self.logger.debug("Schema: %s" % schema)
+        self.logger.debug("Table: %s" % table)
+
+        self.logger.debug("Query: %s" % str(stm))
+        catalog = CatalogDB(db=database)
+
+        # Verifica se a tabela nao existe
+        if catalog.db.table_exists(table, schema):
+            raise Exception("Table %s already exists." % table)
+
+        catalog.db.create_table_as(table=table, schema=schema, stm=stm)
+
+        self.logger.info("Table created successfully.")
+
+
+    def register_new_table_as_product(self, user, original_product, tablename, name, description=None):
+
+        self.logger.info("Register the new table as a product")
+
+        # Dados para o registro
+        data = list([{
+            "process_id": None,
+            "name": tablename,
+            "display_name": name,
+            "database": original_product.table.tbl_database,
+            "schema": original_product.table.tbl_schema,
+            "table": tablename,
+            "filter": original_product.prd_filter,
+            #  "releases": [],
+            #  "fields": ["Y1A1_COADD_STRIPE82"],
+            "association": list(),
+            "type": "catalog",
+            "class": original_product.prd_class.pcl_name,
+            "description": description
+        }])
+
+        # Registar o novo produto
+        import_product = Import()
+
+        import_product.user = user
+        import_product.owner = user
+        import_product.site = None
+        import_product.process = None
+
+        import_product.import_products(data)
+
+
+        self.logger.info("New Product as Registered")
+
+        # Criar associacoes para o produto
+
+
+
+

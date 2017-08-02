@@ -66,6 +66,7 @@ router.register(r'workgroup_users', product_views.WorkgroupUserViewSet)
 router.register(r'filterset', product_views.FiltersetViewSet)
 router.register(r'filtercondition', product_views.FilterConditionViewSet)
 router.register(r'bookmarked', product_views.BookmarkedViewSet)
+router.register(r'productsaveas', product_views.SaveAsViewSet, base_name='product_save_as')
 
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
@@ -106,7 +107,6 @@ urlpatterns = [
     url(r'^contact/', common_views.contact_us),
     # url(r'^get_fits_files', coadd_views.get_fits_files),
     url(r'^get_fits_by_tilename', coadd_views.get_fits_by_tilename),
-
     url(r'^teste/', common_views.teste),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]

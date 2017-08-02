@@ -47,20 +47,19 @@ Ext.define('Target.view.objects.SaveCatalogController', {
             values = form.getValues();
 
             Ext.Ajax.request({
-                url: '/dri/api/product/saveas/',
+                url: '/dri/api/productsaveas/',
                 scope: this,
                 params: {
                     'product': currentCatalog.get('id'),
                     'name': values.name,
-                    'filters': values.filters,
+                    'filter': values.filters,
                     'description': values.description,
                     'columns': values.columns
                 },
                 success: function (response) {
                     // Recuperar a resposta e fazer o decode no json.
-                    var obj = Ext.decode(response.responseText);
-
                     me.onCancel();
+                    Ext.MessageBox.alert('', 'The job will run in the background and you will be notified when it is finished.');
                 },
                 failure: function (response, opts) {
                     // TODO: Mostrar mensagem de falha
