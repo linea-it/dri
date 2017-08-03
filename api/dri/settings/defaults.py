@@ -72,7 +72,8 @@ PROJECT_APPS = [
     'validation',
     'catalog',
     'interfaces',
-    'userquery'
+    'userquery',
+    'aladin'
 ]
 
 if USE_OAUTH:
