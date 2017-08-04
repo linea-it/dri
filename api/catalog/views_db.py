@@ -1,14 +1,13 @@
+import json
+import warnings
+
 from lib.CatalogDB import CatalogDB
 from lib.CatalogDB import DBBase
-
-from sqlalchemy.sql.expression import literal_column, between
-from sqlalchemy.sql import select, and_, or_
 from sqlalchemy import desc
-
-import warnings
 from sqlalchemy import exc as sa_exc
-from django.conf import settings
-import json
+from sqlalchemy.sql import select, and_, or_
+from sqlalchemy.sql.expression import literal_column, between
+
 
 class CoaddObjectsDBHelper:
     def __init__(self, table, schema=None, database=None):
@@ -120,26 +119,13 @@ class CoaddObjectsDBHelper:
         return self.db.fetchall_dict(stm)
 
 
-class TargetViewSetDBHelper:
+class TargetViewSetDBHelper(CatalogDB):
     def __init__(self, table, schema=None, database=None):
-        self.schema = schema
+
+        super(TargetViewSetDBHelper, self).__init__(db=database)
+
         self.schema_rating_reject = None
 
-        if database:
-            com = CatalogDB(db=database)
-
-            if database is not 'catalog':
-                # Se o catalogo a ser lido nao esta no banco de dados de catalogo
-                # e necessario informar em qual esquema esta as tabelas de Rating e Reject
-                try:
-                    self.schema_rating_reject = settings.SCHEMA_RATING_REJECT
-                except:
-                    raise ("The table is in a different schema of the catalog database, the rating and reject tables are not available in this schema. To solve this add the variable SCHEMA_RATING_REJECT to the settings pointing to the schema where the rating and reject tables are available.")
-
-        else:
-            com = CatalogDB()
-
-        self.db = com.database
         if not self.db.table_exists(table, schema=self.schema):
             raise Exception("Table or view  %s.%s does not exist" %
                             (self.schema, table))

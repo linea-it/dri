@@ -1,12 +1,14 @@
+from datetime import datetime
+
 from coadd.models import Release, Tag
 from common.models import Filter
+from django.db.models import Q
 from lib.CatalogDB import CatalogDB
 from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ProcessRelease
 from rest_framework import status
 from rest_framework.response import Response
-from django.db.models import Q
 
 from .models import Site, Authorization, ExternalProcess, Export
 
@@ -226,6 +228,8 @@ class Import():
         date = None
         if self.process is not None:
             date = self.process.epr_start_date
+        else:
+            date = datetime.now()
 
         product, created = Catalog.objects.update_or_create(
             prd_owner=self.owner,

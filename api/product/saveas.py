@@ -1,11 +1,13 @@
 import logging
 
+from django.contrib.auth.models import User
 from lib.CatalogDB import CatalogDB
 from lib.CatalogDB import CatalogObjectsDBHelper
-from django.contrib.auth.models import User
-from .models import Product
-from datetime import datetime
 from product_register.ImportProcess import Import
+
+from .association import Association
+from .models import Product
+
 
 class SaveAs:
     def __init__(self):
@@ -41,12 +43,12 @@ class SaveAs:
 
 
         # Criar a Tabela
-        # self.create_table_as(
-        #     database=product.table.tbl_database,
-        #     schema=product.table.tbl_schema,
-        #     table=tablename,
-        #     stm=stm
-        # )
+        self.create_table_as(
+            database=product.table.tbl_database,
+            schema=product.table.tbl_schema,
+            table=tablename,
+            stm=stm
+        )
 
         # Registar a tabela como produto
         self.register_new_table_as_product(user, product, tablename, name, description)
@@ -74,6 +76,18 @@ class SaveAs:
 
         self.logger.info("Register the new table as a product")
 
+        # Releases
+        releases = list()
+        for mRelease in original_product.releases.all():
+            releases.append(mRelease.rls_name)
+
+        # Tags
+        tags = list()
+        for mTag in original_product.tags.all():
+            tags.append(mTag.rls_name)
+
+        associations = Association().get_association_list_by_product_id(original_product.pk)
+
         # Dados para o registro
         data = list([{
             "process_id": None,
@@ -83,9 +97,9 @@ class SaveAs:
             "schema": original_product.table.tbl_schema,
             "table": tablename,
             "filter": original_product.prd_filter,
-            #  "releases": [],
-            #  "fields": ["Y1A1_COADD_STRIPE82"],
-            "association": list(),
+            "releases": releases,
+            "fields": tags,
+            "association": associations,
             "type": "catalog",
             "class": original_product.prd_class.pcl_name,
             "description": description
@@ -103,9 +117,3 @@ class SaveAs:
 
 
         self.logger.info("New Product as Registered")
-
-        # Criar associacoes para o produto
-
-
-
-

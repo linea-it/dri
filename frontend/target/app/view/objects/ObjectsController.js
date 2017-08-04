@@ -35,6 +35,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 load: 'onLoadCatalogs'
             },
             '#objects': {
+                load: 'onLoadObjects',
                 update: 'onUpdateObject'
             }
         }
@@ -314,11 +315,26 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }
             }
 
-            store.load({
-                callback: function () {
-                    objectsGrid.setLoading(false);
-                },
-                scope: this
+            store.load();
+        }
+    },
+
+    onLoadObjects: function( store, records, successful, operation) {
+        var me = this,
+            objectsGrid = me.lookup("targetsObjectsGrid");
+
+        objectsGrid.setLoading(false);
+
+        if (!successful) {
+            // Se teve alguma falha limpar a grid.
+            objectsGrid.getStore().removeAll();
+            var error = operation.getError();
+
+            Ext.MessageBox.show({
+                // title: error.status + ' - ' + error.statusText,
+                msg: "Sorry there was an error, and it was not possible to list the objects.",
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.WARNING
             });
         }
     },
