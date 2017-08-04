@@ -199,8 +199,7 @@ class Import():
         database = data.get('database', 'catalog')
 
         if not self.db:
-            con = CatalogDB(db=database)
-            self.db = con.db
+            self.db = CatalogDB(db=database)
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
@@ -417,8 +416,7 @@ class Import():
     # =============================< MAP >=============================
     def register_map(self, data):
         if not self.db:
-            con = CatalogDB()
-            self.db = con.db
+            self.db = CatalogDB()
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
@@ -519,8 +517,7 @@ class Import():
     # =============================< MASK >=============================
     def register_mask(self, data):
         if not self.db:
-            con = CatalogDB()
-            self.db = con.db
+            self.db = CatalogDB()
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %

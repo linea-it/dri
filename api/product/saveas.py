@@ -6,7 +6,9 @@ from lib.CatalogDB import CatalogObjectsDBHelper
 from product_register.ImportProcess import Import
 
 from .association import Association
+from .models import FilterCondition
 from .models import Product
+from .serializers import FConditionSerializer
 
 
 class SaveAs:
@@ -34,11 +36,21 @@ class SaveAs:
         tablename = self.parse_name(name)
         self.logger.debug("Tablename: %s" % tablename)
 
+        # Filter Conditions
+        conditions = list()
+        if filter_id is not None and filter_id is not "":
+            queryset = FilterCondition.objects.filter(filterset=int(filter_id))
+
+            for row in queryset:
+                serializer = FConditionSerializer(row)
+                conditions.append(serializer.data)
+
         # Criar o Statement
         stm = CatalogObjectsDBHelper(
             table=product.table.tbl_name,
             schema=product.table.tbl_schema,
-            database=product.table.tbl_database
+            database=product.table.tbl_database,
+            filters=conditions
         ).create_stm()
 
 
@@ -51,7 +63,7 @@ class SaveAs:
         )
 
         # Registar a tabela como produto
-        self.register_new_table_as_product(user, product, tablename, name, description)
+        # self.register_new_table_as_product(user, product, tablename, name, description)
 
     def create_table_as(self, database, table, stm, schema=None):
         self.logger.info("Create new table %s" % table)
@@ -64,10 +76,10 @@ class SaveAs:
         catalog = CatalogDB(db=database)
 
         # Verifica se a tabela nao existe
-        if catalog.db.table_exists(table, schema):
+        if catalog.table_exists(table, schema):
             raise Exception("Table %s already exists." % table)
 
-        catalog.db.create_table_as(table=table, schema=schema, stm=stm)
+        catalog.create_table_as(table=table, schema=schema, stm=stm)
 
         self.logger.info("Table created successfully.")
 

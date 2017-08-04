@@ -1,10 +1,11 @@
+import warnings
+
 from django.conf import settings
 from sqlalchemy import create_engine, inspect, MetaData, func, Table
 from sqlalchemy import exc as sa_exc
-from sqlalchemy.sql import select
-import warnings
-from sqlalchemy.sql.expression import Executable, ClauseElement
 from sqlalchemy.ext.compiler import compiles
+from sqlalchemy.sql import select
+from sqlalchemy.sql.expression import Executable, ClauseElement
 
 
 class DBOracle:
@@ -44,10 +45,14 @@ class DBSqlite:
 class DBBase:
     available_engines = list(['sqlite3', 'oracle'])
 
-    def __init__(self, db_settings):
-        self.database = self.set_database(db_settings)
+    def __init__(self, database):
+
+        self.connection_data = self.prepare_connection(database)
+        self.database = self.set_database(self.connection_data)
         self.engine = create_engine(self.database.get_string_connection())
         self.inspect = inspect(self.engine)
+
+        # self.db = self.engine.connect
 
         with self.engine.connect():
             self.metadata = MetaData(self.engine)
@@ -175,20 +180,48 @@ class DBBase:
                 t_columns.append(DBBase.get_column_obj(table, col))
         return t_columns
 
+    # --------------------- Create Table As ------------------------- #
+    class CreateTableAs(Executable, ClauseElement):
+        def __init__(self, name, query):
+            self.name = name
+            self.query = query
+
+    @compiles(CreateTableAs)
+    def _create_table_as(element, compiler, **kw):
+        return "CREATE TABLE %s AS %s" % (
+            element.name,
+            compiler.process(element.query)
+        )
 
     def create_table_as(self, table, stm, schema=None):
+        """
+        Use this method to Create a new table in the database using a query statement.
+        """
+
+        tablename = table
 
         if schema is not None and schema is not "":
             tablename = "%s.%s" % (table, schema)
-        else:
-            tablename = table
 
-        create_table_stm = "CREATE TABLE %s AS %s" % (
-            tablename,
-            str(stm)
-        )
-
-        print("CREATE TABLE AS STM: %s " % create_table_stm)
         with self.engine.connect() as con:
-            return con.execute(create_table_stm)
+            create_stm = self.CreateTableAs(tablename, stm)
+            return con.execute(create_stm)
 
+    # ----------------------------- Drop Table ----------------------
+    class DropTable(Executable, ClauseElement):
+        def __init__(self, table, schema=None):
+            self.schema = schema
+            self.table = table
+
+    @compiles(DropTable)
+    def _drop_table(element, compiler, **kw):
+        _schema = "%s." % element.schema if element.schema is not None else ''
+        return "DROP TABLE %s%s" % (_schema, element.name)
+
+    def drop_table(self, table, schema=None):
+        """
+        Use this method to Drop a table in the database.
+        """
+        with self.engine.connect() as con:
+            drop_stm = self.DropTable(table, schema)
+            return con.execute(drop_stm)
