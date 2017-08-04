@@ -9,7 +9,7 @@ class ImageFilter(django_filters.FilterSet):
 
     class Meta:
         model = Image
-        fields = ['id', 'img_url', 'product', 'product__prd_name']
+        fields = ['id', 'img_url', 'product']
 
 
 class ImageViewSet(viewsets.ModelViewSet):

@@ -11,8 +11,4 @@ class ImageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Image
 
-        fields = (
-            'id',
-            'img_url',
-            'product'
-        )
+        fields = ['id', 'img_url', 'product']
