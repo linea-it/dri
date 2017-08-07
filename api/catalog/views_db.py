@@ -3,9 +3,8 @@ import warnings
 
 from lib.CatalogDB import CatalogDB
 from lib.CatalogDB import DBBase
-from sqlalchemy import desc
 from sqlalchemy import exc as sa_exc
-from sqlalchemy.sql import select, and_, or_
+from sqlalchemy.sql import select, and_
 from sqlalchemy.sql.expression import literal_column, between
 
 
@@ -119,152 +118,152 @@ class CoaddObjectsDBHelper:
         return self.db.fetchall_dict(stm)
 
 
-class TargetViewSetDBHelper(CatalogDB):
-    def __init__(self, table, schema=None, database=None):
-
-        super(TargetViewSetDBHelper, self).__init__(db=database)
-
-        self.schema_rating_reject = None
-
-        if not self.db.table_exists(table, schema=self.schema):
-            raise Exception("Table or view  %s.%s does not exist" %
-                            (self.schema, table))
-
-        # Desabilitar os warnings na criacao da tabela
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
-
-            table = self.db.get_table_obj(table, schema=self.schema)
-            # Nome das colunas originais na tabela
-            self.columns = [column.key for column in table.columns]
-
-            self.table = table.alias('a')
-
-    def _create_stm(self, request, properties):
-        params = request.query_params
-        owner = request.user.pk
-
-        product_id = request.query_params.get('product', None)
-        try:
-            property_id = properties.get("meta.id;meta.main").lower()
-        except:
-            raise ("Need association for ID column with meta.id;meta.main ucd.")
-
-        catalog_rating_id = self.db.get_table_obj('catalog_rating', schema=self.schema_rating_reject).alias('b')
-        catalog_reject_id = self.db.get_table_obj('catalog_reject', schema=self.schema_rating_reject).alias('c')
-
-        stm_join = self.table
-        stm_join = stm_join.join(catalog_rating_id,
-                                 DBBase.get_column_obj(self.table, property_id) ==
-                                 catalog_rating_id.c.object_id, isouter=True)
-        stm_join = stm_join.join(catalog_reject_id,
-                                 or_(DBBase.get_column_obj(self.table, property_id) ==
-                                 catalog_reject_id.c.object_id, catalog_reject_id.c.id.is_(None)), isouter=True)
-
-        stm = select([self.table,
-                      catalog_rating_id.c.id.label('meta_rating_id'),
-                      catalog_rating_id.c.rating.label('meta_rating'),
-                      catalog_reject_id.c.id.label('meta_reject_id'),
-                      catalog_reject_id.c.reject.label('meta_reject')]). \
-            select_from(stm_join)
-
-        # Filtros
-        filters = list()
-        rating_filter = list()
-        reject_filters = ''
-        coordinates_filter = list()
-        reject_query = True
-        params = params.dict()
-        for param in params:
-            if '__' in param:
-                col, op = param.split('__')
-            else:
-                col = param
-                op = 'eq'
-
-            if col.lower() in self.columns:
-                filters.append(dict(
-                    column=col.lower(),
-                    op=op,
-                    value=params.get(param)))
-            else:
-                if col == '_meta_rating':
-                    rating_filter = list([dict(
-                        column='rating',
-                        op=op,
-                        value=params.get(param))])
-                elif col == '_meta_reject':
-                    reject_filters = or_(catalog_reject_id.c.reject.is_(None), catalog_reject_id.c.reject == 0)
-                    if params.get(param) in ['True', 'true', '1', 't', 'y', 'yes']:
-                        reject_filters = catalog_reject_id.c.reject == 1
-                # Coordenadas query por quadrado
-                elif col == 'coordinates':
-                    value = json.loads(params.get(param))
-                    # Upper Right
-                    ur = value[0]
-                    # Lower Left
-                    ll = value[1]
-                    coordinates_filter.append(
-                        and_(between(
-                            literal_column(str('ra')),
-                            literal_column(str(ll[0])),
-                            literal_column(str(ur[0]))
-                        ), between(
-                            literal_column(str('dec')),
-                            literal_column(str(ll[1])),
-                            literal_column(str(ur[1]))
-                        ))
-                    )
-        rating_filters = and_(*DBBase.do_filter(self.table, filters) +
-                              DBBase.do_filter(catalog_rating_id, rating_filter) +
-                              coordinates_filter)
-        stm = stm.where(and_(rating_filters, reject_filters))
-
-        print(str(stm))
-
-        # Parametros de Paginacao
-        limit = params.get('limit', None)
-        start = params.get('offset', None)
-
-        if limit:
-            stm = stm.limit(literal_column(str(limit)))
-
-        if start:
-            stm = stm.offset(literal_column(str(start)))
-
-        # Parametros de Ordenacao
-        ordering = params.get('ordering', None)
-
-        if ordering is not None:
-            asc = True
-            property = ordering.lower()
-
-            if ordering[0] == '-':
-                asc = False
-                property = ordering[1:].lower()
-
-            if property == '_meta_rating':
-                property = catalog_rating_id.c.rating
-            elif property == '_meta_reject':
-                property = catalog_reject_id.c.reject
-            else:
-                property = 'a.' + property
-
-            if asc:
-                stm = stm.order_by(property)
-            else:
-                stm = stm.order_by(desc(property))
-
-        return stm
-
-    def query_result(self, request, properties):
-        stm = self._create_stm(request, properties)
-
-        result = self.db.fetchall_dict(stm)
-
-        count = self.db.stm_count(stm)
-
-        return result, count
+# class TargetViewSetDBHelper(CatalogDB):
+#     def __init__(self, table, schema=None, database=None):
+#
+#         super(TargetViewSetDBHelper, self).__init__(db=database)
+#
+#         self.schema_rating_reject = None
+#
+#         if not self.db.table_exists(table, schema=self.schema):
+#             raise Exception("Table or view  %s.%s does not exist" %
+#                             (self.schema, table))
+#
+#         # Desabilitar os warnings na criacao da tabela
+#         with warnings.catch_warnings():
+#             warnings.simplefilter("ignore", category=sa_exc.SAWarning)
+#
+#             table = self.db.get_table_obj(table, schema=self.schema)
+#             # Nome das colunas originais na tabela
+#             self.columns = [column.key for column in table.columns]
+#
+#             self.table = table.alias('a')
+#
+#     def _create_stm(self, request, properties):
+#         params = request.query_params
+#         owner = request.user.pk
+#
+#         product_id = request.query_params.get('product', None)
+#         try:
+#             property_id = properties.get("meta.id;meta.main").lower()
+#         except:
+#             raise ("Need association for ID column with meta.id;meta.main ucd.")
+#
+#         catalog_rating_id = self.db.get_table_obj('catalog_rating', schema=self.schema_rating_reject).alias('b')
+#         catalog_reject_id = self.db.get_table_obj('catalog_reject', schema=self.schema_rating_reject).alias('c')
+#
+#         stm_join = self.table
+#         stm_join = stm_join.join(catalog_rating_id,
+#                                  DBBase.get_column_obj(self.table, property_id) ==
+#                                  catalog_rating_id.c.object_id, isouter=True)
+#         stm_join = stm_join.join(catalog_reject_id,
+#                                  or_(DBBase.get_column_obj(self.table, property_id) ==
+#                                  catalog_reject_id.c.object_id, catalog_reject_id.c.id.is_(None)), isouter=True)
+#
+#         stm = select([self.table,
+#                       catalog_rating_id.c.id.label('meta_rating_id'),
+#                       catalog_rating_id.c.rating.label('meta_rating'),
+#                       catalog_reject_id.c.id.label('meta_reject_id'),
+#                       catalog_reject_id.c.reject.label('meta_reject')]). \
+#             select_from(stm_join)
+#
+#         # Filtros
+#         filters = list()
+#         rating_filter = list()
+#         reject_filters = ''
+#         coordinates_filter = list()
+#         reject_query = True
+#         params = params.dict()
+#         for param in params:
+#             if '__' in param:
+#                 col, op = param.split('__')
+#             else:
+#                 col = param
+#                 op = 'eq'
+#
+#             if col.lower() in self.columns:
+#                 filters.append(dict(
+#                     column=col.lower(),
+#                     op=op,
+#                     value=params.get(param)))
+#             else:
+#                 if col == '_meta_rating':
+#                     rating_filter = list([dict(
+#                         column='rating',
+#                         op=op,
+#                         value=params.get(param))])
+#                 elif col == '_meta_reject':
+#                     reject_filters = or_(catalog_reject_id.c.reject.is_(None), catalog_reject_id.c.reject == 0)
+#                     if params.get(param) in ['True', 'true', '1', 't', 'y', 'yes']:
+#                         reject_filters = catalog_reject_id.c.reject == 1
+#                 # Coordenadas query por quadrado
+#                 elif col == 'coordinates':
+#                     value = json.loads(params.get(param))
+#                     # Upper Right
+#                     ur = value[0]
+#                     # Lower Left
+#                     ll = value[1]
+#                     coordinates_filter.append(
+#                         and_(between(
+#                             literal_column(str('ra')),
+#                             literal_column(str(ll[0])),
+#                             literal_column(str(ur[0]))
+#                         ), between(
+#                             literal_column(str('dec')),
+#                             literal_column(str(ll[1])),
+#                             literal_column(str(ur[1]))
+#                         ))
+#                     )
+#         rating_filters = and_(*DBBase.do_filter(self.table, filters) +
+#                               DBBase.do_filter(catalog_rating_id, rating_filter) +
+#                               coordinates_filter)
+#         stm = stm.where(and_(rating_filters, reject_filters))
+#
+#         print(str(stm))
+#
+#         # Parametros de Paginacao
+#         limit = params.get('limit', None)
+#         start = params.get('offset', None)
+#
+#         if limit:
+#             stm = stm.limit(literal_column(str(limit)))
+#
+#         if start:
+#             stm = stm.offset(literal_column(str(start)))
+#
+#         # Parametros de Ordenacao
+#         ordering = params.get('ordering', None)
+#
+#         if ordering is not None:
+#             asc = True
+#             property = ordering.lower()
+#
+#             if ordering[0] == '-':
+#                 asc = False
+#                 property = ordering[1:].lower()
+#
+#             if property == '_meta_rating':
+#                 property = catalog_rating_id.c.rating
+#             elif property == '_meta_reject':
+#                 property = catalog_reject_id.c.reject
+#             else:
+#                 property = 'a.' + property
+#
+#             if asc:
+#                 stm = stm.order_by(property)
+#             else:
+#                 stm = stm.order_by(desc(property))
+#
+#         return stm
+#
+#     def query_result(self, request, properties):
+#         stm = self._create_stm(request, properties)
+#
+#         result = self.db.fetchall_dict(stm)
+#
+#         count = self.db.stm_count(stm)
+#
+#         return result, count
 
 
 

@@ -63,7 +63,7 @@ class SaveAs:
         )
 
         # Registar a tabela como produto
-        # self.register_new_table_as_product(user, product, tablename, name, description)
+        self.register_new_table_as_product(user, product, tablename, name, description)
 
     def create_table_as(self, database, table, stm, schema=None):
         self.logger.info("Create new table %s" % table)

@@ -4,8 +4,9 @@ from django.conf import settings
 from sqlalchemy import create_engine, inspect, MetaData, func, Table
 from sqlalchemy import exc as sa_exc
 from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.sql import select
+from sqlalchemy.sql import select, and_
 from sqlalchemy.sql.expression import Executable, ClauseElement
+from sqlalchemy.sql.expression import literal_column, between
 
 
 class DBOracle:
@@ -53,6 +54,7 @@ class DBBase:
         self.inspect = inspect(self.engine)
 
         # self.db = self.engine.connect
+        self.con = self.engine.connect
 
         with self.engine.connect():
             self.metadata = MetaData(self.engine)
@@ -225,3 +227,29 @@ class DBBase:
         with self.engine.connect() as con:
             drop_stm = self.DropTable(table, schema)
             return con.execute(drop_stm)
+
+    # ------------------------ Filtro Por Posicao ----------------------------------
+    def filter_by_coordinate_square(self, property_ra, property_dec, lowerleft, upperright):
+        """
+        Cria uma clausula Where para fazer uma query por posicao usando um quadrado.
+        :param property_ra: nome da coluna que contem a coordenada RA na tabela
+        :param property_dec: nomde da coluna que conte a coordencada Dec na tabela
+        :param lowerleft: um array com as coordenadas do canto inferior esquerdo list([<RA(deg)>, <Dec(deg)])
+        :param upperright: um array com as coordenadas do canto superior direito list([<RA(deg)>, <Dec(deg)])
+        :return: list() com as condicoes a serem aplicadas ao statement where
+        """
+        conditions = list()
+
+        conditions.append(
+            and_(between(
+                literal_column(str(property_ra)),
+                literal_column(str(lowerleft[0])),
+                literal_column(str(upperright[0]))
+            ), between(
+                literal_column(str(property_dec)),
+                literal_column(str(lowerleft[1])),
+                literal_column(str(upperright[1]))
+            ))
+        )
+
+        return conditions

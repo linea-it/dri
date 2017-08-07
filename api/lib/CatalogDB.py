@@ -1,14 +1,15 @@
+import json
 import warnings
 
 from lib.sqlalchemy_wrapper import DBBase
 from sqlalchemy import Column
+from sqlalchemy import desc
 from sqlalchemy import exc as sa_exc
-from sqlalchemy.sql import select, and_
-from sqlalchemy.sql.expression import literal_column
+from sqlalchemy.sql import select, and_, or_
+from sqlalchemy.sql.expression import literal_column, between
 
 
 class CatalogDB(DBBase):
-
     def __init__(self, db='catalog'):
         if db is None or db == "":
             db = 'catalog'
@@ -17,7 +18,7 @@ class CatalogDB(DBBase):
 
 
 class CatalogTable(CatalogDB):
-    def __init__(self, table, schema=None, database=None):
+    def __init__(self, table, schema=None, database=None, associations=None):
         super(CatalogTable, self).__init__(db=database)
 
         if schema is None or schema is "":
@@ -54,42 +55,59 @@ class CatalogTable(CatalogDB):
                 self.column_names.append(column_name)
                 self.query_columns.append(Column(column_name))
 
-    def create_stm(self):
+        self.associations = associations
+
+        self.filters = list()
+
+    def create_stm(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None):
         """
         Cria a SqlAlchemy Statement, este metdo pode ser sobrescrito para criar querys diferentes.
         mais sempre deve retornar um statement.
         :return: statement
         """
+        self.set_filters(filters)
+        self.set_query_columns(columns)
+        self.set_url_filters(url_filters)
+        self.limit = limit
+        self.start = start
+        self.ordering = ordering
+
         stm = select(self.query_columns).select_from(self.table)
+
+        # Para esta query mais generica nao permitir filtros por condicoes especias "_meta_*"
+        filters = list()
+        for condition in self.filters:
+            if condition.get("column").find("_meta_") is -1:
+                filters.append(condition)
+
+        stm = stm.where(and_(*DBBase.do_filter(self.table, filters)))
+
+        # Ordenacao
+        if self.ordering is not None:
+            asc = True
+            property = self.ordering.lower()
+
+            if self.ordering[0] == '-':
+                asc = False
+                property = self.ordering[1:].lower()
+
+            if asc:
+                stm = stm.order_by(property)
+            else:
+                stm = stm.order_by(desc(property))
+
+        # Paginacao
+        if self.limit:
+            stm = stm.limit(literal_column(str(self.limit)))
+
+            if self.start:
+                stm = stm.offset(literal_column(str(self.start)))
 
         return stm
 
-    def query_result(self):
+    def query(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None):
         """
         Executa o statement criado pelo metodo create_stm
-        :return: tuple(results, count)
-            results: e a queryset os resultados retornados pela query
-            count: e o total de registro encontrado pela query, IMPORTANTE esse count desconsidera os limit, ou seja
-            mesmo que seja uma query paginda esse count e sempre o total de registros que satisfazem a query.
-            ex: uma query com um filtro que retorne 100 resultados mais o parametro limit esta em 25 resultados, o
-            count vai retornar 100. e o results vai ser uma queryset com 25 registros.
-        """
-        stm = self.create_stm()
-
-        result = self.db.fetchall_dict(stm)
-
-        count = self.db.stm_count(stm)
-
-        return result, count
-
-
-class CatalogObjectsDBHelper(CatalogTable):
-    def __init__(self, table, schema=None, database=None, columns=list(), filters=None, limit=None, start=None):
-        """
-
-        :param table:
-        :param schema:
-        :param database:
         :param columns:
         :param filters: Esse Filtros devem estar no formato SqlAlchemy. pode ser usado o FconditionSerializer para converter.
             list([
@@ -99,8 +117,93 @@ class CatalogObjectsDBHelper(CatalogTable):
                     value: <valor>
                 })
             ])
+        :param ordering:
         :param limit:
         :param start:
+        :return: tuple(results, count)
+            results: e a queryset os resultados retornados pela query
+            count: e o total de registro encontrado pela query, IMPORTANTE esse count desconsidera os limit, ou seja
+            mesmo que seja uma query paginda esse count e sempre o total de registros que satisfazem a query.
+            ex: uma query com um filtro que retorne 100 resultados mais o parametro limit esta em 25 resultados, o
+            count vai retornar 100. e o results vai ser uma queryset com 25 registros.
+        """
+        # Cria o Statement para a query
+        stm = self.create_stm(
+            columns=columns,
+            filters=filters,
+            ordering=ordering,
+            limit=limit,
+            start=start,
+            url_filters=url_filters
+        )
+
+        # executa o statement
+        result = self.fetchall_dict(stm)
+
+        # executa um metodo da DBbase para trazer o count sem levar em conta o limit e o start
+        count = self.stm_count(stm)
+
+        return result, count
+
+    def set_query_columns(self, columns):
+        # Se tiver recebido o parametro coluns para a query, adiciona as colunas ao atributo query_columns
+        if len(columns) > 0:
+            self.query_columns = list()
+            for col in columns:
+                if col in self.column_names:
+                    self.query_columns.append(Column(col))
+
+    def set_filters(self, filters):
+        # Seta os filtros a serem aplicados no create_stm
+        if filters is not None and len(filters) > 0:
+            for condition in filters:
+                # Checar se as propriedades a serem filtradas estao na lista de colunas da tabela.
+                if condition.get("column").lower().strip() in self.column_names:
+                    self.filters.append(condition)
+
+    def set_url_filters(self, url_filters):
+        # Filtros passados por url
+        for condition in self.parse_url_filters(url_filters):
+            self.filters.append(condition)
+
+    def parse_url_filters(self, url_filters):
+        conditions = list()
+
+        if url_filters is not None and len(url_filters) > 0:
+            for param in url_filters:
+                # para cara parametro vindo da url checar se e uma propriedade valida da tabela
+                # e Criar um filtro para ela
+
+                column = param.lower().strip()
+                op = "eq"
+
+                if param.find("__") is not -1:
+                    column, op = param.split('__')
+
+                    # Tratar os operadores
+                    if op == 'gte':
+                        op = 'ge'
+                    if op == 'lte':
+                        op = 'le'
+
+                # Se as propriedade esta na lista de colunas ou se e um filtro especial iniciado por _meta_
+                if column in self.column_names or param.find("_meta_") is not -1:
+                    conditions.append(dict(
+                        column=column,
+                        op=op,
+                        value=url_filters.get(param)))
+
+        return conditions
+
+
+class CatalogObjectsDBHelper(CatalogTable):
+    def __init__(self, table, schema=None, database=None, columns=list(), filters=None, limit=None, start=None):
+        """
+
+        :param table:
+        :param schema:
+        :param database:
+
         """
         super(CatalogObjectsDBHelper, self).__init__(database=database, table=table, schema=schema)
 
@@ -121,7 +224,7 @@ class CatalogObjectsDBHelper(CatalogTable):
                 if condition.get("column").lower().strip() in self.column_names:
                     self.filters.append(condition)
 
-    def create_stm(self):
+    def create_stm(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None):
         # Aqui pode entrar o parametro para escolher as colunas
         stm = select(self.query_columns).select_from(self.table)
 
@@ -180,5 +283,135 @@ class CatalogObjectsDBHelper(CatalogTable):
 
             if self.start:
                 stm = stm.offset(literal_column(str(self.start)))
+
+        return stm
+
+
+class TargetObjectsDBHelper(CatalogTable):
+    def __init__(self, table, schema=None, database=None, associations=None, schema_rating_reject=None):
+        super(TargetObjectsDBHelper, self).__init__(database=database, table=table, schema=schema,
+                                                    associations=associations)
+        # Catalogos de Target tem ligacao com o as tabelas Rating e Reject
+        # Esse atributo deve vir do Settings
+        self.schema_rating_reject = schema_rating_reject
+
+    def create_stm(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None):
+
+        self.set_filters(filters)
+        self.set_query_columns(columns)
+        self.set_url_filters(url_filters)
+        self.limit = limit
+        self.start = start
+        self.ordering = ordering
+
+        # recupera a propriedade associada como id
+        property_id = self.associations.get("meta.id;meta.main").lower()
+
+        # Adiciona um alias a tabela principal
+        self.table = self.table.alias('a')
+
+        # Cria as instancias das tabelas de rating e reject
+        catalog_rating_id = self.get_table_obj('catalog_rating', schema=self.schema_rating_reject).alias('b')
+        catalog_reject_id = self.get_table_obj('catalog_reject', schema=self.schema_rating_reject).alias('c')
+
+        # Cria os Joins
+        stm_join = self.table
+        stm_join = stm_join.join(catalog_rating_id,
+                                 DBBase.get_column_obj(self.table, property_id) ==
+                                 catalog_rating_id.c.object_id, isouter=True)
+
+        stm_join = stm_join.join(catalog_reject_id,
+                                 or_(DBBase.get_column_obj(self.table, property_id) ==
+                                     catalog_reject_id.c.object_id, catalog_reject_id.c.id.is_(None)), isouter=True)
+
+        # Criar o Statement usando as colunas selecionadas para query mais as colunas de rating and reject.
+        # TODO: Descobrir um jeito de utilizar o parametro columns nessa query com joins, o jeito que funcionou foi passando todas as colunas da tabela isso por causa do alias para a primeira tabela gera erro se a tabela tiver uma coluna "id"
+        stm = select([
+            self.table,
+            catalog_rating_id.c.id.label('meta_rating_id'),
+            catalog_rating_id.c.rating.label('meta_rating'),
+            catalog_reject_id.c.id.label('meta_reject_id'),
+            catalog_reject_id.c.reject.label('meta_reject')
+        ]).select_from(stm_join)
+
+        # Filtros
+        filters = list()
+        rating_filters = ""
+        reject_filters = ""
+        coordinate_filters = ""
+
+        # Targets podem ter filtros especias checar a existencia deles
+        if self.filters is not None and len(self.filters) > 0:
+            for condition in self.filters:
+                if condition.get("column").find("_meta_") is not -1:
+                    # Filtro Especial onde a propriedade nao faz parte da tabela original
+
+                    if condition.get("column") == '_meta_rating':
+                        condition.update({"column": "rating"})
+                        # rating_filters.append(condition)
+                        rating_filters = self.do_filter(catalog_rating_id, list([condition]))
+
+                    elif condition.get("column") == '_meta_reject':
+                        reject_filters = or_(catalog_reject_id.c.reject.is_(None), catalog_reject_id.c.reject == 0)
+
+                        if condition.get("value") in ['True', 'true', '1', 't', 'y', 'yes']:
+                            reject_filters = catalog_reject_id.c.reject == 1
+
+                    elif condition.get("column") == 'coordinates':
+                        value = json.loads(condition.get("value"))
+                        # Upper Right
+                        ur = value[0]
+                        # Lower Left
+                        ll = value[1]
+                        # property_ra
+                        property_ra = self.associations.get("pos.eq.ra;meta.main")
+                        property_dec = self.associations.get("pos.eq.dec;meta.main")
+
+                        coordinate_filters = and_(between(
+                            Column(str(property_ra)),
+                            Column(str(ll[0])),
+                            Column(str(ur[0]))
+                        ), between(
+                            Column(str(property_dec)),
+                            Column(str(ll[1])),
+                            Column(str(ur[1]))
+                        ))
+
+                else:
+                    filters.append(condition)
+
+        base_filters = and_(*self.do_filter(self.table, filters))
+
+        stm = stm.where(and_(base_filters, coordinate_filters, *rating_filters, reject_filters))
+
+        # Ordenacao
+        if self.ordering is not None:
+            asc = True
+            property = self.ordering.lower()
+
+            if self.ordering[0] == '-':
+                asc = False
+                property = self.ordering[1:].lower()
+
+            if property == '_meta_rating':
+                property = catalog_rating_id.c.rating
+            elif property == '_meta_reject':
+                property = catalog_reject_id.c.reject
+            else:
+                property = 'a.' + property
+
+            if asc:
+                stm = stm.order_by(property)
+            else:
+                stm = stm.order_by(desc(property))
+
+        # Paginacao
+        if self.limit:
+            stm = stm.limit(literal_column(str(self.limit)))
+
+            if self.start:
+                stm = stm.offset(literal_column(str(self.start)))
+
+        print(str(stm))
 
         return stm

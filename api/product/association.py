@@ -45,6 +45,8 @@ class Association:
                     associate.get('pcc_ucd'): associate.get('pcn_column_name').lower()
                 })
 
+        return properties
+
     def get_association_list_by_product_id(self, product_id):
         """
         Retorna uma lista com as propriedades que possuem associacao para um dado produto.
