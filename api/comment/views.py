@@ -1,6 +1,5 @@
 import django_filters
 import json
-from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import filters
 from .models import Position
@@ -12,10 +11,7 @@ class PositionFilter(django_filters.FilterSet):
 
     class Meta:
         model = Position
-        filter_fields = ('id', 'owner', 'pst_dataset', 'pst_ra', 'pst_dec', 'pst_date', 'pst_comment',)
-
-        fields = ['id']
-        order_by = True
+        fields = ['id', 'owner', 'pst_dataset', 'pst_ra', 'pst_dec', 'pst_date', 'pst_comment']
 
     def filter_coordinates(self, queryset, value):
 
@@ -50,7 +46,5 @@ class PositionViewSet(viewsets.ModelViewSet):
     queryset = Position.objects.all()
 
     serializer_class = PositionSerializer
-
-    ordering_fields = ('pst_date',)
     filter_backends = (filters.DjangoFilterBackend,)
     filter_class = PositionFilter
