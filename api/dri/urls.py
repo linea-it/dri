@@ -27,6 +27,8 @@ from validation import views as validation_views
 from dri.settings.defaults import *
 from userquery import views as userquery_views
 from comment import views as comment_views
+from aladin import views as aladin_views
+
 
 router = routers.DefaultRouter()
 
@@ -98,6 +100,8 @@ router.register(r'userquery', userquery_views.UserQueryViewSet)
 # Comment API
 router.register(r'comment/position', comment_views.PositionViewSet)
 
+# Aladin API
+router.register(r'aladin/image', aladin_views.ImageViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),

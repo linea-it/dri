@@ -84,7 +84,6 @@ class CatalogFilter(django_filters.FilterSet):
         return queryset.filter(prd_class__pcl_group__pgr_name__in=value.split(','))
 
 
-# Create your views here.
 class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     """
     API endpoint that allows product to be viewed or edited
@@ -396,6 +395,24 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
     ordering_fields = ('id',)
 
 
+class MapFilter(django_filters.FilterSet):
+    categorization_by_release = django_filters.MethodFilter(action='filter_categorization_by_release')
+
+    class Meta:
+        model = Map
+        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class']
+
+    def filter_categorization_by_release(self, queryset, value):
+
+        release_name = value
+
+        q = queryset.filter(
+            releases__rls_name=release_name
+        )
+
+        return q
+
+
 class MapViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Map to be viewed or edited
@@ -403,12 +420,8 @@ class MapViewSet(viewsets.ModelViewSet):
     queryset = Map.objects.select_related().all()
 
     serializer_class = MapSerializer
-
-    filter_fields = ('prd_name', 'prd_display_name', 'prd_class')
-
-    search_fields = ('prd_name', 'prd_display_name', 'prd_class')
-
-    ordering_fields = ('id',)
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = MapFilter
 
 
 class MaskViewSet(viewsets.ModelViewSet):
