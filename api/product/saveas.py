@@ -1,7 +1,12 @@
 import logging
+import os
+from smtplib import SMTPException
+from urllib.parse import urljoin
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
 from lib.CatalogDB import CatalogDB
 from lib.CatalogDB import TargetObjectsDBHelper
 from product_register.ImportProcess import Import
@@ -33,6 +38,8 @@ class SaveAs:
 
         user = User.objects.get(pk=user_id)
 
+        self.notify_user_start(user, name)
+
         # Nome da tabela a ser criada
         tablename = self.parse_name(name)
         self.logger.debug("Tablename: %s" % tablename)
@@ -53,15 +60,19 @@ class SaveAs:
         associations = Association().get_associations_by_product_id(product.pk)
 
         # Criar o Statement
-        stm = TargetObjectsDBHelper(
+        catalog_db = TargetObjectsDBHelper(
             table=product.table.tbl_name,
             schema=product.table.tbl_schema,
             database=product.table.tbl_database,
             associations=associations,
             schema_rating_reject=schema_rating_reject
-        ).create_stm(
+        )
+
+        columns = catalog_db.column_names
+
+        stm = catalog_db.create_stm(
             filters=conditions,
-            columns=list(["coadd_objects_id", "flag_bd", "ra", "dec", "alphawin_j2000", "deltawin_j2000"])
+            columns=columns
         )
 
         # Criar a Tabela
@@ -74,6 +85,15 @@ class SaveAs:
 
         # Registar a tabela como produto
         self.register_new_table_as_product(user, product, tablename, name, description)
+
+        new_product = Product.objects.get(
+            prd_display_name=name,
+            table__tbl_name=tablename,
+            table__tbl_schema=product.table.tbl_schema,
+            table__tbl_database=product.table.tbl_database
+        )
+
+        self.notify_user_success(user, name, new_product)
 
     def create_table_as(self, database, table, stm, schema=None):
         self.logger.info("Create new table %s" % table)
@@ -92,6 +112,7 @@ class SaveAs:
         catalog.create_table_as(table=table, schema=schema, stm=stm)
 
         self.logger.info("Table created successfully.")
+
 
     def register_new_table_as_product(self, user, original_product, tablename, name, description=None):
 
@@ -137,3 +158,72 @@ class SaveAs:
         import_product.import_products(data)
 
         self.logger.info("New Product as Registered")
+
+    def notify_user_start(self, user, name):
+        """
+        Envia um email para o usuario informando que o Save As iniciou.
+        """
+        try:
+            if user.email:
+                try:
+                    from_email = settings.EMAIL_NOTIFICATION
+                except:
+                    raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
+
+                subject = "LIneA Science Server - Save As Started"
+
+                body = render_to_string("saveas_notification_start.html", {
+                    "username": user.username,
+                    "target_display_name": name,
+                })
+
+                msg = EmailMessage(
+                    subject=subject,
+                    body=body,
+                    from_email=from_email,
+                    to=[user.email],
+                )
+                msg.content_subtype = "html"
+                msg.send(fail_silently=False)
+
+
+        except SMTPException as e:
+            pass
+
+    def notify_user_success(self, user, name, new_product):
+        """
+        Envia um email para o usuario informando que o Save As terminou.
+        neste email tem um link para o target na lista recem criada.
+        """
+        try:
+            if user.email:
+                try:
+                    from_email = settings.EMAIL_NOTIFICATION
+                except:
+                    raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
+
+                host = settings.BASE_HOST
+                url = urljoin(host, os.path.join("dri/apps/target/#cv", str(new_product.pk)))
+
+                subject = "LIneA Science Server - Save As Finish"
+
+                body = render_to_string("saveas_notification_finish.html", {
+                    "username": user.username,
+                    "target_display_name": name,
+                    # "tablename": new_product.table.tbl_name,
+                    # "rows": new_product.table.catalog.ctl_num_objects,
+                    "url": url
+                })
+
+                msg = EmailMessage(
+                    subject=subject,
+                    body=body,
+                    from_email=from_email,
+                    to=[user.email],
+                )
+                msg.content_subtype = "html"
+                msg.send(fail_silently=False)
+
+
+        except SMTPException as e:
+            pass
