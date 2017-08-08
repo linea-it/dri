@@ -168,7 +168,29 @@ class DBBase:
     def do_filter(table, filters):
         f = list()
         for _filter in filters:
-            op = '__%s__' % _filter['op']
+            op = _filter['op']
+
+            if op == "=":
+                op = "__eq__"
+
+            elif op == "!=":
+                op = "__ne__"
+
+            elif op == "<":
+                op = "__lt__"
+
+            elif op == "<=":
+                op = "__le__"
+
+            elif op == ">":
+                op = "__gt__"
+
+            elif op == ">=":
+                op = "__ge__"
+
+            else:
+                op = '__%s__' % op
+
             column = DBBase.get_column_obj(table, _filter['column'])
             f.append(getattr(column, op)(_filter['value']))
         return f

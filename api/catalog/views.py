@@ -70,7 +70,6 @@ class TargetViewSet(ViewSet):
     """
 
     """
-
     def list(self, request):
         """
         Return a list of targets in catalog.

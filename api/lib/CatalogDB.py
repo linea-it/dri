@@ -157,8 +157,13 @@ class CatalogTable(CatalogDB):
         # Seta os filtros a serem aplicados no create_stm
         if filters is not None and len(filters) > 0:
             for condition in filters:
+                column = condition.get("column").lower().strip()
+
                 # Checar se as propriedades a serem filtradas estao na lista de colunas da tabela.
-                if condition.get("column").lower().strip() in self.column_names:
+                if column in self.column_names:
+                    self.filters.append(condition)
+
+                elif column.find("_meta_") is not -1:
                     self.filters.append(condition)
 
     def set_url_filters(self, url_filters):
@@ -311,28 +316,45 @@ class TargetObjectsDBHelper(CatalogTable):
         self.table = self.table.alias('a')
 
         # Cria as instancias das tabelas de rating e reject
-        catalog_rating_id = self.get_table_obj('catalog_rating', schema=self.schema_rating_reject).alias('b')
-        catalog_reject_id = self.get_table_obj('catalog_reject', schema=self.schema_rating_reject).alias('c')
+        catalog_rating = self.get_table_obj('catalog_rating', schema=self.schema_rating_reject).alias('b')
+        catalog_reject = self.get_table_obj('catalog_reject', schema=self.schema_rating_reject).alias('c')
 
         # Cria os Joins
         stm_join = self.table
-        stm_join = stm_join.join(catalog_rating_id,
+        stm_join = stm_join.join(catalog_rating,
                                  DBBase.get_column_obj(self.table, property_id) ==
-                                 catalog_rating_id.c.object_id, isouter=True)
+                                 catalog_rating.c.object_id, isouter=True)
 
-        stm_join = stm_join.join(catalog_reject_id,
+        stm_join = stm_join.join(catalog_reject,
                                  or_(DBBase.get_column_obj(self.table, property_id) ==
-                                     catalog_reject_id.c.object_id, catalog_reject_id.c.id.is_(None)), isouter=True)
+                                     catalog_reject.c.object_id, catalog_reject.c.id.is_(None)), isouter=True)
 
-        # Criar o Statement usando as colunas selecionadas para query mais as colunas de rating and reject.
-        # TODO: Descobrir um jeito de utilizar o parametro columns nessa query com joins, o jeito que funcionou foi passando todas as colunas da tabela isso por causa do alias para a primeira tabela gera erro se a tabela tiver uma coluna "id"
-        stm = select([
-            self.table,
-            catalog_rating_id.c.id.label('meta_rating_id'),
-            catalog_rating_id.c.rating.label('meta_rating'),
-            catalog_reject_id.c.id.label('meta_reject_id'),
-            catalog_reject_id.c.reject.label('meta_reject')
-        ]).select_from(stm_join)
+        query_columns = list()
+
+        if len(columns) == 0:
+            # Criar o Statement usando as todas as colunas mais as colunas de rating and reject.
+            for column in self.table.c:
+                query_columns.append(column)
+
+            query_columns.append(catalog_rating.c.id.label('meta_rating_id'))
+            query_columns.append(catalog_rating.c.rating.label('meta_rating'))
+            query_columns.append(catalog_reject.c.id.label('meta_reject_id'))
+            query_columns.append(catalog_reject.c.reject.label('meta_reject'))
+
+        else:
+            # Usar apenas as colunas selecionadas
+            for column in self.query_columns:
+                if column in list(catalog_rating.c):
+                    query_columns.append(catalog_rating.c[column])
+
+                elif column in list(catalog_reject.c):
+                    query_columns.append(catalog_reject.c[column])
+
+                else:
+                    query_columns.append(column)
+                    # query_columns.append(self.table.c[column])
+
+        stm = select(query_columns).select_from(stm_join)
 
         # Filtros
         filters = list()
@@ -349,13 +371,13 @@ class TargetObjectsDBHelper(CatalogTable):
                     if condition.get("column") == '_meta_rating':
                         condition.update({"column": "rating"})
                         # rating_filters.append(condition)
-                        rating_filters = self.do_filter(catalog_rating_id, list([condition]))
+                        rating_filters = self.do_filter(catalog_rating, list([condition]))
 
                     elif condition.get("column") == '_meta_reject':
-                        reject_filters = or_(catalog_reject_id.c.reject.is_(None), catalog_reject_id.c.reject == 0)
+                        reject_filters = or_(catalog_reject.c.reject.is_(None), catalog_reject.c.reject == 0)
 
                         if condition.get("value") in ['True', 'true', '1', 't', 'y', 'yes']:
-                            reject_filters = catalog_reject_id.c.reject == 1
+                            reject_filters = catalog_reject.c.reject == 1
 
                     elif condition.get("column") == 'coordinates':
                         value = json.loads(condition.get("value"))
@@ -394,9 +416,9 @@ class TargetObjectsDBHelper(CatalogTable):
                 property = self.ordering[1:].lower()
 
             if property == '_meta_rating':
-                property = catalog_rating_id.c.rating
+                property = catalog_rating.c.rating
             elif property == '_meta_reject':
-                property = catalog_reject_id.c.reject
+                property = catalog_reject.c.reject
             else:
                 property = 'a.' + property
 

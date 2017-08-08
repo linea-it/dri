@@ -1,8 +1,9 @@
 import logging
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from lib.CatalogDB import CatalogDB
-from lib.CatalogDB import CatalogObjectsDBHelper
+from lib.CatalogDB import TargetObjectsDBHelper
 from product_register.ImportProcess import Import
 
 from .association import Association
@@ -45,14 +46,23 @@ class SaveAs:
                 serializer = FConditionSerializer(row)
                 conditions.append(serializer.data)
 
+        # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
+        schema_rating_reject = settings.SCHEMA_RATING_REJECT
+
+        # Recuperar as associacoes para o produto
+        associations = Association().get_associations_by_product_id(product.pk)
+
         # Criar o Statement
-        stm = CatalogObjectsDBHelper(
+        stm = TargetObjectsDBHelper(
             table=product.table.tbl_name,
             schema=product.table.tbl_schema,
             database=product.table.tbl_database,
-            filters=conditions
-        ).create_stm()
-
+            associations=associations,
+            schema_rating_reject=schema_rating_reject
+        ).create_stm(
+            filters=conditions,
+            columns=list(["coadd_objects_id", "flag_bd", "ra", "dec", "alphawin_j2000", "deltawin_j2000"])
+        )
 
         # Criar a Tabela
         self.create_table_as(
@@ -82,7 +92,6 @@ class SaveAs:
         catalog.create_table_as(table=table, schema=schema, stm=stm)
 
         self.logger.info("Table created successfully.")
-
 
     def register_new_table_as_product(self, user, original_product, tablename, name, description=None):
 
@@ -126,6 +135,5 @@ class SaveAs:
         import_product.process = None
 
         import_product.import_products(data)
-
 
         self.logger.info("New Product as Registered")

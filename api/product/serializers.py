@@ -991,7 +991,7 @@ class FConditionSerializer(serializers.ModelSerializer):
         elif op == "<=":
             op = "le"
 
-        elif op == ">=":
+        elif op == ">":
             op = "gt"
 
         elif op == ">=":
