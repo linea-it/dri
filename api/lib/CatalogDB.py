@@ -21,6 +21,7 @@ class CatalogTable(CatalogDB):
     def __init__(self, table, schema=None, database=None, associations=None):
         super(CatalogTable, self).__init__(db=database)
 
+        self.schema = schema
         if schema is None or schema is "":
             self.schema = None
 
@@ -193,101 +194,92 @@ class CatalogTable(CatalogDB):
 
                 # Se as propriedade esta na lista de colunas ou se e um filtro especial iniciado por _meta_
                 if column in self.column_names or param.find("_meta_") is not -1:
-                    conditions.append(dict(
-                        column=column,
-                        op=op,
-                        value=url_filters.get(param)))
+                    conditions.append(dict({
+                        "column": column,
+                        "op": op,
+                        "value": url_filters.get(param)}))
+
+                elif column == "coordinates":
+                    try:
+                        value = json.loads(url_filters.get(param))
+
+                        conditions.append(dict({
+                            "column": column,
+                            "op": "coordinates",
+                            "upperright": value[0],
+                            "lowerleft": value[1],
+                            "property_ra": self.associations.get("pos.eq.ra;meta.main"),
+                            "property_dec": self.associations.get("pos.eq.dec;meta.main")
+                        }))
+
+                    except:
+                        # Falhou ao criar a condicao de filtro por coordenadas provavelmente pela falta
+                        # do atributo association
+                        pass
 
         return conditions
 
 
 class CatalogObjectsDBHelper(CatalogTable):
-    def __init__(self, table, schema=None, database=None, columns=list(), filters=None, limit=None, start=None):
-        """
+    def create_stm(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None,
+                   associations=None):
 
-        :param table:
-        :param schema:
-        :param database:
-
-        """
-        super(CatalogObjectsDBHelper, self).__init__(database=database, table=table, schema=schema)
-
-        self.filters = list()
+        self.set_filters(filters)
+        self.set_query_columns(columns)
+        self.set_url_filters(url_filters)
         self.limit = limit
         self.start = start
+        self.ordering = ordering
 
-        # Se tiver recebido o parametro coluns para a query, adiciona as colunas ao atributo query_columns
-        if len(columns) > 0:
-            self.query_columns = list()
-            for col in columns:
-                if col in self.columns_names:
-                    self.query_columns.append(Column(col))
-
-        if filters is not None and len(filters) > 0:
-            for condition in filters:
-                # Checar se as propriedades a serem filtradas estao na lista de colunas da tabela.
-                if condition.get("column").lower().strip() in self.column_names:
-                    self.filters.append(condition)
-
-    def create_stm(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None):
-        # Aqui pode entrar o parametro para escolher as colunas
         stm = select(self.query_columns).select_from(self.table)
 
-        # Filtros
         filters = list()
         coordinates_filter = list()
 
-        if self.filters is not None and len(self.filters) > 0:
-            filters = self.filters
+        for condition in self.filters:
+            if condition.get("op") == "coordinates":
 
-        # TODO: Filtro utilizando os parametros da url.
-        # elif query_params is not None:
-        #     params = query_params.dict()
-        #     for param in params:
-        #         if '__' in param:
-        #             col, op = param.split('__')
-        #             if op == 'gte':
-        #                 op = 'ge'
-        #             if op == 'lte':
-        #                 op = 'le'
-        #         else:
-        #             col = param
-        #             op = 'eq'
-        #
-        #         if col.lower() in self.columns:
-        #             filters.append(dict(
-        #                 column=col.lower(),
-        #                 op=op,
-        #                 value=params.get(param)))
-        #         else:
-        #             # Coordenadas query por quadrado
-        #             if col == 'coordinates':
-        #                 value = json.loads(params.get(param))
-        #                 # Upper Right
-        #                 ur = value[0]
-        #                 # Lower Left
-        #                 ll = value[1]
-        #                 coordinates_filter.append(
-        #                     and_(between(
-        #                         Column(str('ra')),
-        #                         Column(str(ll[0])),
-        #                         Column(str(ur[0]))
-        #                     ), between(
-        #                         Column(str('dec')),
-        #                         Column(str(ll[1])),
-        #                         Column(str(ur[1]))
-        #                     ))
-        #                 )
+                ur = condition.get("upperright")
+                ll = condition.get("lowerleft")
+                coordinates_filter = and_(between(
+                    Column(str(condition.get("property_ra"))),
+                    literal_column(str(ll[0])),
+                    literal_column(str(ur[0]))
+                ), between(
+                    Column(str(condition.get("property_dec"))),
+                    literal_column(str(ll[1])),
+                    literal_column(str(ur[1]))
+                ))
 
-        stm = stm.where(and_(*DBBase.do_filter(self.table, filters) +
-                              coordinates_filter
-                             ))
+            else:
+                filters.append(condition)
 
+        base_filters = and_(*self.do_filter(self.table, filters))
+
+        stm = stm.where(and_(base_filters, coordinates_filter))
+
+        # Ordenacao
+        if self.ordering is not None:
+            asc = True
+            property = self.ordering.lower()
+
+            if self.ordering[0] == '-':
+                asc = False
+                property = self.ordering[1:].lower()
+
+            if asc:
+                stm = stm.order_by(property)
+            else:
+                stm = stm.order_by(desc(property))
+
+        # Paginacao
         if self.limit:
             stm = stm.limit(literal_column(str(self.limit)))
 
             if self.start:
                 stm = stm.offset(literal_column(str(self.start)))
+
+        print(str(stm))
 
         return stm
 
@@ -391,12 +383,12 @@ class TargetObjectsDBHelper(CatalogTable):
 
                         coordinate_filters = and_(between(
                             Column(str(property_ra)),
-                            Column(str(ll[0])),
-                            Column(str(ur[0]))
+                            literal_column(str(ll[0])),
+                            literal_column(str(ur[0]))
                         ), between(
                             Column(str(property_dec)),
-                            Column(str(ll[1])),
-                            Column(str(ur[1]))
+                            literal_column(str(ll[1])),
+                            literal_column(str(ur[1]))
                         ))
 
                 else:

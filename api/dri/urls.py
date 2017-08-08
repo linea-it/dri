@@ -15,18 +15,18 @@ Including another URLconf
 """
 from catalog import views as catalog_views
 from coadd import views as coadd_views
+from comment import views as comment_views
 from common import views as common_views
 from django.conf.urls import url, include
 from django.contrib import admin
+from dri.settings.defaults import *
 from interfaces import views as interfaces_views
 from product import views as product_views
 from product_classifier import views as product_classifier_views
 from product_register import views as product_register_views
 from rest_framework import routers
-from validation import views as validation_views
-from dri.settings.defaults import *
 from userquery import views as userquery_views
-from comment import views as comment_views
+from validation import views as validation_views
 
 router = routers.DefaultRouter()
 
@@ -87,7 +87,6 @@ router.register(r'target', catalog_views.TargetViewSet, base_name='target')
 router.register(r'objectsrating', catalog_views.RatingViewSet)
 router.register(r'objectsreject', catalog_views.RejectViewSet)
 router.register(r'objectscomments', catalog_views.CommentsViewSet)
-router.register(r'coadd_objects', catalog_views.CoaddObjects, base_name='coadd_objects')
 router.register(r'catalogobjects', catalog_views.CatalogObjectsViewSet, base_name='catalog_objects')
 
 # API Catalogos para o Visiomatic
