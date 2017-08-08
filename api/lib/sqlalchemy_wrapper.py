@@ -46,9 +46,14 @@ class DBSqlite:
 class DBBase:
     available_engines = list(['sqlite3', 'oracle'])
 
-    def __init__(self, database):
+    def __init__(self, database, credentials=None):
 
         self.connection_data = self.prepare_connection(database)
+
+        if credentials:
+            self.connection_data['USER'] = credentials[0]
+            self.connection_data['PASSWORD'] = credentials[1]
+
         self.database = self.set_database(self.connection_data)
         self.engine = create_engine(self.database.get_string_connection())
         self.inspect = inspect(self.engine)
@@ -59,8 +64,7 @@ class DBBase:
         with self.engine.connect():
             self.metadata = MetaData(self.engine)
 
-    @staticmethod
-    def prepare_connection(db_name):
+    def prepare_connection(self, db_name):
         connection_data = {}
 
         if db_name not in settings.DATABASES:
