@@ -35,6 +35,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 load: 'onLoadCatalogs'
             },
             '#objects': {
+                load: 'onLoadObjects',
                 update: 'onUpdateObject'
             }
         }
@@ -46,7 +47,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     wizard: null,
     winDownload: null,
     winCutout: null,
-
+    activeFilter: null,
     taskCutoutJob: null,
 
 
@@ -293,10 +294,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             // Aplicar Filtros ao Produto
             if ((filters) && (filters.count() > 0)) {
                 filters.each(function (filter) {
-                    //Assim só filtra igual, não filtra maior que nem menor que, etc.
-                    //store.filter(filter.get('fcd_property_name'), filter.get('fcd_value'));
-                    //store.addFilter('id', filter.get('fcd_value'));
-
                     aFilters.push({
                         property: filter.get('fcd_property_name'),//property_name'),
                         operator: filter.get('fcd_operation'),
@@ -305,20 +302,32 @@ Ext.define('Target.view.objects.ObjectsController', {
 
                 }, me);
 
-                // Se tiver filtros para aplicar e o botão de filtro estiver precionado
-                /*&& (btnFilterApply.pressed)*/
-
                 // Aplicar os Filtros
                 if ((aFilters.length > 0))  {
                     store.addFilter(aFilters);
                 }
             }
 
-            store.load({
-                callback: function () {
-                    objectsGrid.setLoading(false);
-                },
-                scope: this
+            store.load();
+        }
+    },
+
+    onLoadObjects: function( store, records, successful, operation) {
+        var me = this,
+            objectsGrid = me.lookup("targetsObjectsGrid");
+
+        objectsGrid.setLoading(false);
+
+        if (!successful) {
+            // Se teve alguma falha limpar a grid.
+            objectsGrid.getStore().removeAll();
+            var error = operation.getError();
+
+            Ext.MessageBox.show({
+                // title: error.status + ' - ' + error.statusText,
+                msg: "Sorry there was an error, and it was not possible to list the objects.",
+                buttons: Ext.MessageBox.OK,
+                icon: Ext.MessageBox.WARNING
             });
         }
     },
@@ -605,7 +614,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onBeforeDeactivate: function () {
-        console.log('onBeforeDeactivate')
         var me = this;
         // Fix AlertSetting quando usa funcao voltar do navegador
         if (me.winAlertSetting !== null) {
@@ -809,7 +817,8 @@ Ext.define('Target.view.objects.ObjectsController', {
     onClickSaveAs: function () {
         var me = this,
             vm = me.getViewModel(),
-            currentCatalog = vm.get('currentCatalog');
+            currentCatalog = vm.get('currentCatalog'),
+            activeFilter = me.activeFilter;
 
         if (me.winSaveAs !== null) {
             me.winSaveAs.close();
@@ -818,7 +827,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         me.winSaveAs = Ext.create('Target.view.objects.SaveCatalogWindow',{});
 
-        me.winSaveAs.setCurrentCatalog(currentCatalog);
+        me.winSaveAs.setCurrentCatalog(currentCatalog, activeFilter);
 
         me.winSaveAs.show();
 

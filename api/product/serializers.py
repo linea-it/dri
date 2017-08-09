@@ -1,15 +1,13 @@
 import logging
+import os
+import time
 
+from django.contrib.auth.models import User
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ExternalProcess
 from rest_framework import serializers
-from django.conf import settings
-import urllib.parse
-import time
-from .models import *
-import os
 
-from django.contrib.auth.models import User
+from .models import *
 
 logger = logging.getLogger(__name__)
 
@@ -123,7 +121,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             else:
                 return obj.table.tbl_name
         except:
-            return  None
+            return None
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
@@ -389,13 +387,14 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
 
         except KeyError as e:
             raise Exception("The CUTOUT_SOURCE parameter has not been configured, "
-                   " add this attribute to the DES_CUTOUT_SERVICE section.")
+                            " add this attribute to the DES_CUTOUT_SERVICE section.")
 
         except Exception as e:
             raise (e)
 
     def get_timestamp(self, obj):
         return time.time()
+
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -952,6 +951,65 @@ class FilterConditionSerializer(serializers.ModelSerializer):
         except:
             return None
 
+
+class FConditionSerializer(serializers.ModelSerializer):
+    """
+    Este serializer e uma versao menor  do FilterConditionSerializer
+    contendo apenas os atributos para criar a clausula where no formato SQLAlchemy
+    https://github.com/zzzeek/sqlalchemy/blob/master/lib/sqlalchemy/sql/operators.py#L16
+    """
+    column = serializers.SerializerMethodField()
+    op = serializers.SerializerMethodField()
+    value = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FilterCondition
+
+        fields = (
+            'column',
+            'op',
+            'value',
+        )
+
+    def get_column(self, obj):
+        property = ""
+        try:
+            property = obj.fcd_property.pcn_column_name
+        except:
+            property = obj.fcd_property_name
+
+        property.lower().strip()
+
+        return property
+
+    def get_op(self, obj):
+
+        op = obj.fcd_operation
+        if op == "=":
+            op = "eq"
+
+        elif op == "!=":
+            op = "ne"
+
+        elif op == "<":
+            op = "lt"
+
+        elif op == "<=":
+            op = "le"
+
+        elif op == ">":
+            op = "gt"
+
+        elif op == ">=":
+            op = "ge"
+
+        return op
+
+    def get_value(self, obj):
+
+        return obj.fcd_value
+
+
 # ---------------------------------- Bookmark ----------------------------------
 
 class BookmarkedSerializer(serializers.ModelSerializer):
@@ -960,7 +1018,6 @@ class BookmarkedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BookmarkProduct
-
 
         fields = (
             'id',

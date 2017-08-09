@@ -5,15 +5,17 @@ import shutil
 from smtplib import SMTPException
 
 from celery import task
+from celery import shared_task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 from common.download import Download
 from django.utils import timezone
 from product.descutoutservice import DesCutoutService, CutoutJobNotify
+from product.saveas import SaveAs
 
 descutout = DesCutoutService()
 cutoutJobNotify = CutoutJobNotify()
-
+saveas = SaveAs()
 
 @task(name="start_des_cutout_job_by_id")
 def start_des_cutout_job_by_id(cutoutjob_id):
@@ -179,24 +181,28 @@ def notify_user_by_email(cutoutjob_id):
     except SMTPException as e:
         logger.error(e)
 
-# @task(name="download_files")
-# def download_files(arq, dir):
-#     logger = descutout.logger
-#     import time
-#     import random
-#     # for arq in arqs:
-#     logger.debug("Iniciando task [ %s ] " % arq['id'])
-#     # logger.debug("Download Group [ %s ] File: %s" % (group_id, arq.get('filename')))
-#
-#     time.sleep(random.randint(1,10))
-#
-#     logger.debug("Terminada task [ %s ] " % arq['id'])
-#         # descutout.download_file(
-#         #     arq.get('url'),
-#         #     dir,
-#         #     arq.get('filename')
-#         # )
-#
-# @task(name="test_callback")
-# def test_callback():
-#     print("TESTE CALLBACK")
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Product Save As Tasks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
+@task(name="product_save_as")
+@shared_task
+def product_save_as(user_id, product_id, name, filter_id=None, description=None):
+    logger = saveas.logger
+
+    logger.info("Task product_save_as Started")
+
+    logger.debug("User: %s" % user_id)
+    logger.debug("Product: %s" % product_id)
+    logger.debug("Name: %s" % name)
+    logger.debug("Filter: %s" % filter_id)
+    logger.debug("Description: %s" % description)
+
+    # AS TASKS DE CRIAR E REGISTRAR DEVEM SER SEQUENCIAS
+
+    # TODO: Notificar inicio
+
+    # Criar a tabela
+    saveas.create_table_by_product_id(user_id, product_id, name, filter_id, description)
+
+
+
+
+

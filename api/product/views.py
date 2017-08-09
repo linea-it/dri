@@ -1,22 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import logging
-from django.core.exceptions import ObjectDoesNotExist
+import operator
 
 import django_filters
-from rest_framework import filters
-from rest_framework import viewsets
-from rest_framework import mixins
-from rest_framework.decorators import list_route
-from rest_framework.response import Response
-from django.db.models import Q
 from common.filters import IsOwnerFilterBackend
-from .models import Product, Catalog, Map, Mask, CutOutJob, ProductContent, ProductContentAssociation, ProductSetting, \
-    CurrentSetting, ProductContentSetting, Permission, WorkgroupUser
-from .serializers import *
-
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
+from rest_framework import filters
+from rest_framework import mixins
+from rest_framework import viewsets
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.decorators import list_route, detail_route
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from django.http import HttpResponse
 from .filters import ProductPermissionFilterBackend
-import operator
+from .serializers import *
+from .tasks import product_save_as
 
 logger = logging.getLogger(__name__)
 
@@ -645,3 +645,40 @@ class BookmarkedViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+# ---------------------------------- Save As ----------------------------------
+class SaveAsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows save as a product
+    """
+    http_method_names = ['post', ]
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        data = request.data
+
+        product_id = data.get("product", None)
+        name = data.get("name", None)
+        description = data.get("description")
+        filter_id = data.get("filter", None)
+
+
+        if product_id is None:
+            raise Exception("Product Id is mandatory")
+
+        print("EXECUTAR TASK")
+
+        # Executar a Task Assincrona que fara o Save As
+        product_save_as.delay(
+            request.user.pk,
+            product_id,
+            name,
+            filter_id,
+            description
+        )
+
+        return HttpResponse(status=200)
