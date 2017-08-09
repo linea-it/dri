@@ -15,11 +15,10 @@ Including another URLconf
 """
 from catalog import views as catalog_views
 from coadd import views as coadd_views
-from comment import views as comment_views
 from common import views as common_views
 from django.conf.urls import url, include
 from django.contrib import admin
-from dri.settings.defaults import *
+from django.conf import settings
 from interfaces import views as interfaces_views
 from product import views as product_views
 from product_classifier import views as product_classifier_views
@@ -27,6 +26,9 @@ from product_register import views as product_register_views
 from rest_framework import routers
 from userquery import views as userquery_views
 from validation import views as validation_views
+from comment import views as comment_views
+from aladin import views as aladin_views
+
 
 router = routers.DefaultRouter()
 
@@ -89,26 +91,24 @@ router.register(r'objectsreject', catalog_views.RejectViewSet)
 router.register(r'objectscomments', catalog_views.CommentsViewSet)
 router.register(r'catalogobjects', catalog_views.CatalogObjectsViewSet, base_name='catalog_objects')
 
-# API Catalogos para o Visiomatic
-# router.register(r'visiomatic/coadd_objects', catalog_views.VisiomaticCoaddObjects, base_name='visiomatic_coadd_objects')
-
 # UserQuery API
 router.register(r'userquery', userquery_views.UserQueryViewSet)
 
 # Comment API
 router.register(r'comment/position', comment_views.PositionViewSet)
 
+# Aladin API
+router.register(r'aladin/image', aladin_views.ImageViewSet)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^admin', admin.site.urls),
     url(r'^', include(router.urls)),
     url(r'^contact/', common_views.contact_us),
-    # url(r'^get_fits_files', coadd_views.get_fits_files),
     url(r'^get_fits_by_tilename', coadd_views.get_fits_by_tilename),
     url(r'^teste/', common_views.teste),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 
-if USE_OAUTH:
+if settings.USE_OAUTH:
     urlpatterns += (url(r'^accounts/', include('allauth.urls')),)

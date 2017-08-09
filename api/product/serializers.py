@@ -29,6 +29,9 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     # epr_original_id = Original Process ID
     epr_original_id = serializers.SerializerMethodField()
 
+    # epr_original_id = Original Process ID
+    prd_filter = serializers.SerializerMethodField()
+
     # Related Products
     prl_related = serializers.SerializerMethodField()
     prl_cross_identification = serializers.SerializerMethodField()
@@ -53,6 +56,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             # 'pgr_name',
             'pgr_display_name',
             'epr_original_id',
+            'prd_filter',
             'prl_related',
             'prl_cross_identification',
             'prl_cross_property',
@@ -80,6 +84,12 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     def get_epr_original_id(self, obj):
         try:
             return obj.prd_process_id.epr_original_id
+        except:
+            return None
+
+    def get_prd_filter(self, obj):
+        try:
+            return obj.prd_filter.filter
         except:
             return None
 
@@ -296,15 +306,11 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             return False
 
 
-class MapSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
+class MapSerializer(ProductSerializer):
+    class Meta(ProductSerializer.Meta):
         model = Map
 
-        fields = (
-            'id',
-            'mpa_nside',
-            'mpa_ordering',
-        )
+        fields = ProductSerializer.Meta.fields + ('id', 'mpa_nside', 'mpa_ordering')
 
 
 class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
