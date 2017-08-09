@@ -81,7 +81,7 @@ class CatalogTable(CatalogDB):
             if condition.get("column").find("_meta_") is -1:
                 filters.append(condition)
 
-        stm = stm.where(and_(*DBBase.do_filter(self.table, filters)))
+        stm = stm.where(and_(*self.do_filter(self.table, filters)))
 
         # Ordenacao
         if self.ordering is not None:
@@ -314,11 +314,11 @@ class TargetObjectsDBHelper(CatalogTable):
         # Cria os Joins
         stm_join = self.table
         stm_join = stm_join.join(catalog_rating,
-                                 DBBase.get_column_obj(self.table, property_id) ==
+                                 self.get_column_obj(self.table, property_id) ==
                                  catalog_rating.c.object_id, isouter=True)
 
         stm_join = stm_join.join(catalog_reject,
-                                 or_(DBBase.get_column_obj(self.table, property_id) ==
+                                 or_(self.get_column_obj(self.table, property_id) ==
                                      catalog_reject.c.object_id, catalog_reject.c.id.is_(None)), isouter=True)
 
         query_columns = list()
@@ -362,7 +362,8 @@ class TargetObjectsDBHelper(CatalogTable):
 
                     if condition.get("column") == '_meta_rating':
                         condition.update({"column": "rating"})
-                        # rating_filters.append(condition)
+                        condition.update({"value": int(condition.get("value"))})
+
                         rating_filters = self.do_filter(catalog_rating, list([condition]))
 
                     elif condition.get("column") == '_meta_reject':

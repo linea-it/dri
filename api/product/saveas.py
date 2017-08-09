@@ -109,7 +109,7 @@ class SaveAs:
         if catalog.table_exists(table, schema):
             raise Exception("Table %s already exists." % table)
 
-        catalog.create_table_as(table=table, schema=schema, stm=stm)
+        catalog.create_table_as(table=table, stm=stm, schema=schema)
 
         self.logger.info("Table created successfully.")
 

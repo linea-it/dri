@@ -3,6 +3,8 @@ import warnings
 from django.conf import settings
 from sqlalchemy import create_engine, inspect, MetaData, func, Table
 from sqlalchemy import exc as sa_exc
+from sqlalchemy.dialects import oracle
+from sqlalchemy.dialects import sqlite
 from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql import select, and_
 from sqlalchemy.sql.expression import Executable, ClauseElement
@@ -29,6 +31,8 @@ class DBOracle:
     def get_engine(self):
         return "oracle"
 
+    def get_dialect(self):
+        return oracle
 
 class DBSqlite:
     def __init__(self, db):
@@ -41,6 +45,8 @@ class DBSqlite:
     def get_engine(self):
         return "sqlite3"
 
+    def get_dialect(self):
+        return sqlite
 
 # classe generica - nao ligada a este problema
 class DBBase:
@@ -57,6 +63,9 @@ class DBBase:
         self.database = self.set_database(self.connection_data)
         self.engine = create_engine(self.database.get_string_connection())
         self.inspect = inspect(self.engine)
+
+        # Setar o Diaclect especifico deste banco para ser usado com a funcao compile
+        self.dialect = self.database.get_dialect()
 
         # self.db = self.engine.connect
         self.con = self.engine.connect
@@ -168,8 +177,7 @@ class DBBase:
             result = con.execute(stm)
             return result.fetchall()
 
-    @staticmethod
-    def do_filter(table, filters):
+    def do_filter(self, table, filters):
         f = list()
         for _filter in filters:
             op = _filter['op']
@@ -195,44 +203,44 @@ class DBBase:
             else:
                 op = '__%s__' % op
 
-            column = DBBase.get_column_obj(table, _filter['column'])
+            column = self.get_column_obj(table, _filter['column'])
             f.append(getattr(column, op)(_filter['value']))
         return f
 
-    @staticmethod
-    def create_columns_sql_format(table, columns):
+    def create_columns_sql_format(self, table, columns):
         t_columns = table
         if columns is not None:
             t_columns = list()
             for col in columns:
-                t_columns.append(DBBase.get_column_obj(table, col))
+                t_columns.append(self.get_column_obj(table, col))
         return t_columns
 
     # --------------------- Create Table As ------------------------- #
     class CreateTableAs(Executable, ClauseElement):
-        def __init__(self, name, query):
+        def __init__(self, name, query, dialect):
             self.name = name
             self.query = query
+            self.dialect = dialect
 
     @compiles(CreateTableAs)
     def _create_table_as(element, compiler, **kw):
         return "CREATE TABLE %s AS %s" % (
             element.name,
-            compiler.process(element.query)
+            element.query.compile(dialect=element.dialect.dialect(), compile_kwargs={"literal_binds": True})
         )
 
     def create_table_as(self, table, stm, schema=None):
         """
         Use this method to Create a new table in the database using a query statement.
         """
-
         tablename = table
 
         if schema is not None and schema is not "":
-            tablename = "%s.%s" % (table, schema)
+            tablename = "%s.%s" % (schema, table)
 
         with self.engine.connect() as con:
-            create_stm = self.CreateTableAs(tablename, stm)
+            create_stm = self.CreateTableAs(tablename, stm, self.dialect)
+            print(create_stm)
             return con.execute(create_stm)
 
     # ----------------------------- Drop Table ----------------------
