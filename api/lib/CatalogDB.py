@@ -364,7 +364,7 @@ class TargetObjectsDBHelper(CatalogTable):
                         condition.update({"column": "rating"})
                         condition.update({"value": int(condition.get("value"))})
 
-                        rating_filters = self.do_filter(catalog_rating, list([condition]))
+                        rating_filters = and_(*self.do_filter(catalog_rating, list([condition])))
 
                     elif condition.get("column") == '_meta_reject':
                         reject_filters = or_(catalog_reject.c.reject.is_(None), catalog_reject.c.reject == 0)
@@ -397,7 +397,7 @@ class TargetObjectsDBHelper(CatalogTable):
 
         base_filters = and_(*self.do_filter(self.table, filters))
 
-        stm = stm.where(and_(base_filters, coordinate_filters, *rating_filters, reject_filters))
+        stm = stm.where(and_(base_filters, coordinate_filters, rating_filters, reject_filters))
 
         # Ordenacao
         if self.ordering is not None:
