@@ -1006,7 +1006,6 @@ class FConditionSerializer(serializers.ModelSerializer):
         return op
 
     def get_value(self, obj):
-
         return obj.fcd_value
 
 

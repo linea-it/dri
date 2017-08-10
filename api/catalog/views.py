@@ -200,11 +200,6 @@ class CatalogObjectsViewSet(ViewSet):
         limit = request.query_params.get('limit', None)
         start = request.query_params.get('offset', None)
 
-        # colunas associadas ao produto
-        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
-        serializer = AssociationSerializer(queryset, many=True)
-        associations = serializer.data
-        properties = dict()
 
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(product_id)

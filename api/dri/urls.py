@@ -13,12 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from aladin import views as aladin_views
 from catalog import views as catalog_views
 from coadd import views as coadd_views
+from comment import views as comment_views
 from common import views as common_views
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
-from django.conf import settings
 from interfaces import views as interfaces_views
 from product import views as product_views
 from product_classifier import views as product_classifier_views
@@ -26,9 +28,6 @@ from product_register import views as product_register_views
 from rest_framework import routers
 from userquery import views as userquery_views
 from validation import views as validation_views
-from comment import views as comment_views
-from aladin import views as aladin_views
-
 
 router = routers.DefaultRouter()
 
@@ -68,6 +67,7 @@ router.register(r'workgroup_users', product_views.WorkgroupUserViewSet)
 router.register(r'filterset', product_views.FiltersetViewSet)
 router.register(r'filtercondition', product_views.FilterConditionViewSet)
 router.register(r'bookmarked', product_views.BookmarkedViewSet)
+router.register(r'productexport', product_views.ExportViewSet, base_name='export_product')
 router.register(r'productsaveas', product_views.SaveAsViewSet, base_name='product_save_as')
 
 router.register(r'feature', validation_views.FeatureViewSet)

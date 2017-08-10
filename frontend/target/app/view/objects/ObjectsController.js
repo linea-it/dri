@@ -867,7 +867,8 @@ Ext.define('Target.view.objects.ObjectsController', {
     onClickDownload: function () {
         var me = this,
             vm = me.getViewModel(),
-            currentCatalog = vm.get('currentCatalog');
+            currentCatalog = vm.get('currentCatalog'),
+            activeFilter = me.activeFilter;
 
         if (me.winDownload !== null) {
             me.winDownload.close();
@@ -877,6 +878,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.winDownload = Ext.create('Target.view.objects.DownloadWindow',{});
 
         me.winDownload.setCurrentCatalog(currentCatalog);
+        me.winDownload.setFilter(activeFilter.id);
 
         me.winDownload.show();
 
