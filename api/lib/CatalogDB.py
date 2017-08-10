@@ -234,7 +234,7 @@ class CatalogObjectsDBHelper(CatalogTable):
         stm = select(self.query_columns).select_from(self.table)
 
         filters = list()
-        coordinates_filter = list()
+        coordinates_filter = ""
 
         for condition in self.filters:
             if condition.get("op") == "coordinates":
