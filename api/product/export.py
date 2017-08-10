@@ -9,11 +9,12 @@ from urllib.parse import urljoin
 
 import humanize
 from astropy.table import Table
-from catalog.views_db import CatalogObjectsViewSetDBHelper
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from lib.CatalogDB import TargetObjectsDBHelper
+from product.association import Association
 
 
 class Export:
@@ -83,7 +84,7 @@ class Export:
 
         return columns
 
-    def table_to_csv(self, table, export_dir, schema=None, database=None, filters=None):
+    def table_to_csv(self, product_id, table, export_dir, schema=None, database=None, filters=None):
         """
         Le uma tabela no banco de Catalogos e cria um csv com o resultado.
         OBS: NAO recomendada para tabelas grandes. por que neste metodo todos as linhas
@@ -98,7 +99,7 @@ class Export:
         filename = os.path.join(export_dir, name)
         self.logger.debug("Filename: %s" % filename)
 
-        rows, count = self.get_catalog_objects(table, schema, database, filters=filters)
+        rows, count = self.get_catalog_objects(product_id, table, schema, database, filters=filters)
 
         self.logger.debug("Row Count: %s" % count)
 
@@ -146,7 +147,7 @@ class Export:
             self.logger.error(e)
             raise (e)
 
-    def get_catalog_objects(self, table, schema=None, database=None, limit=None, start=None, filters=None):
+    def get_catalog_objects(self, product_id, table, schema=None, database=None, limit=None, start=None, filters=None):
         """
         Executa a Query no banco de dados usando a classe de Catalogo apropriada
         :param table: Nome da tabela no banco de catalogo, deve vir do model Product.
@@ -166,15 +167,25 @@ class Export:
 
         self.logger.info("Retrieving table rows")
 
-        db_helper = CatalogObjectsViewSetDBHelper(
-            table,
+        # colunas associadas ao produto
+        associations = Association().get_associations_by_product_id(product_id=product_id)
+
+        # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
+        schema_rating_reject = settings.SCHEMA_RATING_REJECT
+
+        catalog_db = TargetObjectsDBHelper(
+            table=table,
             schema=schema,
             database=database,
+            associations=associations,
+            schema_rating_reject=schema_rating_reject
+        )
+
+        return catalog_db.query(
             filters=filters,
             limit=limit,
-            start=start)
-
-        return db_helper.query_result()
+            start=start
+        )
 
     def product_cutouts(self, name, path_origin, path_destination, format="zip"):
         """

@@ -1,15 +1,13 @@
 import logging
+import os
+import time
 
+from django.contrib.auth.models import User
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ExternalProcess
 from rest_framework import serializers
-from django.conf import settings
-import urllib.parse
-import time
-from .models import *
-import os
 
-from django.contrib.auth.models import User
+from .models import *
 
 logger = logging.getLogger(__name__)
 
@@ -30,6 +28,9 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
     # epr_original_id = Original Process ID
     epr_original_id = serializers.SerializerMethodField()
+
+    # epr_original_id = Original Process ID
+    prd_filter = serializers.SerializerMethodField()
 
     # Related Products
     prl_related = serializers.SerializerMethodField()
@@ -55,6 +56,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             # 'pgr_name',
             'pgr_display_name',
             'epr_original_id',
+            'prd_filter',
             'prl_related',
             'prl_cross_identification',
             'prl_cross_property',
@@ -82,6 +84,12 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     def get_epr_original_id(self, obj):
         try:
             return obj.prd_process_id.epr_original_id
+        except:
+            return None
+
+    def get_prd_filter(self, obj):
+        try:
+            return obj.prd_filter.filter
         except:
             return None
 
@@ -113,7 +121,7 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             else:
                 return obj.table.tbl_name
         except:
-            return  None
+            return None
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
@@ -298,15 +306,11 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             return False
 
 
-class MapSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
+class MapSerializer(ProductSerializer):
+    class Meta(ProductSerializer.Meta):
         model = Map
 
-        fields = (
-            'id',
-            'mpa_nside',
-            'mpa_ordering',
-        )
+        fields = ProductSerializer.Meta.fields + ('id', 'mpa_nside', 'mpa_ordering')
 
 
 class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
@@ -383,13 +387,14 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
 
         except KeyError as e:
             raise Exception("The CUTOUT_SOURCE parameter has not been configured, "
-                   " add this attribute to the DES_CUTOUT_SERVICE section.")
+                            " add this attribute to the DES_CUTOUT_SERVICE section.")
 
         except Exception as e:
             raise (e)
 
     def get_timestamp(self, obj):
         return time.time()
+
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -946,6 +951,7 @@ class FilterConditionSerializer(serializers.ModelSerializer):
         except:
             return None
 
+
 class FConditionSerializer(serializers.ModelSerializer):
     """
     Este serializer e uma versao menor  do FilterConditionSerializer
@@ -955,6 +961,7 @@ class FConditionSerializer(serializers.ModelSerializer):
     column = serializers.SerializerMethodField()
     op = serializers.SerializerMethodField()
     value = serializers.SerializerMethodField()
+
     class Meta:
         model = FilterCondition
 
@@ -990,7 +997,7 @@ class FConditionSerializer(serializers.ModelSerializer):
         elif op == "<=":
             op = "le"
 
-        elif op == ">=":
+        elif op == ">":
             op = "gt"
 
         elif op == ">=":
@@ -1010,7 +1017,6 @@ class BookmarkedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BookmarkProduct
-
 
         fields = (
             'id',

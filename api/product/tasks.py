@@ -5,8 +5,8 @@ import shutil
 from smtplib import SMTPException
 
 from celery import chord
-from celery import task
 from celery import shared_task
+from celery import task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 from common.download import Download
@@ -18,10 +18,12 @@ from product.export import Export
 from product.models import CutOutJob
 from product.models import FilterCondition
 from product.models import Product
+from product.saveas import SaveAs
 from product.serializers import FConditionSerializer
 
 descutout = DesCutoutService()
 cutoutJobNotify = CutoutJobNotify()
+saveas = SaveAs()
 export = Export()
 
 
@@ -255,6 +257,7 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
                 # Task To CSV
                 header.append(
                     export_target_to_csv.s(
+                        product.pk,
                         product.table.tbl_database,
                         product.table.tbl_schema,
                         product.table.tbl_name,
@@ -267,6 +270,7 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
                 # Task To Fits
                 header.append(
                     export_target_to_fits.s(
+                        product.pk,
                         product.table.tbl_database,
                         product.table.tbl_schema,
                         product.table.tbl_name,
@@ -297,7 +301,7 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
 
 @task(name="export_target_to_csv")
 @shared_task
-def export_target_to_csv(database, schema, table, conditions, export_dir):
+def export_target_to_csv(product_id, database, schema, table, conditions, export_dir):
     """
         gera o arquivo csv do produto.
     """
@@ -306,6 +310,7 @@ def export_target_to_csv(database, schema, table, conditions, export_dir):
     logger.info("Starting Task target_to_csv")
 
     export.table_to_csv(
+        product_id=product_id,
         database=database,
         schema=schema,
         table=table,
@@ -315,9 +320,10 @@ def export_target_to_csv(database, schema, table, conditions, export_dir):
 
     logger.info("Finished Task target_to_csv")
 
+
 @task(name="export_target_to_fits")
 @shared_task
-def export_target_to_fits(database, schema, table, conditions, export_dir):
+def export_target_to_fits(product_id, database, schema, table, conditions, export_dir):
     """
         gera o arquivo fits do produto.
     """
@@ -327,6 +333,7 @@ def export_target_to_fits(database, schema, table, conditions, export_dir):
 
     # Primeiro deve gerar um csv para depois converter para fits.
     csvfile = export.table_to_csv(
+        product_id=product_id,
         database=database,
         schema=schema,
         table=table,
@@ -345,6 +352,7 @@ def export_target_to_fits(database, schema, table, conditions, export_dir):
     )
 
     logger.info("Finished Task target_to_fits")
+
 
 @task(name="export_cutoutjob")
 @shared_task
@@ -433,3 +441,21 @@ def export_notify_user_failure(user, product):
     logger.info("Notify user about Export Failure")
 
     export.notify_user_export_failure(user, product)
+
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Product Save As Tasks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
+@task(name="product_save_as")
+@shared_task
+def product_save_as(user_id, product_id, name, filter_id=None, description=None):
+    logger = saveas.logger
+
+    logger.info("Task product_save_as Started")
+
+    logger.debug("User: %s" % user_id)
+    logger.debug("Product: %s" % product_id)
+    logger.debug("Name: %s" % name)
+    logger.debug("Filter: %s" % filter_id)
+    logger.debug("Description: %s" % description)
+
+    # Criar a tabela
+    saveas.create_table_by_product_id(user_id, product_id, name, filter_id, description)

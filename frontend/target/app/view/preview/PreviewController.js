@@ -122,11 +122,13 @@ Ext.define('Target.view.preview.PreviewController', {
             refs.btnMembers.setVisible(true);
             refs.btnComments.setVisible(true);
             refs.btnCrop.setVisible(true);
+            refs.btnSave.setVisible(true);
         } else {
             refs.btnRadius.setVisible(false);
             refs.btnMembers.setVisible(true);
             refs.btnComments.setVisible(false);
             refs.btnCrop.setVisible(false);
+            refs.btnSave.setVisible(false);
         }
 
     },

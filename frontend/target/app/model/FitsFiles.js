@@ -7,7 +7,7 @@ Ext.define('Target.model.FitsFiles', {
 
     proxy: {
         type: 'django',
-        url: '/dri/api/get_fits_files'
+        url: '/dri/api/get_fits_by_tilename'
     },
 
     fields: [

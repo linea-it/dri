@@ -218,8 +218,6 @@ Ext.define('Target.view.objects.Grid', {
     },
 
     getTypeColumn: function (type) {
-        // console.log(type)
-        // console.log(typeof(type))
         switch (type) {
             case 'integer':
             case 'real':
@@ -227,11 +225,8 @@ Ext.define('Target.view.objects.Grid', {
             case 'bigint':
             case 'smallint':
                 return 'number';
-                break;
             case 'text':
                 return 'string';
-                break;
-            // default:
         }
     },
 

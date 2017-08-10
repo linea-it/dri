@@ -1,8 +1,15 @@
 {% extends "rest_framework/login_base.html" %}
-
 {% block title %}Science Server{% endblock %}
 
 {% block branding %}
 <h3 style="margin: 0 0 20px;">Science Server</h3>
+
+{% if settings.SHOW_OAUTH %}
+{% load socialaccount %}
+{% providers_media_js %}
+<a href="{% provider_login_url "facebook" method="js_sdk" %}" class="btn btn-primary btn-block">Facebook Connect</a>
+<a href="{% provider_login_url "google" %}" class="btn btn-info btn-block">Google Connect</a>
+<br/>
+{% endif %}
 
 {% endblock %}
