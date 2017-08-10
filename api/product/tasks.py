@@ -280,7 +280,7 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
                 )
 
         # Cutouts
-        if cutoutjob_id is not None:
+        if cutoutjob_id not in [None, "", False, "false", "False", 0]:
             header.append(
                 export_cutoutjob.s(
                     cutoutjob_id,

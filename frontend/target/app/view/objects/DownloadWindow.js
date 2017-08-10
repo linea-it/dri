@@ -20,7 +20,7 @@ Ext.define('Target.view.objects.DownloadWindow', {
 
     config: {
         currentCatalog: null,
-        filterSet: null
+        filter: null
     },
 
     initComponent: function () {
@@ -145,11 +145,11 @@ Ext.define('Target.view.objects.DownloadWindow', {
     onDownload: function () {
         var me = this,
             currentCatalog = me.getCurrentCatalog(),
-            filterSet = me.getFilterSet(),
+            filter_id = me.getFilter(),
             form = me.down('form').getForm(),
             values,
             table_format = [],
-            cutouts = false,
+            cutouts = null,
             report_format = [],
             filter = null;
 
@@ -174,8 +174,8 @@ Ext.define('Target.view.objects.DownloadWindow', {
                 report_format = values.report_format;
             }
 
-            if ((filterSet) && (filterSet.get('id') > 0)) {
-                filter = filterSet.get('id');
+            if (filter_id > 0) {
+                filter = filter_id;
             }
 
             Ext.Ajax.request({
