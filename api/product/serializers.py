@@ -895,7 +895,6 @@ class FiltersetSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'product',
-            'owner',
             'fst_name'
         )
 
