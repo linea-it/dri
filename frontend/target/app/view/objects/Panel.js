@@ -177,7 +177,8 @@ Ext.define('Target.view.objects.Panel', {
                         store: '{objects}',
                     },
                     listeners: {
-                        select: 'onSelectObject'
+                        select: 'onSelectObject',
+                        itemdblclick: 'onCutoutDblClick'
                     },
                     tbar: [
                         {
