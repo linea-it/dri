@@ -1,8 +1,11 @@
+import datetime
 import logging
 import os
 import time
 
+import humanize
 from django.contrib.auth.models import User
+from django.db.models import Sum
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ExternalProcess
 from rest_framework import serializers
@@ -318,6 +321,10 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
         queryset=Product.objects.all(), many=False)
 
     owner = serializers.SerializerMethodField()
+    execution_time = serializers.SerializerMethodField()
+    count_files = serializers.SerializerMethodField()
+    file_sizes = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
 
     class Meta:
         model = CutOutJob
@@ -338,11 +345,49 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_label_properties',
             'cjb_label_colors',
             'cjb_label_font_size',
-            'owner'
+            'cjb_start_time',
+            'cjb_finish_time',
+            'owner',
+            'execution_time',
+            'count_files',
+            'file_sizes',
+            'is_owner'
         )
 
     def get_owner(self, obj):
         return obj.owner.username
+
+    def get_execution_time(self, obj):
+        try:
+            tdelta = obj.cjb_finish_time - obj.cjb_start_time
+            seconds = tdelta.total_seconds()
+            execution_time = str(datetime.timedelta(seconds=seconds)).split('.')[0]
+
+            return execution_time
+        except:
+            return None
+
+    def get_count_files(self, obj):
+        try:
+            return obj.cutout_set.count()
+
+        except:
+            return None
+
+    def get_file_sizes(self, obj):
+        try:
+            sum_sizes = obj.cutout_set.aggregate(sum_size=Sum('ctt_file_size'))
+            return humanize.naturalsize(sum_sizes.get("sum_size"))
+
+        except:
+            return None
+
+    def get_is_owner(self, obj):
+        current_user = self.context['request'].user
+        if obj.owner.pk == current_user.pk:
+            return True
+        else:
+            return False
 
 
 class CutoutSerializer(serializers.HyperlinkedModelSerializer):
