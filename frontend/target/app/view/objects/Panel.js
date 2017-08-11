@@ -192,6 +192,15 @@ Ext.define('Target.view.objects.Panel', {
                                 select: 'onSelectCutoutJob'
                             },
                             editable: false
+                        },
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-info',
+                            tooltip: 'Information about mosaic',
+                            handler: 'onClickInfoCutoutJob',
+                            bind: {
+                                disabled: '{!cmbCutoutJob.selection}'
+                            }
                         }
                     ]
                 }

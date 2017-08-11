@@ -19,7 +19,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         'Target.view.objects.FiltersWindow',
         'Target.view.objects.SaveCatalogWindow',
         'Target.view.objects.DownloadWindow',
-        'Target.view.settings.CutoutJobForm'
+        'Target.view.settings.CutoutJobForm',
+        'Target.view.objects.CutoutJobDetailWindow'
     ],
 
     listen: {
@@ -47,6 +48,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     wizard: null,
     winDownload: null,
     winCutout: null,
+    winCutoutjobInfo: null,
     activeFilter: null,
     taskCutoutJob: null,
 
@@ -918,6 +920,71 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }
             });
         }
+
+    },
+
+    onClickInfoCutoutJob: function () {
+        var me = this,
+            combo = me.lookup('cmbCutoutJob'),
+            cutoutjob = combo.selection;
+
+
+        if ((cutoutjob) && (cutoutjob.get('id') > 0)) {
+
+            if (me.winCutoutjobInfo !== null) {
+                me.winCutoutjobInfo.close();
+                me.winCutoutjobInfo = null;
+            }
+
+
+            me.winCutoutjobInfo = Ext.create('Target.view.objects.CutoutJobDetailWindow',{
+                width: 300,
+                height: 400,
+                title: cutoutjob.get('cjb_display_name'),
+                listeners: {
+                    scope: me,
+                    deletecutoutjob: 'onDeleteCutoutjob'
+                }
+
+            });
+
+            me.winCutoutjobInfo.setCutoutjob(cutoutjob);
+
+
+            me.winCutoutjobInfo.show();
+
+        }
+    },
+
+    onDeleteCutoutjob: function(cutoutjob, window) {
+        var me = this,
+            combo = me.lookup('cmbCutoutJob'),
+            store = combo.getStore(),
+            vm = me.getViewModel(),
+            cutouts = vm.getStore('cutouts'),
+            mosaic = me.lookup('TargetMosaic');
+
+        window.setLoading(true);
+
+        store.remove(cutoutjob);
+
+        store.sync({
+            callback: function() {
+                window.close();
+
+                // Limpar o Mosaic
+                cutouts.removeAll();
+                cutouts.clearFilter(true);
+                mosaic.removeAll(true);
+
+                // Limpar a Combo
+                combo.reset();
+
+                window.setLoading(false);
+            }
+        })
+
+
 
     }
 
