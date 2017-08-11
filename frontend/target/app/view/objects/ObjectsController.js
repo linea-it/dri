@@ -983,9 +983,14 @@ Ext.define('Target.view.objects.ObjectsController', {
                 window.setLoading(false);
             }
         })
+    },
 
+    onCutoutDblClick: function(record, imageSource, mosaic) {
+        //console.log("onCutoutDblClick(%o, %o)", record, imageSource)
 
+        url = imageSource;
 
+        window.open(url, '_blank');
     }
 
 });
