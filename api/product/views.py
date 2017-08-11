@@ -618,6 +618,8 @@ class FiltersetViewSet(viewsets.ModelViewSet):
 
     filter_fields = ('id', 'product', 'owner', 'fst_name')
 
+    filter_backends = (filters.DjangoFilterBackend, IsOwnerFilterBackend)
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
