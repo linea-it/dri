@@ -44,7 +44,7 @@ Ext.define('aladin.Aladin', {
             fov:180,
             target: '02 23 11.851 -09 40 21.59',
             cooFrame: 'J2000',
-            //survey:                 'empty_survey',
+            survey: 'irg', //'empty_survey',
             showReticle: true,
             showZoomControl: true,
             showFullscreenControl: true,
