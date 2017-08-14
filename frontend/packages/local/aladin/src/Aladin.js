@@ -247,6 +247,14 @@ Ext.define('aladin.Aladin', {
             aladinOptions
         );
         
+        aladin._setImageSurvey = aladin.setImageSurvey;
+        aladin.setImageSurvey = function(surveyId, callback){
+            return aladin._setImageSurvey(surveyId, function(){
+                me.onChangeImageSurvey();
+                if (callback) callback();
+            });
+        }
+
         me.setAladin(aladin);
 
         me.createImageSurveys();
@@ -270,6 +278,12 @@ Ext.define('aladin.Aladin', {
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);
         
+    },
+
+    onChangeImageSurvey: function(){
+        console.log('ImageSurvey Changed');
+        // Custon events
+        this.addCustonEvents();
     },
 
     aladinIsReady: function () {
