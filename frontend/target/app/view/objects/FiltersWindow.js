@@ -297,7 +297,7 @@ Ext.define('Target.view.objects.FiltersWindow', {
             handler: 'onCancelFilter'
         },
         {
-            text: 'Remove',
+            text: 'Reset',
             margin: '0 10 0 20',
             reference : 'btnRemove',
             handler: 'onRemoveFilter',

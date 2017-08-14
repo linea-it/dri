@@ -895,7 +895,6 @@ Ext.define('Target.view.objects.ObjectsController', {
         store.load();
     },
 
-
     onSelectCutoutJob: function (cmb) {
         var me = this,
             vm = me.getViewModel(),
