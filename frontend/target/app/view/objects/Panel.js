@@ -324,7 +324,6 @@ Ext.define('Target.view.objects.Panel', {
         cutouts.clearFilter(true);
         mosaic.removeAll(true)
 
-
         if(combo.selection !== null) {
             combo.reset()
         }
@@ -332,5 +331,6 @@ Ext.define('Target.view.objects.Panel', {
         // Ativar o painel list como default
         btn.setPressed(false);
 
+        me.getController().onWindowDisapplyFilters();
     }
 });

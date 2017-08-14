@@ -26,9 +26,13 @@ Ext.define('Target.view.objects.FiltersController', {
     onChangeCatalog: function (currentCatalog) {
         var me = this,
             vm = me.getViewModel(),
+            storeFilterSets = vm.getStore('filterSets'),
             contents = vm.getStore('contents');
 
         me.clearInputs();
+
+        //define o filtro para a lista de filtros, a combobox listará apenas os filtros do produto atual
+        storeFilterSets.filter('product', currentCatalog.get('id'));
 
         contents.addFilter({
             property: 'pcn_product_id',
@@ -197,15 +201,29 @@ Ext.define('Target.view.objects.FiltersController', {
             storeFilterSets = vm.getStore('filterSets'),
             filterSet = vm.get('filterSet'),
             view = me.getView(),
+            nameExists = false,
+            isUpdate = (filterSet && filterSet.get('id')>0),
             filterName = refs.cmbName.getValue();
 
         fn = fn || function(){};
 
         if (filterName!==''){
+            //checa se é o filtro tem nome igual a outro já existente
+            storeFilterSets.each(function(item){
+                if (item.data.fst_name==filterName && (!isUpdate || item.data.id!=filterSet.get('id')) ){
+                    nameExists = true;
+                }
+            });
+            if (nameExists){
+                return Ext.MessageBox.alert('', 'This filter name already exists', function() {
+                    fn();
+                });
+            }
+
             view.setLoading(true);
 
             //atualizar filterset
-            if ((filterSet) && (filterSet.get('id') > 0)) {
+            if (isUpdate) {
                 doSave(filterSet, true);
             }
 
@@ -216,17 +234,15 @@ Ext.define('Target.view.objects.FiltersController', {
                     fst_name: filterName
                 }));
             }
+        }else{
+            fn();
         }
-
-        //fn();
 
         function doSave(fset, update){
             fset.set('fst_name', filterName);
-
             fset.save({
                 callback: function (savedRating, operation, success) {
                     view.setLoading(false);
-
                     if (success) {
                         var obj = Ext.decode(operation.getResponse().responseText);
 
@@ -243,7 +259,8 @@ Ext.define('Target.view.objects.FiltersController', {
                             storeFilterSets.add(obj);
                         }
 
-                        if (storeFilters.needsSync){
+                        //aplica o sync somente se existir registro para atualizar ou remover, caso contrário não irá chamar callback
+                        if (storeFilters.updating>0 || storeFilters.removed.length>0 || storeFilters.getNewRecords().length>0){
                             view.setLoading(true);
                             storeFilters.sync({
                                 callback: function () {
@@ -294,6 +311,9 @@ Ext.define('Target.view.objects.FiltersController', {
                             refs.cmbName.clearValue();
                             filters.loadData([]);
 
+                            //limpa a checkbox
+                            refs.chkRejected.setExpanded(false);
+
                             view.fireEvent('disapplyfilters', me);
                             //me.getView().close();
                         }
@@ -310,7 +330,6 @@ Ext.define('Target.view.objects.FiltersController', {
             refs = me.getReferences(),
             currentCatalog = vm.get('currentCatalog'),
             filterSet      = vm.get('filterSet'),
-            filterName     = vm.get('filterName'),
             filterSets     = vm.getStore('filterSets'),
             storeFilters   = vm.getStore('filters'),
             filterName     = refs.cmbName.getValue(),
@@ -319,8 +338,8 @@ Ext.define('Target.view.objects.FiltersController', {
         //filtro sem nenhuma condição, retorna
         if (storeFilters.count() == 0) return;
 
-        //filtro remoto (salvo no banco de dados)
-        if (filterSet && filterSet.get('fst_name')!='') {
+        //filtro com nome definido
+        if (filterName){ //filterSet && filterSet.get('fst_name')!='') {
 
             //ouve alteração no filtro, salva antes de aplicar
             if (me.filterConditionsIsChanged()) {
@@ -442,7 +461,11 @@ Ext.define('Target.view.objects.FiltersController', {
             filterName = refs.cmbName.getValue(),
             changed = false;
 
-        if (filterName !== filterSet.get('fst_name')){
+        if (!filterSet && filterName){
+            return true;
+        }
+
+        if (filterSet && (filterName !== filterSet.get('fst_name'))){
             return true;
         }
 
@@ -511,7 +534,6 @@ Ext.define('Target.view.objects.FiltersController', {
             //limpa a combobox, a lista de condições do filtro e o checkbox reject
             refs.cmbName.clearValue();
             filters.loadData([]);
-            //FABIO refs.chkRejected.setValue(false);
 
             me.viewRenderUIStatus();
     },

@@ -2,4 +2,5 @@ bootstrap.json
 /build/development/
 /build/temp/
 /LOCAL.txt
+/LOCAL-source_update.sh
 /*/sass/example/
