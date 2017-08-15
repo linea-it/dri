@@ -881,7 +881,6 @@ Ext.define('visiomatic.Visiomatic', {
             catalogOptions = me.getCatalogOptions(),
             pathOptions, collection, feature, lCatalog;
 
-//        pathOptions = Ext.Object.merge(catalogOptions, options);
         pathOptions = catalogOptions;
 
         collection = {
@@ -936,11 +935,54 @@ Ext.define('visiomatic.Visiomatic', {
                     }
                 }
 
+//                if ((feature.properties._meta_id == 3028934434) || (feature.properties._meta_id == 465798588)) {
+//                    console.log("Thetha: ", feature.properties._meta_theta_image)
+//
+//                    theta_image = feature.properties._meta_theta_image;
+//
+//
+//                    if (feature.properties._meta_id == 465798588) {
+//                        console.log("Y3")
+//
+//                        theta_image = theta_image - 90;
+//
+//                        console.log("Thetha -90: ", theta_image)
+//
+//                    }
+//
+//                    if (theta_image < 0) {
+//                        theta_image = theta_image * -1;
+//
+//                        console.log("Thetha * -1: ", theta_image)
+//                    }
+//
+//                    feature.properties._meta_theta_image = theta_image;
+//
+//                    console.log("theta_image: %o", theta_image)
+//
+//                }
+
+
+
+
+                // Desenhar ellipse.
+                if ((options) && (options.ellipse == true)) {
+                    majAxis = feature.properties._meta_a_image / 3600.0;
+                    minAxis = feature.properties._meta_b_image / 3600.0;
+                    posAngle = feature.properties._meta_theta_image;
+
+                } else {
+                    // Desenhar apenas o circulo
+                    majAxis = radius;
+                    minAxis = radius;
+                    posAngle = 90;
+
+                }
+
                 path_options = Ext.Object.merge(opts, {
-                    majAxis: radius,
-                    minAxis: radius,
-                    posAngle: 90,
-                    //color: feature.properties._meta_comments ? '#FF9800' : '#4AAB46'
+                    majAxis: majAxis,
+                    minAxis: minAxis,
+                    posAngle: posAngle
                 });
 
                 path_options = Ext.Object.merge(path_options, options);

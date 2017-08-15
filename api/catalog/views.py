@@ -268,8 +268,39 @@ class CatalogObjectsViewSet(ViewSet):
                 try:
                     meta_prop = essential_props.get(ucd)
                     if meta_prop:
+                        value = row.get(associations.get(ucd))
+
+                        # Fix na Propriedade theta_image que pode ter um multiplicador
+                        # diferetente dependendo do catalogo
+                        # try:
+                        #     if meta_prop == '_meta_theta_image':
+                        #
+                        #         t_image = float(value)
+                        #
+                        #         if t_image < 0:
+                        #             t_image = t_image * -1
+
+                                # # Descobrir o release do Catalogo
+                                # release_set = catalog.productrelease_set.first()
+                                # if release_set:
+                                #     release = release_set.release.rls_name
+                                #     # Se tiver release e ele for o Y3 subtrair 90 graus
+                                #     if release == 'y3a1_coadd':
+                                #         t_image = t_image - 90
+                                #
+                                #     elif release == 'y1a1_coadd':
+                                #         print("AQUIII")
+
+                                # else:
+                                #     value = t_image
+
+                        # except Exception as e:
+                        #     # Valor default
+                        #     value = 90
+
+
                         row.update({
-                            meta_prop: row.get(associations.get(ucd))
+                            meta_prop: value
                         })
 
                 except:

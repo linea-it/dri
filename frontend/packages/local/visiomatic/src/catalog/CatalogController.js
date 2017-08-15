@@ -149,6 +149,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
             color = vm.get('currentColor'),
             filters = vm.get('currentFilters'),
             overlays = vm.getStore('overlays'),
+            drawEllipse = vm.get('drawEllipse'),
             overlay;
 
         vm.set('currentCatalog', catalog);
@@ -161,6 +162,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
             visible: true,
             count: null,
             layers: null,
+            ellipse: drawEllipse,
             objects: Ext.create('visiomatic.store.Objects', {}),
             status: 'loading'
         });
@@ -275,7 +277,8 @@ Ext.define('visiomatic.catalog.CatalogController', {
                         overlay.get('name'),
                         store,
                         {
-                            color: overlay.get('color')
+                            color: overlay.get('color'),
+                            ellipse: overlay.get('ellipse')
                         });
 
             overlay.set('layers', layers);

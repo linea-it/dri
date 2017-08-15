@@ -22,11 +22,27 @@ Ext.define('visiomatic.catalog.Submit', {
                     border: false,
                     items: [
                         {
-                            xtype: 'colorfield',
-//                            fieldLabel: 'Color',
-                            labelAlign: 'top',
-                            bind: '{currentColor}',
-                            width: 100,
+                            xtype: 'fieldcontainer',
+                            layout: 'hbox',
+                            defaults: {
+                                flex: 1,
+                                hideLabel: true
+                            },
+                            items: [
+                                {
+                                    xtype: 'colorfield',
+                                    labelAlign: 'top',
+                                    bind: '{currentColor}',
+                                    width: 100,
+                                    margin: '0 10 0 0',
+                                },
+                                {
+                                    xtype: 'checkboxfield',
+                                    name: 'draw_ellipse',
+                                    boxLabel: 'Draw Ellipse',
+                                    bind: '{drawEllipse}',
+                                }
+                            ]
                         },
                         {
                             xtype: 'button',
