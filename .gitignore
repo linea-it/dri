@@ -3,6 +3,7 @@
 /data
 /db
 /log
+/bkp
 
 # Diretorio de projeto pycharm
 /.idea/
