@@ -1,12 +1,14 @@
+from datetime import datetime
+
 from coadd.models import Release, Tag
 from common.models import Filter
+from django.db.models import Q
 from lib.CatalogDB import CatalogDB
 from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ProcessRelease
 from rest_framework import status
 from rest_framework.response import Response
-from django.db.models import Q
 
 from .models import Site, Authorization, ExternalProcess, Export
 
@@ -197,8 +199,7 @@ class Import():
         database = data.get('database', 'catalog')
 
         if not self.db:
-            con = CatalogDB(db=database)
-            self.db = con.database
+            self.db = CatalogDB(db=database)
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
@@ -226,6 +227,8 @@ class Import():
         date = None
         if self.process is not None:
             date = self.process.epr_start_date
+        else:
+            date = datetime.now()
 
         product, created = Catalog.objects.update_or_create(
             prd_owner=self.owner,
@@ -413,8 +416,7 @@ class Import():
     # =============================< MAP >=============================
     def register_map(self, data):
         if not self.db:
-            con = CatalogDB()
-            self.db = con.database
+            self.db = CatalogDB()
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
@@ -515,8 +517,7 @@ class Import():
     # =============================< MASK >=============================
     def register_mask(self, data):
         if not self.db:
-            con = CatalogDB()
-            self.db = con.database
+            self.db = CatalogDB()
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %

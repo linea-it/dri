@@ -116,6 +116,12 @@ Ext.define('Target.view.objects.Mosaic', {
                 scope: me,
                 select: function (selModel, record, index) {
                     me.fireEvent('select', selModel, record, index);
+                },
+                itemdblclick: function (view, record) {
+
+                    var imageSource = me.getImageSource(record.get('_meta_id'));
+
+                    me.fireEvent('itemdblclick', record, imageSource, me);
                 }
             }
         });

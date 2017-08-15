@@ -1,5 +1,12 @@
 Ext.define('Target.model.CutoutJob', {
     extend: 'Ext.data.Model',
+    requires: [
+        'common.data.proxy.Django'
+    ],
+    proxy: {
+        type: 'django',
+        url: '/dri/api/filterset/'
+    },
 
     fields: [
         {name:'id', type:'int', persist: false},
@@ -17,10 +24,19 @@ Ext.define('Target.model.CutoutJob', {
         {name:'cjb_label_properties', type: 'string'},
         {name:'cjb_label_font_size', type: 'int'},
 
+        {name:'cjb_start_time', type: 'date'},
+        {name:'cjb_finish_time', type: 'date'},
+
+
         {name:'cjb_status', type: 'string', default: 'st'},
         {name:'cjb_job_id', type: 'string', persist: false},
 
         {name:'owner', type: 'string', persist: false},
+        {name:'is_owner', type: 'boolean', persist: false},
+        {name:'execution_time', type: 'string', persist: false},
+        {name:'count_files', type: 'int', persist: false},
+        {name:'file_sizes', type: 'string', persist: false},
+
 
         {
             name: 'ready_to_download',

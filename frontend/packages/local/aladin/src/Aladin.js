@@ -44,7 +44,7 @@ Ext.define('aladin.Aladin', {
             fov:180,
             target: '02 23 11.851 -09 40 21.59',
             cooFrame: 'J2000',
-            //survey:                 'empty_survey',
+            survey: 'irg', //'empty_survey',
             showReticle: true,
             showZoomControl: true,
             showFullscreenControl: true,
@@ -248,6 +248,14 @@ Ext.define('aladin.Aladin', {
             aladinOptions
         );
 
+        aladin._setImageSurvey = aladin.setImageSurvey;
+        aladin.setImageSurvey = function(surveyId, callback){
+            return aladin._setImageSurvey(surveyId, function(){
+                me.onChangeImageSurvey();
+                if (callback) callback();
+            });
+        }
+
         me.setAladin(aladin);
 
         me.createImageSurveys();
@@ -263,7 +271,7 @@ Ext.define('aladin.Aladin', {
         // Custon events
         me.addCustonEvents();
 
-        //adiciona o botão manager layers do aladin na toolbar esquerda
+        //adiciona o boto manager layers do aladin na toolbar esquerda
         el = document.querySelector('.aladin-layersControl-container');
         el.style.top = '100px';
         me.leftToolBar.getEl().dom.appendChild(el);
@@ -271,6 +279,12 @@ Ext.define('aladin.Aladin', {
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);
 
+    },
+
+    onChangeImageSurvey: function(){
+        console.log('ImageSurvey Changed');
+        // Custon events
+        this.addCustonEvents();
     },
 
     aladinIsReady: function () {

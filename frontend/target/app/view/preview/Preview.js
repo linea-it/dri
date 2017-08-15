@@ -46,7 +46,6 @@ Ext.define('Target.view.preview.Preview', {
                 bind: {
                     store: '{datasets}',
                     disabled: '{!currentRecord._meta_id}',
-                    selection: '{!currentDataset}'
                 },
                 queryMode: 'local',
                 listConfig: {

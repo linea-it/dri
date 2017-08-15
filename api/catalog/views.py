@@ -1,21 +1,15 @@
-from lib.CatalogDB import CatalogDB
-from product.models import Catalog, ProductContent, ProductContentAssociation
+from django.conf import settings
+from lib.CatalogDB import TargetObjectsDBHelper, CatalogObjectsDBHelper
+from product.association import Association
+from product.models import Catalog, ProductContentAssociation
 from product.serializers import AssociationSerializer
-
 from rest_framework import viewsets
 from rest_framework.response import Response
-from django.http import HttpResponse
 from rest_framework.viewsets import ViewSet
+
 from .models import Rating, Reject, Comments
 from .serializers import RatingSerializer, RejectSerializer, CommentsSerializer
-from rest_framework.permissions import AllowAny
-import csv
 
-from .views_db import CoaddObjectsDBHelper
-from .views_db import TargetViewSetDBHelper
-from .views_db import CatalogObjectsViewSetDBHelper
-
-from rest_framework.decorators import api_view
 
 class RatingViewSet(viewsets.ModelViewSet):
     """
@@ -73,7 +67,6 @@ class TargetViewSet(ViewSet):
     """
 
     """
-
     def list(self, request):
         """
         Return a list of targets in catalog.
@@ -90,24 +83,27 @@ class TargetViewSet(ViewSet):
         if not catalog:
             raise Exception('No product found for this id.')
 
-        db_helper = TargetViewSetDBHelper(
-            catalog.tbl_name,
-            schema=catalog.tbl_schema,
-            database=catalog.tbl_database)
-
         # colunas associadas ao produto
-        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
-        serializer = AssociationSerializer(queryset, many=True)
-        associations = serializer.data
-        properties = dict()
+        associations = Association().get_associations_by_product_id(catalog.pk)
 
-        for property in associations:
-            if property.get('pcc_ucd'):
-                properties.update({
-                    property.get('pcc_ucd'): property.get('pcn_column_name').lower()
-                })
+        # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
+        schema_rating_reject = settings.SCHEMA_RATING_REJECT
 
-        rows, count = db_helper.query_result(request, properties)
+        catalog_db = TargetObjectsDBHelper(
+            table=catalog.tbl_name,
+            schema=catalog.tbl_schema,
+            database=catalog.tbl_database,
+            associations=associations,
+            schema_rating_reject=schema_rating_reject
+        )
+
+        rows, count = catalog_db.query(
+            # columns=list(["coadd_objects_id", "niter_model_g"]),
+            ordering=request.query_params.get('ordering', None),
+            limit=request.query_params.get('limit', None),
+            start=request.query_params.get('start', None),
+            url_filters=request.query_params
+        )
 
         for row in rows:
             row.update({
@@ -124,20 +120,20 @@ class TargetViewSet(ViewSet):
             })
 
             row.update({
-                "_meta_id": row.get(properties.get("meta.id;meta.main")),
-                "_meta_property_id": properties.get("meta.id;meta.main")
+                "_meta_id": row.get(associations.get("meta.id;meta.main")),
+                "_meta_property_id": associations.get("meta.id;meta.main")
             })
             row.update({
-                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main")),
-                "_meta_property_ra": properties.get("pos.eq.ra;meta.main")
+                "_meta_ra": row.get(associations.get("pos.eq.ra;meta.main")),
+                "_meta_property_ra": associations.get("pos.eq.ra;meta.main")
             })
             row.update({
-                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main")),
-                "_meta_property_dec": properties.get("pos.eq.dec;meta.main")
+                "_meta_dec": row.get(associations.get("pos.eq.dec;meta.main")),
+                "_meta_property_dec": associations.get("pos.eq.dec;meta.main")
             })
             row.update({
-                "_meta_radius": row.get(properties.get("phys.angSize;src")),
-                "_meta_property_radius": properties.get("phys.angSize;src")
+                "_meta_radius": row.get(associations.get("phys.angSize;src")),
+                "_meta_property_radius": associations.get("phys.angSize;src")
             })
 
             row.update({
@@ -180,60 +176,6 @@ class TargetViewSet(ViewSet):
         }))
 
 
-class CoaddObjects(ViewSet):
-    """
-
-    """
-
-    def list(self, request):
-        """
-        Return a list of coadd objects.
-        """
-        # Recuperar o parametro product id ou sorce e obrigatorio
-        product_id = request.query_params.get('product', None)
-        source = request.query_params.get('source', None)
-
-        if product_id is not None:
-            # Recuperar no model Catalog pelo id passado na url
-            catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
-        elif source is not None:
-            catalog = Catalog.objects.select_related().get(prd_name=source)
-        else:
-            raise Exception('Product id or source is mandatory.')
-
-        if not catalog:
-            raise Exception('No product found.')
-
-        db_helper = CoaddObjectsDBHelper(catalog.tbl_name,
-                                         schema=catalog.tbl_schema,
-                                         database=catalog.tbl_database)
-
-        # Antes de criar os filtros para a query verificar se o catalogo tem associacao e descobrir as
-        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=catalog.pk)
-        serializer = AssociationSerializer(queryset, many=True)
-        associations = serializer.data
-        properties = dict()
-
-        # propriedades corretas
-        for property in associations:
-            if property.get('pcc_ucd'):
-                properties.update({property.get('pcc_ucd'): property.get('pcn_column_name').lower()})
-
-        rows = db_helper.query_result(request.query_params, properties)
-        for row in rows:
-            print(row)
-            row.update({
-                "_meta_id": row.get(properties.get("meta.id;meta.main"))
-            })
-            row.update({
-                "_meta_ra": row.get(properties.get("pos.eq.ra;meta.main"))
-            })
-            row.update({
-                "_meta_dec": row.get(properties.get("pos.eq.dec;meta.main"))
-            })
-
-        return Response(rows)
-
 class CatalogObjectsViewSet(ViewSet):
     """
 
@@ -243,7 +185,6 @@ class CatalogObjectsViewSet(ViewSet):
         """
         Return a list of objects in catalog.
         """
-        print('----------------------------------------')
         # Recuperar o parametro product id que e obrigatorio
         product_id = request.query_params.get('product', None)
         if not product_id:
@@ -255,37 +196,31 @@ class CatalogObjectsViewSet(ViewSet):
         if not catalog:
             raise Exception('No product found for this id.')
 
-
         # Parametros de Paginacao
         limit = request.query_params.get('limit', None)
         start = request.query_params.get('offset', None)
 
+
         # colunas associadas ao produto
-        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
-        serializer = AssociationSerializer(queryset, many=True)
-        associations = serializer.data
-        properties = dict()
+        associations = Association().get_associations_by_product_id(product_id)
 
         # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
-        columns = list()
-        for property in associations:
-            if property.get('pcc_ucd'):
-                properties.update({
-                    property.get('pcc_ucd'): property.get('pcn_column_name').lower()
-                })
+        columns = Association().get_properties_associated(product_id)
 
-                columns.append(property.get('pcn_column_name').lower())
-
-        db_helper = CatalogObjectsViewSetDBHelper(
-            catalog.tbl_name,
+        catalog_db = CatalogObjectsDBHelper(
+            table=catalog.tbl_name,
             schema=catalog.tbl_schema,
             database=catalog.tbl_database,
+            associations=associations
+        )
+
+        rows, count = catalog_db.query(
             columns=columns,
-            limit=limit,
-            start=start)
-
-
-        rows, count = db_helper.query_result(request, properties)
+            ordering=request.query_params.get('ordering', None),
+            limit=request.query_params.get('limit', None),
+            start=request.query_params.get('start', None),
+            url_filters=request.query_params
+        )
 
         essential_props = dict({
             # Id
@@ -315,27 +250,26 @@ class CatalogObjectsViewSet(ViewSet):
             })
 
             row.update({
-                "_meta_property_id": properties.get("meta.id;meta.main"),
-                "_meta_property_ra": properties.get("pos.eq.ra;meta.main"),
-                "_meta_property_dec": properties.get("pos.eq.dec;meta.main")
+                "_meta_property_id": associations.get("meta.id;meta.main"),
+                "_meta_property_ra": associations.get("pos.eq.ra;meta.main"),
+                "_meta_property_dec": associations.get("pos.eq.dec;meta.main")
             })
 
             try:
                 # Raio so e obrigatorio para catalogo do tipo sistema
                 row.update({
-                    "_meta_radius": float(row.get(properties.get("phys.angSize;src"))),
-                    "_meta_property_radius": properties.get("phys.angSize;src")
+                    "_meta_radius": float(row.get(associations.get("phys.angSize;src"))),
+                    "_meta_property_radius": associations.get("phys.angSize;src")
                 })
             except:
                 pass
 
-
-            for ucd in properties:
+            for ucd in associations:
                 try:
                     meta_prop = essential_props.get(ucd)
                     if meta_prop:
                         row.update({
-                            meta_prop: row.get(properties.get(ucd))
+                            meta_prop: row.get(associations.get(ucd))
                         })
 
                 except:
