@@ -151,7 +151,7 @@ Ext.define('aladin.Aladin', {
         initialFov: null,
 
         // habilitar ou desabilitar a exibicao de mapas
-        enableMaps: false,
+        enableMaps: true,
 
         // habilitar botao que permite troca entre Visiomatic / Aladin
         enableShift: false,
@@ -173,7 +173,8 @@ Ext.define('aladin.Aladin', {
             mlocation: '',
             tile: null,
             tag: null,
-            release: null
+            release: null,
+            release_name: ''
         }
     },
 
@@ -212,7 +213,7 @@ Ext.define('aladin.Aladin', {
                 me.tbar = tollbar;
             }
         }
-        
+
         Ext.apply(this, {
             items: [
                 cmpAladin
@@ -223,7 +224,7 @@ Ext.define('aladin.Aladin', {
                 //onpanend: 'onPanEnd'
             }
         });
-        
+
         me.callParent(arguments);
     },
 
@@ -246,7 +247,7 @@ Ext.define('aladin.Aladin', {
             // opcoes do aladin
             aladinOptions
         );
-        
+
         me.setAladin(aladin);
 
         me.createImageSurveys();
@@ -264,12 +265,12 @@ Ext.define('aladin.Aladin', {
 
         //adiciona o botão manager layers do aladin na toolbar esquerda
         el = document.querySelector('.aladin-layersControl-container');
-        el.style.top = '50px';
+        el.style.top = '100px';
         me.leftToolBar.getEl().dom.appendChild(el);
 
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);
-        
+
     },
 
     aladinIsReady: function () {
@@ -637,7 +638,7 @@ Ext.define('aladin.Aladin', {
             if (tile.get('id') !== oldtile) {
                 tag = me.getStoreTags().getById(tile.get('tag'));
 
-                vm.set('release', tile.get('release_display_name'));
+                vm.set('release_name', tile.get('release_display_name'));
                 vm.set('tile', tile);
                 vm.set('tag', tag);
 

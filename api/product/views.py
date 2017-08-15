@@ -396,21 +396,18 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 
 
 class MapFilter(django_filters.FilterSet):
-    categorization_by_release = django_filters.MethodFilter(action='filter_categorization_by_release')
+    release_id = django_filters.MethodFilter(action='filter_release_id')
+    release_name = django_filters.MethodFilter(action='filter_release_name')
 
     class Meta:
         model = Map
         fields = ['id', 'prd_name', 'prd_display_name', 'prd_class']
 
-    def filter_categorization_by_release(self, queryset, value):
+    def filter_release_id(self, queryset, value):
+        return queryset.filter(releases__id=value)
 
-        release_name = value
-
-        q = queryset.filter(
-            releases__rls_name=release_name
-        )
-
-        return q
+    def filter_release_name(self, queryset, value):
+        return queryset.filter(releases__rls_name=value)
 
 
 class MapViewSet(viewsets.ModelViewSet):
