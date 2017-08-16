@@ -39,6 +39,7 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     onChangeRecord: function (record) {
+        console.log("onChangeRecord(%o)", record)
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -140,12 +141,16 @@ Ext.define('Target.view.preview.PreviewController', {
 
     onChangeDataset: function (combo) {
         var me = this,
-            dataset = combo.getSelectedRecord();
+            vm = me.getViewModel(),
+            dataset = combo.selection;
+
+        vm.set('currentDataset', dataset);
 
         me.changeImage(dataset);
     },
 
     changeImage: function (dataset) {
+        //console.log("changeImage(%o)", dataset)
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
             url,

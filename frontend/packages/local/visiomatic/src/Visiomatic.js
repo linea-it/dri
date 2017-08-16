@@ -880,7 +880,6 @@ Ext.define('visiomatic.Visiomatic', {
             catalogOptions = me.getCatalogOptions(),
             pathOptions, collection, feature, lCatalog;
 
-//        pathOptions = Ext.Object.merge(catalogOptions, options);
         pathOptions = catalogOptions;
 
         collection = {
@@ -935,10 +934,37 @@ Ext.define('visiomatic.Visiomatic', {
                     }
                 }
 
+                // Desenhar apenas o circulo
+                majAxis = radius;
+                minAxis = radius;
+                posAngle = 90;
+
+                // Desenhar ellipse.
+                if ((options) && (options.ellipse == true)) {
+
+                    try {
+
+                        var a_image = feature.properties._meta_a_image,
+                            b_image = feature.properties._meta_b_image,
+                            theta_image = feature.properties._meta_theta_image
+
+                        // Checar se tem o 3 campos
+                        if ((typeof a_image == 'number') &&
+                            (typeof b_image == 'number') &&
+                            (typeof theta_image == 'number')) {
+
+                            majAxis = a_image / 3600.0;
+                            minAxis = b_image / 3600.0;
+                            posAngle = theta_image;
+                        }
+                    }
+                    catch(err) {}
+                }
+
                 path_options = Ext.Object.merge(opts, {
-                    majAxis: radius,
-                    minAxis: radius,
-                    posAngle: 90
+                    majAxis: majAxis,
+                    minAxis: minAxis,
+                    posAngle: posAngle
                 });
 
                 path_options = Ext.Object.merge(path_options, options);
