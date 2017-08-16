@@ -91,14 +91,14 @@ Ext.define('Sky.view.dataset.Dataset', {
                             },
                             menu: []
                         },
-                        {
+                        /*{
                             xtype: 'button',
                             iconCls: 'x-fa fa-map-marker',
                             tooltip: 'Show/Hide Pin',
                             enableToggle: true,
                             pressed: true,
                             toggleHandler: 'showHideMarker'
-                        }
+                        }*/
                         /*,
                         {
                             xtype: 'button',
