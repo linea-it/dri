@@ -942,16 +942,24 @@ Ext.define('visiomatic.Visiomatic', {
 
                 // Desenhar ellipse.
                 if ((options) && (options.ellipse == true)) {
-                    var a_image = feature.properties._meta_a_image,
-                        b_image = feature.properties._meta_b_image,
-                        theta_image = feature.properties._meta_theta_image
 
-                    // Checar se tem o 3 campos
-                    if ((a_image) && (b_image) (theta_image)) {
-                        majAxis = a_image / 3600.0;
-                        minAxis = b_image / 3600.0;
-                        posAngle = theta_image;
+                    try {
+
+                        var a_image = feature.properties._meta_a_image,
+                            b_image = feature.properties._meta_b_image,
+                            theta_image = feature.properties._meta_theta_image
+
+                        // Checar se tem o 3 campos
+                        if ((typeof a_image == 'number') &&
+                            (typeof b_image == 'number') &&
+                            (typeof theta_image == 'number')) {
+
+                            majAxis = a_image / 3600.0;
+                            minAxis = b_image / 3600.0;
+                            posAngle = theta_image;
+                        }
                     }
+                    catch(err) {}
                 }
 
                 path_options = Ext.Object.merge(opts, {
