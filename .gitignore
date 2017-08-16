@@ -1,8 +1,9 @@
-# installation path
+# installation paths
 /env
 /data
 /db
 /log
+/bkp
 
 # Diretorio de projeto pycharm
 /.idea/
