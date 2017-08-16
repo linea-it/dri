@@ -270,26 +270,38 @@ class CatalogObjectsViewSet(ViewSet):
                     if meta_prop:
                         value = row.get(associations.get(ucd))
 
-                        # Fix na Propriedade theta_image que pode ter um multiplicador
-                        # diferetente dependendo do catalogo
+                        # TODO: Esse Bloco precisa de um refactoring
+                        """
+                            Glauber: 16/08/2017
+                         Essa solucao foi adotada por que cada release esta com um valor diferente para 
+                         o atributo theta_image e nao ficou muito claro uma forma de tratar esses valores 
+                         no banco. solucao rapida por causa de ser vespera de uma reuniao 1/09/2017
+                         
+                         Releases 
+                            Y1 - para corrigir as ellipses do Y1 deve multiplicar o valor de theta_image 
+                            por -1. para todas as linhas. 
+                            
+                            Y3 - a correcao do Y3 e: 90 - theta_image. 
+                            
+                            NAO foi testado outros releases por nao estarem registrados as suas tabelas coadd.
+                        """
                         if meta_prop == '_meta_theta_image':
                             t_image = float(value)
 
-                        #     # Descobrir o release do Catalogo
-                        #     release_set = catalog.productrelease_set.first()
-                        #     if release_set:
-                        #         release = release_set.release.rls_name
-                        #         # Se tiver release e ele for o Y3 subtrair 90 graus
-                        #         if release == 'y3a1_coadd':
-                        #             t_image = t_image - 90
+                            # Descobrir o release do Catalogo
+                            release_set = catalog.productrelease_set.first()
+                            if release_set:
+                                release = release_set.release.rls_name
+                                # Se tiver release e ele for o Y3 subtrair 90 graus
+                                if release == 'y3a1_coadd':
+                                    t_image = 90 - t_image
 
-                            # t_image = 90 - t_image
-                            # if t_image < 0:
-                            t_image = t_image * -1
-
+                                else:
+                                    t_image = t_image * -1
+                            else:
+                                t_image = t_image * -1
 
                             value = t_image
-
 
                         row.update({
                             meta_prop: value
