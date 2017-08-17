@@ -39,7 +39,6 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     onChangeRecord: function (record) {
-        console.log("onChangeRecord(%o)", record)
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -95,7 +94,7 @@ Ext.define('Target.view.preview.PreviewController', {
                     }
 
                 }, this);
-                
+
                 if (dataset) {
                     me.changeImage(dataset);
 
@@ -379,7 +378,7 @@ Ext.define('Target.view.preview.PreviewController', {
             refs = me.getReferences(),
             btnMembers = refs.btnMembers,
             coordinates, loaded=0;
-            
+
         // Verificar se tem um produto relacioando ao catalogo
         if ((productRelated.get('id') > 0) && (productRelated.get('prl_product') === currentCatalog.get('id'))) {
             members.clearFilter();
@@ -397,7 +396,7 @@ Ext.define('Target.view.preview.PreviewController', {
                 members.addFilter({
                     property: productRelated.get('prl_cross_name'),
                     value: object.get('_meta_id')
-                });                
+                });
                 members.load({
                     callback: function () {
                         loaded--;
@@ -407,12 +406,12 @@ Ext.define('Target.view.preview.PreviewController', {
 
                 //carrega os comentários de posição
                 loaded++
-                coordinates = '[['+ me.activeDataset.get('tli_urall') + ',' + me.activeDataset.get('tli_udecll')+ '],' + 
+                coordinates = '[['+ me.activeDataset.get('tli_urall') + ',' + me.activeDataset.get('tli_udecll')+ '],' +
                                '['+ me.activeDataset.get('tli_uraur') + ',' + me.activeDataset.get('tli_udecur')+ ']]';
                 comments.filter([{
                     property: 'coordinates',
                     value: coordinates
-                }]);                
+                }]);
                 comments.load({
                     callback: function () {
                         loaded--
@@ -527,7 +526,7 @@ Ext.define('Target.view.preview.PreviewController', {
           view.setLoading(false);
         } else {
 
-          alert ('Please select an element.')
+          alert ('File not found.')
 
         }
 

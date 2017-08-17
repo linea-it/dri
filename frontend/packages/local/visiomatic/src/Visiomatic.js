@@ -1283,7 +1283,7 @@ Ext.define('visiomatic.Visiomatic', {
                 labelOptions.centerPadding : 0.005);
 
         size = ((labelOptions.size) ?
-                labelOptions.size : 0.05);
+                labelOptions.size : 0.010);
 
         lineTop       = [l.latLng((dec + centerPadding), ra), l.latLng((dec + size), ra)];
         lineBotton    = [l.latLng((dec - centerPadding), ra), l.latLng((dec - size), ra)];

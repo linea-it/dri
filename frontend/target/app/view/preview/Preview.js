@@ -152,7 +152,7 @@ Ext.define('Target.view.preview.Preview', {
                 iconCls: 'x-fa fa-download',
                 handler: 'onSave',
                 hidden: true,
-                tooltip: 'Show/Hide Download Files',
+                tooltip: 'Download',
             },
             '-',
             {
