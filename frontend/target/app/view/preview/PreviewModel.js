@@ -62,6 +62,10 @@ Ext.define('Target.view.preview.PreviewModel', {
         productRelateds: {
             type: 'product_relateds',
             autoLoad: false
+        },
+        comments: {
+            type: 'comments-position',
+            autoLoad: false
         }
     }
 });

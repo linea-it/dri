@@ -26,7 +26,8 @@ Ext.define('visiomatic.catalog.CatalogViewModel', {
     data: {
         visiomatic: null,
         currentColor: '1dff00',
-        currentFilters: null
+        currentFilters: null,
+        drawEllipse: false
     },
 
     links: {

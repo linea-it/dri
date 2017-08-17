@@ -656,7 +656,7 @@ class ExportViewSet(viewsets.ModelViewSet):
     """
     http_method_names = ['post', ]
 
-    authentication_classes = (SessionAuthentication, BasicAuthentication, TokenAuthentication)
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
 
     permission_classes = (IsAuthenticated,)
 

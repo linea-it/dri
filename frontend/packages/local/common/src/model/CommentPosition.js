@@ -10,7 +10,8 @@ Ext.define('common.model.CommentPosition', {
         {name:'pst_dec', type:'float'},
         {name:'pst_date', type:'date'},
         {name:'pst_comment', type:'string'},
-        {name:'is_owner', type:'boolean'}
+        {name:'is_owner', type:'boolean'},
+        {name:'coordinates', type:'string'}
     ]
 
 });
