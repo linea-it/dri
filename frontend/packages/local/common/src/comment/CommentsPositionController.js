@@ -3,24 +3,28 @@ Ext.define('common.comment.CommentsPositionController', {
 
     alias: 'controller.comment-position',
 
-    loadComments: function (dec, ra /**vai ser pelos cantos dat tile */, dataset) {
+    loadComments: function (event, dataset) {
         var vm = this.getView().getViewModel(),
-            store = vm.getStore('comments');
-
-        vm.set('pst_dataset', dataset.id);
-        vm.set('pst_dec', dec);
-        vm.set('pst_ra', ra);
+            storeComments = vm.getStore('comments'),
+            targetPosition = event.targetPosition,
+            lat = targetPosition ? targetPosition.lat : event.latlng.lat,
+            lng = targetPosition ? targetPosition.lng : event.latlng.lng;
         
-        store.filter([
+        vm.set('pst_dataset', dataset.id);
+        vm.set('pst_dec',     lat);
+        vm.set('pst_ra',      lng);
+        
+        storeComments.filter([
+            /*{
+                property: 'pst_dataset',
+                value: dataset.id
+            },*/
             {
-                property:'pst_dec',
-                value: dec
-            },
-            {
-                property: 'pst_ra',
-                value: ra
+                property: 'coordinates',
+                value: '[['+ lng + ',' + lat+ '],['+ lng + ',' + lat+ ']]'
             }
         ]);
+
     },
 
     onDeleteComment: function (item) {
@@ -65,6 +69,7 @@ Ext.define('common.comment.CommentsPositionController', {
             success: function () {
 
                 // Disparar evento de que houve mudanca nos comentarios
+                comment.isCommentPosition = true;
                 view.fireEvent('changecomments', {type:'delete', comment:comment, total:store.data.items.length});
                 view.setLoading(false);
             },
@@ -90,10 +95,9 @@ Ext.define('common.comment.CommentsPositionController', {
     },
 
     onSaveComment: function (btn) {
-
-        var me = this,
-            view = me.getView(),
-            vm = view.getViewModel(),
+        var me    = this,
+            view  = me.getView(),
+            vm    = view.getViewModel(),
             store = vm.getStore('comments');
 
         var currentcomment = vm.get('currentcomment');
@@ -103,13 +107,13 @@ Ext.define('common.comment.CommentsPositionController', {
 
             store.sync({
                 success: function () {
-
                     store.commitChanges();
 
                     store.load({
                         callback: function () {
 
                             // Disparar evento de que houve mudanca nos comentarios
+                            currentcomment.isCommentPosition = true;
                             view.fireEvent('changecomments', {type:'delete', comment:currentcomment, total:store.data.items.length});
                             view.fireEvent('changecomments');
                         }
