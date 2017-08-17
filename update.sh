@@ -68,8 +68,24 @@ cd ..
 #   http://askubuntu.com/questions/694036/apache-as-non-root
 
 echo
+echo "= Restart rabbitmq-server ="
+sudo /etc/init.d/rabbitmq-server stop || error_exit "Error, exit" 12
+sudo /etc/init.d/rabbitmq-server start || error_exit "Error, exit" 13
+
+echo
+echo "= Reloading celerybeat ="
+sudo /etc/init.d/celerybeat stop || error_exit "Error, exit" 14
+sudo /etc/init.d/celerybeat start || error_exit "Error, exit" 15
+
+echo
+echo "= Reloading celeryd ="
+sudo /etc/init.d/celeryd stop || error_exit "Error, exit" 16
+sudo /etc/init.d/celeryd start || error_exit "Error, exit" 17
+
+echo
 echo "= Reloading apache ="
-sudo /etc/init.d/apache2 reload || error_exit "Error, exit" 12
+sudo /etc/init.d/apache2 stop || error_exit "Error, exit" 18
+sudo /etc/init.d/apache2 start || error_exit "Error, exit" 19
 
 echo
 echo "= Exiting ="
