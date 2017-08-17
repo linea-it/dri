@@ -100,6 +100,8 @@ router.register(r'comment/position', comment_views.PositionViewSet)
 # Aladin API
 router.register(r'aladin/image', aladin_views.ImageViewSet)
 
+providers = common_views.get_providers()
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^admin', admin.site.urls),
@@ -107,7 +109,7 @@ urlpatterns = [
     url(r'^contact/', common_views.contact_us),
     url(r'^get_fits_by_tilename', coadd_views.get_fits_by_tilename),
     url(r'^teste/', common_views.teste),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'), {'extra_context':{'providers': providers }}),
 ]
 
 if settings.USE_OAUTH:
