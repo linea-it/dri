@@ -295,8 +295,13 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
     except Exception as e:
         logger.error(e)
 
-        # Notify User about error
-        export_notify_user_failure(user, product)
+        # TODO: Deveria notificar o usuario em caso de falha mais o Celery esta retornando uma exception que nao
+        # consegui corrigir Never call result.get() within a task!
+        # See http://docs.celeryq.org/en/latest/userguide/tasks.html#task-synchronous-subtasks
+        # A solucao provavel e mudar a estrutura de tasks ao inves de usar chord utilizar tasks normais
+        # encadeadas e um callback no final.
+
+        # export_notify_user_failure(user, product)
 
 
 @task(name="export_target_to_csv")
