@@ -39,7 +39,6 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     onChangeRecord: function (record) {
-        console.log("onChangeRecord(%o)", record)
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
