@@ -10,10 +10,28 @@ function error_exit {
     exit "${2:-1}"
 }
 
+# vars
+BKP_PATH=bkp
+DB_PATH=db
+LOG_PATH=log
+
+mkdir -p "${BKP_PATH}"  || error_exit "Error, exit" 1
+cd $DRI_HOME
+
+echo
+echo "= Backup database ="
+TOFILE="${BKP_PATH}/bkp_"`basename "${DB_PATH}"`"_"`date +%Y-%m-%d_%H-%M-%S`".tgz"
+tar -czf "${TOFILE}" "${DB_PATH}" || error_exit "Error, exit" 2
+
+echo
+echo "= Backup and refresh logs ="
+TOFILE="${BKP_PATH}/bkp_"`basename "${LOG_PATH}"`"_"`date +%Y-%m-%d_%H-%M-%S`".tgz"
+tar -czf "${TOFILE}" "${LOG_PATH}" || error_exit "Error, exit" 3
+find "${LOG_PATH}" -type f \( -name \*.log -o -name celery -o -name worker1 -o -name worker1.pid \) -exec rm -f {} \; || error_exit "Error, exit" 4
+
 echo
 echo "= Updating the code ="
-cd $DRI_HOME
-git pull || error_exit "Error, exit" 1
+git pull || error_exit "Error, exit" 5
 
 echo
 echo "= Setting up env ="
@@ -52,10 +70,6 @@ cd ..
 echo
 echo "= Reloading apache ="
 sudo /etc/init.d/apache2 reload || error_exit "Error, exit" 12
-
-echo
-echo "= Running bash ="
-bash || error_exit "Error, exit" 13
 
 echo
 echo "= Exiting ="
