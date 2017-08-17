@@ -7,10 +7,10 @@
 {% load socialaccount %}
 {% providers_media_js %}
 {% if "facebook" in providers %}
-  <a href="{% provider_login_url "facebook" method="js_sdk" %}" class="btn btn-primary btn-block">Facebook Connect</a>
+<a href="{% provider_login_url "facebook" method="js_sdk" %}" class="btn btn-primary btn-block">Facebook Connect</a>
 {% endif %}
 {% if "google" in providers %}
-  <a href="{% provider_login_url "google" %}" class="btn btn-info btn-block">Google Connect</a>
+<a href="{% provider_login_url "google" %}" class="btn btn-info btn-block">Google Connect</a>
 {% endif %}
 <br/>
 
