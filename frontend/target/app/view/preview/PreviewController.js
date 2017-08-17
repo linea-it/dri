@@ -527,7 +527,7 @@ Ext.define('Target.view.preview.PreviewController', {
           view.setLoading(false);
         } else {
 
-          alert ('Files not found.')
+          alert ('File not found.')
 
         }
 
