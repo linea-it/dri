@@ -13,14 +13,6 @@ Ext.define('aladin.maps.MapSelectionViewModel', {
             type: 'maps',
             autoLoad: false
         },
-        // types_store: {
-        //     type: 'maps',
-        //     autoLoad: false
-        // },
-        // classes_store: {
-        //     type: 'maps',
-        //     autoLoad: false
-        // },
         aladin_images_store: {
             type: 'aladin_images',
             autoLoad: false

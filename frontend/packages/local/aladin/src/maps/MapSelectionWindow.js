@@ -22,7 +22,6 @@ Ext.define('aladin.maps.MapSelectionWindow', {
             title: 'Map viewer',
             closeAction: 'hide',
             bodyPadding: 5,
-            //layout: 'hbox',
             items: [
                 {
                     xtype: 'combobox',
@@ -32,20 +31,11 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                     emptyText: '<Types>',
                     displayField: 'pgr_display_name',
                     valueField: 'pgr_group',
-                    // bind: {
-                    //     store: '{types_store}'
-                    // },
                     store: {
                         type: 'maps',
                         autoLoad: false,
                         remoteFilter: false
                     },
-                    // store: new Ext.data.ArrayStore({
-                    //     fields: [
-                    //         'pgr_group',
-                    //         'pgr_display_name'
-                    //     ]
-                    // }),
                     listeners: {
                         select: 'onSelectMapType'
                     },
@@ -60,21 +50,11 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                     emptyText: '<Classes>',
                     displayField: 'pcl_display_name',
                     valueField: 'prd_class',
-                    // bind: {
-                    //     store: '{classes_store}',
-                    //     disabled: '{!cmbType.selection}'
-                    // },
                     store: {
                         type: 'maps',
                         autoLoad: false,
                         remoteFilter: false
                     },
-                    // store: new Ext.data.ArrayStore({
-                    //     fields: [
-                    //         'prd_class',
-                    //         'pcl_display_name'
-                    //     ]
-                    // }),
                     listeners: {
                         select: 'onSelectMapClass'
                     },
@@ -112,16 +92,7 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                     handler: 'onClickBtnOnOff',
                     bind: { disabled: '{!aladin_switchable}'}
                 }
-            ]//,
-            // buttons: [
-            //     {text: 'g', filter: 'g', handler: 'onClickBtnMap'},
-            //     {text: 'r', filter: 'r', handler: 'onClickBtnMap'},
-            //     {text: 'i', filter: 'i', handler: 'onClickBtnMap'},
-            //     {text: 'z', filter: 'z', handler: 'onClickBtnMap'},
-            //     {text: 'Y', filter: 'Y', handler: 'onClickBtnMap'},
-            //     {text: 'griz', filter: 'griz', handler: 'onClickBtnMap'},
-            //     {text: 'grizY', filter: 'grizY', handler: 'onClickBtnMap'},
-            // ]
+            ]
         });
 
         me.callParent(arguments);
