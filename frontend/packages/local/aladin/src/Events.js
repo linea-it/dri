@@ -204,7 +204,10 @@ Ext.define('aladin.Events', {
         if (me.windowMapSelection == null) {
             me.windowMapSelection = Ext.create('aladin.maps.MapSelectionWindow',{
                 width: 182,
-                height: 207,
+                height: 247,
+                x: 45,
+                y: 55,
+                resizable: false,
                 aladin: me
             });
         }

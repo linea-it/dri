@@ -28,6 +28,18 @@ Ext.define('aladin.maps.MapSelectionViewModel', {
     },
 
     data: {
-        release: null
+        release: null,
+        aladin_last_map_survey: null,
+        aladin_last_nonmap_survey: null,
+        map_selected: false
     },
+
+    formulas : {
+        aladin_switchable : function (get) {
+            return (
+                (get('aladin_last_nonmap_survey') != null) &&
+                    (get('aladin_last_map_survey') != null)
+            );
+        }
+    }
 });

@@ -100,6 +100,18 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                     editable: false,
                     queryMode: 'local',
                 }
+            ],
+            buttons: [
+                {
+                    text: 'Remove Map',
+                    handler: 'onClickBtnRemoveMap',
+                    bind: { disabled: '{!aladin_last_nonmap_survey}'}
+                },
+                {
+                    text: 'On/Off',
+                    handler: 'onClickBtnOnOff',
+                    bind: { disabled: '{!aladin_switchable}'}
+                }
             ]//,
             // buttons: [
             //     {text: 'g', filter: 'g', handler: 'onClickBtnMap'},
@@ -126,4 +138,5 @@ Ext.define('aladin.maps.MapSelectionWindow', {
             me.fireEvent('changerelease', release);
         }
     }
+
 });

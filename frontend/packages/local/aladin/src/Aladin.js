@@ -395,6 +395,13 @@ Ext.define('aladin.Aladin', {
         }
     },
 
+    getImageSurvey: function () {
+        var me = this,
+            aladin = me.getAladin();
+
+        return aladin.getBaseImageLayer();
+    },
+
     setImageSurvey: function (imageSurvey) {
         var me = this,
             aladin = me.getAladin(),

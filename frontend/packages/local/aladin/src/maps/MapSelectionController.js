@@ -34,6 +34,10 @@ Ext.define('aladin.maps.MapSelectionController', {
             {
                 property: 'release_id',
                 value: release
+            },
+            {
+                property: 'with_image',
+                value: true
             }//,
             // {
             //     fn: function(record) {
@@ -207,6 +211,7 @@ Ext.define('aladin.maps.MapSelectionController', {
         var me = this,
             vm = me.getViewModel(),
             view = vm.getView(),
+            aladin = view.getAladin(),
             map_model = cmb.selection,
             aladin_images_store = vm.getStore('aladin_images_store');
 
@@ -218,8 +223,6 @@ Ext.define('aladin.maps.MapSelectionController', {
                 value: map_model.get('id')
             }
         ]);
-
-        view.setLoading(true);
 
         aladin_images_store.load({
             callback: function() {
@@ -248,14 +251,68 @@ Ext.define('aladin.maps.MapSelectionController', {
                         }
                     };
 
-                    //console.log('survey: %o', survey);
-                    mapSurvey = view.getAladin().createImageSurvey(survey);
-                    //console.log('mapSurvey: %o', mapSurvey);
-                    view.getAladin().setImageSurvey(mapSurvey);
-                }
+                    // retrieve the first non-map layer to restore
+                    aladin_last_nonmap_survey = vm.get('aladin_last_nonmap_survey');
 
-                view.setLoading(false);
+                    if (aladin_last_nonmap_survey == null) {
+                        vm.set('aladin_last_nonmap_survey', aladin.getImageSurvey());
+                    }
+
+                    //console.log('aladin_last_nonmap_survey: %o', vm.get('aladin_last_nonmap_survey'));
+
+                    //console.log('survey: %o', survey);
+                    mapSurvey = aladin.createImageSurvey(survey);
+                    //console.log('mapSurvey: %o', mapSurvey);
+                    aladin.setImageSurvey(mapSurvey);
+
+                    vm.set('aladin_last_map_survey', mapSurvey);
+                    vm.set('map_selected', true);
+                }
             }
         });
+    },
+
+    onClickBtnRemoveMap: function (btn) {
+        console.log('onClickBtnRemoveMap(%o)', btn);
+
+        var me = this,
+            vm = me.getViewModel(),
+            view = vm.getView(),
+            aladin = view.getAladin(),
+            cmb_type = me.lookup('cmbType'),
+            cmb_class = me.lookup('cmbClass'),
+            cmb_filter = me.lookup('cmbFilter');
+
+        aladin_last_nonmap_survey = vm.get('aladin_last_nonmap_survey');
+        aladin.setImageSurvey(aladin_last_nonmap_survey); // null value will cleanup the background
+        vm.set('aladin_last_nonmap_survey', null);
+        vm.set('aladin_last_map_survey', null);
+        cmb_filter.reset();
+        cmb_class.reset();
+        cmb_type.reset();
+        vm.set('map_selected', false);
+    },
+
+    onClickBtnOnOff: function (btn) {
+        //console.log('onClickBtnOnOff(%o)', btn);
+
+        var me = this,
+            vm = me.getViewModel(),
+            view = vm.getView(),
+            aladin = view.getAladin(),
+            aladin_survey = null;
+
+        if (vm.get('map_selected')) {
+            aladin_survey = vm.get('aladin_last_map_survey');
+            vm.set('map_selected', false);
+        }
+        else
+        {
+            aladin_survey = vm.get('aladin_last_nonmap_survey');
+            vm.set('map_selected', true);
+        }
+
+        aladin.setImageSurvey(aladin_survey);
     }
+
 });
