@@ -401,10 +401,14 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 class MapFilter(django_filters.FilterSet):
     release_id = django_filters.MethodFilter(action='filter_release_id')
     release_name = django_filters.MethodFilter(action='filter_release_name')
+    with_image =  django_filters.MethodFilter(action='filter_with_image')
 
     class Meta:
         model = Map
         fields = ['id', 'prd_name', 'prd_display_name', 'prd_class']
+
+    def filter_with_image(self, queryset, value):
+        return queryset.filter(image__isnull=False)
 
     def filter_release_id(self, queryset, value):
         return queryset.filter(releases__id=value)
