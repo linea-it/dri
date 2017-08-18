@@ -268,8 +268,8 @@ Ext.define('aladin.Aladin', {
             me.enableDisableInfo(null, me.getInfoEnabled());
         }
 
-        // Custon events
-        me.addCustonEvents();
+        // Custom events
+        me.addCustomEvents();
 
         //adiciona o boto manager layers do aladin na toolbar esquerda
         el = document.querySelector('.aladin-layersControl-container');
@@ -282,9 +282,9 @@ Ext.define('aladin.Aladin', {
     },
 
     onChangeImageSurvey: function(){
-        console.log('ImageSurvey Changed');
-        // Custon events
-        this.addCustonEvents();
+        //console.log('ImageSurvey Changed');
+        // Custom events
+        this.addCustomEvents();
     },
 
     aladinIsReady: function () {
@@ -429,8 +429,8 @@ Ext.define('aladin.Aladin', {
             // Mostrar o footprint
             me.showDesFootprint();
 
-            // Custon events
-            me.addCustonEvents();
+            // Custom events
+            me.addCustomEvents();
 
             // Disparar evento changeimage
             me.fireEvent('changeimage', imageSurvey, me);

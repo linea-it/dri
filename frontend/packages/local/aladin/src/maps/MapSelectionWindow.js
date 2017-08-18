@@ -27,7 +27,7 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                 {
                     xtype: 'combobox',
                     reference: 'cmbType',
-                    fieldLabel: 'Choose the Map\'s Type',
+                    fieldLabel: 'Map Type:',
                     labelAlign: 'top',
                     emptyText: '<Types>',
                     displayField: 'pgr_display_name',
@@ -55,7 +55,7 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                 {
                     xtype: 'combobox',
                     reference: 'cmbClass',
-                    fieldLabel: 'Choose the Map\'s Class',
+                    fieldLabel: 'Map Class:',
                     labelAlign: 'top',
                     emptyText: '<Classes>',
                     displayField: 'pcl_display_name',
@@ -83,10 +83,10 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                 },
                 {
                     xtype: 'combobox',
-                    reference: 'cmbBand',
-                    fieldLabel: 'Choose the Map\'s Band',
+                    reference: 'cmbFilter',
+                    fieldLabel: 'Filter:',
                     labelAlign: 'top',
-                    emptyText: '<Bands>',
+                    emptyText: '<Filters>',
                     displayField: 'prd_filter',
                     valueField: 'id',
                     store: {
@@ -95,20 +95,20 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                         remoteFilter: false
                     },
                     listeners: {
-                        select: 'onSelectMapBand'
+                        select: 'onSelectMapFilter'
                     },
                     editable: false,
                     queryMode: 'local',
                 }
             ]//,
             // buttons: [
-            //     {text: 'g', band: 'g', handler: 'onClickBtnMap'},
-            //     {text: 'r', band: 'r', handler: 'onClickBtnMap'},
-            //     {text: 'i', band: 'i', handler: 'onClickBtnMap'},
-            //     {text: 'z', band: 'z', handler: 'onClickBtnMap'},
-            //     {text: 'Y', band: 'Y', handler: 'onClickBtnMap'},
-            //     {text: 'griz', band: 'griz', handler: 'onClickBtnMap'},
-            //     {text: 'grizY', band: 'grizY', handler: 'onClickBtnMap'},
+            //     {text: 'g', filter: 'g', handler: 'onClickBtnMap'},
+            //     {text: 'r', filter: 'r', handler: 'onClickBtnMap'},
+            //     {text: 'i', filter: 'i', handler: 'onClickBtnMap'},
+            //     {text: 'z', filter: 'z', handler: 'onClickBtnMap'},
+            //     {text: 'Y', filter: 'Y', handler: 'onClickBtnMap'},
+            //     {text: 'griz', filter: 'griz', handler: 'onClickBtnMap'},
+            //     {text: 'grizY', filter: 'grizY', handler: 'onClickBtnMap'},
             // ]
         });
 

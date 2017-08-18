@@ -160,8 +160,8 @@ Ext.define('aladin.maps.MapSelectionController', {
             vm = me.getViewModel(),
             map_model = cmb.selection,
             store = vm.getStore('maps_store'),
-            cmb_band = me.lookup('cmbBand'),
-            store_bands = cmb_band.getStore();
+            cmb_filter = me.lookup('cmbFilter'),
+            store_filters = cmb_filter.getStore();
 
         // store.addFilter([
         //     {
@@ -174,8 +174,8 @@ Ext.define('aladin.maps.MapSelectionController', {
         //     }
         // ]);
 
-        cmb_band.reset();
-        store_bands.removeAll();
+        cmb_filter.reset();
+        store_filters.removeAll();
 
         //console.log('map_model: ', map_model)
 
@@ -185,7 +185,7 @@ Ext.define('aladin.maps.MapSelectionController', {
             //console.log(map_model.get('prd_class'));
 
             if (record.get('id') == map_model.get('id')) {
-                store_bands.add(record);
+                store_filters.add(record);
             }
         }, this);
     },
@@ -195,14 +195,14 @@ Ext.define('aladin.maps.MapSelectionController', {
 
     //     var me = this,
     //         vm = me.getViewModel(),
-    //         band_name = btn.band;
+    //         filter_name = btn.filter;
 
     //     //TODO remove
-    //     console.log(band_name);
+    //     console.log(filter_name);
     // }
 
-    onSelectMapBand: function (cmb) {
-        //console.log('onSelectMapBand(%o)', cmb);
+    onSelectMapFilter: function (cmb) {
+        //console.log('onSelectMapFilter(%o)', cmb);
 
         var me = this,
             vm = me.getViewModel(),
