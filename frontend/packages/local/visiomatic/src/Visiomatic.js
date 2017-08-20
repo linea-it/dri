@@ -1003,7 +1003,7 @@ Ext.define('visiomatic.Visiomatic', {
                     lng: record.get('pst_ra')
                 };
 
-                me.createCommentIcon(latlng);                
+                me.createCommentIcon(latlng);
             });
         }
 
@@ -1113,7 +1113,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker'+(circle?'':' mapmaker-comment-position'))
             .on('contextmenu', me.onLayerContextMenu, me);
-        
+
         if (circle){
             circle.commentMaker = commentMaker;
             commentMaker.targetObjet = circle;
@@ -1131,7 +1131,7 @@ Ext.define('visiomatic.Visiomatic', {
                 lat: comment.get('pst_dec'),
                 lng: comment.get('pst_ra')
             };
-        
+
         // se comentário de posição
         if (comment.isCommentPosition){
             maps.eachLayer(function(l){
@@ -1156,7 +1156,7 @@ Ext.define('visiomatic.Visiomatic', {
                 }
             }
         }
-        
+
         // se comentário de objeto
         else{
             for (i in layers){
@@ -1340,6 +1340,27 @@ Ext.define('visiomatic.Visiomatic', {
 
             return false;
         }
+    },
+
+    showDownloadWindow: function () {
+        var me = this,
+            currentDataset = me.getCurrentDataset(),
+            tilename;
+
+        if (currentDataset.get('tli_tilename')) {
+
+          tilename = currentDataset.get('tli_tilename');
+
+          var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
+          winDownload.loadFits(tilename);
+          winDownload.show();
+
+        } else {
+
+          alert ('File not found.')
+
+        }
+
     },
 
     /**

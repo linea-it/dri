@@ -1,9 +1,9 @@
-Ext.define('Target.view.preview.DescutDownloadWindow', {
+Ext.define('visiomatic.download.DescutDownloadWindow', {
     extend: 'Ext.window.Window',
 
     requires: [
-        'Target.view.preview.FitsController',
-        'Target.view.preview.FitsModel',
+        'visiomatic.download.FitsController',
+        'visiomatic.download.FitsModel',
     ],
 
     xtype: 'target-download-descut',

@@ -1,4 +1,4 @@
-Ext.define('Target.view.preview.FitsController', {
+Ext.define('visiomatic.download.FitsController', {
     extend: 'Ext.app.ViewController',
 
     alias: 'controller.fits-files',
