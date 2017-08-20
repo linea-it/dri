@@ -77,9 +77,9 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
         this.close();
     },
 
-    loadFits: function (tilename) {
+    loadFits: function (tilename, catalog) {
         var me = this;
         this.loadFits = tilename;
-        me.fireEvent('changeLoadFits', tilename);
+        me.fireEvent('changeLoadFits', tilename, catalog);
     },
 });

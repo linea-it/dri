@@ -1352,7 +1352,7 @@ Ext.define('visiomatic.Visiomatic', {
           tilename = currentDataset.get('tli_tilename');
 
           var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
-          winDownload.loadFits(tilename);
+          winDownload.loadFits(tilename, 'Y3A1_COADD');
           winDownload.show();
 
         } else {
