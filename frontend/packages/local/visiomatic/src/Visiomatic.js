@@ -1439,10 +1439,13 @@ Ext.define('visiomatic.Visiomatic', {
             Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
         hiddenlink.download = layer._title + '_' + libL.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
           '.jpg';
-        hiddenlink['data-link'] = layer._title + '_' + libL.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
-          '.jpg';
-          console.log(hiddenlink);
-        hiddenlink.click();
+
+        var winDownload = Ext.create('visiomatic.crop.CropWindow', {
+          image: hiddenlink,
+          height: dy+100,
+          width: dx+100
+        });
+        // hiddenlink.click();
     },
 
     showContextMenuObject: function(event){
