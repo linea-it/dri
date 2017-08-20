@@ -91,6 +91,18 @@ Ext.define('Sky.view.dataset.Dataset', {
                             },
                             menu: []
                         },
+                        {
+                            xtype: 'button',
+                            reference: 'btnCrop',
+                            iconCls: 'x-fa fa-crop',
+                            enableToggle: true,
+                            toggleHandler: 'showHideCrop',
+                            tooltip: 'Show/Hide Crop',
+                            bind: {
+                                disabled: '{is_empty}'
+                            },
+                            pressed: true,
+                        },
                         /*{
                             xtype: 'button',
                             iconCls: 'x-fa fa-map-marker',
