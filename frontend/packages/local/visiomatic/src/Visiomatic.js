@@ -150,7 +150,7 @@ Ext.define('visiomatic.Visiomatic', {
         lcrosshair: null,
 
         showCrosshair: false,
-
+        enableContextMenu: true,
         mlocate:''
     },
 
@@ -1351,6 +1351,8 @@ Ext.define('visiomatic.Visiomatic', {
             target = event.target,
             xy     = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
 
+        if (!me.getEnableContextMenu()) return;
+
         if (event.originalEvent.target.classList.contains('comment-maker') && !target.targetPosition){
             return me.showContextMenuObject(event);
         }
@@ -1447,7 +1449,9 @@ Ext.define('visiomatic.Visiomatic', {
         var objectMenuItem,
             me = this,
             xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
-
+        
+        if (!me.getEnableContextMenu()) return;
+        
         if (!this.contextMenuObject){
             this.contextMenuObject = new Ext.menu.Menu({
                 items: [
