@@ -41,6 +41,8 @@ Ext.define('visiomatic.Visiomatic', {
 
         enableSidebar: true,
 
+        enableSmallCrosshair: true,
+
         // Catalog Overlays
         enableCatalogs: true,
         availableCatalogs: [
@@ -408,6 +410,21 @@ Ext.define('visiomatic.Visiomatic', {
 
     },
 
+    createSmallCrosshair: function () {
+        var me = this,
+            coordinates = me.getRaDec(),
+            crosshairOptions = {
+                color: '#90FA3A',
+                weight: 1,
+                opacity: 0.8,
+                smoothFactor: 1,
+                centerPadding: 0.0005, // Deg
+                size: 0.0015 // Deg
+            };
+
+        me.drawCrosshair(coordinates.ra, coordinates.dec, crosshairOptions);
+    },
+
     addWcsController: function () {
         var me = this,
             libL = me.libL,
@@ -724,6 +741,11 @@ Ext.define('visiomatic.Visiomatic', {
                 me.cropInit['radec'],
                 me.currentPosition['radec']
             );
+        }
+
+        // Small Crosshair
+        if (me.getEnableSmallCrosshair()) {
+            me.createSmallCrosshair();
         }
 
         //me.fireEvent('changemouseposition', event, me);
@@ -1266,11 +1288,20 @@ Ext.define('visiomatic.Visiomatic', {
         }
 
         // Verificar se ja tem crosshair
-        if (me.lcrosshair) {
+        if (me.lcrosshair && !options) {
             if (map.hasLayer(me.lcrosshair)) {
                 // se ja houver remove do map
                 map.removeLayer(me.lcrosshair);
                 me.lcrosshair = null;
+            }
+        }
+
+        // Verificar se ja tem small crosshair
+        if (me.lcrosshair && options) {
+            if (map.hasLayer(me.lsmallcrosshair)) {
+                // se ja houver remove do map
+                map.removeLayer(me.lsmallcrosshair);
+                me.lsmallcrosshair = null;
             }
         }
 
@@ -1297,10 +1328,19 @@ Ext.define('visiomatic.Visiomatic', {
         layer = new l.LayerGroup(
                 [lineTop, lineBotton, lineLeft, lineRight]);
 
+        layerSmall = new l.LayerGroup(
+                [lineTop, lineBotton, lineLeft, lineRight]);
+
+        me.lsmallcrosshair = layerSmall;
         me.lcrosshair = layer;
 
-        if (me.getShowCrosshair()) {
+        if (me.getShowCrosshair() && !options) {
             map.addLayer(me.lcrosshair);
+
+        }
+
+        if (me.getShowCrosshair() && options) {
+            map.addLayer(me.lsmallcrosshair);
 
         }
 
