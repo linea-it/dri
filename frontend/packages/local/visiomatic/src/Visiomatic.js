@@ -1382,6 +1382,27 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
+    showDownloadWindow: function () {
+        var me = this,
+            currentDataset = me.getCurrentDataset(),
+            tilename;
+
+        if (currentDataset.get('tli_tilename')) {
+
+          tilename = currentDataset.get('tli_tilename');
+
+          var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
+          winDownload.loadFits(tilename, 'Y3A1_COADD');
+          winDownload.show();
+
+        } else {
+
+          alert ('File not found.')
+
+        }
+
+    },
+
     /**
      * @description Exibe um menu de contexto
      */
