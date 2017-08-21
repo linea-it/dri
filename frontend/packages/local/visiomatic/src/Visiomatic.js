@@ -1508,7 +1508,6 @@ Ext.define('visiomatic.Visiomatic', {
         return layer
     },
 
-
     /**
      * Verifica se uma dada coordenada esta dentro dos limites do dataset atual.
      */

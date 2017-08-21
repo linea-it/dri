@@ -376,8 +376,15 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     gotoPosition: function(value){
-        var visiomatic = this.lookupReference('visiomatic');        
-        visiomatic.panTo(value);
+        var visiomatic = this.lookupReference('visiomatic');
+
+        visiomatic.coordinatesToLatLng(value, function(latlng){
+            if (visiomatic.isInsideTile(latlng.lng, latlng.lat)){
+                visiomatic.panTo(value);
+            }else{
+                console.log('There is no DES tile in the current release on this position.');
+            }
+        });
     },
 
     onActivate: function(){
