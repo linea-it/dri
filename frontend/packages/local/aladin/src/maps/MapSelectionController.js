@@ -26,7 +26,11 @@ Ext.define('aladin.maps.MapSelectionController', {
             view = vm.getView(),
             store = vm.getStore('maps_store'),
             cmb_type = me.lookup('cmbType'),
-            store_types = cmb_type.getStore();
+            cmb_class = me.lookup('cmbClass'),
+            store_types = cmb_type.getStore(),
+            store_classes = cmb_class.getStore(),
+            cmb_filter = me.lookup('cmbFilter'),
+            store_filters = cmb_filter.getStore();
 
         view.setLoading(true);
 
@@ -45,6 +49,10 @@ Ext.define('aladin.maps.MapSelectionController', {
             callback: function() {
                 cmb_type.reset();
                 store_types.removeAll();
+                cmb_class.reset();
+                store_classes.removeAll();
+                cmb_filter.reset();
+                store_filters.removeAll();
 
                 store.each(function(record){
                     if (store_types.findRecord('pgr_group', record.get('pgr_group')) == null) {
@@ -65,10 +73,14 @@ Ext.define('aladin.maps.MapSelectionController', {
             map_model = cmb.selection,
             store = vm.getStore('maps_store'),
             cmb_class = me.lookup('cmbClass'),
-            store_classes = cmb_class.getStore();
+            store_classes = cmb_class.getStore(),
+            cmb_filter = me.lookup('cmbFilter'),
+            store_filters = cmb_filter.getStore();
 
         cmb_class.reset();
         store_classes.removeAll();
+        cmb_filter.reset();
+        store_filters.removeAll();
 
         store.each(function(record) {
             if (record.get('pgr_group') == map_model.get('pgr_group')) {
@@ -106,8 +118,6 @@ Ext.define('aladin.maps.MapSelectionController', {
             aladin = view.getAladin(),
             map_model = cmb.selection,
             aladin_images_store = vm.getStore('aladin_images_store');
-
-
 
         aladin_images_store.addFilter([
             {
@@ -157,27 +167,6 @@ Ext.define('aladin.maps.MapSelectionController', {
         });
     },
 
-    onClickBtnRemoveMap: function (btn) {
-        console.log('onClickBtnRemoveMap(%o)', btn);
-
-        var me = this,
-            vm = me.getViewModel(),
-            view = vm.getView(),
-            aladin = view.getAladin(),
-            cmb_type = me.lookup('cmbType'),
-            cmb_class = me.lookup('cmbClass'),
-            cmb_filter = me.lookup('cmbFilter');
-
-        aladin_last_nonmap_survey = vm.get('aladin_last_nonmap_survey');
-        aladin.setImageSurvey(aladin_last_nonmap_survey); // null value will cleanup the background
-        vm.set('aladin_last_nonmap_survey', null);
-        vm.set('aladin_last_map_survey', null);
-        cmb_filter.reset();
-        cmb_class.reset();
-        cmb_type.reset();
-        vm.set('map_selected', false);
-    },
-
     onClickBtnOnOff: function (btn) {
         //console.log('onClickBtnOnOff(%o)', btn);
 
@@ -189,12 +178,10 @@ Ext.define('aladin.maps.MapSelectionController', {
 
         if (vm.get('map_selected')) {
             aladin_survey = vm.get('aladin_last_map_survey');
-            vm.set('map_selected', false);
         }
         else
         {
             aladin_survey = vm.get('aladin_last_nonmap_survey');
-            vm.set('map_selected', true);
         }
 
         aladin.setImageSurvey(aladin_survey);
