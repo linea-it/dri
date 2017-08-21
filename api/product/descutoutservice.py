@@ -13,7 +13,7 @@ from django.core.mail import EmailMessage
 from django.db.models import Sum
 from django.template.loader import render_to_string
 from django.utils import timezone
-from lib.CatalogDB import CatalogDB
+from lib.CatalogDB import CatalogObjectsDBHelper
 from product.models import Catalog, ProductContentAssociation
 from product.models import CutOutJob
 from product.models import Cutout
@@ -21,6 +21,7 @@ from product.serializers import AssociationSerializer
 from sqlalchemy import exc as sa_exc
 from sqlalchemy.sql import column
 from sqlalchemy.sql import select
+from product.association import Association
 
 
 class DesCutoutService:
@@ -399,9 +400,12 @@ class DesCutoutService:
                 break
 
             if list_files is not None:
+                #  Path onde ficaram os arquivos de cutout
+                cutoutdir = self.get_cutout_dir(job)
+
                 # Guardar o Arquivo de resultado com os links a serem baixados
                 result_file = self.save_result_links_file(job, list_files)
-                job.cjb_results_file = result_file
+                job.cjb_results_file = result_file.split(self.data_dir)[1].strip("/")
 
                 # Baixar o Arquivo Matched que sera usado para associar os arquivos baixados com os objetos.
                 matched = None
@@ -412,14 +416,10 @@ class DesCutoutService:
                         break
 
                 if matched is not None:
-                    cutoutdir = self.get_cutout_dir(job)
-                    print(matched)
                     matched_file = Download().download_file_from_url(
                         matched.get("url"),
                         cutoutdir,
                         matched.get("filename"))
-
-                    job.cjb_matched_file = matched_file
 
                     # Criar um arquivo associando os arquivos ao seu objeto
                     objects = self.get_objects_from_file(job)
@@ -436,6 +436,7 @@ class DesCutoutService:
                                     break
 
                     matched_csv.close()
+                    job.cjb_matched_file = matched_file.split(self.data_dir)[1].strip("/")
 
                     # Escrever o novo arquivo de objetos com o nome do arquivo
                     with open(os.path.join(cutoutdir, "objects.csv"), "w") as new_objects_csv:
@@ -448,6 +449,10 @@ class DesCutoutService:
                             writer.writerow(obj)
 
                     new_objects_csv.close()
+
+
+                job.cjb_cutouts_path = cutoutdir.split(self.data_dir)[1].strip("/")
+
 
                 # Changing the CutoutJob Status for Before Download
                 self.change_cutoutjob_status(job, "bd")
@@ -505,23 +510,21 @@ class DesCutoutService:
         product_id = job.cjb_product_id
         cutoutdir = self.get_cutout_dir(job)
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
-        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
-        serializer = AssociationSerializer(queryset, many=True)
-        associations = serializer.data
 
-        properties = dict()
-        columns = list()
-        for property in associations:
-            if property.get("pcc_ucd"):
-                properties.update({property.get("pcc_ucd"): property.get("pcn_column_name").lower().strip()})
-                columns.append(property.get("pcn_column_name"))
+        # colunas associadas ao produto
+        associations = Association().get_associations_by_product_id(product_id)
 
-        db_helper = CutoutJobsDBHelper(
+        # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
+        columns = Association().get_properties_associated(product_id)
+
+        catalog_db = CatalogObjectsDBHelper(
             catalog.tbl_name,
             schema=catalog.tbl_schema,
             database=catalog.tbl_database)
 
-        rows = db_helper.query_result(properties)
+        rows, count = catalog_db.query(
+            columns=columns
+        )
 
         # Criar um arquivo que servira de index para a associar os objetos as imagens
 
@@ -534,15 +537,14 @@ class DesCutoutService:
             writer = csv.DictWriter(objects_csv, fieldnames=fieldnames)
             writer.writeheader()
 
-            objects = list()
             for row in rows:
                 obj = dict({
-                    "id": row.get(properties.get("meta.id;meta.main")),
-                    "ra": row.get(properties.get("pos.eq.ra;meta.main")),
-                    "dec": row.get(properties.get("pos.eq.dec;meta.main")),
+                    "id": row.get(associations.get("meta.id;meta.main")),
+                    "ra": row.get(associations.get("pos.eq.ra;meta.main")),
+                    "dec": row.get(associations.get("pos.eq.dec;meta.main")),
                     "key": str(self.get_object_position_key(
-                        row.get(properties.get("pos.eq.ra;meta.main")),
-                        row.get(properties.get("pos.eq.dec;meta.main"))))
+                        row.get(associations.get("pos.eq.ra;meta.main")),
+                        row.get(associations.get("pos.eq.dec;meta.main"))))
                 })
 
                 writer.writerow(obj)
@@ -655,48 +657,47 @@ class DesCutoutService:
         return cutout
 
 
-class CutoutJobsDBHelper:
-    def __init__(self, table, schema=None, database=None):
+# class CutoutJobsDBHelper(CatalogDB):
+    # def __init__(self, table, schema=None, database=None):
+    #
+    #     # Get an instance of a logger
+    #     self.logger = logging.getLogger("descutoutservice")
+    #
+    #     self.schema = schema
+    #
+    #     if database:
+    #         self.db = CatalogDB(db=database)
+    #     else:
+    #         self.db = CatalogDB()
+    #
+    #     if not self.db.table_exists(table, schema=self.schema):
+    #         raise Exception("Table or view  %s.%s does not exist" %
+    #                         (self.schema, table))
+    #
+    #     # Desabilitar os warnings na criacao da tabela
+    #     with warnings.catch_warnings():
+    #         warnings.simplefilter("ignore", category=sa_exc.SAWarning)
+    #
+    #         self.table = self.db.get_table_obj(table, schema=self.schema)
+    #         self.str_columns = [column.key for column in self.table.columns]
 
-        # Get an instance of a logger
-        self.logger = logging.getLogger("descutoutservice")
-
-        self.schema = schema
-
-        if database:
-            com = CatalogDB(db=database)
-        else:
-            com = CatalogDB()
-
-        self.db = com.database
-        if not self.db.table_exists(table, schema=self.schema):
-            raise Exception("Table or view  %s.%s does not exist" %
-                            (self.schema, table))
-
-        # Desabilitar os warnings na criacao da tabela
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=sa_exc.SAWarning)
-
-            self.table = self.db.get_table_obj(table, schema=self.schema)
-            self.str_columns = [column.key for column in self.table.columns]
-
-    def query_result(self, properties):
-        cols = [
-            properties.get("meta.id;meta.main"),
-            properties.get("pos.eq.ra;meta.main"),
-            properties.get("pos.eq.dec;meta.main")
-        ]
-        columns = list()
-
-        for col in cols:
-            col = col.lower().strip()
-            if col in self.str_columns:
-                columns.append(column(str(col)))
-
-        stm = select(columns).select_from(self.table)
-        self.logger.debug("Catalog Query: %s" % str(stm))
-
-        return self.db.fetchall_dict(stm)
+    # def query_result(self, properties):
+    #     cols = [
+    #         properties.get("meta.id;meta.main"),
+    #         properties.get("pos.eq.ra;meta.main"),
+    #         properties.get("pos.eq.dec;meta.main")
+    #     ]
+    #     columns = list()
+    #
+    #     for col in cols:
+    #         col = col.lower().strip()
+    #         if col in self.str_columns:
+    #             columns.append(column(str(col)))
+    #
+    #     stm = select(columns).select_from(self.table)
+    #     self.logger.debug("Catalog Query: %s" % str(stm))
+    #
+    #     return self.db.fetchall_dict(stm)
 
 
 class CutoutJobNotify:

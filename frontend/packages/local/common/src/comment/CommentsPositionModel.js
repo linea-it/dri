@@ -13,7 +13,8 @@ Ext.define('common.comment.CommentsPositionModel', {
 
     data: {
         catalog_id: null,
-        object_id: null
+        //object_id: null,
+        coordinates: null
     },
 
     stores: {

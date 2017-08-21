@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User, Group
 from lib.sqlalchemy_wrapper import DBBase
+from sqlalchemy.sql import column
 from sqlalchemy.sql import select
 from sqlalchemy.sql import table
-from sqlalchemy.sql import column
 
 
 class NcsaBackend(object):
@@ -22,17 +22,14 @@ class NcsaBackend(object):
 
     def check_user(self, username, password):
         try:
-            prep = DBBase.prepare_connection('dessci')
-            prep['USER'] = username
-            prep['PASSWORD'] = password
-            db = DBBase(prep)
+            DBBase('dessci', [username, password])
             # [CMP] this should be not needed,
             # if a pool is used it will close all the connection of the pool
             # db.engine.dispose()
 
             return True
 
-        except Exception:
+        except:
             return False
 
     def ensure_user(self, username):
@@ -58,7 +55,7 @@ class NcsaBackend(object):
 
     def getUserInfo(self, username):
         # TODO [CMP] this should have a connection management/pool
-        db = DBBase(DBBase.prepare_connection('dessci'))
+        db = DBBase('dessci')
         stm = select([column('email'), column('firstname'), column('lastname')]).select_from(
             table('des_users')).where(column('username') == username)
         return db.fetchone_dict(stm)
