@@ -24,6 +24,16 @@ Ext.define('aladin.maps.MapSelectionWindow', {
             bodyPadding: 5,
             items: [
                 {
+                    xtype: 'checkbox',
+                    reference: 'chkOnOff',
+                    boxLabel: 'Display Map',
+                    handler: 'onClickBtnOnOff',
+                    bind: {
+                        disabled: '{!aladin_switchable}',
+                        value: '{map_selected}'
+                    }
+                },
+                {
                     xtype: 'combobox',
                     reference: 'cmbType',
                     fieldLabel: 'Map Type:',
@@ -79,18 +89,6 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                     },
                     editable: false,
                     queryMode: 'local',
-                }
-            ],
-            buttons: [
-                {
-                    text: 'Remove Map',
-                    handler: 'onClickBtnRemoveMap',
-                    bind: { disabled: '{!aladin_last_nonmap_survey}'}
-                },
-                {
-                    text: 'On/Off',
-                    handler: 'onClickBtnOnOff',
-                    bind: { disabled: '{!aladin_switchable}'}
                 }
             ]
         });
