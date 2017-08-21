@@ -509,27 +509,10 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     onSave: function () {
-        var me = this,
-            view = me.getView(),
-            vm = view.getViewModel(),
-            object = vm.get('currentRecord'),
-            catalog = vm.get('currentCatalog'),
-            id;
+      var me = this,
+          visiomatic = me.lookupReference('visiomatic');
 
-        if (object.get('tilename')) {
-
-          view.setLoading(true);
-          tilename = object.get('tilename');
-
-          var winDownload = Ext.create('Target.view.preview.DescutDownloadWindow');
-          winDownload.loadFits(tilename);
-          winDownload.show();
-          view.setLoading(false);
-        } else {
-
-          alert ('File not found.')
-
-        }
+      visiomatic.showDownloadWindow();
 
     },
 

@@ -78,7 +78,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
                     }
                 ]
             });
-            
+
             //passar latlng e feature para ser caregado comentários de um objeto específico ou de uma posição específica
             comment.down('comments-object').getController().loadComments(catalog_id, object_id, event.latlng, feature);
         }
@@ -86,7 +86,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     //ao clicar em um item do menu de contexto de objeto do visiomatic
     onImageMenuItemClickVisiomatic: function(event, dataset){
-        var latlng = event.latlng;        
+        var latlng = event.latlng;
         var comment = Ext.create('Ext.window.Window', {
             title: 'Position Comments',
             iconCls: 'x-fa fa-comments',
@@ -385,6 +385,14 @@ Ext.define('Sky.view.dataset.DatasetController', {
                 Ext.MessageBox.alert('Alert', 'There is no DES tile in the current release on this position.');
             }
         });
+    },
+
+    onSave: function () {
+      var me = this,
+          visiomatic = me.lookupReference('visiomatic');
+
+      visiomatic.showDownloadWindow();
+
     },
 
     onActivate: function(){
