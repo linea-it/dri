@@ -78,7 +78,7 @@ Ext.define('Target.view.preview.Preview', {
                 boxLabel: 'Reject',
                 bind: {
                     value: '{currentRecord._meta_reject}',
-                    disabled: '{!currentRecord._meta_id}'
+                    disabled: '{is_empty}'
                 }
             },
             {
@@ -91,7 +91,8 @@ Ext.define('Target.view.preview.Preview', {
                 minValue: 0,
                 width: 50,
                 bind: {
-                    value: '{currentRecord._meta_rating}'
+                    value: '{currentRecord._meta_rating}',
+                    disabled: '{is_empty}'
                 }
             },
             {
@@ -100,23 +101,20 @@ Ext.define('Target.view.preview.Preview', {
                 tooltip: 'See more information about this object in Explorer app',
                 ui: 'soft-blue',
                 iconCls: 'x-fa fa-info-circle',
-                handler: 'onExplorer'
-            },
-            /*{
-                xtype: 'button',
-                iconCls: 'x-fa fa-comments',
+                handler: 'onExplorer',
                 bind: {
-                    disabled: '{!currentRecord._meta_id}'
-                },
-                handler: 'onComment'
-            },*/
-
+                    disabled: '{is_empty}'
+                }
+            },
             '-',
             {
                 xtype: 'button',
                 iconCls: 'x-fa fa-arrows',
                 tooltip: 'Center',
-                handler: 'onCenterTarget'
+                handler: 'onCenterTarget',
+                bind: {
+                    disabled: '{is_empty}'
+                }
             },
             {
                 xtype: 'button',
@@ -124,7 +122,10 @@ Ext.define('Target.view.preview.Preview', {
                 tooltip: 'Show/Hide Crosshair',
                 enableToggle: true,
                 pressed: true,
-                reference: 'BtnCrosshair'
+                reference: 'BtnCrosshair',
+                bind: {
+                    disabled: '{is_empty}'
+                }
             },
             {
                 xtype: 'button',
@@ -134,7 +135,9 @@ Ext.define('Target.view.preview.Preview', {
                 toggleHandler: 'showHideComments',
                 tooltip: 'Show/Hide Comments',
                 pressed: true,
-                hidden: true
+                bind: {
+                    disabled: '{is_empty}'
+                },
             },
             {
                 xtype: 'button',
@@ -143,7 +146,9 @@ Ext.define('Target.view.preview.Preview', {
                 enableToggle: true,
                 toggleHandler: 'showHideCrop',
                 tooltip: 'Show/Hide Crop',
-                hidden: true,
+                bind: {
+                    disabled: '{is_empty}'
+                },
                 pressed: true,
             },
             {
@@ -151,8 +156,10 @@ Ext.define('Target.view.preview.Preview', {
                 reference: 'btnSave',
                 iconCls: 'x-fa fa-download',
                 handler: 'onSave',
-                hidden: true,
                 tooltip: 'Download',
+                bind: {
+                    disabled: '{is_empty}'
+                }
             },
             '-',
             {
@@ -163,7 +170,10 @@ Ext.define('Target.view.preview.Preview', {
                 enableToggle: true,
                 toggleHandler: 'showHideRadius',
                 pressed: true,
-                hidden: true
+                hidden: true,
+                bind: {
+                    disabled: '{is_empty}'
+                }
             },
             {
                 xtype: 'button',
@@ -173,7 +183,10 @@ Ext.define('Target.view.preview.Preview', {
                 enableToggle: true,
                 toggleHandler: 'showHideMembers',
                 pressed: true,
-                hidden: true
+                hidden: true,
+                bind: {
+                    disabled: '{is_empty}'
+                }
             }
         ]
     }],
@@ -182,20 +195,25 @@ Ext.define('Target.view.preview.Preview', {
         var me = this,
             vm = me.getViewModel();
 
-        // Setar o currentRecord no Painel
-        me.currentRecord = record;
+        if ((record) && (record.get('_meta_id') > 0)) {
+            // Setar o currentRecord no Painel
+            me.currentRecord = record;
 
-        // Setar o currentRecord no viewModel
-        vm.set('currentRecord', record);
+            // Setar o currentRecord no viewModel
+            vm.set('currentRecord', record);
 
-        // Setar o catalogo
-        vm.set('currentCatalog', catalog);
+            // Marcar no view model o atributo is_empty como false para habilitar os botoes
+            vm.set('is_empty', false);
 
-        // Declarando se o Catalogo exibe single objects ou sistemas.
-        vm.set('is_system', catalog.get('pcl_is_system'));
+            // Setar o catalogo
+            vm.set('currentCatalog', catalog);
 
-        // disparar evento before load
-        me.fireEvent('changerecord', record, me);
+            // Declarando se o Catalogo exibe single objects ou sistemas.
+            vm.set('is_system', catalog.get('pcl_is_system'));
+
+            // disparar evento before load
+            me.fireEvent('changerecord', record, me);
+        }
     }
 
 });
