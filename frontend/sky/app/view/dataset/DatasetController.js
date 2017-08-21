@@ -382,7 +382,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
             if (visiomatic.isInsideTile(latlng.lng, latlng.lat)){
                 visiomatic.panTo(value);
             }else{
-                console.log('There is no DES tile in the current release on this position.');
+                Ext.MessageBox.alert('Alert', 'There is no DES tile in the current release on this position.');
             }
         });
     },
