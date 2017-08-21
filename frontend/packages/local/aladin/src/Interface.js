@@ -1,6 +1,11 @@
 Ext.define('aladin.Interfaces', {
 
+    requires: [
+        'aladin.maps.MapSelectionWindow'
+    ],
+
     windowInfo: null,
+    windowMapSelection: null,
 
     enableDisableInfo: function (btn, state) {
         var me = this,
@@ -50,7 +55,7 @@ Ext.define('aladin.Interfaces', {
             vm = me.getViewModel(),
             tile = vm.get('tile'),
             tag = vm.get('tag'),
-            release = vm.get('release'),
+            release = vm.get('release_name'),
             data,
             tl = '',
             tg = '',
@@ -175,6 +180,19 @@ Ext.define('aladin.Interfaces', {
 
         }
 
+        // Mapas
+        if (me.getEnableMaps()) {
+            tools.push({
+                xtype: 'button',
+                tooltip: 'Map Viewer',
+                iconCls: 'x-fa fa-th',
+                scope: me,
+                handler: me.onClickBtnMap,
+            });
+
+        }
+
+        // TODO ARRANCAR VELHO MAPA
         // Color Map Menu
         if (me.getEnableColorMap()) {
 
