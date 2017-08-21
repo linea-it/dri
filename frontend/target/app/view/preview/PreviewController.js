@@ -47,8 +47,7 @@ Ext.define('Target.view.preview.PreviewController', {
             dec = record.get('_meta_dec'),
             position;
 
-        vm.set('currentRecord', record);
-
+        // Limpar os membros do cluster
         vm.set('overlayMembers', null);
 
         position = String(ra) + ',' + String(dec);
@@ -125,15 +124,17 @@ Ext.define('Target.view.preview.PreviewController', {
         if (vm.get('is_system')) {
             refs.btnRadius.setVisible(true);
             refs.btnMembers.setVisible(true);
-            refs.btnComments.setVisible(true);
-            refs.btnCrop.setVisible(true);
-            refs.btnSave.setVisible(true);
+
+//            refs.btnComments.setVisible(true);
+//            refs.btnCrop.setVisible(true);
+//            refs.btnSave.setVisible(true);
         } else {
             refs.btnRadius.setVisible(false);
-            refs.btnMembers.setVisible(true);
-            refs.btnComments.setVisible(false);
-            refs.btnCrop.setVisible(false);
-            refs.btnSave.setVisible(false);
+            refs.btnMembers.setVisible(false);
+
+//            refs.btnComments.setVisible(false);
+//            refs.btnCrop.setVisible(false);
+//            refs.btnSave.setVisible(false);
         }
 
     },
@@ -508,28 +509,13 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     onSave: function () {
-        var me = this,
-            view = me.getView(),
-            vm = view.getViewModel(),
-            object = vm.get('currentRecord'),
-            catalog = vm.get('currentCatalog'),
-            id;
+      var me = this,
+          visiomatic = me.lookupReference('visiomatic');
 
-        if (object.get('tilename')) {
-
-          view.setLoading(true);
-          tilename = object.get('tilename');
-
-          var winDownload = Ext.create('Target.view.preview.DescutDownloadWindow');
-          winDownload.loadFits(tilename);
-          winDownload.show();
-          view.setLoading(false);
-        } else {
-
-          alert ('File not found.')
-
-        }
+      visiomatic.showDownloadWindow();
 
     },
+
+
 
 });

@@ -151,7 +151,7 @@ Ext.define('aladin.Aladin', {
         initialFov: null,
 
         // habilitar ou desabilitar a exibicao de mapas
-        enableMaps: false,
+        enableMaps: true,
 
         // habilitar botao que permite troca entre Visiomatic / Aladin
         enableShift: false,
@@ -173,7 +173,8 @@ Ext.define('aladin.Aladin', {
             mlocation: '',
             tile: null,
             tag: null,
-            release: null
+            release: null,
+            release_name: ''
         }
     },
 
@@ -212,7 +213,7 @@ Ext.define('aladin.Aladin', {
                 me.tbar = tollbar;
             }
         }
-        
+
         Ext.apply(this, {
             items: [
                 cmpAladin
@@ -223,7 +224,7 @@ Ext.define('aladin.Aladin', {
                 //onpanend: 'onPanEnd'
             }
         });
-        
+
         me.callParent(arguments);
     },
 
@@ -244,7 +245,7 @@ Ext.define('aladin.Aladin', {
             // opcoes do aladin
             aladinOptions
         );
-        
+
         aladin._setImageSurvey = aladin.setImageSurvey;
         aladin.setImageSurvey = function(surveyId, callback){
             return aladin._setImageSurvey(surveyId, function(){
@@ -265,18 +266,18 @@ Ext.define('aladin.Aladin', {
             me.enableDisableInfo(null, me.getInfoEnabled());
         }
 
-        // Custon events
-        me.addCustonEvents();
+        // Custom events
+        me.addCustomEvents();
 
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);
-        
+
     },
 
     onChangeImageSurvey: function(){
-        console.log('ImageSurvey Changed');
-        // Custon events
-        this.addCustonEvents();
+        //console.log('ImageSurvey Changed');
+        // Custom events
+        this.addCustomEvents();
     },
 
     aladinIsReady: function () {
@@ -387,6 +388,13 @@ Ext.define('aladin.Aladin', {
         }
     },
 
+    getImageSurvey: function () {
+        var me = this,
+            aladin = me.getAladin();
+
+        return aladin.getBaseImageLayer();
+    },
+
     setImageSurvey: function (imageSurvey) {
         var me = this,
             aladin = me.getAladin(),
@@ -421,8 +429,8 @@ Ext.define('aladin.Aladin', {
             // Mostrar o footprint
             me.showDesFootprint();
 
-            // Custon events
-            me.addCustonEvents();
+            // Custom events
+            me.addCustomEvents();
 
             // Disparar evento changeimage
             me.fireEvent('changeimage', imageSurvey, me);
@@ -644,7 +652,7 @@ Ext.define('aladin.Aladin', {
             if (tile.get('id') !== oldtile) {
                 tag = me.getStoreTags().getById(tile.get('tag'));
 
-                vm.set('release', tile.get('release_display_name'));
+                vm.set('release_name', tile.get('release_display_name'));
                 vm.set('tile', tile);
                 vm.set('tag', tag);
 

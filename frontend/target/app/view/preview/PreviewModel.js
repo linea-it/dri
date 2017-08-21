@@ -17,6 +17,13 @@ Ext.define('Target.view.preview.PreviewModel', {
     ],
 
     data: {
+        /**
+         * is_empty:  True se o painel preview nao estiver setado com nenhum record
+         * quando um record for atribuido ao painel o valor deve ser true, use esse
+         * atributo para gerenciar botoes e outros componentes que precisem ficar desabilitados
+         * quando nao houver registro selecionado.
+        **/
+        is_empty: true,
         is_system: false,
         overlayMembers: null
     },

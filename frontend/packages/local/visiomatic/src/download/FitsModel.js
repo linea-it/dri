@@ -1,11 +1,11 @@
-Ext.define('Target.view.preview.FitsModel', {
+Ext.define('visiomatic.download.FitsModel', {
     extend: 'Ext.app.ViewModel',
 
     alias: 'viewmodel.fits-files',
 
     requires: [
-        'Target.store.FitsFiles',
-        'Target.model.FitsFiles'
+        'visiomatic.store.FitsFiles',
+        'visiomatic.model.FitsFiles'
     ],
 
     stores: {

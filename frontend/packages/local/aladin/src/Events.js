@@ -6,7 +6,7 @@ Ext.define('aladin.Events', {
 
     mouseLastPosition: [],
 
-    addCustonEvents: function () {
+    addCustomEvents: function () {
         var me = this;
 
         me.addDblClickListener();
@@ -92,7 +92,7 @@ Ext.define('aladin.Events', {
             xymouse = view.imageCanvas.relMouseCoords(e);
 
             radec = me.mousePositionToSky(xymouse);
-            
+
             if (radec) {
                 // Atualizar a string com a posicao do reticle
                 me.updateLocation(me.getRaDec(), radec);
@@ -186,11 +186,40 @@ Ext.define('aladin.Events', {
     updateLocation: function (radec, mradec) {
         var me = this,
             location, mlocation;
-            
+
         location = me.skyToString(radec);
         mlocation = me.skyToString(mradec);
-        
+
         me.setLocation(location, mlocation);
+    },
+
+    onClickBtnMap: function () {
+        //console.log('onClickBtnMap');
+
+        var me = this,
+            vm = me.getViewModel(),
+            release = vm.get('release');
+
+
+        if (me.windowMapSelection == null) {
+            me.windowMapSelection = Ext.create('aladin.maps.MapSelectionWindow',{
+                width: 182,
+                height: 247,
+                x: 45,
+                y: 55,
+                resizable: false,
+                aladin: me
+            });
+        }
+
+        me.windowMapSelection.setRelease(release);
+
+        if (me.windowMapSelection.isHidden()) {
+            me.windowMapSelection.show();
+        } else {
+            me.windowMapSelection.hide();
+        }
+
     }
 
 });

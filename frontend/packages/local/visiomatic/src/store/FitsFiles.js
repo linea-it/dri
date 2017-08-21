@@ -1,13 +1,13 @@
-Ext.define('Target.store.FitsFiles', {
+Ext.define('visiomatic.store.FitsFiles', {
     extend: 'common.store.MyStore',
 
     alias: 'store.fits-files',
 
     requires: [
-        'Target.model.FitsFiles'
+        'visiomatic.model.FitsFiles'
     ],
 
-    model: 'Target.model.FitsFiles',
+    model: 'visiomatic.model.FitsFiles',
 
     remoteFilter: true,
 
