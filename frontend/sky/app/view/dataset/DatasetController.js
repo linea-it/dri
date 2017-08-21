@@ -207,8 +207,8 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
         visiomatic.setView(radec.ra, radec.dec, fov);
 
-        //me.lMarker = visiomatic.markPosition(radec.ra, radec.dec, 'x-fa fa-map-marker fa-2x');
-
+        //PIN (Marcador estilo google)
+        me.lMarker = visiomatic.markPosition(radec.ra, radec.dec, 'x-fa fa-map-marker fa-2x');
     },
 
     onChangePosition: function (radec, fov) {

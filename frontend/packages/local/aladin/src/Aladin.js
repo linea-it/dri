@@ -228,8 +228,6 @@ Ext.define('aladin.Aladin', {
     },
 
     onAfterrender: function () {
-        // console.log('Aladin - afterrender()');
-
         var me = this,
             aladinId = '#' + me.getAladinId(),
             libA = me.libA,
@@ -269,11 +267,6 @@ Ext.define('aladin.Aladin', {
 
         // Custon events
         me.addCustonEvents();
-
-        //adiciona o botão manager layers do aladin na toolbar esquerda
-        el = document.querySelector('.aladin-layersControl-container');
-        el.style.top = '50px';
-        me.leftToolBar.getEl().dom.appendChild(el);
 
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);

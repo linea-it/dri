@@ -118,15 +118,35 @@ Ext.define('aladin.Interfaces', {
             vertical = true;
         }
 
+        //Botão de troca para o VisiOmatic
         if (me.getEnableShift()) {
             tools.push({
                 xtype: 'button',
-                tooltip: 'Switch between Aladdin / Visiomatic.',
+                tooltip: 'Goto Visiomatic.',
                 iconCls: 'x-fa fa-exchange',
                 scope: me,
                 handler: me.onShift,
                 bind: {
                     disabled:'{!tile}'
+                }
+            });
+        }
+
+        // Botão Layers Control
+        if (me.getEnableLayersControl()){
+            tools.push({
+                xtype: 'button',
+                scope: me,
+                html:['<div class="aladin-layer-button"></div>'],
+                listeners:{
+                    click: function(){
+                        var aladin = me.getViewModel().getView().getAladin();
+
+                        aladin.hideBoxes();
+                        aladin.showLayerBox();
+
+                        return false;
+                    }
                 }
             });
         }
@@ -224,6 +244,9 @@ Ext.define('aladin.Interfaces', {
             });
         }
 
+        //Manager Layers Button
+        //Esse botão é criado pelo aladin e não está disponível aqui, ver Aladin.js
+        
         return tools;
 
     },
