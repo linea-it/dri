@@ -64,6 +64,7 @@ Ext.define('Sky.view.home.HomeController', {
 
         } else {
             field.getTrigger('clear').hide();
+            me.cancelFilter(field);
         }
     },
 
