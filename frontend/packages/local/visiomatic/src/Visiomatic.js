@@ -157,6 +157,7 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     _winCatalogOverlay: null,
+    _showComments: null,
 
     bind: {
         release: '{release}',
@@ -895,7 +896,7 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
-    overlayCatalog: function (title, storeMembers, options, storeCommentsPosition) {
+    overlayCatalog: function (title, storeMembers, options, storeCommentsPosition, showComments) {
         var me = this,
             l = me.libL,
             map = me.getMap(),
@@ -904,6 +905,7 @@ Ext.define('visiomatic.Visiomatic', {
             pathOptions, collection, feature, lCatalog;
 
         pathOptions = catalogOptions;
+        me._showComments = showComments || false;
 
         collection = {
             type: 'FeatureCollection',
@@ -1095,7 +1097,15 @@ Ext.define('visiomatic.Visiomatic', {
     showHideComments: function (layer, state) {
         var me = this, l, q,
             map = me.getMap();
+      
+        map.eachLayer(function(l){
+            //comentário por posição
+            if (l.targetPosition){
+                l.getElement().style.display = state ? '' : 'none';
+            }
+        });
 
+        // se comentário de objeto
         if (layer !== null) {
             for (i in layer._layers){
                 l = layer._layers[i];
@@ -1143,11 +1153,13 @@ Ext.define('visiomatic.Visiomatic', {
         }else{
             commentMaker.targetPosition = latlng
         }
+
+        commentMaker.getElement().style.display = me._showComments ? '' : 'none';
     },
 
     updateComment: function (layer, comment, total) {
         var me     = this, circle, id,
-            maps   = me.getMap(),
+            map    = me.getMap(),
             layers = layer ? layer._layers : null,
             layerComment = false,
             latlng = {
@@ -1157,7 +1169,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         // se comentário de posição
         if (comment.isCommentPosition){
-            maps.eachLayer(function(l){
+            map.eachLayer(function(l){
                 //comentário por posição
                 if (l.targetPosition){
                     if (latlng.lat==l.targetPosition.lat && latlng.lng==l.targetPosition.lng){

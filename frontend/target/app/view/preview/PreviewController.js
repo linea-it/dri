@@ -405,10 +405,10 @@ Ext.define('Target.view.preview.PreviewController', {
                     }
                 });
 
-                //carrega os comentários de posição
+                // carrega os comentários de posição
                 loaded++
                 coordinates = '[['+ me.activeDataset.get('tli_urall') + ',' + me.activeDataset.get('tli_udecll')+ '],' +
-                               '['+ me.activeDataset.get('tli_uraur') + ',' + me.activeDataset.get('tli_udecur')+ ']]';
+                            '['+ me.activeDataset.get('tli_uraur') + ',' + me.activeDataset.get('tli_udecur')+ ']]';
                 comments.filter([{
                     property: 'coordinates',
                     value: coordinates
@@ -425,7 +425,7 @@ Ext.define('Target.view.preview.PreviewController', {
                         // Remover o load do botao
                         btnMembers.setIconCls('x-fa fa-dot-circle-o');
                         // Exibir os objetos membros
-                        me.onLoadSystemMembers(members, comments);
+                        me.onLoadSystemMembers(members, comments, refs.btnComments.pressed);
                     }
                 }
             }
@@ -449,13 +449,13 @@ Ext.define('Target.view.preview.PreviewController', {
         }
     },
 
-    onLoadSystemMembers: function (members, comments/*cometários por posição*/) {
+    onLoadSystemMembers: function (members, comments/*cometários por posição*/, showComments) {
         var me = this,
             vm = me.getViewModel(),
             visiomatic = me.lookupReference('visiomatic'),
             lmembers;
 
-        lmembers = visiomatic.overlayCatalog('catalog_teste', members, null, comments);
+        lmembers = visiomatic.overlayCatalog('catalog_teste', members, null, comments, showComments);
 
         vm.set('overlayMembers', lmembers);
     },

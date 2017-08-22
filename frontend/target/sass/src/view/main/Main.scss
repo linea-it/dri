@@ -28,3 +28,9 @@
 .color-icon-starred {
     color: $color-gray-blue;
 }
+
+// Melhora o destaque de botão pressionado
+.x-btn.x-btn-pressed.x-btn-default-toolbar-small {
+    border-color: #A0A0A0;
+    background-color: rgb(220, 220, 220);
+}
