@@ -14,3 +14,22 @@
 .aladin-location {
     visibility: hidden
 }
+
+.aladin-layer-button{
+    width: 16px;
+    height: 16px;
+    background-image:url('data:image/gif;base64,R0lGODlhGQAcAMIAAAAAADQ0NKahocvFxf///wAAAAAAAAAAACH5BAEKAAcALAAAAAAZABwAAANneLoH/hCwyaJ1dDrCuydY1gBfyYUaaZqosq0r+sKxNNP1pe98Hy2OgXBILLZGxWRSBlA6iZjgczrwWa9WIEDA7Xq/R8d3PGaSz97oFs0WYN9wiDZAr9vvYcB9v2fy/3ZqgIN0cYZYCQA7');
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: contain;
+    margin-left: -4px;
+    margin-right: -4px;
+}
+
+/**
+ * Div original do Aladin, botão layercontrol
+ * Deixa oculto porque está sendo usado um botão do ExtJs
+*/
+.aladin-layersControl-container{
+    display: none!important;
+}

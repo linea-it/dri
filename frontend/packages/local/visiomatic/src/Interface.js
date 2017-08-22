@@ -45,14 +45,15 @@ Ext.define('visiomatic.Interface', {
     },
 
     makeMousePosition: function(){
-        return Ext.create('Ext.Component', {
-            renderTpl: [
-                '<div class="visiomatic-mouse-position-label">',
-                    'Mouse RA, Dec ({mlocate})',
-                '</div>'],
-            id: 'fabio'+(iii++),
-            cls: 'visiomatic-mouse-position leaflet-control-wcs-dialog'
+        var map = this.getMap();
+
+        return Ext.DomHelper.append(map._controlCorners['topright'], {
+            tag: 'div',
+            cls: 'leaflet-right leaflet-control leaflet-control-wcs-dialog visiomatic-mouse-position',
+            html:'<div class="visiomatic-mouse-position-label">'+
+                    'Mouse RA, Dec (0,0)'+
+                 '</div>'
         });
     }
 });
-var iii=0
+//var iii=0

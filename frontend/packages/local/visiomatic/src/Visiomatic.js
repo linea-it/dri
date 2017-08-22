@@ -65,7 +65,7 @@ Ext.define('visiomatic.Visiomatic', {
             zoomLevelOffset: -6,
             nativeCelsys: true
         },
-        miniMap: true,
+        miniMap: null, //true,
 
         enableWcs: true,
         wcsUnits: [
@@ -152,7 +152,7 @@ Ext.define('visiomatic.Visiomatic', {
         lcrosshair: null,
 
         showCrosshair: false,
-
+        enableContextMenu: true,
         mlocate:''
     },
 
@@ -260,15 +260,13 @@ Ext.define('visiomatic.Visiomatic', {
 
         }
 
-        me.cmpMousePosition = me.makeMousePosition();
-
         Ext.apply(this, {
             items: [
                 cmpVisiomatic,
-                me.cmpMousePosition
+                //me.cmpMousePosition
             ]
         });
-
+        
         me.callParent(arguments);
     },
 
@@ -320,6 +318,8 @@ Ext.define('visiomatic.Visiomatic', {
         if (me.getEnableScale()) {
             me.addScaleController();
         }
+
+        me.cmpMousePosition = me.makeMousePosition();
     },
 
     savePreferences: function () {
@@ -719,7 +719,8 @@ Ext.define('visiomatic.Visiomatic', {
         var pos = String(event.latlng.lng.toFixed(5) + ', ' + event.latlng.lat.toFixed(5)),
             me = this,
             map = me.getMap();
-        this.cmpMousePosition.el.dom.children[0].innerHTML = 'Mouse RA, Dec ('+(pos)+')';
+
+        this.cmpMousePosition.children[0].innerHTML = 'Mouse RA, Dec ('+(pos)+')';
 
         me.currentPosition = {
             radec: [
@@ -1147,7 +1148,7 @@ Ext.define('visiomatic.Visiomatic', {
     updateComment: function (layer, comment, total) {
         var me     = this, circle, id,
             maps   = me.getMap(),
-            layers = layer._layers,
+            layers = layer ? layer._layers : null,
             layerComment = false,
             latlng = {
                 lat: comment.get('pst_dec'),
@@ -1180,7 +1181,7 @@ Ext.define('visiomatic.Visiomatic', {
         }
 
         // se comentário de objeto
-        else{
+        else if (layers){
             for (i in layers){
                 circle  = layers[i];
                 id = circle.feature.id;
@@ -1411,6 +1412,8 @@ Ext.define('visiomatic.Visiomatic', {
             target = event.target,
             xy     = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
 
+        if (!me.getEnableContextMenu()) return;
+
         if (event.originalEvent.target.classList.contains('comment-maker') && !target.targetPosition){
             return me.showContextMenuObject(event);
         }
@@ -1500,14 +1503,22 @@ Ext.define('visiomatic.Visiomatic', {
             Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
         hiddenlink.download = layer._title + '_' + libL.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
           '.jpg';
-        hiddenlink.click();
+
+        var winDownload = Ext.create('visiomatic.crop.CropWindow', {
+          image: hiddenlink,
+          height: dy+100,
+          width: dx+100
+        });
+        // hiddenlink.click();
     },
 
     showContextMenuObject: function(event){
         var objectMenuItem,
             me = this,
             xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
-
+        
+        if (!me.getEnableContextMenu()) return;
+        
         if (!this.contextMenuObject){
             this.contextMenuObject = new Ext.menu.Menu({
                 items: [
@@ -1563,7 +1574,6 @@ Ext.define('visiomatic.Visiomatic', {
 
         return layer
     },
-
 
     /**
      * Verifica se uma dada coordenada esta dentro dos limites do dataset atual.

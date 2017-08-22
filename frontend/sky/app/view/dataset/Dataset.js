@@ -93,6 +93,18 @@ Ext.define('Sky.view.dataset.Dataset', {
                         },
                         {
                             xtype: 'button',
+                            reference: 'btnCrop',
+                            iconCls: 'x-fa fa-crop',
+                            enableToggle: true,
+                            toggleHandler: 'showHideCrop',
+                            tooltip: 'Show/Hide Crop',
+                            bind: {
+                                disabled: '{is_empty}'
+                            },
+                            pressed: false,
+                        },
+                        {
+                            xtype: 'button',
                             reference: 'btnSave',
                             iconCls: 'x-fa fa-download',
                             handler: 'onSave',
