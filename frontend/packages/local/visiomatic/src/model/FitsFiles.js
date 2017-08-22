@@ -1,4 +1,4 @@
-Ext.define('Target.model.FitsFiles', {
+Ext.define('visiomatic.model.FitsFiles', {
     extend: 'Ext.data.Model',
 
     requires: [

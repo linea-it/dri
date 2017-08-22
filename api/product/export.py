@@ -293,7 +293,7 @@ class Export:
                 except:
                     raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
-                subject = "LIneA Science Server - Export in Progress"
+                subject = "LIneA Science Server - Download in Progress"
                 body = render_to_string("export_notification_start.html", {
                     "username": user.username,
                     "target_display_name": product.prd_display_name
@@ -330,7 +330,7 @@ class Export:
                 except:
                     raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
-                subject = "LIneA Science Server - Export Finish"
+                subject = "LIneA Science Server - Download Finish"
                 body = render_to_string("export_notification_finish.html", {
                     "username": user.username,
                     "target_display_name": product_name,
@@ -365,7 +365,7 @@ class Export:
                 except:
                     raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
-                subject = "LIneA Science Server - Export Failed"
+                subject = "LIneA Science Server - Download Failed"
                 body = render_to_string("export_notification_error.html", {
                     "username": user.username,
                     "target_display_name": product.prd_display_name

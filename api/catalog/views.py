@@ -101,7 +101,7 @@ class TargetViewSet(ViewSet):
             # columns=list(["coadd_objects_id", "niter_model_g"]),
             ordering=request.query_params.get('ordering', None),
             limit=request.query_params.get('limit', None),
-            start=request.query_params.get('start', None),
+            start=request.query_params.get('offset', None),
             url_filters=request.query_params
         )
 
@@ -196,11 +196,6 @@ class CatalogObjectsViewSet(ViewSet):
         if not catalog:
             raise Exception('No product found for this id.')
 
-        # Parametros de Paginacao
-        limit = request.query_params.get('limit', None)
-        start = request.query_params.get('offset', None)
-
-
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(product_id)
 
@@ -218,7 +213,7 @@ class CatalogObjectsViewSet(ViewSet):
             columns=columns,
             ordering=request.query_params.get('ordering', None),
             limit=request.query_params.get('limit', None),
-            start=request.query_params.get('start', None),
+            start=request.query_params.get('offset', None),
             url_filters=request.query_params
         )
 
