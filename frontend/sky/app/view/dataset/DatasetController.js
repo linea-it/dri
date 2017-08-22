@@ -385,7 +385,14 @@ Ext.define('Sky.view.dataset.DatasetController', {
                 Ext.MessageBox.alert('Alert', 'There is no DES tile in the current release on this position.');
             }
         });
-        
+
+    },
+
+    showHideCrop: function (btn, state) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
+
+        visiomatic.initCrop();
     },
 
     onSave: function () {

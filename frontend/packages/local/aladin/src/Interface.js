@@ -142,17 +142,8 @@ Ext.define('aladin.Interfaces', {
             tools.push({
                 xtype: 'button',
                 scope: me,
-                html:['<div class="aladin-layer-button"></div>'],
-                listeners:{
-                    click: function(){
-                        var aladin = me.getViewModel().getView().getAladin();
-
-                        aladin.hideBoxes();
-                        aladin.showLayerBox();
-
-                        return false;
-                    }
-                }
+                iconCls: 'aladin-layer-button',
+                handler: me.onShowLayerBox
             });
         }
 

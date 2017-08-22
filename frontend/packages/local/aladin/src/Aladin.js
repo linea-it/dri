@@ -1058,6 +1058,16 @@ Ext.define('aladin.Aladin', {
 
     },
 
+    onShowLayerBox:function(){
+        var me = this,
+            aladin = me.getViewModel().getView().getAladin();
+
+        aladin.hideBoxes();
+        aladin.showLayerBox();
+
+        return false;
+    },
+
     getDesFootprintCoordinates: function () {
         var area = [[23, -7], [22, -7], [21, -7], [20, -7], [19, -7], [18, -7],
         [17, -7], [16, -7], [15, -7], [14, -7], [13, -7], [12, -7], [11, -7],
