@@ -152,7 +152,7 @@ Ext.define('visiomatic.Visiomatic', {
         lcrosshair: null,
 
         showCrosshair: false,
-
+        enableContextMenu: true,
         mlocate:''
     },
 
@@ -1412,6 +1412,8 @@ Ext.define('visiomatic.Visiomatic', {
             target = event.target,
             xy     = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
 
+        if (!me.getEnableContextMenu()) return;
+
         if (event.originalEvent.target.classList.contains('comment-maker') && !target.targetPosition){
             return me.showContextMenuObject(event);
         }
@@ -1501,14 +1503,22 @@ Ext.define('visiomatic.Visiomatic', {
             Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
         hiddenlink.download = layer._title + '_' + libL.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
           '.jpg';
-        hiddenlink.click();
+
+        var winDownload = Ext.create('visiomatic.crop.CropWindow', {
+          image: hiddenlink,
+          height: dy+100,
+          width: dx+100
+        });
+        // hiddenlink.click();
     },
 
     showContextMenuObject: function(event){
         var objectMenuItem,
             me = this,
             xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
-
+        
+        if (!me.getEnableContextMenu()) return;
+        
         if (!this.contextMenuObject){
             this.contextMenuObject = new Ext.menu.Menu({
                 items: [
@@ -1564,7 +1574,6 @@ Ext.define('visiomatic.Visiomatic', {
 
         return layer
     },
-
 
     /**
      * Verifica se uma dada coordenada esta dentro dos limites do dataset atual.

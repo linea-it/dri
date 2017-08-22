@@ -314,8 +314,10 @@ Ext.define('Target.view.objects.FiltersController', {
                             //limpa a checkbox
                             refs.chkRejected.setExpanded(false);
 
+                            //atualiza a view
+                            me.viewRenderUIStatus();
+
                             view.fireEvent('disapplyfilters', me);
-                            //me.getView().close();
                         }
                     }
                 });
