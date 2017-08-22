@@ -316,7 +316,11 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     onLoadObjects: function( store, records, successful, operation) {
         var me = this,
+            refs = me.getReferences(),
+            preview = refs.targetsPreviewPanel,
             objectsGrid = me.lookup("targetsObjectsGrid");
+        
+        preview.clear();
 
         objectsGrid.setLoading(false);
 

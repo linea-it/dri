@@ -228,7 +228,8 @@ Ext.define('Target.view.objects.Panel', {
             frame: true,
             split: true,
             listeners: {
-                changeinobject: 'onChangeInObjects'
+                changeinobject: 'onChangeInObjects',
+                loadobjects: 'onLoadObjects'
             }
         }
     ],

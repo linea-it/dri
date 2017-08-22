@@ -25,7 +25,8 @@ Ext.define('Target.view.preview.Preview', {
             xtype: 'targets-visiomatic',
             reference: 'visiomatic',
             bind: {
-                showCrosshair: '{BtnCrosshair.pressed}'
+                showCrosshair: '{BtnCrosshair.pressed}',
+                hidden: '{is_empty}'
             },
             listeners: {
                 objectMenuItemClick: 'onObjectMenuItemClickVisiomatic',
@@ -214,6 +215,20 @@ Ext.define('Target.view.preview.Preview', {
             // disparar evento before load
             me.fireEvent('changerecord', record, me);
         }
+    },
+
+    clear: function(){
+        var me = this,
+            vm = me.getViewModel(),
+            refs = me.getReferences(),
+            datasets = vm.getStore('datasets');
+        
+        // limpa o datasets e o texto da combo
+        datasets.clearData();
+        refs.currentDataset.clearValue();
+
+        // oculta o visiomatic e desabilita botões
+        vm.set('is_empty', true);
     }
 
 });
