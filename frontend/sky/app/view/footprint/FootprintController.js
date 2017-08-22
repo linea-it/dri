@@ -260,6 +260,12 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
     gotoPosition: function(value){
         var me = this,
+            aladin = me.lookupReference('aladin').getAladin();
+
+        aladin.gotoObject(value);
+
+        /*
+        var me = this,
             o = visiomatic.Visiomatic.strToSystem(value);
 
         if (visiomatic.processing) return;
@@ -275,7 +281,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
             }else{
                 me.toVisiomatic([o.value.lng, o.value.lat]);
             }
-        }
+        }*/
     },
 
     onActivate: function(){
