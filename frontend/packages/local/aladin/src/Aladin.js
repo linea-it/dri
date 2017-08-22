@@ -229,8 +229,6 @@ Ext.define('aladin.Aladin', {
     },
 
     onAfterrender: function () {
-        // console.log('Aladin - afterrender()');
-
         var me = this,
             aladinId = '#' + me.getAladinId(),
             libA = me.libA,
@@ -270,11 +268,6 @@ Ext.define('aladin.Aladin', {
 
         // Custom events
         me.addCustomEvents();
-
-        //adiciona o boto manager layers do aladin na toolbar esquerda
-        el = document.querySelector('.aladin-layersControl-container');
-        el.style.top = '100px';
-        me.leftToolBar.getEl().dom.appendChild(el);
 
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);
@@ -1063,6 +1056,16 @@ Ext.define('aladin.Aladin', {
     onShift: function () {
         this.fireEvent('shift', this.getRaDec(), this);
 
+    },
+
+    onShowLayerBox:function(){
+        var me = this,
+            aladin = me.getViewModel().getView().getAladin();
+
+        aladin.hideBoxes();
+        aladin.showLayerBox();
+
+        return false;
     },
 
     getDesFootprintCoordinates: function () {
