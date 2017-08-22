@@ -385,6 +385,13 @@ Ext.define('Sky.view.dataset.DatasetController', {
             visiomatic = me.lookupReference('visiomatic');
 
         visiomatic.initCrop();
+    },
+
+    onSave: function () {
+      var me = this,
+          visiomatic = me.lookupReference('visiomatic');
+
+      visiomatic.showDownloadWindow();
 
     },
 

@@ -360,6 +360,8 @@ Ext.define('Target.view.objects.ObjectsController', {
             preview = refs.targetsPreviewPanel,
             catalog = vm.get('currentCatalog');
 
+        vm.set('currentRecord', record);
+
         // Setar o Objeto Selecionado
         preview.setCurrentRecord(record, catalog);
 

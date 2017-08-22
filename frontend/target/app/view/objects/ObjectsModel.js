@@ -12,6 +12,7 @@ Ext.define('Target.view.objects.ObjectsModel', {
         'Target.model.CurrentSetting',
         'Target.model.FilterSet',
         'Target.model.CutoutJob',
+        'Target.model.Object',
         'Target.store.Objects',
         'Target.store.CurrentSettings',
         'Target.store.ProductDisplayContents',
@@ -71,6 +72,10 @@ Ext.define('Target.view.objects.ObjectsModel', {
         filterSet: {
             type: 'Target.model.FilterSet',
             create: true
-        }
+        },
+        currentRecord: {
+            type: 'Target.model.Object',
+            create: true
+        },
     }
 });

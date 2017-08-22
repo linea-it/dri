@@ -101,7 +101,17 @@ Ext.define('Sky.view.dataset.Dataset', {
                             bind: {
                                 disabled: '{is_empty}'
                             },
-                            pressed: true,
+                            pressed: false,
+                        },
+                        {
+                            xtype: 'button',
+                            reference: 'btnSave',
+                            iconCls: 'x-fa fa-download',
+                            handler: 'onSave',
+                            tooltip: 'Download',
+                            bind: {
+                                disabled: '{is_empty}'
+                            }
                         },
                         /*{
                             xtype: 'button',
