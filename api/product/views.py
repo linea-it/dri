@@ -106,9 +106,9 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     @list_route()
     def get_class_tree_by_group(self, request):
         """
-            Este metodo retorna uma tree, com todos os produtos de um grupo. estes produtos estÃ£o
+            Este metodo retorna uma tree, com todos os produtos de um grupo. estes produtos esto
             agrupados por suas classes.
-            Ã© necessario o parametro group que Ã© o internal name da tabela Group
+             necessario o parametro group que  o internal name da tabela Group
             ex: catalog/get_class_tree_by_group/group='targets'
         """
         group = request.query_params.get('group', None)
@@ -399,20 +399,22 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 
 
 class MapFilter(django_filters.FilterSet):
-    categorization_by_release = django_filters.MethodFilter(action='filter_categorization_by_release')
+    release_id = django_filters.MethodFilter(action='filter_release_id')
+    release_name = django_filters.MethodFilter(action='filter_release_name')
+    with_image =  django_filters.MethodFilter(action='filter_with_image')
 
     class Meta:
         model = Map
         fields = ['id', 'prd_name', 'prd_display_name', 'prd_class']
 
-    def filter_categorization_by_release(self, queryset, value):
-        release_name = value
+    def filter_with_image(self, queryset, value):
+        return queryset.filter(image__isnull=False)
 
-        q = queryset.filter(
-            releases__rls_name=release_name
-        )
+    def filter_release_id(self, queryset, value):
+        return queryset.filter(releases__id=value)
 
-        return q
+    def filter_release_name(self, queryset, value):
+        return queryset.filter(releases__rls_name=value)
 
 
 class MapViewSet(viewsets.ModelViewSet):

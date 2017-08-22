@@ -41,6 +41,8 @@ Ext.define('visiomatic.Visiomatic', {
 
         enableSidebar: true,
 
+        enableSmallCrosshair: true,
+
         // Catalog Overlays
         enableCatalogs: true,
         availableCatalogs: [
@@ -408,6 +410,21 @@ Ext.define('visiomatic.Visiomatic', {
 
     },
 
+    createSmallCrosshair: function () {
+        var me = this,
+            coordinates = me.getRaDec(),
+            crosshairOptions = {
+                color: '#90FA3A',
+                weight: 1,
+                opacity: 0.8,
+                smoothFactor: 1,
+                centerPadding: 0.0005, // Deg
+                size: 0.0015 // Deg
+            };
+
+        me.drawCrosshair(coordinates.ra, coordinates.dec, crosshairOptions);
+    },
+
     addWcsController: function () {
         var me = this,
             libL = me.libL,
@@ -727,6 +744,11 @@ Ext.define('visiomatic.Visiomatic', {
             );
         }
 
+        // Small Crosshair
+        if (me.getEnableSmallCrosshair()) {
+            me.createSmallCrosshair();
+        }
+
         //me.fireEvent('changemouseposition', event, me);
     },
 
@@ -1004,7 +1026,7 @@ Ext.define('visiomatic.Visiomatic', {
                     lng: record.get('pst_ra')
                 };
 
-                me.createCommentIcon(latlng);                
+                me.createCommentIcon(latlng);
             });
         }
 
@@ -1114,7 +1136,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker'+(circle?'':' mapmaker-comment-position'))
             .on('contextmenu', me.onLayerContextMenu, me);
-        
+
         if (circle){
             circle.commentMaker = commentMaker;
             commentMaker.targetObjet = circle;
@@ -1132,7 +1154,7 @@ Ext.define('visiomatic.Visiomatic', {
                 lat: comment.get('pst_dec'),
                 lng: comment.get('pst_ra')
             };
-        
+
         // se comentário de posição
         if (comment.isCommentPosition){
             maps.eachLayer(function(l){
@@ -1157,7 +1179,7 @@ Ext.define('visiomatic.Visiomatic', {
                 }
             }
         }
-        
+
         // se comentário de objeto
         else if (layers){
             for (i in layers){
@@ -1267,11 +1289,20 @@ Ext.define('visiomatic.Visiomatic', {
         }
 
         // Verificar se ja tem crosshair
-        if (me.lcrosshair) {
+        if (me.lcrosshair && !options) {
             if (map.hasLayer(me.lcrosshair)) {
                 // se ja houver remove do map
                 map.removeLayer(me.lcrosshair);
                 me.lcrosshair = null;
+            }
+        }
+
+        // Verificar se ja tem small crosshair
+        if (me.lcrosshair && options) {
+            if (map.hasLayer(me.lsmallcrosshair)) {
+                // se ja houver remove do map
+                map.removeLayer(me.lsmallcrosshair);
+                me.lsmallcrosshair = null;
             }
         }
 
@@ -1298,10 +1329,19 @@ Ext.define('visiomatic.Visiomatic', {
         layer = new l.LayerGroup(
                 [lineTop, lineBotton, lineLeft, lineRight]);
 
+        layerSmall = new l.LayerGroup(
+                [lineTop, lineBotton, lineLeft, lineRight]);
+
+        me.lsmallcrosshair = layerSmall;
         me.lcrosshair = layer;
 
-        if (me.getShowCrosshair()) {
+        if (me.getShowCrosshair() && !options) {
             map.addLayer(me.lcrosshair);
+
+        }
+
+        if (me.getShowCrosshair() && options) {
+            map.addLayer(me.lsmallcrosshair);
 
         }
 
@@ -1341,6 +1381,27 @@ Ext.define('visiomatic.Visiomatic', {
 
             return false;
         }
+    },
+
+    showDownloadWindow: function () {
+        var me = this,
+            currentDataset = me.getCurrentDataset(),
+            tilename;
+
+        if (currentDataset.get('tli_tilename')) {
+
+          tilename = currentDataset.get('tli_tilename');
+
+          var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
+          winDownload.loadFits(tilename, 'Y3A1_COADD');
+          winDownload.show();
+
+        } else {
+
+          alert ('File not found.')
+
+        }
+
     },
 
     /**

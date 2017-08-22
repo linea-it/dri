@@ -1,9 +1,9 @@
-Ext.define('Target.view.preview.DescutDownloadWindow', {
+Ext.define('visiomatic.download.DescutDownloadWindow', {
     extend: 'Ext.window.Window',
 
     requires: [
-        'Target.view.preview.FitsController',
-        'Target.view.preview.FitsModel',
+        'visiomatic.download.FitsController',
+        'visiomatic.download.FitsModel',
     ],
 
     xtype: 'target-download-descut',
@@ -77,9 +77,9 @@ Ext.define('Target.view.preview.DescutDownloadWindow', {
         this.close();
     },
 
-    loadFits: function (tilename) {
+    loadFits: function (tilename, catalog) {
         var me = this;
         this.loadFits = tilename;
-        me.fireEvent('changeLoadFits', tilename);
+        me.fireEvent('changeLoadFits', tilename, catalog);
     },
 });
