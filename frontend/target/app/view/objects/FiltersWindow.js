@@ -56,7 +56,7 @@ Ext.define('Target.view.objects.FiltersWindow', {
                                     xtype: 'button',
                                     reference : 'btnClear',
                                     iconCls: 'x-fa fa-file-o',
-                                    tooltip: 'Clear',
+                                    tooltip: 'New',
                                     handler: 'onFilterWindow_ClearFilterSet'
                                 },
                                 {
