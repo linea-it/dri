@@ -6,9 +6,12 @@ Ext.define('common.statistics.Events', {
     },
 
     onEventRegister: function (eventDescription) {
-        console.log('onEventRegister');
         Ext.Ajax.request({
-            url: `/dri/api/event?event=${eventDescription}`,
+            url: `/dri/api/statistics/`,
+            method: 'POST',
+            params: {
+                event: eventDescription
+            },
             success: function (response) {
 
             },

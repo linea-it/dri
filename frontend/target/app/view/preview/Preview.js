@@ -166,7 +166,8 @@ Ext.define('Target.view.preview.Preview', {
                 reference: 'btnEvent',
                 iconCls: 'x-fa fa-download',
                 handler: 'onEvent',
-                tooltip: 'Event'
+                tooltip: 'Event',
+                hidden: true
             },
             '-',
             {
