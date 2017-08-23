@@ -1,9 +1,5 @@
-import logging
-
 from rest_framework import serializers
 from .models import Statistics
-
-logger = logging.getLogger(__name__)
 
 class StatisticsSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.SerializerMethodField()

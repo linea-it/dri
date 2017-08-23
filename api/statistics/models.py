@@ -1,10 +1,6 @@
-import logging
-
 from django.db import models
 from django.conf import settings
 from current_user import get_current_user
-
-logger = logging.getLogger(__name__)
 
 class Statistics(models.Model):
     class Meta:
