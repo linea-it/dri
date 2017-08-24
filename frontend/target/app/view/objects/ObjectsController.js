@@ -6,12 +6,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     alias: 'controller.objects',
 
-    /**
-     * @requires Target.view.catalog.Export
-     */
     requires: [
-        'Target.view.catalog.Export',
-        'Target.view.catalog.SubmitCutout',
         'Target.view.association.Panel',
         'Target.model.Rating',
         'Target.model.Reject',
@@ -51,7 +46,6 @@ Ext.define('Target.view.objects.ObjectsController', {
     winCutoutjobInfo: null,
     activeFilter: null,
     taskCutoutJob: null,
-
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
         var me = this,
@@ -112,7 +106,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }
             ]);
 
-            cutoutsJobs.load()
+            cutoutsJobs.load();
 
             // Task para verificar se existe cutoutjob
             if (me.taskCutoutJob !== null) {
@@ -314,9 +308,9 @@ Ext.define('Target.view.objects.ObjectsController', {
         }
     },
 
-    onLoadObjects: function( store, records, successful, operation) {
+    onLoadObjects: function (store, records, successful, operation) {
         var me = this,
-            objectsGrid = me.lookup("targetsObjectsGrid");
+            objectsGrid = me.lookup('targetsObjectsGrid');
 
         objectsGrid.setLoading(false);
 
@@ -327,7 +321,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             Ext.MessageBox.show({
                 // title: error.status + ' - ' + error.statusText,
-                msg: "Sorry there was an error, and it was not possible to list the objects.",
+                msg: 'Sorry there was an error, and it was not possible to list the objects.',
                 buttons: Ext.MessageBox.OK,
                 icon: Ext.MessageBox.WARNING
             });
@@ -666,12 +660,12 @@ Ext.define('Target.view.objects.ObjectsController', {
     /**
      * Ao aplicar filtro na window filters
      */
-    onWindowApplyFilters: function (filter){//filterset, filters) {
-        var me = this, a=[],
+    onWindowApplyFilters: function (filter) {//filterset, filters) {
+        var me = this, a = [],
             vm = me.getViewModel(),  //
             txtFilterSet = me.lookup('txtFilterSet'),
             currentCatalog = vm.get('currentCatalog');
-        
+
         me.activeFilter = filter;
 
         txtFilterSet.setValue(filter.fst_name);
@@ -697,7 +691,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.loadObjects();
     },
 
-    onCommentButton: function(event){
+    onCommentButton: function (event) {
         this.getReferences()
             .targetsPreviewPanel.getController().onObjectMenuItemClickVisiomatic({});
     },
@@ -713,8 +707,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.loadObjects();
     },
 
-    rejectedFilter: function(){
-      console.log('test');
+    rejectedFilter: function () {
+        console.log('test');
     },
 
     /**
@@ -915,7 +909,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             }]);
 
             cutouts.load({
-                callback: function() {
+                callback: function () {
                     // Setar no Mosaic o Cutout Job Selecionado
                     mosaic.setCutoutJob(cutoutJob, this);
                 }
@@ -929,14 +923,12 @@ Ext.define('Target.view.objects.ObjectsController', {
             combo = me.lookup('cmbCutoutJob'),
             cutoutjob = combo.selection;
 
-
         if ((cutoutjob) && (cutoutjob.get('id') > 0)) {
 
             if (me.winCutoutjobInfo !== null) {
                 me.winCutoutjobInfo.close();
                 me.winCutoutjobInfo = null;
             }
-
 
             me.winCutoutjobInfo = Ext.create('Target.view.objects.CutoutJobDetailWindow',{
                 width: 300,
@@ -951,13 +943,12 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             me.winCutoutjobInfo.setCutoutjob(cutoutjob);
 
-
             me.winCutoutjobInfo.show();
 
         }
     },
 
-    onDeleteCutoutjob: function(cutoutjob, window) {
+    onDeleteCutoutjob: function (cutoutjob, window) {
         var me = this,
             combo = me.lookup('cmbCutoutJob'),
             store = combo.getStore(),
@@ -970,7 +961,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         store.remove(cutoutjob);
 
         store.sync({
-            callback: function() {
+            callback: function () {
                 window.close();
 
                 // Limpar o Mosaic
@@ -983,10 +974,10 @@ Ext.define('Target.view.objects.ObjectsController', {
 
                 window.setLoading(false);
             }
-        })
+        });
     },
 
-    onCutoutDblClick: function(record, imageSource, mosaic) {
+    onCutoutDblClick: function (record, imageSource, mosaic) {
         //console.log("onCutoutDblClick(%o, %o)", record, imageSource)
 
         url = imageSource;
