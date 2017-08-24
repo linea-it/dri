@@ -719,3 +719,35 @@ class SaveAsViewSet(viewsets.ModelViewSet):
         )
 
         return HttpResponse(status=200)
+
+
+# ---------------------------------- Import Target List ----------------------------------
+class ImportTargetListViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows upload a Target List Product
+    """
+    http_method_names = ['post', ]
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        data = request.data
+
+        print('------------ ImportTargetList ---------')
+
+        from pprint import pprint
+        pprint(data)
+
+
+        # # Executar a Task Assincrona que fara o Save As
+        # product_save_as.delay(
+        #     request.user.pk,
+        #     product_id,
+        #     name,
+        #     filter_id,
+        #     description
+        # )
+
+        return HttpResponse(status=200)

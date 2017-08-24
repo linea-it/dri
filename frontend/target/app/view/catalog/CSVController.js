@@ -12,7 +12,7 @@ Ext.define('Target.view.catalog.CSVController', {
     ],
 
     separator: ',',
-    baseProperties: ['id', 'ra', 'dec'],
+    baseProperties: ['ra', 'dec'],
 
     addCatalog: function () {
         var me = this,
@@ -24,7 +24,10 @@ Ext.define('Target.view.catalog.CSVController', {
 
         values = form.getValues();
 
-        me.validateCSVDAta(values.csvData);
+        console.log(values);
+
+        headers = me.validateCSVDAta(values.csvData);
+        console.log(headers);
 
         // Criando um internal name
         name = values.displayName.split(' ').join('_');
@@ -35,20 +38,60 @@ Ext.define('Target.view.catalog.CSVController', {
         isPublic = values.isPublic === 'on' ? true : false;
 
         data = {
-            products: [{
-                type: 'catalog',
-                class: values.classname,
-                name: name,
-                display_name: values.displayName,
-                releases: release,
-                is_public: isPublic,
-                description: values.description,
-                csvData: values.csvData
-            }]
+            mime: 'csv',
+            type: 'catalog',
+            class: values.classname,
+            name: name,
+            displayName: values.displayName,
+            releases: release,
+            isPublic: isPublic,
+            description: values.description,
+            csvData: values.csvData
         };
 
-        view.setLoading(true);
-        // }
+        me.importTargetList(data);
+
+    },
+
+    importTargetList: function (data) {
+        console.log('importTargetList(%o)', data);
+        var me = this,
+            view = me.getView();
+
+        // view.setLoading(true);
+        Ext.Ajax.request({
+            cors: true,
+            method: 'POST',
+            url: '/dri/api/import_target_list/',
+            success: function () {
+                // Fechar a janela de registro
+                // view.setLoading(false);
+                // view.close();
+
+                // Exibir janela de associacao
+                // me.getAddedCatalog(name);
+
+            },
+            failure: function (response, opts) {
+                // view.setLoading(false);
+                // // TODO MENSAGEM DE ERRO E FECHAR A JANELA
+                // view.close();
+                // Ext.MessageBox.show({
+                //     title: 'Server Side Failure',
+                //     msg: response.status + ' ' + response.statusText,
+                //     buttons: Ext.MessageBox.OK,
+                //     icon: Ext.MessageBox.WARNING
+                // });
+            },
+            // Headers necessarios para fazer um Post Autheticado no Django
+            headers: {
+                'Accept': 'application/json',
+                'Application': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': Ext.util.Cookies.get('csrftoken')
+            },
+            params: Ext.util.JSON.encode(data)
+        });
     },
 
     validateCSVDAta: function (csvData) {
@@ -71,7 +114,9 @@ Ext.define('Target.view.catalog.CSVController', {
         for (var i = 0; i < lines.length; i++) {
             var line = lines[i];
 
-            console.log('line [%o] : %s', i, line);
+            if (line != '') {
+                console.log('line [%o] : %s', i, line);
+            }
         }
 
     },
@@ -88,22 +133,19 @@ Ext.define('Target.view.catalog.CSVController', {
             console.log(property);
             console.log(parseInt(property));
             a = property;
+            // Se a propriedade for uma string ela entra na lista de headers
             if (isNaN(parseInt(a))) {
-
-                console.log('property: %o e string', property);
+                // console.log('property: %o e string', property);
                 property = property.toLowerCase().trim();
 
                 hdrs.push(property);
                 if (me.baseProperties.indexOf(property)) {
                     bases.push(property);
                 }
-            } else {
-                console.log('nao e uma string');
             }
         }, me);
 
-        console.log(hdrs);
-
+        // Verifica se tem as headers obrigatorias.
         if (me.baseProperties.length === bases.length) {
             return hdrs;
         } else {

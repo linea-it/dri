@@ -12,7 +12,7 @@ Ext.define('Target.view.catalog.CSVForm', {
         'common.store.Releases'
     ],
 
-    title: 'Upload CSV',
+    title: 'Upload',
 
     controller: 'csvform',
 
@@ -44,11 +44,12 @@ Ext.define('Target.view.catalog.CSVForm', {
     items: [
         {
             xtype: 'textfield',
-            name: 'display_name',
+            name: 'displayName',
             fieldLabel: 'Name',
             regex: /^[a-z0-9-_\s]+$/i,
             regexText: 'Please use only letters and numbers separated ' +
-                        'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
+                        'by spaces \' \', minus sign \'-\' or underscore \'_\'.',
+            value: 'Teste Import CSV'
         },
         {
             xtype: 'combobox',
@@ -60,7 +61,8 @@ Ext.define('Target.view.catalog.CSVForm', {
             editable: false,
             bind: {
                 store: '{productclass}'
-            }
+            },
+            value: 'galaxy_clusters'
         },
         {
             xtype: 'combobox',
@@ -70,12 +72,13 @@ Ext.define('Target.view.catalog.CSVForm', {
             valueField: 'rls_name',
             bind: {
                 store: '{releases}'
-            }
+            },
+            value: 'y1_wide_survey'
         },
         {
             xtype: 'checkbox',
             boxLabel: 'Public',
-            name: 'is_public',
+            name: 'isPublic',
             checked: true
         },
         // TODO add file Field para permitir o upload de um arquivo csv completo
@@ -90,7 +93,14 @@ Ext.define('Target.view.catalog.CSVForm', {
             height: 200,
             labelAlign: 'top',
             emptyText: 'id, ra, dec, col1, col2, ...',
-            value: 'id_auto,ra,dec'
+            value:  '93.96499634,-57.77629852\n' +
+                    '94.28079987,-55.13209915\n' +
+                    '68.05249786,-61.84970093\n'
+
+            // value: 'id_auto,ra,dec\n' +
+            //         '30,93.96499634,-57.77629852\n' +
+            //         '32,94.28079987,-55.13209915\n' +
+            //         '40,68.05249786,-61.84970093\n'
         },
         {
             xtype: 'textareafield',

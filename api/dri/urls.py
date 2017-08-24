@@ -69,6 +69,7 @@ router.register(r'filtercondition', product_views.FilterConditionViewSet)
 router.register(r'bookmarked', product_views.BookmarkedViewSet)
 router.register(r'productexport', product_views.ExportViewSet, base_name='export_product')
 router.register(r'productsaveas', product_views.SaveAsViewSet, base_name='product_save_as')
+router.register(r'import_target_list', product_views.ImportTargetListViewSet, base_name='import_target_list')
 
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
