@@ -97,7 +97,7 @@ Ext.define('Sky.view.dataset.Dataset', {
                             iconCls: 'x-fa fa-crop',
                             enableToggle: true,
                             toggleHandler: 'showHideCrop',
-                            tooltip: 'Show/Hide Crop',
+                            tooltip: 'Crop',
                             bind: {
                                 disabled: '{is_empty}'
                             },
