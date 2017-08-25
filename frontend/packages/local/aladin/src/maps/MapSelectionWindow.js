@@ -27,7 +27,7 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                     xtype: 'checkbox',
                     reference: 'chkOnOff',
                     boxLabel: 'Display Map',
-                    handler: 'onClickBtnOnOff',
+                    handler: 'onDisplayOnOff',
                     bind: {
                         disabled: '{!aladin_switchable}',
                         value: '{map_selected}'
