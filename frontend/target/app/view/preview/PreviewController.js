@@ -475,6 +475,7 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = me.getViewModel(),
             lmembers = vm.get('overlayMembers');
 
+        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - show_comments');
         visiomatic.showHideComments(lmembers, state);
 
     },
@@ -483,6 +484,7 @@ Ext.define('Target.view.preview.PreviewController', {
         var me = this,
             visiomatic = me.lookupReference('visiomatic');
 
+        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - crop');
         visiomatic.initCrop();
 
     },
@@ -512,6 +514,7 @@ Ext.define('Target.view.preview.PreviewController', {
         var me = this,
             visiomatic = me.lookupReference('visiomatic');
 
+        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - save_fits');
         visiomatic.showDownloadWindow();
 
     },
