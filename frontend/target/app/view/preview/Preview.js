@@ -46,7 +46,7 @@ Ext.define('Target.view.preview.Preview', {
                 displayField: 'release_tag',
                 bind: {
                     store: '{datasets}',
-                    disabled: '{!currentRecord._meta_id}',
+                    disabled: '{!currentRecord._meta_id}'
                 },
                 queryMode: 'local',
                 listConfig: {
@@ -138,7 +138,7 @@ Ext.define('Target.view.preview.Preview', {
                 pressed: true,
                 bind: {
                     disabled: '{is_empty}'
-                },
+                }
             },
             {
                 xtype: 'button',
@@ -146,11 +146,11 @@ Ext.define('Target.view.preview.Preview', {
                 iconCls: 'x-fa fa-crop',
                 enableToggle: true,
                 toggleHandler: 'showHideCrop',
-                tooltip: 'Show/Hide Crop',
+                tooltip: 'Crop',
                 bind: {
                     disabled: '{is_empty}'
                 },
-                pressed: true,
+                pressed: true
             },
             {
                 xtype: 'button',
@@ -161,6 +161,14 @@ Ext.define('Target.view.preview.Preview', {
                 bind: {
                     disabled: '{is_empty}'
                 }
+            },
+            {
+                xtype: 'button',
+                reference: 'btnEvent',
+                iconCls: 'x-fa fa-download',
+                handler: 'onEvent',
+                tooltip: 'Event',
+                hidden: true
             },
             '-',
             {

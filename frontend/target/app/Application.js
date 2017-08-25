@@ -8,6 +8,10 @@ Ext.define('Target.Application', {
 
     name: 'Target',
 
+    requires: [
+        'common.statistics.Events'
+    ],
+
     defaultToken : 'home',
 
     stores: [
@@ -15,6 +19,7 @@ Ext.define('Target.Application', {
     ],
 
     init:function () {
+        Ext.create('common.statistics.Events').init();
         // console.log('init');
         // Desabilitar os erros de Aria
         // Ext.enableAriaButtons = false;

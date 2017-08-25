@@ -5,6 +5,9 @@
 /log
 /bkp
 
+# Diretorio da Home Wordpress
+/apps/home
+
 # Diretorio de projeto pycharm
 /.idea/
 
