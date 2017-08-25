@@ -301,7 +301,7 @@ Ext.define('Target.view.objects.FiltersWindow', {
             margin: '0 10 0 20',
             reference : 'btnRemove',
             handler: 'onRemoveFilter',
-            tooltip: 'Remove applied filter'
+            tooltip: 'Reset applied filter'
         },
         {
             text: 'Apply',

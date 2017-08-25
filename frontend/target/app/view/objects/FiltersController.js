@@ -314,8 +314,10 @@ Ext.define('Target.view.objects.FiltersController', {
                             //limpa a checkbox
                             refs.chkRejected.setExpanded(false);
 
+                            //atualiza a view
+                            me.viewRenderUIStatus();
+
                             view.fireEvent('disapplyfilters', me);
-                            //me.getView().close();
                         }
                     }
                 });
@@ -340,57 +342,24 @@ Ext.define('Target.view.objects.FiltersController', {
 
         //filtro com nome definido
         if (filterName){ //filterSet && filterSet.get('fst_name')!='') {
-
             //ouve alteração no filtro, salva antes de aplicar
             if (me.filterConditionsIsChanged()) {
 
                 //faz update das condicões e aplica o filtro
                 me.saveFilterSet(function(){
                     //dá um tempo pro extjs se organizar, caso contrário gera erro
-                    setTimeout(function(){
-                        me.applyFilters();
-                    },10)
+                    setTimeout(function(){me.applyFilters();},10);
                 });
             }
 
             //não ouve alteração no filtro existente, apenas aplica
             else {
                 me.applyFilters();
-                /*
-                view.setLoading(true);
-
-                fset = Ext.create('Target.model.FilterSet', {
-                    product: currentCatalog.get('id'),
-                    fst_name: filterName
-                });
-
-                fset.save({
-                    callback: function (savedRating, operation, success) {
-                        if (success) {
-                            var obj = Ext.decode(operation.getResponse().responseText);
-
-                            fset.set(obj);
-                            vm.set('filterSet', fset);
-
-                            view.setLoading(false);
-
-                            me.onCreateFilterset(fset, filters);
-                        }
-                    }
-                });*/
             }
         }
 
         //filtro local (não salvo)
         else {
-
-            //aplicar como um filtro local
-            /*fset = Ext.create('Target.model.FilterSet', {
-                product: currentCatalog.get('id'),
-                fst_name: 'Unnamed Filter'
-            });
-
-            vm.set('filterSet', fset);*/
             me.applyFilters();
         }
     },
