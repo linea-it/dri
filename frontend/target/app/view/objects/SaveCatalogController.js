@@ -21,7 +21,7 @@ Ext.define('Target.view.objects.SaveCatalogController', {
             filterSets = vm.getStore('filterSets'),
             contents = Ext.data.StoreManager.lookup('multiselectColumnsStore');
 
-        vm.set("activeFilter", activeFilter);
+        vm.set('activeFilter', activeFilter);
 
         filterSets.addFilter({
             property: 'product',
@@ -41,10 +41,10 @@ Ext.define('Target.view.objects.SaveCatalogController', {
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
             form = me.lookup('SaveAsForm').getForm(),
-            activeFilter = vm.get("activeFilter"),
+            activeFilter = vm.get('activeFilter'),
             values, filter;
 
-        if ((activeFilter) && (activeFilter.id >0)){
+        if ((activeFilter) && (activeFilter.id > 0)) {
             filter = activeFilter.id;
         }
 
@@ -65,6 +65,7 @@ Ext.define('Target.view.objects.SaveCatalogController', {
                     // Recuperar a resposta e fazer o decode no json.
                     me.onCancel();
                     Ext.MessageBox.alert('', 'The job will run in the background and you will be notified when it is finished.');
+                    Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - save_as');
                 },
                 failure: function (response, opts) {
                     // TODO: Mostrar mensagem de falha

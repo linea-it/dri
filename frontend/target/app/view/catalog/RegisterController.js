@@ -62,6 +62,7 @@ Ext.define('Target.view.catalog.RegisterController', {
 
                     // Exibir janela de associacao
                     me.getAddedCatalog(name);
+                    Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - add_catalog');
 
                 },
                 failure: function (response, opts) {
