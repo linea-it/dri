@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from .filters import ProductPermissionFilterBackend
 from .serializers import *
 from .tasks import product_save_as
-
+from .tasks import import_target_list
 logger = logging.getLogger(__name__)
 
 
@@ -740,14 +740,10 @@ class ImportTargetListViewSet(viewsets.ModelViewSet):
         from pprint import pprint
         pprint(data)
 
-
-        # # Executar a Task Assincrona que fara o Save As
-        # product_save_as.delay(
-        #     request.user.pk,
-        #     product_id,
-        #     name,
-        #     filter_id,
-        #     description
-        # )
+        # Executar a Task Assincrona que fara o Save As
+        import_target_list.delay(
+            request.user.pk,
+            data
+        )
 
         return HttpResponse(status=200)
