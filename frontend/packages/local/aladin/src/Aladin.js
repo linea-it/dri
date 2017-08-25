@@ -44,7 +44,7 @@ Ext.define('aladin.Aladin', {
             fov:180,
             target: '02 23 11.851 -09 40 21.59',
             cooFrame: 'J2000',
-            survey: 'irg', //'empty_survey',
+            survey: 'empty_survey',
             showReticle: true,
             showZoomControl: true,
             showFullscreenControl: true,
@@ -245,6 +245,9 @@ Ext.define('aladin.Aladin', {
             // opcoes do aladin
             aladinOptions
         );
+
+        // 
+        aladin.view.setUnknownSurveyIfNeeded=function(){}
 
         aladin._setImageSurvey = aladin.setImageSurvey;
         aladin.setImageSurvey = function(surveyId, callback){
