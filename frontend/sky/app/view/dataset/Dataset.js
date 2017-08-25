@@ -45,7 +45,7 @@ Ext.define('Sky.view.dataset.Dataset', {
                     listeners: {
                         objectMenuItemClick: 'onObjectMenuItemClickVisiomatic',
                         imageMenuItemClick : 'onImageMenuItemClickVisiomatic'
-                    },
+                    }
                     // bind: {
                     // showCrosshair: '{BtnCrosshair.pressed}'
                     // }
@@ -101,7 +101,7 @@ Ext.define('Sky.view.dataset.Dataset', {
                             bind: {
                                 disabled: '{is_empty}'
                             },
-                            pressed: false,
+                            pressed: false
                         },
                         {
                             xtype: 'button',
@@ -112,7 +112,7 @@ Ext.define('Sky.view.dataset.Dataset', {
                             bind: {
                                 disabled: '{is_empty}'
                             }
-                        },
+                        }
                         /*{
                             xtype: 'button',
                             iconCls: 'x-fa fa-map-marker',
