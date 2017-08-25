@@ -246,7 +246,8 @@ Ext.define('aladin.Aladin', {
             aladinOptions
         );
 
-        // 
+        // override native aladin setUnknownSurveyIfNeeded method
+        // o método fosobrescrito pq adiciona uma survey vazia após a apolicação adicionar a sua própria survey
         aladin.view.setUnknownSurveyIfNeeded=function(){}
 
         aladin._setImageSurvey = aladin.setImageSurvey;
