@@ -1,7 +1,7 @@
 import warnings
 
 from django.conf import settings
-from sqlalchemy import create_engine, inspect, MetaData, func, Table
+from sqlalchemy import create_engine, inspect, MetaData, func, Table, Column, Integer, String, Float, Boolean
 from sqlalchemy import exc as sa_exc
 from sqlalchemy.dialects import oracle
 from sqlalchemy.dialects import sqlite
@@ -34,6 +34,7 @@ class DBOracle:
     def get_dialect(self):
         return oracle
 
+
 class DBSqlite:
     def __init__(self, db):
         self.db = db
@@ -47,6 +48,7 @@ class DBSqlite:
 
     def get_dialect(self):
         return sqlite
+
 
 # classe generica - nao ligada a este problema
 class DBBase:
@@ -287,3 +289,71 @@ class DBBase:
         )
 
         return conditions
+
+    # ------------------------------ Create Table --------------------------------------
+    def create_table(self, name, columns, schema=None):
+        """
+
+        :param name:
+        :param columns:
+        :return:
+        """
+
+        sa_columns = list()
+
+        for col in columns:
+            sa_columns.append(self.create_obj_colum(col))
+
+        # columns = list([
+        #     Column('user_id', Integer, primary_key=True),
+        #     Column('user_name', String(16), nullable=False),
+        # ])
+
+        newtable = Table(name, self.metadata, *sa_columns, schema=schema)
+
+        try:
+
+            # TODO PARA OS TESTES DROPAR ANTES DE CRIAR
+            newtable.drop(self.engine, checkfirst=True)
+
+            # Criar a Tabela so se ela nao existir, se ja existir disparar uma excessao
+            newtable.create(self.engine, checkfirst=False)
+
+            return newtable
+
+        except Exception as e:
+            raise e
+
+    def create_obj_colum(self, dcolumn):
+        """
+
+        :param column:
+        :return:
+        """
+
+        # Tratar o nome da coluna
+        name = dcolumn.get('property')
+
+        # troca espacos por '_', converte para lowercase, remove espacos do final
+        name = name.replace(' ', '_').lower().strip().strip('\n')
+
+        # Retirar qualquer caracter que nao seja alfanumerico exceto '_'
+        name = ''.join(e for e in name if e.isalnum() or e == '_')
+
+        # coluna nullable por default a menos que seja primary_key
+        # ou que tenha sido especificado
+        nullable = dcolumn.get('nullable', True)
+
+        if dcolumn.get('primary_key'):
+            nullable = False
+
+        if dcolumn.get('type') == 'int':
+            return Column(name, Integer,
+                          primary_key=dcolumn.get('primary_key'),
+                          nullable=nullable
+                          )
+
+        elif dcolumn.get('type') == 'float':
+            return Column(name, Float,
+                          nullable=nullable,
+                          )
