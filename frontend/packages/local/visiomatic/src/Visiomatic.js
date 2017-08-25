@@ -422,7 +422,7 @@ Ext.define('visiomatic.Visiomatic', {
                 size: 0.0015 // Deg
             };
 
-        me.drawSmallCrosshair(coordinates.ra, coordinates.dec, crosshairOptions);
+        me.drawCrosshair(coordinates.ra, coordinates.dec, crosshairOptions);
     },
 
     addWcsController: function () {
@@ -682,13 +682,13 @@ Ext.define('visiomatic.Visiomatic', {
 
         urra = parseFloat(bounding.lng + bounding.dlng / 2).toFixed(6);
         urdec = parseFloat(bounding.lat + bounding.dlat / 2).toFixed(6);
-        llra = parseFloat(bounding.lng - bounding.dlng / 2).toFixed(6);
-        lldec = parseFloat(bounding.lat - bounding.dlat / 2).toFixed(6);
+        llra = parseFloat(bounding.lng - bounding.dlng / 2).toFixed(6)
+        lldec = parseFloat(bounding.lat - bounding.dlat/2).toFixed(6)
 
         ur = [urra, urdec];
         ll = [llra, lldec];
 
-        box = [ur, ll];
+        box = [ ur, ll ];
 
         // Debugar o Box, desenha um retangulo representando a area visivel
         // ldebugbox = me.drawRectangle(ur, ll, {color: '#1dff00', weight: 5});
@@ -721,7 +721,7 @@ Ext.define('visiomatic.Visiomatic', {
             me = this,
             map = me.getMap();
 
-        this.cmpMousePosition.children[0].innerHTML = 'Mouse RA, Dec (' + (pos) + ')';
+        this.cmpMousePosition.children[0].innerHTML = 'Mouse RA, Dec ('+(pos)+')';
 
         me.currentPosition = {
             radec: [
@@ -785,19 +785,19 @@ Ext.define('visiomatic.Visiomatic', {
      * Define a posição do centro
      * @param value String lat, lng ou h:m:s h:m:s
      */
-    panTo: function (value) {
+    panTo: function(value){
         var map = this.getMap();
 
-        this.coordinatesToLatLng(value, function (latlng) {
+        this.coordinatesToLatLng(value, function(latlng){
             if (latlng) map.panTo(latlng);
-        });
+        })
     },
 
-    coordinatesToLatLng: function (value, fn) {
+    coordinatesToLatLng: function(value, fn){
         visiomatic.Visiomatic.coordinatesToLatLng(value, fn);
     },
 
-    hmsToLatLng: function (value, fn) {
+    hmsToLatLng: function(value, fn){
         visiomatic.Visiomatic.hmsToLatLng(value, fn);
     },
 
@@ -970,7 +970,7 @@ Ext.define('visiomatic.Visiomatic', {
 
                         var a_image = feature.properties._meta_a_image,
                             b_image = feature.properties._meta_b_image,
-                            theta_image = feature.properties._meta_theta_image;
+                            theta_image = feature.properties._meta_theta_image
 
                         // Checar se tem o 3 campos
                         if ((typeof a_image == 'number') &&
@@ -982,7 +982,7 @@ Ext.define('visiomatic.Visiomatic', {
                             posAngle = theta_image;
                         }
                     }
-                    catch (err) {}
+                    catch(err) {}
                 }
 
                 path_options = Ext.Object.merge(opts, {
@@ -994,7 +994,7 @@ Ext.define('visiomatic.Visiomatic', {
                 path_options = Ext.Object.merge(path_options, options);
 
                 // tornar o objeto clicavel
-                path_options.interactive = true;
+                path_options.interactive = true
 
                 // Usei ellipse por ja estar em degrees a funcao circulo
                 // estava em pixels
@@ -1003,7 +1003,7 @@ Ext.define('visiomatic.Visiomatic', {
                 circle = l.ellipse(latlng, path_options);
 
                 // adiciona o ícone de comentário por objeto
-                if (feature.properties._meta_comments) {
+                if (feature.properties._meta_comments){
                     me.createCommentIcon(latlng, circle);
                 }
 
@@ -1020,8 +1020,8 @@ Ext.define('visiomatic.Visiomatic', {
         .on('contextmenu', me.onLayerContextMenu, me);
 
         // adiciona os ícones de comentário por posição
-        if (storeCommentsPosition) {
-            storeCommentsPosition.each(function (record) {
+        if (storeCommentsPosition){
+            storeCommentsPosition.each(function(record){
                 var latlng = {
                     lat: record.get('pst_dec'),
                     lng: record.get('pst_ra')
@@ -1036,6 +1036,7 @@ Ext.define('visiomatic.Visiomatic', {
         return lCatalog;
     },
 
+
     createOverlayPopup: function (layer) {
         var feature = layer.feature,
             properties = feature.properties,
@@ -1046,16 +1047,16 @@ Ext.define('visiomatic.Visiomatic', {
         Ext.each(mags, function (mag) {
             try {
                 mag_name = mag.slice(-1);
-                if (mag_name == 'y') {
+                if (mag_name == 'y'){
                     mag_name = 'Y';
 
                 }
                 mag_value = properties[mag];
 
                 tag = '<TR><TD><spam>' + mag_name + '</spam>: </TD><TD>' + mag_value.toFixed(2) + '</td></tr>';
-                mag_tags.push(tag);
+                mag_tags.push(tag)
 
-            } catch (err) {
+            } catch(err) {
 
             }
         });
@@ -1097,7 +1098,7 @@ Ext.define('visiomatic.Visiomatic', {
             map = me.getMap();
 
         if (layer !== null) {
-            for (i in layer._layers) {
+            for (i in layer._layers){
                 l = layer._layers[i];
                 q = l.feature.properties._meta_comments;
 
@@ -1281,15 +1282,24 @@ Ext.define('visiomatic.Visiomatic', {
             crosshairOptions = me.getCrosshairOptions(),
             layer = null,
             labelOptions, centerPadding, size, latlng,
-            lineTop, lineBottom, lineLeft, lineRight;
+            lineTop, lineBotton, lineLeft, lineRight;
 
         labelOptions = Ext.Object.merge({}, crosshairOptions);
         if (options) {
             labelOptions = Ext.Object.merge(labelOptions, options);
         }
 
+        // Verificar se ja tem crosshair
+        if (me.lcrosshair && !options) {
+            if (map.hasLayer(me.lcrosshair)) {
+                // se ja houver remove do map
+                map.removeLayer(me.lcrosshair);
+                me.lcrosshair = null;
+            }
+        }
+
         // Verificar se ja tem small crosshair
-        if (me.lcrosshair) {
+        if (me.lcrosshair && options) {
             if (map.hasLayer(me.lsmallcrosshair)) {
                 // se ja houver remove do map
                 map.removeLayer(me.lsmallcrosshair);
@@ -1308,18 +1318,22 @@ Ext.define('visiomatic.Visiomatic', {
                 labelOptions.size : 0.010);
 
         lineTop       = [l.latLng((dec + centerPadding), ra), l.latLng((dec + size), ra)];
-        lineBottom    = [l.latLng((dec - centerPadding), ra), l.latLng((dec - size), ra)];
+        lineBotton    = [l.latLng((dec - centerPadding), ra), l.latLng((dec - size), ra)];
         lineLeft      = [l.latLng(dec, (ra + centerPadding)), l.latLng(dec, (ra + size))];
         lineRight     = [l.latLng(dec, (ra - centerPadding)), l.latLng(dec, (ra - size))];
 
         lineTop     = l.polyline(lineTop, options);
-        lineBottom  = l.polyline(lineBottom, options);
+        lineBotton  = l.polyline(lineBotton, options);
         lineLeft    = l.polyline(lineLeft, options);
         lineRight   = l.polyline(lineRight, options);
 
         layer = new l.LayerGroup(
-                [lineTop, lineBottom, lineLeft, lineRight]);
+                [lineTop, lineBotton, lineLeft, lineRight]);
 
+        layerSmall = new l.LayerGroup(
+                [lineTop, lineBotton, lineLeft, lineRight]);
+
+        me.lsmallcrosshair = layerSmall;
         me.lcrosshair = layer;
 
         if (me.getShowCrosshair() && !options) {
@@ -1327,62 +1341,12 @@ Ext.define('visiomatic.Visiomatic', {
 
         }
 
-        return me.lcrosshair;
-    },
-
-    drawSmallCrosshair: function (ra, dec, options) {
-        // console.log("Zoomify - drawCrosshair()");
-        var me = this,
-            l = me.libL,
-            map = me.getMap(),
-            crosshairOptions = me.getCrosshairOptions(),
-            layer = null,
-            labelOptions, centerPadding, size, latlng,
-            lineTop, lineBottom, lineLeft, lineRight;
-
-        labelOptions = Ext.Object.merge({}, crosshairOptions);
-        if (options) {
-            labelOptions = Ext.Object.merge(labelOptions, options);
-        }
-
-        // Verificar se ja tem small crosshair
-        if (me.lsmallcrosshair) {
-            if (map.hasLayer(me.lsmallcrosshair)) {
-                // se ja houver remove do map
-                map.removeLayer(me.lsmallcrosshair);
-                me.lsmallcrosshair = null;
-            }
-        }
-
-        // coordenadas
-        latlng = l.latLng(dec, ra);
-
-        // centerPadding e a distancia que as linhas vao ter a partir do centro.
-        centerPadding = 0.005 / map._zoom;
-
-        size = 0.01 / map._zoom;
-
-        lineTop       = [l.latLng((dec + centerPadding), ra), l.latLng((dec + size), ra)];
-        lineBottom    = [l.latLng((dec - centerPadding), ra), l.latLng((dec - size), ra)];
-        lineLeft      = [l.latLng(dec, (ra + centerPadding)), l.latLng(dec, (ra + size))];
-        lineRight     = [l.latLng(dec, (ra - centerPadding)), l.latLng(dec, (ra - size))];
-
-        lineTop     = l.polyline(lineTop, options);
-        lineBottom  = l.polyline(lineBottom, options);
-        lineLeft    = l.polyline(lineLeft, options);
-        lineRight   = l.polyline(lineRight, options);
-
-        layerSmall = new l.LayerGroup(
-                [lineTop, lineBottom, lineLeft, lineRight]);
-
-        me.lsmallcrosshair = layerSmall;
-
-        if (me.getEnableSmallCrosshair() && options) {
+        if (me.getShowCrosshair() && options) {
             map.addLayer(me.lsmallcrosshair);
 
         }
 
-        return me.lsmallcrosshair;
+        return me.lcrosshair;
     },
 
     showCatalogOverlayWindow: function() {
@@ -1589,19 +1553,19 @@ Ext.define('visiomatic.Visiomatic', {
             urdec = upperRight[1],
             llra = lowerLeft[0],
             lldec = lowerLeft[1],
-            lineTop, lineBottom, lineLeft, lineRight, lt, lb, ll, lr;
+            lineTop, lineBotton, lineLeft, lineRight, lt, lb, ll, lr;
 
 
         pathOptions = Ext.Object.merge(me.getCrosshairOptions(), options)
 
         lineTop = [l.latLng(urdec, llra), l.latLng(urdec, urra)];
-        lineBottom = [l.latLng(lldec, llra), l.latLng(lldec, urra)];
+        lineBotton = [l.latLng(lldec, llra), l.latLng(lldec, urra)];
         lineLeft = [l.latLng(urdec, urra), l.latLng(lldec, urra)];
         lineRight = [l.latLng(urdec, llra), l.latLng(lldec, llra)];
 
 
         lt = l.polyline(lineTop, pathOptions);
-        lb = l.polyline(lineBottom, pathOptions);
+        lb = l.polyline(lineBotton, pathOptions);
         ll = l.polyline(lineLeft, pathOptions);
         lr = l.polyline(lineRight, pathOptions);
 
