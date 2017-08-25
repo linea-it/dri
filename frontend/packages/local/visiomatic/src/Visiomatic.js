@@ -1032,8 +1032,24 @@ Ext.define('visiomatic.Visiomatic', {
         }
 
         map.addLayer(lCatalog);
+        
+        me.redraw();
 
         return lCatalog;
+    },
+
+    redraw(){
+        var me = this,
+            map = me.getMap(),
+            container = $(map.getContainer()),
+            width = container.width();
+
+        if (width>0){
+            container.css({width:width+2});
+            map.invalidateSize();
+            container.css({width:'initial'});
+        }
+        
     },
 
     createOverlayPopup: function (layer) {
