@@ -36,10 +36,10 @@ Ext.define('Target.view.settings.CutoutJobController', {
     },
 
     onChangeSetting: function (setting) {
-         var me = this,
-             vm = me.getViewModel(),
-             product = vm.get('currentProduct'),
-             contents = vm.getStore('contents');
+        var me = this,
+            vm = me.getViewModel(),
+            product = vm.get('currentProduct'),
+            contents = vm.getStore('contents');
 
         vm.set('currentSetting', setting);
 
@@ -55,18 +55,18 @@ Ext.define('Target.view.settings.CutoutJobController', {
 
     },
 
-    addContentsToField: function (store){
+    addContentsToField: function (store) {
         var me = this,
             vm = me.getViewModel(),
             auxcontents = vm.get('auxcontents');
 
-        store.each(function(record){
-            if (record.get('is_visible') === true){
+        store.each(function (record) {
+            if (record.get('is_visible') === true) {
                 auxcontents.add(record);
 
             }
 
-        }, store)
+        }, store);
     },
 
     onCancelAddJob: function () {
@@ -157,6 +157,7 @@ Ext.define('Target.view.settings.CutoutJobController', {
                     view.setLoading(false);
 
                     view.fireEvent('submitedjob', me);
+                    Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - create_mosaic');
 
                     // Fechar a Janela
                     view.close();

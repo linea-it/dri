@@ -468,6 +468,7 @@ Ext.define('visiomatic.Visiomatic', {
         options = options || {};
 
         if (imageLayer) {
+<<<<<<< HEAD
               imageOptions = {
                   credentials: true,
                   channelLabelMatch: "[ugrizY]",
@@ -478,6 +479,19 @@ Ext.define('visiomatic.Visiomatic', {
                   colorSat: imageLayer.iipColorSat,
                   quality: imageLayer.iipQuality,
             }
+=======
+            imageOptions = {
+                credentials: true,
+                channelLabelMatch: '[ugrizY]',
+                mixingMode: imageLayer.iipMode,
+                contrast: imageLayer.iipContrast,
+                gamma: imageLayer.iipGamma,
+                invertCMap: imageLayer.iipInvertCMap,
+                colorSat: imageLayer.iipColorSat,
+                quality: imageLayer.iipQuality
+
+            };
+>>>>>>> develop
         }
 
         args = Ext.Object.merge(imageOptions, options);

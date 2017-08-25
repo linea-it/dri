@@ -69,7 +69,8 @@ PROJECT_APPS = [
     'catalog',
     'interfaces',
     'userquery',
-    'aladin'
+    'aladin',
+    'statistics'
 ]
 
 if USE_OAUTH:
