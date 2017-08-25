@@ -477,6 +477,7 @@ Ext.define('visiomatic.Visiomatic', {
                 invertCMap: imageLayer.iipInvertCMap,
                 colorSat: imageLayer.iipColorSat,
                 quality: imageLayer.iipQuality
+
             };
         }
 

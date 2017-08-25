@@ -54,7 +54,7 @@ Ext.define('Target.view.objects.DownloadWindow', {
                                     columns: 1,
                                     items: [
                                         {boxLabel: 'CSV', name: 'table_format', inputValue: 'csv', checked: true},
-                                        {boxLabel: 'FITS', name: 'table_format', inputValue: 'fits'},
+                                        {boxLabel: 'FITS', name: 'table_format', inputValue: 'fits'}
                                         //{boxLabel: 'JSON', name: 'table_format', inputValue: 'json'}
                                     ]
                                 }
@@ -63,8 +63,8 @@ Ext.define('Target.view.objects.DownloadWindow', {
                         {
                             xtype: 'combobox',
                             itemId: 'cmbCutoutJob',
-                            name: "cutouts",
-                            fieldLabel: "Mosaic",
+                            name: 'cutouts',
+                            fieldLabel: 'Mosaic',
                             emptyText: 'Choose Mosaic',
                             displayField: 'cjb_display_name',
                             valueField: 'id',
@@ -116,7 +116,7 @@ Ext.define('Target.view.objects.DownloadWindow', {
 
     setCurrentCatalog: function (currentCatalog) {
         var me = this,
-            cmbCutouts = me.down("#cmbCutoutJob"),
+            cmbCutouts = me.down('#cmbCutoutJob'),
             store = cmbCutouts.getStore();
 
         if ((currentCatalog) && (currentCatalog.get('id') > 0)) {
@@ -135,10 +135,10 @@ Ext.define('Target.view.objects.DownloadWindow', {
             ]);
 
             store.load({
-                callback: function() {
+                callback: function () {
                     cmbCutouts.enable();
                 }
-            })
+            });
         }
     },
 
@@ -161,7 +161,7 @@ Ext.define('Target.view.objects.DownloadWindow', {
                 table_format = values.table_format;
 
                 if (Array.isArray(table_format)) {
-                    table_format = table_format.join()
+                    table_format = table_format.join();
                 }
 
             }
@@ -186,11 +186,12 @@ Ext.define('Target.view.objects.DownloadWindow', {
                     'filetypes': table_format,
                     'cutout': cutouts,
                     'filter': filter
-//                    'report_format': report_format
+                    //                    'report_format': report_format
                 },
                 success: function (response) {
                     me.onCancel();
                     Ext.MessageBox.alert('', 'The job will run in the background and you will be notified when it is finished.');
+                    Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - download_catalogs');
                 },
                 failure: function (response, opts) {
                     var msg = response.status + ' ' + response.statusText;
