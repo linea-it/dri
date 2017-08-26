@@ -29,12 +29,12 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     //ao clicar em um item do menu de contexto de objeto do visiomatic
-    onObjectMenuItemClickVisiomatic: function(event, feature){
+    onObjectMenuItemClickVisiomatic: function (event, feature) {
         this.onComment(event.latlng, feature);
     },
 
     //ao clicar em um item do menu de contexto de posição do visiomatic
-    onImageMenuItemClickVisiomatic: function(event, dataset){
+    onImageMenuItemClickVisiomatic: function (event, dataset) {
         this.onCommentPosition(event, dataset);
     },
 
@@ -125,16 +125,16 @@ Ext.define('Target.view.preview.PreviewController', {
             refs.btnRadius.setVisible(true);
             refs.btnMembers.setVisible(true);
 
-//            refs.btnComments.setVisible(true);
-//            refs.btnCrop.setVisible(true);
-//            refs.btnSave.setVisible(true);
+            //            refs.btnComments.setVisible(true);
+            //            refs.btnCrop.setVisible(true);
+            //            refs.btnSave.setVisible(true);
         } else {
             refs.btnRadius.setVisible(false);
             refs.btnMembers.setVisible(false);
 
-//            refs.btnComments.setVisible(false);
-//            refs.btnCrop.setVisible(false);
-//            refs.btnSave.setVisible(false);
+            //            refs.btnComments.setVisible(false);
+            //            refs.btnCrop.setVisible(false);
+            //            refs.btnSave.setVisible(false);
         }
 
     },
@@ -158,7 +158,7 @@ Ext.define('Target.view.preview.PreviewController', {
 
         if (!visiomatic.imageLayer) {
             options = JSON.parse(
-                localStorage.getItem("imageOptions")
+                localStorage.getItem('imageOptions')
             );
         }
 
@@ -281,10 +281,10 @@ Ext.define('Target.view.preview.PreviewController', {
             return false;
         }
 
-        if (feature && feature.properties){
+        if (feature && feature.properties) {
             catalog_id = feature.properties._meta_catalog_id;
             object_id  = feature.id;
-        }else{
+        }else {
             catalog_id = catalog.get('id');
             object_id  = object.get('_meta_id');
         }
@@ -378,7 +378,7 @@ Ext.define('Target.view.preview.PreviewController', {
             comments = vm.getStore('comments'),
             refs = me.getReferences(),
             btnMembers = refs.btnMembers,
-            coordinates, loaded=0;
+            coordinates, loaded = 0;
 
         // Verificar se tem um produto relacioando ao catalogo
         if ((productRelated.get('id') > 0) && (productRelated.get('prl_product') === currentCatalog.get('id'))) {
@@ -405,23 +405,24 @@ Ext.define('Target.view.preview.PreviewController', {
                     }
                 });
 
-                // carrega os comentários de posição
-                loaded++
-                coordinates = '[['+ me.activeDataset.get('tli_urall') + ',' + me.activeDataset.get('tli_udecll')+ '],' +
-                            '['+ me.activeDataset.get('tli_uraur') + ',' + me.activeDataset.get('tli_udecur')+ ']]';
+                //carrega os comentários de posição
+                loaded++;
+                coordinates = '[[' + me.activeDataset.get('tli_urall') + ',' + me.activeDataset.get('tli_udecll') + '],' +
+                               '[' + me.activeDataset.get('tli_uraur') + ',' + me.activeDataset.get('tli_udecur') + ']]';
+
                 comments.filter([{
                     property: 'coordinates',
                     value: coordinates
                 }]);
                 comments.load({
                     callback: function () {
-                        loaded--
+                        loaded--;
                         loadMembersAndCommentsComplete();
                     }
                 });
 
-                function loadMembersAndCommentsComplete(){
-                    if (loaded==0){
+                function loadMembersAndCommentsComplete() {
+                    if (loaded == 0) {
                         // Remover o load do botao
                         btnMembers.setIconCls('x-fa fa-dot-circle-o');
                         // Exibir os objetos membros
@@ -475,6 +476,7 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = me.getViewModel(),
             lmembers = vm.get('overlayMembers');
 
+        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - show_comments');
         visiomatic.showHideComments(lmembers, state);
 
     },
@@ -483,6 +485,7 @@ Ext.define('Target.view.preview.PreviewController', {
         var me = this,
             visiomatic = me.lookupReference('visiomatic');
 
+        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - crop');
         visiomatic.initCrop();
 
     },
@@ -509,13 +512,17 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     onSave: function () {
-      var me = this,
-          visiomatic = me.lookupReference('visiomatic');
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
 
-      visiomatic.showDownloadWindow();
+        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - save_fits');
+        visiomatic.showDownloadWindow();
 
     },
 
+    onEvent: function () {
+        Ext.GlobalEvents.fireEvent('eventregister','teste');
 
+    }
 
 });
