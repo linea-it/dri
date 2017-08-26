@@ -1,8 +1,9 @@
 bootstrap.json
 /build/development/
 /build/temp/
+/build/*/*/cache.appcache
+/*/sass/example/
 /LOCAL.txt
 /LOCAL-source_update.sh
 /LOCAL-sencha_target_build_production.sh
 /LOCAL-sencha_sky_build_production.sh
-/*/sass/example/

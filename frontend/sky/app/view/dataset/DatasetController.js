@@ -39,7 +39,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
     lMarker: null,
 
     //ao clicar em um item do menu de contexto de objeto do visiomatic
-    onObjectMenuItemClickVisiomatic: function(event, feature){
+    onObjectMenuItemClickVisiomatic: function (event, feature) {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -47,10 +47,10 @@ Ext.define('Sky.view.dataset.DatasetController', {
             catalog = vm.get('currentCatalog'),
             object_id, catalog_id;
 
-        if (feature && feature.properties){
+        if (feature && feature.properties) {
             catalog_id = feature.properties._meta_catalog_id;
             object_id  = feature.id;
-        }else{
+        }else {
             catalog_id = catalog.get('id');
             object_id  = object.get('_meta_id');
         }
@@ -85,7 +85,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     //ao clicar em um item do menu de contexto de objeto do visiomatic
-    onImageMenuItemClickVisiomatic: function(event, dataset){
+    onImageMenuItemClickVisiomatic: function (event, dataset) {
         var latlng = event.latlng;
         var comment = Ext.create('Ext.window.Window', {
             title: 'Position Comments',
@@ -375,13 +375,13 @@ Ext.define('Sky.view.dataset.DatasetController', {
         visiomatic.showHideComments(lmembers, state);
     },
 
-    gotoPosition: function(value){
+    gotoPosition: function (value) {
         var visiomatic = this.lookupReference('visiomatic');
 
-        visiomatic.coordinatesToLatLng(value, function(latlng){
-            if (visiomatic.isInsideTile(latlng.lng, latlng.lat)){
+        visiomatic.coordinatesToLatLng(value, function (latlng) {
+            if (visiomatic.isInsideTile(latlng.lng, latlng.lat)) {
                 visiomatic.panTo(value);
-            }else{
+            }else {
                 Ext.MessageBox.alert('Alert', 'There is no DES tile in the current release on this position.');
             }
         });
@@ -392,18 +392,20 @@ Ext.define('Sky.view.dataset.DatasetController', {
         var me = this,
             visiomatic = me.lookupReference('visiomatic');
 
+        Ext.GlobalEvents.fireEvent('eventregister','SkyViewer - crop');
         visiomatic.initCrop();
     },
 
     onSave: function () {
-      var me = this,
-          visiomatic = me.lookupReference('visiomatic');
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
 
-      visiomatic.showDownloadWindow();
+        Ext.GlobalEvents.fireEvent('eventregister','SkyViewer - save_fits');
+        visiomatic.showDownloadWindow();
 
     },
 
-    onActivate: function(){
+    onActivate: function () {
         var me = this, coordinate, zoom, aladin,
             visiomatic = me.lookupReference('visiomatic');
 

@@ -55,7 +55,10 @@ Ext.define('aladin.maps.MapSelectionController', {
                 store_filters.removeAll();
 
                 store.each(function(record){
-                    if (store_types.findRecord('pgr_group', record.get('pgr_group')) == null) {
+                    if (
+                        store_types.findRecord(
+                            'pgr_group', record.get('pgr_group')) == null
+                    ) {
                         store_types.add(record);
                     }
                 }, this);
@@ -83,7 +86,10 @@ Ext.define('aladin.maps.MapSelectionController', {
         store_filters.removeAll();
 
         store.each(function(record) {
-            if (record.get('pgr_group') == map_model.get('pgr_group')) {
+            if (
+                record.get('pgr_group') == map_model.get('pgr_group') &&
+                    store_classes.findRecord('prd_class', record.get('prd_class')) == null
+            ) {
                 store_classes.add(record);
             }
         }, this);
@@ -103,7 +109,10 @@ Ext.define('aladin.maps.MapSelectionController', {
         store_filters.removeAll();
 
         store.each(function(record) {
-            if (record.get('id') == map_model.get('id')) {
+            if (
+                record.get('pgr_group') == map_model.get('pgr_group') &&
+                    record.get('prd_class') == map_model.get('prd_class')
+            ) {
                 store_filters.add(record);
             }
         }, this);
@@ -167,8 +176,8 @@ Ext.define('aladin.maps.MapSelectionController', {
         });
     },
 
-    onClickBtnOnOff: function (btn) {
-        //console.log('onClickBtnOnOff(%o)', btn);
+    onDisplayOnOff: function (btn) {
+        //console.log('onDisplayOff(%o)', btn);
 
         var me = this,
             vm = me.getViewModel(),

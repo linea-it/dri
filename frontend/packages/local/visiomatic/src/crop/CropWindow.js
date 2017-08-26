@@ -12,7 +12,7 @@ Ext.define('visiomatic.crop.CropWindow', {
     closeAction: 'destroy',
 
     layout: {
-        type: 'hbox',
+        type: 'hbox'
     },
 
     initComponent: function () {
@@ -24,18 +24,18 @@ Ext.define('visiomatic.crop.CropWindow', {
             layout: 'ux.center',
             items: [
               {
-                  xtype: 'image',
-                  src: image.href,
-                  alt: image.download,
-                  height: me.height - 100,
-                  width: me.width-100,
-              },
+                xtype: 'image',
+                src: image.href,
+                alt: image.download,
+                height: me.height - 100,
+                width: me.width - 100
+            }
             ],
             buttons: [
                 {
                     xtype: 'label',
-                    text: 'Right click "Save link as" to download the image',
-                    flex: 1,
+                    text: 'Right click "Save image as" to download the image',
+                    flex: 1
                 },
                 {
                     text: 'Cancel',
@@ -54,5 +54,5 @@ Ext.define('visiomatic.crop.CropWindow', {
     loadImage: function (image) {
         var me = this;
         this.image = image;
-    },
+    }
 });

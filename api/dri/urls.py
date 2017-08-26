@@ -28,6 +28,7 @@ from product_register import views as product_register_views
 from rest_framework import routers
 from userquery import views as userquery_views
 from validation import views as validation_views
+from statistics import views as statistics_views
 
 router = routers.DefaultRouter()
 
@@ -99,6 +100,9 @@ router.register(r'comment/position', comment_views.PositionViewSet)
 
 # Aladin API
 router.register(r'aladin/image', aladin_views.ImageViewSet)
+
+# Statistics API
+router.register(r'statistics', statistics_views.StatisticsViewSet)
 
 providers = common_views.get_providers()
 
