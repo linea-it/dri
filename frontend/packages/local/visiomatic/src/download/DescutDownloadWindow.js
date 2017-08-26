@@ -3,7 +3,7 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
 
     requires: [
         'visiomatic.download.FitsController',
-        'visiomatic.download.FitsModel',
+        'visiomatic.download.FitsModel'
     ],
 
     xtype: 'target-download-descut',
@@ -35,7 +35,7 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
                     xtype: 'gridpanel',
                     scrollable: true,
                     bind: {
-                        store: '{fitsFiles}',
+                        store: '{fitsFiles}'
                     },
                     columns: [
                         {
@@ -45,14 +45,14 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
                         },
                         {
                             text: 'Band',
-                            dataIndex: 'band',
+                            dataIndex: 'band'
                         },
                         {
                             text: 'URL',
                             dataIndex: 'url',
                             renderer: function (value, metadata, record) {
                                 return '<a href=' + value + '><i class="fa fa-download"> </i></a>';
-                            },
+                            }
                         }
                     ]
                 }
@@ -61,7 +61,7 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
                 {
                     xtype: 'label',
                     text: 'Right click "Save link as" to download files',
-                    flex: 1,
+                    flex: 1
                 },
                 {
                     text: 'Cancel',
@@ -81,5 +81,5 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
         var me = this;
         this.loadFits = tilename;
         me.fireEvent('changeLoadFits', tilename, catalog);
-    },
+    }
 });
