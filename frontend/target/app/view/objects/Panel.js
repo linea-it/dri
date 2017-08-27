@@ -60,12 +60,18 @@ Ext.define('Target.view.objects.Panel', {
                         xtype: 'button',
                         iconCls: 'x-fa fa-floppy-o',
                         tooltip: 'Save As',
-                        handler: 'onClickSaveAs'
+                        handler: 'onClickSaveAs',
+                        bind: {
+                            disabled: '{!targetsObjectsGrid.selection}'
+                        }
                     },
                     {
                         iconCls: 'x-fa fa-download',
                         tooltip: 'Download',
-                        handler: 'onClickDownload'
+                        handler: 'onClickDownload',
+                        bind: {
+                            disabled: '{!targetsObjectsGrid.selection}'
+                        }
                     },
                     {
                         xtype: 'button',
