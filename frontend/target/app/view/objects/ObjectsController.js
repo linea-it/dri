@@ -276,7 +276,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid,
             btnFilterApply = refs.btnFilterApply,
-            aFilters = [];
+            aFilters = [], f={};
 
         if (!catalog) {
             catalog = currentCatalog.get('id');
@@ -296,12 +296,21 @@ Ext.define('Target.view.objects.ObjectsController', {
             // Aplicar Filtros ao Produto
             if ((filters) && (filters.count() > 0)) {
                 filters.each(function (filter) {
-                    aFilters.push({
-                        property: filter.get('fcd_property_name'),//property_name'),
-                        operator: filter.get('fcd_operation'),
-                        value: filter.get('fcd_value')
-                    });
+                    var n = filter.get('fcd_property_name'),
+                        v = filter.get('fcd_value');
 
+                    if (f[n]){
+                        (f[n].value.push ? f[n].value.push(v) : f[n].value=[f[n].value, v]);
+                        f[n].operator = 'in';
+                    }else{
+                        f[n] = {
+                            property: n,
+                            operator: filter.get('fcd_operation'),
+                            value   : v
+                        };
+
+                        aFilters.push(f[n]);
+                    }
                 }, me);
 
                 // Aplicar os Filtros
