@@ -1,23 +1,22 @@
 Ext.define('common.statistics.Events', {
-    extend : 'Ext.app.Controller',
+    extend: 'Ext.app.Controller',
     init: function () {
         var me = this;
         Ext.GlobalEvents.on('eventregister', me.onEventRegister);
     },
 
     onEventRegister: function (eventDescription) {
+        var csrf = Ext.util.Cookies.get('csrftoken');
+
         Ext.Ajax.request({
-            url: `/dri/api/statistics/`,
+            url: `${window.location.origin}/dri/api/statistics/`,
             method: 'POST',
             params: {
+                csrfmiddlewaretoken: csrf,
                 event: eventDescription
             },
-            success: function (response) {
-
-            },
-            failure: function (response, opts) {
-
-            }
+            success: function (response) {},
+            failure: function (response, opts) {}
         });
     }
 });
