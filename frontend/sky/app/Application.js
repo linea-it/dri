@@ -8,6 +8,10 @@ Ext.define('Sky.Application', {
 
     name: 'Sky',
 
+    requires: [
+        'common.statistics.Events'
+    ],
+
     stores: [
         // TODO: add global / shared stores here
     ],
