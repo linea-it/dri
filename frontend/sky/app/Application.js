@@ -22,7 +22,6 @@ Ext.define('Sky.Application', {
         var me = this;
         // Desabilitar os erros de Aria
         Ext.enableAriaButtons = false;
-        Ext.create('common.statistics.Events').init();
 
         // Checar se o usuario esta logado
         Ext.Ajax.request({
