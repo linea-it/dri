@@ -4,11 +4,11 @@ Ext.define('visiomatic.download.FitsController', {
     alias: 'controller.fits-files',
 
     listen: {
-          component: {
-              'target-download-descut': {
-                  changeLoadFits: 'onChangeLoadFits',
-              }
-      }
+        component: {
+            'target-download-descut': {
+                changeLoadFits: 'onChangeLoadFits'
+            }
+        }
     },
 
     listen: {
@@ -16,10 +16,10 @@ Ext.define('visiomatic.download.FitsController', {
             'target-download-descut': {
                 changeLoadFits: 'onChangeLoadFits'
             }
-        },
+        }
     },
 
-    onChangeLoadFits: function(tilename, catalog) {
+    onChangeLoadFits: function (tilename, catalog) {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
@@ -38,5 +38,5 @@ Ext.define('visiomatic.download.FitsController', {
                 value: catalog
             }
         ]);
-    },
+    }
 });

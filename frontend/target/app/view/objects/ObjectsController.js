@@ -325,7 +325,13 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     onLoadObjects: function( store, records, successful, operation) {
         var me = this,
+            refs = me.getReferences(),
+            preview = refs.targetsPreviewPanel,
             objectsGrid = me.lookup("targetsObjectsGrid");
+        
+        //limpa o preview(visiomatic e botões) e desabilita botões save as, download, comments...
+        preview.clear();
+        objectsGrid.setSelection(null);
 
         objectsGrid.setLoading(false);
 
