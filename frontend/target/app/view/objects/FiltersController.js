@@ -262,8 +262,8 @@ Ext.define('Target.view.objects.FiltersController', {
                         //aplica o sync somente se existir registro para atualizar ou remover, caso contrário não irá chamar callback
                         if (storeFilters.updating>0 || storeFilters.removed.length>0 || storeFilters.getNewRecords().length>0){
                             view.setLoading(true);
-                            storeFilters.save({
-                                callback: function(savedRating, operation, success){
+                            storeFilters.sync({
+                                callback: function(){
                                     view.setLoading(false);
                                     fn();
                                 }
