@@ -160,7 +160,7 @@ def get_fits_by_tilename(request):
             fits_file.update({
                 'band': tile[2]
             })
-
-            result.append(copy.copy(fits_file))
+            if tile[2] != None:
+                result.append(copy.copy(fits_file))
 
         return Response(dict({'results': result}))

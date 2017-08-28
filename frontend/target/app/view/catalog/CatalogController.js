@@ -56,6 +56,8 @@ Ext.define('Target.view.catalog.CatalogController', {
             catalogs = vm.getStore('catalogs'),
             selected = vm.get('selectedCatalog');
 
+        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - delete_catalog');
+
         if (btn === 'no') {
             return false;
         }
@@ -116,6 +118,8 @@ Ext.define('Target.view.catalog.CatalogController', {
                     }
                 });
 
+                Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - delete_bookmark');
+
             } else {
                 // Criar um Model sem id, com o id do produto e a flag is_starred true
                 bookmark = Ext.create('Target.model.Bookmarked',{
@@ -138,6 +142,7 @@ Ext.define('Target.view.catalog.CatalogController', {
                     }
                 });
 
+                Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - add_bookmark');
             }
         }
     },
