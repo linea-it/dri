@@ -47,8 +47,8 @@ Ext.define('Target.view.catalog.CSVForm', {
             fieldLabel: 'Name',
             regex: /^[a-z0-9-_\s]+$/i,
             regexText: 'Please use only letters and numbers separated ' +
-                        'by spaces \' \', minus sign \'-\' or underscore \'_\'.',
-            value: 'Teste Import CSV'
+                        'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
+            // value: 'Teste Import CSV'
         },
         {
             xtype: 'combobox',
@@ -60,8 +60,8 @@ Ext.define('Target.view.catalog.CSVForm', {
             editable: false,
             bind: {
                 store: '{productclass}'
-            },
-            value: 'galaxy_clusters'
+            }
+            // value: 'galaxy_clusters'
         },
         {
             xtype: 'combobox',
@@ -71,8 +71,8 @@ Ext.define('Target.view.catalog.CSVForm', {
             valueField: 'rls_name',
             bind: {
                 store: '{releases}'
-            },
-            value: 'y1_wide_survey'
+            }
+            // value: 'y1_wide_survey'
         },
         {
             xtype: 'checkbox',
@@ -87,10 +87,10 @@ Ext.define('Target.view.catalog.CSVForm', {
             height: 200,
             labelAlign: 'top',
             emptyText: 'ra, dec',
-            allowBlank: false,
-            value:  '93.96499634,-57.77629852\n' +
-                    '94.28079987,-55.13209915\n' +
-                    '68.05249786,-61.84970093\n'
+            allowBlank: false
+            // value:  '93.96499634,-57.77629852\n' +
+            //         '94.28079987,-55.13209915\n' +
+            //         '68.05249786,-61.84970093\n'
         },
         {
             xtype: 'textareafield',

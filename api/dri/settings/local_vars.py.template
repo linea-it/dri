@@ -62,7 +62,7 @@ SCHEMA_RATING_REJECT = None
 
 # Logging is disabled due errors in testing and production environment, this must be investigated.
 # for developers, it safe to disable the follows lines
-# LOGGING = {
+LOGGING = {
 #     'version': 1,
 #     'disable_existing_loggers': False,
 #     'formatters': {
@@ -91,6 +91,18 @@ SCHEMA_RATING_REJECT = None
 #             'filename': os.path.join(LOG_DIR, 'downloads.log'),
 #             'formatter': 'simple'
 #         },
+#         'product_export': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(LOG_DIR, 'product_export.log'),
+#             'formatter': 'simple'
+#         },
+#         'product_import': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(LOG_DIR, 'product_import.log'),
+#             'formatter': 'simple'
+#         },
 #     },
 #     'loggers': {
 #         'django': {
@@ -105,6 +117,16 @@ SCHEMA_RATING_REJECT = None
 #         },
 #         'downloads': {
 #             'handlers': ['downloads'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'product_export': {
+#             'handlers': ['product_export'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'product_import': {
+#             'handlers': ['product_import'],
 #             'level': 'DEBUG',
 #             'propagate': True,
 #         },

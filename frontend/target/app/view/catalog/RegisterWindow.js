@@ -7,7 +7,6 @@ Ext.define('Target.view.catalog.RegisterWindow', {
     xtype: 'targets-catalog-register-window',
 
     requires: [
-        // 'Target.view.catalog.RegisterController',
         'Target.view.catalog.DatabaseForm',
         'Target.view.catalog.CSVForm',
         'Target.store.ProductClass',
@@ -41,7 +40,14 @@ Ext.define('Target.view.catalog.RegisterWindow', {
                             }
                         },
                         {
-                            xtype: 'targets-catalog-database-form'
+                            xtype: 'targets-catalog-database-form',
+                            listeners: {
+                                scope: me,
+                                newproduct: function (product) {
+                                    me.fireEvent('newproduct', product);
+                                    me.close();
+                                }
+                            }
                         }
                     ]
                 }

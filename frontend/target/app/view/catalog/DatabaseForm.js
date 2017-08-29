@@ -49,28 +49,31 @@ Ext.define('Target.view.catalog.DatabaseForm', {
             regex: /^[a-z0-9-_\s]+$/i,
             regexText: 'Please use only letters and numbers separated ' +
                         'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
+            // value: 'Registro de tabela Dessci'
         },
         {
             xtype: 'combobox',
             name: 'classname',
             fieldLabel: 'Folder',
             valueField: 'pcl_name',
-            displayField: 'pcl_displayName',
+            displayField: 'pcl_display_name',
             allowBlank: false,
             editable: false,
             bind: {
                 store: '{productclass}'
             }
+            // value: 'galaxy_clusters'
         },
         {
             xtype: 'combobox',
             name: 'release',
             fieldLabel: 'Release',
-            displayField: 'rls_displayName',
+            displayField: 'rls_display_name',
             valueField: 'rls_name',
             bind: {
                 store: '{releases}'
             }
+            // value: 'y1_wide_survey'
         },
         {
             xtype: 'textfield',
@@ -79,9 +82,6 @@ Ext.define('Target.view.catalog.DatabaseForm', {
             maxLength: 30,
             value: 'dessci',
             readOnly: true
-            // bind: {
-            //     hidden: '{!rdDatabase.checked}'
-            // }
         },
         {
             xtype: 'textfield',
@@ -92,11 +92,12 @@ Ext.define('Target.view.catalog.DatabaseForm', {
             regex: /[/\S+/]+[\\.][/\S+/]+/gi,
             regexText: 'Please use schema.table',
             allowBlank: false
+            // value: 'brportal.e_987_2097'
         },
         {
             xtype: 'checkbox',
             boxLabel: 'Public',
-            name: 'is_public',
+            name: 'isPublic',
             checked: true
         },
         {
