@@ -318,7 +318,7 @@ class DBBase:
         try:
 
             # PARA OS TESTAR DROPAR ANTES DE CRIAR
-            #newtable.drop(self.engine, checkfirst=True)
+            # newtable.drop(self.engine, checkfirst=True)
 
             # Criar a Tabela so se ela nao existir, se ja existir disparar uma excessao
             newtable.create(self.engine, checkfirst=False)
@@ -349,6 +349,7 @@ class DBBase:
         nullable = dcolumn.get('nullable', True)
 
         if dcolumn.get('primary_key'):
+
             if self.database.get_engine() == 'oracle':
                 if (len(tablename) >= 30):
                     tablename = tablename[:26]
@@ -367,7 +368,6 @@ class DBBase:
 
         elif dcolumn.get('type') == 'int':
             return Column(name, Integer,
-
                           nullable=nullable
                           )
 
@@ -376,8 +376,5 @@ class DBBase:
                           nullable=nullable,
                           )
 
-        # TODO Adicionar mais tipos de colunas
-        #http: // docs.sqlalchemy.org / en / latest / core / type_basics.html
-
-
-
+            # TODO Adicionar mais tipos de colunas
+            # http: // docs.sqlalchemy.org / en / latest / core / type_basics.html
