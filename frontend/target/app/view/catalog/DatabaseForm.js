@@ -46,6 +46,7 @@ Ext.define('Target.view.catalog.DatabaseForm', {
             xtype: 'textfield',
             name: 'displayName',
             fieldLabel: 'Name',
+            maxLength: 30,
             regex: /^[a-z0-9-_\s]+$/i,
             regexText: 'Please use only letters and numbers separated ' +
                         'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
