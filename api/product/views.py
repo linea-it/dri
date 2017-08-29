@@ -17,9 +17,12 @@ from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from product.importproduct import ImportTargetListCSV
+from django.http import JsonResponse
 from .filters import ProductPermissionFilterBackend
 from .serializers import *
 from .tasks import product_save_as
+from .tasks import import_target_list
 
 logger = logging.getLogger(__name__)
 
@@ -401,7 +404,7 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 class MapFilter(django_filters.FilterSet):
     release_id = django_filters.MethodFilter(action='filter_release_id')
     release_name = django_filters.MethodFilter(action='filter_release_name')
-    with_image =  django_filters.MethodFilter(action='filter_with_image')
+    with_image = django_filters.MethodFilter(action='filter_with_image')
 
     class Meta:
         model = Map
@@ -719,3 +722,34 @@ class SaveAsViewSet(viewsets.ModelViewSet):
         )
 
         return HttpResponse(status=200)
+
+
+# ---------------------------------- Import Target List ----------------------------------
+class ImportTargetListViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows upload a Target List Product
+    """
+    http_method_names = ['post', ]
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        data = request.data
+
+        try:
+
+            product = ImportTargetListCSV().start_import(request.user.pk, data)
+
+            return JsonResponse(dict({
+                'success': True,
+                'product': product.pk
+            }))
+
+
+        except Exception as e:
+            return JsonResponse(dict({
+                'success': False,
+                'message': str(e)
+            }), status=200)

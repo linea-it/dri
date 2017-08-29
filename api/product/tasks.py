@@ -19,12 +19,15 @@ from product.models import CutOutJob
 from product.models import FilterCondition
 from product.models import Product
 from product.saveas import SaveAs
+from product.importproduct import ImportTargetListCSV
 from product.serializers import FConditionSerializer
 
 descutout = DesCutoutService()
 cutoutJobNotify = CutoutJobNotify()
 saveas = SaveAs()
 export = Export()
+importtargetlistcsv = ImportTargetListCSV()
+
 
 
 @task(name="start_des_cutout_job_by_id")
@@ -464,3 +467,19 @@ def product_save_as(user_id, product_id, name, filter_id=None, description=None)
 
     # Criar a tabela
     saveas.create_table_by_product_id(user_id, product_id, name, filter_id, description)
+
+
+
+# %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Product Import Target List CSV %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
+@task(name="import_target_list")
+@shared_task
+def import_target_list(user_id, data):
+
+    if data.get('mime') == 'csv':
+        importtargetlistcsv.start_import(user_id, data)
+
+
+
+
+
+

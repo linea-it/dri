@@ -9,7 +9,7 @@ Ext.define('Target.view.catalog.Tree', {
     requires: [
         'Target.view.catalog.CatalogController',
         'Target.view.catalog.CatalogModel',
-        'Target.view.catalog.RegisterForm',
+        'Target.view.catalog.RegisterWindow',
         'Ext.grid.filters.Filters'
     ],
 
@@ -143,11 +143,11 @@ Ext.define('Target.view.catalog.Tree', {
                     tooltip:'Remove Target List',
                     iconCls: 'x-fa fa-trash',
                     ui: 'soft-red',
-                    handler: 'onRemoveCatalog'
-                    // disabled: true
-                    // bind: {
-                    //     disabled: '{!selectedCatalog.editable}'
-                    // }
+                    handler: 'onRemoveCatalog',
+                    disabled: true,
+                    bind: {
+                        disabled: '{!selectedCatalog.editable}'
+                    }
                 },
                 {
                     xtype: 'textfield',
@@ -207,7 +207,6 @@ Ext.define('Target.view.catalog.Tree', {
             property:'group',
             value: type.toLowerCase()
         });
-
 
         // Guardar os filtros usados no load dos catologos
         baseFilters = Ext.clone(filters);

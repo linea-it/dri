@@ -1,10 +1,10 @@
 /**
  *
  */
-Ext.define('Target.view.catalog.RegisterController', {
+Ext.define('Target.view.catalog.DatabaseController', {
     extend: 'Ext.app.ViewController',
 
-    alias: 'controller.register',
+    alias: 'controller.database',
 
     requires: [
         'Target.store.Catalogs',
@@ -17,17 +17,17 @@ Ext.define('Target.view.catalog.RegisterController', {
     addCatalog: function () {
         var me = this,
             view = me.getView(),
-            form = view.down('form').getForm(),
-            values, data, name, release, is_public, tablename, schema, table;
+            form = view.getForm(),
+            values, data, name, release, isPublic, tablename, schema, table;
 
         if (form.isValid()) {
 
             values = form.getValues();
 
-            name = values.display_name.split(' ').join('_');
+            name = values.displayName.split(' ').join('_');
             name = name.toLowerCase().trim();
             release = values.release !== '' ? [values.release] : [];
-            is_public = values.is_public === 'on' ? true : false;
+            isPublic = values.isPublic === 'on' ? true : false;
 
             tablename = values.tablename.split('.');
             schema = tablename[0];
@@ -35,16 +35,16 @@ Ext.define('Target.view.catalog.RegisterController', {
 
             data = {
                 products: [{
-                    type: 'catalog',
-                    class: values.classname,
-                    name: name,
-                    display_name: values.display_name,
-                    database: values.database,
-                    schema: schema,
-                    table: table,
-                    releases: release,
-                    is_public: is_public,
-                    description: values.description
+                    'type': 'catalog',
+                    'class': values.classname,
+                    'name': name,
+                    'display_name': values.displayName,
+                    'database': values.database,
+                    'schema': schema,
+                    'table': table,
+                    'releases': release,
+                    'is_public': isPublic,
+                    'description': values.description
                 }]
             };
 
@@ -58,17 +58,14 @@ Ext.define('Target.view.catalog.RegisterController', {
                 success: function () {
                     // Fechar a janela de registro
                     view.setLoading(false);
-                    view.close();
 
                     // Exibir janela de associacao
                     me.getAddedCatalog(name);
-                    Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - add_catalog');
 
                 },
                 failure: function (response, opts) {
                     view.setLoading(false);
-                    // TODO MENSAGEM DE ERRO E FECHAR A JANELA
-                    view.close();
+
                     Ext.MessageBox.show({
                         title: 'Server Side Failure',
                         msg: response.status + ' ' + response.statusText,
@@ -149,14 +146,13 @@ Ext.define('Target.view.catalog.RegisterController', {
 
     onFinishAssociation: function (panel) {
         var me = this,
-            catalog = panel.getProduct(),
+            view = me.getView(),
+            product = panel.getProduct(),
             hash;
 
+        view.fireEvent('newproduct', product);
+
         me.onCloseAssociation();
-
-        hash = 'cv/' + catalog;
-        me.redirectTo(hash);
-
     },
 
     onCloseAssociation: function () {
@@ -166,5 +162,19 @@ Ext.define('Target.view.catalog.RegisterController', {
             me.winAssociation.close();
         }
 
+    },
+
+    onChangeType: function (radiogroup, value) {
+        console.log('onChangeType(%o)', value);
+        var me = this,
+            database = me.lookup('fldDatabase');
+        console.log(database);
+        if (value.type === 'csv') {
+            database.setVisible(true);
+
+        } else {
+
+        }
     }
+
 });
