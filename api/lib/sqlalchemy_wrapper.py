@@ -313,8 +313,8 @@ class DBBase:
 
         try:
 
-            # TODO PARA OS TESTES DROPAR ANTES DE CRIAR
-            newtable.drop(self.engine, checkfirst=True)
+            # PARA OS TESTAR DROPAR ANTES DE CRIAR
+            #newtable.drop(self.engine, checkfirst=True)
 
             # Criar a Tabela so se ela nao existir, se ja existir disparar uma excessao
             newtable.create(self.engine, checkfirst=False)
