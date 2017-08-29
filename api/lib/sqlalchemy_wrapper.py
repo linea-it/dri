@@ -9,6 +9,7 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql import select, and_
 from sqlalchemy.sql.expression import Executable, ClauseElement
 from sqlalchemy.sql.expression import literal_column, between
+from sqlalchemy.schema import Sequence
 
 
 class DBOracle:
@@ -299,10 +300,13 @@ class DBBase:
         :return:
         """
 
+        if (len(name) > 30):
+            name = name[:30]
+
         sa_columns = list()
 
         for col in columns:
-            sa_columns.append(self.create_obj_colum(col))
+            sa_columns.append(self.create_obj_colum(name, col))
 
         # columns = list([
         #     Column('user_id', Integer, primary_key=True),
@@ -324,9 +328,9 @@ class DBBase:
         except Exception as e:
             raise e
 
-    def create_obj_colum(self, dcolumn):
+    def create_obj_colum(self, tablename, dcolumn):
         """
-
+        :param tablename:
         :param column:
         :return:
         """
@@ -345,11 +349,25 @@ class DBBase:
         nullable = dcolumn.get('nullable', True)
 
         if dcolumn.get('primary_key'):
-            nullable = False
+            if self.database.get_engine() == 'oracle':
+                if (len(tablename) >= 30):
+                    tablename = tablename[:26]
 
-        if dcolumn.get('type') == 'int':
+                seq_name = '%s_seq' % tablename
+
+                return Column(name, Integer,
+                              Sequence(seq_name),
+                              primary_key=dcolumn.get('primary_key'),
+                              )
+
+            else:
+                return Column(name, Integer,
+                              primary_key=dcolumn.get('primary_key'),
+                              )
+
+        elif dcolumn.get('type') == 'int':
             return Column(name, Integer,
-                          primary_key=dcolumn.get('primary_key'),
+
                           nullable=nullable
                           )
 

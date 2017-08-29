@@ -73,6 +73,8 @@ Ext.define('Target.view.catalog.CSVController', {
                     view.setLoading(false);
 
                     Ext.MessageBox.show({
+                        title: 'Failure',
+                        icon: Ext.MessageBox.WARNING,
                         msg: data.message,
                         buttons: Ext.MessageBox.OK
                     });
