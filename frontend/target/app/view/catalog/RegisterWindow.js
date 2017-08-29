@@ -20,40 +20,34 @@ Ext.define('Target.view.catalog.RegisterWindow', {
 
     closeAction: 'destroy',
 
-    // controller: 'register',
-
-    viewModel: {
-        stores: {
-            productclass: {
-                type: 'product_class',
-                autoLoad: true,
-                filters: [
-                    {
-                        property: 'pgr_name',
-                        value: 'targets'
-                    }
-                ]
-            },
-            releases: {
-                type: 'releases',
-                autoLoad: true
-            }
-        }
-    },
-
     layout: 'fit',
 
-    items: [
-        {
-            xtype: 'tabpanel',
+    initComponent: function () {
+        var me = this;
+
+        Ext.apply(this, {
             items: [
                 {
-                    xtype: 'targets-catalog-csv-form'
-                },
-                {
-                    xtype: 'targets-catalog-database-form'
+                    xtype: 'tabpanel',
+                    items: [
+                        {
+                            xtype: 'targets-catalog-csv-form',
+                            listeners: {
+                                scope: me,
+                                newproduct: function (product) {
+                                    me.fireEvent('newproduct', product);
+                                    me.close();
+                                }
+                            }
+                        },
+                        {
+                            xtype: 'targets-catalog-database-form'
+                        }
+                    ]
                 }
             ]
-        }
-    ]
+        });
+
+        me.callParent(arguments);
+    }
 });

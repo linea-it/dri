@@ -17,10 +17,13 @@ from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from product.importproduct import ImportTargetListCSV
+from django.http import JsonResponse
 from .filters import ProductPermissionFilterBackend
 from .serializers import *
 from .tasks import product_save_as
 from .tasks import import_target_list
+
 logger = logging.getLogger(__name__)
 
 
@@ -401,7 +404,7 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 class MapFilter(django_filters.FilterSet):
     release_id = django_filters.MethodFilter(action='filter_release_id')
     release_name = django_filters.MethodFilter(action='filter_release_name')
-    with_image =  django_filters.MethodFilter(action='filter_with_image')
+    with_image = django_filters.MethodFilter(action='filter_with_image')
 
     class Meta:
         model = Map
@@ -735,15 +738,18 @@ class ImportTargetListViewSet(viewsets.ModelViewSet):
     def create(self, request):
         data = request.data
 
-        print('------------ ImportTargetList ---------')
+        try:
 
-        from pprint import pprint
-        pprint(data)
+            product = ImportTargetListCSV().start_import(request.user.pk, data)
 
-        # Executar a Task Assincrona que fara o Save As
-        import_target_list.delay(
-            request.user.pk,
-            data
-        )
+            return JsonResponse(dict({
+                'success': True,
+                'product': product.pk
+            }))
 
-        return HttpResponse(status=200)
+
+        except Exception as e:
+            return JsonResponse(dict({
+                'success': False,
+                'message': str(e)
+            }), status=200)

@@ -357,3 +357,9 @@ class DBBase:
             return Column(name, Float,
                           nullable=nullable,
                           )
+
+        # TODO Adicionar mais tipos de colunas
+        #http: // docs.sqlalchemy.org / en / latest / core / type_basics.html
+
+
+

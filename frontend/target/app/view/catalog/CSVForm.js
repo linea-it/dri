@@ -38,7 +38,6 @@ Ext.define('Target.view.catalog.CSVForm', {
     bodyPadding: 20,
     submitEmptyText: false,
     defaults: {
-        // labelAlign: 'top',
         anchor: '100%'
     },
     items: [
@@ -81,26 +80,17 @@ Ext.define('Target.view.catalog.CSVForm', {
             name: 'isPublic',
             checked: true
         },
-        // TODO add file Field para permitir o upload de um arquivo csv completo
-        // {
-        //     xtype: 'filefield',
-        //     fieldLabel: 'Choose CSV file'
-        // },
         {
             xtype: 'textareafield',
             name: 'csvData',
-            fieldLabel: 'CSV Data',
+            fieldLabel: 'Coordinates',
             height: 200,
             labelAlign: 'top',
-            emptyText: 'id, ra, dec, col1, col2, ...',
+            emptyText: 'ra, dec',
+            allowBlank: false,
             value:  '93.96499634,-57.77629852\n' +
                     '94.28079987,-55.13209915\n' +
                     '68.05249786,-61.84970093\n'
-
-            // value: 'id_auto,ra,dec\n' +
-            //         '30,93.96499634,-57.77629852\n' +
-            //         '32,94.28079987,-55.13209915\n' +
-            //         '40,68.05249786,-61.84970093\n'
         },
         {
             xtype: 'textareafield',

@@ -1,19 +1,26 @@
-import logging
-from django.contrib.auth.models import User
 import ast
-from product_classifier.models import ProductClass
+import logging
+import time
 
+from django.contrib.auth.models import User
 from lib.CatalogDB import CatalogDB
+from product_classifier.models import ProductClass
+from product_register.ImportProcess import Import
+from .models import Product
 
 
 class ImportTargetListCSV:
     def __init__(self):
         # Get an instance of a logger
-        self.logger = logging.getLogger("product_import")
+        self.logger = logging.getLogger('product_import')
 
         self.csv_separator = ','
 
         self.require_properties = list(['ra', 'dec'])
+
+        self.database = 'catalog'
+
+        self.schema = None
 
         self.user = None
 
@@ -40,25 +47,27 @@ class ImportTargetListCSV:
 
         self._columns_type = dict({
             'id': dict({
-                'property': 'id',
+                'property': 'meta_id',
                 'type': 'int',
-                'primary_key': True
+                'primary_key': True,
+                'ucd': 'meta.id;meta.main'
             }),
             'ra': dict({
                 'property': 'ra',
                 'type': 'float',
                 'nullable': False,
+                'ucd': 'pos.eq.ra;meta.main'
             }),
             'dec': dict({
                 'property': 'dec',
                 'type': 'float',
                 'nullable': False,
+                'ucd': 'pos.eq.dec;meta.main'
             })
         })
 
-
-
     def start_import(self, user_id, data):
+
         self.logger.info('IMPORT TARGET LIST CSV')
 
         self.logger.debug(data)
@@ -76,8 +85,8 @@ class ImportTargetListCSV:
         self.logger.debug('Internal Name: %s' % internal_name)
 
         # Display Name
-        display_name = data.get('displayName').strip()
-        self.logger.debug('Display Name: %s' % display_name)
+        self.display_name = data.get('displayName').strip()
+        self.logger.debug('Display Name: %s' % self.display_name)
 
         # Is Public
         self.is_public = bool(data.get('isPublic'))
@@ -86,6 +95,9 @@ class ImportTargetListCSV:
         # Releases
         self.releases = data.get('releases')
         self.logger.debug('Releases: %s' % self.releases)
+
+        # Description
+        self.description = data.get('description', None)
 
         # CSV Data
         # retirar o escape do caracter \n e remove o \n do final
@@ -103,6 +115,17 @@ class ImportTargetListCSV:
 
         # tendo os dados e o nome das colunas pode ser criado a tabela com SqlAlchemy
         self.table = self.create_table(self.internal_name, self._columns_type)
+
+        # Inserir os dados na nova tabela
+        self.populate_table(self.table, self._table_data)
+
+        # Registrar a nova tabela como produto.
+        self.product = self.register_new_table_as_product(self.user, self.internal_name, self.display_name,
+                                                          self.database, self.schema,
+                                                          self.internal_name, self.product_class, self.releases,
+                                                          self.description)
+
+        return self.product
 
     def set_user(self, user_id):
 
@@ -166,7 +189,7 @@ class ImportTargetListCSV:
         rows = self.parse_rows(self.headers, lines)
 
         # TODO remover esse Debug
-        self.logger.debug("ROWS:  ", rows)
+        self.logger.debug('ROWS:  %s' % rows)
 
         return rows
 
@@ -214,7 +237,7 @@ class ImportTargetListCSV:
 
         # Para cada linha validar
         for line in lines:
-            self.logger.debug("ROW: %s" % line)
+            self.logger.debug('ROW: %s' % line)
             values = line.split(self.csv_separator)
 
             # Incrementar o contador de linhas para ajudar nas mensagens de erro
@@ -232,7 +255,7 @@ class ImportTargetListCSV:
                 # Validar cada valor de acordo com a sua coluna.
                 value = self.check_is_valid(header, value)
 
-                self.logger.debug("Header: %s Value: %s" % (header, value))
+                self.logger.debug('Header: %s Value: %s' % (header, value))
 
                 row.update({
                     header: value
@@ -252,7 +275,7 @@ class ImportTargetListCSV:
         return value
 
     def get_columns_type(self, first_row):
-        self.logger.info("Extract Column types from first data row")
+        self.logger.info('Extract Column types from first data row')
 
         self.logger.debug(first_row)
 
@@ -277,13 +300,23 @@ class ImportTargetListCSV:
 
         return self._columns_type
 
+    def get_associations(self):
+        associations = list()
+        for column in self._columns_type:
+            c = self._columns_type[column]
+
+            associations.append(dict({
+                'property': c.get('property'),
+                'ucd': c.get('ucd')
+            }))
+
+        return associations
+
     # %%%%%%%%%%%%%%%%%%%%%%%%%% Create Table %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     def create_table(self, name, columns_type):
-        self.logger.info("Create table with SqlAlchemy")
+        self.logger.info('Create table with SqlAlchemy')
 
-        self.logger.debug("Table name: %s" % name)
-
-        from sqlalchemy import Table, Column, Integer, String
+        self.logger.debug('Table name: %s' % name)
 
         self.db = CatalogDB()
 
@@ -292,14 +325,72 @@ class ImportTargetListCSV:
             cols.append(columns_type.get(col))
 
         try:
-            self.db.create_table(name, columns=cols)
+            table = self.db.create_table(name, columns=cols)
 
-            self.logger.debug("Table %s Created" % name)
+            self.logger.debug('Table %s Created' % name)
+
+            return table
 
         except Exception as e:
             raise e
 
+    def populate_table(self, table, data):
+        self.logger.info('Populate Table')
 
+        try:
+            start = time.time()
+
+            self.db.engine.execute(table.insert(), data)
+
+            duration = time.time() - start
+
+            self.logger.info('Insert %s rows in %s' % (len(data), '{:.2f} seconds'.format(duration)))
+
+        except Exception as e:
+            raise e
+
+    # %%%%%%%%%%%%%%%%%%%%%%%%%% Register new Product %%%%%%%%%%%%%%%%%%%%%%%%%%
+    def register_new_table_as_product(self, user, internal_name, display_name, database, schema, tablename,
+                                      product_class,
+                                      releases=None, description=None):
+
+        self.logger.info('Register the new table as a product')
+
+        associations = self.get_associations()
+
+        self.logger.debug('Associations: %s' % associations)
+
+        # Dados para o registro
+        data = list([{
+            'process_id': None,
+            'name': internal_name,
+            'display_name': display_name,
+            'database': database,
+            'schema': schema,
+            'table': tablename,
+            'filter': None,
+            'releases': releases,
+            'fields': list([]),
+            'association': associations,
+            'type': 'catalog',
+            'class': product_class.pcl_name,
+            'description': description
+        }])
+
+        # Registar o novo produto
+        import_product = Import()
+
+        import_product.user = user
+        import_product.owner = user
+        import_product.site = None
+        import_product.process = None
+
+        import_product.import_products(data)
+
+        # Retornar o Produto que foi registrado.
+        return Product.objects.get(prd_name=self.internal_name)
+
+        self.logger.info('New Product as Registered')
 
     # %%%%%%%%%%%%%%%%%%%%%%%%%% Validacoes por colunas %%%%%%%%%%%%%%%%%%%%%%%%%%
     def check_is_valid(self, header, value):
@@ -365,13 +456,3 @@ class ImportTargetListCSV:
                 raise Exception(message)
         else:
             raise Exception(message)
-
-# {'class': 'galaxy_clusters',
-#  'csvData': '93.96499634,-57.77629852\\n94.28079987,-55.13209915\\n68.05249786,-61.84970093\\n',
-#  'description': 'TESTE DE IMPORTACAO POR CSV',
-#  'displayName': 'Teste Import CSV',
-#  'isPublic': True,
-#  'mime': 'csv',
-#  'name': 'teste_import_csv',
-#  'releases': ['y1_wide_survey'],
-#  'type': 'catalog'}
