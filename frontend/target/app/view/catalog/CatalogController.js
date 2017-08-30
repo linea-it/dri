@@ -9,7 +9,8 @@ Ext.define('Target.view.catalog.CatalogController', {
     winAddCatalog: null,
 
     requires: [
-        'Target.model.Bookmarked'
+        'Target.model.Bookmarked',
+        'Target.view.catalog.RegisterWindow'
     ],
 
     onAddCatalog: function () {
@@ -19,11 +20,14 @@ Ext.define('Target.view.catalog.CatalogController', {
             me.winAddCatalog.destroy();
             me.winAddCatalog = null;
         }
-        me.winAddCatalog = Ext.create('Target.view.catalog.RegisterForm', {
-            width: 300,
+        me.winAddCatalog = Ext.create('Target.view.catalog.RegisterWindow', {
+            width: 400,
+            height: 550,
             listeners: {
-                scope: this,
-                close: me.reloadCatalogs
+                scope: me,
+                //close: 'reloadCatalogs',
+                newproduct: 'onAddedProduct'
+
             }
         });
 
@@ -38,6 +42,15 @@ Ext.define('Target.view.catalog.CatalogController', {
 
         catalogs.load();
 
+    },
+
+    onAddedProduct: function (product) {
+        var me = this;
+
+        me.reloadCatalogs();
+
+        hash = 'cv/' + product;
+        me.redirectTo(hash);
     },
 
     onRemoveCatalog: function (btn) {

@@ -1,7 +1,7 @@
 import warnings
 
 from django.conf import settings
-from sqlalchemy import create_engine, inspect, MetaData, func, Table
+from sqlalchemy import create_engine, inspect, MetaData, func, Table, Column, Integer, String, Float, Boolean
 from sqlalchemy import exc as sa_exc
 from sqlalchemy.dialects import oracle
 from sqlalchemy.dialects import sqlite
@@ -9,6 +9,7 @@ from sqlalchemy.ext.compiler import compiles
 from sqlalchemy.sql import select, and_
 from sqlalchemy.sql.expression import Executable, ClauseElement
 from sqlalchemy.sql.expression import literal_column, between
+from sqlalchemy.schema import Sequence
 
 
 class DBOracle:
@@ -34,6 +35,7 @@ class DBOracle:
     def get_dialect(self):
         return oracle
 
+
 class DBSqlite:
     def __init__(self, db):
         self.db = db
@@ -47,6 +49,7 @@ class DBSqlite:
 
     def get_dialect(self):
         return sqlite
+
 
 # classe generica - nao ligada a este problema
 class DBBase:
@@ -287,3 +290,91 @@ class DBBase:
         )
 
         return conditions
+
+    # ------------------------------ Create Table --------------------------------------
+    def create_table(self, name, columns, schema=None):
+        """
+
+        :param name:
+        :param columns:
+        :return:
+        """
+
+        if (len(name) > 30):
+            name = name[:30]
+
+        sa_columns = list()
+
+        for col in columns:
+            sa_columns.append(self.create_obj_colum(name, col))
+
+        # columns = list([
+        #     Column('user_id', Integer, primary_key=True),
+        #     Column('user_name', String(16), nullable=False),
+        # ])
+
+        newtable = Table(name, self.metadata, *sa_columns, schema=schema)
+
+        try:
+
+            # PARA OS TESTAR DROPAR ANTES DE CRIAR
+            # newtable.drop(self.engine, checkfirst=True)
+
+            # Criar a Tabela so se ela nao existir, se ja existir disparar uma excessao
+            newtable.create(self.engine, checkfirst=False)
+
+            return newtable
+
+        except Exception as e:
+            raise e
+
+    def create_obj_colum(self, tablename, dcolumn):
+        """
+        :param tablename:
+        :param column:
+        :return:
+        """
+
+        # Tratar o nome da coluna
+        name = dcolumn.get('property')
+
+        # troca espacos por '_', converte para lowercase, remove espacos do final
+        name = name.replace(' ', '_').lower().strip().strip('\n')
+
+        # Retirar qualquer caracter que nao seja alfanumerico exceto '_'
+        name = ''.join(e for e in name if e.isalnum() or e == '_')
+
+        # coluna nullable por default a menos que seja primary_key
+        # ou que tenha sido especificado
+        nullable = dcolumn.get('nullable', True)
+
+        if dcolumn.get('primary_key'):
+
+            if self.database.get_engine() == 'oracle':
+                if (len(tablename) >= 30):
+                    tablename = tablename[:26]
+
+                seq_name = '%s_seq' % tablename
+
+                return Column(name, Integer,
+                              Sequence(seq_name),
+                              primary_key=dcolumn.get('primary_key'),
+                              )
+
+            else:
+                return Column(name, Integer,
+                              primary_key=dcolumn.get('primary_key'),
+                              )
+
+        elif dcolumn.get('type') == 'int':
+            return Column(name, Integer,
+                          nullable=nullable
+                          )
+
+        elif dcolumn.get('type') == 'float':
+            return Column(name, Float,
+                          nullable=nullable,
+                          )
+
+            # TODO Adicionar mais tipos de colunas
+            # http: // docs.sqlalchemy.org / en / latest / core / type_basics.html

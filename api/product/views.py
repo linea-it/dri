@@ -17,9 +17,14 @@ from rest_framework.decorators import list_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from product.importproduct import ImportTargetListCSV
+from django.http import JsonResponse
+
+from lib.CatalogDB import CatalogDB
 from .filters import ProductPermissionFilterBackend
 from .serializers import *
 from .tasks import product_save_as
+from .tasks import import_target_list
 
 logger = logging.getLogger(__name__)
 
@@ -147,6 +152,9 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
         # Esse dicionario vai receber os nos principais que sao as classes.
         classes = dict()
 
+        # Instancia do banco de Catalogo
+        catalog_db = CatalogDB()
+
         for row in queryset:
             # Internal name da classe
             class_name = str(row.prd_class.pcl_name)
@@ -171,14 +179,29 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             if row.prd_owner and request.user.pk == row.prd_owner.pk:
                 editable = True
 
+            # Checar se o Catalog Existe no Banco de Dados
+            # TODO essa solucao e temporaria enquanto nao temos um garbage colector para apagar as tabelas
+            # nao registradas.
+            table_exist = False
+            iconcls = 'x-fa fa-exclamation-triangle color-orange'
+            try:
+                if catalog_db.table_exists(schema=row.tbl_schema, table=row.tbl_name):
+                    iconcls = 'no-icon'
+                    table_exist = True
+
+            except:
+                pass
+
             # Adiciono os atributos que serao usados pela interface
             # esse dict vai ser um no filho de um dos nos de classe.
             catalog.update({
                 "text": row.prd_display_name,
                 "leaf": True,
-                "iconCls": "no-icon",
+                "iconCls": iconcls,
                 "bookmark": None,
-                "editable": editable
+                "editable": editable,
+                "tableExist": table_exist,
+                "description": row.prd_description
             })
 
             try:
@@ -401,7 +424,7 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 class MapFilter(django_filters.FilterSet):
     release_id = django_filters.MethodFilter(action='filter_release_id')
     release_name = django_filters.MethodFilter(action='filter_release_name')
-    with_image =  django_filters.MethodFilter(action='filter_with_image')
+    with_image = django_filters.MethodFilter(action='filter_with_image')
 
     class Meta:
         model = Map
@@ -719,3 +742,34 @@ class SaveAsViewSet(viewsets.ModelViewSet):
         )
 
         return HttpResponse(status=200)
+
+
+# ---------------------------------- Import Target List ----------------------------------
+class ImportTargetListViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows upload a Target List Product
+    """
+    http_method_names = ['post', ]
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        data = request.data
+
+        try:
+
+            product = ImportTargetListCSV().start_import(request.user.pk, data)
+
+            return JsonResponse(dict({
+                'success': True,
+                'product': product.pk
+            }))
+
+
+        except Exception as e:
+            return JsonResponse(dict({
+                'success': False,
+                'message': str(e)
+            }), status=200)

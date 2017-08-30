@@ -8,6 +8,10 @@ Ext.define('Sky.Application', {
 
     name: 'Sky',
 
+    requires: [
+        'common.statistics.Events'
+    ],
+
     stores: [
         // TODO: add global / shared stores here
     ],
@@ -18,7 +22,6 @@ Ext.define('Sky.Application', {
         var me = this;
         // Desabilitar os erros de Aria
         Ext.enableAriaButtons = false;
-        Ext.create('common.statistics.Events').init();
 
         // Checar se o usuario esta logado
         Ext.Ajax.request({
