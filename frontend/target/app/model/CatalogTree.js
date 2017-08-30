@@ -18,15 +18,17 @@ Ext.define('Target.model.CatalogTree', {
         {name:'epr_readme', type:'string'},
         {name:'epr_comment', type:'string'},
 
+        {name:'description', type:'string'},
+
         {name:'ctl_num_columns', type:'int'},
         {name:'ctl_num_tiles', type:'int'},
         {name:'ctl_num_objects', type:'int'},
 
         {name:'editable', type:'boolean', defaultValue: false},
         {name:'markable', type:'boolean', defaultValue: false},
+        {name:'tableExist', type:'boolean', defaultValue: false},
         {name:'release_display_name', type:'string'}
 
     ]
 
 });
-
