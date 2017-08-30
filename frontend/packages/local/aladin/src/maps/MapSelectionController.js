@@ -147,12 +147,18 @@ Ext.define('aladin.maps.MapSelectionController', {
                 {
                     var img_url = aladin_images_store.getAt(0).get('img_url');
 
+                    // TODO [CMP] there is a 'properties' file
+                    // in the root aladin url with the follow options
+                    // like maxOrder, an important one
+                    // there is a hidden function ProgressiveCat.readProperties
+                    // in the aladin original src code that is used to read
+                    // such file options but it is not accessible outside aladin
                     survey = {
                         'id': 'map_' + map_model.get('id').toString(),
                         'url': img_url,
                         'name': map_model.get('pcl_display_name'),
                         'filter': map_model.get('prd_filter'),
-                        'maxOrder': 11,
+                        'maxOrder': 3,
                         'frame': 'equatorial',
                         'options': {
                             'imgFormat': 'png'
