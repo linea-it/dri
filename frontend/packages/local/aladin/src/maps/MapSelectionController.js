@@ -141,18 +141,20 @@ Ext.define('aladin.maps.MapSelectionController', {
                 if (aladin_images_store.getCount() != 1) {
                     Ext.MessageBox.alert(
                         'Warning',
-                        aladin_images_store.getCount().toString() + 'Images found!');
+                        aladin_images_store.getCount().toString() + ' images found for same map!');
                 }
                 else
                 {
+                    // retrieve the first non-map layer to restore
+                    aladin_last_nonmap_survey = vm.get('aladin_last_nonmap_survey');
+
+                    if (aladin_last_nonmap_survey == null) {
+                        vm.set('aladin_last_nonmap_survey', aladin.getImageSurvey());
+                    }
+
                     var img_url = aladin_images_store.getAt(0).get('img_url');
 
-                    // TODO [CMP] there is a 'properties' file
-                    // in the root aladin url with the follow options
-                    // like maxOrder, an important one
-                    // there is a hidden function ProgressiveCat.readProperties
-                    // in the aladin original src code that is used to read
-                    // such file options but it is not accessible outside aladin
+                    // default survey object
                     survey = {
                         'id': 'map_' + map_model.get('id').toString(),
                         'url': img_url,
@@ -165,21 +167,36 @@ Ext.define('aladin.maps.MapSelectionController', {
                         }
                     };
 
-                    // retrieve the first non-map layer to restore
-                    aladin_last_nonmap_survey = vm.get('aladin_last_nonmap_survey');
-
-                    if (aladin_last_nonmap_survey == null) {
-                        vm.set('aladin_last_nonmap_survey', aladin.getImageSurvey());
-                    }
-
-                    mapSurvey = aladin.createImageSurvey(survey);
-                    aladin.setImageSurvey(mapSurvey);
-
-                    vm.set('aladin_last_map_survey', mapSurvey);
-                    vm.set('map_selected', true);
+                    // retrieving maxOrder value from properties file
+                    aladin.readProperties(
+                        img_url,
+                        function(properties) {
+                            survey['maxOrder'] = properties["maxOrder"];
+                            me.setMapSurvey(survey);
+                        },
+                        function(error) {
+                            console.log('aladin.readProperties() error: %o', error);
+                            me.setMapSurvey(survey);
+                        }
+                    );
                 }
             }
         });
+    },
+
+    setMapSurvey: function (survey) {
+        //console.log('setMapSurvey(%o)', survey);
+
+        var me = this,
+            vm = me.getViewModel(),
+            view = vm.getView(),
+            aladin = view.getAladin();
+
+        mapSurvey = aladin.createImageSurvey(survey);
+        aladin.setImageSurvey(mapSurvey);
+
+        vm.set('aladin_last_map_survey', mapSurvey);
+        vm.set('map_selected', true);
     },
 
     onDisplayOnOff: function (btn) {
