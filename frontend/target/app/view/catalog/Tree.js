@@ -50,7 +50,8 @@ Ext.define('Target.view.catalog.Tree', {
                     text: 'Name',
                     flex: 2,
                     sortable: true,
-                    dataIndex: 'text'
+                    dataIndex: 'text',
+                    renderer: me.getTooltipName
                 },
                 {
                     text: 'Owner',
@@ -229,7 +230,16 @@ Ext.define('Target.view.catalog.Tree', {
     },
 
     viewRecord: function (record) {
-        this.fireEvent('selectcatalog', record, this);
+        // So disparar o evento se o catalogo tiver a sua tabela disponivel
+        // https://github.com/linea-it/dri/issues/662
+        if (record.get('tableExist')) {
+            this.fireEvent('selectcatalog', record, this);
+
+        } else {
+            // Avisar o usuario que a tabela esta indisponivel.
+            Ext.MessageBox.alert('Warning', 'The table for this product is not currently available or does not exist');
+
+        }
 
     },
 
@@ -311,6 +321,33 @@ Ext.define('Target.view.catalog.Tree', {
         var tree = this.up('treepanel');
 
         tree.filterCatalogs();
+    },
+
+    getTooltipName: function (value, meta, record) {
+        var me = this,
+            tpl, tooltip;
+
+        tpl = new Ext.XTemplate(
+            '<div>',
+                '<spam><b>{prd_display_name}</b></spam>',
+
+                '<tpl if=\'description != ""\'>',
+                    '<p></br></br>{description}</p>',
+                '</tpl>',
+                '<tpl if=\'!tableExist\'>',
+                    '</br><spam><b class=color-orange>Warning</b>: ',
+                    'The table for this product is not currently available or does not exist.</spam>',
+                '</tpl>',
+            '</div>'
+        );
+
+        tooltip = tpl.apply(record.data);
+
+        if (record.get('leaf')) {
+            meta.tdAttr = 'data-qtip=\"' + tooltip + '\"';
+        }
+
+        return value;
     }
 
 });

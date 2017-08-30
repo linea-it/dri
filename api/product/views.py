@@ -19,6 +19,8 @@ from rest_framework.response import Response
 
 from product.importproduct import ImportTargetListCSV
 from django.http import JsonResponse
+
+from lib.CatalogDB import CatalogDB
 from .filters import ProductPermissionFilterBackend
 from .serializers import *
 from .tasks import product_save_as
@@ -150,6 +152,9 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
         # Esse dicionario vai receber os nos principais que sao as classes.
         classes = dict()
 
+        # Instancia do banco de Catalogo
+        catalog_db = CatalogDB()
+
         for row in queryset:
             # Internal name da classe
             class_name = str(row.prd_class.pcl_name)
@@ -174,14 +179,29 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             if row.prd_owner and request.user.pk == row.prd_owner.pk:
                 editable = True
 
+            # Checar se o Catalog Existe no Banco de Dados
+            # TODO essa solucao e temporaria enquanto nao temos um garbage colector para apagar as tabelas
+            # nao registradas.
+            table_exist = False
+            iconcls = 'x-fa fa-exclamation-triangle color-orange'
+            try:
+                if catalog_db.table_exists(schema=row.tbl_schema, table=row.tbl_name):
+                    iconcls = 'no-icon'
+                    table_exist = True
+
+            except:
+                pass
+
             # Adiciono os atributos que serao usados pela interface
             # esse dict vai ser um no filho de um dos nos de classe.
             catalog.update({
                 "text": row.prd_display_name,
                 "leaf": True,
-                "iconCls": "no-icon",
+                "iconCls": iconcls,
                 "bookmark": None,
-                "editable": editable
+                "editable": editable,
+                "tableExist": table_exist,
+                "description": row.prd_description
             })
 
             try:
