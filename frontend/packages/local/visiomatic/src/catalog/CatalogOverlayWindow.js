@@ -124,4 +124,5 @@ Ext.define('visiomatic.catalog.CatalogOverlayWindow', {
         }
 
     }
+
 });
