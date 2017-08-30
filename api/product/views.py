@@ -185,11 +185,16 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             table_exist = False
             iconcls = 'x-fa fa-exclamation-triangle color-orange'
             try:
-                if catalog_db.table_exists(schema=row.tbl_schema, table=row.tbl_name):
+                if row.tbl_database == 'catalog' or row.tbl_database is None:
+                    if catalog_db.table_exists(schema=row.tbl_schema, table=row.tbl_name):
+                        iconcls = 'no-icon'
+                        table_exist = True
+                else:
                     iconcls = 'no-icon'
                     table_exist = True
 
-            except:
+            except Exception as e:
+                print(e)
                 pass
 
             # Adiciono os atributos que serao usados pela interface
