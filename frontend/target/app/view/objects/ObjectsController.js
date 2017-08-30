@@ -45,7 +45,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     winCutout: null,
     winCutoutjobInfo: null,
     activeFilter: null,
-    taskCutoutJob: null,
+    // taskCutoutJob: null,
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
         var me = this,
@@ -85,14 +85,6 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             me.loadCurrentSetting();
 
-            // Adicionar Filtro a store de FIltersets
-            // combobox de filtros
-            filtersets.addFilter({
-                property: 'product',
-                value: currentCatalog.get('id')
-            });
-
-
             // Adicionar Filtro a store CutoutJobs
             // combobox Mosaic-cutoutJobs
             cutoutsJobs.addFilter([
@@ -107,19 +99,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             ]);
 
             cutoutsJobs.load();
-
-            // Task para verificar se existe cutoutjob
-            if (me.taskCutoutJob !== null) {
-                Ext.TaskManager.stop(me.taskCutoutJob);
-                me.taskCutoutJob = null;
-            }
-
-            me.taskCutoutJob = {
-                run: me.reloadCutoutJobs,
-                interval: 60000,
-                scope: me
-            };
-            Ext.TaskManager.start(me.taskCutoutJob);
 
         }
     },
@@ -152,9 +131,8 @@ Ext.define('Target.view.objects.ObjectsController', {
                     me.configurePanelBySettings();
 
                 } else if (((success) && (records.length > 1))) {
-                    console.log('Mais de uma setting');
-                    console.log('TODO ISSO NAO PODE ACONTECER');
-
+                    // Mais de uma setting
+                    // TODO ISSO NAO PODE ACONTECER
                     vm.set('currentSetting', records[records.length - 1]);
                     me.configurePanelBySettings();
 
@@ -269,7 +247,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             store = vm.getStore('objects'),
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid,
-            btnFilterApply = refs.btnFilterApply,
             aFilters = [];
 
         if (!catalog) {
@@ -310,19 +287,25 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     onLoadObjects: function (store, records, successful, operation) {
         var me = this,
+            vm = me.getViewModel(),
             refs = me.getReferences(),
             preview = refs.targetsPreviewPanel,
             objectsGrid = me.lookup('targetsObjectsGrid');
 
-        //limpa o preview(visiomatic e botões) e desabilita botões save as, download, comments...
+        //limpa o preview
         preview.clear();
-        objectsGrid.setSelection(null);
+
+        if (records.length > 0) {
+            vm.set('haveResults', true);
+
+        } else {
+            vm.set('haveResults', false);
+        }
 
         objectsGrid.setLoading(false);
-
         if (!successful) {
             // Se teve alguma falha limpar a grid.
-            objectsGrid.getStore().removeAll();
+            me.clearObjects();
             var error = operation.getError();
 
             Ext.MessageBox.show({
@@ -630,10 +613,10 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.wizard = null;
         }
 
-        if (me.taskCutoutJob !== null) {
-            Ext.TaskManager.stop(me.taskCutoutJob);
-            me.taskCutoutJob = null;
-        }
+        // if (me.taskCutoutJob !== null) {
+        //     Ext.TaskManager.stop(me.taskCutoutJob);
+        //     me.taskCutoutJob = null;
+        // }
     },
 
     onClickFilter: function () {
@@ -687,7 +670,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         filterset = Ext.create('Target.model.FilterSet',{});
 
-        txtFilterSet.setValue('');
+        txtFilterSet.reset();
 
         vm.set('filterSet', filterset);
         vm.set('filters', null);

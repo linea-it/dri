@@ -27,7 +27,8 @@ Ext.define('Target.view.objects.ObjectsModel', {
         field_id: 0,
         catalog: 0,
         filters: null,
-        mosaic_is_visible: false
+        mosaic_is_visible: false,
+        haveResults: false
     },
 
     stores: {
@@ -76,6 +77,6 @@ Ext.define('Target.view.objects.ObjectsModel', {
         currentRecord: {
             type: 'Target.model.Object',
             create: true
-        },
+        }
     }
 });

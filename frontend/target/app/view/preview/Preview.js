@@ -225,18 +225,32 @@ Ext.define('Target.view.preview.Preview', {
         }
     },
 
-    clear: function(){
+    clear: function () {
         var me = this,
             vm = me.getViewModel(),
             refs = me.getReferences(),
-            datasets = vm.getStore('datasets');
-        
+            datasets = vm.getStore('datasets'),
+            members = vm.getStore('members'),
+            comments = vm.getStore('comments');
+
         // limpa o datasets e o texto da combo
         datasets.clearData();
         refs.currentDataset.clearValue();
 
+        // Limpa o Record
+        record = Ext.create('Target.model.Object', {});
+        vm.set('currentRecord', record);
+
         // oculta o visiomatic e desabilita botões
         vm.set('is_empty', true);
+
+        // Store de Membros do cluster
+        members.removeAll();
+        members.clearFilter(true);
+
+        comments.removeAll();
+        comments.clearFilter(true);
+
     }
 
 });
