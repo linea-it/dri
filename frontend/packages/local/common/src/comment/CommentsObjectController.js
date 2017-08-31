@@ -114,7 +114,7 @@ Ext.define('common.comment.CommentsObjectController', {
 
                             // Disparar evento de que houve mudanca nos comentarios
                             view.fireEvent('changecomments', {type:'delete', comment:currentcomment, total:store.data.items.length});
-                            view.fireEvent('changecomments');
+                            //view.fireEvent('changecomments');
                         }
                     });
 

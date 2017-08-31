@@ -55,15 +55,6 @@ Ext.define('common.comment.CommentsPositionController', {
         // Remover da store
         store.remove(comment);
 
-        /*data: Object
-            catalog_id: 74
-            comments: "adasd"
-            date: "2017-07-01 14:05"
-            id: 21
-            is_owner: true
-            object_id: 3017197200
-            owner: "admin"*/
-
         // Faz com que a store envie as alteracoes no caso um delete
         store.sync({
             success: function () {
@@ -115,7 +106,7 @@ Ext.define('common.comment.CommentsPositionController', {
                             // Disparar evento de que houve mudanca nos comentarios
                             currentcomment.isCommentPosition = true;
                             view.fireEvent('changecomments', {type:'delete', comment:currentcomment, total:store.data.items.length});
-                            view.fireEvent('changecomments');
+                            //view.fireEvent('changecomments');
                         }
                     });
 
