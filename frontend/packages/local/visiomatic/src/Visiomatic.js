@@ -467,6 +467,13 @@ Ext.define('visiomatic.Visiomatic', {
 
         me.setReady(false);
 
+        // Se tiver com a janela de Overlay Catalog aberta deve fechar
+        if (me._winCatalogOverlay !== null) {
+            me._winCatalogOverlay.close();
+
+            me._winCatalogOverlay = null
+        }
+
         options = options || {};
 
         if (imageLayer) {

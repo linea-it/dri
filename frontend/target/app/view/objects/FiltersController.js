@@ -26,8 +26,12 @@ Ext.define('Target.view.objects.FiltersController', {
     onChangeCatalog: function (currentCatalog) {
         var me = this,
             vm = me.getViewModel(),
+            filters = vm.getStore('filters'),
             storeFilterSets = vm.getStore('filterSets'),
             contents = vm.getStore('contents');
+
+        // clear filters conditions
+        filters.loadData([]);
 
         me.clearInputs();
 
@@ -259,10 +263,10 @@ Ext.define('Target.view.objects.FiltersController', {
                             storeFilterSets.add(obj);
                         }
 
-                        //aplica o sync somente se existir registro para atualizar ou remover, caso contrário não irá chamar callback
+                        //aplica o save somente se existir registro para atualizar ou remover, caso contrário não irá chamar callback
                         if (storeFilters.updating>0 || storeFilters.removed.length>0 || storeFilters.getNewRecords().length>0){
                             view.setLoading(true);
-                            storeFilters.sync({
+                            storeFilters.save({
                                 callback: function () {
                                     view.setLoading(false);
                                     fn();
@@ -294,6 +298,7 @@ Ext.define('Target.view.objects.FiltersController', {
             vm = me.getViewModel(),
             filters = vm.getStore('filters'),
             filterSet = vm.get('filterSet'),
+            storeFilterSets = vm.getStore('filterSets'),
             view = me.getView();
 
         Ext.MessageBox.confirm('', 'The Filter will be deleted. Do you want continue?', function (btn) {
@@ -311,8 +316,12 @@ Ext.define('Target.view.objects.FiltersController', {
                             refs.cmbName.clearValue();
                             filters.loadData([]);
 
-                            //limpa a checkbox
+                            //remove da lista da store storeFilterSets
+                            storeFilterSets.remove(record);
+
+                            //limpa a checkbox e a lista de condições do filtro
                             refs.chkRejected.setExpanded(false);
+                            filters.loadData([]);
 
                             //atualiza a view
                             me.viewRenderUIStatus();

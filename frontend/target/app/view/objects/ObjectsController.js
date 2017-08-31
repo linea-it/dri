@@ -496,19 +496,22 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.showWizard();
     },
 
-    onChangeInObjects: function () {
+    onChangeInObjects: function (event) {
         // toda vez que houver uma modificacao no objeto ex. comentarios
         // atualiza a store de objetos
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('objects');
-
-        store.load({
-            scope: this,
-            callback: function () {
-                // Todo caso seja necessario selecionar o record que estava selecionado antes
-            }
-        });
+        
+        if (!event.ignoreStoreLoad){
+            store.load({
+                scope: this,
+                callback: function () {
+                    // Todo caso seja necessario selecionar o record que estava selecionado antes
+                }
+            });
+        }
+        
     },
 
     showWizard: function () {

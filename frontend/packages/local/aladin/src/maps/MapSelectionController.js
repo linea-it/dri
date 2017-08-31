@@ -141,24 +141,10 @@ Ext.define('aladin.maps.MapSelectionController', {
                 if (aladin_images_store.getCount() != 1) {
                     Ext.MessageBox.alert(
                         'Warning',
-                        aladin_images_store.getCount().toString() + 'Images found!');
+                        aladin_images_store.getCount().toString() + ' images found for same map!');
                 }
                 else
                 {
-                    var img_url = aladin_images_store.getAt(0).get('img_url');
-
-                    survey = {
-                        'id': 'map_' + map_model.get('id').toString(),
-                        'url': img_url,
-                        'name': map_model.get('pcl_display_name'),
-                        'filter': map_model.get('prd_filter'),
-                        'maxOrder': 11,
-                        'frame': 'equatorial',
-                        'options': {
-                            'imgFormat': 'png'
-                        }
-                    };
-
                     // retrieve the first non-map layer to restore
                     aladin_last_nonmap_survey = vm.get('aladin_last_nonmap_survey');
 
@@ -166,14 +152,51 @@ Ext.define('aladin.maps.MapSelectionController', {
                         vm.set('aladin_last_nonmap_survey', aladin.getImageSurvey());
                     }
 
-                    mapSurvey = aladin.createImageSurvey(survey);
-                    aladin.setImageSurvey(mapSurvey);
+                    var img_url = aladin_images_store.getAt(0).get('img_url');
 
-                    vm.set('aladin_last_map_survey', mapSurvey);
-                    vm.set('map_selected', true);
+                    // default survey object
+                    survey = {
+                        'id': 'map_' + map_model.get('id').toString(),
+                        'url': img_url,
+                        'name': map_model.get('pcl_display_name'),
+                        'filter': map_model.get('prd_filter'),
+                        'maxOrder': 3,
+                        'frame': 'equatorial',
+                        'options': {
+                            'imgFormat': 'png'
+                        }
+                    };
+
+                    // retrieving maxOrder value from properties file
+                    aladin.readProperties(
+                        img_url,
+                        function(properties) {
+                            survey['maxOrder'] = properties["maxOrder"];
+                            me.setMapSurvey(survey);
+                        },
+                        function(error) {
+                            console.log('aladin.readProperties() error: %o', error);
+                            me.setMapSurvey(survey);
+                        }
+                    );
                 }
             }
         });
+    },
+
+    setMapSurvey: function (survey) {
+        //console.log('setMapSurvey(%o)', survey);
+
+        var me = this,
+            vm = me.getViewModel(),
+            view = vm.getView(),
+            aladin = view.getAladin();
+
+        mapSurvey = aladin.createImageSurvey(survey);
+        aladin.setImageSurvey(mapSurvey);
+
+        vm.set('aladin_last_map_survey', mapSurvey);
+        vm.set('map_selected', true);
     },
 
     onDisplayOnOff: function (btn) {

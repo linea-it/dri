@@ -362,8 +362,8 @@ Ext.define('Target.view.preview.PreviewController', {
             //TODO: atualizar o número de comentários em lmembers.feature.properties.
             visiomatic.updateComment(lmembers, event.comment, event.total);
         }
-
-        view.fireEvent('changeinobject');
+        
+        view.fireEvent('changeinobject', {ignoreStoreLoad:true});
 
     },
 
