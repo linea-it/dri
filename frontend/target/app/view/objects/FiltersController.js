@@ -294,6 +294,7 @@ Ext.define('Target.view.objects.FiltersController', {
             vm = me.getViewModel(),
             filters = vm.getStore('filters'),
             filterSet = vm.get('filterSet'),
+            storeFilterSets = vm.getStore('filterSets'),
             view = me.getView();
 
         Ext.MessageBox.confirm('', 'The Filter will be deleted. Do you want continue?', function (btn) {
@@ -311,8 +312,12 @@ Ext.define('Target.view.objects.FiltersController', {
                             refs.cmbName.clearValue();
                             filters.loadData([]);
 
-                            //limpa a checkbox
+                            //remove da lista da store storeFilterSets
+                            storeFilterSets.remove(record);
+
+                            //limpa a checkbox e a lista de condições do filtro
                             refs.chkRejected.setExpanded(false);
+                            filters.loadData([]);
 
                             //atualiza a view
                             me.viewRenderUIStatus();
