@@ -205,6 +205,7 @@ Ext.define('Target.view.objects.Panel', {
     ],
 
     loadPanel: function (arguments) {
+        console.log('loadPanel');
         var me = this,
             vm = this.getViewModel(),
             catalog = me.getCatalog();
@@ -224,6 +225,7 @@ Ext.define('Target.view.objects.Panel', {
     },
 
     updatePanel: function (arguments) {
+        console.log('updatePanel');
         var me = this,
             vm = this.getViewModel(),
             // catalog = me.getCatalog(),
@@ -236,6 +238,7 @@ Ext.define('Target.view.objects.Panel', {
             catalog_id = arguments[1];
 
             if (catalog != catalog_id) {
+                console.log('Catalogo Novo');
                 // Limpar o painel e as stores antes de carregar um catalogo novo
                 me.clearPanel();
 
@@ -244,14 +247,16 @@ Ext.define('Target.view.objects.Panel', {
                 me.fireEvent('beforeLoadPanel', catalog_id, me);
 
             } else {
+                console.log('Mesmo catalogo');
                 // O mesmo catalogo foi aberto
                 // nao fazer nada deixar como estava,
                 // mas verificar se tem alguma setting selecionada caso nao tenha tratar como um catalogo novo
-                if (currentSetting.get('cst_product') != currentCatalog.get('id')) {
+                if ((currentSetting) && (currentSetting.get('id') > 0)) {
+                    if (currentSetting.get('cst_product') != currentCatalog.get('id')) {
+                        vm.set('catalog', catalog_id);
 
-                    vm.set('catalog', catalog_id);
-
-                    me.fireEvent('beforeLoadPanel', catalog_id, me);
+                        me.fireEvent('beforeLoadPanel', catalog_id, me);
+                    }
                 }
             }
         }
