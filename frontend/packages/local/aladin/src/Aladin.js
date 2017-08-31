@@ -302,6 +302,10 @@ Ext.define('aladin.Aladin', {
         return Ext.clone(this.emptySurvey);
     },
 
+    readProperties: function (rootUrl, successCallback, errorCallback) {
+        ProgressiveCat.readProperties(rootUrl, successCallback, errorCallback);
+    },
+
 //    onResize: function () {
 //        var me = this,
 //            aladin = me.getAladin();
