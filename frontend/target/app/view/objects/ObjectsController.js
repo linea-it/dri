@@ -45,9 +45,10 @@ Ext.define('Target.view.objects.ObjectsController', {
     winCutout: null,
     winCutoutjobInfo: null,
     activeFilter: null,
-    taskCutoutJob: null,
+    // taskCutoutJob: null,
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
+        // console.log('1 - onBeforeLoadPanel');
         var me = this,
             vm = objectsPanel.getViewModel(),
             catalogs = vm.getStore('catalogs'),
@@ -67,6 +68,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onLoadCatalogs: function (store) {
+        // console.log('2 - onLoadCatalogs');
         var me = this,
             vm = me.getViewModel(),
             currentCatalog,
@@ -81,17 +83,9 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             vm.set('currentCatalog', currentCatalog);
 
-            objectsGrid.setLoading(false);
+            //objectsGrid.setLoading(false);
 
             me.loadCurrentSetting();
-
-            // Adicionar Filtro a store de FIltersets
-            // combobox de filtros
-            filtersets.addFilter({
-                property: 'product',
-                value: currentCatalog.get('id')
-            });
-
 
             // Adicionar Filtro a store CutoutJobs
             // combobox Mosaic-cutoutJobs
@@ -108,23 +102,11 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             cutoutsJobs.load();
 
-            // Task para verificar se existe cutoutjob
-            if (me.taskCutoutJob !== null) {
-                Ext.TaskManager.stop(me.taskCutoutJob);
-                me.taskCutoutJob = null;
-            }
-
-            me.taskCutoutJob = {
-                run: me.reloadCutoutJobs,
-                interval: 60000,
-                scope: me
-            };
-            Ext.TaskManager.start(me.taskCutoutJob);
-
         }
     },
 
     loadCurrentSetting: function () {
+        // console.log('3 - loadCurrentSetting');
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('currentSettings'),
@@ -132,7 +114,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid;
 
-        objectsGrid.setLoading(true);
+        //objectsGrid.setLoading(true);
 
         store.addFilter([
             {
@@ -144,7 +126,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         store.load({
             callback: function (records, operations, success) {
 
-                objectsGrid.setLoading(false);
+                //objectsGrid.setLoading(false);
 
                 if ((success) && (records.length == 1)) {
                     vm.set('currentSetting', records[0]);
@@ -152,10 +134,9 @@ Ext.define('Target.view.objects.ObjectsController', {
                     me.configurePanelBySettings();
 
                 } else if (((success) && (records.length > 1))) {
-                    console.log('Mais de uma setting');
-                    console.log('TODO ISSO NAO PODE ACONTECER');
-
+                    // Mais de uma setting
                     vm.set('currentSetting', records[records.length - 1]);
+
                     me.configurePanelBySettings();
 
                 } else {
@@ -167,6 +148,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     configurePanelBySettings: function () {
+        // console.log('4 - configurePanelBySettings');
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('displayContents'),
@@ -186,6 +168,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     configurePanelWithoutSettings: function () {
+        // console.log('4 - configurePanelWithoutSettings');
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
@@ -204,6 +187,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onLoadProductContent: function (productContent) {
+        // console.log('5 - onLoadProductContent');
         var me = this,
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid;
@@ -238,6 +222,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onLoadAssociation: function (productAssociation) {
+        // console.log('6 - onLoadAssociation');
         var me = this,
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid;
@@ -253,6 +238,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onGridObjectsReady: function () {
+        // console.log('7 - onGridObjectsReady');
         var me = this,
             vm = this.getViewModel(),
             catalog = vm.get('currentCatalog');
@@ -263,13 +249,13 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     loadObjects: function (catalog, filters) {
+        // console.log('8 - loadObjects');
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
             store = vm.getStore('objects'),
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid,
-            btnFilterApply = refs.btnFilterApply,
             aFilters = [];
 
         if (!catalog) {
@@ -309,20 +295,28 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onLoadObjects: function (store, records, successful, operation) {
+        // console.log('9 - onLoadObjects');
         var me = this,
+            vm = me.getViewModel(),
             refs = me.getReferences(),
             preview = refs.targetsPreviewPanel,
             objectsGrid = me.lookup('targetsObjectsGrid');
 
-        //limpa o preview(visiomatic e botões) e desabilita botões save as, download, comments...
+        //limpa o preview
         preview.clear();
-        objectsGrid.setSelection(null);
+
+        if (records.length > 0) {
+            vm.set('haveResults', true);
+
+        } else {
+            vm.set('haveResults', false);
+        }
 
         objectsGrid.setLoading(false);
 
         if (!successful) {
             // Se teve alguma falha limpar a grid.
-            objectsGrid.getStore().removeAll();
+            me.clearObjects();
             var error = operation.getError();
 
             Ext.MessageBox.show({
@@ -335,6 +329,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     clearObjects: function () {
+        // console.log('clearObjects');
         var vm = this.getViewModel(),
             objects = vm.getStore('objects');
 
@@ -343,6 +338,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     reloadObjects: function () {
+        // console.log('reloadObjects');
         var me = this,
             vm = me.getViewModel(),
             catalog = vm.get('catalog');
@@ -519,8 +515,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('objects');
-        
-        if (!event.ignoreStoreLoad){
+
+        if (!event.ignoreStoreLoad) {
             store.load({
                 scope: this,
                 callback: function () {
@@ -528,7 +524,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }
             });
         }
-        
+
     },
 
     showWizard: function () {
@@ -632,11 +628,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.wizard.close();
             me.wizard = null;
         }
-
-        if (me.taskCutoutJob !== null) {
-            Ext.TaskManager.stop(me.taskCutoutJob);
-            me.taskCutoutJob = null;
-        }
     },
 
     onClickFilter: function () {
@@ -690,7 +681,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         filterset = Ext.create('Target.model.FilterSet',{});
 
-        txtFilterSet.setValue('');
+        txtFilterSet.reset();
 
         vm.set('filterSet', filterset);
         vm.set('filters', null);
@@ -714,41 +705,6 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this;
 
         me.loadObjects();
-    },
-
-    rejectedFilter: function () {
-        console.log('test');
-    },
-
-    /**
-     * Executado toda vez que e selecionado um filterset
-     * na combo box, apenas executa a funcao applyFilter.
-     * @param  {Target.model.FilterSet} filterset [description]
-     */
-    onSelectFilterSet: function (combo, filterset) {
-        var me = this;
-
-        // mostrar o botao clear da combo box
-        if (filterset.get('id') > 0) {
-            combo.getTrigger('clear').show();
-
-            me.applyFilter(filterset);
-        }
-    },
-
-    /**
-     * executado quando clica no trigger clear da combo box
-     * apenas seta um Filterset em branco no model
-     * para que a combo fique sem selecao, remove
-     * a variavel filters.
-     */
-    onClearCmbFilterSet: function (combo) {
-        var me = this;
-
-        // Esconder o botao clear da combo box
-        combo.getTrigger('clear').hide();
-
-        me.applyFilter();
     },
 
     /**
