@@ -612,11 +612,6 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.wizard.close();
             me.wizard = null;
         }
-
-        // if (me.taskCutoutJob !== null) {
-        //     Ext.TaskManager.stop(me.taskCutoutJob);
-        //     me.taskCutoutJob = null;
-        // }
     },
 
     onClickFilter: function () {
@@ -694,41 +689,6 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this;
 
         me.loadObjects();
-    },
-
-    rejectedFilter: function () {
-        console.log('test');
-    },
-
-    /**
-     * Executado toda vez que e selecionado um filterset
-     * na combo box, apenas executa a funcao applyFilter.
-     * @param  {Target.model.FilterSet} filterset [description]
-     */
-    onSelectFilterSet: function (combo, filterset) {
-        var me = this;
-
-        // mostrar o botao clear da combo box
-        if (filterset.get('id') > 0) {
-            combo.getTrigger('clear').show();
-
-            me.applyFilter(filterset);
-        }
-    },
-
-    /**
-     * executado quando clica no trigger clear da combo box
-     * apenas seta um Filterset em branco no model
-     * para que a combo fique sem selecao, remove
-     * a variavel filters.
-     */
-    onClearCmbFilterSet: function (combo) {
-        var me = this;
-
-        // Esconder o botao clear da combo box
-        combo.getTrigger('clear').hide();
-
-        me.applyFilter();
     },
 
     /**

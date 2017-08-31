@@ -285,6 +285,7 @@ Ext.define('Target.view.objects.Panel', {
             cutoutjobs = combo.getStore(),
             cutouts = vm.getStore('cutouts'),
             txtFilterSet = me.lookup('txtFilterSet'),
+            displayContents = vm.getStore('displayContents'),
             filterset;
 
         // Limpar as Stores
@@ -297,8 +298,10 @@ Ext.define('Target.view.objects.Panel', {
         vm.getStore('currentSettings').removeAll();
         vm.getStore('currentSettings').clearFilter(true);
 
-        vm.getStore('displayContents').removeAll();
-        vm.getStore('displayContents').clearFilter(true);
+        // Limpar a Grid
+        displayContents.removeAll();
+        displayContents.clearFilter(true);
+        gridPanel.reconfigureGrid(displayContents);
 
         // Mosaic / Cutouts
         cutoutjobs.removeAll();
@@ -316,8 +319,6 @@ Ext.define('Target.view.objects.Panel', {
         btn.setPressed(false);
 
         // Filtros
-        //me.getController().onWindowDisapplyFilters();
-
         filterset = Ext.create('Target.model.FilterSet',{});
         vm.set('filterSet', filterset);
         vm.set('filters', null);
