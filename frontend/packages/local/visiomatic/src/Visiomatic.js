@@ -1057,7 +1057,10 @@ Ext.define('visiomatic.Visiomatic', {
         if (width > 0) {
             container.css({width:width + 2});
             map.invalidateSize();
-            container.css({width:'initial'});
+            setTimeout(function(){
+                container.css({width:'initial'});
+                map.invalidateSize();
+            },10)
         }
 
     },
