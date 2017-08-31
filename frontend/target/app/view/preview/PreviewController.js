@@ -125,16 +125,10 @@ Ext.define('Target.view.preview.PreviewController', {
             refs.btnRadius.setVisible(true);
             refs.btnMembers.setVisible(true);
 
-            //            refs.btnComments.setVisible(true);
-            //            refs.btnCrop.setVisible(true);
-            //            refs.btnSave.setVisible(true);
         } else {
             refs.btnRadius.setVisible(false);
             refs.btnMembers.setVisible(false);
 
-            //            refs.btnComments.setVisible(false);
-            //            refs.btnCrop.setVisible(false);
-            //            refs.btnSave.setVisible(false);
         }
 
     },
@@ -362,7 +356,7 @@ Ext.define('Target.view.preview.PreviewController', {
             //TODO: atualizar o número de comentários em lmembers.feature.properties.
             visiomatic.updateComment(lmembers, event.comment, event.total);
         }
-        
+
         view.fireEvent('changeinobject', {ignoreStoreLoad:true});
 
     },

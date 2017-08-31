@@ -34,14 +34,17 @@ Ext.define('Target.view.objects.ObjectsModel', {
     stores: {
         catalogs: {
             type: 'catalogs',
-            storeId: 'Catalogs'
+            storeId: 'Catalogs',
+            autoLoad: false
         },
         objects: {
             type: 'targets-objects',
-            storeId: 'objects'
+            storeId: 'objects',
+            autoLoad: false
         },
         currentSettings: {
-            type: 'currentsettings'
+            type: 'currentsettings',
+            autoLoad: false
         },
         displayContents: {
             type: 'product-display-contents',

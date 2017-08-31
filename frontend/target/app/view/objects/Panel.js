@@ -205,7 +205,6 @@ Ext.define('Target.view.objects.Panel', {
     ],
 
     loadPanel: function (arguments) {
-        console.log('loadPanel');
         var me = this,
             vm = this.getViewModel(),
             catalog = me.getCatalog();
@@ -225,7 +224,6 @@ Ext.define('Target.view.objects.Panel', {
     },
 
     updatePanel: function (arguments) {
-        console.log('updatePanel');
         var me = this,
             vm = this.getViewModel(),
             // catalog = me.getCatalog(),
@@ -238,7 +236,6 @@ Ext.define('Target.view.objects.Panel', {
             catalog_id = arguments[1];
 
             if (catalog != catalog_id) {
-                console.log('Catalogo Novo');
                 // Limpar o painel e as stores antes de carregar um catalogo novo
                 me.clearPanel();
 
@@ -247,7 +244,6 @@ Ext.define('Target.view.objects.Panel', {
                 me.fireEvent('beforeLoadPanel', catalog_id, me);
 
             } else {
-                console.log('Mesmo catalogo');
                 // O mesmo catalogo foi aberto
                 // nao fazer nada deixar como estava,
                 // mas verificar se tem alguma setting selecionada caso nao tenha tratar como um catalogo novo
@@ -306,7 +302,7 @@ Ext.define('Target.view.objects.Panel', {
         // Limpar a Grid
         displayContents.removeAll();
         displayContents.clearFilter(true);
-        gridPanel.reconfigureGrid(displayContents);
+        gridPanel.reconfigureGrid(displayContents, true);
 
         // Mosaic / Cutouts
         cutoutjobs.removeAll();

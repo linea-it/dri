@@ -48,6 +48,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     // taskCutoutJob: null,
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
+        // console.log('1 - onBeforeLoadPanel');
         var me = this,
             vm = objectsPanel.getViewModel(),
             catalogs = vm.getStore('catalogs'),
@@ -67,6 +68,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onLoadCatalogs: function (store) {
+        // console.log('2 - onLoadCatalogs');
         var me = this,
             vm = me.getViewModel(),
             currentCatalog,
@@ -81,7 +83,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             vm.set('currentCatalog', currentCatalog);
 
-            objectsGrid.setLoading(false);
+            //objectsGrid.setLoading(false);
 
             me.loadCurrentSetting();
 
@@ -104,6 +106,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     loadCurrentSetting: function () {
+        // console.log('3 - loadCurrentSetting');
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('currentSettings'),
@@ -111,7 +114,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid;
 
-        objectsGrid.setLoading(true);
+        //objectsGrid.setLoading(true);
 
         store.addFilter([
             {
@@ -123,7 +126,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         store.load({
             callback: function (records, operations, success) {
 
-                objectsGrid.setLoading(false);
+                //objectsGrid.setLoading(false);
 
                 if ((success) && (records.length == 1)) {
                     vm.set('currentSetting', records[0]);
@@ -132,8 +135,8 @@ Ext.define('Target.view.objects.ObjectsController', {
 
                 } else if (((success) && (records.length > 1))) {
                     // Mais de uma setting
-                    // TODO ISSO NAO PODE ACONTECER
                     vm.set('currentSetting', records[records.length - 1]);
+
                     me.configurePanelBySettings();
 
                 } else {
@@ -145,6 +148,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     configurePanelBySettings: function () {
+        // console.log('4 - configurePanelBySettings');
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('displayContents'),
@@ -164,6 +168,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     configurePanelWithoutSettings: function () {
+        // console.log('4 - configurePanelWithoutSettings');
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
@@ -182,6 +187,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onLoadProductContent: function (productContent) {
+        // console.log('5 - onLoadProductContent');
         var me = this,
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid;
@@ -216,6 +222,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onLoadAssociation: function (productAssociation) {
+        // console.log('6 - onLoadAssociation');
         var me = this,
             refs = me.getReferences(),
             objectsGrid = refs.targetsObjectsGrid;
@@ -231,6 +238,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onGridObjectsReady: function () {
+        // console.log('7 - onGridObjectsReady');
         var me = this,
             vm = this.getViewModel(),
             catalog = vm.get('currentCatalog');
@@ -241,6 +249,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     loadObjects: function (catalog, filters) {
+        // console.log('8 - loadObjects');
         var me = this,
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
@@ -286,6 +295,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onLoadObjects: function (store, records, successful, operation) {
+        // console.log('9 - onLoadObjects');
         var me = this,
             vm = me.getViewModel(),
             refs = me.getReferences(),
@@ -303,6 +313,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         }
 
         objectsGrid.setLoading(false);
+
         if (!successful) {
             // Se teve alguma falha limpar a grid.
             me.clearObjects();
@@ -318,6 +329,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     clearObjects: function () {
+        // console.log('clearObjects');
         var vm = this.getViewModel(),
             objects = vm.getStore('objects');
 
@@ -326,6 +338,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     reloadObjects: function () {
+        // console.log('reloadObjects');
         var me = this,
             vm = me.getViewModel(),
             catalog = vm.get('catalog');
@@ -502,8 +515,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         var me = this,
             vm = me.getViewModel(),
             store = vm.getStore('objects');
-        
-        if (!event.ignoreStoreLoad){
+
+        if (!event.ignoreStoreLoad) {
             store.load({
                 scope: this,
                 callback: function () {
@@ -511,7 +524,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }
             });
         }
-        
+
     },
 
     showWizard: function () {
