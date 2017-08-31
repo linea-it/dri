@@ -26,8 +26,12 @@ Ext.define('Target.view.objects.FiltersController', {
     onChangeCatalog: function (currentCatalog) {
         var me = this,
             vm = me.getViewModel(),
+            filters = vm.getStore('filters'),
             storeFilterSets = vm.getStore('filterSets'),
             contents = vm.getStore('contents');
+
+        // clear filters conditions
+        filters.loadData([]);
 
         me.clearInputs();
 
@@ -259,10 +263,10 @@ Ext.define('Target.view.objects.FiltersController', {
                             storeFilterSets.add(obj);
                         }
 
-                        //aplica o sync somente se existir registro para atualizar ou remover, caso contrário não irá chamar callback
+                        //aplica o save somente se existir registro para atualizar ou remover, caso contrário não irá chamar callback
                         if (storeFilters.updating>0 || storeFilters.removed.length>0 || storeFilters.getNewRecords().length>0){
                             view.setLoading(true);
-                            storeFilters.sync({
+                            storeFilters.save({
                                 callback: function () {
                                     view.setLoading(false);
                                     fn();
