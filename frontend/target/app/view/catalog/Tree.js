@@ -152,11 +152,14 @@ Ext.define('Target.view.catalog.Tree', {
                 },
                 {
                     xtype: 'textfield',
+                    reference: 'searchByName',
+                    // itemId: 'searchByName',
                     emptyText: 'Search by name',
                     width: 250,
                     triggers: {
                         clear: {
                             cls: 'x-form-clear-trigger',
+                            scope: this,
                             handler: this.cancelFilter,
                             hidden: true
                         },
@@ -165,6 +168,7 @@ Ext.define('Target.view.catalog.Tree', {
                         }
                     },
                     listeners: {
+                        scope: this,
                         change: me.filterByname,
                         buffer: 500
                     }
@@ -172,6 +176,7 @@ Ext.define('Target.view.catalog.Tree', {
                 {
                     tooltip: 'Refresh and Clear filters',
                     iconCls: 'x-fa fa-refresh',
+                    scope: this,
                     handler: me.refreshAndClear
                 }
             ]
@@ -244,16 +249,17 @@ Ext.define('Target.view.catalog.Tree', {
     },
 
     filterByname: function () {
-
-        var tree = this.up('treepanel'),
-            store = tree.getStore(),
-            value = this.getValue(),
+        var me = this,
+            txt = me.lookup('searchByName'),
+            // txt = me.down('#searchByName'),
+            store = me.getStore(),
+            value = txt.getValue(),
             fts = [],
             f;
 
         if (value.length > 0) {
 
-            this.getTrigger('clear').show();
+            txt.getTrigger('clear').show();
 
             // checar se a store esta em loading
             if (store.isLoading()) {
@@ -274,9 +280,9 @@ Ext.define('Target.view.catalog.Tree', {
 
             fts.push(f);
 
-            tree.filterCatalogs(fts);
+            me.filterCatalogs(fts);
         } else {
-            this.getTrigger('clear').hide();
+            me.cancelFilter();
         }
 
     },
@@ -306,21 +312,20 @@ Ext.define('Target.view.catalog.Tree', {
     },
 
     cancelFilter: function () {
+        var me = this,
+            txt = me.lookup('searchByName');
 
-        var tree = this.up('treepanel');
+        txt.reset();
 
-        this.reset();
+        txt.getTrigger('clear').hide();
 
-        tree.filterCatalogs();
-
-        this.getTrigger('clear').hide();
+        me.filterCatalogs();
     },
 
     refreshAndClear: function () {
+        var me = this;
 
-        var tree = this.up('treepanel');
-
-        tree.filterCatalogs();
+        me.cancelFilter();
     },
 
     getTooltipName: function (value, meta, record) {

@@ -27,20 +27,24 @@ Ext.define('Target.view.objects.ObjectsModel', {
         field_id: 0,
         catalog: 0,
         filters: null,
-        mosaic_is_visible: false
+        mosaic_is_visible: false,
+        haveResults: false
     },
 
     stores: {
         catalogs: {
             type: 'catalogs',
-            storeId: 'Catalogs'
+            storeId: 'Catalogs',
+            autoLoad: false
         },
         objects: {
             type: 'targets-objects',
-            storeId: 'objects'
+            storeId: 'objects',
+            autoLoad: false
         },
         currentSettings: {
-            type: 'currentsettings'
+            type: 'currentsettings',
+            autoLoad: false
         },
         displayContents: {
             type: 'product-display-contents',
@@ -76,6 +80,6 @@ Ext.define('Target.view.objects.ObjectsModel', {
         currentRecord: {
             type: 'Target.model.Object',
             create: true
-        },
+        }
     }
 });

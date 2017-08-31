@@ -50,7 +50,7 @@ Ext.define('Target.view.objects.Grid', {
         me.callParent(arguments);
     },
 
-    reconfigureGrid: function (storeColumns) {
+    reconfigureGrid: function (storeColumns, suppressEvent) {
         // console.log('Targets Objects - reconfigureGrid(%o)', storeColumns);
 
         var me = this,
@@ -212,9 +212,10 @@ Ext.define('Target.view.objects.Grid', {
         me.reconfigure(null, columns);
 
         // Marcar como ready
-        me.setReady(true);
-        this.fireEvent('ready', this);
-
+        if (!suppressEvent) {
+            me.setReady(true);
+            this.fireEvent('ready', this);
+        }
     },
 
     getTypeColumn: function (type) {

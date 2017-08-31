@@ -62,7 +62,7 @@ Ext.define('Target.view.objects.Panel', {
                         tooltip: 'Save As',
                         handler: 'onClickSaveAs',
                         bind: {
-                            disabled: '{!targetsObjectsGrid.selection}'
+                            disabled: '{!haveResults}'
                         }
                     },
                     {
@@ -70,7 +70,7 @@ Ext.define('Target.view.objects.Panel', {
                         tooltip: 'Download',
                         handler: 'onClickDownload',
                         bind: {
-                            disabled: '{!targetsObjectsGrid.selection}'
+                            disabled: '{!haveResults}'
                         }
                     },
                     {
@@ -111,42 +111,6 @@ Ext.define('Target.view.objects.Panel', {
                                 emptyText: 'No filter',
                                 editable : false
                             }
-                            /*{
-                                xtype: 'button',
-                                reference: 'btnFilterApply',
-                                iconCls: 'x-fa fa-bolt',
-                                tooltip: 'Apply or Disapply Filters',
-                                pressed: true,
-                                enableToggle: true,
-                                toggleHandler: 'applyDisapplyFilter',
-                                bind: {
-                                    disabled: '{!filters}'
-                                }
-                            },
-                            {
-                                xtype: 'combobox',
-                                reference: 'cmbFilterSet',
-                                emptyText: 'No filter',
-                                displayField: 'fst_name',
-                                publishes: 'id',
-                                bind: {
-                                    store: '{filterSets}',
-                                    selection: '{filterSet}'
-                                },
-                                listeners: {
-                                    select: 'onSelectFilterSet'
-                                },
-                                triggers: {
-                                    clear: {
-                                        cls: 'x-form-clear-trigger',
-                                        handler: 'onClearCmbFilterSet',
-                                        hidden: true
-                                    }
-                                },
-                                minChars: 0,
-                                queryMode: 'local',
-                                editable: false
-                            }*/
                         ]
                     },
                     {
@@ -180,7 +144,7 @@ Ext.define('Target.view.objects.Panel', {
                     xtype: 'targets-objects-mosaic',
                     reference: 'TargetMosaic',
                     bind: {
-                        store: '{objects}',
+                        store: '{objects}'
                     },
                     listeners: {
                         select: 'onSelectObject',
@@ -283,11 +247,12 @@ Ext.define('Target.view.objects.Panel', {
                 // O mesmo catalogo foi aberto
                 // nao fazer nada deixar como estava,
                 // mas verificar se tem alguma setting selecionada caso nao tenha tratar como um catalogo novo
-                if (currentSetting.get('cst_product') != currentCatalog.get('id')) {
+                if ((currentSetting) && (currentSetting.get('id') > 0)) {
+                    if (currentSetting.get('cst_product') != currentCatalog.get('id')) {
+                        vm.set('catalog', catalog_id);
 
-                    vm.set('catalog', catalog_id);
-
-                    me.fireEvent('beforeLoadPanel', catalog_id, me);
+                        me.fireEvent('beforeLoadPanel', catalog_id, me);
+                    }
                 }
             }
         }
@@ -319,7 +284,10 @@ Ext.define('Target.view.objects.Panel', {
             btn = me.lookup('BtnSwitchMosaic'),
             mosaic = me.lookup('TargetMosaic'),
             cutoutjobs = combo.getStore(),
-            cutouts = vm.getStore('cutouts');
+            cutouts = vm.getStore('cutouts'),
+            txtFilterSet = me.lookup('txtFilterSet'),
+            displayContents = vm.getStore('displayContents'),
+            filterset;
 
         // Limpar as Stores
         vm.getStore('catalogs').removeAll();
@@ -331,23 +299,40 @@ Ext.define('Target.view.objects.Panel', {
         vm.getStore('currentSettings').removeAll();
         vm.getStore('currentSettings').clearFilter(true);
 
-        vm.getStore('displayContents').removeAll();
-        vm.getStore('displayContents').clearFilter(true);
+        // Limpar a Grid
+        displayContents.removeAll();
+        displayContents.clearFilter(true);
+        gridPanel.reconfigureGrid(displayContents, true);
 
+        // Mosaic / Cutouts
         cutoutjobs.removeAll();
         cutoutjobs.clearFilter(true);
 
         cutouts.removeAll();
         cutouts.clearFilter(true);
-        mosaic.removeAll(true)
+        mosaic.removeAll(true);
 
-        if(combo.selection !== null) {
-            combo.reset()
+        if (combo.selection !== null) {
+            combo.reset();
         }
 
         // Ativar o painel list como default
         btn.setPressed(false);
 
-        me.getController().onWindowDisapplyFilters();
+        // Filtros
+        filterset = Ext.create('Target.model.FilterSet',{});
+        vm.set('filterSet', filterset);
+        vm.set('filters', null);
+
+        vm.getStore('filterConditions').removeAll();
+        vm.getStore('filterConditions').clearFilter(true);
+
+        vm.getStore('filterSets').removeAll();
+        vm.getStore('filterSets').clearFilter(true);
+
+        txtFilterSet.reset();
+
+        me.activeFilter = null;
+
     }
 });
