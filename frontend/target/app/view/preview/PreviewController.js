@@ -319,7 +319,7 @@ Ext.define('Target.view.preview.PreviewController', {
      */
     onCommentPosition: function (event, dataset) {
         var comment = Ext.create('Ext.window.Window', {
-            title: 'Position Comments',
+            title: 'Comments',
             iconCls: 'x-fa fa-comments',
             layout: 'fit',
             closeAction: 'destroy',
