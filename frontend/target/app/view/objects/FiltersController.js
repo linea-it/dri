@@ -220,7 +220,7 @@ Ext.define('Target.view.objects.FiltersController', {
             });
             if (nameExists){
                 return Ext.MessageBox.alert('', 'This filter name already exists', function() {
-                    fn();
+                    fn(true);
                 });
             }
 
@@ -355,9 +355,11 @@ Ext.define('Target.view.objects.FiltersController', {
             if (me.filterConditionsIsChanged()) {
 
                 //faz update das condicões e aplica o filtro
-                me.saveFilterSet(function(){
-                    //dá um tempo pro extjs se organizar, caso contrário gera erro
-                    setTimeout(function(){me.applyFilters();},10);
+                me.saveFilterSet(function(error){
+                    if (!error){
+                        //dá um tempo pro extjs se organizar, caso contrário gera erro
+                        setTimeout(function(){me.applyFilters();},10);
+                    }
                 });
             }
 
