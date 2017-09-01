@@ -10,8 +10,7 @@ Ext.define('aladin.Aladin', {
 
     mixins: {
         events: 'aladin.Events',
-        interface: 'aladin.Interfaces',
-        maps:'aladin.Maps'
+        interface: 'aladin.Interfaces'
     },
 
     layout: 'fit',
@@ -48,7 +47,7 @@ Ext.define('aladin.Aladin', {
             showReticle: true,
             showZoomControl: true,
             showFullscreenControl: true,
-            showLayersControl: false,
+            showLayersControl: true,
             showGotoControl: false,
             showShareControl: false,
             showCatalog: true,
@@ -88,10 +87,13 @@ Ext.define('aladin.Aladin', {
         },
 
         // LayersControl
-        enableLayersControl: true,
+        enableLayersControl: false,
+
+        // Habilitar a toolbar
+        enableToolbar: true,
 
         // Barra com botoes para escolher a banda da imagem
-        showFilters: true,
+        showFilters: false,
         bandFilter: null,
         // array de filtros disponiveis baseado no array surveys
         availableFilters: [],
@@ -100,7 +102,7 @@ Ext.define('aladin.Aladin', {
         enableViewMenu: true,
 
         // Botao para exportar para PNG
-        enableExportPng: false,
+        enableExportPng: true,
 
         // Botao para mostrar ou ocultar a crosshair
         enableReticle: true,
@@ -109,7 +111,7 @@ Ext.define('aladin.Aladin', {
         enableHealpixGrid: true,
 
         // Menu que permite trocar as cores da imagem
-        enableColorMap: false,
+        enableColorMap: true,
 
         // Botao para mostrar ou ocultar o footprint
         enableFootprint: true,
@@ -118,7 +120,7 @@ Ext.define('aladin.Aladin', {
         hideFootprint: true,
 
         // habilitar o campo de GoTo
-        enableGoto: true,
+        enableGoto: false,
         // esse parametro determina se o campo de GoTo, vai posicionar a imagem na coordenada
         // ou se vai disparar um evento.
         gotoSetPosition: true,
@@ -202,7 +204,7 @@ Ext.define('aladin.Aladin', {
             height: me.getAladinHeight()
         });
 
-        if (me.getShowFilters()) {
+        if (me.getEnableToolbar()) {
             tollbar = me.leftToolBar = me.makeToolbar();
             btns = me.makeToolbarButtons();
             tollbar.add(btns);
@@ -235,10 +237,6 @@ Ext.define('aladin.Aladin', {
             aladinOptions = me.getAladinOptions(),
             aladin, el;
 
-        if (me.getEnableLayersControl()) {
-            aladinOptions.showLayersControl = me.getEnableLayersControl();
-        }
-
         aladin = libA.aladin(
             // Id da div que recebera o aladin
             aladinId,
@@ -248,15 +246,15 @@ Ext.define('aladin.Aladin', {
 
         // override native aladin setUnknownSurveyIfNeeded method
         // o método fosobrescrito pq adiciona uma survey vazia após a apolicação adicionar a sua própria survey
-        aladin.view.setUnknownSurveyIfNeeded=function(){}
+        aladin.view.setUnknownSurveyIfNeeded = function () {};
 
         aladin._setImageSurvey = aladin.setImageSurvey;
-        aladin.setImageSurvey = function(surveyId, callback){
-            return aladin._setImageSurvey(surveyId, function(){
+        aladin.setImageSurvey = function (surveyId, callback) {
+            return aladin._setImageSurvey(surveyId, function () {
                 me.onChangeImageSurvey();
                 if (callback) callback();
             });
-        }
+        };
 
         me.setAladin(aladin);
 
@@ -278,7 +276,7 @@ Ext.define('aladin.Aladin', {
 
     },
 
-    onChangeImageSurvey: function(){
+    onChangeImageSurvey: function () {
         //console.log('ImageSurvey Changed');
         // Custom events
         this.addCustomEvents();
@@ -306,14 +304,14 @@ Ext.define('aladin.Aladin', {
         ProgressiveCat.readProperties(rootUrl, successCallback, errorCallback);
     },
 
-//    onResize: function () {
-//        var me = this,
-//            aladin = me.getAladin();
-//
-//        if (me.getAutoSize()) {
-//            aladin.view.fixLayoutDimensions();
-//        }
-//    },
+    onResize: function () {
+        var me = this,
+            aladin = me.getAladin();
+
+        if (me.getAutoSize()) {
+            aladin.view.fixLayoutDimensions();
+        }
+    },
 
     setSurveys: function (surveys) {
         this.surveys = null;
@@ -1066,7 +1064,7 @@ Ext.define('aladin.Aladin', {
 
     },
 
-    onShowLayerBox:function(){
+    onShowLayerBox:function () {
         var me = this,
             aladin = me.getViewModel().getView().getAladin();
 
