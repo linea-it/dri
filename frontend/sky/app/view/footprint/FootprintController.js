@@ -208,7 +208,8 @@ Ext.define('Sky.view.footprint.FootprintController', {
     },
 
     onDblClickAladin: function (radec) {
-        this.toVisiomatic(radec, true);
+        this.getView().fireEvent('ondblclick');
+        this.toVisiomatic(radec, true, true);
     },
 
     onShift: function (radec) {
