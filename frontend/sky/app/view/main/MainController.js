@@ -114,7 +114,10 @@ Ext.define('Sky.view.main.MainController', {
         }
 
         if (view != this.activePanel){
-            view.getController().onActivate();
+            view.getController().onActivate({
+                action: me.aladinDblClick  ? 'dblclick' : ''
+            });
+            me.aladinDblClick = false;
         }
 
         this.activePanel = view;
@@ -136,21 +139,27 @@ Ext.define('Sky.view.main.MainController', {
 
     //exibindo o Aladin
     onSky: function (release, coordinate, fov) {
-        var headerBar = this.getView().down('dri-header-sky'),
+        var me = this,
+            headerBar = me.getView().down('dri-header-sky'),
             newView = Ext.create('Sky.view.footprint.Footprint', {
                 hideMode: 'offsets',
                 routeId: 'sky',
                 layout: 'fit',
                 release: release,
                 coordinate: coordinate,
-                foc: fov
+                foc: fov,
+                listeners: {
+                    ondblclick: function(){
+                        me.aladinDblClick = true;
+                    }
+                }                
             }),
             headerRefs = headerBar.getReferences();
 
         headerRefs.searchGlobal.show();
-
+        
         newView.txtCoordinateSearch = headerRefs.txtCoordinateSearch;
-        this.setActivePanel(newView, release, coordinate, fov);
+        me.setActivePanel(newView, release, coordinate, fov);
 
         //define o título da barra superior
         headerBar.getViewModel().set('name', 'Sky Viewer');
