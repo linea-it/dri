@@ -1168,7 +1168,7 @@ Ext.define('visiomatic.Visiomatic', {
     createCommentIcon: function(latlng, circle){
         var me = this, m, commentMaker;
 
-        commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker'+(circle?'':' mapmaker-comment-position'))
+        commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker')//+(circle?'':' mapmaker-comment-position'))
             .on('contextmenu', me.onLayerContextMenu, me);
 
         if (circle){
