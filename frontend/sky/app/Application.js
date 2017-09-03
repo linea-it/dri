@@ -9,7 +9,8 @@ Ext.define('Sky.Application', {
     name: 'Sky',
 
     requires: [
-        'common.statistics.Events'
+        'common.statistics.Events',
+        'common.token.GetToken'
     ],
 
     stores: [
@@ -23,6 +24,7 @@ Ext.define('Sky.Application', {
         // Desabilitar os erros de Aria
         Ext.enableAriaButtons = false;
         Ext.create('common.statistics.Events').init();
+        Ext.create('common.token.GetToken').init();
 
         // Checar se o usuario esta logado
         Ext.Ajax.request({

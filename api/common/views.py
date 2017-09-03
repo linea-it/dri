@@ -16,6 +16,7 @@ from django.conf import settings
 from rest_framework import status
 import django_filters
 from rest_framework import filters
+from rest_framework.authtoken.models import Token
 
 
 class FilterViewSet(viewsets.ModelViewSet):
@@ -142,6 +143,14 @@ def get_providers():
                 app2 = ''
     return str(result)
 
+@api_view(['GET'])
+def get_token(request):
+    if request.method == 'GET':
+        try:
+            token = Token.objects.get(user=request.user)
+        except:
+            token = Token.objects.create(user=request.user)
+        return Response(dict({'token': token.key}))
 
 @api_view(['GET'])
 def teste(request):
