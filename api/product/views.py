@@ -449,7 +449,8 @@ class MapViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Map to be viewed or edited
     """
-    queryset = Map.objects.select_related().all()
+    queryset = Map.objects.select_related().all().order_by(
+        'prd_filter__lambda_mean')
 
     serializer_class = MapSerializer
     filter_backends = (filters.DjangoFilterBackend,)
