@@ -40,7 +40,7 @@ Ext.define('aladin.Interfaces', {
             tpl: [
                 '<spam>{release}</spam> <spam>{tag}</spam>',
                 '</br><spam>{tilename}</spam>',
-                '</br><spam>RA, Dec (deg): {location}</spam>'+
+                '</br><spam>RA, Dec (deg): {location}</spam>' +
                 '</br><div style="white-space:nowrap;">Mouse RA, Dec (deg): {mlocation}</div>'
             ]
         });
@@ -138,7 +138,7 @@ Ext.define('aladin.Interfaces', {
         }
 
         // Botão Layers Control
-        if (me.getEnableLayersControl()){
+        if (me.getEnableLayersControl()) {
             tools.push({
                 xtype: 'button',
                 scope: me,
@@ -151,7 +151,7 @@ Ext.define('aladin.Interfaces', {
         if (me.getShowFilters()) {
 
             var bandFilter = Ext.create('common.BandFilter', {
-                filters:[],// ['g', 'r', 'i', 'z', 'Y', 'irg'],
+                filters: ['g', 'r', 'i', 'z', 'Y', 'irg'],
                 defaultFilter: 'irg',
                 vertical: vertical,
                 listeners: {
@@ -178,20 +178,13 @@ Ext.define('aladin.Interfaces', {
                 tooltip: 'Map Viewer',
                 iconCls: 'x-fa fa-th',
                 scope: me,
-                handler: me.onClickBtnMap,
+                handler: me.onClickBtnMap
             });
 
         }
 
-        // TODO ARRANCAR VELHO MAPA
-        // Color Map Menu
-        if (me.getEnableColorMap()) {
-
-            tools.push(me.createColorMapMenu());
-        }
-
         // Goto
-        /*if (me.getEnableGoto()) {
+        if (me.getEnableGoto()) {
             tools.push({
                 iconCls: 'x-fa fa-search',
                 tooltip: 'Go To position. 356.0085, 0.5168 or 23 44 2.040 +00 31 0.48',
@@ -220,15 +213,15 @@ Ext.define('aladin.Interfaces', {
                     }
                 ]
             });
-        }*/
+        }
 
         // Export Png
         if (me.getEnableExportPng()) {
 
             tools.push({
                 xtype: 'button',
-                tooltip: 'Export view as PNG',
-                iconCls: 'x-fa fa-picture-o',
+                tooltip: 'Snapshot',
+                iconCls: 'x-fa fa-camera',
                 scope: me,
                 handler: me.exportAsPng
             });
@@ -236,15 +229,6 @@ Ext.define('aladin.Interfaces', {
 
         // Auxiliar Tools
         auxTools = me.getAuxTools();
-
-        // TODO Mover o location para info
-        // auxTools.push({
-        //     xtype: 'tbtext',
-        //     width: 180,
-        //     bind: {
-        //         html: 'Location: ' + '{location}'
-        //     }
-        // });
 
         if (auxTools.length > 0) {
             Ext.each(auxTools, function (tool) {
@@ -255,7 +239,7 @@ Ext.define('aladin.Interfaces', {
 
         //Manager Layers Button
         //Esse botão é criado pelo aladin e não está disponível aqui, ver Aladin.js
-        
+
         return tools;
 
     },
@@ -305,21 +289,17 @@ Ext.define('aladin.Interfaces', {
             checked: me.getTilesGridVisible()
         });
 
-        // Maps
-        var maps = me.createMapsMenuItems();
-        if (me.getEnableMaps()) {
-            items.push({
-                text: 'Maps',
-                itemId: 'MapsMenu',
-                menu: maps,
-                menuAlign: 'tr'
-                // disabled: true
-            });
+        // -------------------- Separador -----------------------------
+        items.push('-');
+
+        // Color Map Menu
+        if (me.getEnableColorMap()) {
+
+            items.push(me.createColorMapMenu());
         }
 
         // -------------------- Separador -----------------------------
         items.push('-');
-
         // Des Footprint
         if (me.getEnableFootprint()) {
             var isHidden = me.getHideFootprint();
@@ -438,16 +418,15 @@ Ext.define('aladin.Interfaces', {
 
         items = me.createColorMapMenuItems();
 
-        menu = Ext.create('Ext.button.Button', {
-            //text: 'Color Map',
+        menu = {
+            text: 'Color Map',
             tooltip: 'Change Color Map',
-            iconCls: 'x-fa fa-eyedropper',
             reference: 'BtnColorMap',
             itemId: 'BtnColorMap',
             menu: items,
             menuAlign: 'tr',
             arrowVisible: false
-        });
+        };
 
         return menu;
     },

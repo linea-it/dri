@@ -208,7 +208,9 @@ Ext.define('Sky.view.dataset.DatasetController', {
         visiomatic.setView(radec.ra, radec.dec, fov);
 
         //PIN (Marcador estilo google)
-        me.lMarker = visiomatic.markPosition(radec.ra, radec.dec, 'x-fa fa-map-marker fa-2x');
+        if (me.showPin){
+            me.lMarker = visiomatic.markPosition(radec.ra, radec.dec, 'x-fa fa-map-marker fa-2x');
+        }
     },
 
     onChangePosition: function (radec, fov) {
@@ -405,9 +407,11 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     },
 
-    onActivate: function () {
+    onActivate: function (event) {
         var me = this, coordinate, zoom, aladin,
             visiomatic = me.lookupReference('visiomatic');
+
+        me.showPin = (event.action == 'dblclick');
 
         //obtém as coordenadas e o zoom da url
         coordinate = ((location.hash.split('/')[2] || '').replace(/%2C/g, '.').split('%2B')) || null;

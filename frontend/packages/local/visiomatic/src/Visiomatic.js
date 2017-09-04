@@ -42,7 +42,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         enableSidebar: true,
 
-        enableSmallCrosshair: true,
+        enableSmallCrosshair: false,
 
         // Catalog Overlays
         enableCatalogs: true,
@@ -471,7 +471,7 @@ Ext.define('visiomatic.Visiomatic', {
         if (me._winCatalogOverlay !== null) {
             me._winCatalogOverlay.close();
 
-            me._winCatalogOverlay = null
+            me._winCatalogOverlay = null;
         }
 
         options = options || {};
@@ -1124,7 +1124,7 @@ Ext.define('visiomatic.Visiomatic', {
     showHideComments: function (layer, state) {
         var me = this, l, q,
             map = me.getMap();
-      
+
         map.eachLayer(function(l){
             //comentário por posição
             if (l.targetPosition){
@@ -1171,7 +1171,7 @@ Ext.define('visiomatic.Visiomatic', {
     createCommentIcon: function(latlng, circle){
         var me = this, m, commentMaker;
 
-        commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker'+(circle?'':' mapmaker-comment-position'))
+        commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker')//+(circle?'':' mapmaker-comment-position'))
             .on('contextmenu', me.onLayerContextMenu, me);
 
         if (circle){
