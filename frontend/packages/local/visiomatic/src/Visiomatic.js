@@ -743,7 +743,7 @@ Ext.define('visiomatic.Visiomatic', {
             ]
         };
 
-        if (me.cropInit && me.cropInit == me.cropEnd) {
+        if (me.cropInit && me.cropInit == me.cropEnd && me.isCropping) {
             if (me.cropRectangle) {
                 map.removeLayer(me.cropRectangle);
             }
@@ -1538,7 +1538,9 @@ Ext.define('visiomatic.Visiomatic', {
     initCrop: function() {
         var me = this,
             map = me.getMap();
-        map.on('click', me.startCrop, me);
+        map.on('mousedown', me.startCrop, me);
+        me.isCropping = true;
+        map.dragging.removeHooks();
     },
 
     startCrop: function(){
@@ -1548,8 +1550,8 @@ Ext.define('visiomatic.Visiomatic', {
         me.cropInit = me.currentPosition
         me.cropEnd = me.cropInit;
 
-        map.off('click', me.startCrop, me);
-        map.on('click', me.endCrop, me);
+        map.off('mousedown', me.startCrop, me);
+        map.on('mouseup', me.endCrop, me);
     },
 
     endCrop: function(event){
@@ -1557,9 +1559,14 @@ Ext.define('visiomatic.Visiomatic', {
             map = me.getMap();
 
         me.cropEnd = me.currentPosition
-        map.removeLayer(me.cropRectangle);
-        map.off('click', me.endCrop, me);
+        map.off('mouseup', me.endCrop, me);
         me.downloadCrop(me.cropInit, me.cropEnd);
+        if (me.cropRectangle) {
+          map.removeLayer(me.cropRectangle);
+        }
+        me.cropInit = null;
+        me.isCropping = false;
+        map.dragging.addHooks();
     },
 
     downloadCrop: function(init, end){
