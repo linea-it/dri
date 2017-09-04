@@ -120,7 +120,7 @@ Ext.define('visiomatic.Visiomatic', {
         crosshairOptions: {
             color: '#90FA3A',
             weight: 1,
-            opacity: 0.8,
+            opacity: 0.5,
             smoothFactor: 1,
             centerPadding: 0.005, // Deg
             size: 0.010 // Deg
@@ -1303,6 +1303,17 @@ Ext.define('visiomatic.Visiomatic', {
 
     },
 
+    onToggleCrosshair: function (ra, dec, btn) {
+        var me = this;
+        if (btn.pressed) {
+          me.drawCrosshair(ra, dec);
+
+        } else {
+          me.removeCrosshair(ra, dec);
+
+        }
+    },
+
     /**
      * Desenha uma crosshair marcando a coordenada passada por parametro
      * @param {Model/Array[ra,dec]} object - uma instancia de model com
@@ -1324,11 +1335,11 @@ Ext.define('visiomatic.Visiomatic', {
             labelOptions = Ext.Object.merge(labelOptions, options);
         }
 
-        // Verificar se ja tem small crosshair
+        // Verificar se ja tem crosshair
         if (me.lcrosshair) {
-            if (map.hasLayer(me.lsmallcrosshair)) {
+            if (map.hasLayer(me.lcrosshair)) {
                 // se ja houver remove do map
-                map.removeLayer(me.lsmallcrosshair);
+                map.removeLayer(me.lcrosshair);
                 me.lsmallcrosshair = null;
             }
         }
@@ -1348,22 +1359,36 @@ Ext.define('visiomatic.Visiomatic', {
         lineLeft      = [l.latLng(dec, (ra + centerPadding)), l.latLng(dec, (ra + size))];
         lineRight     = [l.latLng(dec, (ra - centerPadding)), l.latLng(dec, (ra - size))];
 
-        lineTop     = l.polyline(lineTop, options);
-        lineBottom  = l.polyline(lineBottom, options);
-        lineLeft    = l.polyline(lineLeft, options);
-        lineRight   = l.polyline(lineRight, options);
+        lineTop     = l.polyline(lineTop, labelOptions);
+        lineBottom  = l.polyline(lineBottom, labelOptions);
+        lineLeft    = l.polyline(lineLeft, labelOptions);
+        lineRight   = l.polyline(lineRight, labelOptions);
 
         layer = new l.LayerGroup(
                 [lineTop, lineBottom, lineLeft, lineRight]);
 
         me.lcrosshair = layer;
 
-        if (me.getShowCrosshair() && !options) {
+        if (me.getShowCrosshair()) {
             map.addLayer(me.lcrosshair);
 
         }
 
         return me.lcrosshair;
+    },
+
+    removeCrosshair: function() {
+        var me = this,
+            map = me.getMap();
+
+        // Verificar se ja tem crosshair
+        if (me.lcrosshair) {
+            if (map.hasLayer(me.lcrosshair)) {
+                // se ja houver remove do map
+                map.removeLayer(me.lcrosshair);
+                me.lsmallcrosshair = null;
+            }
+        }
     },
 
     drawSmallCrosshair: function (ra, dec, options) {
