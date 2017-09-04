@@ -123,6 +123,7 @@ Ext.define('Target.view.preview.Preview', {
                 tooltip: 'Show/Hide Crosshair',
                 enableToggle: true,
                 pressed: true,
+                handler: 'onToggleCrosshair',
                 reference: 'BtnCrosshair',
                 bind: {
                     disabled: '{is_empty}'

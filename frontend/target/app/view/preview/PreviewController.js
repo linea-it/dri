@@ -258,6 +258,19 @@ Ext.define('Target.view.preview.PreviewController', {
         visiomatic.showHideRadius(state);
     },
 
+    onToggleCrosshair: function (btn, state) {
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('currentRecord'),
+            visiomatic = me.lookupReference('visiomatic');
+
+        visiomatic.onToggleCrosshair(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
+            btn
+        );
+    },
+
     /**
      * @description
      * @param latlng Object Posição x,y referente a lat long da imagem
