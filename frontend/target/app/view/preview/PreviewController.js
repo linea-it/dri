@@ -190,14 +190,17 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     targetIsSingleObject: function () {
-        // console.log('targetIsSingleObject');
         var me = this,
             vm = me.getViewModel(),
-            object = vm.get('currentRecord'),
-            visiomatic = me.lookupReference('visiomatic');
+            members = vm.getStore('members')
+            refs = me.getReferences();
 
         // Centraliza a imagem no target
         me.onCenterTarget();
+
+        me.loadCommentsPosition(function(comments){
+            me.onLoadSystemMembers(members, comments, refs.btnComments.pressed);
+        });
     },
 
     targetIsSystem: function () {
@@ -369,10 +372,9 @@ Ext.define('Target.view.preview.PreviewController', {
             productRelated = vm.get('productRelated'),
             relateds = vm.getStore('productRelateds'),
             members = vm.getStore('members'),
-            comments = vm.getStore('comments'),
             refs = me.getReferences(),
             btnMembers = refs.btnMembers,
-            coordinates, loaded = 0;
+            coordinates, comments, loaded = 0;
 
         // Verificar se tem um produto relacioando ao catalogo
         if ((productRelated.get('id') > 0) && (productRelated.get('prl_product') === currentCatalog.get('id'))) {
@@ -401,18 +403,10 @@ Ext.define('Target.view.preview.PreviewController', {
 
                 //carrega os comentários de posição
                 loaded++;
-                coordinates = '[[' + me.activeDataset.get('tli_urall') + ',' + me.activeDataset.get('tli_udecll') + '],' +
-                               '[' + me.activeDataset.get('tli_uraur') + ',' + me.activeDataset.get('tli_udecur') + ']]';
-
-                comments.filter([{
-                    property: 'coordinates',
-                    value: coordinates
-                }]);
-                comments.load({
-                    callback: function () {
-                        loaded--;
-                        loadMembersAndCommentsComplete();
-                    }
+                me.loadCommentsPosition(function(result){
+                    loaded--;
+                    comments = result;
+                    loadMembersAndCommentsComplete();
                 });
 
                 function loadMembersAndCommentsComplete() {
@@ -442,6 +436,27 @@ Ext.define('Target.view.preview.PreviewController', {
                 }
             });
         }
+    },
+
+    // carrega os comentários de posição
+    loadCommentsPosition(next){
+        var me = this,
+            storeCommentsPosition = me.getViewModel().getStore('comments'),
+            coordinates;
+
+        coordinates = '[[' + me.activeDataset.get('tli_urall') + ',' + me.activeDataset.get('tli_udecll') + '],' +
+                        '[' + me.activeDataset.get('tli_uraur') + ',' + me.activeDataset.get('tli_udecur') + ']]';
+
+        storeCommentsPosition.filter([{
+            property: 'coordinates',
+            value: coordinates
+        }]);
+
+        storeCommentsPosition.load({
+            callback: function () {
+                next(storeCommentsPosition);
+            }
+        });
     },
 
     onLoadSystemMembers: function (members, comments/*cometários por posição*/, showComments) {

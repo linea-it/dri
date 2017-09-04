@@ -158,7 +158,7 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     _winCatalogOverlay: null,
-    _showComments: null,
+    _showComments: true,
 
     bind: {
         release: '{release}',
@@ -942,7 +942,7 @@ Ext.define('visiomatic.Visiomatic', {
             }
 
         }, me);
-
+        
         lCatalog = l.geoJson(collection, {
             coordsToLatLng: function (coords) {
                 if (wcs.forceNativeCelsys) {
@@ -1029,6 +1029,9 @@ Ext.define('visiomatic.Visiomatic', {
         // chama a função de exibição do menu de contexto
         .on('contextmenu', me.onLayerContextMenu, me);
 
+        map.addLayer(lCatalog);
+        me.redraw();
+
         // adiciona os ícones de comentário por posição
         if (storeCommentsPosition) {
             storeCommentsPosition.each(function (record) {
@@ -1040,10 +1043,6 @@ Ext.define('visiomatic.Visiomatic', {
                 me.createCommentIcon(latlng);
             });
         }
-
-        map.addLayer(lCatalog);
-
-        me.redraw();
 
         return lCatalog;
     },
