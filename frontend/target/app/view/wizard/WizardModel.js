@@ -36,7 +36,6 @@ Ext.define('Target.view.wizard.WizardModel', {
     },
 
     data: {
-        product: null,
-        setting_editable: false
+        product: null
     }
 });
