@@ -21,7 +21,7 @@ class StatisticsViewSet(viewsets.ModelViewSet):
 def user_by_date(request):
     if request.method == 'GET':
         date_params = request.query_params.get('date', None)
-        date = datetime.datetime.strptime(date_params, "%Y-%m-%d") + datetime.timedelta(days=1)
+        date = datetime.datetime.strptime(date_params, "%Y-%m-%d")
         day_min = datetime.datetime.combine(date, datetime.time.min)
         day_max = datetime.datetime.combine(date, datetime.time.max)
         queryset = Statistics.objects.filter(date__range=(day_min, day_max))
