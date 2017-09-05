@@ -29,4 +29,4 @@ def user_by_date(request):
         for statistic in queryset:
             if statistic.owner.email not in users:
                 users.append(copy.copy(statistic.owner.email))
-        return Response(dict({'users': users}))
+        return Response(dict({'users': users, 'total': len(users)}))
