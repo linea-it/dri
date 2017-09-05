@@ -1,6 +1,10 @@
 Ext.define('Target.model.Setting', {
     extend: 'Ext.data.Model',
 
+    requires: [
+        'common.data.proxy.Django'
+    ],
+
     fields: [
         {name:'id', type:'int', persist: false},
         {name:'cst_product', type:'int'},
@@ -10,6 +14,11 @@ Ext.define('Target.model.Setting', {
         {name:'cst_is_editable', type:'boolean'},
         {name:'owner', type:'string'},
         {name:'editable', type:'boolean', default: false, persist: false}
-    ]
+    ],
+
+    proxy: {
+        type: 'django',
+        url: '/dri/api/productsetting/'
+    }
 
 });
