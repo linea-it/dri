@@ -25,8 +25,11 @@ def user_by_date(request):
         day_min = datetime.datetime.combine(date, datetime.time.min)
         day_max = datetime.datetime.combine(date, datetime.time.max)
         queryset = Statistics.objects.filter(date__range=(day_min, day_max))
-        users = []
+        users = dict()
         for statistic in queryset:
-            if statistic.owner.email not in users:
-                users.append(copy.copy(statistic.owner.email))
-        return Response(dict({'users': users, 'total': len(users)}))
+            email = statistic.owner.email
+            if email not in users:
+                users[email] = 1
+            else:
+                users[email] += 1
+        return Response(users)
