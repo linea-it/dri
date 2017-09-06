@@ -27,8 +27,9 @@ class StatisticsAPITestCase(APITestCase):
         # return new statistics list
         response = self.client.get('/statistics/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['event'], event)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['event'], 'API - login')
+        self.assertEqual(response.data[1]['event'], event)
         self.assertEqual(response.data[0]['owner'], 'dri')
 
         # change statistics event
@@ -40,7 +41,7 @@ class StatisticsAPITestCase(APITestCase):
         # return new statistics list
         response = self.client.get('/statistics/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['event'], newEvent)
 
         # delete statistics
@@ -50,4 +51,4 @@ class StatisticsAPITestCase(APITestCase):
         # return new statistics list - (return 0 userqueries)
         response = self.client.get('/statistics/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 1)
