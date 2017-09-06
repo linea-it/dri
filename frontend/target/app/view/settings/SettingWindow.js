@@ -1,19 +1,27 @@
 Ext.define('Target.view.settings.SettingWindow', {
     extend: 'Ext.window.Window',
 
+    requires: [
+        'Target.view.settings.SettingsController'
+    ],
+
+    controller: 'settings',
+    viewModel: {
+        data: {
+            isEdit: false
+        }
+    },
+
     title: 'Create or edit a setting',
-    reference: 'winSetting',
     width: 300,
     height: 350,
     layout: 'fit',
     modal: true,
-    // defaultFocus: 'cst_display_name',
-    //
-    //viewModel: 'settings',
+
     closeAction: 'destroy',
 
     config: {
-        edit: false
+        record: null
     },
 
     items: [
@@ -86,30 +94,37 @@ Ext.define('Target.view.settings.SettingWindow', {
             text: 'Delete',
             itemId: 'btnDeleteSetting',
             ui: 'soft-red',
-            handler: 'onDeleteSetting',
-            hidden: true
+            handler: 'deleteSetting',
+            bind: {
+                hidden: '{!isEdit}'
+            }
         },
         '->',
         {
             text: 'Cancel',
-            handler: 'onCancelSetting'
+            handler: 'cancelSetting'
         }, {
             text: 'Save',
             ui: 'soft-green',
-            handler: 'onAddSetting'
+            handler: 'addSetting'
         }
     ],
 
-    setEdit: function (edit) {
-        if (edit) {
-            this.down('#btnDeleteSetting').setVisible(true);
+    setRecord: function (record) {
+        var me = this,
+            vm = me.getViewModel(),
+            form = me.lookup('settingForm');
+
+        me.record = record;
+
+        form.loadRecord(record);
+
+        if (record.get('id') > 0) {
+            vm.set('isEdit', true);
+        } else {
+            vm.set('isEdit', false);
         }
-    },
 
-    onDelete: function () {
-        this.fireEvent('delete', this);
-
-        this.close();
     }
 
 });
