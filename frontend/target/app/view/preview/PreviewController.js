@@ -199,7 +199,7 @@ Ext.define('Target.view.preview.PreviewController', {
         me.onCenterTarget();
 
         me.loadCommentsPosition(function(comments){
-            me.onLoadSystemMembers(members, comments, refs.btnComments.pressed);
+            me.overlayCatalog(members, comments, refs.btnComments.pressed);
         });
     },
 
@@ -427,7 +427,7 @@ Ext.define('Target.view.preview.PreviewController', {
                         // Remover o load do botao
                         btnMembers.setIconCls('x-fa fa-dot-circle-o');
                         // Exibir os objetos membros
-                        me.onLoadSystemMembers(members, comments, refs.btnComments.pressed);
+                        me.overlayCatalog(members, comments, refs.btnComments.pressed);
                     }
                 }
             }
@@ -472,7 +472,8 @@ Ext.define('Target.view.preview.PreviewController', {
         });
     },
 
-    onLoadSystemMembers: function (members, comments/*cometários por posição*/, showComments) {
+    // atualiza o catálogo de objetos e a lista de comentário non visiomatic
+    overlayCatalog: function (members, comments/*cometários por posição*/, showComments) {
         var me = this,
             vm = me.getViewModel(),
             visiomatic = me.lookupReference('visiomatic'),
