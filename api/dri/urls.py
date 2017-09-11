@@ -115,6 +115,7 @@ urlpatterns = [
     url(r'^get_fits_by_tilename', coadd_views.get_fits_by_tilename),
     url(r'^user_by_date', statistics_views.user_by_date),
     url(r'^teste/', common_views.teste),
+    url(r'^get_token', common_views.get_token),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'), {'extra_context':{'providers': providers }}),
 ]
 

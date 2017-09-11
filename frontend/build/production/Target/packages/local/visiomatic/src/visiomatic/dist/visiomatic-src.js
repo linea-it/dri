@@ -745,7 +745,9 @@ L.IIPUtils = {
 
 // Ajax call to server
 	requestURL: function (url, purpose, action, context, timeout) {
-		var	httpRequest;
+		var	httpRequest,
+				token,
+				urlPort;
 
 		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
 			httpRequest = new XMLHttpRequest();
@@ -770,7 +772,29 @@ L.IIPUtils = {
 				alert('Time out while ' + purpose);
 			};
 		}
-		httpRequest.open('GET', url);
+
+		token = window.localStorage['token'];
+
+		if (
+			window.location.origin.includes('desportal.cosmology.illinois.edu') &&
+			token
+		) {
+			urlArray = url.split('desportal.cosmology.illinois.edu')
+
+			httpRequest.open('GET',
+				urlArray[0] +
+				window.location.host +
+				urlArray[1]
+			);
+
+			httpRequest.setRequestHeader('Authorization', 'Basic a');
+			httpRequest.setRequestHeader('Token', token);
+
+
+		} else {
+			httpRequest.open('GET', url);
+
+		}
 
 		// Send Credrentials
 		if ((context) && (context.options.credentials)) {
@@ -782,6 +806,8 @@ L.IIPUtils = {
 		if ((context) && (context.options.authenticate === 'csrftoken')) {
 			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
 		}
+
+
 
 		if ((action)) {
 			httpRequest.onreadystatechange = function () {
