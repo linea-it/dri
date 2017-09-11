@@ -53,6 +53,7 @@ Ext.define('Sky.view.home.Home', {
                   {
                     xtype: 'textfield',
                     emptyText: 'Search by name',
+                    reference: 'txtSearch',
                     width: 250,
                     triggers: {
                         clear: {
@@ -61,6 +62,7 @@ Ext.define('Sky.view.home.Home', {
                             hidden: true
                         },
                         search: {
+                            handler: 'filterByname',
                             cls: ' x-form-search-trigger'
                         }
                     },
