@@ -1,7 +1,9 @@
 from django.core.urlresolvers import resolve
 from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
-
+import datetime
+import warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning)
 
 class StatisticsAPITestCase(APITestCase):
     def setUp(self):
@@ -27,8 +29,9 @@ class StatisticsAPITestCase(APITestCase):
         # return new statistics list
         response = self.client.get('/statistics/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['event'], event)
+        self.assertEqual(len(response.data), 2)
+        self.assertEqual(response.data[0]['event'], 'API - login')
+        self.assertEqual(response.data[1]['event'], event)
         self.assertEqual(response.data[0]['owner'], 'dri')
 
         # change statistics event
@@ -40,7 +43,7 @@ class StatisticsAPITestCase(APITestCase):
         # return new statistics list
         response = self.client.get('/statistics/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['event'], newEvent)
 
         # delete statistics
@@ -50,4 +53,10 @@ class StatisticsAPITestCase(APITestCase):
         # return new statistics list - (return 0 userqueries)
         response = self.client.get('/statistics/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data), 1)
+
+    def test_user_by_date(self):
+        date_now = str(datetime.datetime.now().date())
+        response = self.client.get('/user_by_date?date=' + date_now)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, dict({'dri@linea.org': 1}))
