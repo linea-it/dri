@@ -782,6 +782,7 @@ L.IIPUtils = {
 			urlArray = url.split('desportal.cosmology.illinois.edu')
 
 			httpRequest.open('GET',
+				urlArray[0] +
 				window.location.host +
 				urlArray[1]
 			);
