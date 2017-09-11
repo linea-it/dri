@@ -87,7 +87,6 @@ Ext.define('Sky.view.main.MainController', {
     },
 
     setActivePanel: function (panel) {
-
         var me = this,
             refs = me.getReferences(),
             mainCard = refs.mainCardPanel,
@@ -98,13 +97,10 @@ Ext.define('Sky.view.main.MainController', {
 
         // Saber se ja existe uma interface  criada.
         if (!existingItem) {
-
             view = mainCard.add(panel);
             view.loadPanel(arguments);
             mainLayout.setActiveItem(view);
-
         }else{
-
             view = existingItem;
             view.updatePanel(arguments);
             mainLayout.setActiveItem(view);
@@ -115,11 +111,13 @@ Ext.define('Sky.view.main.MainController', {
 
         if (view != this.activePanel){
             view.getController().onActivate({
-                action: me.aladinDblClick  ? 'dblclick' : ''
+                action: me.aladinDblClick  ? 'dblclick' : '',
+                showPin: Boolean(this.activePanel && this.activePanel.showPin)
             });
             me.aladinDblClick = false;
         }
 
+        view.showPin = false;
         this.activePanel = view;
     },
 
@@ -180,6 +178,7 @@ Ext.define('Sky.view.main.MainController', {
 
         headerRefs.searchGlobal.show();
 
+        if (this.activePanel) newView.showPin = this.activePanel.showPin
         newView.txtCoordinateSearch = headerRefs.txtCoordinateSearch;
         this.setActivePanel(newView, dataset, coordinate, fov);
 

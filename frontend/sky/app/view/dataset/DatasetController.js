@@ -411,7 +411,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
         var me = this, coordinate, zoom, aladin,
             visiomatic = me.lookupReference('visiomatic');
 
-        me.showPin = (event.action == 'dblclick');
+        me.showPin = (event.showPin || event.action == 'dblclick');
 
         //obtém as coordenadas e o zoom da url
         coordinate = ((location.hash.split('/')[2] || '').replace(/%2C/g, '.').split('%2B')) || null;

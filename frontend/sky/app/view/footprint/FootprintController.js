@@ -219,14 +219,24 @@ Ext.define('Sky.view.footprint.FootprintController', {
     toVisiomatic: function (radec, clearSearch) {
         var me = this,
             vm = me.getViewModel(),
+            vw = me.getView(),
             store = vm.getStore('tiles'),
             aladin = me.lookupReference('aladin'),
-            coordinate,
             fov = aladin.getFov()[0].toFixed(2).replace('.', ','),
-            hash, dataset, ra, dec;
+            txtCoordinateSearch = vw.txtCoordinateSearch,
+            hash, dataset, ra, dec, coordinate, value, sys;
 
-        ra = parseFloat(radec[0]).toFixed(3);
-        dec = parseFloat(radec[1]).toFixed(3);
+        value = txtCoordinateSearch.getValue();
+        if (value){
+            sys = visiomatic.Visiomatic.strToSystem(value);
+            ra  = String(sys.value.lng);
+            dec = String(sys.value.lat);
+            vw.showPin = true;
+        }else{
+            ra = parseFloat(radec[0]).toFixed(3);
+            dec = parseFloat(radec[1]).toFixed(3);
+            vw.showPin = false;
+        }
 
         dataset = store.filterByRaDec(ra, dec);
 
@@ -245,7 +255,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
             me.redirectTo(hash, true);
 
             //Limpa a caixa de texto global search searchGlobal
-            if (clearSearch) me.getView().txtCoordinateSearch.setValue('');
+            if (clearSearch) txtCoordinateSearch.setValue('');
 
 
         }else{
