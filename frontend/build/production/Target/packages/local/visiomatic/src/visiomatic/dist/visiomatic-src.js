@@ -779,16 +779,16 @@ L.IIPUtils = {
 			window.location.origin.includes('desportal.cosmology.illinois.edu') &&
 			token
 		) {
-
-			httpRequest.setRequestHeader('Authorization', 'Basic a');
-			httpRequest.setRequestHeader('Token', token);
-
 			urlArray = url.split('desportal.cosmology.illinois.edu')
 
 			httpRequest.open('GET',
 				window.location.host +
 				urlArray[1]
 			);
+
+			httpRequest.setRequestHeader('Authorization', 'Basic a');
+			httpRequest.setRequestHeader('Token', token);
+
 
 		} else {
 			httpRequest.open('GET', url);
