@@ -772,29 +772,31 @@ L.IIPUtils = {
 				alert('Time out while ' + purpose);
 			};
 		}
+		// TODO Implement authenticate by token
+		// token = window.localStorage['token'];
+		//
+		// if (
+		// 	window.location.origin.includes('desportal.cosmology.illinois.edu') &&
+		// 	token
+		// ) {
+		// 	urlArray = url.split('desportal.cosmology.illinois.edu')
+		//
+		// 	httpRequest.open('GET',
+		// 		urlArray[0] +
+		// 		window.location.host +
+		// 		urlArray[1]
+		// 	);
+		//
+		// 	httpRequest.setRequestHeader('Authorization', 'Basic a');
+		// 	httpRequest.setRequestHeader('Token', token);
+		//
+		//
+		// } else {
+		// 	httpRequest.open('GET', url);
+		//
+		// }
 
-		token = window.localStorage['token'];
-
-		if (
-			window.location.origin.includes('desportal.cosmology.illinois.edu') &&
-			token
-		) {
-			urlArray = url.split('desportal.cosmology.illinois.edu')
-
-			httpRequest.open('GET',
-				urlArray[0] +
-				window.location.host +
-				urlArray[1]
-			);
-
-			httpRequest.setRequestHeader('Authorization', 'Basic a');
-			httpRequest.setRequestHeader('Token', token);
-
-
-		} else {
-			httpRequest.open('GET', url);
-
-		}
+		httpRequest.open('GET', url);
 
 		// Send Credrentials
 		if ((context) && (context.options.credentials)) {
