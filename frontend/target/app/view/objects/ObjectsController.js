@@ -811,8 +811,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         // Checar a quantidade de objetos na lista se for maior que 10.000
         // Mostar um popup informando a limitiacao do sistema
-        console.log(objects);
-        if (objects.count() > 10000) {
+        if (objects.getTotalCount() > 10000) {
             Ext.MessageBox.alert(
                 'Sorry!',
                 "The cutout tool has currently a limit of 10k objects. \
@@ -820,6 +819,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 manageable number of objects, save it as a new list, \
                 then run cutout on it. </br>\
                 We are working on a solution to this limitation.");
+
         } else {
 
             me.winCutout = Ext.create('Target.view.settings.CutoutJobForm',{
@@ -827,7 +827,10 @@ Ext.define('Target.view.objects.ObjectsController', {
                 listeners: {
                     scope: me,
                     submitedjob: function () {
-                        Ext.MessageBox.alert('', 'The job will run in the background and you will be notified when it is finished.');
+                        Ext.MessageBox.alert(
+                            '',
+                            "The job will run in the background and you will \
+                            be notified when it is finished.");
                     }
                 }
             });
