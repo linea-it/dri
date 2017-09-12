@@ -818,7 +818,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 Please use portal filter to narrow your list down to a \
                 manageable number of objects, save it as a new list, \
                 then run cutout on it. </br>\
-                We are working on a solution to this limitation.");
+                 We are working to fix this limitation.");
 
         } else {
 
