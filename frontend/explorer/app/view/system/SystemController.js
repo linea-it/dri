@@ -60,11 +60,12 @@ Ext.define('Explorer.view.system.SystemController', {
     onLoadProduct: function (product) {
         var me = this,
             vm = me.getViewModel(),
-            view = me.getView();
+            view = me.getView(),
+            detailPanel = me.lookup('detailPanel');
 
         vm.set('currentProduct', product);
 
-        view.setTitle(product.get('prd_display_name'));
+        detailPanel.setTitle(product.get('prd_display_name'));
 
         // Descobrir a Propriedade Id
         me.loadAssociations(product);
