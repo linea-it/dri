@@ -54,7 +54,9 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
                             fieldLabel: 'Name',
                             name: 'name',
                             allowBlank: false,
-                            maxLength: 40
+                            maxLength: 40,
+                            regex: /^[a-z0-9-_\s]+$/i,
+                            regexText: 'Please use only letters and numbers separated by spaces \' \', minus sign \'-\' or underscore \'_\'.'
                         },
                         // {
                         //     xtype: 'tagfield',
@@ -120,7 +122,7 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
         me.callParent(arguments);
     },
 
-    setCurrentCatalog: function (currentCatalog) {
+    setCurrentCatalog: function (currentCatalog, activeFilter) {
         var me = this;
 
         if ((currentCatalog) && (currentCatalog.get('id') > 0)) {
@@ -129,7 +131,7 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
 
             me.getViewModel().set('currentCatalog', currentCatalog);
 
-            me.fireEvent('changecatalog', currentCatalog);
+            me.fireEvent('changecatalog', currentCatalog, activeFilter);
 
         }
     }

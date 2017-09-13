@@ -3,10 +3,23 @@ import os
 # Just the 3 vars that the specific environment will use:
 # BASE_PROJECT, LOG_DIR, DATABASES
 
-# NOTE: change "#BASEPROJECT#" for the initial project full path
+# Substituir #BASEPROJECT# pelo diretorio de intalacao do projeto.
 BASE_PROJECT = "#BASEPROJECT#"
+# the hostname and port number of the current Server
+BASE_HOST = "http://dri.com"
 
 LOG_DIR = os.path.join(BASE_PROJECT, 'log')
+
+# Diretorio onde ficam os arquivos estaticos gerados pela aplicacao, arquivos como imagens, csvs, zips que necessitam
+# ter uma url acessivel para download.
+DATA_DIR = os.path.join(BASE_PROJECT, 'data')
+
+# Diretorio para arquivos temporarios, gerados pelo sistema e que ficaram disponiveis para o usuario fazer o download.
+# esse diretorio deve ser usado junto com o DATA_DIR, deve OBRIGATORIAMENTE ser um diretorio dentro do DATA_DIR
+DATA_TMP_DIR = 'tmp'
+
+# Url base para o diretorio onde os arquivos gerados pela aplicacao podem ser acessados pelo servidor web
+DATA_SOURCE = "/data"
 
 DATABASES = {
     'default': {
@@ -20,6 +33,8 @@ DATABASES = {
 }
 
 # Email notification configs
+# Email utilizado para enviar as notificacoes do science server
+EMAIL_NOTIFICATION = 'noreply@linea.gov.br'
 EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
 EMAIL_HOST = 'smtp.linea.gov.br'
 EMAIL_PORT = '<porta do smtp>'
@@ -28,23 +43,92 @@ EMAIL_HOST_PASSWORD = '<senha do smtp>'
 EMAIL_USE_TLS = True
 
 # DES Cutout Service
-CUTOUT_HOST = 'http://descut.cosmology.illinois.edu'
-CUTOUT_USER = '<User required for cutout>'
-CUTOUT_PASSWORD = '<password required for cutout>'
-CUTOUT_ROOT = '<cutouts main directory>'
+DES_CUTOUT_SERVICE = {
+    'HOST': 'http://descut.cosmology.illinois.edu',
+    'USER': '<User required for cutout>',
+    'PASSWORD': '<password required for cutout>',
+    # Path onde ficaram os arquivos de cutout, esse parametro sera usado em conjunto com DATA_DIR para criar o path
+    # absoluto para os arquivos.
+    'CUTOUT_DIR': 'targets/cutouts',
+    # Url base que sera usada para exibir as imagens geradas esse parametro deve ser mapeado no dri.conf no apache
+    'CUTOUT_SOURCE': '/data',
+    # Tempo de delay para a task check_jobs em minutos
+    'CUTOUT_TASK_CHECK_JOBS_DELAY': 1
+}
+
 
 # Target Viewer Rating, Reject Schema
 SCHEMA_RATING_REJECT = None
 
-
-# Exemple using Mysql need mysqlclient in requiments.txt
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'dri',
-#         'USER': 'driapi',
-#         'PASSWORD': 'driapi',
-#         'HOST': 'localhost',
-#         'PORT': ''
+# Logging is disabled due errors in testing and production environment, this must be investigated.
+# for developers, it safe to disable the follows lines
+LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'formatters': {
+#         'verbose': {
+#             'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+#         },
+#         'simple': {
+#             'format': '%(asctime)s [%(levelname)s] %(message)s'
+#         },
+#     },
+#     'handlers': {
+#         'file': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(LOG_DIR, 'django.log'),
+#         },
+#         'descutoutservice': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(LOG_DIR, 'cutout.log'),
+#             'formatter': 'simple'
+#         },
+#         'downloads': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(LOG_DIR, 'downloads.log'),
+#             'formatter': 'simple'
+#         },
+#         'product_export': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(LOG_DIR, 'product_export.log'),
+#             'formatter': 'simple'
+#         },
+#         'product_import': {
+#             'level': 'DEBUG',
+#             'class': 'logging.FileHandler',
+#             'filename': os.path.join(LOG_DIR, 'product_import.log'),
+#             'formatter': 'simple'
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['file'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'descutoutservice': {
+#             'handlers': ['descutoutservice'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'downloads': {
+#             'handlers': ['downloads'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'product_export': {
+#             'handlers': ['product_export'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#         'product_import': {
+#             'handlers': ['product_import'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
 #     }
-# }
+}

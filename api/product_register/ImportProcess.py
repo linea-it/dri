@@ -1,12 +1,14 @@
+from datetime import datetime
+
 from coadd.models import Release, Tag
 from common.models import Filter
+from django.db.models import Q
 from lib.CatalogDB import CatalogDB
 from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ProcessRelease
 from rest_framework import status
 from rest_framework.response import Response
-from django.db.models import Q
 
 from .models import Site, Authorization, ExternalProcess, Export
 
@@ -197,15 +199,17 @@ class Import():
         database = data.get('database', 'catalog')
 
         if not self.db:
-            con = CatalogDB(db=database)
-            self.db = con.database
+            self.db = CatalogDB(db=database)
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
                             (data.get('schema', None), data.get('table')))
 
         # Recuperar a quantidade de linhas da tabela
-        count = self.db.get_count(data.get('table'), schema=data.get('schema', None))
+        count = 0
+        if data.get('class') is not 'coadd_objects':
+            count = self.db.get_count(data.get('table'), schema=data.get('schema', None))
+
 
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))
@@ -223,6 +227,8 @@ class Import():
         date = None
         if self.process is not None:
             date = self.process.epr_start_date
+        else:
+            date = datetime.now()
 
         product, created = Catalog.objects.update_or_create(
             prd_owner=self.owner,
@@ -297,7 +303,7 @@ class Import():
             for column in columns:
                 content = ProductContent.objects.create(
                     pcn_product_id=catalog,
-                    pcn_column_name=column
+                    pcn_column_name=column.strip()
                 )
 
         self.product_content_association(catalog, data, created)
@@ -322,6 +328,11 @@ class Import():
                     dict({'property': 'a_image', 'ucd': 'phys.size.smajAxis;instr.det;meta.main'}),
                     dict({'property': 'b_image', 'ucd': 'phys.size.sminAxis;instr.det;meta.main'}),
                     dict({'property': 'theta_j2000', 'ucd': 'pos.posAng;instr.det;meta.main'}),
+                    dict({'property': 'mag_auto_g', 'ucd': 'phot.mag;meta.main;em.opt.g'}),
+                    dict({'property': 'mag_auto_r', 'ucd': 'phot.mag;meta.main;em.opt.r'}),
+                    dict({'property': 'mag_auto_i', 'ucd': 'phot.mag;meta.main;em.opt.i'}),
+                    dict({'property': 'mag_auto_z', 'ucd': 'phot.mag;meta.main;em.opt.z'}),
+                    dict({'property': 'mag_auto_y', 'ucd': 'phot.mag;meta.main;em.opt.Y'})
                 ])
 
         # Se for um update do produto
@@ -405,8 +416,7 @@ class Import():
     # =============================< MAP >=============================
     def register_map(self, data):
         if not self.db:
-            con = CatalogDB()
-            self.db = con.database
+            self.db = CatalogDB()
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
@@ -507,8 +517,7 @@ class Import():
     # =============================< MASK >=============================
     def register_mask(self, data):
         if not self.db:
-            con = CatalogDB()
-            self.db = con.database
+            self.db = CatalogDB()
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %

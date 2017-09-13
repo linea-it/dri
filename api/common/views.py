@@ -16,6 +16,8 @@ from django.conf import settings
 from rest_framework import status
 import django_filters
 from rest_framework import filters
+from rest_framework.authtoken.models import Token
+from django.conf import settings
 
 
 class FilterViewSet(viewsets.ModelViewSet):
@@ -122,15 +124,62 @@ def contact_us(request):
             except SMTPException as e:
                 return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+def get_providers():
+    try:
+        # [Glauber] 06/09/2017
+        # Esses imports NAO podem ocorrer se a aplicacao estiver configurada
+        # para nao usar OAUTH. (settings.degaults USE_OAUTH: boolean)
+        # Esses imports geram erro na instalacao da aplicacao quando ainda
+        # nao existem as tabelas e o comando migrate nao consegue executar
+        # por que esses imports tentam acessar uma tabela que nao existe.
+        # TODO: Checar qual o impacto desse bloco nao ser executado.
+        if settings.USE_OAUTH:
+            from allauth.socialaccount.providers import registry
+            from allauth.socialaccount.models import SocialApp
+            from allauth.socialaccount.providers.oauth.provider import OAuthProvider
+            from allauth.socialaccount.providers.oauth2.provider import OAuth2Provider
+            from django.contrib.sites.models import Site
+
+            site = Site.objects.get_current()
+            result = []
+            for provider in registry.get_list():
+                if (isinstance(provider, OAuth2Provider)
+                        or isinstance(provider, OAuthProvider)):
+                    try:
+                        app = SocialApp.objects.get(provider=provider.id,
+                                              sites=site)
+                        result.append(str(app.provider))
+                    except SocialApp.DoesNotExist:
+                        app2 = ''
+            return str(result)
+    except:
+        pass
+
+@api_view(['GET'])
+def get_token(request):
+    if request.method == 'GET':
+        try:
+            token = Token.objects.get(user=request.user)
+        except:
+            token = Token.objects.create(user=request.user)
+        return Response(dict({'token': token.key}))
 
 @api_view(['GET'])
 def teste(request):
     if request.method == 'GET':
         print('Teste---------------------')
 
-        # from product.CutoutJobs import CutoutJobs
-        # cutoutjobs = CutoutJobs()
-        # a = cutoutjobs.check_job()
+        # from product.tasks import start_des_cutout_job_by_id
+        # from pprint import pprint
+
+        # result = start_des_cutout_job_by_id.delay(37)
+        # pprint(result)
+        # from product.descutoutservice import DesCutoutService, CutoutJobNotify
+        # cutoutjobs = DesCutoutService()
+        # cutoutjob = cutoutjobs.get_cutoutjobs_by_id(68)
+        # teste = CutoutJobNotify().create_email_message(cutoutjob)
+        # a = cutoutjobs.start_job_by_id(46)
+        # a = cutoutjobs.check_jobs()
         # a = cutoutjobs.start_job()
         # a = cutoutjobs.test_api_help()
 

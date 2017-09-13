@@ -18,7 +18,9 @@ Ext.define('Target.view.objects.Mosaic', {
         store: null,
         ready: true,
         cutoutJob: null,
-        labelProperties: []
+        labelProperties: [],
+        cutouts: null,
+        imagesFormat: 'png'
     },
 
     setStore: function (store) {
@@ -26,13 +28,15 @@ Ext.define('Target.view.objects.Mosaic', {
 
     },
 
-    setCutoutJob: function (cutoutJob) {
+    setCutoutJob: function (cutoutJob, cutouts) {
         var me = this,
             labelProperties = [],
             properties;
 
         if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
-            this.cutoutJob = cutoutJob;
+            me.cutoutJob = cutoutJob;
+
+            me.setCutouts(cutouts);
 
             properties = cutoutJob.get('cjb_label_properties');
 
@@ -45,12 +49,14 @@ Ext.define('Target.view.objects.Mosaic', {
 
                     me.createView();
                 }
+            } else {
+                me.createView();
             }
         }
     },
 
     createView: function () {
-        // console.log("Targets Mosaic - createView()");
+        //console.log("Targets Mosaic - createView()");
         var me = this,
             store = me.getStore(),
             labelProperties = me.getLabelProperties(),
@@ -80,7 +86,11 @@ Ext.define('Target.view.objects.Mosaic', {
                         '<div class="thumb-wrap" id="target_{_meta_ra}-{_meta_dec}">' +
                             '<div class="thumb">' +
                                 labels_inside +
-                                '<img style="width:200px; height:200px;" src="{postage_stamps}?_dc={timestamp}" title="ID: {_meta_id} RA: {[this.formatNumber(values._meta_ra)]} Dec: {[this.formatNumber(values._meta_dec)]}" onError="this.onerror=null;this.src=\'resources/cutout_placeholder.png\';" >' +
+                                '<img style="width:200px; height:200px;"' +
+                                    'src="{[this.getImageSource(values._meta_id)]}"' +
+                                    'title="ID: {_meta_id} RA: {[this.formatNumber(values._meta_ra)]} ' +
+                                        'Dec: {[this.formatNumber(values._meta_dec)]}"' +
+                                    'onError="this.onerror=null;this.src=\'resources/cutout_placeholder.png\';" >' +
                                 labels_outside +
                             '</div>' +
                         '</div>' +
@@ -90,52 +100,9 @@ Ext.define('Target.view.objects.Mosaic', {
         var tpl =  Ext.create('Ext.XTemplate',
             string_tpl.toString(),
             {
-                formatNumber: me.formatNumber
-            });
-
-        // var tpl =  Ext.create('Ext.XTemplate',
-        //     '<tpl for=".">',
-        //         '<div class="thumb-wrap" id="target_{_meta_ra}-{_meta_dec}">',
-        //             '<div class="thumb">',
-        //                 '<div class="image_legend">',
-        //                     '<spam class=legend_j2000>Id: {_meta_id}</spam>',
-        //                     '</br>',
-        //                     '<spam class=legend_j2000>J2000 {[this.formatNumber(values._meta_ra)]}, {[this.formatNumber(values._meta_dec)]}</spam>',
-        //                 '</div>',
-        //                 // Usando timestamp com Unique id para a imagem não ficar em cache
-        //                 '<img style="width:200px; height:200px;" src="{postage_stamps}?_dc={timestamp}" title="ID: {_meta_id} RA: {[this.formatNumber(values._meta_ra)]} Dec: {[this.formatNumber(values._meta_dec)]}" onError="this.onerror=null;this.src=\'resources/cutout_placeholder.png\';" >',
-        //             '</div>',
-        //         '</div>',
-        //     '</tpl>',
-        //     '<div class="x-clear"></div>',
-        //     {
-        //         formatNumber: function (value) {
-        //             return value.toFixed(3);
-        //         }
-        //     });
-
-        // var tpl =  Ext.create('Ext.XTemplate',
-        //     '<tpl for=".">',
-        //         '<div class="thumb-wrap" id="target_{_meta_ra}-{_meta_dec}">',
-        //             '<div class="thumb">',
-        //                 // Usando timestamp com Unique id para a imagem não ficar em cache
-        //                 '<img style="width:200px; height:200px;" src="{postage_stamps}?_dc={timestamp}" title="ID: {_meta_id} RA: {[this.formatNumber(values._meta_ra)]} Dec: {[this.formatNumber(values._meta_dec)]}" onError="this.onerror=null;this.src=\'resources/cutout_placeholder.png\';" >',
-        //             '</div>',
-        //             '<div>',
-        //                 '<p>Id: {_meta_id}</p>',
-        //                 '<tpl if=\'name != ""\'>',
-        //                     '<p>Name: {name}</p>',
-        //                 '</tpl>',
-        //                 '<p>RA: {[this.formatNumber(values._meta_ra)]} Dec: {[this.formatNumber(values._meta_dec)]}</p>',
-        //             '</div>',
-        //         '</div>',
-        //     '</tpl>',
-        //     '<div class="x-clear"></div>',
-        //     {
-        //         formatNumber: function (value) {
-        //             return value.toFixed(4);
-        //         }
-        //     });
+                getImageSource: me.getImageSource,
+                formatNumber: me.formatNumber,
+            }, this);
 
         var _view = Ext.create('Ext.view.View', {
             tpl: tpl,
@@ -149,6 +116,12 @@ Ext.define('Target.view.objects.Mosaic', {
                 scope: me,
                 select: function (selModel, record, index) {
                     me.fireEvent('select', selModel, record, index);
+                },
+                itemdblclick: function (view, record) {
+
+                    var imageSource = me.getImageSource(record.get('_meta_id'));
+
+                    me.fireEvent('itemdblclick', record, imageSource, me);
                 }
             }
         });
@@ -161,8 +134,10 @@ Ext.define('Target.view.objects.Mosaic', {
     getSelectionModel: function () {
         if (this._view) {
             return this._view.getSelectionModel();
+
         } else {
             return null;
+
         }
     },
 
@@ -202,8 +177,23 @@ Ext.define('Target.view.objects.Mosaic', {
 
     },
 
+    getImageSource: function (meta_id) {
+//        console.log('getImageSource(%o)', meta_id);
+
+        var me = this,
+            cutouts = me.getCutouts(),
+            imagesFormat = me.getImagesFormat(),
+            imageSource;
+
+        imageSource = cutouts.getImageSourceByObjectId(
+            meta_id,
+            imagesFormat, true);
+
+        return imageSource;
+    },
+
     formatNumber: function (value) {
-        var precision = 3,
+        var precision = 5,
             aValue, decimal;
 
         if (typeof(value) === 'number') {

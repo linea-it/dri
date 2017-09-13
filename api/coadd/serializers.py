@@ -101,6 +101,11 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     tli_tilename = serializers.SerializerMethodField()
     tli_ra = serializers.SerializerMethodField()
     tli_dec = serializers.SerializerMethodField()
+    tli_urall = serializers.SerializerMethodField()
+    tli_udecll = serializers.SerializerMethodField()
+    tli_uraur = serializers.SerializerMethodField()
+    tli_udecur = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Dataset
@@ -118,7 +123,11 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'tli_ra',
             'tli_dec',
             # 'image_src_thumbnails',
-            'image_src_ptif'
+            'image_src_ptif',
+            'tli_urall',
+            'tli_udecll',
+            'tli_uraur',
+            'tli_udecur',
         )
 
     def get_tag_display_name(self, obj):
@@ -141,6 +150,18 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_tli_dec(self, obj):
         return obj.tile.tli_dec
+
+    def get_tli_udecll(self, obj):
+        return obj.tile.tli_udecll
+
+    def get_tli_urall(self, obj):
+        return obj.tile.tli_urall
+
+    def get_tli_uraur(self, obj):
+        return obj.tile.tli_uraur
+
+    def get_tli_udecur(self, obj):
+        return obj.tile.tli_udecur
 
         # def image_src_ptif(self, obj):
         #     tile = obj.tile

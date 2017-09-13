@@ -9,7 +9,7 @@ Ext.define('Target.view.catalog.Tree', {
     requires: [
         'Target.view.catalog.CatalogController',
         'Target.view.catalog.CatalogModel',
-        'Target.view.catalog.RegisterForm',
+        'Target.view.catalog.RegisterWindow',
         'Ext.grid.filters.Filters'
     ],
 
@@ -38,7 +38,7 @@ Ext.define('Target.view.catalog.Tree', {
         bsfilters: null
     },
 
-    emptyText: 'No data to dysplay.',
+    emptyText: 'No data to display.',
 
     initComponent: function () {
         var me = this;
@@ -50,7 +50,8 @@ Ext.define('Target.view.catalog.Tree', {
                     text: 'Name',
                     flex: 2,
                     sortable: true,
-                    dataIndex: 'text'
+                    dataIndex: 'text',
+                    renderer: me.getTooltipName
                 },
                 {
                     text: 'Owner',
@@ -143,19 +144,22 @@ Ext.define('Target.view.catalog.Tree', {
                     tooltip:'Remove Target List',
                     iconCls: 'x-fa fa-trash',
                     ui: 'soft-red',
-                    handler: 'onRemoveCatalog'
-                    // disabled: true
-                    // bind: {
-                    //     disabled: '{!selectedCatalog.editable}'
-                    // }
+                    handler: 'onRemoveCatalog',
+                    disabled: true,
+                    bind: {
+                        disabled: '{!selectedCatalog.editable}'
+                    }
                 },
                 {
                     xtype: 'textfield',
+                    reference: 'searchByName',
+                    // itemId: 'searchByName',
                     emptyText: 'Search by name',
                     width: 250,
                     triggers: {
                         clear: {
                             cls: 'x-form-clear-trigger',
+                            scope: this,
                             handler: this.cancelFilter,
                             hidden: true
                         },
@@ -164,6 +168,7 @@ Ext.define('Target.view.catalog.Tree', {
                         }
                     },
                     listeners: {
+                        scope: this,
                         change: me.filterByname,
                         buffer: 500
                     }
@@ -171,6 +176,7 @@ Ext.define('Target.view.catalog.Tree', {
                 {
                     tooltip: 'Refresh and Clear filters',
                     iconCls: 'x-fa fa-refresh',
+                    scope: this,
                     handler: me.refreshAndClear
                 }
             ]
@@ -208,7 +214,6 @@ Ext.define('Target.view.catalog.Tree', {
             value: type.toLowerCase()
         });
 
-
         // Guardar os filtros usados no load dos catologos
         baseFilters = Ext.clone(filters);
         me.setBsfilters(baseFilters);
@@ -230,21 +235,31 @@ Ext.define('Target.view.catalog.Tree', {
     },
 
     viewRecord: function (record) {
-        this.fireEvent('selectcatalog', record, this);
+        // So disparar o evento se o catalogo tiver a sua tabela disponivel
+        // https://github.com/linea-it/dri/issues/662
+        if (record.get('tableExist')) {
+            this.fireEvent('selectcatalog', record, this);
+
+        } else {
+            // Avisar o usuario que a tabela esta indisponivel.
+            Ext.MessageBox.alert('Warning', 'The table for this product is not currently available or does not exist');
+
+        }
 
     },
 
     filterByname: function () {
-
-        var tree = this.up('treepanel'),
-            store = tree.getStore(),
-            value = this.getValue(),
+        var me = this,
+            txt = me.lookup('searchByName'),
+            // txt = me.down('#searchByName'),
+            store = me.getStore(),
+            value = txt.getValue(),
             fts = [],
             f;
 
         if (value.length > 0) {
 
-            this.getTrigger('clear').show();
+            txt.getTrigger('clear').show();
 
             // checar se a store esta em loading
             if (store.isLoading()) {
@@ -265,9 +280,9 @@ Ext.define('Target.view.catalog.Tree', {
 
             fts.push(f);
 
-            tree.filterCatalogs(fts);
+            me.filterCatalogs(fts);
         } else {
-            this.getTrigger('clear').hide();
+            me.cancelFilter();
         }
 
     },
@@ -297,21 +312,47 @@ Ext.define('Target.view.catalog.Tree', {
     },
 
     cancelFilter: function () {
+        var me = this,
+            txt = me.lookup('searchByName');
 
-        var tree = this.up('treepanel');
+        txt.reset();
 
-        this.reset();
+        txt.getTrigger('clear').hide();
 
-        tree.filterCatalogs();
-
-        this.getTrigger('clear').hide();
+        me.filterCatalogs();
     },
 
     refreshAndClear: function () {
+        var me = this;
 
-        var tree = this.up('treepanel');
+        me.cancelFilter();
+    },
 
-        tree.filterCatalogs();
+    getTooltipName: function (value, meta, record) {
+        var me = this,
+            tpl, tooltip;
+
+        tpl = new Ext.XTemplate(
+            '<div>',
+                '<spam><b>{prd_display_name}</b></spam>',
+
+                '<tpl if=\'description != ""\'>',
+                    '<p></br></br>{description}</p>',
+                '</tpl>',
+                '<tpl if=\'!tableExist\'>',
+                    '</br><spam><b class=color-orange>Warning</b>: ',
+                    'The table for this product is not currently available or does not exist.</spam>',
+                '</tpl>',
+            '</div>'
+        );
+
+        tooltip = tpl.apply(record.data);
+
+        if (record.get('leaf')) {
+            meta.tdAttr = 'data-qtip=\"' + tooltip + '\"';
+        }
+
+        return value;
     }
 
 });

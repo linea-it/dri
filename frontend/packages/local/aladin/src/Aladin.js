@@ -10,8 +10,7 @@ Ext.define('aladin.Aladin', {
 
     mixins: {
         events: 'aladin.Events',
-        interface: 'aladin.Interfaces',
-        maps:'aladin.Maps'
+        interface: 'aladin.Interfaces'
     },
 
     layout: 'fit',
@@ -44,11 +43,11 @@ Ext.define('aladin.Aladin', {
             fov:180,
             target: '02 23 11.851 -09 40 21.59',
             cooFrame: 'J2000',
-            //survey:                 'empty_survey',
+            survey: 'empty_survey',
             showReticle: true,
             showZoomControl: true,
             showFullscreenControl: true,
-            showLayersControl: false,
+            showLayersControl: true,
             showGotoControl: false,
             showShareControl: false,
             showCatalog: true,
@@ -90,8 +89,11 @@ Ext.define('aladin.Aladin', {
         // LayersControl
         enableLayersControl: false,
 
+        // Habilitar a toolbar
+        enableToolbar: true,
+
         // Barra com botoes para escolher a banda da imagem
-        showFilters: true,
+        showFilters: false,
         bandFilter: null,
         // array de filtros disponiveis baseado no array surveys
         availableFilters: [],
@@ -100,7 +102,7 @@ Ext.define('aladin.Aladin', {
         enableViewMenu: true,
 
         // Botao para exportar para PNG
-        enableExportPng: false,
+        enableExportPng: true,
 
         // Botao para mostrar ou ocultar a crosshair
         enableReticle: true,
@@ -109,7 +111,7 @@ Ext.define('aladin.Aladin', {
         enableHealpixGrid: true,
 
         // Menu que permite trocar as cores da imagem
-        enableColorMap: false,
+        enableColorMap: true,
 
         // Botao para mostrar ou ocultar o footprint
         enableFootprint: true,
@@ -118,7 +120,7 @@ Ext.define('aladin.Aladin', {
         hideFootprint: true,
 
         // habilitar o campo de GoTo
-        enableGoto: true,
+        enableGoto: false,
         // esse parametro determina se o campo de GoTo, vai posicionar a imagem na coordenada
         // ou se vai disparar um evento.
         gotoSetPosition: true,
@@ -145,15 +147,16 @@ Ext.define('aladin.Aladin', {
 
         // String ra, dec da posicao atual do reticle.
         location: '',
+        mlocation: '',
 
         // FoV inicial tem preferencia sobre o FoV do survey.
         initialFov: null,
 
         // habilitar ou desabilitar a exibicao de mapas
-        enableMaps: false,
+        enableMaps: true,
 
         // habilitar botao que permite troca entre Visiomatic / Aladin
-        enableShift: true,
+        enableShift: false,
 
         // toolbar position (left or top)
         toolbarPosition: 'left'
@@ -169,9 +172,11 @@ Ext.define('aladin.Aladin', {
     viewModel: {
         data: {
             location: '',
+            mlocation: '',
             tile: null,
             tag: null,
-            release: null
+            release: null,
+            release_name: ''
         }
     },
 
@@ -199,8 +204,8 @@ Ext.define('aladin.Aladin', {
             height: me.getAladinHeight()
         });
 
-        if (me.getShowFilters()) {
-            tollbar = me.makeToolbar();
+        if (me.getEnableToolbar()) {
+            tollbar = me.leftToolBar = me.makeToolbar();
             btns = me.makeToolbarButtons();
             tollbar.add(btns);
 
@@ -226,17 +231,11 @@ Ext.define('aladin.Aladin', {
     },
 
     onAfterrender: function () {
-        // console.log('Aladin - afterrender()');
-
         var me = this,
             aladinId = '#' + me.getAladinId(),
             libA = me.libA,
             aladinOptions = me.getAladinOptions(),
-            aladin;
-
-        if (me.getEnableLayersControl()) {
-            aladinOptions.showLayersControl = me.getEnableLayersControl();
-        }
+            aladin, el;
 
         aladin = libA.aladin(
             // Id da div que recebera o aladin
@@ -244,6 +243,18 @@ Ext.define('aladin.Aladin', {
             // opcoes do aladin
             aladinOptions
         );
+
+        // override native aladin setUnknownSurveyIfNeeded method
+        // o método fosobrescrito pq adiciona uma survey vazia após a apolicação adicionar a sua própria survey
+        aladin.view.setUnknownSurveyIfNeeded = function () {};
+
+        aladin._setImageSurvey = aladin.setImageSurvey;
+        aladin.setImageSurvey = function (surveyId, callback) {
+            return aladin._setImageSurvey(surveyId, function () {
+                me.onChangeImageSurvey();
+                if (callback) callback();
+            });
+        };
 
         me.setAladin(aladin);
 
@@ -257,12 +268,18 @@ Ext.define('aladin.Aladin', {
             me.enableDisableInfo(null, me.getInfoEnabled());
         }
 
-        // Custon events
-        me.addCustonEvents();
+        // Custom events
+        me.addCustomEvents();
 
         me.setAladinReady(true);
         me.fireEvent('aladinready', me);
 
+    },
+
+    onChangeImageSurvey: function () {
+        //console.log('ImageSurvey Changed');
+        // Custom events
+        this.addCustomEvents();
     },
 
     aladinIsReady: function () {
@@ -283,14 +300,18 @@ Ext.define('aladin.Aladin', {
         return Ext.clone(this.emptySurvey);
     },
 
-//    onResize: function () {
-//        var me = this,
-//            aladin = me.getAladin();
-//
-//        if (me.getAutoSize()) {
-//            aladin.view.fixLayoutDimensions();
-//        }
-//    },
+    readProperties: function (rootUrl, successCallback, errorCallback) {
+        ProgressiveCat.readProperties(rootUrl, successCallback, errorCallback);
+    },
+
+    onResize: function () {
+        var me = this,
+            aladin = me.getAladin();
+
+        if (me.getAutoSize()) {
+            aladin.view.fixLayoutDimensions();
+        }
+    },
 
     setSurveys: function (surveys) {
         this.surveys = null;
@@ -309,7 +330,22 @@ Ext.define('aladin.Aladin', {
             empty = me.getEmptySurvey(),
             aladin = me.getAladin(),
             newSurvey,
-            alSurvey;
+            alSurvey,
+            token;
+
+        token = window.localStorage['token'];
+
+        if (token) {
+            var realSend = XMLHttpRequest.prototype.send;
+
+            XMLHttpRequest.prototype.send = function () {
+                this.setRequestHeader('Authorization', 'Basic a');
+                this.setRequestHeader('Token', token);
+
+                realSend.apply(this, arguments);
+            };
+
+        }
 
         newSurvey = Ext.Object.merge(empty, survey);
 
@@ -373,6 +409,13 @@ Ext.define('aladin.Aladin', {
         }
     },
 
+    getImageSurvey: function () {
+        var me = this,
+            aladin = me.getAladin();
+
+        return aladin.getBaseImageLayer();
+    },
+
     setImageSurvey: function (imageSurvey) {
         var me = this,
             aladin = me.getAladin(),
@@ -407,8 +450,8 @@ Ext.define('aladin.Aladin', {
             // Mostrar o footprint
             me.showDesFootprint();
 
-            // Custon events
-            me.addCustonEvents();
+            // Custom events
+            me.addCustomEvents();
 
             // Disparar evento changeimage
             me.fireEvent('changeimage', imageSurvey, me);
@@ -460,9 +503,7 @@ Ext.define('aladin.Aladin', {
 
         if (store.count() === 0) {
             console.log('NAO TEM SURVEY');
-
             me.setImageSurvey(empty);
-
         }
 
         // criar um array com os elementos da store
@@ -487,13 +528,15 @@ Ext.define('aladin.Aladin', {
         me.setAvailableFilters(filters);
     },
 
-    setLocation: function (location) {
+    setLocation: function (location, mlocation) {
         var me = this,
             vm = me.getViewModel();
 
         me.location = location;
+        me.mlocation = mlocation;
 
         vm.set('location', location);
+        vm.set('mlocation', mlocation);
 
         if (me.getAladin()) {
             me.onChangeLocation();
@@ -630,7 +673,7 @@ Ext.define('aladin.Aladin', {
             if (tile.get('id') !== oldtile) {
                 tag = me.getStoreTags().getById(tile.get('tag'));
 
-                vm.set('release', tile.get('release_display_name'));
+                vm.set('release_name', tile.get('release_display_name'));
                 vm.set('tile', tile);
                 vm.set('tag', tag);
 
@@ -1034,6 +1077,16 @@ Ext.define('aladin.Aladin', {
     onShift: function () {
         this.fireEvent('shift', this.getRaDec(), this);
 
+    },
+
+    onShowLayerBox:function () {
+        var me = this,
+            aladin = me.getViewModel().getView().getAladin();
+
+        aladin.hideBoxes();
+        aladin.showLayerBox();
+
+        return false;
     },
 
     getDesFootprintCoordinates: function () {

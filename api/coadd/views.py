@@ -1,14 +1,15 @@
-import logging
+import copy
 
 import django_filters
-from django.db.models import Q
+from lib.sqlalchemy_wrapper import DBBase
 from rest_framework import filters
 from rest_framework import viewsets
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from .models import Release, Tag, Tile, Dataset, Survey
 from .serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, \
     SurveySerializer, DatasetFootprintSerializer
-
-logger = logging.getLogger(__name__)
 
 
 # Create your views here.
@@ -134,55 +135,32 @@ class SurveyViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('srv_filter__lambda_min',)
 
-# class DatasetViewSet(viewsets.ViewSet,
-#                      generics.GenericAPIView):
-#
-#     # queryset = Dataset.objects.select_related().all()
-#
-#     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-#
-#     serializer_class = DatasetSerializer
-#
-#
-#     def get_queryset(self):
-#         logger.info('-----------------get_queryset-----------')
-#         pass
-#
-#     def retrieve(self, request, pk=None):
-#
-#         obj = get_object_or_404(Dataset, pk=pk)
-#
-#         serializer = DatasetSerializer(obj)
-#
-#         return Response(serializer.data)
-#
-#
-#     def list(self, request):
-#         logger.info('-----------------list---------------------')
-#
-#         tag = request.query_params.get('tag', None)
-#         if tag:
-#             queryset = get_list_or_404(Dataset.objects.select_related(), tag=tag)
-#
-#         tag_in = request.query_params.get('tag__in', None)
-#         if tag_in:
-#             ids = map(int, tag_in.split(','))
-#
-#             queryset = get_list_or_404(Dataset.objects.select_related(), tag__in=ids)
-#
-#         page = self.paginate_queryset(queryset)
-#
-#         logger.info('--------------------------------------')
-#
-#         if page is not None:
-#             serializer = self.get_serializer(page, many=True)
-#             return self.get_paginated_response(serializer.data)
-#
-#         else:
-#             serializer = DatasetSerializer(queryset, many=True)
-#             content = Response({
-#                 'count': len(queryset),
-#                 'results': serializer.data,
-#             })
-#
-#             return content
+
+@api_view(['GET'])
+def get_fits_by_tilename(request):
+    if request.method == 'GET':
+        tilename = request.query_params.get('tilename', None)
+        catalog = request.query_params.get('catalog', None)
+        sql = (
+            "SELECT m.filename, m.filetype, m.band, f.path FROM proctag t, file_archive_info f, miscfile m WHERE t.pfw_attempt_id = m.pfw_attempt_id AND t.tag='" + catalog + "' AND f.filename=m.filename AND m.filetype NOT IN ('coadd_head_scamp', 'mangle_molys', 'mangle_polygons', 'mangle_csv_ccdgon', 'mangle_csv_cobjmoly', 'mangle_csv_molyccd', 'mangle_csv_molyccd', 'mangle_csv_molygon', 'coadd_psfex_model', 'coadd_qa_scamp', 'coadd_xml_scamp', 'coadd_xml_psfex', 'coadd_det_psfex_model') AND m.tilename = '" + tilename + "' ORDER BY m.filetype, m.filename")
+
+        db = DBBase('desoper')
+        tiles = db.engine.execute(sql)
+        fits_file = {}
+        result = []
+        for tile in tiles:
+            url = "https://desar2.cosmology.illinois.edu/DESFiles/desarchive/%s/%s.fz" % (
+                tile[3].replace("+", "%2B"), tile[0].replace("+", "%2B"))
+            fits_file.update({'url': url})
+
+            fits_file.update({
+                'tilename': tile[0]
+            })
+
+            fits_file.update({
+                'band': tile[2]
+            })
+            if tile[2] != None:
+                result.append(copy.copy(fits_file))
+
+        return Response(dict({'results': result}))

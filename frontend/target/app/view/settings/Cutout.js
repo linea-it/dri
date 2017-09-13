@@ -38,7 +38,7 @@ Ext.define('Target.view.settings.Cutout', {
                     },
                     tbar: [
                         {
-                            text: 'Create Cutouts',
+                            text: 'Create Cutout',
                             iconCls: 'x-fa fa-picture-o',
                             ui: 'soft-green',
                             tooltip: 'Create cutouts for this catalog',

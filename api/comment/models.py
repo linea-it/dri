@@ -12,8 +12,6 @@ class Position(models.Model):
     pst_dataset = models.ForeignKey(
         Dataset,
         on_delete=models.CASCADE, verbose_name='Dataset', default=None, null=True, blank=True)
-    pst_filter = models.ForeignKey(
-        Filter, verbose_name='Filter', default=None, null=True, blank=True)
     pst_ra = models.FloatField(
         verbose_name='RA (deg)')
     pst_dec = models.FloatField(

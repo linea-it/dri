@@ -19,7 +19,8 @@ Ext.define('Target.view.objects.DownloadWindow', {
     },
 
     config: {
-        currentCatalog: null
+        currentCatalog: null,
+        filter: null
     },
 
     initComponent: function () {
@@ -53,18 +54,25 @@ Ext.define('Target.view.objects.DownloadWindow', {
                                     columns: 1,
                                     items: [
                                         {boxLabel: 'CSV', name: 'table_format', inputValue: 'csv', checked: true},
-                                        {boxLabel: 'FITS', name: 'table_format', inputValue: 'fits'},
+                                        {boxLabel: 'FITS', name: 'table_format', inputValue: 'fits'}
                                         //{boxLabel: 'JSON', name: 'table_format', inputValue: 'json'}
                                     ]
                                 }
                             ]
                         },
                         {
-                            xtype: 'checkbox',
-                            boxLabel: 'Cutouts',
+                            xtype: 'combobox',
+                            itemId: 'cmbCutoutJob',
                             name: 'cutouts',
-                            margin: '10 0 0 0',
-                            inputValue: true
+                            fieldLabel: 'Mosaic',
+                            emptyText: 'Choose Mosaic',
+                            displayField: 'cjb_display_name',
+                            valueField: 'id',
+                            store: {
+                                type: 'cutoutjobs'
+                            },
+                            editable: false,
+                            disabled: true
                         },
                         {
                             xtype: 'fieldset',
@@ -75,6 +83,7 @@ Ext.define('Target.view.objects.DownloadWindow', {
                             items: [
                                 {
                                     xtype: 'checkboxgroup',
+                                    disabled: true,
                                     columns: 1,
                                     items: [
                                         // {boxLabel: 'HTML', name: 'report_format', inputValue: 'html'},
@@ -106,23 +115,43 @@ Ext.define('Target.view.objects.DownloadWindow', {
     },
 
     setCurrentCatalog: function (currentCatalog) {
-        var me = this;
+        var me = this,
+            cmbCutouts = me.down('#cmbCutoutJob'),
+            store = cmbCutouts.getStore();
 
         if ((currentCatalog) && (currentCatalog.get('id') > 0)) {
 
             me.currentCatalog = currentCatalog;
 
+            store.addFilter([
+                {
+                    property: 'cjb_product',
+                    value: currentCatalog.get('id')
+                },
+                {
+                    property: 'cjb_status',
+                    value: 'ok'
+                }
+            ]);
+
+            store.load({
+                callback: function () {
+                    cmbCutouts.enable();
+                }
+            });
         }
     },
 
     onDownload: function () {
         var me = this,
             currentCatalog = me.getCurrentCatalog(),
+            filter_id = me.getFilter(),
             form = me.down('form').getForm(),
             values,
             table_format = [],
-            cutouts = false,
-            report_format = [];
+            cutouts = null,
+            report_format = [],
+            filter = null;
 
         if (form.isValid()) {
 
@@ -130,6 +159,11 @@ Ext.define('Target.view.objects.DownloadWindow', {
 
             if (values.table_format) {
                 table_format = values.table_format;
+
+                if (Array.isArray(table_format)) {
+                    table_format = table_format.join();
+                }
+
             }
 
             if (values.cutouts) {
@@ -140,23 +174,26 @@ Ext.define('Target.view.objects.DownloadWindow', {
                 report_format = values.report_format;
             }
 
+            if (filter_id > 0) {
+                filter = filter_id;
+            }
+
             Ext.Ajax.request({
-                url: '/dri/api/product/download/',
+                url: '/dri/api/productexport/',
                 scope: this,
                 params: {
                     'product': currentCatalog.get('id'),
-                    'table_format': table_format,
-                    'cutouts': cutouts,
-                    'report_format': report_format
+                    'filetypes': table_format,
+                    'cutout': cutouts,
+                    'filter': filter
+                    //                    'report_format': report_format
                 },
                 success: function (response) {
-                    // Recuperar a resposta e fazer o decode no json.
-                    var obj = Ext.decode(response.responseText);
-
                     me.onCancel();
+                    Ext.MessageBox.alert('', 'The job will run in the background and you will be notified when it is finished.');
+                    Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - download_catalogs');
                 },
                 failure: function (response, opts) {
-                    // TODO: Mostrar mensagem de falha
                     var msg = response.status + ' ' + response.statusText;
                     Ext.Msg.show({
                         title: 'Sorry',

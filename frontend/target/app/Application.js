@@ -8,6 +8,11 @@ Ext.define('Target.Application', {
 
     name: 'Target',
 
+    requires: [
+        'common.statistics.Events',
+        'common.token.GetToken'
+    ],
+
     defaultToken : 'home',
 
     stores: [
@@ -15,6 +20,8 @@ Ext.define('Target.Application', {
     ],
 
     init:function () {
+        Ext.create('common.statistics.Events').init();
+        Ext.create('common.token.GetToken').init();
         // console.log('init');
         // Desabilitar os erros de Aria
         // Ext.enableAriaButtons = false;
@@ -61,15 +68,18 @@ Ext.define('Target.Application', {
                 var data = JSON.parse(response.responseText);
 
                 // Identificar o usuario no Google Analitics
-                ga('set', 'userId', data.id);
+                if (window.ga) ga('set', 'userId', data.id);
 
             },
             failure: function (response, opts) {
-                var pathname = window.location.pathname,
+                var protocol = window.location.protocol,
+                    pathname = window.location.pathname,
                     hostname = window.location.host,
                     location;
 
-                location = Ext.String.format('http://{0}/dri/api/api-auth/login/?next={1}', hostname, pathname);
+                location = Ext.String.format(
+                    '{0}//{1}/dri/api/api-auth/login/?next={2}',
+                    protocol, hostname, pathname);
 
                 window.location.assign(location);
 

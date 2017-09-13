@@ -24,6 +24,9 @@ Ext.define('Target.view.settings.CutoutJobController', {
 
         vm.set('currentProduct', product);
 
+        contents.removeAll();
+        contents.clearFilter(true);
+
         contents.addFilter({
             property: 'pcn_product_id',
             value: product.get('id')
@@ -33,10 +36,10 @@ Ext.define('Target.view.settings.CutoutJobController', {
     },
 
     onChangeSetting: function (setting) {
-         var me = this,
-             vm = me.getViewModel(),
-             product = vm.get('currentProduct'),
-             contents = vm.getStore('contents');
+        var me = this,
+            vm = me.getViewModel(),
+            product = vm.get('currentProduct'),
+            contents = vm.getStore('contents');
 
         vm.set('currentSetting', setting);
 
@@ -52,18 +55,18 @@ Ext.define('Target.view.settings.CutoutJobController', {
 
     },
 
-    addContentsToField: function (store){
+    addContentsToField: function (store) {
         var me = this,
             vm = me.getViewModel(),
             auxcontents = vm.get('auxcontents');
 
-        store.each(function(record){
-            if (record.get('is_visible') === true){
+        store.each(function (record) {
+            if (record.get('is_visible') === true) {
                 auxcontents.add(record);
 
             }
 
-        }, store)
+        }, store);
     },
 
     onCancelAddJob: function () {
@@ -94,14 +97,12 @@ Ext.define('Target.view.settings.CutoutJobController', {
 
             values = form.getValues();
 
-            console.log(values);
-
             job = Ext.create('Target.model.CutoutJob', {
                 cjb_product: product.get('id'),
                 cjb_display_name: values.job_name,
                 cjb_job_type: values.job_type,
-                cjb_xsize: values.xsize,
-                cjb_ysize: values.ysize,
+                cjb_xsize: parseFloat(values.xsize / 60).toFixed(3),
+                cjb_ysize: parseFloat(values.ysize / 60).toFixed(3),
                 cjb_Blacklist: false,
                 cjb_status: 'st' // Status Start
             });
@@ -141,8 +142,6 @@ Ext.define('Target.view.settings.CutoutJobController', {
 
             }
 
-            console.log('job', '=', job);
-
             // adicionar o record a store e fazer o sync
             cutoutjobs.add(job);
 
@@ -158,6 +157,7 @@ Ext.define('Target.view.settings.CutoutJobController', {
                     view.setLoading(false);
 
                     view.fireEvent('submitedjob', me);
+                    Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - create_mosaic');
 
                     // Fechar a Janela
                     view.close();

@@ -40,6 +40,20 @@ Ext.define('visiomatic.Interface', {
             });
         }
 
+
         return tools;
+    },
+
+    makeMousePosition: function(){
+        var map = this.getMap();
+
+        return Ext.DomHelper.append(map._controlCorners['topright'], {
+            tag: 'div',
+            cls: 'leaflet-right leaflet-control leaflet-control-wcs-dialog visiomatic-mouse-position',
+            html:'<div class="visiomatic-mouse-position-label">'+
+                    'Mouse RA, Dec (0,0)'+
+                 '</div>'
+        });
     }
 });
+//var iii=0

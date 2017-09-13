@@ -733,10 +733,10 @@ L.CRS.wcs = function (options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 29/11/2016
+#	Last modified: 27/06/2017
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -745,7 +745,9 @@ L.IIPUtils = {
 
 // Ajax call to server
 	requestURL: function (url, purpose, action, context, timeout) {
-		var	httpRequest;
+		var	httpRequest,
+				token,
+				urlPort;
 
 		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
 			httpRequest = new XMLHttpRequest();
@@ -770,6 +772,30 @@ L.IIPUtils = {
 				alert('Time out while ' + purpose);
 			};
 		}
+		// TODO Implement authenticate by token
+		// token = window.localStorage['token'];
+		//
+		// if (
+		// 	window.location.origin.includes('desportal.cosmology.illinois.edu') &&
+		// 	token
+		// ) {
+		// 	urlArray = url.split('desportal.cosmology.illinois.edu')
+		//
+		// 	httpRequest.open('GET',
+		// 		urlArray[0] +
+		// 		window.location.host +
+		// 		urlArray[1]
+		// 	);
+		//
+		// 	httpRequest.setRequestHeader('Authorization', 'Basic a');
+		// 	httpRequest.setRequestHeader('Token', token);
+		//
+		//
+		// } else {
+		// 	httpRequest.open('GET', url);
+		//
+		// }
+
 		httpRequest.open('GET', url);
 
 		// Send Credrentials
@@ -783,9 +809,13 @@ L.IIPUtils = {
 			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
 		}
 
-		httpRequest.onreadystatechange = function () {
-			action(context, httpRequest);
-		};
+
+
+		if ((action)) {
+			httpRequest.onreadystatechange = function () {
+				action(context, httpRequest);
+			};
+		}
 		httpRequest.send();
 	},
 
@@ -881,6 +911,43 @@ L.IIPUtils = {
 		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
 
 		return Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * 360.0 / Math.PI;
+	},
+
+	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
+	latLngToHMSDMS : function (latlng) {
+		var lng = (latlng.lng + 360.0) / 360.0;
+		lng = (lng - Math.floor(lng)) * 24.0;
+		var h = Math.floor(lng),
+		 mf = (lng - h) * 60.0,
+		 m = Math.floor(mf),
+		 sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
+		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
+		 lat = Math.abs(latlng.lat),
+		 sgn = latlng.lat < 0.0 ? '-' : '+',
+		 d = Math.floor(lat);
+		mf = (lat - d) * 60.0;
+		m = Math.floor(mf);
+		sf = (mf - m) * 60.0;
+		if (sf >= 60.0) {
+			m++;
+			sf = 0.0;
+		}
+		if (m === 60) {
+			h++;
+			m = 0;
+		}
+		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
+		 (m < 10 ? '0' : '') + m.toString() + ':' +
+		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
 	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
@@ -1398,8 +1465,9 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	getTileUrl: function (coords) {
-		var str = this._url,
-				z = this._getZoomForUrl();
+		var	str = this._url,
+			z = this._getZoomForUrl();
+
 		if (this.iipCMap !== this.iipdefault.cMap) {
 			str += '&CMP=' + this.iipCMap;
 		}
@@ -1869,7 +1937,7 @@ L.ellipse = function (latlng, options) {
 #	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 07/01/2017
+#	Last modified: 30/07/2017
 */
 
 L.Catalog = {
@@ -1922,7 +1990,6 @@ L.Catalog = {
 		var str = '<div>';
 		if (this.objurl) {
 			str += 'ID: <a href=\"' +  L.Util.template(this.objurl, L.extend({
-                                id: feature.id,
 				ra: feature.geometry.coordinates[0].toFixed(6),
 				dec: feature.geometry.coordinates[1].toFixed(6)
 			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';
@@ -2106,6 +2173,21 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	properties: ['G', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.URAT_1 = L.extend({}, L.Catalog, {
+	name: 'URAT1',
+	attribution: 'The first U.S. Naval Observatory Astrometric Robotic Telescope Catalog (Zacharias et al. 2015)',
+	color: 'yellow',
+	maglim: 17.0,
+	service: 'Vizier@CDS',
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/329&' +
+	 '-out=URAT1,RAJ2000,DEJ2000,f.mag,pmRA,pmDE&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	properties: ['f<sub>mag</sub>', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
+	units: ['', 'mas/yr', 'mas/yr'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 
@@ -4454,10 +4536,10 @@ L.control.iip.doc = function (url, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright:		(C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				                      Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		15/12/2015
+#	Last modified:		05/07/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -4483,7 +4565,7 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		var _this = this,
 			className = this._className,
 			layer = this._layer,
-			elem;
+			map = this._map;
 
 		// Invert
 		this._addSwitchInput(layer, this._dialog, 'Invert:', 'iipInvertCMap',
@@ -5085,6 +5167,115 @@ L.Control.IIP.Region = L.Control.IIP.extend({
 
 L.control.iip.region = function (regions, options) {
 	return new L.Control.IIP.Region(regions, options);
+};
+
+
+
+/*
+# L.Control.IIP.snapshot offers several options to take snapshots of the current image/field
+#	This file part of:	VisiOmatic
+#
+#	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#				                      Chiara Marmo - IDES/Paris-Sud
+#
+#	Last modified:		11/07/2017
+*/
+
+if (typeof require !== 'undefined') {
+	var $ = require('jquery'),
+		html2canvas = require('html2canvas');
+}
+
+L.Control.IIP.Snapshot = L.Control.IIP.extend({
+	options: {
+		title: 'Field snapshot',
+		collapsed: true,
+		position: 'topleft'
+	},
+
+	initialize: function (options) {
+		L.setOptions(this, options);
+
+		this._className = 'leaflet-control-iip';
+		this._id = 'leaflet-iipsnapshot';
+		this._sideClass = 'snapshot';
+	},
+
+	_initDialog: function () {
+		var _this = this,
+			className = this._className,
+			layer = this._layer,
+			map = this._map;
+
+		// Image snapshot
+		var	line = this._addDialogLine('Snap:', this._dialog),
+			elem = this._addDialogElement(line),
+			items = ['Screen pixels', 'Native pixels'];
+
+		this._snapType = 0;
+		this._snapSelect =  this._createSelectMenu(
+			this._className + '-select',
+			elem,
+			items,
+			undefined,
+			this._snapType,
+			function () {
+				this._snapType = parseInt(this._snapSelect.selectedIndex - 1, 10);
+			},
+			'Select snapshot resolution'
+		);
+
+		var	hiddenlink = document.createElement('a'),
+			button = this._createButton(className + '-button', elem, 'snapshot',
+			  function (event) {
+				var	latlng = map.getCenter(),
+					bounds = map.getPixelBounds(),
+					z = map.getZoom(),
+					zfac;
+
+				if (z > layer.iipMaxZoom) {
+					zfac = Math.pow(2, z - layer.iipMaxZoom);
+					z = layer.iipMaxZoom;
+				} else {
+					zfac = 1;
+				}
+
+				var	sizex = layer.iipImageSize[z].x * zfac,
+					sizey = layer.iipImageSize[z].y * zfac,
+					dx = (bounds.max.x - bounds.min.x),
+					dy = (bounds.max.y - bounds.min.y);
+
+				hiddenlink.href = layer.getTileUrl({x: 1, y: 1}
+				  ).replace(/JTL\=\d+\,\d+/g,
+				  'RGN=' + bounds.min.x / sizex + ',' +
+				  bounds.min.y / sizey + ',' +
+				  dx / sizex + ',' + dy / sizey +
+				  '&WID=' + (this._snapType === 0 ?
+				    Math.floor(dx / zfac) :
+				    Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
+				hiddenlink.download = layer._title + '_' +
+				  L.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
+				  '.jpg';
+				hiddenlink.click();
+			}, 'Take a snapshot of the displayed image');
+
+		document.body.appendChild(hiddenlink);
+
+		line = this._addDialogLine('Print:', this._dialog);
+		elem = this._addDialogElement(line);
+		button = this._createButton(className + '-button', elem, 'print',
+			function (event) {
+				var	control = document.querySelector('#map > .leaflet-control-container');
+				control.style.display = 'none';
+				window.print();
+				control.style.display = 'unset';
+			}, 'Print current map');
+	}
+
+});
+
+L.control.iip.snapshot = function (options) {
+	return new L.Control.IIP.Snapshot(options);
 };
 
 
@@ -5876,10 +6067,10 @@ L.control.sidebar = function (map, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 07/09/2016
+#	Last modified: 27/06/2017
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -5953,7 +6144,7 @@ L.Control.WCS = L.Control.extend({
 				latlng = map.getCenter();
 			L.IIPUtils.flashElement(this._wcsinput);
 			url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
-			  this._latLngToHMSDMS(latlng));
+			  L.IIPUtils.latLngToHMSDMS(latlng));
 			url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,
 			  wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
 			history.pushState(stateObj, '', url);
@@ -5982,7 +6173,7 @@ L.Control.WCS = L.Control.extend({
 			}
 			switch (coord.units) {
 			case 'HMS':
-				this._wcsinput.value = this._latLngToHMSDMS(latlng);
+				this._wcsinput.value = L.IIPUtils.latLngToHMSDMS(latlng);
 				break;
 			case 'deg':
 				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
@@ -5992,43 +6183,6 @@ L.Control.WCS = L.Control.extend({
 				break;
 			}
 		}
-	},
-
-	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
-	_latLngToHMSDMS : function (latlng) {
-		var lng = (latlng.lng + 360.0) / 360.0;
-		lng = (lng - Math.floor(lng)) * 24.0;
-		var h = Math.floor(lng),
-		 mf = (lng - h) * 60.0,
-		 m = Math.floor(mf),
-		 sf = (mf - m) * 60.0;
-		if (sf >= 60.0) {
-			m++;
-			sf = 0.0;
-		}
-		if (m === 60) {
-			h++;
-			m = 0;
-		}
-		var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
-		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
-		 lat = Math.abs(latlng.lat),
-		 sgn = latlng.lat < 0.0 ? '-' : '+',
-		 d = Math.floor(lat);
-		mf = (lat - d) * 60.0;
-		m = Math.floor(mf);
-		sf = (mf - m) * 60.0;
-		if (sf >= 60.0) {
-			m++;
-			sf = 0.0;
-		}
-		if (m === 60) {
-			h++;
-			m = 0;
-		}
-		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
-		 (m < 10 ? '0' : '') + m.toString() + ':' +
-		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
 	panTo: function (str) {
@@ -6089,4 +6243,61 @@ L.control.wcs = function (options) {
     return new L.Control.WCS(options);
 };
 
+/**
+ * This control is just a button that triggers the overlaycatalog event that will be used with the
+ * LIneA - DRI integration
+ */
+L.Control.LineaOverlay = L.Control.extend({
+    options: {
+        position: 'topleft',
+        title: 'Catalog Overlay',
+        forceSeparateButton: false
+    },
 
+    onAdd: function (map) {
+        var className = 'leaflet-control-linea-overlay-catalog', container;
+
+        if (map.zoomControl && !this.options.forceSeparateButton) {
+            container = map.zoomControl._container;
+        } else {
+            container = L.DomUtil.create('div', 'leaflet-bar');
+        }
+
+        this._createButton(this.options.title, className, container, this.onClickLineaOverlayCatalog, map);
+
+        return container;
+    },
+
+    _createButton: function (title, className, container, fn, context) {
+        var link = L.DomUtil.create('a', className, container);
+        link.href = '#';
+        link.title = title;
+
+        L.DomEvent
+            .addListener(link, 'click', L.DomEvent.stopPropagation)
+            .addListener(link, 'click', L.DomEvent.preventDefault)
+            .addListener(link, 'click', fn, context);
+
+
+        return link;
+    },
+
+    onClickLineaOverlayCatalog: function () {
+
+        this.fire('overlaycatalog');
+
+    },
+
+});
+
+L.Map.addInitHook(function () {
+    if (this.options.enableLineaOverlay) {
+
+        this.lineaoverlayControl = L.control.lineaoverlay();
+        this.addControl(this.lineaoverlayControl);
+    }
+});
+
+L.control.lineaoverlay = function (options) {
+    return new L.Control.LineaOverlay(options);
+};

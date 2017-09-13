@@ -17,7 +17,7 @@ Ext.define('Explorer.view.system.Aladin', {
             infoEnabled: false,
             enableLayersControl: true,
             toolbarPosition: 'top',
-            showFilters: true
+            showFilters: false
 
         });
 

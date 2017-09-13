@@ -3,6 +3,7 @@ Ext.define('Target.view.settings.Columns', {
 
     requires: [
         'Target.view.settings.ColumnsController',
+        'Target.view.settings.SettingsController',
         'Target.view.settings.ColumnsModel',
         'Ext.ux.CheckColumn'
     ],
@@ -27,7 +28,6 @@ Ext.define('Target.view.settings.Columns', {
             items: [
                 {
                     xtype: 'panel',
-                    // region: 'north',
                     height: 80,
                     bodyPadding: 10,
                     html: [
@@ -36,10 +36,63 @@ Ext.define('Target.view.settings.Columns', {
                 },
                 {
                     xtype: 'panel',
+                    height: 60,
+                    bodyPadding: 5,
+                    items:[{
+                        xtype: 'fieldcontainer',
+                        layout: 'hbox',
+                        fieldLabel: 'Choose or create a Setting',
+                        labelAlign: 'top',
+                        items: [
+                            {
+                                xtype: 'combobox',
+                                itemId: 'cmbSetting',
+                                reference: 'cmbSetting',
+                                publishes: 'id',
+                                displayField: 'cst_display_name',
+                                bind: {
+                                    store: '{settings}',
+                                    selection: '{selectedSetting}'
+                                },
+                                listeners: {
+                                    select: 'onSelectSetting'
+                                },
+                                minChars: 0,
+                                queryMode: 'local',
+                                editable: false,
+                                labelStyle: 'font-weight:bold',
+                                readOnly: false,
+                                width: 300
+                            },
+                            {
+                                xtype: 'button',
+                                iconCls: 'x-fa fa-plus',
+                                handler: 'newSetting',
+                                margin: '0 0 0 5',
+                                tooltip: 'Add New Setting'
+                            },
+                            {
+                                xtype: 'button',
+                                iconCls: 'x-fa fa-pencil',
+                                handler: 'editSetting',
+                                tooltip: 'Edit Selected Setting',
+                                reference: 'btnEditSetting',
+                                bind: {
+                                    disabled: '{!selectedSetting.editable}'
+                                }
+                            }
+                        ]
+                    }]
+                },
+                {
+                    xtype: 'panel',
                     flex: 1,
                     layout: {
                         type: 'hbox',
                         align: 'stretch'
+                    },
+                    bind: {
+                        disabled: '{!cmbSetting.selection}'
                     },
                     items: [
                         {
@@ -164,13 +217,23 @@ Ext.define('Target.view.settings.Columns', {
         me.callParent(arguments);
     },
 
+    setCurrentCatalog: function (currentCatalog) {
+        // console.log('setCurrentCatalog(%o)', currentCatalog);
+        if ((currentCatalog) && (currentCatalog.get('id') > 0)) {
+            this.currentCatalog = currentCatalog;
+
+            this.getViewModel().set('currentCatalog', currentCatalog);
+
+            this.fireEvent('changecatalog', currentCatalog);
+        }
+    },
+
     setCurrentSetting: function (currentSetting) {
 
         this.currentSetting = currentSetting;
 
         this.getViewModel().set('currentSetting', currentSetting);
 
-        this.fireEvent('changesetting', currentSetting);
     }
 
 });

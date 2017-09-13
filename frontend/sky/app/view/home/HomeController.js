@@ -28,20 +28,20 @@ Ext.define('Sky.view.home.HomeController', {
 
     refreshAndClear: function () {
         var me = this,
+            txtSearch = me.getReferences().txtSearch,
             store = me.getView().getStore();
-
-        store.clearFilter(true);
-
-        // store.removeAll();
-
-        store.load();
+        
+        if (txtSearch.getValue()){
+            txtSearch.setValue('');
+        }else{
+            store.clearFilter(true);
+            store.load();
+        }
     },
 
     cancelFilter: function (field) {
-        field.reset();
         field.getTrigger('clear').hide();
         this.refreshAndClear();
-
     },
 
     filterByname: function (field) {
@@ -64,7 +64,12 @@ Ext.define('Sky.view.home.HomeController', {
 
         } else {
             field.getTrigger('clear').hide();
+            me.cancelFilter(field);
         }
+    },
+
+    onActivate: function(){
+        //console.log('home is active')
     }
 
 });
