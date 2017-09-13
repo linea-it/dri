@@ -3,7 +3,8 @@ from statistics.models import *
 from statistics.serializers import *
 
 class GeneralStatistics:
-    def visits_and_recent_login():
+
+    def visits_and_recent_login(self):
         users = User.objects.all()
         results = []
         for user in users:
@@ -16,7 +17,7 @@ class GeneralStatistics:
                 }))
         return results
 
-    def total_visits():
+    def total_visits(self):
         users = User.objects.all()
         visits = []
         for user in users:
@@ -40,7 +41,7 @@ class GeneralStatistics:
         total_visits = len(Statistics.objects.all())
         return {"Total of users grouped by number of visits": result, "Total Visits": total_visits}
 
-    def visits_per_month():
+    def visits_per_month(self):
         results = dict()
         statistics = Statistics.objects.all().order_by('-date')
         for statistic in statistics:

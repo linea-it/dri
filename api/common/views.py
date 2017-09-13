@@ -169,6 +169,11 @@ def teste(request):
     if request.method == 'GET':
         print('Teste---------------------')
 
+        from activity_statistic.tasks import test
+
+        result = test.delay()
+        print(result)
+
         # from product.tasks import start_des_cutout_job_by_id
         # from pprint import pprint
 
