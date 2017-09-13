@@ -799,6 +799,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     onClickCreateCutouts: function () {
         var me = this,
             vm = me.getViewModel(),
+            objects = vm.getStore('objects'),
             currentSetting = vm.get('currentSetting'),
             currentCatalog = vm.get('currentCatalog');
 
@@ -807,24 +808,41 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winCutout = null;
         }
 
-        me.winCutout = Ext.create('Target.view.settings.CutoutJobForm',{
-            modal: true,
-            listeners: {
-                scope: me,
-                submitedjob: function () {
-                    Ext.MessageBox.alert('', 'The job will run in the background and you will be notified when it is finished.');
+
+        // Checar a quantidade de objetos na lista se for maior que 10.000
+        // Mostar um popup informando a limitiacao do sistema
+        if (objects.getTotalCount() > 10000) {
+            Ext.MessageBox.alert(
+                'Sorry!',
+                "The cutout tool has currently a limit of 10k objects. \
+                Please use portal filter to narrow your list down to a \
+                manageable number of objects, save it as a new list, \
+                then run cutout on it. </br>\
+                 We are working to fix this limitation.");
+
+        } else {
+
+            me.winCutout = Ext.create('Target.view.settings.CutoutJobForm',{
+                modal: true,
+                listeners: {
+                    scope: me,
+                    submitedjob: function () {
+                        Ext.MessageBox.alert(
+                            '',
+                            "The job will run in the background and you will \
+                            be notified when it is finished.");
+                    }
                 }
+            });
+
+            me.winCutout.setCurrentProduct(currentCatalog);
+
+            if ((currentSetting) && (currentSetting.get('id') > 0)) {
+                me.winCutout.setCurrentSetting(currentSetting);
             }
-        });
 
-        me.winCutout.setCurrentProduct(currentCatalog);
-
-        if ((currentSetting) && (currentSetting.get('id') > 0)) {
-            me.winCutout.setCurrentSetting(currentSetting);
+            me.winCutout.show();
         }
-
-        me.winCutout.show();
-
     },
 
     onClickDownload: function () {

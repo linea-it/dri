@@ -502,6 +502,7 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = me.getViewModel(),
             catalog = vm.get('currentCatalog'),
             object = vm.get('currentRecord'),
+            protocol = window.location.protocol,
             host = window.location.host,
             source, id, hash;
 
@@ -509,7 +510,9 @@ Ext.define('Target.view.preview.PreviewController', {
             source = catalog.get('prd_name');
             id = object.get('_meta_id');
 
-            hash = Ext.String.format('http://{0}/dri/apps/explorer/#system/{1}/{2}', host, source, id);
+            hash = Ext.String.format(
+                '{0}//{1}/dri/apps/explorer/#system/{2}/{3}',
+                protocol, host, source, id);
 
             window.open(hash, '_blank');
 

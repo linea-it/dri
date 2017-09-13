@@ -38,6 +38,7 @@ Ext.define('Explorer.view.system.System', {
                     width: 300,
                     margin: '0 10 0 0',
                     split: true,
+                    reference: 'detailPanel',
                     layout: {
                         type: 'vbox',
                         pack: 'start',
@@ -49,7 +50,7 @@ Ext.define('Explorer.view.system.System', {
                             xtype: 'system-form',
                             reference: 'properties-form',
                             split: true,
-                            margin: '0 0 10 0'
+                            //margin: '0 0 10 0'
                         },
                         // Inferior Esquerdo
                         {
@@ -79,7 +80,7 @@ Ext.define('Explorer.view.system.System', {
                         {
                             xtype: 'panel',
                             // title: 'Superior',
-                            height: 400,
+                            height: 300,
                             split: true,
                             layout: {
                                 type: 'hbox',

@@ -72,11 +72,14 @@ Ext.define('Target.Application', {
 
             },
             failure: function (response, opts) {
-                var pathname = window.location.pathname,
+                var protocol = window.location.protocol,
+                    pathname = window.location.pathname,
                     hostname = window.location.host,
                     location;
 
-                location = Ext.String.format('http://{0}/dri/api/api-auth/login/?next={1}', hostname, pathname);
+                location = Ext.String.format(
+                    '{0}//{1}/dri/api/api-auth/login/?next={2}',
+                    protocol, hostname, pathname);
 
                 window.location.assign(location);
 

@@ -147,6 +147,7 @@ cd ~/dri
 cat dri.conf | sed -e "s|#BASEPROJECT#|`pwd`|g" -e "s|#PROJECTUSER#|`whoami`|g" > dri.conf_apache
 sudo cp dri.conf_apache /etc/apache2/sites-available/dri.conf
 sudo chmod 644 /etc/apache2/sites-available/dri.conf
+sudo a2dissite 000-default.conf
 sudo rm -f /etc/apache2/sites-available/000-default.conf
 rm -f dri.conf_apache
 sudo a2ensite dri.conf
