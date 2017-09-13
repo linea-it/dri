@@ -8,5 +8,5 @@ Ext.define('Target.view.preview.Visiomatic', {
     xtype: 'targets-visiomatic',
 
     enableTools: false,
-    enableMiniMap: false
+    enableMiniMap: true
 });

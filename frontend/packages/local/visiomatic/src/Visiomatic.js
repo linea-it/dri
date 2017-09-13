@@ -478,7 +478,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         if (imageLayer) {
             imageOptions = {
-                credentials: true,
+                credentials: imageOptions.credentials,
                 channelLabelMatch: '[ugrizY]',
                 mixingMode: imageLayer.iipMode,
                 contrast: imageLayer.iipContrast,
@@ -493,8 +493,7 @@ Ext.define('visiomatic.Visiomatic', {
         args = Ext.Object.merge(imageOptions, options);
 
         me.image = image;
-
-        if (!imageLayer) {
+        if (!imageLayer) { 
             imageLayer = libL.tileLayer.iip(image, args).addTo(map);
 
             me.setImageLayer(imageLayer);
@@ -509,14 +508,8 @@ Ext.define('visiomatic.Visiomatic', {
 
         // Mini Map
         if (me.getEnableMiniMap()) {
-            if (!miniMap) {
-                // se nao existir minimap cria
-                me.createMiniMap();
-
-            } else {
-                navlayer = libL.tileLayer.iip(image, {});
-                miniMap.changeLayer(navlayer);
-            }
+            if (miniMap) miniMap.remove();
+            me.createMiniMap();
         }
     },
 
@@ -525,15 +518,23 @@ Ext.define('visiomatic.Visiomatic', {
             libL = me.libL,
             map = me.getMap(),
             navoptions = me.getMiniMapOptions(),
+            imageOptions = me.getImageOptions(),
             image = me.getImage(),
             miniMap,
             navlayer;
 
         if (image) {
-            navlayer = libL.tileLayer.iip(image, {});
-
+            navlayer= libL.tileLayer.iip(image, {
+                credentials:imageOptions.credentials,
+                mixingMode: 'color',
+                defaultChannel: 2,
+                contrast: 0.7,
+                gamma: 2.8,
+                colorSat: 2.0,
+                channelLabelMatch: '[ugrizY]'
+            });
             miniMap = libL.control.extraMap(navlayer, navoptions).addTo(map);
-
+            //miniMap._minimize();
             me.setMiniMap(miniMap);
         }
     },
