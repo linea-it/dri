@@ -30,3 +30,15 @@ def activity_log_out(sender, user, request, **kwargs):
 
 user_logged_in.connect(activity_log_in)
 user_logged_out.connect(activity_log_out)
+
+
+class Visit(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        default=get_current_user, verbose_name='Owner')
+
+    date = models.DateTimeField(
+        auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Creation Date')
+
+    def __str__(self):
+        return str("%s - %s" % (self.owner, self.date.strftime('%Y-%m-%d %H:%M')))
