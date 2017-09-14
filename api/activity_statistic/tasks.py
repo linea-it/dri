@@ -8,10 +8,10 @@ def test():
 
     """
     print("----------- TESTE ----------------")
-    from activity_statistic.general_statistic import GeneralStatistic
+    from activity_statistic.reports import ActivityReports
 
     from activity_statistic.models import Activity
 
-    print(GeneralStatistic().visits_and_recent_login())
+    print(ActivityReports().visits_and_recent_login())
 
-    print(Activity.objects.count())
+    # print(Activity.objects.count())

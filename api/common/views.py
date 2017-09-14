@@ -169,10 +169,13 @@ def teste(request):
     if request.method == 'GET':
         print('Teste---------------------')
 
-        from activity_statistic.tasks import test
-
-        result = test.delay()
-        print(result)
+        # from activity_statistic.tasks import test
+        #
+        # result = test.delay()
+        # print(result)
+        from activity_statistic.reports import ActivityReports
+        visits = ActivityReports().unique_visits_by_date(year=2017, month=9, day=14)
+        return Response(dict({'data': visits}))
 
         # from product.tasks import start_des_cutout_job_by_id
         # from pprint import pprint
@@ -188,4 +191,4 @@ def teste(request):
         # a = cutoutjobs.start_job()
         # a = cutoutjobs.test_api_help()
 
-        return Response(dict({'teste': ''}))
+        # return Response(dict({'teste': ''}))
