@@ -121,6 +121,7 @@ class DesCutoutService:
                 "ra"           : str(ra),           # required
                 "dec"          : str(dec),          # required
                 "job_type"     : "coadd",           # required "coadd" or "single"
+                "comment"      : "String"           # required Adicionado em 09/2017
                 "xsize"        : str(xs),           # optional (default : 1.0)
                 "ysize"        : str(ys),           # optional (default : 1.0)
                 "tag"          : "Y3A1_COADD",      # optional for "coadd" jobs (default: Y3A1_COADD, see Coadd Help page for more options)
@@ -134,14 +135,18 @@ class DesCutoutService:
 
         data["token"] = token
 
+        self.logger.debug("Host Jobs: %s" % self.host_jobs)
+
         req = requests.post(
             self.host_jobs,
             data=data)
 
-        self.logger.debug(req.json())
+        self.logger.debug(req)
 
         try:
             if req.json()["status"] == "ok":
+                self.logger.debug("Req: %s" % req.json())
+
                 return req.json()
 
             else:
@@ -149,8 +154,7 @@ class DesCutoutService:
                 raise Exception(msg)
 
         except Exception as e:
-            text = req.json()
-            msg = ("Request Create Job error %s - %s" % (req.status_code, text["message"]))
+            msg = ("Request Create Job error %s - %s" % (req.status_code, req.text))
 
             raise Exception(msg)
 
@@ -268,10 +272,14 @@ class DesCutoutService:
 
             self.logger.info("There are %s objects to send" % objects.get("count"))
 
+            # Comment, este comentario e visivel so na interface do descut
+            comment = "Science Server Cutout Job Id: %s Product ID: %s" % (job.pk, product_id)
+
             data = {
                 "job_type": job.cjb_job_type,
                 "ra": objects.get("ra"),
                 "dec": objects.get("dec"),
+                # "comment": comment
             }
             if job.cjb_xsize:
                 data.update({"xsize": job.cjb_xsize})
@@ -289,7 +297,8 @@ class DesCutoutService:
                 if job.cjb_tag:
                     data.update({"tag": job.cjb_tag})
 
-            self.logger.debug("Data to be send coordinates: %s" % pformat(data))
+            self.logger.debug("Data to be send coordinates:")
+            self.logger.debug(pformat(data))
 
             # Submit a Job
             try:
