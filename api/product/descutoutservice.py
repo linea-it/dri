@@ -279,7 +279,7 @@ class DesCutoutService:
                 "job_type": job.cjb_job_type,
                 "ra": objects.get("ra"),
                 "dec": objects.get("dec"),
-                # "comment": comment
+                "comment": comment
             }
             if job.cjb_xsize:
                 data.update({"xsize": job.cjb_xsize})
