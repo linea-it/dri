@@ -70,7 +70,6 @@ PROJECT_APPS = [
     'interfaces',
     'userquery',
     'aladin',
-    'statistics',
     'activity_statistic'
 ]
 

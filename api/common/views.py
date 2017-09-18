@@ -174,7 +174,10 @@ def teste(request):
         # result = test.delay()
         # print(result)
         from activity_statistic.reports import ActivityReports
-        visits = ActivityReports().unique_visits_by_date(year=2017, month=9, day=18)
+        from datetime import datetime
+        today = datetime.today()
+
+        visits = ActivityReports().unique_visits_by_date(year=today.year, month=today.month, day=today.day)
         return Response(dict({'data': visits}))
 
         # from product.tasks import start_des_cutout_job_by_id
