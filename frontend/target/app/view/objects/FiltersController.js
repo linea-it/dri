@@ -493,7 +493,7 @@ Ext.define('Target.view.objects.FiltersController', {
         this.arrayFilterConditions = null;
 
         // carrega os itens do filtro selecionado
-        if (filterId > 0) {
+        if (filterId>0 && !storeFilters.isSyncing) {
             storeFilters.filter('filterset', filterId);
             storeFilters.load();
         }
