@@ -1,19 +1,16 @@
 from .models import Activity
 from .models import Visit
 from datetime import datetime, date
+from django.db.models import Count
 
 
 class ActivityReports:
     def __init__(self):
         pass
 
-    def visits_and_recent_login(self):
-        print('ActivityReports::visits_and_recent_login')
-        return 10
-
     def unique_visits_by_date(self, year, month, day):
         users = list()
-        visits = list()
+        uniqueVisits = list()
         activities = Activity.objects.filter(
             date__year=year,
             date__month=month,
@@ -28,21 +25,24 @@ class ActivityReports:
                 visit = self.get_or_create_unique_visit(activity)
 
         # Recuperar os usuarios que visitaram neste dia + o total de visitas dele no mes
-        Visit.objects.filter(date__year=2017, date__month=9).annotate(visits_in_month=Count('owner'))
+        visits_count = Visit.objects.filter(
+            date__year=year,
+            date__month=month,
+            owner__pk__in=users).annotate(visits_in_month=Count('owner'))
 
-        # visits.append(dict({
-        #     "user": activity.owner.username,
-        #     "last_activity": activity.date.strftime('%Y-%m-%d %H:%M')
-        # }))
+        for a in visits_count:
+            uniqueVisits.append(dict({
+                "user": a.owner.username,
+                "last_activity": a.date.strftime('%Y-%m-%d %H:%M'),
+                "visits_in_month": a.visits_in_month
+            }))
 
-
-        return visits
+        return uniqueVisits
 
     def unique_visits_today(self):
         today = date.today()
 
         return self.unique_visits_by_date(today.year, today.month, today.day)
-
 
     def get_or_create_unique_visit(self, activity):
         """
@@ -75,27 +75,50 @@ class ActivityReports:
             raise e
 
 
-
-        # def total_visits(self):
-        #     users = User.objects.all()
-        #     visits = []
-        #     for user in users:
-        #         statistics = Statistics.objects.filter(owner=user).order_by('-date')
-        #         if len(statistics) != 0:
-        #             visits.append(dict({
-        #                 "user": user.email,
-        #                 "visits": len(statistics),
-        #             }))
-        #
-        #     sorted_list = sorted(visits, key=lambda k: k['visits'])
-        #     number_of_visits = 0
-        #     result = dict()
-        #     result[str(number_of_visits) + '-' + str(number_of_visits+4)] = 0
-        #     for visit in sorted_list:
-        #         if visit['visits'] <= number_of_visits+4:
-        #             result[str(number_of_visits) + '-' + str(number_of_visits+4)] += 1
-        #         else:
-        #             number_of_visits += 4
-        #             result[str(number_of_visits) + '-' + str(number_of_visits+4)] = 1
-        #     total_visits = len(Statistics.objects.all())
-        #     return {"Total of users grouped by number of visits": result, "Total Visits": total_visits}
+    # TODO Codigo gerado pelo Felipe, que precisa ser alterado para o novo app.
+    # def visits_and_recent_login(self):
+    #     users = User.objects.all()
+    #     results = []
+    #     for user in users:
+    #         statistics = Statistics.objects.filter(owner=user).order_by('-date')
+    #         if len(statistics) != 0:
+    #             results.append(dict({
+    #                 "user": user.email,
+    #                 "visits": len(statistics),
+    #                 "last_visit": str(statistics[0].date.date())
+    #             }))
+    #     return results
+    #
+    # def total_visits(self):
+    #     users = User.objects.all()
+    #     visits = []
+    #     for user in users:
+    #         statistics = Statistics.objects.filter(owner=user).order_by('-date')
+    #         if len(statistics) != 0:
+    #             visits.append(dict({
+    #                 "user": user.email,
+    #                 "visits": len(statistics),
+    #             }))
+    #
+    #     sorted_list = sorted(visits, key=lambda k: k['visits'])
+    #     number_of_visits = 0
+    #     result = dict()
+    #     result[str(number_of_visits) + '-' + str(number_of_visits + 4)] = 0
+    #     for visit in sorted_list:
+    #         if visit['visits'] <= number_of_visits + 4:
+    #             result[str(number_of_visits) + '-' + str(number_of_visits + 4)] += 1
+    #         else:
+    #             number_of_visits += 4
+    #             result[str(number_of_visits) + '-' + str(number_of_visits + 4)] = 1
+    #     total_visits = len(Statistics.objects.all())
+    #     return {"Total of users grouped by number of visits": result, "Total Visits": total_visits}
+    #
+    # def visits_per_month(self):
+    #     results = dict()
+    #     statistics = Statistics.objects.all().order_by('-date')
+    #     for statistic in statistics:
+    #         if statistic.date.strftime("%Y-%m") not in results.keys():
+    #             results[statistic.date.strftime("%Y-%m")] = 1
+    #         else:
+    #             results[statistic.date.strftime("%Y-%m")] += 1
+    #     return {"Visits Per Month": results}
