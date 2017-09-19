@@ -42,7 +42,7 @@ SCHEMA_SAVE_AS = None
 
 # Email notification configs
 # Email utilizado para enviar as notificacoes do science server
-EMAIL_NOTIFICATION = 'noreply@linea.gov.br'
+EMAIL_NOTIFICATION = 'noreply@desportal.cosmology.illinois.edu'
 EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
 EMAIL_HOST = 'smtp.linea.gov.br'
 EMAIL_PORT = '<porta do smtp>'
