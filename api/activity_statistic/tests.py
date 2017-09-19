@@ -5,14 +5,14 @@ import datetime
 import warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
-class StatisticsAPITestCase(APITestCase):
+class ActivityStatisticsAPITestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create_user("dri", "dri@linea.org", "dri")
         self.client.login(username='dri', password='dri')
 
     def test_list_Statistics_route(self):
         route = resolve('/statistics/')
-        self.assertEqual(route.func.__name__, 'StatisticsViewSet')
+        self.assertEqual(route.func.__name__, 'ActivityStatisticViewSet')
 
     def test_list_statistics(self):
         response = self.client.get('/statistics/')
@@ -55,25 +55,3 @@ class StatisticsAPITestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
 
-    def test_user_by_date(self):
-        date_now = str(datetime.datetime.now().date())
-        response = self.client.get('/user_by_date?date=' + date_now)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, dict({'dri@linea.org': 1}))
-
-    def test_visits_and_recent_login(self):
-        date_now = str(datetime.datetime.now().date())
-        response = self.client.get('/visits_and_recent_login')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, [{'user': 'dri@linea.org', 'last_visit': date_now, "visits": 1}])
-
-    def test_total_visits(self):
-        response = self.client.get('/total_visits')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, dict({'Total Visits': 1, 'Total of users grouped by number of visits': {'0-4': 1}}))
-
-    def test_visits_per_month(self):
-        date_now = str(datetime.datetime.now().date().strftime("%Y-%m"))
-        response = self.client.get('/visits_per_month')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data, dict({'Visits Per Month': {date_now: 1}}))

@@ -1,11 +1,11 @@
 from rest_framework import serializers
-from .models import Statistics
+from .models import Activity
 
-class StatisticsSerializer(serializers.HyperlinkedModelSerializer):
+class ActivityStatisticSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField()
 
     class Meta:
-        model = Statistics
+        model = Activity
 
         fields = (
             'owner',
