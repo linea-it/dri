@@ -1,5 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+<header>
+  <style>
+    .unique_visits table {
+      border-style: solid;
+      border-color: #777;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .unique_visits th, td {
+      text-align: left;
+      padding: 8px;
+    }
+
+    .unique_visits tr:nth-child(even){background-color: #f2f2f2}
+  </style>
+</header>
 <body>
 <table border="0" align="center" width="680" valign="top" cellspacing="0" cellpadding="0" align="center"
        style="background-color: #f0f0f0">
@@ -36,24 +53,36 @@
                     <td height="20" style="background-color: #FFF"></td>
                 </tr>
                 <!-- Content -->
+                <tr style="background-color: #FFF">
+                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                      Unique visits on the day {{ today }}</td>
+                </tr>
                 <tr>
                     <td style="background-color: #FFF">
                         <!-- Aqui ja entra o que vai ser substituido no template -->
-                        <table border="0" width="600" cellpadding="0" cellspacing="0" align="center" valign="top">
+                        <table class="unique_visits" width="600" cellpadding="0" cellspacing="0" align="center" valign="top">
                             <tbody>
                             <!-- Nome do Usuario -->
                             <tr>
-                                <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
-                                    Visits in month</td>
+                                <!--<td width=120 style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">-->
+                                    <!--Visits in month</td>-->
                                 <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
                                     User</td>
                                 <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
                                     Last activity
                                     </td>
                             </tr>
-                            <!--<tr>-->
-                                <!---->
-                            <!--</tr>-->
+                            {% for hit in visits %}
+                                <tr>
+                                    <!--<td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">-->
+                                        <!--{{ hit.visits_in_month }}</td>-->
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        {{ hit.user }}</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        {{ hit.last_activity }}
+                                        </td>
+                                </tr>
+                            {% endfor %}
                             <!-- Quebra de Linha -->
                             <tr>
                                 <td height="20"></td>

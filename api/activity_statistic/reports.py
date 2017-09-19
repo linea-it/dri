@@ -15,6 +15,7 @@ class ActivityReports:
     def unique_visits_by_date(self, year, month, day):
         users = list()
         uniqueVisits = list()
+
         activities = Activity.objects.filter(
             date__year=year,
             date__month=month,
@@ -32,13 +33,16 @@ class ActivityReports:
         visits_count = Visit.objects.filter(
             date__year=year,
             date__month=month,
-            owner__pk__in=users).annotate(visits_in_month=Count('owner'))
+            date__day=day,
+            owner__pk__in=users).order_by('-date')
+
+        # Todo falta fazer a conta de acessos por mes do usuario
 
         for a in visits_count:
             uniqueVisits.append(dict({
                 "user": a.owner.username,
-                "last_activity": a.date.strftime('%Y-%m-%d %H:%M'),
-                "visits_in_month": a.visits_in_month
+                "last_activity": a.date.strftime('%d-%m-%Y %H:%M'),
+                # "visits_in_month": a.visits_in_month
             }))
 
         return uniqueVisits
@@ -76,8 +80,8 @@ class ActivityReports:
             # usuario no mesmo dia.
             raise e
 
-    def report_email_unique_visits_today(self):
-        print("report_email_unique_visits_today")
+    def report_email_unique_visits(self, report_date):
+        print("report_email_unique_visits")
         try:
             from_email = settings.EMAIL_NOTIFICATION
         except:
@@ -92,66 +96,39 @@ class ActivityReports:
         subject = "LIneA Science Server - Unique hits on the day"
 
         # Recuperar as visitas unicas do dia.
-        visits = self.unique_visits_today()
-        print(visits)
-        visits = list()
+        visits = self.unique_visits_by_date(
+            year=report_date.year,
+            month=report_date.month,
+            day=report_date.day
+        )
+
         if len(visits) == 0:
             # nao houve visitas neste dia
             body = "There were no visits to the science server today."
 
         else:
+            d = date.today()
             body = render_to_string("unique_hits_on_day.html", {
-                # "visits": visits,
+                "today": report_date.strftime('%d/%m/%Y'),
+                "visits": visits,
             })
 
         try:
-            print('entrou no try')
             msg = EmailMessage(
                 subject=subject,
                 body=body,
                 from_email=from_email,
                 to=[email_admin],
             )
-            print('tentando enviar a mensagem')
-            # msg.content_subtype = "html"
-            msg.send(fail_silently=False)
 
-            print("Enviou Email")
+            msg.content_subtype = "html"
+            msg.send(fail_silently=False)
 
         except SMTPException as e:
             raise (e)
 
         except Exception as e:
             raise (e)
-
-            #     if user.email:
-            #         self.logger.info("Sending mail notification START.")
-            #
-            #         try:
-            #             from_email = settings.EMAIL_NOTIFICATION
-            #         except:
-            #             raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
-            #
-            #         subject = "LIneA Science Server - Download in Progress"
-            #         body = render_to_string("export_notification_start.html", {
-            #             "username": user.username,
-            #             "target_display_name": product.prd_display_name
-            #         })
-            #
-            #         msg = EmailMessage(
-            #             subject=subject,
-            #             body=body,
-            #             from_email=from_email,
-            #             to=[user.email],
-            #         )
-            #         msg.content_subtype = "html"
-            #         msg.send(fail_silently=False)
-            #
-            #     else:
-            #         self.logger.info("It was not possible to notify the user, for not having the email registered.")
-            #
-            # except SMTPException as e:
-            #     self.logger.error(e)
 
 
             # TODO Codigo gerado pelo Felipe, que precisa ser alterado para o novo app.

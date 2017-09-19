@@ -4,20 +4,37 @@ from celery import task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 
-
 @periodic_task(
-    run_every=(crontab(minute='*/1')),
-    # run_every=(crontab(minute='*/%s' % descutout.check_jobs_task_delay)),
-    # run_every=10.0,
-    name="activity_statistic_accesses_by_day",
-    ignore_result=True
+    # run_every=(crontab(minute='*/1')),
+    run_every=(crontab(minute=0, hour='*/3')),
+    name = "activity_statistic_accesses_by_day",
+    ignore_result = True
 )
 def activity_statistic_accesses_by_day():
     """
-
+        Varre a tabela de acessos para recuperar os
+        acessos unicos, e guarda em uma tabela separada.
+        Essa task apenas coleta as informacoes.
+        Executada a cada 3 horas
     """
-    print("----------- TESTE ----------------")
+    from activity_statistic.reports import ActivityReports
+    ActivityReports().unique_visits_today()
+
+
+@periodic_task(
+    # run_every=(crontab(minute='*/1')),
+    run_every=(crontab(hour=8, minute=0)),
+    name="activity_statistic_email_unique_hits_per_day",
+    ignore_result=True
+)
+def activity_statistic_email_unique_hits_per_day():
+    """
+        Envia o Email de Acessos unicos referente ao dia anterior
+    """
 
     from activity_statistic.reports import ActivityReports
-    ActivityReports().report_email_unique_visits_today()
+    import datetime
 
+    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+
+    ActivityReports().report_email_unique_visits(yesterday)
