@@ -200,7 +200,6 @@ def notify_user_by_email(cutoutjob_id):
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Export Product Tasks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 
 @task(name="export_target_by_filter")
-@shared_task
 def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cutoutjob_id=None):
     """
     Este metodo vai exportar um produto do tipo Target,
@@ -477,9 +476,3 @@ def import_target_list(user_id, data):
 
     if data.get('mime') == 'csv':
         importtargetlistcsv.start_import(user_id, data)
-
-
-
-
-
-

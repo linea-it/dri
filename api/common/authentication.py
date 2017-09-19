@@ -3,11 +3,10 @@ from lib.sqlalchemy_wrapper import DBBase
 from sqlalchemy.sql import column
 from sqlalchemy.sql import select
 from sqlalchemy.sql import table
-from statistics.models import Statistics
+from activity_statistic.models import Activity
 
 
 class NcsaBackend(object):
-
     # this method is needed by Django auth backend
     def get_user(self, user_id):
         try:
@@ -45,7 +44,7 @@ class NcsaBackend(object):
         user.first_name = user_info['firstname']
         user.last_name = user_info['lastname']
         user.save()
-        Statistics(owner=user,event="new_user_ncsa").save()
+        Activity(owner=user, event="new_user_ncsa").save()
         # TODO [CMP] the group NCSA should be better defined
         # NOTE it appears to be the origin of the created user
         # we should define where (if) we will use this information

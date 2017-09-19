@@ -28,7 +28,7 @@ from product_register import views as product_register_views
 from rest_framework import routers
 from userquery import views as userquery_views
 from validation import views as validation_views
-from statistics import views as statistics_views
+from activity_statistic import views as statistics_views
 
 router = routers.DefaultRouter()
 
@@ -103,7 +103,7 @@ router.register(r'comment/position', comment_views.PositionViewSet)
 router.register(r'aladin/image', aladin_views.ImageViewSet)
 
 # Statistics API
-router.register(r'statistics', statistics_views.StatisticsViewSet)
+router.register(r'statistics', statistics_views.ActivityStatisticViewSet)
 
 providers = common_views.get_providers()
 
@@ -113,10 +113,6 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^contact/', common_views.contact_us),
     url(r'^get_fits_by_tilename', coadd_views.get_fits_by_tilename),
-    url(r'^user_by_date', statistics_views.user_by_date),
-    url(r'^visits_and_recent_login', statistics_views.visits_and_recent_login),
-    url(r'^total_visits', statistics_views.total_visits),
-    url(r'^visits_per_month', statistics_views.visits_per_month),
     url(r'^teste/', common_views.teste),
     url(r'^get_token', common_views.get_token),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'), {'extra_context':{'providers': providers }}),
