@@ -32,6 +32,14 @@ DATABASES = {
     }
 }
 
+# Target Viewer Rating, Reject Schema
+SCHEMA_RATING_REJECT = None
+
+# Save As default Schema, Utilizado pela feature Target::Save As caso seja None, o schema utilizado
+# sera o mesmo do produto original mais vai requerer permissao. para o ncsa cada usuario tem um schema
+# utilizar o nome de usuario da conf 'catalog'
+SCHEMA_SAVE_AS = None
+
 # Email notification configs
 # Email utilizado para enviar as notificacoes do science server
 EMAIL_NOTIFICATION = 'noreply@desportal.cosmology.illinois.edu'
@@ -58,10 +66,6 @@ DES_CUTOUT_SERVICE = {
     # Tempo de delay para a task check_jobs em minutos
     'CUTOUT_TASK_CHECK_JOBS_DELAY': 1
 }
-
-
-# Target Viewer Rating, Reject Schema
-SCHEMA_RATING_REJECT = None
 
 # Logging is disabled due errors in testing and production environment, this must be investigated.
 # for developers, it safe to disable the follows lines
