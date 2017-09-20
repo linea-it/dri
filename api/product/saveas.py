@@ -95,7 +95,7 @@ class SaveAs:
         )
 
         # Registar a tabela como produto
-        self.register_new_table_as_product(user, product, tablename, name, description)
+        self.register_new_table_as_product(user, product, saveas_schema, tablename, name, description)
 
         new_product = Product.objects.get(
             prd_display_name=name,
@@ -125,7 +125,7 @@ class SaveAs:
         self.logger.info("Table created successfully.")
 
 
-    def register_new_table_as_product(self, user, original_product, tablename, name, description=None):
+    def register_new_table_as_product(self, user, original_product, schema, tablename, name, description=None):
 
         self.logger.info("Register the new table as a product")
 
@@ -147,7 +147,7 @@ class SaveAs:
             "name": tablename,
             "display_name": name,
             "database": original_product.table.tbl_database,
-            "schema": original_product.table.tbl_schema,
+            "schema": schema,
             "table": tablename,
             "filter": original_product.prd_filter,
             "releases": releases,
