@@ -36,6 +36,7 @@ class SaveAs:
         except Product.DoesNotExist as e:
             self.logger.error("Product matching query does not exist. Product Id: %s" % product_id)
 
+
         user = User.objects.get(pk=user_id)
 
         self.notify_user_start(user, name)
@@ -75,10 +76,20 @@ class SaveAs:
             columns=columns
         )
 
+        # Schema onde a tabela sera criada, no NCSA + Oracle a tabela sera criada no user/schema do proprio DRI
+        try:
+            saveas_schema = settings.SCHEMA_SAVE_AS
+        except:
+            saveas_schema = None
+
+        if saveas_schema is None and product.table.tbl_schema is not None:
+            # Se nao tiver um schema default e o produto estiver salvo em um schema, utilizar o schema do produto
+            saveas_schema = product.table.tbl_schema
+
         # Criar a Tabela
         self.create_table_as(
             database=product.table.tbl_database,
-            schema=product.table.tbl_schema,
+            schema=saveas_schema,
             table=tablename,
             stm=stm
         )
@@ -89,7 +100,7 @@ class SaveAs:
         new_product = Product.objects.get(
             prd_display_name=name,
             table__tbl_name=tablename,
-            table__tbl_schema=product.table.tbl_schema,
+            table__tbl_schema=saveas_schema,
             table__tbl_database=product.table.tbl_database
         )
 
