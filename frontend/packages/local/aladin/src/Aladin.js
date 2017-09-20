@@ -333,20 +333,6 @@ Ext.define('aladin.Aladin', {
             alSurvey,
             token;
 
-        token = window.localStorage['token'];
-
-        if (token) {
-            var realSend = XMLHttpRequest.prototype.send;
-
-            XMLHttpRequest.prototype.send = function () {
-                this.setRequestHeader('Authorization', 'Basic a');
-                this.setRequestHeader('Token', token);
-
-                realSend.apply(this, arguments);
-            };
-
-        }
-
         newSurvey = Ext.Object.merge(empty, survey);
 
         alSurvey = aladin.createImageSurvey(
