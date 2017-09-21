@@ -295,14 +295,19 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
         qdisplay_name = request.query_params.get('display_name', None)
 
-        queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id)
+        queryset = ProductContent.objects.select_related().filter(
+            pcn_product_id=pcn_product_id).order_by('pcn_column_name')
 
         contents = list()
 
         # Esse array define uma ordem padrao para as propriedades que podem ser associadas, sera usado caso nao tenha
         # uma configuracao para a coluna
-        # ID, RA, Dec, Radius(Arcmin)
-        ucds = list(["meta.id;meta.main", "pos.eq.ra;meta.main", "pos.eq.dec;meta.main", "phys.angSize;src"])
+        # ID, RA, Dec, Radius(Arcmin), a_image, b_image, theta_image, mags
+        ucds = list(["meta.id;meta.main", "pos.eq.ra;meta.main", "pos.eq.dec;meta.main", "phys.angSize;src",
+                     "phot.mag;meta.main;em.opt.g", "phot.mag;meta.main;em.opt.r", "phot.mag;meta.main;em.opt.i",
+                     "phot.mag;meta.main;em.opt.z", "phot.mag;meta.main;em.opt.Y",
+                     "phys.size.smajAxis;instr.det;meta.main", "phys.size.sminAxis;instr.det;meta.main",
+                     "pos.posAng;instr.det;meta.main", ])
 
         default_order = 99999
 
@@ -352,7 +357,6 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
                 content.update({
                     'class_id': association.pca_class_content.pk,
-                    'display_name': association.pca_class_content.pcc_display_name,
                     'ucd': ucd,
                     'unit': association.pca_class_content.pcc_unit,
                     'reference': association.pca_class_content.pcc_reference,
