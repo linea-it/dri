@@ -598,8 +598,23 @@ Ext.define('aladin.Aladin', {
 
         me.storeTiles = store;
 
+        store.on('beforeload', 'onBeforeloadStoreTiles', this);
         store.on('load', 'onLoadStoreTiles', this);
 
+    },
+
+    /**
+     * Executado antes da Store Tiles fazer a requisicao
+     * esta sendo usado para adicionar a mensagem de load que sera removida
+     * apos o load. dessa forma travando a tela ate que as informacoes das
+     * tiles sejam carregadas, impedindo que o usuario possa fazer outra acao
+     * antes do termino do carregamento.
+     */
+    onBeforeloadStoreTiles: function () {
+        //console.log('onBeforeloadStoreTiles()');
+        var me = this;
+
+        me.setLoading(true);
     },
 
     /**
@@ -608,8 +623,11 @@ Ext.define('aladin.Aladin', {
      * executa o metodo para fazer o plot da tile grid.
      */
     onLoadStoreTiles: function () {
+        // console.log('onLoadStoreTiles');
         var me = this,
             menu;
+
+        me.setLoading(false);
 
         // recuperar o menu tileGrid e verificar se tem tags marcadas
         if (me.getEnableViewMenu()) {
