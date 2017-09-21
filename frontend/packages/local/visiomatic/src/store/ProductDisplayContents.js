@@ -19,7 +19,16 @@ Ext.define('visiomatic.store.ProductDisplayContents', {
         url: '/dri/api/productcontent/get_display_content/'
     },
 
-    autoSort: true,
+    sorters: [
+        {
+            property: 'order',
+            direction: 'ASC'
+        },
+        {
+            property: 'display_name',
+            direction: 'ASC'
+        }
+    ],
 
     ucds: [
         'meta.id;meta.main',
