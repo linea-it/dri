@@ -370,7 +370,9 @@ Ext.define('Target.view.preview.PreviewController', {
             visiomatic.updateComment(lmembers, event.comment, event.total);
         }
 
-        view.fireEvent('changeinobject', {ignoreStoreLoad:true});
+        // TODO Refactor Comments by Position:: Comentario por posicao nao
+        // precisa disparar eventos de que houve mudanca.
+        //view.fireEvent('changeinobject', {ignoreStoreLoad:true});
 
     },
 

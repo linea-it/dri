@@ -15,7 +15,8 @@ Ext.define('Target.view.objects.ObjectsController', {
         'Target.view.objects.SaveCatalogWindow',
         'Target.view.objects.DownloadWindow',
         'Target.view.settings.CutoutJobForm',
-        'Target.view.objects.CutoutJobDetailWindow'
+        'Target.view.objects.CutoutJobDetailWindow',
+        'common.comment.CommentsObject'
     ],
 
     listen: {
@@ -45,7 +46,8 @@ Ext.define('Target.view.objects.ObjectsController', {
     winCutout: null,
     winCutoutjobInfo: null,
     activeFilter: null,
-    // taskCutoutJob: null,
+    winComment: null,
+
 
     onBeforeLoadPanel: function (catalogId, objectsPanel) {
         // console.log('1 - onBeforeLoadPanel');
@@ -516,14 +518,13 @@ Ext.define('Target.view.objects.ObjectsController', {
             vm = me.getViewModel(),
             store = vm.getStore('objects');
 
-        if (!event.ignoreStoreLoad) {
-            store.load({
-                scope: this,
-                callback: function () {
-                    // Todo caso seja necessario selecionar o record que estava selecionado antes
-                }
-            });
-        }
+        console.log('Houve mudanca no objeto');
+        store.load({
+            scope: this,
+            callback: function () {
+                // Todo caso seja necessario selecionar o record que estava selecionado antes
+            }
+        });
 
     },
 
@@ -691,10 +692,46 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.loadObjects();
     },
 
-    onCommentButton: function (event) {
-        this.getReferences()
-            .targetsPreviewPanel.getController().onObjectMenuItemClickVisiomatic({});
+    onClickComment: function () {
+        console.log('onClickComment')
+
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            currentRecord = vm.get('currentRecord');
+
+        if (me.winComment !== null) {
+            me.winComment.close();
+            me.winComment = null;
+        }
+        if ((currentRecord) && (currentRecord.get('_meta_id') > 0)) {
+
+            console.log(currentRecord)
+
+            me.winComment = Ext.create('Ext.window.Window', {
+                title: 'Comments',
+                iconCls: 'x-fa fa-comments',
+                layout: 'fit',
+                closeAction: 'destroy',
+                constrainHeader:true,
+                width: 500,
+                height: 300,
+                items: [
+                    {
+                        xtype: 'comments-object',
+                        listeners: {
+                            scope: this,
+                            //changecomments: 'onChangeComments'
+                        }
+                    }
+                ]
+            });
+
+            me.winComment.show();
+        }
+
     },
+
 
     /**
      * Executado pelo botao apply/disappy
