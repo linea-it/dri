@@ -66,6 +66,10 @@ class DesCutoutService:
         # Nome do arquivo de resultados
         self.result_file = "result_file.txt"
 
+        # fazer os request sem verificar o certificado SSL / HTTPS
+        self.verify_ssl = False
+
+
         # TODO ter uma lista com as bandas para usar na associacao
         # self.filters = dict({})
         # filters = Filter.objects.all()
@@ -85,9 +89,12 @@ class DesCutoutService:
             data={
                 "username": self.user,
                 "password": self.password
-            })
+            },
+            verify=self.verify_ssl)
 
         try:
+            self.logger.debug(req.text)
+
             self.logger.debug(req.json())
 
             return req.json()["token"]
@@ -105,7 +112,7 @@ class DesCutoutService:
         """
         # print("Check the expiration time for a token")
         req = requests.get(
-            self.host_token + "?token=" + token)
+            self.host_token + "?token=" + token, verify=self.verify_ssl)
 
         if req.json()["status"].lower() == "ok":
             return True
@@ -139,7 +146,8 @@ class DesCutoutService:
 
         req = requests.post(
             self.host_jobs,
-            data=data)
+            data=data,
+            verify=self.verify_ssl)
 
         self.logger.debug(req)
 
@@ -164,7 +172,7 @@ class DesCutoutService:
 
         """
         req = requests.get(
-            self.host_jobs + "?token=" + token + "&jobid=" + jobid)
+            self.host_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
 
         self.logger.info("Get Results for job %s" % jobid)
 
@@ -190,7 +198,7 @@ class DesCutoutService:
         """
         self.logger.info("Deleting job %s in DesCutout service" % jobid)
         req = requests.delete(
-            self.host_jobs + "?token=" + token + "&jobid=" + jobid)
+            self.host_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
 
         data = req.json()
         self.logger.debug(data)
@@ -414,6 +422,7 @@ class DesCutoutService:
 
                 # Guardar o Arquivo de resultado com os links a serem baixados
                 result_file = self.save_result_links_file(job, list_files)
+
                 job.cjb_results_file = result_file.split(self.data_dir)[1].strip("/")
 
                 # Baixar o Arquivo Matched que sera usado para associar os arquivos baixados com os objetos.
@@ -625,7 +634,7 @@ class DesCutoutService:
             "email": "false"  # optional will send email when job is finished
         }
 
-        req = requests.post("http://descut.cosmology.illinois.edu/api/jobs/", data=body)
+        req = requests.post("http://descut.cosmology.illinois.edu/api/jobs/", data=body, verify=self.verify_ssl)
 
         # create body for files if needed
         # body_files = {"csvfile": open("mydata.csv", "rb")}  # To load csv file as part of request
