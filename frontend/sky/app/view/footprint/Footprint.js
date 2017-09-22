@@ -25,7 +25,6 @@ Ext.define('Sky.view.footprint.Footprint', {
                 {
                     xtype: 'footprint-aladin',
                     reference: 'aladin',
-                    tilesGridVisible: true,
                     bind: {
                         storeSurveys: '{surveys}',
                         storeTags: '{tags}',
