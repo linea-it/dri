@@ -1,9 +1,9 @@
 import os
-import urllib
 import logging
 from django.utils import timezone
 from math import log
-
+import requests
+import shutil
 
 class Download():
     def __init__(self):
@@ -28,7 +28,14 @@ class Download():
 
         if not os.path.exists(file_path):
             try:
-                urllib.request.urlretrieve(url, file_path)
+
+                #urllib.request.urlretrieve(url, file_path)
+                r = requests.get(url, stream=True, verify=False)
+                if r.status_code == 200:
+                    with open(file_path, 'wb') as f:
+                        r.raw.decode_content = True
+                        shutil.copyfileobj(r.raw, f)
+
                 size = os.path.getsize(file_path)
                 hsize = self.bytes2human(size)
 

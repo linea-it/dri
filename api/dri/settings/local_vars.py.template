@@ -42,7 +42,7 @@ SCHEMA_SAVE_AS = None
 
 # Email notification configs
 # Email utilizado para enviar as notificacoes do science server
-EMAIL_NOTIFICATION = 'noreply@desportal.cosmology.illinois.edu'
+EMAIL_NOTIFICATION = 'ncsa-portal@desportal.cosmology.illinois.edu'
 EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
 EMAIL_HOST = 'smtp.linea.gov.br'
 EMAIL_PORT = '<porta do smtp>'
@@ -55,7 +55,7 @@ EMAIL_ADMIN = 'dri@linea.gov.br'
 
 # DES Cutout Service
 DES_CUTOUT_SERVICE = {
-    'HOST': 'http://descut.cosmology.illinois.edu',
+    'HOST': 'https://descut.cosmology.illinois.edu',
     'USER': '<User required for cutout>',
     'PASSWORD': '<password required for cutout>',
     # Path onde ficaram os arquivos de cutout, esse parametro sera usado em conjunto com DATA_DIR para criar o path

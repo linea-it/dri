@@ -93,7 +93,8 @@ class ActivityReports:
             raise Exception("The EMAIL_ADMIN variable is not configured in settings.")
 
         # subject
-        subject = "LIneA Science Server - Unique hits on the day"
+        subject = (
+            "Science Server portal @ NCSA status %s - %s - %s" % (report_date.year, report_date.month, report_date.day))
 
         # Recuperar as visitas unicas do dia.
         visits = self.unique_visits_by_date(
