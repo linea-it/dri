@@ -236,8 +236,7 @@
         },
         // biblioteca Aladin (Necessita do JQuery)
         {
-            "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js",
-            "remote": true
+            "path": "../packages/local/aladin/src/aladin/aladin-min.js"
         },
         {
             "path": "${framework.dir}/build/ext-all-rtl-debug.js"
