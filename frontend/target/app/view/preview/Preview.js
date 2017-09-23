@@ -103,6 +103,7 @@ Ext.define('Target.view.preview.Preview', {
                 ui: 'soft-blue',
                 iconCls: 'x-fa fa-info-circle',
                 handler: 'onExplorer',
+                reference: 'BtnExplorer',
                 bind: {
                     disabled: '{is_empty}'
                 }

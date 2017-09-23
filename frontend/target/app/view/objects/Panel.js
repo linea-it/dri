@@ -80,7 +80,7 @@ Ext.define('Target.view.objects.Panel', {
                         bind: {
                             disabled: '{!targetsObjectsGrid.selection}'
                         },
-                        handler: 'onCommentButton'
+                        handler: 'onClickComment'
                     },
                     {
                         iconCls: 'x-fa fa-picture-o',
