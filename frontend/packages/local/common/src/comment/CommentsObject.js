@@ -240,5 +240,18 @@ Ext.define('common.comment.CommentsObject',{
             '</div>', value,
 
             record.get('date') || 'Unknown');*/
+    },
+
+    setObject: function(catalog, object) {
+        // console.log('setObject(%o, %o)', catalog, object)
+
+        var me = this,
+            vm = me.getViewModel(),
+            ctrl = me.getController();
+
+        vm.set('catalog_id', catalog);
+        vm.set('object_id', object);
+
+        ctrl.loadComments(catalog, object);
     }
 });

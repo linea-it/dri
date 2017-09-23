@@ -511,18 +511,21 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.showWizard();
     },
 
-    onChangeInObjects: function (event) {
+    onChangeInObjects: function () {
         // toda vez que houver uma modificacao no objeto ex. comentarios
         // atualiza a store de objetos
         var me = this,
             vm = me.getViewModel(),
-            store = vm.getStore('objects');
+            store = vm.getStore('objects'),
+            currentRecord = vm.get('currentRecord'),
+            grid = me.lookup('targetsObjectsGrid');
 
-        console.log('Houve mudanca no objeto');
+        //console.log('Houve mudanca no objeto');
         store.load({
             scope: this,
             callback: function () {
                 // Todo caso seja necessario selecionar o record que estava selecionado antes
+                grid.selModel.select(currentRecord, false);
             }
         });
 
@@ -693,7 +696,7 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onClickComment: function () {
-        console.log('onClickComment')
+        // console.log('onClickComment()')
 
         var me = this,
             view = me.getView(),
@@ -704,9 +707,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winComment.close();
             me.winComment = null;
         }
-        if ((currentRecord) && (currentRecord.get('_meta_id') > 0)) {
-
-            console.log(currentRecord)
+        if ((currentRecord) && (currentRecord.get('_meta_id') !== null)) {
 
             me.winComment = Ext.create('Ext.window.Window', {
                 title: 'Comments',
@@ -721,11 +722,15 @@ Ext.define('Target.view.objects.ObjectsController', {
                         xtype: 'comments-object',
                         listeners: {
                             scope: this,
-                            //changecomments: 'onChangeComments'
+                            changecomments: 'onChangeInObjects'
                         }
                     }
                 ]
             });
+
+            me.winComment.down('comments-object').setObject(
+                currentRecord.get('_meta_catalog_id'),
+                currentRecord.get('_meta_id'));
 
             me.winComment.show();
         }

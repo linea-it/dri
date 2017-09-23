@@ -194,10 +194,14 @@ Ext.define('Target.view.preview.PreviewController', {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
-            visiomatic = me.lookupReference('visiomatic');
+            visiomatic = me.lookupReference('visiomatic'),
+            btnExplorer = me.lookup('BtnExplorer');
 
         // Centraliza a imagem no target
         me.onCenterTarget();
+
+        // Desabilitar o btn Explorer
+        btnExplorer.disable();
     },
 
     targetIsSystem: function () {

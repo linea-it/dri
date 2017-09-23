@@ -4,6 +4,7 @@ Ext.define('common.comment.CommentsObjectController', {
     alias: 'controller.comment-object',
 
     loadComments: function (catalog_id, object_id) {
+        // console.log('loadComments(%o, %o)', catalog_id, object_id);
         var me = this,
             // refs = me.getReferences(),
             // catalogPanel = refs.targetsCatalogPanel,
