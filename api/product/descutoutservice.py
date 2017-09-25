@@ -538,10 +538,12 @@ class DesCutoutService:
         catalog_db = CatalogObjectsDBHelper(
             catalog.tbl_name,
             schema=catalog.tbl_schema,
-            database=catalog.tbl_database)
+            database=catalog.tbl_database
+        )
 
         rows, count = catalog_db.query(
-            columns=columns
+            columns=columns,
+            limit=100
         )
 
         # Criar um arquivo que servira de index para a associar os objetos as imagens
