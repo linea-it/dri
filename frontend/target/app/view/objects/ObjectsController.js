@@ -849,19 +849,15 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winCutout.close();
             me.winCutout = null;
         }
-        console.log('TESTE')
 
         me.winCutout = Ext.create('Target.view.settings.CutoutJobForm',{
             modal: true,
             listeners: {
                 scope: me,
                 submitedjob: function () {
-
-                    console.log('Deveria entrar aqui')
                     // Checar a quantidade de objetos na lista se for maior que 100
                     // Mostar um popup informando a limitiacao do sistema
                     if (objects.getTotalCount() > 100) {
-                        console.log('Maior que 100')
                         Ext.MessageBox.alert(
                             '',
                             "The cutout tool has currently a limit of 100 objects. We are working to fix this limitation.<br>"+
