@@ -55,3 +55,11 @@
     visibility: hidden;
   }
 }
+
+.leaflet-grab{
+    cursor: default;
+}
+.leaflet-grab:active{
+    cursor: -webkit-grabbing;
+    cursor: move;
+}
