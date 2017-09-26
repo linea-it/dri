@@ -15,6 +15,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from lib.CatalogDB import TargetObjectsDBHelper
 from product.association import Association
+from common.notify import Notify
 
 
 class Export:
@@ -284,104 +285,70 @@ class Export:
         """
         Envia um email para o usuario informando que os arquivos estao sendo criados.
         """
-        try:
-            if user.email:
-                self.logger.info("Sending mail notification START.")
+        if user.email:
+            self.logger.info("Sending mail notification START.")
 
-                try:
-                    from_email = settings.EMAIL_NOTIFICATION
-                except:
-                    raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
+            subject = "LIneA Science Server - Download in Progress"
+            body = render_to_string("export_notification_start.html", {
+                "username": user.username,
+                "target_display_name": product.prd_display_name
+            })
 
-                subject = "LIneA Science Server - Download in Progress"
-                body = render_to_string("export_notification_start.html", {
-                    "username": user.username,
-                    "target_display_name": product.prd_display_name
-                })
+            Notify().send_email(subject, body, user.email)
 
-                msg = EmailMessage(
-                    subject=subject,
-                    body=body,
-                    from_email=from_email,
-                    to=[user.email],
-                )
-                msg.content_subtype = "html"
-                msg.send(fail_silently=False)
+        else:
+            self.logger.info("It was not possible to notify the user, for not having the email registered.")
 
-            else:
-                self.logger.info("It was not possible to notify the user, for not having the email registered.")
 
-        except SMTPException as e:
-            self.logger.error(e)
 
     def notify_user_export_success(self, user_id, product_name, url):
         """
         Envia um email para o usuario informando que o export terminou.
         neste email tem um link para o arquivo final do export.
         """
-        try:
-            user = User.objects.get(pk=user_id)
+        user = User.objects.get(pk=user_id)
 
-            if user.email:
-                self.logger.info("Sending mail notification SUCCESS.")
+        if user.email:
+            self.logger.info("Sending mail notification SUCCESS.")
 
-                try:
-                    from_email = settings.EMAIL_NOTIFICATION
-                except:
-                    raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
+            try:
+                from_email = settings.EMAIL_NOTIFICATION
+            except:
+                raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
-                subject = "LIneA Science Server - Download Finish"
-                body = render_to_string("export_notification_finish.html", {
-                    "username": user.username,
-                    "target_display_name": product_name,
-                    "url": url
-                })
+            subject = "LIneA Science Server - Download Finish"
+            body = render_to_string("export_notification_finish.html", {
+                "username": user.username,
+                "target_display_name": product_name,
+                "url": url
+            })
 
-                msg = EmailMessage(
-                    subject=subject,
-                    body=body,
-                    from_email=from_email,
-                    to=[user.email],
-                )
-                msg.content_subtype = "html"
-                msg.send(fail_silently=False)
+            Notify().send_email(subject, body, user.email)
 
-            else:
-                self.logger.info("It was not possible to notify the user, for not having the email registered.")
+        else:
+            self.logger.info("It was not possible to notify the user, for not having the email registered.")
 
-        except SMTPException as e:
-            self.logger.error(e)
 
     def notify_user_export_failure(self, user, product):
         """
         Envia um email para o usuario informando que houve um erro na geracao dos arquivos.
         """
-        try:
-            if user.email:
-                self.logger.info("Sending mail notification FAILURE.")
+        if user.email:
+            self.logger.info("Sending mail notification FAILURE.")
 
-                try:
-                    from_email = settings.EMAIL_NOTIFICATION
-                except:
-                    raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
+            try:
+                from_email = settings.EMAIL_NOTIFICATION
+            except:
+                raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
-                subject = "LIneA Science Server - Download Failed"
-                body = render_to_string("export_notification_error.html", {
-                    "username": user.username,
-                    "target_display_name": product.prd_display_name
-                })
+            subject = "LIneA Science Server - Download Failed"
+            body = render_to_string("export_notification_error.html", {
+                "username": user.username,
+                "target_display_name": product.prd_display_name
+            })
 
-                msg = EmailMessage(
-                    subject=subject,
-                    body=body,
-                    from_email=from_email,
-                    to=[user.email],
-                )
-                msg.content_subtype = "html"
-                msg.send(fail_silently=False)
+            Notify().send_email(subject, body, user.email)
 
-            else:
-                self.logger.info("It was not possible to notify the user, for not having the email registered.")
+        else:
+            self.logger.info("It was not possible to notify the user, for not having the email registered.")
 
-        except SMTPException as e:
-            self.logger.error(e)
