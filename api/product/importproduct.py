@@ -267,6 +267,8 @@ class ImportTargetListCSV:
 
     def cast_value_type(self, value):
         try:
+            value = value.replace('\n', '').strip()
+
             value = ast.literal_eval(value)
 
         except:
@@ -388,9 +390,11 @@ class ImportTargetListCSV:
         import_product.import_products(data)
 
         # Retornar o Produto que foi registrado.
-        return Product.objects.get(prd_name=self.internal_name)
+        newproduct = Product.objects.get(prd_name=self.internal_name)
 
-        self.logger.info('New Product as Registered')
+        self.logger.info('New Product as Registered: %s - %s' %(newproduct.pk, newproduct.prd_display_name))
+
+        return newproduct
 
     # %%%%%%%%%%%%%%%%%%%%%%%%%% Validacoes por colunas %%%%%%%%%%%%%%%%%%%%%%%%%%
     def check_is_valid(self, header, value):
@@ -433,8 +437,10 @@ class ImportTargetListCSV:
                 return value
 
             else:
+                self.logger.debug(message)
                 raise Exception(message)
         else:
+            self.logger.debug(message)
             raise Exception(message)
 
     def check_dec(self, value):
@@ -453,6 +459,8 @@ class ImportTargetListCSV:
                 return value
 
             else:
+                self.logger.debug(message)
                 raise Exception(message)
         else:
+            self.logger.debug(message)
             raise Exception(message)
