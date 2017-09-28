@@ -64,7 +64,9 @@ class SaveAs:
             schema=product.table.tbl_schema,
             database=product.table.tbl_database,
             associations=associations,
-            schema_rating_reject=schema_rating_reject
+            schema_rating_reject=schema_rating_reject,
+            product=product,
+            user=user
         )
 
         columns = catalog_db.column_names
