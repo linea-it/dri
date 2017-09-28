@@ -106,17 +106,17 @@ Ext.define('Target.view.catalog.CSVForm', {
         '->',
         {
             xtype: 'button',
+            text: 'Cancel',
+            iconCls: 'x-fa fa-close',
+            handler: 'onCancelAddCatalog'
+        },
+        {
+            xtype: 'button',
             text: 'Submit',
             iconCls: 'x-fa fa-check',
             ui: 'soft-green',
             handler: 'addCatalog'
-        },
-        {
-            xtype: 'button',
-            text: 'Cancel',
-            iconCls: 'x-fa fa-close',
-            handler: 'onCancelAddCatalog'
-        }
+        }        
     ]
 
 });
