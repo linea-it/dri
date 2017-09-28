@@ -55,3 +55,12 @@
     visibility: hidden;
   }
 }
+
+/** Altera o ponteiro do mouse no Visiomatic **/
+ .leaflet-grab{
+    cursor: default;
+}
+.leaflet-grab:active{
+    cursor: -webkit-grabbing;
+    cursor: move;
+}
