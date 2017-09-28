@@ -285,12 +285,29 @@ class CatalogObjectsDBHelper(CatalogTable):
 
 
 class TargetObjectsDBHelper(CatalogTable):
-    def __init__(self, table, schema=None, database=None, associations=None, schema_rating_reject=None):
+    def __init__(self, table, schema=None, database=None, associations=None, schema_rating_reject=None, product=None,
+                 user=None):
         super(TargetObjectsDBHelper, self).__init__(database=database, table=table, schema=schema,
                                                     associations=associations)
         # Catalogos de Target tem ligacao com o as tabelas Rating e Reject
         # Esse atributo deve vir do Settings
         self.schema_rating_reject = schema_rating_reject
+
+        # Para o as querys de Target e necessario ter a instancia do product para fazer os join com Rating e Reject
+        if product is None:
+            raise Exception(
+                'for the target queries it is necessary the product parameter, which is used in' \
+                'the join with rating and reject.')
+
+        self.product = product
+
+        # Para as querys de Target e necessario a instancia de usuario para que as querys de Rating e Reject
+        # tragam apenas as classificacoes do usuario
+        if user is None:
+            raise Exception('for the target queries the user parameter is required, ' \
+                            'which is used in the join with rating and reject.')
+
+        self.user = user
 
     def create_stm(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None):
 
@@ -313,13 +330,30 @@ class TargetObjectsDBHelper(CatalogTable):
 
         # Cria os Joins
         stm_join = self.table
+
+        # Join com Catalog_Rating
         stm_join = stm_join.join(catalog_rating,
-                                 self.get_column_obj(self.table, property_id) ==
-                                 catalog_rating.c.object_id, isouter=True)
+                                 and_(
+                                     # Product ID
+                                     catalog_rating.c.catalog_id == self.product.pk,
+                                     # User ID
+                                     catalog_rating.c.owner == self.user.pk,
+                                     # Object ID
+                                     self.get_column_obj(self.table, property_id) == catalog_rating.c.object_id,
+                                 ),
+                                 isouter=True)
 
         stm_join = stm_join.join(catalog_reject,
-                                 or_(self.get_column_obj(self.table, property_id) ==
-                                     catalog_reject.c.object_id, catalog_reject.c.id.is_(None)), isouter=True)
+                                 and_(
+                                     # Product ID
+                                     catalog_reject.c.catalog_id == self.product.pk,
+                                     # User ID
+                                     catalog_reject.c.owner == self.user.pk,
+                                     # Object Id OR Reject is NULL
+                                     or_(self.get_column_obj(self.table, property_id) == catalog_reject.c.object_id,
+                                         catalog_reject.c.id.is_(None))
+                                 ),
+                                 isouter=True)
 
         query_columns = list()
 
