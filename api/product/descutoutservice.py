@@ -2,26 +2,21 @@ import csv
 import datetime
 import logging
 import os
-import warnings
 from pprint import pformat
 
 import humanize
 import requests
 from common.download import Download
+from common.notify import Notify
 from django.conf import settings
-from django.core.mail import EmailMessage
 from django.db.models import Sum
 from django.template.loader import render_to_string
 from django.utils import timezone
 from lib.CatalogDB import CatalogObjectsDBHelper
-from product.models import Catalog, ProductContentAssociation
+from product.association import Association
+from product.models import Catalog
 from product.models import CutOutJob
 from product.models import Cutout
-from product.serializers import AssociationSerializer
-from sqlalchemy import exc as sa_exc
-from sqlalchemy.sql import column
-from sqlalchemy.sql import select
-from product.association import Association
 
 
 class DesCutoutService:
@@ -468,9 +463,7 @@ class DesCutoutService:
 
                     new_objects_csv.close()
 
-
                 job.cjb_cutouts_path = cutoutdir.split(self.data_dir)[1].strip("/")
-
 
                 # Changing the CutoutJob Status for Before Download
                 self.change_cutoutjob_status(job, "bd")
@@ -676,8 +669,7 @@ class DesCutoutService:
         self.logger.debug("Cutout ID %s Registred" % cutout.pk)
         return cutout
 
-
-# class CutoutJobsDBHelper(CatalogDB):
+    # class CutoutJobsDBHelper(CatalogDB):
     # def __init__(self, table, schema=None, database=None):
     #
     #     # Get an instance of a logger
@@ -725,31 +717,16 @@ class CutoutJobNotify:
         # Get an instance of a logger
         self.logger = logging.getLogger("descutoutservice")
 
-    def send_email(self, subject, body, from_email, to):
+    def send_email(self, subject, body, to):
 
         self.logger.info("Sending mail notification.")
 
-        try:
-            msg = EmailMessage(
-                subject=subject,
-                body=body,
-                from_email=from_email,
-                to=[to],
-            )
-            msg.content_subtype = "html"
-            msg.send(fail_silently=False)
-
-        except Exception as e:
-            self.logger.error(e)
+        Notify().send_email(subject, body, to)
 
     def create_email_message(self, cutoutjob):
 
         if cutoutjob.owner.email:
             to_email = cutoutjob.owner.email
-            try:
-                from_email = settings.EMAIL_NOTIFICATION
-            except:
-                raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
             if cutoutjob.cjb_status == 'st':
                 subject = "LIneA Science Server - Mosaic in progress"
@@ -768,7 +745,7 @@ class CutoutJobNotify:
                 message = self.generate_failure_email(cutoutjob)
 
             if message:
-                self.send_email(subject, message, from_email, to_email)
+                self.send_email(subject, message, to_email)
 
         else:
             self.logger.info("It was not possible to notify the user, for not having the email registered.")
