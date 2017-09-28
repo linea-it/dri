@@ -237,15 +237,19 @@ Ext.define('Target.view.catalog.Tree', {
     viewRecord: function (record) {
         // So disparar o evento se o catalogo tiver a sua tabela disponivel
         // https://github.com/linea-it/dri/issues/662
-        if (record.get('tableExist')) {
+        if ((record.get('tableExist') == true) &&
+            (record.get('leaf') == true )) {
+
             this.fireEvent('selectcatalog', record, this);
 
         } else {
-            // Avisar o usuario que a tabela esta indisponivel.
-            Ext.MessageBox.alert('Warning', 'The table for this product is not currently available or does not exist');
-
+            if (record.get('leaf') == true ) {
+                // Avisar o usuario que a tabela esta indisponivel.
+                Ext.MessageBox.alert(
+                    'Warning',
+                    'The table for this product is not currently available or does not exist');
+            }
         }
-
     },
 
     filterByname: function () {
