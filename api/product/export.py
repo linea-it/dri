@@ -6,7 +6,7 @@ import time
 import zipfile
 from smtplib import SMTPException
 from urllib.parse import urljoin
-
+from django.contrib.auth.models import User
 import humanize
 from astropy.table import Table
 from django.conf import settings
@@ -16,7 +16,7 @@ from django.template.loader import render_to_string
 from lib.CatalogDB import TargetObjectsDBHelper
 from product.association import Association
 from common.notify import Notify
-
+from .models import Product
 
 class Export:
     def __init__(self):
@@ -85,7 +85,7 @@ class Export:
 
         return columns
 
-    def table_to_csv(self, product_id, table, export_dir, schema=None, database=None, filters=None):
+    def table_to_csv(self, product_id, table, export_dir, user_id, schema=None, database=None, filters=None):
         """
         Le uma tabela no banco de Catalogos e cria um csv com o resultado.
         OBS: NAO recomendada para tabelas grandes. por que neste metodo todos as linhas
@@ -100,7 +100,7 @@ class Export:
         filename = os.path.join(export_dir, name)
         self.logger.debug("Filename: %s" % filename)
 
-        rows, count = self.get_catalog_objects(product_id, table, schema, database, filters=filters)
+        rows, count = self.get_catalog_objects(product_id, table, user_id, schema, database,  filters=filters)
 
         self.logger.debug("Row Count: %s" % count)
 
@@ -148,7 +148,7 @@ class Export:
             self.logger.error(e)
             raise (e)
 
-    def get_catalog_objects(self, product_id, table, schema=None, database=None, limit=None, start=None, filters=None):
+    def get_catalog_objects(self, product_id, table, user_id, schema=None, database=None, limit=None, start=None, filters=None):
         """
         Executa a Query no banco de dados usando a classe de Catalogo apropriada
         :param table: Nome da tabela no banco de catalogo, deve vir do model Product.
@@ -168,6 +168,20 @@ class Export:
 
         self.logger.info("Retrieving table rows")
 
+        user = User.objects.get(pk=user_id)
+
+        self.logger.debug("User: %s" % user.username)
+
+
+        # Recuperar o produto
+        try:
+            product = Product.objects.get(pk=int(product_id))
+            self.logger.debug("Origin Product: %s" % product.prd_display_name)
+
+        except Product.DoesNotExist as e:
+            self.logger.error("Product matching query does not exist. Product Id: %s" % product_id)
+
+
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(product_id=product_id)
 
@@ -179,7 +193,9 @@ class Export:
             schema=schema,
             database=database,
             associations=associations,
-            schema_rating_reject=schema_rating_reject
+            schema_rating_reject=schema_rating_reject,
+            product=product,
+            user=user
         )
 
         return catalog_db.query(

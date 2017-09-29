@@ -264,7 +264,8 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
                         product.table.tbl_schema,
                         product.table.tbl_name,
                         conditions,
-                        export_dir
+                        export_dir,
+                        user_id
                     )
                 )
 
@@ -277,7 +278,8 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
                         product.table.tbl_schema,
                         product.table.tbl_name,
                         conditions,
-                        export_dir
+                        export_dir,
+                        user_id
                     )
                 )
 
@@ -308,7 +310,7 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
 
 @task(name="export_target_to_csv")
 @shared_task
-def export_target_to_csv(product_id, database, schema, table, conditions, export_dir):
+def export_target_to_csv(product_id, database, schema, table, conditions, export_dir, user_id):
     """
         gera o arquivo csv do produto.
     """
@@ -322,7 +324,8 @@ def export_target_to_csv(product_id, database, schema, table, conditions, export
         schema=schema,
         table=table,
         filters=conditions,
-        export_dir=export_dir
+        export_dir=export_dir,
+        user_id=user_id
     )
 
     logger.info("Finished Task target_to_csv")
@@ -330,7 +333,7 @@ def export_target_to_csv(product_id, database, schema, table, conditions, export
 
 @task(name="export_target_to_fits")
 @shared_task
-def export_target_to_fits(product_id, database, schema, table, conditions, export_dir):
+def export_target_to_fits(product_id, database, schema, table, conditions, export_dir, user_id):
     """
         gera o arquivo fits do produto.
     """
@@ -345,7 +348,8 @@ def export_target_to_fits(product_id, database, schema, table, conditions, expor
         schema=schema,
         table=table,
         filters=conditions,
-        export_dir=export_dir
+        export_dir=export_dir,
+        user_id=user_id
     )
 
     fname, extension = os.path.splitext(csvfile)
