@@ -1,11 +1,10 @@
 import logging
 import os
-from smtplib import SMTPException
 from urllib.parse import urljoin
 
+from common.notify import Notify
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from lib.CatalogDB import CatalogDB
 from lib.CatalogDB import TargetObjectsDBHelper
@@ -20,7 +19,7 @@ from .serializers import FConditionSerializer
 class SaveAs:
     def __init__(self):
         # Get an instance of a logger
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger('product_saveas')
 
     def parse_name(self, name):
 
@@ -35,7 +34,6 @@ class SaveAs:
 
         except Product.DoesNotExist as e:
             self.logger.error("Product matching query does not exist. Product Id: %s" % product_id)
-
 
         user = User.objects.get(pk=user_id)
 
@@ -66,7 +64,9 @@ class SaveAs:
             schema=product.table.tbl_schema,
             database=product.table.tbl_database,
             associations=associations,
-            schema_rating_reject=schema_rating_reject
+            schema_rating_reject=schema_rating_reject,
+            product=product,
+            user=user
         )
 
         columns = catalog_db.column_names
@@ -124,7 +124,6 @@ class SaveAs:
 
         self.logger.info("Table created successfully.")
 
-
     def register_new_table_as_product(self, user, original_product, schema, tablename, name, description=None):
 
         self.logger.info("Register the new table as a product")
@@ -174,67 +173,36 @@ class SaveAs:
         """
         Envia um email para o usuario informando que o Save As iniciou.
         """
-        try:
-            if user.email:
-                try:
-                    from_email = settings.EMAIL_NOTIFICATION
-                except:
-                    raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
-                subject = "LIneA Science Server - Save As Started"
+        if user.email:
+            self.logger.info("Sending mail notification.")
+            subject = "LIneA Science Server - Save As Started"
 
-                body = render_to_string("saveas_notification_start.html", {
-                    "username": user.username,
-                    "target_display_name": name,
-                })
+            body = render_to_string("saveas_notification_start.html", {
+                "username": user.username,
+                "target_display_name": name,
+            })
 
-                msg = EmailMessage(
-                    subject=subject,
-                    body=body,
-                    from_email=from_email,
-                    to=[user.email],
-                )
-                msg.content_subtype = "html"
-                msg.send(fail_silently=False)
-
-
-        except SMTPException as e:
-            pass
+            Notify().send_email(subject, body, user.email)
 
     def notify_user_success(self, user, name, new_product):
         """
         Envia um email para o usuario informando que o Save As terminou.
         neste email tem um link para o target na lista recem criada.
         """
-        try:
-            if user.email:
-                try:
-                    from_email = settings.EMAIL_NOTIFICATION
-                except:
-                    raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
+        if user.email:
+            self.logger.info("Sending mail notification.")
+            host = settings.BASE_HOST
+            url = urljoin(host, os.path.join("dri/apps/target/#cv", str(new_product.pk)))
 
-                host = settings.BASE_HOST
-                url = urljoin(host, os.path.join("dri/apps/target/#cv", str(new_product.pk)))
+            subject = "LIneA Science Server - Save As Finish"
 
-                subject = "LIneA Science Server - Save As Finish"
+            body = render_to_string("saveas_notification_finish.html", {
+                "username": user.username,
+                "target_display_name": name,
+                # "tablename": new_product.table.tbl_name,
+                # "rows": new_product.table.catalog.ctl_num_objects,
+                "url": url
+            })
 
-                body = render_to_string("saveas_notification_finish.html", {
-                    "username": user.username,
-                    "target_display_name": name,
-                    # "tablename": new_product.table.tbl_name,
-                    # "rows": new_product.table.catalog.ctl_num_objects,
-                    "url": url
-                })
-
-                msg = EmailMessage(
-                    subject=subject,
-                    body=body,
-                    from_email=from_email,
-                    to=[user.email],
-                )
-                msg.content_subtype = "html"
-                msg.send(fail_silently=False)
-
-
-        except SMTPException as e:
-            pass
+            Notify().send_email(subject, body, user.email)

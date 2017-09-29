@@ -94,7 +94,9 @@ class TargetViewSet(ViewSet):
             schema=catalog.tbl_schema,
             database=catalog.tbl_database,
             associations=associations,
-            schema_rating_reject=schema_rating_reject
+            schema_rating_reject=schema_rating_reject,
+            product=catalog,
+            user=request.user
         )
 
         rows, count = catalog_db.query(

@@ -287,6 +287,7 @@ Ext.define('Target.view.objects.Panel', {
             cutouts = vm.getStore('cutouts'),
             txtFilterSet = me.lookup('txtFilterSet'),
             displayContents = vm.getStore('displayContents'),
+            preview = me.lookup('targetsPreviewPanel'),
             filterset;
 
         // Limpar as Stores
@@ -333,6 +334,8 @@ Ext.define('Target.view.objects.Panel', {
         txtFilterSet.reset();
 
         me.activeFilter = null;
+
+        preview.clear();
 
     }
 });

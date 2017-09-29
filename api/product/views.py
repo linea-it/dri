@@ -167,7 +167,8 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                         "text": "%s" % row.prd_class.pcl_display_name,
                         "expanded": False,
                         "children": list(),
-                        "pgr_name": str(row.prd_class.pcl_group.pgr_name)
+                        "pgr_name": str(row.prd_class.pcl_group.pgr_name),
+                        "leaf": False,
                     })
                 })
 
