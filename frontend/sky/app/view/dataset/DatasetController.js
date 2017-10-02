@@ -2,7 +2,6 @@
  * This class is the controller for the main view for the application. It is specified as
  * the "controller" of the Main view class.
  *
- * TODO - Replace this content of this view to suite the needs of your application.
  */
 Ext.define('Sky.view.dataset.DatasetController', {
     extend: 'Ext.app.ViewController',
@@ -37,94 +36,6 @@ Ext.define('Sky.view.dataset.DatasetController', {
     winGetLink: null,
 
     lMarker: null,
-
-    //ao clicar em um item do menu de contexto de objeto do visiomatic
-    onObjectMenuItemClickVisiomatic: function (event, feature) {
-        var me = this,
-            view = me.getView(),
-            vm = view.getViewModel(),
-            object = vm.get('currentRecord'),
-            catalog = vm.get('currentCatalog'),
-            object_id, catalog_id;
-
-        if (feature && feature.properties) {
-            catalog_id = feature.properties._meta_catalog_id;
-            object_id  = feature.id;
-        }else {
-            catalog_id = catalog.get('id');
-            object_id  = object.get('_meta_id');
-        }
-
-        if (object_id > 0) {
-
-            var comment = Ext.create('Ext.window.Window', {
-                title: 'Comments',
-                iconCls: 'x-fa fa-comments',
-                layout: 'fit',
-                closeAction: 'destroy',
-                constrainHeader:true,
-                width: 500,
-                height: 300,
-                autoShow:true,
-                onEsc: Ext.emptyFn,
-                items: [
-                    {
-                        xtype: 'comments-object',
-                        reference: '',
-                        listeners: {
-                            scope: this,
-                            changecomments: 'onChangeComments'
-                        }
-                    }
-                ]
-            });
-
-            //passar latlng e feature para ser caregado comentários de um objeto específico ou de uma posição específica
-            comment.down('comments-object').getController().loadComments(catalog_id, object_id, event.latlng, feature);
-        }
-    },
-
-    //ao clicar em um item do menu de contexto de objeto do visiomatic
-    onImageMenuItemClickVisiomatic: function (event, dataset) {
-        var latlng = event.latlng;
-        var comment = Ext.create('Ext.window.Window', {
-            title: 'Position Comments',
-            iconCls: 'x-fa fa-comments',
-            layout: 'fit',
-            closeAction: 'destroy',
-            constrainHeader:true,
-            width: 500,
-            height: 300,
-            autoShow:true,
-            onEsc: Ext.emptyFn,
-            items: [
-                {
-                    xtype: 'comments-position',
-                    listeners: {
-                        scope: this,
-                        changecomments: 'onChangeComments'
-                    }
-                }
-            ]
-        });
-
-        comment.down('comments-position').getController().loadComments(/*dec*/latlng.lat, /*ra*/latlng.lng, dataset);
-    },
-
-    onChangeComments: function (event) {
-        var me = this,
-           view = me.getView(),
-           visiomatic = me.lookupReference('visiomatic'),
-           vm = me.getViewModel(),
-           lmembers = vm.get('overlayMembers');
-
-        if (event && event.comment) {
-            //TODO: atualizar o número de comentários em lmembers.feature.properties.
-            //visiomatic.updateComment(lmembers, event.comment, event.total);
-        }
-
-        //view.fireEvent('changeinobject');
-    },
 
     onLoadPanel: function (dataset) {
         var me = this;
@@ -288,9 +199,15 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     getDatasetInOtherReleases: function (current) {
         var me = this,
+            view = me.getView();
             vm = me.getViewModel(),
             store = vm.getStore('compare');
 
+        // Desabilitar o botao compare
+        view.clearCompareOptions();
+
+        store.clearFilter(true);
+        store.removeAll(true);
         store.filter([
             {
                 'property': 'tli_tilename',
@@ -301,7 +218,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     onResize: function () {
-        console.log('onResize');
+        // console.log('onResize');
 
     },
 
@@ -421,5 +338,93 @@ Ext.define('Sky.view.dataset.DatasetController', {
             visiomatic.panTo(coordinate[0] + ',' + coordinate[1]);
             visiomatic.getMap().setZoom(zoom);
         }*/
-    }
+    },
+
+    //ao clicar em um item do menu de contexto de objeto do visiomatic
+    onObjectMenuItemClickVisiomatic: function (event, feature) {
+        var me = this,
+            view = me.getView(),
+            vm = view.getViewModel(),
+            object = vm.get('currentRecord'),
+            catalog = vm.get('currentCatalog'),
+            object_id, catalog_id;
+
+        if (feature && feature.properties) {
+            catalog_id = feature.properties._meta_catalog_id;
+            object_id  = feature.id;
+        }else {
+            catalog_id = catalog.get('id');
+            object_id  = object.get('_meta_id');
+        }
+
+        if (object_id > 0) {
+
+            var comment = Ext.create('Ext.window.Window', {
+                title: 'Comments',
+                iconCls: 'x-fa fa-comments',
+                layout: 'fit',
+                closeAction: 'destroy',
+                constrainHeader:true,
+                width: 500,
+                height: 300,
+                autoShow:true,
+                onEsc: Ext.emptyFn,
+                items: [
+                    {
+                        xtype: 'comments-object',
+                        reference: '',
+                        listeners: {
+                            scope: this,
+                            changecomments: 'onChangeComments'
+                        }
+                    }
+                ]
+            });
+
+            //passar latlng e feature para ser caregado comentários de um objeto específico ou de uma posição específica
+            comment.down('comments-object').getController().loadComments(catalog_id, object_id, event.latlng, feature);
+        }
+    },
+
+    //ao clicar em um item do menu de contexto de objeto do visiomatic
+    onImageMenuItemClickVisiomatic: function (event, dataset) {
+        var latlng = event.latlng;
+        var comment = Ext.create('Ext.window.Window', {
+            title: 'Position Comments',
+            iconCls: 'x-fa fa-comments',
+            layout: 'fit',
+            closeAction: 'destroy',
+            constrainHeader:true,
+            width: 500,
+            height: 300,
+            autoShow:true,
+            onEsc: Ext.emptyFn,
+            items: [
+                {
+                    xtype: 'comments-position',
+                    listeners: {
+                        scope: this,
+                        changecomments: 'onChangeComments'
+                    }
+                }
+            ]
+        });
+
+        comment.down('comments-position').getController().loadComments(/*dec*/latlng.lat, /*ra*/latlng.lng, dataset);
+    },
+
+    onChangeComments: function (event) {
+        var me = this,
+           view = me.getView(),
+           visiomatic = me.lookupReference('visiomatic'),
+           vm = me.getViewModel(),
+           lmembers = vm.get('overlayMembers');
+
+        if (event && event.comment) {
+            //TODO: atualizar o número de comentários em lmembers.feature.properties.
+            //visiomatic.updateComment(lmembers, event.comment, event.total);
+        }
+
+        //view.fireEvent('changeinobject');
+    },
 });
