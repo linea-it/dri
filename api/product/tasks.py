@@ -237,7 +237,8 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
     try:
 
         # Notificação de inicio
-        export_notify_user_start(user, product)
+        export.notify_user_export_start(user, product)
+
 
         # Criar o diretorio de export
         export_dir = export.create_export_dir(name=product.prd_name)
@@ -405,53 +406,52 @@ def export_create_zip(self, user_id, product_name, export_dir):
     """
     url = export.create_zip(export_dir)
 
-    export_notify_user_success(user_id, product_name, url)
-
-
-@task(name="export_notify_user_start")
-@shared_task
-def export_notify_user_start(user, product):
-    """
-    Envia um email avisando o usuario que a tarefa esta em andamento em background
-    """
-    logger = export.logger
-
-    logger = descutout.logger
-
-    logger.info("Notify user about Export Start")
-
-    export.notify_user_export_start(user, product)
-
-
-@task(name="export_notify_user_success")
-@shared_task
-def export_notify_user_success(user_id, product_name, url):
-    """
-    Envia um email avisando o usuario que a tarefa terminou com sucesso
-    na mensagem contem a url do arquivo.zip gerado.
-    """
-    logger = export.logger
-
-    logger = descutout.logger
-
-    logger.info("Notify user about Export Success")
-
     export.notify_user_export_success(user_id, product_name, url)
 
+# @task(name="export_notify_user_start")
+# @shared_task
+# def export_notify_user_start(user, product):
+#     """
+#     Envia um email avisando o usuario que a tarefa esta em andamento em background
+#     """
+#     logger = export.logger
+#
+#     logger = descutout.logger
+#
+#     logger.info("Notify user about Export Start")
+#
+#     export.notify_user_export_start(user, product)
 
-@task(name="export_notify_user_failure")
-@shared_task
-def export_notify_user_failure(user, product):
-    """
-    Envia um email avisando o usuario que a tarefa falhou.
-    """
-    logger = export.logger
 
-    logger = descutout.logger
+# @task(name="export_notify_user_success")
+# @shared_task
+# def export_notify_user_success(user_id, product_name, url):
+#     """
+#     Envia um email avisando o usuario que a tarefa terminou com sucesso
+#     na mensagem contem a url do arquivo.zip gerado.
+#     """
+#     logger = export.logger
+#
+#     logger = descutout.logger
+#
+#     logger.info("Notify user about Export Success")
+#
+#     export.notify_user_export_success(user_id, product_name, url)
 
-    logger.info("Notify user about Export Failure")
 
-    export.notify_user_export_failure(user, product)
+# @task(name="export_notify_user_failure")
+# @shared_task
+# def export_notify_user_failure(user, product):
+#     """
+#     Envia um email avisando o usuario que a tarefa falhou.
+#     """
+#     logger = export.logger
+#
+#     logger = descutout.logger
+#
+#     logger.info("Notify user about Export Failure")
+#
+#     export.notify_user_export_failure(user, product)
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Product Save As Tasks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
