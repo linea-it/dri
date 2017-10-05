@@ -34,7 +34,8 @@ Ext.define('Explorer.view.coadd.Coadd', {
                 // Painel Esquerdo
                 {
                     xtype: 'panel',
-                    width: 400,
+                    reference: 'detailPanel',
+                    width: 300,
                     margin: '0 10 0 0',
                     layout: {
                         type: 'vbox',
@@ -47,7 +48,6 @@ Ext.define('Explorer.view.coadd.Coadd', {
                             xtype: 'coadd-form',
                             reference: 'properties-form',
                             split: true,
-                            margin: '0 0 10 0'
                         },
                         // Inferior Esquerdo
                         {

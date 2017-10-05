@@ -17,7 +17,7 @@ Ext.define('Explorer.view.coadd.Aladin', {
             infoEnabled: false,
             enableLayersControl: true,
             toolbarPosition: 'top',
-            showFilters: true
+            showFilters: false
 
         });
 
@@ -25,6 +25,7 @@ Ext.define('Explorer.view.coadd.Aladin', {
     },
 
     plotObject: function (object) {
+        // console.log('plotObject(%o)', object)
         var me = this,
             aladin = me.getAladin(),
             libA = me.libA,
