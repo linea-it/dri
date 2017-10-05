@@ -90,8 +90,6 @@ class DesCutoutService:
         try:
             self.logger.debug(req.text)
 
-            self.logger.debug(req.json())
-
             return req.json()["token"]
         except Exception as e:
             text = req.json()
@@ -142,7 +140,8 @@ class DesCutoutService:
         req = requests.post(
             self.host_jobs,
             data=data,
-            verify=self.verify_ssl)
+            verify=self.verify_ssl
+        )
 
         self.logger.debug(req)
 
@@ -171,7 +170,8 @@ class DesCutoutService:
 
         self.logger.info("Get Results for job %s" % jobid)
 
-        # print(req.text)
+        self.logger.debug(req.text)
+
         data = req.json()
 
         if data["status"] != "error" and data["job_status"] == "SUCCESS":
@@ -551,10 +551,15 @@ class DesCutoutService:
             writer.writeheader()
 
             for row in rows:
+
+                ra = float(row.get(associations.get("pos.eq.ra;meta.main")))
+                dec = float(row.get(associations.get("pos.eq.dec;meta.main")))
+
+
                 obj = dict({
                     "id": row.get(associations.get("meta.id;meta.main")),
-                    "ra": row.get(associations.get("pos.eq.ra;meta.main")),
-                    "dec": row.get(associations.get("pos.eq.dec;meta.main")),
+                    "ra": ra,
+                    "dec": dec,
                     "key": str(self.get_object_position_key(
                         row.get(associations.get("pos.eq.ra;meta.main")),
                         row.get(associations.get("pos.eq.dec;meta.main"))))
@@ -562,8 +567,8 @@ class DesCutoutService:
 
                 writer.writerow(obj)
 
-                lra.append(float(obj.get("ra")))
-                ldec.append(float(obj.get("dec")))
+                lra.append(ra)
+                ldec.append(dec)
 
         objects_csv.close()
 
@@ -669,49 +674,6 @@ class DesCutoutService:
         self.logger.debug("Cutout ID %s Registred" % cutout.pk)
         return cutout
 
-    # class CutoutJobsDBHelper(CatalogDB):
-    # def __init__(self, table, schema=None, database=None):
-    #
-    #     # Get an instance of a logger
-    #     self.logger = logging.getLogger("descutoutservice")
-    #
-    #     self.schema = schema
-    #
-    #     if database:
-    #         self.db = CatalogDB(db=database)
-    #     else:
-    #         self.db = CatalogDB()
-    #
-    #     if not self.db.table_exists(table, schema=self.schema):
-    #         raise Exception("Table or view  %s.%s does not exist" %
-    #                         (self.schema, table))
-    #
-    #     # Desabilitar os warnings na criacao da tabela
-    #     with warnings.catch_warnings():
-    #         warnings.simplefilter("ignore", category=sa_exc.SAWarning)
-    #
-    #         self.table = self.db.get_table_obj(table, schema=self.schema)
-    #         self.str_columns = [column.key for column in self.table.columns]
-
-    # def query_result(self, properties):
-    #     cols = [
-    #         properties.get("meta.id;meta.main"),
-    #         properties.get("pos.eq.ra;meta.main"),
-    #         properties.get("pos.eq.dec;meta.main")
-    #     ]
-    #     columns = list()
-    #
-    #     for col in cols:
-    #         col = col.lower().strip()
-    #         if col in self.str_columns:
-    #             columns.append(column(str(col)))
-    #
-    #     stm = select(columns).select_from(self.table)
-    #     self.logger.debug("Catalog Query: %s" % str(stm))
-    #
-    #     return self.db.fetchall_dict(stm)
-
-
 class CutoutJobNotify:
     def __init__(self):
         # Get an instance of a logger
@@ -797,7 +759,8 @@ class CutoutJobNotify:
         try:
             context = dict({
                 "username": cutoutjob.owner.username,
-                "target_display_name": cutoutjob.cjb_product.prd_display_name
+                "target_display_name": cutoutjob.cjb_product.prd_display_name,
+                "cutoutjob_display_name": cutoutjob.cjb_display_name,
             })
 
             return render_to_string("cutout_notification_start.html", context)
@@ -816,6 +779,7 @@ class CutoutJobNotify:
             context = dict({
                 "username": cutoutjob.owner.username,
                 "target_display_name": cutoutjob.cjb_product.prd_display_name,
+                "cutoutjob_display_name": cutoutjob.cjb_display_name,
                 "execution_time_humanized": execution_time_humanized
             })
 
