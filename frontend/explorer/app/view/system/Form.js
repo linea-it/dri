@@ -43,18 +43,6 @@ Ext.define('Explorer.view.system.Form', {
                                 value: '{object_data._meta_radius}'
                             }
                         }
-                        // {
-                        //     fieldLabel: 'RA (deg)',
-                        //     bind: {
-                        //         value: '{object._meta_ra}'
-                        //     }
-                        // },
-                        // {
-                        //     fieldLabel: 'Dec (deg)',
-                        //     bind: {
-                        //         value: '{object._meta_dec}'
-                        //     }
-                        // }
                     ]
                 }
             ]

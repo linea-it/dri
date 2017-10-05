@@ -14,9 +14,6 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             }
         },
         store: {
-            '#coaddObject': {
-                load: 'onLoadObject'
-            },
             '#datasets': {
                 load: 'onLoadDatasets'
             }
@@ -24,36 +21,123 @@ Ext.define('Explorer.view.coadd.CoaddController', {
     },
 
     onLoadPanel: function (source, object_id) {
-        this.loadObject();
+        // console.log('onLoadPanel(%o, %o)', source, object_id);
+        this.loadProduct(source);
 
     },
 
-    loadObject: function () {
+    loadProduct: function (source) {
+        // console.log('loadProduct(%o)', source);
         var me = this,
+            view = me.getView(),
             vm = me.getViewModel(),
-            store = vm.getStore('coaddObject'),
-            source = vm.get('source'),
-            object_id = vm.get('object_id'),
-            view = me.getView();
+            products = vm.getStore('products');
 
         view.setLoading(true);
 
-        store.addFilter([
-            {
-                'property': 'source',
-                'value': source
-            },
-            {
-                'property': 'coadd_object_id',
-                'value': object_id
-            }
-        ]);
+        products.addFilter({
+            property: 'prd_name',
+            value: source
+        });
 
-        store.load();
+        products.load({
+            callback: function () {
+                if (this.count() === 1) {
+                    me.onLoadProduct(this.first());
+
+                    view.setLoading(false);
+                }
+
+            }
+        });
 
     },
 
-    onLoadObject: function (store) {
+    onLoadProduct: function (product) {
+        // console.log('onLoadProduct(%o)', product)
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            detailPanel = me.lookup('detailPanel');
+
+        vm.set('currentProduct', product);
+
+        detailPanel.setTitle(product.get('prd_display_name'));
+
+        // Descobrir a Propriedade Id
+        me.loadAssociations(product);
+
+    },
+
+    loadAssociations: function (product) {
+        // console.log('loadAssociations(%o)', product);
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            associations = vm.getStore('associations');
+
+        view.setLoading(true);
+
+        associations.addFilter({
+            property: 'pca_product',
+            value: product.get('id')
+        });
+
+        associations.load({
+            callback: function () {
+                if (this.count() > 0) {
+
+                    this.each(function (item) {
+                        if (item.get('pcc_ucd') === 'meta.id;meta.main') {
+                            vm.set('property_id', item.get('pcn_column_name'));
+                        }
+
+                    }, me);
+
+                    view.setLoading(false);
+
+                    me.loadObject();
+                }
+            }
+        });
+    },
+
+
+    loadObject: function () {
+        // console.log('loadObject()');
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            product = vm.get('currentProduct'),
+            objects = vm.getStore('objects'),
+            object_id = vm.get('object_id'),
+            property_id = vm.get('property_id');
+
+        view.setLoading(true);
+
+        objects.addFilter([
+            {
+                property: 'product',
+                value: product.get('id')
+            },
+            {
+                property: property_id,
+                value: object_id
+            }
+        ]);
+
+        objects.load({
+            callback: function () {
+                if (this.count() === 1) {
+                    me.onLoadObject(this.first());
+
+                    view.setLoading(false);
+                }
+            }
+        });
+    },
+
+    onLoadObject: function (object) {
         var me = this,
             vm = me.getViewModel(),
             grid = me.lookupReference('properties-grid'),
@@ -61,29 +145,26 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             datasets = vm.getStore('datasets'),
             aladin = me.lookupReference('aladin'),
             view = me.getView(),
-            coaddObject, data, position;
+            data, position;
 
         // Setar as propriedades
         properties.removeAll();
 
-        if (store.count() == 1) {
-            coaddObject = store.first();
-            data = coaddObject.data;
+        data = object.data;
 
-            for (var property in data) {
-                var prop = property.toLowerCase();
+        for (var property in data) {
+            var prop = property.toLowerCase();
 
-                // nao incluir as propriedades _meta
-                if (prop.indexOf('_meta_') === -1) {
-                    properties.add([
-                        [property.toLowerCase(), data[property]]
-                    ]);
-                }
+            // nao incluir as propriedades _meta
+            if (prop.indexOf('_meta_') === -1) {
+                properties.add([
+                    [property.toLowerCase(), data[property]]
+                ]);
             }
-
-            vm.set('coaddObject', data);
-
         }
+
+        vm.set('object_data', data);
+
 
         grid.setStore(properties);
 
@@ -162,7 +243,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
     onChangeImage: function () {
         var me = this,
             vm = me.getViewModel(),
-            object = vm.get('coaddObject'),
+            object = vm.get('object_data'),
             visiomatic = me.lookupReference('visiomatic'),
             fov = 0.05;
 

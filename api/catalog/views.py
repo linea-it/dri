@@ -240,6 +240,8 @@ class CatalogObjectsViewSet(ViewSet):
         for row in rows:
             row.update({
                 "_meta_catalog_id": catalog.pk,
+                "_meta_catalog_name": catalog.prd_name,
+                "_meta_catalog_class": catalog.prd_class.pcl_name,
                 "_meta_is_system": catalog.prd_class.pcl_is_system,
                 "_meta_id": '',
                 "_meta_ra": 0,

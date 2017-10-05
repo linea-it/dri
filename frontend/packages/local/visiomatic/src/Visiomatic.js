@@ -493,7 +493,7 @@ Ext.define('visiomatic.Visiomatic', {
         args = Ext.Object.merge(imageOptions, options);
 
         me.image = image;
-        if (!imageLayer) { 
+        if (!imageLayer) {
             imageLayer = libL.tileLayer.iip(image, args).addTo(map);
 
             me.setImageLayer(imageLayer);
@@ -1068,6 +1068,7 @@ Ext.define('visiomatic.Visiomatic', {
             properties = feature.properties,
             mags = ['_meta_mag_auto_g','_meta_mag_auto_r','_meta_mag_auto_i', '_meta_mag_auto_z', '_meta_mag_auto_y'],
             mag_tags = [],
+            tag_id = feature.properties._meta_id,
             popup;
 
         Ext.each(mags, function (mag) {
@@ -1087,12 +1088,36 @@ Ext.define('visiomatic.Visiomatic', {
             }
         });
 
+        // Link para explorer
+        if (feature.properties._meta_is_system) {
+            // Se o objeto e um sistema utilizar o explorer system
+            tag_id = '<a href="/dri/apps/explorer/#system/' +
+               feature.properties._meta_catalog_name + '/' +
+               feature.properties._meta_id + '"target="_blank">' +
+               feature.properties._meta_id + '</a>';
+
+        } else {
+            if (feature.properties._meta_catalog_class == 'coadd_objects') {
+                // se o Objeto e um coadd object utilizar o explorer coadd
+                tag_id = '<a href="/dri/apps/explorer/#coadd/' +
+                   feature.properties._meta_catalog_name + '/' +
+                   feature.properties._meta_id + '"target="_blank">' +
+                   feature.properties._meta_id + '</a>';
+
+            } else {
+                // se o Objeto e um single object utilizar o explorer single
+
+                // TODO: ou dar a opcao de visualizar o coadd_objects.
+            }
+        }
+
         popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
            '<TABLE style="margin:auto;">' +
            '<TBODY style="vertical-align:top;text-align:left;">' +
-                '<TR><TD><spam>ID</spam>: </TD><TD>' + feature.properties._meta_id + '</td></tr>' +
+                '<TR><TD><spam>ID</spam>: </TD><TD>' + tag_id + '</TD></TR>' +
                 '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
-                    feature.properties._meta_ra.toFixed(5) + ', ' + feature.properties._meta_dec.toFixed(5) +
+                    feature.properties._meta_ra.toFixed(5) + ', '
+                    + feature.properties._meta_dec.toFixed(5) +
                 '</td></tr>' +
                 mag_tags.join('') +
             '</TBODY></TABLE>';
