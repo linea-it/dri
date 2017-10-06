@@ -105,7 +105,7 @@ class ActivityReports:
 
         # subject
         subject = (
-            "Science Server portal @ NCSA status %s - %s - %s" % (report_date.year, report_date.month, report_date.day))
+            "portal @ NCSA status %s - %s - %s" % (report_date.year, report_date.month, report_date.day))
 
         # Recuperar as visitas unicas do dia.
         visits = self.unique_visits_by_date(

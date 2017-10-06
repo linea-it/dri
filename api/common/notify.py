@@ -23,6 +23,12 @@ class Notify():
         except:
             raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
+        try:
+            environment = settings.ENVIRONMENT_NAME
+        except:
+            raise Exception("The ENVIRONMENT_NAME variable is not configured in settings.")
+
+
         self.logger.debug("FROM: %s" % from_email)
 
         # Se o parametro to nao for uma lista corverter para lista.
@@ -36,8 +42,10 @@ class Notify():
             except:
                 raise Exception("The EMAIL_NOTIFICATION_COPY_TO variable is not configured in settings.")
 
-
         self.logger.debug("TO: %s" % to)
+
+        # Subject
+        subject = ("LIneA Science Server %s - %s" % (environment, subject))
 
         self.logger.debug("SUBJECT: %s" % subject)
 

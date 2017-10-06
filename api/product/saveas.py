@@ -176,7 +176,7 @@ class SaveAs:
 
         if user.email:
             self.logger.info("Sending mail notification.")
-            subject = "LIneA Science Server - Save As Started"
+            subject = "Save As Started"
 
             body = render_to_string("saveas_notification_start.html", {
                 "username": user.username,
@@ -195,7 +195,7 @@ class SaveAs:
             host = settings.BASE_HOST
             url = urljoin(host, os.path.join("dri/apps/target/#cv", str(new_product.pk)))
 
-            subject = "LIneA Science Server - Save As Finish"
+            subject = "Save As Finish"
 
             body = render_to_string("saveas_notification_finish.html", {
                 "username": user.username,

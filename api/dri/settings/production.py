@@ -4,6 +4,9 @@ from dri.settings.local_vars import *
 
 import os
 
+# Identification of the environment, leave empty for production
+ENVIRONMENT_NAME = ""
+
 ALLOWED_HOSTS = '*'
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True

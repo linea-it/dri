@@ -691,19 +691,19 @@ class CutoutJobNotify:
             to_email = cutoutjob.owner.email
 
             if cutoutjob.cjb_status == 'st':
-                subject = "LIneA Science Server - Mosaic in progress"
+                subject = "Mosaic in progress"
                 message = self.generate_start_email(cutoutjob)
 
             elif cutoutjob.cjb_status == 'ok':
-                subject = "LIneA Science Server - Mosaic Finish"
+                subject = "Mosaic Finish"
                 message = self.generate_success_email(cutoutjob)
 
             elif cutoutjob.cjb_status == 'er':
-                subject = "LIneA Science Server - Mosaic Failed"
+                subject = "Mosaic Failed"
                 message = self.generate_failure_email(cutoutjob)
 
             elif cutoutjob.cjb_status == 'je':
-                subject = "LIneA Science Server - Mosaic Failed"
+                subject = "Mosaic Failed"
                 message = self.generate_failure_email(cutoutjob)
 
             if message:
