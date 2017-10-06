@@ -10,6 +10,5 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 DEBUG = True
 
-# INSTALLED_APPS.extend([
-#     'debug_toolbar',
-# ])
+# Enables or disables sending daily email access statistics.
+SEND_DAILY_STATISTICS_EMAIL = False

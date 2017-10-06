@@ -81,7 +81,7 @@ class ActivityReports:
             raise e
 
     def report_email_unique_visits(self, report_date):
-        print("report_email_unique_visits")
+
         try:
             from_email = settings.EMAIL_NOTIFICATION
         except:
@@ -91,6 +91,17 @@ class ActivityReports:
             email_admin = settings.EMAIL_ADMIN
         except:
             raise Exception("The EMAIL_ADMIN variable is not configured in settings.")
+
+        try:
+            send_daily_email = settings.SEND_DAILY_STATISTICS_EMAIL
+        except:
+            raise Exception("The SEND_DAILY_STATISTICS_EMAIL variable is not configured in settings.")
+
+
+        # Se a variavel de configuracao SEND_DAILY_STATISTICS_EMAIL for False nao envia a notificacao.
+        if not send_daily_email:
+            return
+
 
         # subject
         subject = (
