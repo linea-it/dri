@@ -32,7 +32,7 @@ class DesCutoutService:
 
         try:
             params = settings.DES_CUTOUT_SERVICE
-            self.logger.debug(params)
+            # self.logger.debug(params)
 
             self.host = params["HOST"]
             self.user = params["USER"]
@@ -164,6 +164,10 @@ class DesCutoutService:
         """
         Get Job Results : Mainly returns a list of links to files
 
+        return
+            links (string): quando o job termina com sucesso
+            None: quando o job ainda nao terminou
+            False: quando o job retorna com status failure
         """
         req = requests.get(
             self.host_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
@@ -175,13 +179,20 @@ class DesCutoutService:
         data = req.json()
 
         if data["status"] != "error" and data["job_status"] == "SUCCESS":
-            self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
 
-            return data["links"]
+            if "links" in data and data["links"] is not None:
+                self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
+
+                return data["links"]
+            else:
+                # Nao retornou a lista de resultado
+                self.logger.warning("Descut returned success, but not the list of download links.")
+                return None
 
         elif data["status"] != "error" and data["job_status"] == "PENDING":
             # O job ainda nao terminou no servidor
             self.logger.info("This job %s is still running" % jobid)
+            return None
 
         else:
             return False
