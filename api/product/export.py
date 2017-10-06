@@ -304,7 +304,7 @@ class Export:
         if user.email:
             self.logger.info("Sending mail notification START.")
 
-            subject = "LIneA Science Server - Download in Progress"
+            subject = "Download in Progress"
             body = render_to_string("export_notification_start.html", {
                 "username": user.username,
                 "target_display_name": product.prd_display_name
@@ -332,7 +332,7 @@ class Export:
             except:
                 raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
-            subject = "LIneA Science Server - Download Finish"
+            subject = "Download Finish"
             body = render_to_string("export_notification_finish.html", {
                 "username": user.username,
                 "target_display_name": product_name,
@@ -357,7 +357,7 @@ class Export:
             except:
                 raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
 
-            subject = "LIneA Science Server - Download Failed"
+            subject = "Download Failed"
             body = render_to_string("export_notification_error.html", {
                 "username": user.username,
                 "target_display_name": product.prd_display_name
