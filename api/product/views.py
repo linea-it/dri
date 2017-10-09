@@ -550,13 +550,13 @@ class CutoutJobViewSet(viewsets.ModelViewSet):
     """
 
     """
-    queryset = CutOutJob.objects.all()
+    queryset = CutOutJob.objects.all().order_by('-cjb_finish_time')
 
     serializer_class = CutoutJobSerializer
 
     filter_fields = ('id', 'cjb_product', 'cjb_display_name', 'cjb_status')
 
-    ordering_fields = ('id',)
+    ordering_fields = ('id', 'cjb_finish_time')
 
 
 class CutoutViewSet(viewsets.ModelViewSet):
