@@ -11,7 +11,7 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
 
     title: 'Save As',
     width: 450,
-    height: 500,
+    height: 300,
     modal: true,
     autoShow: true,
     controller: 'savecatalog',
@@ -44,8 +44,8 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
                     // bodyPadding: 10,
                     fieldDefaults: {
                         msgTarget: 'side',
-                        labelAlign: 'top',
-                        labelWidth: 100,
+//                        labelAlign: 'top',
+//                        labelWidth: 100,
                         labelStyle: 'font-weight:bold'
                     },
                     items: [
@@ -58,45 +58,6 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
                             regex: /^[a-z0-9-_\s]+$/i,
                             regexText: 'Please use only letters and numbers separated by spaces \' \', minus sign \'-\' or underscore \'_\'.'
                         },
-                        // {
-                        //     xtype: 'tagfield',
-                        //     name: 'filters',
-                        //     fieldLabel: 'Filters',
-                        //     displayField: 'fst_name',
-                        //     publishes: 'id',
-                        //     valueField: 'id',
-                        //     queryMode: 'local',
-                        //     allowBlank: true,
-                        //     bind: {
-                        //         store: '{filterSets}'
-                        //     }
-                        // },
-                        // {
-                        //     xtype: 'multiselector',
-                        //     reference: 'mtsColumns',
-                        //     title: 'Columns',
-                        //     name: 'columns',
-                        //     height: 150,
-                        //     viewConfig: {
-                        //         deferEmptyText: false,
-                        //         emptyText: 'Choose a set of columns or leave it blank to keep them all. </br> Use + to add columns.'
-                        //     },
-                        //     fieldName: 'pcn_column_name',
-                        //     valueField: 'pcn_column_name',
-                        //     search: {
-                        //         field: 'pcn_column_name',
-                        //         store: Ext.create('Ext.data.Store', {
-                        //             storeId: 'multiselectColumnsStore',
-                        //             model: 'Target.model.CatalogColumn',
-                        //             sorters: 'pcn_column_name',
-                        //             proxy: {
-                        //                 type: 'django',
-                        //                 limitParam: null,
-                        //                 url: '/dri/api/productcontent/'
-                        //             }
-                        //         })
-                        //     }
-                        // },
                         {
                             xtype: 'textarea',
                             fieldLabel: 'Comment',
