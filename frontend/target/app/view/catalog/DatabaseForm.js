@@ -38,7 +38,7 @@ Ext.define('Target.view.catalog.DatabaseForm', {
     bodyPadding: 10,
     submitEmptyText: false,
     defaults: {
-        labelAlign: 'top',
+//        labelAlign: 'top',
         anchor: '100%'
     },
     items: [
