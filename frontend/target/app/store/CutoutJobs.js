@@ -15,6 +15,13 @@ Ext.define('Target.store.CutoutJobs', {
 
     proxy: {
         url: '/dri/api/cutoutjob/'
-    }
+    },
+
+    sorters: [
+        {
+            property: 'cjb_finish_time',
+            direction: 'DESC'
+        }
+    ]
 
 });
