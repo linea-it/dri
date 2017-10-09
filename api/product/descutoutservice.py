@@ -547,7 +547,7 @@ class DesCutoutService:
 
         rows, count = catalog_db.query(
             columns=columns,
-            limit=100
+            # limit=100
         )
 
         # Criar um arquivo que servira de index para a associar os objetos as imagens
