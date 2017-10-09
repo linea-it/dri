@@ -952,7 +952,7 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             me.winCutoutjobInfo = Ext.create('Target.view.objects.CutoutJobDetailWindow',{
                 width: 300,
-                height: 400,
+                height: 420,
                 title: cutoutjob.get('cjb_display_name'),
                 listeners: {
                     scope: me,
