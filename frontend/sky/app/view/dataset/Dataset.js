@@ -225,19 +225,28 @@ Ext.define('Sky.view.dataset.Dataset', {
 
     },
 
+    clearCompareOptions: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            btn = me.down('#CompareDataset');
+
+        // Limpar os menus anteriores
+        btn.getMenu().removeAll();
+
+        vm.set('disablecompare', true);
+
+    },
+
     updateCompareOptions: function () {
         var me = this,
+            vm = me.getViewModel(),
             store = me.getDatasets(),
             btn = me.down('#CompareDataset'),
             currentDataset = me.getCurrentDataset(),
             items = [],
             item;
 
-        // Limpar os menus anteriores
-        btn.getMenu().removeAll();
-
-        // Desabilita o botao
-        btn.disable();
+        me.clearCompareOptions();
 
         if (!currentDataset) {
             return false;
@@ -274,7 +283,7 @@ Ext.define('Sky.view.dataset.Dataset', {
             btn.getMenu().add(items);
 
             // Habilita o botao
-            btn.enable();
+            vm.set('disablecompare', false);
 
         }
     },

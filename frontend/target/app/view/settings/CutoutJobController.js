@@ -104,7 +104,8 @@ Ext.define('Target.view.settings.CutoutJobController', {
                 cjb_xsize: parseFloat(values.xsize / 60).toFixed(3),
                 cjb_ysize: parseFloat(values.ysize / 60).toFixed(3),
                 cjb_Blacklist: false,
-                cjb_status: 'st' // Status Start
+                cjb_status: 'st', // Status Start
+                cjb_description: values.cjb_description
             });
 
             if (values.job_type == 'single') {

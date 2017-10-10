@@ -43,7 +43,8 @@ Ext.define('Sky.view.dataset.DatasetModel', {
 
         compare: {
             type: 'datasets',
-            storeId: 'compare'
+            storeId: 'compare',
+            autoLoad: false
         }
 
     }

@@ -306,6 +306,9 @@ class CutOutJob(models.Model):
     cjb_finish_time = models.DateTimeField(
         auto_now_add=False, null=True, blank=True, verbose_name='Finish')
 
+    cjb_description = models.CharField(
+        max_length=1024, verbose_name='Description', null=True, blank=True)
+
     def __str__(self):
         return str(self.cjb_display_name)
 

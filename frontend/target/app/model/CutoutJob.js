@@ -27,6 +27,7 @@ Ext.define('Target.model.CutoutJob', {
         {name:'cjb_start_time', type: 'date'},
         {name:'cjb_finish_time', type: 'date'},
 
+        {name:'cjb_description', type: 'string'},
 
         {name:'cjb_status', type: 'string', default: 'st'},
         {name:'cjb_job_id', type: 'string', persist: false},
@@ -36,7 +37,6 @@ Ext.define('Target.model.CutoutJob', {
         {name:'execution_time', type: 'string', persist: false},
         {name:'count_files', type: 'int', persist: false},
         {name:'file_sizes', type: 'string', persist: false},
-
 
         {
             name: 'ready_to_download',

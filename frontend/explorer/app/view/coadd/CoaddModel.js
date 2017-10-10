@@ -4,18 +4,28 @@ Ext.define('Explorer.view.coadd.CoaddModel', {
     alias: 'viewmodel.coadd',
 
     requires: [
-        'Explorer.store.CoaddObject',
+        'Explorer.store.Products',
+        'Explorer.store.Association',
+        'Explorer.store.Objects',
+        'common.store.Datasets',
         'common.model.Dataset',
-        'common.store.Datasets'
+        'Explorer.model.Product',
+
+
     ],
 
     data: {
         source: null,
         object_id: null,
-        coaddObject: null
+        object_data: null,
+        property_id: null,
     },
 
     links: {
+        currentProduct: {
+            type: 'Explorer.model.Product',
+            create: true
+        },
         currentDataset: {
             type: 'common.model.Dataset',
             create: true
@@ -23,9 +33,14 @@ Ext.define('Explorer.view.coadd.CoaddModel', {
     },
 
     stores: {
-        coaddObject: {
-            type: 'coaddobject',
-            storeId: 'coaddObject'
+        products: {
+            type: 'products'
+        },
+        associations: {
+            type: 'association'
+        },
+        objects: {
+            type: 'objects'
         },
         properties: {
             type: 'array',

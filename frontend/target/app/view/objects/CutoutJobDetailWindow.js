@@ -73,6 +73,13 @@ Ext.define('Target.view.objects.CutoutJobDetailWindow', {
                             fieldLabel: 'Size',
                             name: 'file_sizes'
                         },
+                        {
+                            xtype: 'textarea',
+                            labelAlign: 'top',
+                            fieldLabel: 'Comment',
+                            name: 'cjb_description',
+                            maxLength: 1024
+                        }
                     ]
                 }
             ],

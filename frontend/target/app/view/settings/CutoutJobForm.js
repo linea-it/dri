@@ -10,7 +10,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
 
     title: 'Create Mosaic',
     width: 450,
-    height: 450,
+    height: 500,
     layout: 'fit',
     modal: true,
 
@@ -31,7 +31,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
             items: [
                 {
                     xtype: 'form',
-                    bodyPadding: 40,
+                    bodyPadding: 20,
                     defaults: {
                         labelWidth: 125,
                         anchor: '95%',
@@ -174,9 +174,15 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     }
                                 }
                             ]
+                        },
+                        {
+                            xtype: 'textarea',
+                            labelAlign: 'top',
+                            fieldLabel: 'Comment',
+                            name: 'cjb_description',
+                            maxLength: 1024
                         }
                     ]
-
                 }
             ],
             buttons: [

@@ -32,7 +32,7 @@ class DesCutoutService:
 
         try:
             params = settings.DES_CUTOUT_SERVICE
-            self.logger.debug(params)
+            # self.logger.debug(params)
 
             self.host = params["HOST"]
             self.user = params["USER"]
@@ -90,8 +90,6 @@ class DesCutoutService:
         try:
             self.logger.debug(req.text)
 
-            self.logger.debug(req.json())
-
             return req.json()["token"]
         except Exception as e:
             text = req.json()
@@ -142,7 +140,8 @@ class DesCutoutService:
         req = requests.post(
             self.host_jobs,
             data=data,
-            verify=self.verify_ssl)
+            verify=self.verify_ssl
+        )
 
         self.logger.debug(req)
 
@@ -165,23 +164,35 @@ class DesCutoutService:
         """
         Get Job Results : Mainly returns a list of links to files
 
+        return
+            links (string): quando o job termina com sucesso
+            None: quando o job ainda nao terminou
+            False: quando o job retorna com status failure
         """
         req = requests.get(
             self.host_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
 
         self.logger.info("Get Results for job %s" % jobid)
 
-        # print(req.text)
+        self.logger.debug(req.text)
+
         data = req.json()
 
         if data["status"] != "error" and data["job_status"] == "SUCCESS":
-            self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
 
-            return data["links"]
+            if "links" in data and data["links"] is not None:
+                self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
+
+                return data["links"]
+            else:
+                # Nao retornou a lista de resultado
+                self.logger.warning("Descut returned success, but not the list of download links.")
+                return None
 
         elif data["status"] != "error" and data["job_status"] == "PENDING":
             # O job ainda nao terminou no servidor
             self.logger.info("This job %s is still running" % jobid)
+            return None
 
         else:
             return False
@@ -536,7 +547,7 @@ class DesCutoutService:
 
         rows, count = catalog_db.query(
             columns=columns,
-            limit=100
+            # limit=100
         )
 
         # Criar um arquivo que servira de index para a associar os objetos as imagens
@@ -551,10 +562,15 @@ class DesCutoutService:
             writer.writeheader()
 
             for row in rows:
+
+                ra = float(row.get(associations.get("pos.eq.ra;meta.main")))
+                dec = float(row.get(associations.get("pos.eq.dec;meta.main")))
+
+
                 obj = dict({
                     "id": row.get(associations.get("meta.id;meta.main")),
-                    "ra": row.get(associations.get("pos.eq.ra;meta.main")),
-                    "dec": row.get(associations.get("pos.eq.dec;meta.main")),
+                    "ra": ra,
+                    "dec": dec,
                     "key": str(self.get_object_position_key(
                         row.get(associations.get("pos.eq.ra;meta.main")),
                         row.get(associations.get("pos.eq.dec;meta.main"))))
@@ -562,8 +578,8 @@ class DesCutoutService:
 
                 writer.writerow(obj)
 
-                lra.append(float(obj.get("ra")))
-                ldec.append(float(obj.get("dec")))
+                lra.append(ra)
+                ldec.append(dec)
 
         objects_csv.close()
 
@@ -669,49 +685,6 @@ class DesCutoutService:
         self.logger.debug("Cutout ID %s Registred" % cutout.pk)
         return cutout
 
-    # class CutoutJobsDBHelper(CatalogDB):
-    # def __init__(self, table, schema=None, database=None):
-    #
-    #     # Get an instance of a logger
-    #     self.logger = logging.getLogger("descutoutservice")
-    #
-    #     self.schema = schema
-    #
-    #     if database:
-    #         self.db = CatalogDB(db=database)
-    #     else:
-    #         self.db = CatalogDB()
-    #
-    #     if not self.db.table_exists(table, schema=self.schema):
-    #         raise Exception("Table or view  %s.%s does not exist" %
-    #                         (self.schema, table))
-    #
-    #     # Desabilitar os warnings na criacao da tabela
-    #     with warnings.catch_warnings():
-    #         warnings.simplefilter("ignore", category=sa_exc.SAWarning)
-    #
-    #         self.table = self.db.get_table_obj(table, schema=self.schema)
-    #         self.str_columns = [column.key for column in self.table.columns]
-
-    # def query_result(self, properties):
-    #     cols = [
-    #         properties.get("meta.id;meta.main"),
-    #         properties.get("pos.eq.ra;meta.main"),
-    #         properties.get("pos.eq.dec;meta.main")
-    #     ]
-    #     columns = list()
-    #
-    #     for col in cols:
-    #         col = col.lower().strip()
-    #         if col in self.str_columns:
-    #             columns.append(column(str(col)))
-    #
-    #     stm = select(columns).select_from(self.table)
-    #     self.logger.debug("Catalog Query: %s" % str(stm))
-    #
-    #     return self.db.fetchall_dict(stm)
-
-
 class CutoutJobNotify:
     def __init__(self):
         # Get an instance of a logger
@@ -729,19 +702,19 @@ class CutoutJobNotify:
             to_email = cutoutjob.owner.email
 
             if cutoutjob.cjb_status == 'st':
-                subject = "LIneA Science Server - Mosaic in progress"
+                subject = "Mosaic in progress"
                 message = self.generate_start_email(cutoutjob)
 
             elif cutoutjob.cjb_status == 'ok':
-                subject = "LIneA Science Server - Mosaic Finish"
+                subject = "Mosaic Finish"
                 message = self.generate_success_email(cutoutjob)
 
             elif cutoutjob.cjb_status == 'er':
-                subject = "LIneA Science Server - Mosaic Failed"
+                subject = "Mosaic Failed"
                 message = self.generate_failure_email(cutoutjob)
 
             elif cutoutjob.cjb_status == 'je':
-                subject = "LIneA Science Server - Mosaic Failed"
+                subject = "Mosaic Failed"
                 message = self.generate_failure_email(cutoutjob)
 
             if message:
@@ -797,7 +770,8 @@ class CutoutJobNotify:
         try:
             context = dict({
                 "username": cutoutjob.owner.username,
-                "target_display_name": cutoutjob.cjb_product.prd_display_name
+                "target_display_name": cutoutjob.cjb_product.prd_display_name,
+                "cutoutjob_display_name": cutoutjob.cjb_display_name,
             })
 
             return render_to_string("cutout_notification_start.html", context)
@@ -816,6 +790,7 @@ class CutoutJobNotify:
             context = dict({
                 "username": cutoutjob.owner.username,
                 "target_display_name": cutoutjob.cjb_product.prd_display_name,
+                "cutoutjob_display_name": cutoutjob.cjb_display_name,
                 "execution_time_humanized": execution_time_humanized
             })
 

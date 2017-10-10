@@ -217,14 +217,17 @@ Ext.define('aladin.Interfaces', {
 
         // Export Png
         if (me.getEnableExportPng()) {
-
-            tools.push({
-                xtype: 'button',
-                tooltip: 'Snapshot',
-                iconCls: 'x-fa fa-camera',
-                scope: me,
-                handler: me.exportAsPng
-            });
+            // Habilitar o botão apenas se o navegador for firefox,
+            // a funcao do aladin de snapshot nao funciona no google chrome.
+            if (Ext.firefoxVersion > 0) {
+              tools.push({
+                  xtype: 'button',
+                  tooltip: 'Snapshot',
+                  iconCls: 'x-fa fa-camera',
+                  scope: me,
+                  handler: me.exportAsPng
+              });
+            }
         }
 
         // Auxiliar Tools

@@ -167,31 +167,15 @@ def get_token(request):
 @api_view(['GET'])
 def teste(request):
     if request.method == 'GET':
-        print('Teste---------------------')
+        return Response(dict({'status': "success"}))
 
-        # from activity_statistic.tasks import test
+        # from activity_statistic.reports import ActivityReports
+        # import datetime
         #
-        # result = test.delay()
-        # print(result)
-        from activity_statistic.reports import ActivityReports
-        from datetime import datetime
-        today = datetime.today()
+        # yesterday = datetime.date.today() - datetime.timedelta(days=1)
+        #
+        # ActivityReports().report_email_unique_visits(yesterday)
+        #
+        # visits = ActivityReports().unique_visits_by_date(year=yesterday.year, month=yesterday.month, day=yesterday.day)
+        # return Response(dict({'data': visits}))
 
-        visits = ActivityReports().unique_visits_by_date(year=today.year, month=today.month, day=today.day)
-        return Response(dict({'data': visits}))
-
-        # from product.tasks import start_des_cutout_job_by_id
-        # from pprint import pprint
-
-        # result = start_des_cutout_job_by_id.delay(37)
-        # pprint(result)
-        # from product.descutoutservice import DesCutoutService, CutoutJobNotify
-        # cutoutjobs = DesCutoutService()
-        # cutoutjob = cutoutjobs.get_cutoutjobs_by_id(68)
-        # teste = CutoutJobNotify().create_email_message(cutoutjob)
-        # a = cutoutjobs.start_job_by_id(46)
-        # a = cutoutjobs.check_jobs()
-        # a = cutoutjobs.start_job()
-        # a = cutoutjobs.test_api_help()
-
-        # return Response(dict({'teste': ''}))

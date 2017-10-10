@@ -40,6 +40,9 @@ SCHEMA_RATING_REJECT = None
 # utilizar o nome de usuario da conf 'catalog'
 SCHEMA_SAVE_AS = None
 
+# CELERY
+CELERY_BROKER_URL = 'amqp://localhost'
+
 # Email notification configs
 # Email utilizado para enviar as notificacoes do science server
 EMAIL_NOTIFICATION = 'ncsa-portal@desportal.cosmology.illinois.edu'
