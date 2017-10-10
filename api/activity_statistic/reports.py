@@ -29,6 +29,7 @@ class ActivityReports:
                 # Recuperar a visita
                 visit = self.get_or_create_unique_visit(activity)
 
+
         # Recuperar os usuarios que visitaram neste dia + o total de visitas dele no mes
         visits_count = Visit.objects.filter(
             date__year=year,
@@ -36,13 +37,18 @@ class ActivityReports:
             date__day=day,
             owner__pk__in=users).order_by('-date')
 
-        # Todo falta fazer a conta de acessos por mes do usuario
-
         for a in visits_count:
+
+            # Recupera as visitas unicas por neste mes por cada usuario.
+            visits_month = self.get_visits_in_month_by_user(user=a.owner, year=year, month=month)
+
+            all_visits = self.get_all_visits_by_user(user=a.owner)
+
             uniqueVisits.append(dict({
                 "user": a.owner.username,
                 "last_activity": a.date.strftime('%d-%m-%Y %H:%M'),
-                # "visits_in_month": a.visits_in_month
+                "visits_in_month": visits_month,
+                "all_visits": all_visits
             }))
 
         return uniqueVisits
@@ -51,6 +57,62 @@ class ActivityReports:
         today = date.today()
 
         return self.unique_visits_by_date(today.year, today.month, today.day)
+
+    def get_all_distinct_visits(self):
+        """
+            Retorna todas uma lista com todos os usuarios e o total de suas visitas.
+        :return:
+        """
+        users = list()
+        result = list()
+
+        # Recuperar os usuarios que visitaram neste dia + o total de visitas dele no mes
+        all_visits = Visit.objects.filter().order_by('-date')
+
+        for visit in all_visits:
+            if visit.owner.username not in users:
+
+                users.append(visit.owner.username)
+
+                all_visits = self.get_all_visits_by_user(user=visit.owner)
+
+                result.append(dict({
+                    "user": visit.owner.username,
+                    "last_activity": visit.date.strftime('%d-%m-%Y %H:%M'),
+                    "all_visits": all_visits
+                }))
+
+        return result
+
+
+
+    def get_visits_in_month_by_user(self, user, year, month):
+        """
+            Retorna o total de acessos de um usuario em um mes.
+            OBS: e sempre considerado um unico acesso por dia.
+        :param user:
+        :param year:
+        :param month:
+        :return:
+        """
+
+        return Visit.objects.filter(
+            date__year=year,
+            date__month=month,
+            owner=user).count()
+
+
+    def get_all_visits_by_user(self, user):
+        """
+            Retorna o total de visitas de um usuario
+        :param user:
+        :return:
+        """
+
+        return Visit.objects.filter(
+            owner=user).count()
+
+
 
     def get_or_create_unique_visit(self, activity):
         """
@@ -114,6 +176,13 @@ class ActivityReports:
             day=report_date.day
         )
 
+        sum_visits = 0
+        all_visits = self.get_all_distinct_visits()
+        sum_users = len(all_visits)
+
+        for a in all_visits:
+            sum_visits = sum_visits + a.get('all_visits')
+
         if len(visits) == 0:
             # nao houve visitas neste dia
             body = "There were no visits to the science server today."
@@ -123,6 +192,9 @@ class ActivityReports:
             body = render_to_string("unique_hits_on_day.html", {
                 "today": report_date.strftime('%d/%m/%Y'),
                 "visits": visits,
+                "total_visits": all_visits,
+                "sum_visits": sum_visits,
+                "sum_users": sum_users
             })
 
         try:
