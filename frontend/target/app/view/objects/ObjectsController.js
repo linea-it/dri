@@ -857,16 +857,16 @@ Ext.define('Target.view.objects.ObjectsController', {
                 submitedjob: function () {
                     // Checar a quantidade de objetos na lista se for maior que 100
                     // Mostar um popup informando a limitiacao do sistema
-//                    if (objects.getTotalCount() > 100) {
-//                        Ext.MessageBox.alert(
-//                            '',
-//                            "The cutout tool has currently a limit of 100 objects. We are working to fix this limitation.<br>"+
-//                            "The job will run in the background and you will be notified when it is finished.");
-//                    }
-                    Ext.MessageBox.alert(
-                       '',
-                       "The job will run in the background and you will be notified when it is finished.");
-
+                    if (objects.getTotalCount() > 100) {
+                        Ext.MessageBox.alert(
+                            '',
+                            "The cutout tool has currently a limit of 100 objects. We are working to fix this limitation.<br>"+
+                            "The job will run in the background and you will be notified when it is finished.");
+                    } else {
+                        Ext.MessageBox.alert(
+                           '',
+                           "The job will run in the background and you will be notified when it is finished.");
+                    }
                 }
             }
         });
