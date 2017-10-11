@@ -209,7 +209,10 @@ class ImportTargetListCSV:
 
         # testar se as colunas sao strings
         for col in cols:
-            if col.isalpha() or col.isalnum():
+
+            col = self.cast_value_type(col)
+
+            if isinstance(col, str):
                 tmp_headers.append(col.lower().strip().strip('\n'))
 
         # Se nao houver nome de colunas na primeira linha usar as required_properties
