@@ -203,10 +203,11 @@ Ext.define('Target.view.preview.Preview', {
     }],
 
     setCurrentRecord: function (record, catalog) {
+        // console.log('setCurrentRecord(%o)', record)
         var me = this,
             vm = me.getViewModel();
 
-        if ((record) && (record.get('_meta_id') > 0)) {
+        if ((record) && (record.get('_meta_catalog_id') != null)) {
             // Setar o currentRecord no Painel
             me.currentRecord = record;
 
