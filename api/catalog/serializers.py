@@ -1,12 +1,12 @@
 from rest_framework import serializers
-from rest_framework.fields import IntegerField, BooleanField, ReadOnlyField
+from rest_framework.fields import IntegerField, BooleanField, ReadOnlyField, CharField
 from django.contrib.auth.models import User
 from .models import Rating, Reject, Comments
 
 
 class RatingSerializer(serializers.HyperlinkedModelSerializer):
     catalog_id = IntegerField(allow_null=False)
-    object_id = IntegerField(min_value=0, allow_null=False, required=True)
+    object_id = CharField(min_length=1, max_length=255, allow_null=False, required=True)
     rating = IntegerField(min_value=1, max_value=5, allow_null=False, required=True)
 
     class Meta:
@@ -22,7 +22,7 @@ class RatingSerializer(serializers.HyperlinkedModelSerializer):
 
 class RejectSerializer(serializers.HyperlinkedModelSerializer):
     catalog_id = IntegerField(allow_null=False)
-    object_id = IntegerField(min_value=0, allow_null=False, required=True)
+    object_id = CharField(min_length=1, max_length=255, allow_null=False, required=True)
     reject = BooleanField(default=False)
 
     class Meta:
@@ -38,7 +38,7 @@ class RejectSerializer(serializers.HyperlinkedModelSerializer):
 
 class CommentsSerializer(serializers.HyperlinkedModelSerializer):
     catalog_id = IntegerField(allow_null=False)
-    object_id = IntegerField(min_value=0, allow_null=False, required=True)
+    object_id = CharField(min_length=1, max_length=255, allow_null=False, required=True)
     owner = serializers.SerializerMethodField()
     date = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
