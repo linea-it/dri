@@ -14,9 +14,8 @@ Ext.define('Target.model.Reject', {
         {name:'id'},
         {name:'catalog_id', type:'int'},
         {name:'owner', type:'int'},
-        {name:'object_id', type:'int'},
+        {name:'object_id', type:'string'},
         {name:'reject', type: 'boolean'}
     ]
 
 });
-

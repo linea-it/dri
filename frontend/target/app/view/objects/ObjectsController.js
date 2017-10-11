@@ -432,14 +432,15 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     onRatingTarget: function (record, store) {
+        // console.log('onRatingTarget(%o)', record)
         var me = this,
             view = me.getView().down('targets-objects-grid'),
             rating;
 
         view.setLoading('Saving...');
 
-        if (record.get('_meta_rating_id') > 0) {
 
+        if (record.get('_meta_rating_id') > 0) {
             // Cria um model com o id que ja existe no banco de dados
             rating = Ext.create('Target.model.Rating', {
                 'id': record.get('_meta_rating_id')
