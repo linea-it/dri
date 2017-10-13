@@ -55,7 +55,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
     filter_fields = ('id', 'catalog_id', 'owner', 'object_id', 'comments')
 
-    ordering_fields = ('id',)
+    ordering_fields = ('id', 'date')
 
     def perform_create(self, serializer):
         if not self.request.user.pk:
