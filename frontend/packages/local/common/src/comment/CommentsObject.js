@@ -26,45 +26,6 @@ Ext.define('common.comment.CommentsObject',{
     initComponent: function () {
         var me = this;
 
-        me.rowEditing = new Ext.grid.plugin.RowEditing({
-            listeners: {
-                edit: function(editor, e){    
-                    e.record.set('comments', e.newValues['comments']);
-                    me.getController().onSaveComment();
-                },
-                canceledit: function(editor, e){    
-                    
-                }
-            }
-        });
-
-        if (!me.contextMenu){
-            me.contextMenu = new Ext.menu.Menu({
-                items: [
-                    {
-                        text: 'Edit',
-                        handler: function(item) {
-                            var grid = me.down('grid'),
-                                record = me.contextMenu.record,
-                                index = grid.store.find('id', record.data.id);
-
-                            me.rowEditing.startEdit(index, 0);
-                        }
-                    },
-                    {
-                        text: 'Delete',
-                        handler: function(item) {
-                            var grid = me.down('grid'),
-                                record = me.contextMenu.record,
-                                index = grid.store.find('id', record.data.id);
-                            
-                            grid.getSelectionModel().select(index);
-                            me.getController().onDeleteComment(item);
-                        }
-                    }]
-            });
-        }
-
         Ext.apply(this, {
             items: [
                 {
@@ -74,81 +35,48 @@ Ext.define('common.comment.CommentsObject',{
                     items:[
                         {
                             xtype: 'textfield',
+                            reference: 'txtComment',
                             name: 'comments',
                             margin: '0 6 0 0',
                             flex: 1,
                             enableKeyEvents: true,
                             listeners:{
-                                change: function(event, value){
-                                    var store = me.down('grid').store;
-
-                                    if (store.getNewRecords().length==0){
-                                        
-                                    }
-                                },
-                                specialkey: function(o, event){
-                                    var ctrl = me.getController();
-                                    
-                                    if (event.keyCode==13 && this.value){
-                                        ctrl.onNewComment( this.value );
-                                        ctrl.onSaveComment();
-                                        this.setValue('');
-                                    }else if (event.keyCode==27){
-                                        this.setValue('');
-                                    }                                    
-                                }
+                                specialkey: 'onTxtCommentPressKey'
                             }
-                            /*bind: {
-                                value: '{currentcomment.comments}',
-                                disabled: '{!currentcomment.is_owner}'
-                            }*/
                         },
                         {
                             xtype: 'button',
                             text: 'Post',
                             itemId:'btnSaveComment',
                             align:'stretch',
-                            handler: function(){
-                                var ctrl = me.getController();
-                                var txt = me.down('[name="comments"]');
-
-                                if (txt.value){
-                                    ctrl.onNewComment( txt.value );
-                                    ctrl.onSaveComment();
-                                    txt.setValue('');
-                                }
-                            }, 
+                            handler: 'onNewComment',
                             iconCls:'x-fa fa-floppy-o',
-                            /*bind: {
-                                disabled: '{!currentcomment.is_owner}'
-                            }*/
                         }
                     ]
                 },
                 {
                     xtype: 'grid',
+                    reference: 'GridComments',
                     flex:1,
                     frame: true,
                     split:true,
                     hideHeaders: true,
-                    cls: 'comment-grid',
                     bind: {
                         store: '{comments}',
                         selection: '{currentcomment}'
                     },
-                    plugins: [me.rowEditing],
-                    /*plugins: [
-                        {
-                            ptype: 'preview',
-                            bodyField: 'comments',
-                            expanded: true
+                    plugins: [{
+                        ptype: 'rowediting',
+                        autoCancel: false,
+                        listeners: {
+                            edit: 'updateComment'
                         }
-                    ],*/
+                    }],
                     columns: [
                         {
                             text: '',
                             dataIndex: 'comments',
-                            renderer:this.formatUser,
+                            renderer:me.formatUser,
                             flex:2,
                             menuDisabled: true,
                             editor : {
@@ -161,33 +89,41 @@ Ext.define('common.comment.CommentsObject',{
                             text: 'Date',
                             dataIndex: 'date',
                             hidden: true
+                        },
+                        {
+                            text: 'Button',
+                            width: 50,
+                            xtype: 'widgetcolumn',
+                            widget: {
+                                xtype: 'button',
+                                iconCls: 'x-fa fa-caret-down',
+                                arrowVisible: false,
+                                menu: [
+                                    {
+                                        text:'Edit',
+                                        iconCls: 'x-fa fa-pencil',
+                                        handler: 'onClickUpdateComment'
+                                    },
+                                    {
+                                        text:'Delete',
+                                        iconCls: 'x-fa fa-trash',
+                                        handler: 'onClickDeleteComment'
+                                    }
+                                ]
+                            },
+                            onWidgetAttach: function (column, widget) {
+                                // Desabilita o botao se o user logado nao e
+                                // o dono do comentario.
+                                if (widget.getWidgetRecord().get('is_owner')) {
+                                    widget.setDisabled(false)
+                                } else {
+                                    widget.setDisabled(true)
+                                }
+                            }
                         }
                     ]
                 }
             ],
-            /*tbar: [
-                {
-                    xtype: 'button',
-                    text: 'New',
-                    itemId:'btnNewComment',
-                    handler: 'onNewComment',
-                    iconCls:'x-fa fa-plus'
-                },
-                {
-                    xtype: 'button',
-                    itemId:'btnDeleteComment',
-                    text: 'Delete',
-                    handler: 'onDeleteComment',
-                    iconCls:'x-fa fa-minus',
-                    bind: {
-                        disabled: '{!currentcomment.is_owner}'
-                    }
-                }
-            ],*/
-            /*bbar: [
-                '->',
-                
-            ]*/
         });
 
         me.callParent(arguments);
@@ -199,52 +135,23 @@ Ext.define('common.comment.CommentsObject',{
      */
     formatUser: function (value, p, record) {
         var me = this,
-            id = Ext.id(),
-            tpl = 
+            tpl =
                 '<div class="user">'+
                     '<b>{0}</b>'+
                     ' comments on '+
                     '<span class="date">{1}</span>'+
-                    '<span id="{2}"></span>'+
-                    '<div>{3}</div>'+
+                    '<div>{2}</div>'+
                 '</div>';
 
-        Ext.defer(function() {
-        Ext.widget('button', {
-            renderTo: id,
-            iconCls: 'x-fa fa-caret-down',
-            padding: '0',
-            margin:  '0 0 0 20',
-            handler: function(data, event) {                
-                var xy = {x:event.event.clientX, y:event.event.clientY},
-                    menu = me.up('comments-object').contextMenu;
-                
-                menu.record = record;
-                menu.showAt(xy);
-            }
-        });
-        }, 50);
-        
-        return Ext.String.format(tpl, 
+        return Ext.String.format(tpl,
             record.get('owner'),               //{0} owner
             record.get('date') || 'Unknown',   //{1} date
-            id,                                //{2} button
-            value                              //{3} comments
+            value                              //{2} comments
         );
-
-        /*return Ext.String.format(
-            '<div class="user">'+
-                '<spam style="font-weight: bold;">{0}</spam>'+
-                ' comments on '+
-                '<span class="date">{1}</span>'+
-            '</div>', value,
-
-            record.get('date') || 'Unknown');*/
     },
 
     setObject: function(catalog, object) {
         // console.log('setObject(%o, %o)', catalog, object)
-
         var me = this,
             vm = me.getViewModel(),
             ctrl = me.getController();

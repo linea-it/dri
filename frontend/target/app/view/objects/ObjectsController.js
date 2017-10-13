@@ -633,6 +633,36 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.wizard.close();
             me.wizard = null;
         }
+
+        if (me.winComment !== null) {
+            me.winComment.close();
+            me.winComment = null;
+        }
+
+        if (me.winFilters !== null) {
+            me.winFilters.close();
+            me.winFilters = null;
+        }
+
+        if (me.winSaveAs !== null) {
+            me.winSaveAs.close();
+            me.winSaveAs = null;
+        }
+
+        if (me.winDownload !== null) {
+            me.winDownload.close();
+            me.winDownload = null;
+        }
+
+        if (me.winCutout !== null) {
+            me.winCutout.close();
+            me.winCutout = null;
+        }
+
+        if (me.winCutoutjobInfo !== null) {
+            me.winCutoutjobInfo.close();
+            me.winCutoutjobInfo = null;
+        }
     },
 
     onClickFilter: function () {
@@ -718,6 +748,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 constrainHeader:true,
                 width: 500,
                 height: 300,
+                modal: true,
                 items: [
                     {
                         xtype: 'comments-object',
