@@ -348,6 +348,7 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_start_time',
             'cjb_finish_time',
             'cjb_description',
+            'cjb_image_formats',
             'owner',
             'execution_time',
             'count_files',

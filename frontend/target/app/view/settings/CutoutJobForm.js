@@ -10,7 +10,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
 
     title: 'Create Mosaic',
     width: 450,
-    height: 500,
+    height: 540,
     layout: 'fit',
     modal: true,
 
@@ -125,7 +125,16 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                 disabled: '{!rdSingleEpoch.checked}'
                             }
                         },
-
+                        {
+                            xtype: 'radiogroup',
+                            fieldLabel: 'Image Formats',
+                            cls: 'x-check-group-alt',
+                            name: 'image_formats',
+                            items: [
+                                {boxLabel: 'only PNGs (fast)', inputValue: 'png', checked: true},
+                                {boxLabel: 'PNGs and Fits', inputValue: 'png,fits'}
+                            ]
+                        },
                         {
                             xtype: 'fieldset',
                             title: 'Labels',

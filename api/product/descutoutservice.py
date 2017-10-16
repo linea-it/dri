@@ -743,6 +743,10 @@ class CutoutJobNotify:
             execution_time = str(datetime.timedelta(seconds=seconds)).split('.')[0]
             execution_time_humanized = humanize.naturaldelta(datetime.timedelta(seconds=seconds))
 
+            image_formats = cutoutjob.cjb_image_formats
+            if image_formats is None:
+                image_formats = 'png'
+
             context = dict({
                 "username": cutoutjob.owner.username,
                 "target_display_name": cutoutjob.cjb_product.prd_display_name,
@@ -751,6 +755,7 @@ class CutoutJobNotify:
                 "cutoutjob_tag": tag,
                 "cutoutjob_xsize": int((float(cutoutjob.cjb_xsize) * 60)),  # converter para arcsec
                 "cutoutjob_ysize": int((float(cutoutjob.cjb_ysize) * 60)),
+                "cutoutjob_image_formats": image_formats,
                 "n_objects": cutoutjob.cjb_product.table.catalog.ctl_num_objects,
                 "n_files": cutoutjob.cutout_set.count(),
                 "files_size": files_size,
