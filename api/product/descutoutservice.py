@@ -464,7 +464,7 @@ class DesCutoutService:
 
                     # Escrever o novo arquivo de objetos com o nome do arquivo
                     with open(os.path.join(cutoutdir, "objects.csv"), "w") as new_objects_csv:
-                        fieldnames = ["key", "id", "ra", "dec", "thumbname"]
+                        fieldnames = ["key", "id", "ra_original", "ra", "dec", "thumbname"]
                         writer = csv.DictWriter(new_objects_csv, fieldnames=fieldnames)
                         writer.writeheader()
                         for obj in objects:
@@ -557,23 +557,24 @@ class DesCutoutService:
         ldec = list()
 
         with open(os.path.join(cutoutdir, "objects.csv"), "w") as objects_csv:
-            fieldnames = ["key", "id", "ra", "dec"]
+            fieldnames = ["key", "id", "ra_original", "ra", "dec"]
             writer = csv.DictWriter(objects_csv, fieldnames=fieldnames)
             writer.writeheader()
 
             for row in rows:
-
-                ra = float(row.get(associations.get("pos.eq.ra;meta.main")))
+                ra_original = float(row.get(associations.get("pos.eq.ra;meta.main")))
+                ra = ra_original
                 dec = float(row.get(associations.get("pos.eq.dec;meta.main")))
 
+                if ra < 0 and ra > -180:
+                    ra = ra + 360
 
                 obj = dict({
                     "id": row.get(associations.get("meta.id;meta.main")),
+                    "ra_original": ra_original,
                     "ra": ra,
                     "dec": dec,
-                    "key": str(self.get_object_position_key(
-                        row.get(associations.get("pos.eq.ra;meta.main")),
-                        row.get(associations.get("pos.eq.dec;meta.main"))))
+                    "key": str(self.get_object_position_key(ra, dec))
                 })
 
                 writer.writerow(obj)
