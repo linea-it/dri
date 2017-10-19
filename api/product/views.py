@@ -26,6 +26,8 @@ from .serializers import *
 from .tasks import product_save_as
 from .tasks import import_target_list
 
+from .association import Association
+
 logger = logging.getLogger(__name__)
 
 
@@ -429,6 +431,17 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'pca_product', 'pca_class_content', 'pca_product_content',)
 
     ordering_fields = ('id',)
+
+    @list_route()
+    def get_ucds_by_product(self, request):
+
+        product_id = request.query_params.get('product_id', None)
+        if product_id is None:
+            raise Exception('product_id is required.')
+
+        associations =  Association().get_associations_by_product_id(product_id)
+
+        return Response(associations)
 
 
 class MapFilter(django_filters.FilterSet):
