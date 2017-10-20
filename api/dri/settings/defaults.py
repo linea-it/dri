@@ -70,7 +70,8 @@ PROJECT_APPS = [
     'interfaces',
     'userquery',
     'aladin',
-    'activity_statistic'
+    'activity_statistic',
+    'visiomatic'
 ]
 
 if USE_OAUTH:

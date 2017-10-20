@@ -242,6 +242,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                         })
                     })
 
+
         result = dict({
             'success': True,
             'expanded': True,
@@ -261,6 +262,12 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             for group_name in nodeGroup:
                 result.get('children').append(nodeGroup.get(group_name))
 
+
+            # Adiciona Catalogos Externos ex: Vizier
+            if 'external_catalogs' in groups:
+                external_catalogs = self.get_external_catalogs()
+                result.get('children').append(external_catalogs)
+
         else:
             # Se tiver apenas um grupo basta retornar as classes
             for class_name in classes:
@@ -268,6 +275,16 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
 
         return Response(result)
 
+
+    def get_external_catalogs(self):
+
+        external_catalogs = dict({
+            "text": "External Catalogs",
+            "expanded": False,
+            "children": list()
+        })
+
+        return external_catalogs
 
 class ProductContentViewSet(viewsets.ModelViewSet):
     """
