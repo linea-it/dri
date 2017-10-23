@@ -464,7 +464,7 @@ class DesCutoutService:
 
                     # Escrever o novo arquivo de objetos com o nome do arquivo
                     with open(os.path.join(cutoutdir, "objects.csv"), "w") as new_objects_csv:
-                        fieldnames = ["key", "id", "ra", "dec", "thumbname"]
+                        fieldnames = ["key", "id", "ra_original", "ra", "dec", "thumbname"]
                         writer = csv.DictWriter(new_objects_csv, fieldnames=fieldnames)
                         writer.writeheader()
                         for obj in objects:
@@ -557,23 +557,24 @@ class DesCutoutService:
         ldec = list()
 
         with open(os.path.join(cutoutdir, "objects.csv"), "w") as objects_csv:
-            fieldnames = ["key", "id", "ra", "dec"]
+            fieldnames = ["key", "id", "ra_original", "ra", "dec"]
             writer = csv.DictWriter(objects_csv, fieldnames=fieldnames)
             writer.writeheader()
 
             for row in rows:
-
-                ra = float(row.get(associations.get("pos.eq.ra;meta.main")))
+                ra_original = float(row.get(associations.get("pos.eq.ra;meta.main")))
+                ra = ra_original
                 dec = float(row.get(associations.get("pos.eq.dec;meta.main")))
 
+                if ra < 0 and ra > -180:
+                    ra = ra + 360
 
                 obj = dict({
                     "id": row.get(associations.get("meta.id;meta.main")),
+                    "ra_original": ra_original,
                     "ra": ra,
                     "dec": dec,
-                    "key": str(self.get_object_position_key(
-                        row.get(associations.get("pos.eq.ra;meta.main")),
-                        row.get(associations.get("pos.eq.dec;meta.main"))))
+                    "key": str(self.get_object_position_key(ra, dec))
                 })
 
                 writer.writerow(obj)
@@ -743,6 +744,10 @@ class CutoutJobNotify:
             execution_time = str(datetime.timedelta(seconds=seconds)).split('.')[0]
             execution_time_humanized = humanize.naturaldelta(datetime.timedelta(seconds=seconds))
 
+            image_formats = cutoutjob.cjb_image_formats
+            if image_formats is None:
+                image_formats = 'png'
+
             context = dict({
                 "username": cutoutjob.owner.username,
                 "target_display_name": cutoutjob.cjb_product.prd_display_name,
@@ -751,6 +756,7 @@ class CutoutJobNotify:
                 "cutoutjob_tag": tag,
                 "cutoutjob_xsize": int((float(cutoutjob.cjb_xsize) * 60)),  # converter para arcsec
                 "cutoutjob_ysize": int((float(cutoutjob.cjb_ysize) * 60)),
+                "cutoutjob_image_formats": image_formats,
                 "n_objects": cutoutjob.cjb_product.table.catalog.ctl_num_objects,
                 "n_files": cutoutjob.cutout_set.count(),
                 "files_size": files_size,

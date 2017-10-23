@@ -309,6 +309,11 @@ class CutOutJob(models.Model):
     cjb_description = models.CharField(
         max_length=1024, verbose_name='Description', null=True, blank=True)
 
+    cjb_image_formats = models.CharField(
+        max_length=10, verbose_name='Image Formats', null=True, blank=True,
+        help_text="list of image extensions that will be downloaded from the descut. example \'png,fits\'"
+    )
+
     def __str__(self):
         return str(self.cjb_display_name)
 

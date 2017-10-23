@@ -5,10 +5,10 @@ Ext.define('common.model.CommentObject', {
         {name:'id', type:'int', persist: false},
         {name:'catalog_id', type:'int'},
         {name:'object_id', type:'string'},
-        {name:'owner', type:'string'},
-        {name:'date', type:'date'},
         {name:'comments', type:'string'},
-        {name:'is_owner', type:'boolean'}
+        {name:'owner', type:'string', persist: false},
+        {name:'date', type:'date', persist: false},
+        {name:'is_owner', type:'boolean', persist: false}
     ]
 
 });

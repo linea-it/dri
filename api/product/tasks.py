@@ -73,6 +73,14 @@ def download_cutoutjob(id):
 
     allarqs = list()
 
+    image_formats = cutoutjob.cjb_image_formats
+    if image_formats is None:
+        image_formats = 'png'
+
+    formats = image_formats.split(',')
+
+    logger.info("Only download the files with these formats: [ %s ]" % image_formats)
+
     # Deixar na memoria a lista de objetos ja associada com os nomes dos arquivos
     objects = descutout.get_objects_from_file(cutoutjob)
 
@@ -84,8 +92,9 @@ def download_cutoutjob(id):
         for url in lines:
             arq = descutout.parse_result_url(url)
 
-            # TODO adicionar um parametro para decidir se baixa somente os arquivos pngs.
-            if arq.get('file_type') == 'png':
+            # Verifica se o formato do arquivo esta na lista de formatos a serem baixados
+            # os formatos ficam no campo cjb_image_formats
+            if arq.get('file_type').lower() in formats:
                 allarqs.append(arq)
 
                 object_id = None
@@ -407,51 +416,6 @@ def export_create_zip(self, user_id, product_name, export_dir):
     url = export.create_zip(export_dir)
 
     export.notify_user_export_success(user_id, product_name, url)
-
-# @task(name="export_notify_user_start")
-# @shared_task
-# def export_notify_user_start(user, product):
-#     """
-#     Envia um email avisando o usuario que a tarefa esta em andamento em background
-#     """
-#     logger = export.logger
-#
-#     logger = descutout.logger
-#
-#     logger.info("Notify user about Export Start")
-#
-#     export.notify_user_export_start(user, product)
-
-
-# @task(name="export_notify_user_success")
-# @shared_task
-# def export_notify_user_success(user_id, product_name, url):
-#     """
-#     Envia um email avisando o usuario que a tarefa terminou com sucesso
-#     na mensagem contem a url do arquivo.zip gerado.
-#     """
-#     logger = export.logger
-#
-#     logger = descutout.logger
-#
-#     logger.info("Notify user about Export Success")
-#
-#     export.notify_user_export_success(user_id, product_name, url)
-
-
-# @task(name="export_notify_user_failure")
-# @shared_task
-# def export_notify_user_failure(user, product):
-#     """
-#     Envia um email avisando o usuario que a tarefa falhou.
-#     """
-#     logger = export.logger
-#
-#     logger = descutout.logger
-#
-#     logger.info("Notify user about Export Failure")
-#
-#     export.notify_user_export_failure(user, product)
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Product Save As Tasks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
