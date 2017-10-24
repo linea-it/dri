@@ -5,6 +5,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
 
     requires: [
         'visiomatic.store.Objects',
+        'visiomatic.store.ExternalObjects',
         'visiomatic.model.Overlay',
         'visiomatic.filter.FiltersWindow'
     ],
@@ -44,7 +45,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
            {
                 property:'group',
                 operator: 'in',
-                value: ['objects_catalog', 'targets', 'value_added_catalogs']
+                value: ['objects_catalog', 'targets', 'value_added_catalogs', 'external_catalogs']
             }
         ]
 
@@ -58,11 +59,13 @@ Ext.define('visiomatic.catalog.CatalogController', {
     onSelectCatalog: function () {
         var me = this,
             vm = me.getViewModel(),
-            filters = vm.get('currentFilters');
+            filters = vm.get('currentFilters'),
+            tree = me.lookup('CatalogsTree'),
+            catalog = tree.selection,
+            btnFilter = me.lookup('btnFilter');
 
         // Toda vez que troca de catalogo zera os filtros so para garantir.
         filters = [];
-
     },
 
     filterCatalogByname: function () {
@@ -158,19 +161,77 @@ Ext.define('visiomatic.catalog.CatalogController', {
             name: catalog.get('prd_display_name'),
             catalog: catalog,
             color: Ext.String.format('#{0}', color),
-            filters: filters,
             visible: true,
             count: null,
             layers: null,
             ellipse: drawEllipse,
-            objects: Ext.create('visiomatic.store.Objects', {}),
-            status: 'loading'
+            status: 'loading',
+            filters: null
         });
 
         overlays.add(overlay);
 
-        me.loadObjects(overlay);
+        // Verificar se o Catalogo e externo
+        if (!catalog.get('external_catalog')) {
+            // Se for catalogos do DRI
+            overlay.set('objects', Ext.create('visiomatic.store.Objects', {}));
+            overlay.set('filters', filters);
 
+            me.loadObjects(overlay);
+        } else {
+            overlay.set('objects', Ext.create(
+                'visiomatic.store.ExternalObjects', {}));
+
+            overlay.set('objectUrl', true);
+
+            me.loadExternalCatalogObjects(overlay)
+        }
+
+    },
+
+    loadExternalCatalogObjects: function (overlay) {
+        // console.log('loadExternalCatalogObjects(%o)', overlay)
+        var me = this,
+            vm = me.getViewModel(),
+            visiomatic = vm.get('visiomatic'),
+            store = overlay.get('objects'),
+            bounds;
+
+        // pegar os parametros de posicao e passar para a store
+        bounds = visiomatic.getBounds()
+
+        store.addFilter([
+            {
+                property: 'cds_source',
+                value: overlay.get('catalog').get('cds_source')
+            },
+            {
+                property: 'cds_fieldnames',
+                value: overlay.get('catalog').get('cds_fieldnames')
+            },
+            {
+                property: 'lat',
+                value: bounds.lat
+            },
+            {
+                property: 'lng',
+                value: bounds.lng
+            },
+            {
+                property: 'dlat',
+                value: bounds.dlat
+            },
+            {
+                property: 'dlng',
+                value: bounds.dlng
+            }
+        ]);
+
+        store.load({
+            callback: function (store, operation, successful) {
+                me.onLoadObjects(overlay, operation, successful);
+            }
+        })
     },
 
     loadObjects: function(overlay) {
@@ -278,7 +339,8 @@ Ext.define('visiomatic.catalog.CatalogController', {
                         store,
                         {
                             color: overlay.get('color'),
-                            ellipse: overlay.get('ellipse')
+                            ellipse: overlay.get('ellipse'),
+                            objectUrl: overlay.get('objectUrl')
                         });
 
             overlay.set('layers', layers);
@@ -352,4 +414,3 @@ Ext.define('visiomatic.catalog.CatalogController', {
     }
 
 });
-

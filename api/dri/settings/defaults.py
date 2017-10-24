@@ -71,7 +71,6 @@ PROJECT_APPS = [
     'userquery',
     'aladin',
     'activity_statistic',
-    'visiomatic'
 ]
 
 if USE_OAUTH:
