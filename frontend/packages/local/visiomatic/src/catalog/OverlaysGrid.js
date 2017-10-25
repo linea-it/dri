@@ -166,20 +166,20 @@ Ext.define('visiomatic.catalog.OverlayGrid', {
    renderColumnColor: function(value, meta, record) {
         switch (record.get('status')) {
             case 'loading':
-                value = '<i class="fa fa-spinner fa-pulse fa-fw" aria-hidden="true"></i>'
+                value = '<spam class="fa fa-spinner fa-pulse fa-fw" aria-hidden="true"></spam>'
                 break;
 
             case 'ok':
                 value = Ext.String.format(
-                            '<i class="fa fa-square" aria-hidden="true" style="color:{0}"></i>', value)
+                            '<spam class="x-fa fa-square" aria-hidden="true" style="color:{0}"></spam>', value)
                 break;
 
             case 'alert':
                 msg = record.get('status_message');
 
-                value = '<i class="fa fa-exclamation" ' +
+                value = '<spam class="x-fa fa-exclamation" ' +
                             'aria-hidden="true" style="color:#FF8C2E" ' +
-                            'data-qtip="' + msg + '"></i>';
+                            'data-qtip="' + msg + '"></spam>';
 
                 // Como esse icone e muito pequeno e dificil abrir o tooltip, entao adicionei o tooltip
                 // a cell
@@ -188,16 +188,16 @@ Ext.define('visiomatic.catalog.OverlayGrid', {
                 break;
 
             case 'warning':
-                value = '<i class="fa fa-exclamation-triangle" ' +
-                            'aria-hidden="true" style="color:#FF8C2E" data-qtip="0 Entries"></i>'
+                value = '<spam class="x-fa fa-exclamation-triangle" ' +
+                            'aria-hidden="true" style="color:#FF8C2E" data-qtip="0 Entries"></spam>'
 
                 break;
 
             case 'error':
                 msg = record.get('status_message');
 
-                value = '<i class="fa fa-exclamation-triangle" ' +
-                            'aria-hidden="true" style="color:#FD172C" data-qtip="' + msg + '"></i>'
+                value = '<spam class="x-fa fa-exclamation-triangle" ' +
+                            'aria-hidden="true" style="color:#FD172C" data-qtip="' + msg + '"></spam>'
 
                 break;
         }

@@ -22,11 +22,13 @@ Ext.define('visiomatic.model.CatalogTree', {
         {name:'ctl_num_tiles', type:'int'},
         {name:'ctl_num_objects', type:'int'},
 
+        {name:'cds_source', type:'string'},
+        {name:'cds_fieldnames', type:'string'},
+
         {name:'editable', type:'boolean', defaultValue: false},
         {name:'markable', type:'boolean', defaultValue: false},
-        {name:'release_display_name', type:'string'}
-
+        {name:'release_display_name', type:'string'},
+        {name:'external_catalog', type:'boolean', defaultValue: false},
     ]
 
 });
-

@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from activity_statistic import views as statistics_views
 from aladin import views as aladin_views
 from catalog import views as catalog_views
 from coadd import views as coadd_views
@@ -28,7 +29,6 @@ from product_register import views as product_register_views
 from rest_framework import routers
 from userquery import views as userquery_views
 from validation import views as validation_views
-from activity_statistic import views as statistics_views
 
 router = routers.DefaultRouter()
 
@@ -113,9 +113,11 @@ urlpatterns = [
     url(r'^', include(router.urls)),
     url(r'^contact/', common_views.contact_us),
     url(r'^get_fits_by_tilename', coadd_views.get_fits_by_tilename),
+    url(r'^vizier/', product_views.vizier_cds),
     url(r'^teste/', common_views.teste),
     url(r'^get_token', common_views.get_token),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'), {'extra_context':{'providers': providers }}),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'),
+        {'extra_context': {'providers': providers}}),
 ]
 
 if settings.USE_OAUTH:

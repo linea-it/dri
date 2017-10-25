@@ -28,6 +28,12 @@ from .tasks import import_target_list
 
 from .association import Association
 
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from .viziercds import VizierCDS
+
+
+
 logger = logging.getLogger(__name__)
 
 
@@ -209,7 +215,8 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 "bookmark": None,
                 "editable": editable,
                 "tableExist": table_exist,
-                "description": row.prd_description
+                "description": row.prd_description,
+                "external_catalog": False
             })
 
             try:
@@ -242,6 +249,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                         })
                     })
 
+
         result = dict({
             'success': True,
             'expanded': True,
@@ -261,6 +269,12 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             for group_name in nodeGroup:
                 result.get('children').append(nodeGroup.get(group_name))
 
+
+            # Adiciona Catalogos Externos ex: Vizier
+            if 'external_catalogs' in groups:
+                external_catalogs = self.get_external_catalogs()
+                result.get('children').append(external_catalogs)
+
         else:
             # Se tiver apenas um grupo basta retornar as classes
             for class_name in classes:
@@ -268,6 +282,47 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
 
         return Response(result)
 
+
+    def get_external_catalogs(self):
+
+        # tmass = dict({
+        #     "id": "visier_2mass",
+        #     "external_catalog": True,
+        #     "owner": "Visier",
+        #     "prd_name": "2MASS",
+        #     "prd_display_name": "2MASS All-Sky",
+        #     "cds_source": "II/246",
+        #     "cds_fieldnames": ",".join(["2MASS", "RAJ2000", "DEJ2000", "Jmag", "Hmag", "Kmag"]),
+        #     "ctl_num_objects": 470992970,
+        #     "description": "2MASS All-Sky Catalog of Point Sources (Cutri+ 2003)",
+        #     "pcl_is_system": False,
+        #     "is_owner": False,
+        #     "text": "2MASS All-Sky",
+        #     "bookmark": None,
+        #     "tableExist": True,
+        #     "editable": False,
+        #     "markable": False,
+        #     "iconCls": "no-icon",
+        #     "leaf": True,
+        # })
+
+        vizier_catalogs = VizierCDS().get_available_catalogs()
+
+        vizier = dict({
+            "text": "VizieR ",
+            "expanded": False,
+            "children": vizier_catalogs
+
+        })
+
+
+        external_catalogs = dict({
+            "text": "External Catalogs",
+            "expanded": False,
+            "children": list([vizier])
+        })
+
+        return external_catalogs
 
 class ProductContentViewSet(viewsets.ModelViewSet):
     """
@@ -797,3 +852,30 @@ class ImportTargetListViewSet(viewsets.ModelViewSet):
                 'success': False,
                 'message': str(e)
             }), status=200)
+
+
+# ------------------------------------- VisieR CDS Objects ----------------------------------
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def vizier_cds(request):
+    if request.method == 'GET':
+        """
+         Faz uma requisicao ao servico Visier CDS e faz um parse do resultado que vem em csv para o 
+         uma lista de dict como se fosse um produto do DRI.        
+
+         """
+
+        query_params = request.query_params
+
+        rows = VizierCDS().get_objects(
+            source=query_params.get("cds_source"),
+            fieldnames=query_params.get("cds_fieldnames"),
+            coordinates=[query_params.get("lat"), query_params.get("lng")],
+            bounds=[query_params.get("dlat"), query_params.get("dlng")]
+        )
+
+        return Response(
+            dict({
+                "count": len(rows),
+                "results": rows
+            }))
