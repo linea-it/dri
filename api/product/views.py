@@ -285,27 +285,6 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
 
     def get_external_catalogs(self):
 
-        # tmass = dict({
-        #     "id": "visier_2mass",
-        #     "external_catalog": True,
-        #     "owner": "Visier",
-        #     "prd_name": "2MASS",
-        #     "prd_display_name": "2MASS All-Sky",
-        #     "cds_source": "II/246",
-        #     "cds_fieldnames": ",".join(["2MASS", "RAJ2000", "DEJ2000", "Jmag", "Hmag", "Kmag"]),
-        #     "ctl_num_objects": 470992970,
-        #     "description": "2MASS All-Sky Catalog of Point Sources (Cutri+ 2003)",
-        #     "pcl_is_system": False,
-        #     "is_owner": False,
-        #     "text": "2MASS All-Sky",
-        #     "bookmark": None,
-        #     "tableExist": True,
-        #     "editable": False,
-        #     "markable": False,
-        #     "iconCls": "no-icon",
-        #     "leaf": True,
-        # })
-
         vizier_catalogs = VizierCDS().get_available_catalogs()
 
         vizier = dict({

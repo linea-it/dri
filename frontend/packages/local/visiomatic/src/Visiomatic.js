@@ -389,13 +389,15 @@ Ext.define('visiomatic.Visiomatic', {
         libL.control.iip.image().addTo(sidebar);
 
         // Catalog Overlays
-        Ext.Array.each(availableCatalogs, function (value) {
-            catalogs.push(
-                libL.Catalog[value]
-            );
-        });
+        if (me.getEnableCatalogs()) {
+            Ext.Array.each(availableCatalogs, function (value) {
+                catalogs.push(
+                    libL.Catalog[value]
+                );
+            });
 
-        libL.control.iip.catalog(catalogs).addTo(sidebar);
+            libL.control.iip.catalog(catalogs).addTo(sidebar);
+        }
 
         // Region
         libL.control.iip.region(
