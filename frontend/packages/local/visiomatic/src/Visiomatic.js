@@ -45,7 +45,7 @@ Ext.define('visiomatic.Visiomatic', {
         enableSmallCrosshair: false,
 
         // Catalog Overlays
-        enableCatalogs: true,
+        enableCatalogs: false,
         availableCatalogs: [
             'GALEX_AIS',
             '2MASS',
