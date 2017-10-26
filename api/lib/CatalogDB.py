@@ -241,10 +241,21 @@ class CatalogObjectsDBHelper(CatalogTable):
 
                 ur = condition.get("upperright")
                 ll = condition.get("lowerleft")
+
+                # Tratar RA > 360
+                llra = float(ll[0])
+                urra = float(ur[0])
+
+                if llra > 360:
+                    llra = llra - 360
+
+                if urra > 360:
+                    urra = urra - 360
+
                 coordinates_filter = and_(between(
                     Column(str(condition.get("property_ra"))),
-                    literal_column(str(ll[0])),
-                    literal_column(str(ur[0]))
+                    literal_column(str(llra)),
+                    literal_column(str(urra))
                 ), between(
                     Column(str(condition.get("property_dec"))),
                     literal_column(str(ll[1])),
@@ -415,6 +426,16 @@ class TargetObjectsDBHelper(CatalogTable):
                         # property_ra
                         property_ra = self.associations.get("pos.eq.ra;meta.main")
                         property_dec = self.associations.get("pos.eq.dec;meta.main")
+
+                        # Tratar RA > 360
+                        llra = float(ll[0])
+                        urra = float(ur[0])
+
+                        if llra > 360:
+                            llra = llra - 360
+
+                        if urra > 360:
+                            urra = urra - 360
 
                         coordinate_filters = and_(between(
                             Column(str(property_ra)),

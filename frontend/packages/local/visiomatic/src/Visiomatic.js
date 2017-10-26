@@ -672,6 +672,11 @@ Ext.define('visiomatic.Visiomatic', {
             dlng = 0.0001;
         }
 
+        // Tratar RA > 360
+        if (lng > 360) {
+            lng = lng - 360;
+        }
+
         return {
             lat: parseFloat(lat.toFixed(6)),
             lng: parseFloat(lng.toFixed(6)),
@@ -691,6 +696,11 @@ Ext.define('visiomatic.Visiomatic', {
             box, urra, urdec, llra, lldec, ur, ll;
 
         bounding = me.getBounds();
+
+        // Tratar RA > 360
+        if (bounding.lng > 360) {
+            bounding.lng = bounding.lng - 360;
+        }
 
         urra = parseFloat(bounding.lng + bounding.dlng / 2).toFixed(6);
         urdec = parseFloat(bounding.lat + bounding.dlat / 2).toFixed(6);
