@@ -19,7 +19,8 @@ Ext.define('visiomatic.catalog.Catalogs', {
                     text: 'Name',
                     flex: 2,
                     sortable: true,
-                    dataIndex: 'text'
+                    dataIndex: 'text',
+                    renderer: me.getTooltipName
                 }
             ],
 
@@ -50,4 +51,26 @@ Ext.define('visiomatic.catalog.Catalogs', {
 
         me.callParent(arguments);
     },
+
+    getTooltipName: function (value, meta, record) {
+        var me = this,
+            tpl, tooltip;
+        if (record.get('leaf')) {
+            tpl = new Ext.XTemplate(
+                '<div>',
+                    '<spam><b>{prd_display_name}</b></spam>',
+                    '<tpl if=\'description != ""\'>',
+                        '<p></br>{description}</p>',
+                    '</tpl>',
+                '</div>'
+            );
+
+            tooltip = tpl.apply(record.data);
+
+
+            meta.tdAttr = 'data-qtip=\"' + tooltip + '\"';
+        }
+
+        return value;
+    }
 });

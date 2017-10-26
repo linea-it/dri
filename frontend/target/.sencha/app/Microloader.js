@@ -307,8 +307,12 @@ Ext.Microloader = Ext.Microloader || (function () {
 
             applyCacheBuster: function(url) {
                 var tstamp = new Date().getTime(),
-                    sep = url.indexOf('?') === -1 ? '?' : '&';
-                url = url + sep + "_dc=" + tstamp;
+                    sep = url.indexOf('?') === -1 ? '?' : '&',
+                    progressive = Ext.manifest.progressive,
+                    serviceWorker = progressive && progressive.serviceWorker;
+                if (!serviceWorker) {
+                    url = url + sep + "_dc=" + tstamp;
+                }
                 return url;
             },
 
@@ -342,21 +346,20 @@ Ext.Microloader = Ext.Microloader || (function () {
 
                     // Manifest is not in local storage. Fetch it from the server
                     } else {
-                        Boot.fetch(Microloader.applyCacheBuster(url), function (result) {
-                            //<debug>
-                                _debug("Manifest file was not found in Local Storage, loading: " + url);
-                            //</debug>
-                            manifest = new Manifest({
-                                url: url,
-                                content: result.content
-                            });
+                        //<debug>
+                        _debug("Manifest file was not found in Local Storage, loading: " + url);
+                        //</debug>
 
-                            manifest.cache();
-                            if (postProcessor) {
-                                postProcessor(manifest);
-                            }
-                            Microloader.load(manifest);
-                        });
+                        if (location.href.indexOf('file:/') === 0) {
+                            Manifest.url = Microloader.applyCacheBuster(url + 'p');
+                            Boot.load(Manifest.url);
+                        }
+                        else {
+                            Manifest.url = url;
+                            Boot.fetch(Microloader.applyCacheBuster(url), function(result) {
+                                Microloader.setManifest(result.content);
+                            });
+                        }
                     }
 
                 // Embedded Manifest into JS file
@@ -372,13 +375,36 @@ Ext.Microloader = Ext.Microloader || (function () {
             },
 
             /**
+             *
+             * @param cfg
+             */
+            setManifest: function(cfg) {
+                var manifest = new Manifest({
+                    url: Manifest.url,
+                    content: cfg
+                });
+                manifest.cache();
+                if (postProcessor) {
+                    postProcessor(manifest);
+                }
+                Microloader.load(manifest);
+            },
+
+            /**
              * @param {Manifest} manifest
              */
             load: function (manifest) {
                 Microloader.urls = [];
                 Microloader.manifest = manifest;
                 Ext.manifest = Microloader.manifest.exportContent();
-
+                var progressive = Ext.manifest.progressive;
+                if (progressive && progressive.serviceWorker) {
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.register('./' + progressive.serviceWorker);
+                        Ext.Boot.config.disableCaching = false;
+                    }
+                }
+                
                 var assets = manifest.getAssets(),
                     cachedAssets = [],
                     asset, i, len, include, entry;
@@ -904,7 +930,7 @@ Ext.Microloader = Ext.Microloader || (function () {
                     // as we are still very early in the lifecycle
                     Ext.defer(function() {
                         Ext.GlobalEvents.fireEvent('appupdate', Microloader.appUpdate);
-                    }, 100);
+                    }, 1000);
                 }
             },
 

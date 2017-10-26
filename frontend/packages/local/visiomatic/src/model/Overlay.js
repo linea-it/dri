@@ -16,9 +16,9 @@ Ext.define('visiomatic.model.Overlay', {
         {name: 'catalog'},
         {name: 'layers'},
         {name: 'objects'},
-        {name: 'filters'}
+        {name: 'filters'},
+        {name: 'objectUrl'}
 
     ]
 
 });
-

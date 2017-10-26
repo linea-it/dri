@@ -45,7 +45,7 @@ Ext.define('visiomatic.Visiomatic', {
         enableSmallCrosshair: false,
 
         // Catalog Overlays
-        enableCatalogs: true,
+        enableCatalogs: false,
         availableCatalogs: [
             'GALEX_AIS',
             '2MASS',
@@ -389,13 +389,15 @@ Ext.define('visiomatic.Visiomatic', {
         libL.control.iip.image().addTo(sidebar);
 
         // Catalog Overlays
-        Ext.Array.each(availableCatalogs, function (value) {
-            catalogs.push(
-                libL.Catalog[value]
-            );
-        });
+        if (me.getEnableCatalogs()) {
+            Ext.Array.each(availableCatalogs, function (value) {
+                catalogs.push(
+                    libL.Catalog[value]
+                );
+            });
 
-        libL.control.iip.catalog(catalogs).addTo(sidebar);
+            libL.control.iip.catalog(catalogs).addTo(sidebar);
+        }
 
         // Region
         libL.control.iip.region(
@@ -670,6 +672,11 @@ Ext.define('visiomatic.Visiomatic', {
             dlng = 0.0001;
         }
 
+        // Tratar RA > 360
+        if (lng > 360) {
+            lng = lng - 360;
+        }
+
         return {
             lat: parseFloat(lat.toFixed(6)),
             lng: parseFloat(lng.toFixed(6)),
@@ -689,6 +696,11 @@ Ext.define('visiomatic.Visiomatic', {
             box, urra, urdec, llra, lldec, ur, ll;
 
         bounding = me.getBounds();
+
+        // Tratar RA > 360
+        if (bounding.lng > 360) {
+            bounding.lng = bounding.lng - 360;
+        }
 
         urra = parseFloat(bounding.lng + bounding.dlng / 2).toFixed(6);
         urdec = parseFloat(bounding.lat + bounding.dlat / 2).toFixed(6);
@@ -1067,8 +1079,11 @@ Ext.define('visiomatic.Visiomatic', {
         var feature = layer.feature,
             properties = feature.properties,
             mags = ['_meta_mag_auto_g','_meta_mag_auto_r','_meta_mag_auto_i', '_meta_mag_auto_z', '_meta_mag_auto_y'],
-            mag_tags = [],
+            tag_mags = [],
+            tag_properties = [],
             tag_id = feature.properties._meta_id,
+            excludeProperties = ['RAJ2000', 'DEJ2000'],
+            allProps = [],
             popup;
 
         Ext.each(mags, function (mag) {
@@ -1081,7 +1096,7 @@ Ext.define('visiomatic.Visiomatic', {
                 mag_value = properties[mag];
 
                 tag = '<TR><TD><spam>' + mag_name + '</spam>: </TD><TD>' + mag_value.toFixed(2) + '</td></tr>';
-                mag_tags.push(tag);
+                tag_mags.push(tag);
 
             } catch (err) {
 
@@ -1104,12 +1119,42 @@ Ext.define('visiomatic.Visiomatic', {
                    feature.properties._meta_id + '"target="_blank">' +
                    feature.properties._meta_id + '</a>';
 
+            } else if (feature.properties._meta_object_url) {
+                // Se o objeto tiver o atributo _meta_object_url exemplo
+                // external catalogs dos vizier
+                tag_id = '<a href="' + feature.properties._meta_object_url +
+                    '"target="_blank">' + feature.properties._meta_id + '</a>';
+
+                // Se o Objeto tiver poucas propriedades vale a pena lista-las
+                // as propriedades nao podem comecar com _meta_ e nao podem estar
+                // na lista de excluded
+                // E necessario fazer 2 for para que as propriedades fiquem ordenadas
+                // em ordem alfabetica
+                for (property in feature.properties) {
+                    if ((!property.startsWith("_meta_"))
+                        && (excludeProperties.indexOf(property) == -1)) {
+
+                        allProps.push(property);
+                    }
+                }
+
+                if (allProps.length <= 15) {
+                    for (key in allProps.sort()) {
+                        property = allProps[key];
+
+                        tag_properties.push(
+                            '<TR><TD><spam>' + property + '</spam>: </TD>' +
+                            '<TD>' + feature.properties[property] + '</td></tr>');
+                    }
+                }
+
             } else {
                 // se o Objeto e um single object utilizar o explorer single
 
                 // TODO: ou dar a opcao de visualizar o coadd_objects.
             }
         }
+
 
         popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
            '<TABLE style="margin:auto;">' +
@@ -1119,7 +1164,8 @@ Ext.define('visiomatic.Visiomatic', {
                     feature.properties._meta_ra.toFixed(5) + ', '
                     + feature.properties._meta_dec.toFixed(5) +
                 '</td></tr>' +
-                mag_tags.join('') +
+                tag_mags.join('') +
+                tag_properties.join('') +
             '</TBODY></TABLE>';
 
         return popup;

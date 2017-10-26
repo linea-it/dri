@@ -41,6 +41,7 @@ Ext.define('visiomatic.catalog.Submit', {
                                     name: 'draw_ellipse',
                                     boxLabel: 'Draw Ellipse',
                                     bind: '{drawEllipse}',
+                                    reference: 'chkEllipse',
                                 }
                             ]
                         },
@@ -50,6 +51,7 @@ Ext.define('visiomatic.catalog.Submit', {
                             text: 'Filters',
                             tooltip: 'Filters',
                             handler: 'onClickBtnFilter',
+                            reference: 'btnFilter',
                             width: 100,
                         }
                     ]
