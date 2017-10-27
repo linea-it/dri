@@ -27,7 +27,6 @@ from product import views as product_views
 from product_classifier import views as product_classifier_views
 from product_register import views as product_register_views
 from rest_framework import routers
-from userquery import views as userquery_views
 from validation import views as validation_views
 
 router = routers.DefaultRouter()
@@ -92,9 +91,6 @@ router.register(r'objectsrating', catalog_views.RatingViewSet)
 router.register(r'objectsreject', catalog_views.RejectViewSet)
 router.register(r'objectscomments', catalog_views.CommentsViewSet)
 router.register(r'catalogobjects', catalog_views.CatalogObjectsViewSet, base_name='catalog_objects')
-
-# UserQuery API
-router.register(r'userquery', userquery_views.UserQueryViewSet)
 
 # Comment API
 router.register(r'comment/position', comment_views.PositionViewSet)
