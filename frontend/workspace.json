@@ -36,7 +36,8 @@
         "catalogserver",
         "target",
         "products",
-        "explorer"
+        "explorer",
+        "userquery"
     ],
 
     /**
