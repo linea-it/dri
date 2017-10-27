@@ -113,6 +113,31 @@ class ActivityReports:
             owner=user).count()
 
 
+    def get_all_visits_consolidate_by_month(self):
+        """
+            Retorna uma lista com todos os meses que tiveram pelo menos 1 acesso.
+            e para cada mes o total de visitas.
+        :return: [{'date': '2017-09', 'visits': 31}, {'date': '2017-10', 'visits': 14}]
+        """
+
+        consolidates = list()
+
+        # All Distinct
+        months = Visit.objects.filter().order_by('-date').datetimes('date', 'month')
+
+        for month in months:
+            visits = Visit.objects.filter(
+                date__year=month.year,
+                date__month=month.month,
+            ).count()
+
+            consolidates.append(dict({
+                "date": month.strftime('%Y-%m'),
+                "visits": visits
+            }))
+
+        return consolidates
+
 
     def get_or_create_unique_visit(self, activity):
         """
@@ -142,8 +167,8 @@ class ActivityReports:
             # usuario no mesmo dia.
             raise e
 
-    def report_email_unique_visits(self, report_date):
 
+    def report_email_unique_visits(self, report_date):
         try:
             from_email = settings.EMAIL_NOTIFICATION
         except:
@@ -159,11 +184,9 @@ class ActivityReports:
         except:
             raise Exception("The SEND_DAILY_STATISTICS_EMAIL variable is not configured in settings.")
 
-
         # Se a variavel de configuracao SEND_DAILY_STATISTICS_EMAIL for False nao envia a notificacao.
         if not send_daily_email:
             return
-
 
         # subject
         subject = (
@@ -176,6 +199,7 @@ class ActivityReports:
             day=report_date.day
         )
 
+
         sum_visits = 0
         all_visits = self.get_all_distinct_visits()
         sum_users = len(all_visits)
@@ -183,19 +207,21 @@ class ActivityReports:
         for a in all_visits:
             sum_visits = sum_visits + a.get('all_visits')
 
-        if len(visits) == 0:
-            # nao houve visitas neste dia
-            body = "There were no visits to the science server today."
 
-        else:
-            d = date.today()
-            body = render_to_string("unique_hits_on_day.html", {
-                "today": report_date.strftime('%d/%m/%Y'),
-                "visits": visits,
-                "total_visits": all_visits,
-                "sum_visits": sum_visits,
-                "sum_users": sum_users
-            })
+        consolidate_by_month = self.get_all_visits_consolidate_by_month()
+
+        if len(visits) == 0:
+            visits = False
+
+        d = date.today()
+        body = render_to_string("unique_hits_on_day.html", {
+            "today": report_date.strftime('%d/%m/%Y'),
+            "visits": visits,
+            "consolidate": consolidate_by_month,
+            "total_visits": all_visits,
+            "sum_visits": sum_visits,
+            "sum_users": sum_users
+        })
 
         try:
             msg = EmailMessage(
