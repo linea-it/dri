@@ -23,7 +23,7 @@ class UserQueryAPITestCase(APITestCase):
             'name': query_name,
             'description': 'query1 description',
             'query': 'select 1',
-            'tablename': 'table_name',
+            'table_name': 'table_name',
             'is_public': True,
         }
         response = self.client.post('/userquery/', post_data, format='json')
@@ -35,9 +35,11 @@ class UserQueryAPITestCase(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['name'], query_name)
 
-        # change userquery name
         query_name = 'newquery1'
-        put_data = {'name': query_name}
+        put_data = {
+            'name': query_name,
+            'table_name': 'new_table_name',
+            'query': 'new_query'}
         response = self.client.put('/userquery/1/', put_data, format='json')
         self.assertEqual(response.status_code, 200)
 
