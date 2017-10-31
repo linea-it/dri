@@ -183,13 +183,16 @@ Ext.define('Explorer.view.system.SystemController', {
             value: position
         }]);
 
-        // Aladin
-        aladin.showDesFootprint();
-        aladin.goToPosition(position);
-        aladin.setFov(0.1);
-        // aladin.plotObject(data, product.get('prd_display_name'));
+        vm.set('position', position);
 
         view.setLoading(false);
+
+        // Descobrir se tem membros
+        // os membros so podem ser plotados depois que o dataset
+        // estiver carregado no visiomatic
+        if (product.get('prl_related') > 0) {
+            me.loadSystemMembers(product, object);
+        }
 
     },
 
@@ -244,6 +247,13 @@ Ext.define('Explorer.view.system.SystemController', {
     onChangeDataset: function (dataset) {
         var me = this;
         me.changeImage(dataset);
+
+        // Depois de Selecionar um dataset carregar o Aladin com a imagem
+        // do mesmo Release do dataset
+        me.loadSurveys(dataset.get('release'))
+
+        // Carregar as Tile Grid que e apresentada no aladin
+        me.loadTags(dataset.get('release'))
     },
 
     onChangeImage: function () {
@@ -253,7 +263,7 @@ Ext.define('Explorer.view.system.SystemController', {
             object = vm.get('object'),
             visiomatic = me.lookupReference('visiomatic'),
             aladin = me.lookupReference('aladin'),
-            fov = 0.05;
+            fov = 0.07;
 
         visiomatic.setView(
             object.get('_meta_ra'),
@@ -268,24 +278,62 @@ Ext.define('Explorer.view.system.SystemController', {
             'arcmin');
 
         visiomatic.showHideRadius(true);
+        
+    },
 
+    /**
+     * Carrega a lista de imagens disponiveis para um release.
+     * @param {int} release - Release ID
+     */
+    loadSurveys: function (release) {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('surveys');
+
+        store.addFilter(
+            [
+                {
+                    property: 'srv_project',
+                    value: 'DES'
+                },
+                {
+                    property: 'srv_release',
+                    value: release
+                }
+            ]
+        );
+
+        store.load({
+            callback: function () {
+                me.onLoadSurvey(this);
+            }
+        })
+    },
+
+    onLoadSurvey: function (surveys) {
+        // console.log('onLoadSurvey(%o)', surveys)
+        var me = this,
+            aladin = me.lookupReference('aladin'),
+            position = me.getViewModel().get('position'),
+            data = me.getViewModel().get('object_data');
+
+        // Aladin
+        aladin.goToPosition(position);
+
+        // Coadd Objects o zoom deve ser mais proximo
+        aladin.setFov(0.07);
 
         // Aladin Raio
         aladin.drawRadius(
-            object.get('_meta_ra'),
-            object.get('_meta_dec'),
-            object.get('_meta_radius'),
+            data._meta_ra,
+            data._meta_dec,
+            data._meta_radius,
             'arcmin'
         );
 
-        // Descobrir se tem membros
-        // os membros so podem ser plotados depois que o dataset
-        // estiver carregado no visiomatic
-        if (product.get('prl_related') > 0) {
-            me.loadSystemMembers(product, object);
-        }
-
     },
+
+
 
     onSearch: function (value) {
         var me = this,
@@ -415,5 +463,58 @@ Ext.define('Explorer.view.system.SystemController', {
         position = String(member.get('_meta_ra')) + ',' + String(member.get('_meta_dec'));
         aladin.goToPosition(position);
 
-    }
+    },
+
+    /**
+     * Retorna os tags que estao associados a um release
+     * Filtra a Store TagsByRelease de acordo com o release
+     */
+    loadTags: function (release) {
+        var me = this,
+            vm = me.getViewModel(),
+            tags = vm.getStore('tags');
+
+        if (release > 0) {
+            tags.addFilter([
+                {
+                    property: 'tag_release',
+                    value: release
+                }
+            ]);
+
+            tags.load({
+                callback: function () {
+                    me.onLoadTags(this);
+                }
+            })
+        }
+    },
+
+    onLoadTags: function (store) {
+        var me = this;
+
+        if (store.count() > 0) {
+            me.loadTiles();
+        }
+    },
+
+    loadTiles: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            tags = vm.getStore('tags'),
+            tiles = vm.getStore('tiles'),
+            ids = [];
+
+        tags.each(function (tag) {
+            ids.push(tag.get('id'));
+        },this);
+
+        tiles.filter([
+            {
+                property: 'tag',
+                operator: 'in',
+                value: ids
+            }
+        ]);
+    },
 });

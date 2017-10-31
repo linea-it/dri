@@ -177,16 +177,14 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             value: position
         }]);
 
-        // Aladin
-        aladin.showDesFootprint();
-        aladin.goToPosition(position);
-        aladin.plotObject(data);
+        vm.set('position', position);
 
         view.setLoading(false);
 
     },
 
     onLoadDatasets: function (store) {
+        console.log("onLoadDatasets")
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
             cmb = visiomatic.lookupReference('cmbCurrentDataset');
@@ -237,7 +235,15 @@ Ext.define('Explorer.view.coadd.CoaddController', {
 
     onChangeDataset: function (dataset) {
         var me = this;
+
         me.changeImage(dataset);
+
+        // Depois de Selecionar um dataset carregar o Aladin com a imagem
+        // do mesmo Release do dataset
+        me.loadSurveys(dataset.get('release'))
+
+        // Carregar as Tile Grid que e apresentada no aladin
+        me.loadTags(dataset.get('release'))
     },
 
     onChangeImage: function () {
@@ -245,34 +251,58 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             vm = me.getViewModel(),
             object = vm.get('object_data'),
             visiomatic = me.lookupReference('visiomatic'),
-            fov = 0.05;
+            fov = 0.03;
 
         visiomatic.setView(
             object._meta_ra,
             object._meta_dec,
             fov);
+    },
 
-        // map = visiomatic.getMap();
-        // libL = visiomatic.libL;
-        // wcs = map.options.crs;
-        // console.log('---------------------------------');
-        // var latLng = wcs.eqToCelsys(object.DEC, object.RA);
-        // latlng = libL.latLng(latLng.lat, latLng.lng);
-        // console.log(latlng);
-        // var path = libL.ellipseMarker(latlng, {
-        //     majAxis: object.A_IMAGE / 3600.0,
-        //     minAxis: object.B_IMAGE / 3600.0,
-        //     posAngle: 90 - object.THETA_IMAGE,
-        //     color: '#FFFF00'
-        // }).addTo(map);
+    /**
+     * Carrega a lista de imagens disponiveis para um release.
+     * @param {int} release - Release ID
+     */
+    loadSurveys: function (release) {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('surveys');
 
-        // feature = libL.ellipse(latlng, {
-        //     majAxis: object.A_IMAGE / 3600.0,
-        //     minAxis: object.B_IMAGE / 3600.0,
-        //     posAngle: 90 - object.THETA_IMAGE
-        // });
+        store.addFilter(
+            [
+                {
+                    property: 'srv_project',
+                    value: 'DES'
+                },
+                {
+                    property: 'srv_release',
+                    value: release
+                }
+            ]
+        );
 
-        // feature.addTo(map);
+        store.load({
+            callback: function () {
+                me.onLoadSurvey(this);
+            }
+        })
+    },
+
+    onLoadSurvey: function (surveys) {
+        // console.log('onLoadSurvey(%o)', surveys)
+        var me = this,
+            aladin = me.lookupReference('aladin'),
+            position = me.getViewModel().get('position'),
+            data = me.getViewModel().get('object_data');
+
+        // Aladin
+        aladin.goToPosition(position);
+
+        // Coadd Objects o zoom deve ser mais proximo
+        aladin.setFov(0.01);
+
+        // Marcar com um ponto o Objeto
+        aladin.plotObject(data);
 
     },
 
@@ -302,6 +332,59 @@ Ext.define('Explorer.view.coadd.CoaddController', {
 
         properties.clearFilter();
 
-    }
+    },
+
+    /**
+     * Retorna os tags que estao associados a um release
+     * Filtra a Store TagsByRelease de acordo com o release
+     */
+    loadTags: function (release) {
+        var me = this,
+            vm = me.getViewModel(),
+            tags = vm.getStore('tags');
+
+        if (release > 0) {
+            tags.addFilter([
+                {
+                    property: 'tag_release',
+                    value: release
+                }
+            ]);
+
+            tags.load({
+                callback: function () {
+                    me.onLoadTags(this);
+                }
+            })
+        }
+    },
+
+    onLoadTags: function (store) {
+        var me = this;
+
+        if (store.count() > 0) {
+            me.loadTiles();
+        }
+    },
+
+    loadTiles: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            tags = vm.getStore('tags'),
+            tiles = vm.getStore('tiles'),
+            ids = [];
+
+        tags.each(function (tag) {
+            ids.push(tag.get('id'));
+        },this);
+
+        tiles.filter([
+            {
+                property: 'tag',
+                operator: 'in',
+                value: ids
+            }
+        ]);
+    },
 
 });

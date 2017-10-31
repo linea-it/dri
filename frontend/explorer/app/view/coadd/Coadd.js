@@ -97,7 +97,12 @@ Ext.define('Explorer.view.coadd.Coadd', {
                                     xtype: 'coadd-aladin',
                                     reference: 'aladin',
                                     split: true,
-                                    flex: 1
+                                    flex: 1,
+                                    bind: {
+                                        storeSurveys: '{surveys}',
+                                        storeTags: '{tags}',
+                                        storeTiles: '{tiles}'                                    
+                                    },
                                 }
                             ]
                         },

@@ -10,7 +10,10 @@ Ext.define('Explorer.view.system.SystemModel', {
         'Explorer.store.Association',
         'Explorer.store.ProductDisplayContents',
         'common.model.Dataset',
-        'common.store.Datasets'
+        'common.store.Surveys',
+        'common.store.Tags',
+        'common.store.Footprints',
+        'common.store.Datasets',
     ],
 
     data: {
@@ -19,7 +22,8 @@ Ext.define('Explorer.view.system.SystemModel', {
         object: null,
         object_data: null,
         property_id: null,
-        overlayMembers: null
+        overlayMembers: null,
+        position: null
     },
 
     links: {
@@ -67,6 +71,22 @@ Ext.define('Explorer.view.system.SystemModel', {
                 property: 'id',
                 direction: 'DESC'
             }]
-        }
+        },
+        // Surveys = Imagens que estao disponiveis para um release
+        surveys: {
+            type: 'surveys'
+        },
+
+        // Tags = Tags associados ao Release
+        tags: {
+            type: 'tags',
+            storeId: 'Tags'
+        },
+        // Tile = Uma instancia reduzida de um dataset somente informacoes das coordenadas
+        // de cada tile.
+        tiles: {
+            type: 'footprints',
+            pageSize: 0
+        },            
     }
 });
