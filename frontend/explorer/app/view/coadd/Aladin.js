@@ -15,7 +15,7 @@ Ext.define('Explorer.view.coadd.Aladin', {
             enableGoto: false,
             enableShift: false,
             infoEnabled: false,
-            enableLayersControl: true,
+            enableLayersControl: false,
             toolbarPosition: 'top',
             showFilters: false
 
@@ -39,15 +39,17 @@ Ext.define('Explorer.view.coadd.Aladin', {
 
         catalog.addSources([
             libA.marker(
-                object.RA,
-                object.DEC,
+                object._meta_ra,
+                object._meta_dec,
                 {
-                    popupTitle: 'ID: ' + object.COADD_OBJECT_ID,
-                    popupDesc: 'RA: ' + object.RA + '</br>' +
-                               'Dec: ' + object.DEC
+                    popupTitle: 'ID: ' + object._meta_id,
+                    popupDesc: 'RA: ' + object._meta_ra + '</br>' +
+                               'Dec: ' + object._meta_dec
                 }
             )
         ]);
+
+        console.log(object)
 
         aladin.addCatalog(catalog);
 
