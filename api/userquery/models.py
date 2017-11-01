@@ -28,7 +28,7 @@ class Query(models.Model):
     is_public = models.BooleanField(
         default=False, verbose_name='Is Public',
         help_text='Is Public default True')
-    # TODO: missing release and database
+    # TODO: missing release and database - Use foreign key;
 
     def __str__(self):
         return self.name
