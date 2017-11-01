@@ -7,11 +7,12 @@ Ext.define('Explorer.view.coadd.CoaddModel', {
         'Explorer.store.Products',
         'Explorer.store.Association',
         'Explorer.store.Objects',
+        'common.store.Surveys',
+        'common.store.Tags',
+        'common.store.Footprints',
         'common.store.Datasets',
         'common.model.Dataset',
         'Explorer.model.Product',
-
-
     ],
 
     data: {
@@ -19,6 +20,7 @@ Ext.define('Explorer.view.coadd.CoaddModel', {
         object_id: null,
         object_data: null,
         property_id: null,
+        position: null
     },
 
     links: {
@@ -60,6 +62,22 @@ Ext.define('Explorer.view.coadd.CoaddModel', {
                 property: 'id',
                 direction: 'DESC'
             }]
-        }
+        },
+        // Surveys = Imagens que estao disponiveis para um release
+        surveys: {
+            type: 'surveys'
+        },
+
+        // Tags = Tags associados ao Release
+        tags: {
+            type: 'tags',
+            storeId: 'Tags'
+        },
+        // Tile = Uma instancia reduzida de um dataset somente informacoes das coordenadas
+        // de cada tile.
+        tiles: {
+            type: 'footprints',
+            pageSize: 0
+        },
     }
 });

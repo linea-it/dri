@@ -102,7 +102,12 @@ Ext.define('Explorer.view.system.System', {
                                     xtype: 'system-aladin',
                                     reference: 'aladin',
                                     split: true,
-                                    flex: 1
+                                    flex: 1,
+                                    bind: {
+                                        storeSurveys: '{surveys}',
+                                        storeTags: '{tags}',
+                                        storeTiles: '{tiles}'
+                                    },                                    
                                 }
                             ]
                         },

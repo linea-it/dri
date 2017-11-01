@@ -15,7 +15,7 @@ Ext.define('Explorer.view.system.Aladin', {
             enableGoto: false,
             enableShift: false,
             infoEnabled: false,
-            enableLayersControl: true,
+            enableLayersControl: false,
             toolbarPosition: 'top',
             showFilters: false
 
@@ -91,6 +91,14 @@ Ext.define('Explorer.view.system.Aladin', {
             aladin = me.getAladin(),
             libA = me.libA,
             overlay;
+
+        ra = parseFloat(ra);
+        dec = parseFloat(dec);
+        
+        // Tratar ra negativo
+        if (ra < 0) {
+            ra = ra + 360;
+        }
 
         overlay = libA.graphicOverlay({
             color: '#ee2345',
