@@ -949,38 +949,6 @@ Ext.define('aladin.Aladin', {
         }
     },
 
-    submitGoToPosition: function (field) {
-        var me = this,
-            value = field.getValue(),
-            position,
-            menu = field.up('menu');
-
-        if ((field.isValid()) && (field.getValue() !== '')) {
-
-            // Foi pedido que essa funcao dispare um evento ao inves de
-            // apontar a imagem para a posicao entao caso o parametro gotoSetPosition
-            // seja true executa o metodo goToPosition
-            // caso contrario dispara um evento.
-            if (me.getGotoSetPosition()) {
-                me.goToPosition(value);
-
-            } else {
-                // Desativar o item de menu para nao ficar na tela
-                menu.deactivateActiveItem ();
-
-                position = me.parsePosition(value);
-                me.fireEvent('gotoposition', position, me);
-            }
-
-        } else {
-            if (field.getValue() !== '') {
-                field.markInvalid('Invalid value.');
-
-            }
-        }
-
-    },
-
     parsePosition: function (position) {
         var ra, dec, newposition;
 

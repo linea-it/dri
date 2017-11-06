@@ -27,10 +27,10 @@ Ext.define('Sky.view.main.Toolbar', {
                     queryMode:'local',
                     store:['',''],
                     menu: {
-                        xtype: 'menu',                          
+                        xtype: 'menu',
                         items: [{
                                     name:'latlng', text: 'RA, Dec (Deg)'
-                                }, 
+                                },
                                 {
                                     name:'HMS', text: 'RA, Dec (HMS)'
                                 }],
@@ -41,9 +41,9 @@ Ext.define('Sky.view.main.Toolbar', {
                                     me.fireEvent('changeCoordinateSystem', {name:item.name, textfield:me.getReferences().txtCoordinateSearch});
                                 }
                             }
-                        }                         
+                        }
                     }
-                },              
+                },
                 {
                     xtype: 'textfield',
                     emptyText: 'RA (deg), Dec (deg)',
@@ -69,7 +69,7 @@ Ext.define('Sky.view.main.Toolbar', {
                 }
             ]
         });
-         
+
         return items;
     },
 
@@ -77,22 +77,4 @@ Ext.define('Sky.view.main.Toolbar', {
         this.fireEvent('dosearch', value);
     },
 
-/*    parsePosition: function (position) {
-        var ra, dec, newposition;
-
-        if (position) {
-            // Fix if value in degrees need a space between values
-            if (position.indexOf(',') != -1) {
-                position = position.split(',');
-                ra = position[0].trim();
-                dec = position[1].trim();
-                newposition = [ra, dec];
-                position = newposition.join(', ');
-            } else {
-                position = newposition;
-            }
-
-            return newposition;
-        }
-    }*/
 });
