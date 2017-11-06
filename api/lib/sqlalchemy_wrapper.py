@@ -35,6 +35,9 @@ class DBOracle:
     def get_dialect(self):
         return oracle
 
+    def get_raw_sql_limit(self, line_number):
+        return "FETCH FIRST %s ROWS ONLY" % line_number
+
 
 class DBSqlite:
     def __init__(self, db):
@@ -49,6 +52,9 @@ class DBSqlite:
 
     def get_dialect(self):
         return sqlite
+
+    def get_raw_sql_limit(self, line_number):
+        return "LIMIT(%s)" % line_number
 
 
 # classe generica - nao ligada a este problema
@@ -69,9 +75,6 @@ class DBBase:
 
         # Setar o Diaclect especifico deste banco para ser usado com a funcao compile
         self.dialect = self.database.get_dialect()
-
-        # self.db = self.engine.connect
-        self.con = self.engine.connect
 
         with self.engine.connect():
             self.metadata = MetaData(self.engine)
