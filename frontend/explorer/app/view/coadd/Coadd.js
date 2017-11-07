@@ -48,6 +48,23 @@ Ext.define('Explorer.view.coadd.Coadd', {
                             xtype: 'coadd-form',
                             reference: 'properties-form',
                             split: true,
+                            bbar: [
+                                {
+                                    xtype: 'button',
+                                    text: 'SIMBAD',
+                                    handler: 'onClickSimbad'
+                                },
+                                {
+                                    xtype: 'button',
+                                    text: 'NED',
+                                    handler: 'onClickNed'
+                                },
+                                {
+                                    xtype: 'button',
+                                    text: 'VizieR',
+                                    handler: 'onClickVizier'
+                                }
+                            ]
                         },
                         // Inferior Esquerdo
                         {
@@ -56,7 +73,7 @@ Ext.define('Explorer.view.coadd.Coadd', {
                             split: true,
                             flex: 1
                         }
-                    ]
+                    ],
                 },
                 // Painel Direito
                 {
@@ -101,7 +118,7 @@ Ext.define('Explorer.view.coadd.Coadd', {
                                     bind: {
                                         storeSurveys: '{surveys}',
                                         storeTags: '{tags}',
-                                        storeTiles: '{tiles}'                                    
+                                        storeTiles: '{tiles}'
                                     },
                                 }
                             ]
