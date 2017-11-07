@@ -10,7 +10,7 @@ class UserQueryAPITestCase(APITestCase):
 
     def test_list_userquery_route(self):
         route = resolve('/userquery/')
-        self.assertEqual(route.func.__name__, 'UserQueryViewSet')
+        self.assertEqual(route.func.__name__, 'QueryViewSet')
 
     def test_list_userquery(self):
         response = self.client.get('/userquery/')
