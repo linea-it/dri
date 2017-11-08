@@ -1,17 +1,19 @@
 import logging
-from .serializers import *
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
-from .permissions import IsOwnerOrPublic
-from django.db.models import Q
 
+from django.db.models import Q
 from django.http import HttpResponse
 from django.http import JsonResponse
-from .db import RawQueryValidator
-from lib.sqlalchemy_wrapper import DBBase
 
+from .models import *
+from .permissions import IsOwnerOrPublic
+from .serializers import *
 from .tasks import create_table
+from .db import RawQueryValidator
+
+from lib.sqlalchemy_wrapper import DBBase
 
 
 logger = logging.getLogger(__name__)
@@ -19,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 class QueryViewSet(viewsets.ModelViewSet):
     queryset = Query.objects.filter()
-    serializer_class = UserQuerySerializer
+    serializer_class = QuerySerializer
 
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic,)
@@ -30,6 +32,14 @@ class QueryViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+class JobViewSet(viewsets.ModelViewSet):
+    queryset = Job.objects.all()
+    serializer_class = JobSerializer
+
+    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic,)
 
 
 class QueryValidateViewSet(viewsets.ModelViewSet):

@@ -21,8 +21,8 @@ class Query(models.Model):
         help_text='Last Edition Date')
     table_name = models.CharField(
         max_length=128, null=False, verbose_name='Table Name')
-    query = models.CharField(
-        max_length=2048, null=False, verbose_name='Query')
+    sql_sentence = models.CharField(
+        max_length=2048, null=False, verbose_name='Sql Sentence')
     is_validate = models.BooleanField(
         default=False, verbose_name='Is Query Validated')
     is_public = models.BooleanField(
@@ -32,3 +32,36 @@ class Query(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Job(models.Model):
+
+    job_status_ops = (
+        ('st', 'Starting'),
+        ('vl', 'Validating query'),
+        ('rn', 'Running'),
+        ('ok', 'Done'),
+        ('er', 'Error'),
+    )
+
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Owner', default=None)
+    start_date_time = models.DateTimeField(
+        auto_now_add=True, null=True, blank=True, verbose_name='Creation Date',
+        help_text='Creation Date')
+    #review
+    end_date_time = models.DateTimeField(
+        null=True, blank=True, verbose_name='Last Edition Date',
+        help_text='Last Edition Date')
+    sql_sentence = models.CharField(
+        max_length=2048, null=False, verbose_name='Sql_sentence')
+    timeout = models.IntegerField(null=True, verbose_name='Query execution timeout in seconds')
+    #review resul_table, limit, size
+    job_status = models.CharField(
+        max_length=25,
+        choices=job_status_ops,
+        default='st',
+        verbose_name='Status'
+    )
