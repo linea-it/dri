@@ -1,12 +1,5 @@
-/**
- * This class is the main view for the application. It is specified in app.js as the
- * "mainView" property. That setting automatically applies the "viewport"
- * plugin causing this view to become the body element (i.e., the viewport).
- *
- * TODO - Replace this content of this view to suite the needs of your application.
- */
 Ext.define('UserQuery.view.main.Main', {
-    extend: 'Ext.tab.Panel',
+    extend: 'Ext.container.Container',
     xtype: 'app-main',
 
     requires: [
@@ -14,91 +7,144 @@ Ext.define('UserQuery.view.main.Main', {
         'Ext.window.MessageBox',
 
         'UserQuery.view.main.MainController',
-        'UserQuery.view.main.MainModel',
-        'UserQuery.view.main.List'
+
+        'common.header.Toolbar',
+        'common.footer.Footer'
     ],
 
     controller: 'main',
-    viewModel: 'main',
+    viewModel: {},
 
-    ui: 'navigation',
+    layout: {
+        type: 'vbox',
+        align: 'stretch'
+    },
 
-    tabBarHeaderPosition: 1,
-    titleRotation: 0,
-    tabRotation: 0,
+    bind:{
+        hidden: '{!initialized}'
+    },
 
-    header: {
-        layout: {
-            align: 'stretchmax'
-        },
-        title: {
-            bind: {
-                text: '{name}'
+    items: [
+        // header bar
+        {xtype: 'dri-header', viewModel:{ data: {name:'User Query'}}},
+
+        // toolbar
+        {xtype: 'toolbar', region:'north', items: [
+            {xtype: 'button', tooltip:'New', handler:'btnNew_onClick', iconCls: 'x-fa fa-file-o', 
+                // menu: {xtype: 'menu', plain: true, items: {
+                //     xtype: 'button',
+                //     text: 'User options',
+                //     handler: 'onBtnNew_Click'
+                // }}
             },
-            flex: 0
-        },
-        iconCls: 'fa-th-list'
-    },
+            {xtype: 'button', tooltip:'Open', handler:'btnOpen_onClick', iconCls: 'x-fa fa-folder-open'},
+            '-',
+            {xtype: 'button', tooltip:'Delete', bind:{disabled:'{!activeQuery.exist}'}, iconCls: 'x-fa fa-trash-o'},
+            '-',
+            {xtype: 'button', tooltip:'Save', iconCls: 'x-fa fa-floppy-o', handler:'btnSave_onClick',
+                // menu: {xtype: 'menu', plain: true, items: {
+                //     text: 'Save As',
+                //     handler: 'mnuSaveAs_onClick'
+                // }}
+            },
+            {xtype: 'button', tooltip:'Start Job', handler:'btnStartJob_onClick',  iconCls: 'x-fa fa-play'},
+            // '->',
+            // {xtype: 'button', text:'My Jobs', tooltip:'My Jobs', iconCls: 'x-fa fa-info-circle'}
+        ]},
 
-    tabBar: {
-        flex: 1,
-        layout: {
-            align: 'stretch',
-            overflowHandler: 'none'
-        }
-    },
+        // client area
+        {xtype: 'container', reference:'ctnArea', flex:1, bodyPadding: 15, style:{opacity:'0'}, layout:'border', items:[
+            // accordion
+            {xtype: 'panel', region:'west', split:true, width:300, minWidth:100, bind:{title:'{activeQuery.releaseText}'}, layout:{type:'accordion', titleCollapse:false, animate:true}, items:[
+                // tables of release
+                {title: 'Input Tables', layout:'fit', items:[
+                    {xtype: 'treepanel', reference:'tvwInputTables', rootVisible:false, 
+                        listeners: {
+                            itemexpand: 'tvwInputTables_onExpanded',
+                            drag: function(node, data, dropRec, dropPosition) {
+                                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
+                                //Ext.example.msg("Drag from right to left", 'Dropped ' + data.records[0].get('name') + dropOn);
+                                console.log(111)
+                            }
+                        },
 
-    responsiveConfig: {
-        tall: {
-            headerPosition: 'top'
-        },
-        wide: {
-            headerPosition: 'left'
-        }
-    },
-
-    defaults: {
-        bodyPadding: 20,
-        tabConfig: {
-            plugins: 'responsive',
-            responsiveConfig: {
-                wide: {
-                    iconAlign: 'left',
-                    textAlign: 'left'
+                        viewConfig: {
+                            plugins: {
+                                ptype: 'treeviewdragdrop',
+                                enableDrag: true,
+                                enableDrop: false,
+                                ddGroup: 'TreeDD',
+                                listeners: {
+                                    drag: function(node, data, dropRec, dropPosition) {
+                                        //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
+                                        //Ext.example.msg("Drag from right to left", 'Dropped ' + data.records[0].get('name') + dropOn);
+                                        console.log(node)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                ]},
+                
+                // tables of external catalog
+                {title: 'External Catalog', layout:'fit', reference:'accExternalCatalog',
+                    listeners:{
+                        expand: 'accExternalCatalog_onExpand'
+                    },
+                    items:[
+                        {xtype: 'treepanel', reference:'tvwExternalCatalog', rootVisible:false}
+                    ]
                 },
-                tall: {
-                    iconAlign: 'top',
-                    textAlign: 'center',
-                    width: 120
-                }
-            }
-        }
-    },
 
-    items: [{
-        title: 'Home',
-        iconCls: 'fa-home',
-        // The following grid shares a store with the classic version's grid as well!
-        items: [{
-            xtype: 'mainlist'
-        }]
-    }, {
-        title: 'Users',
-        iconCls: 'fa-user',
-        bind: {
-            html: '{loremIpsum}'
-        }
-    }, {
-        title: 'Groups',
-        iconCls: 'fa-users',
-        bind: {
-            html: '{loremIpsum}'
-        }
-    }, {
-        title: 'Settings',
-        iconCls: 'fa-cog',
-        bind: {
-            html: '{loremIpsum}'
-        }
-    }]
+                // tables of user
+                {title: 'My Tables', layout:'fit', items:[
+                    {xtype: 'treepanel', reference:'tvwMyTables', rootVisible:false}
+                ]}
+            ]},
+
+            // form panel
+            {xtype: 'panel', region:'center', bind:{title:'{activeQuery.name}'}, layout:'border', items:[
+                {xtype: 'form', reference:'frmQuery', region:'center', layout:'vbox', bodyPadding: 15, 
+                    defaults: {
+                        listeners: {
+                            change: 'form_onDataChange'
+                        }
+                    },
+                    items: [
+                        {xtype: 'textfield',     fieldLabel: 'Name',         name:'name', width:'100%'},
+                        {xtype: 'textfield',     fieldLabel: 'Description',  name:'description', width:'100%'},
+                        {xtype: 'textareafield', fieldLabel: 'SQL Sentence', name:'sql', reference:'sql', width:'100%', flex:1},
+                        {xtype:'container', width:'100%', layout:{type:'hbox', pack:'end'}, defaults:{margin:'0 0 0 10'}, items:[
+                            {xtype:'button', text:'Check', reference:'btnCheck', handler:'btnCheck_onClick'},
+                            {xtype:'button', text:'Preview', reference:'btnPreview', handler:'btnPreview_onClick'}
+                        ]}
+                    ]
+                },
+                {xtype:'grid', region:'south', reference:'grdPreview', split:true, height:200, store: Ext.create('Ext.data.Store')} 
+            ]},
+
+            // jobs panel
+            {xtype: 'panel', region:'east', width:300, layout:'vbox', split:true, collapsible:true, collapsed:true, title:'My Jobs', bodyPadding: 15, items:[
+                {xtype:'treelist', reference:'tvwJobList', flex:1, width:'100%', rootVisible:false,
+                    store: {
+                        root: {
+                        expanded: true,
+                            children: [
+                                {text:'My Job 01', leaf: true, iconCls: 'x-fa fa-hourglass-3'},
+                                {text:'My Job 02', leaf: true, iconCls: 'x-fa fa-hourglass-3'},
+                                {text:'My Job 03', leaf: true, iconCls: 'x-fa fa-frown-o', cls :'rednode'}
+                            ]
+                        }
+                    },
+                    listeners: {
+                        selectionchange: 'tvwJobList_onSelectionChange'
+                    }
+                },
+                {xtype:'container', reference:'ctnJobDetail', html:'JOB Detail'}
+            ]},
+        ]},
+        
+        // footer bar
+        {xtype: 'dri-footer'}
+    ]
 });
