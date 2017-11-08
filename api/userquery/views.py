@@ -11,6 +11,8 @@ from django.http import JsonResponse
 from .db import RawQueryValidator
 from lib.sqlalchemy_wrapper import DBBase
 
+from .tasks import create_table
+
 
 logger = logging.getLogger(__name__)
 
@@ -80,3 +82,22 @@ class QueryInspectViewSet(viewsets.ModelViewSet):
 
         result = db.fetchall_dict(sql)
         return JsonResponse(result, safe=False)
+
+
+class CreateTableViewSet(viewsets.ModelViewSet):
+    http_method_names = ['post', ]
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def create(self, request):
+        data = request.data
+        sql = data.get("raw_sql", None)
+        table = data.get("table_name", None)
+
+        try:
+            create_table.delay(table, sql, schema=None, timeout=None)
+            return HttpResponse(status=201)
+        except Exception as e:
+            print(str(e))
+            return HttpResponse(status=400)
+
