@@ -41,9 +41,15 @@ Ext.define('Sky.view.main.MainController', {
             refs = me.getReferences(),
             mainCard = refs.mainCardPanel,
             mainLayout = mainCard.getLayout(),
+            sky = mainCard.child('component[routeId=\'sky\']'),
             ctrl = mainLayout.getActiveItem().getController();
 
+        // A Pesquisa sempre redireciona para o Footprint, por que a coordenada
+        // pode nao ser na mesma tile. entao e necessario a busca no ceu inteiro
+        me.setActivePanel(sky);
+
         ctrl.gotoPosition(value);
+
     },
 
     /**
@@ -56,7 +62,7 @@ Ext.define('Sky.view.main.MainController', {
             mainLayout = mainCard.getLayout(),
             ctrl = mainLayout.getActiveItem().getController(),
             value = item.textfield.value;
-        
+
         //converte para o sistema de métrica escolhido
         if (value){
             t1 = visiomatic.Visiomatic.strToSystem(value);
@@ -150,12 +156,12 @@ Ext.define('Sky.view.main.MainController', {
                     ondblclick: function(){
                         me.aladinDblClick = true;
                     }
-                }                
+                }
             }),
             headerRefs = headerBar.getReferences();
 
         headerRefs.searchGlobal.show();
-        
+
         newView.txtCoordinateSearch = headerRefs.txtCoordinateSearch;
         me.setActivePanel(newView, release, coordinate, fov);
 

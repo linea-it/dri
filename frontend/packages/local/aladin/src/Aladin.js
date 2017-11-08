@@ -949,38 +949,6 @@ Ext.define('aladin.Aladin', {
         }
     },
 
-    submitGoToPosition: function (field) {
-        var me = this,
-            value = field.getValue(),
-            position,
-            menu = field.up('menu');
-
-        if ((field.isValid()) && (field.getValue() !== '')) {
-
-            // Foi pedido que essa funcao dispare um evento ao inves de
-            // apontar a imagem para a posicao entao caso o parametro gotoSetPosition
-            // seja true executa o metodo goToPosition
-            // caso contrario dispara um evento.
-            if (me.getGotoSetPosition()) {
-                me.goToPosition(value);
-
-            } else {
-                // Desativar o item de menu para nao ficar na tela
-                menu.deactivateActiveItem ();
-
-                position = me.parsePosition(value);
-                me.fireEvent('gotoposition', position, me);
-            }
-
-        } else {
-            if (field.getValue() !== '') {
-                field.markInvalid('Invalid value.');
-
-            }
-        }
-
-    },
-
     parsePosition: function (position) {
         var ra, dec, newposition;
 
@@ -988,19 +956,26 @@ Ext.define('aladin.Aladin', {
             // Fix if value in degrees need a space between values
             if (position.indexOf(',') != -1) {
                 position = position.split(',');
-                ra = position[0].trim();
-                dec = position[1].trim();
+                ra = parseFloat(position[0].trim());
+                dec = parseFloat(position[1].trim());
+
+                // Converter RA para 0-360
+                if (ra < 0) {
+                    ra = ra + 360;
+                }
+
                 newposition = [ra, dec];
                 position = newposition.join(', ');
             } else {
                 position = newposition;
             }
 
-            return newposition;
+            return position
         }
     },
 
     goToPosition: function (position) {
+        // console.log('goToPosition(%o)', position);
         var me = this,
             aladin = me.getAladin(),
             newposition;
@@ -1105,6 +1080,22 @@ Ext.define('aladin.Aladin', {
         aladin.showLayerBox();
 
         return false;
+    },
+
+
+    overlayDrawCircle: function(source, canvasCtx, viewParams) {
+        // define custom draw function
+        // http://aladin.unistra.fr/AladinLite/doc/API/examples/cat-custom-draw-function/
+        canvasCtx.beginPath();
+        canvasCtx.arc(source.x, source.y, source.data['size'] * 2, 0, 2 * Math.PI, false);
+        canvasCtx.closePath();
+        canvasCtx.strokeStyle = '#c38';
+        canvasCtx.lineWidth = 3;
+        canvasCtx.globalAlpha = 0.7,
+        canvasCtx.stroke();
+        var fov = Math.max(viewParams['fov'][0], viewParams['fov'][1]);
+
+        return;
     },
 
     getDesFootprintCoordinates: function () {

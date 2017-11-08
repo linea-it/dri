@@ -28,6 +28,7 @@ from product_classifier import views as product_classifier_views
 from product_register import views as product_register_views
 from rest_framework import routers
 from validation import views as validation_views
+from userquery import views as userquery_views
 
 router = routers.DefaultRouter()
 
@@ -94,6 +95,11 @@ router.register(r'catalogobjects', catalog_views.CatalogObjectsViewSet, base_nam
 
 # Comment API
 router.register(r'comment/position', comment_views.PositionViewSet)
+
+# UserQuery API
+router.register(r'userquery', userquery_views.QueryViewSet)
+router.register(r'userquery_validate', userquery_views.QueryValidateViewSet, base_name='validate_query')
+router.register(r'userquery_inspect', userquery_views.QueryInspectViewSet, base_name='inspect_query')
 
 # Aladin API
 router.register(r'aladin/image', aladin_views.ImageViewSet)
