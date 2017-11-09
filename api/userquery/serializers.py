@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import Query
+from .models import *
 
 
-class UserQuerySerializer(serializers.HyperlinkedModelSerializer):
+class QuerySerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     id = serializers.ReadOnlyField()
 
@@ -15,8 +15,25 @@ class UserQuerySerializer(serializers.HyperlinkedModelSerializer):
             'owner',
             'creation_date',
             'last_edition_date',
-            'table_name',
-            'query',
+            'sql_sentence',
             'is_validate',
             'is_public'
+        )
+
+
+class JobSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    id = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Job
+        fields = (
+            'id',
+            'table_name',
+            'owner',
+            'start_date_time',
+            'end_date_time',
+            'sql_sentence',
+            'job_status',
+            'timeout',
         )

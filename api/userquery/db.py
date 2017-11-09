@@ -18,6 +18,9 @@ class RawQueryValidator(DBBase):
     def is_query_validated(self):
         return self._is_query_validated
 
+    def validation_error_message(self):
+        return self._validation_error_message
+
     def get_json_response(self):
         return dict({'is_validated': self._is_query_validated,
                     'error_message': self._validation_error_message})
