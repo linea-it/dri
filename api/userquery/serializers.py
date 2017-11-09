@@ -13,6 +13,7 @@ class QuerySerializer(serializers.HyperlinkedModelSerializer):
             'name',
             'description',
             'owner',
+            'release',
             'creation_date',
             'last_edition_date',
             'sql_sentence',
