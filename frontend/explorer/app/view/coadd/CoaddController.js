@@ -179,9 +179,6 @@ Ext.define('Explorer.view.coadd.CoaddController', {
 
         vm.set('position', position);
 
-        // Criar os dados para o plot Spectral Distribution (Flux)
-        me.loadSpectralDistribution();
-
         view.setLoading(false);
 
     },
@@ -301,7 +298,8 @@ Ext.define('Explorer.view.coadd.CoaddController', {
         // Aladin
         aladin.goToPosition(position);
 
-        aladin.setFov(180);
+        // Coadd Objects o zoom deve ser mais proximo
+        aladin.setFov(0.01);
 
         // Marcar com um ponto o Objeto
         aladin.plotObject(data);
@@ -436,42 +434,6 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             object._meta_ra, object._meta_dec, radius)
 
         window.open(url, '_blank')
-    },
-
-
-    loadSpectralDistribution: function () {
-        var me = this,
-            vm = me.getViewModel(),
-            object = vm.get('object_data'),
-            spectral = vm.getStore('spectral'),
-            mags = ['mag_auto_g', 'mag_auto_r', 'mag_auto_i',
-                    'mag_auto_z', 'mag_auto_y'],
-            wavelengths = [474, 645.5, 783.5, 926, 1008],
-            wavelength, mag_auto, flux, min, max;
-
-        for (var property in object) {
-            var prop = property.toLowerCase();
-
-            // nao incluir as propriedades _meta
-            if (mags.indexOf(prop) !== -1) {
-
-                mag_auto = parseFloat(parseFloat(object[prop]).toFixed(2));
-
-                if ((parseInt(mag_auto) !== 99) && (parseInt(mag_auto) !== 0)) {
-                    flux = (-0.4 * mag_auto);
-                    flux = parseFloat(flux.toFixed(1));
-                }
-
-                wavelength = wavelengths[mags.indexOf(prop)];
-
-                spectral.add({
-                    flux: flux,
-                    mag_auto: mag_auto,
-                    wavelength: wavelength,
-                    property: prop
-                })
-
-            }
-        }
     }
+
 });

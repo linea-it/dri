@@ -9,8 +9,7 @@ Ext.define('Explorer.view.coadd.Coadd', {
         'Explorer.view.coadd.Form',
         'Explorer.view.coadd.Properties',
         'Explorer.view.coadd.Visiomatic',
-        'Explorer.view.coadd.Aladin',
-        'Explorer.view.coadd.SpectralDistribution'
+        'Explorer.view.coadd.Aladin'
     ],
 
     controller: 'coadd',
@@ -94,7 +93,7 @@ Ext.define('Explorer.view.coadd.Coadd', {
                         {
                             xtype: 'panel',
                             // title: 'Superior',
-                            height: 500,
+                            height: 400,
                             layout: {
                                 type: 'hbox',
                                 pack: 'start',
@@ -127,26 +126,8 @@ Ext.define('Explorer.view.coadd.Coadd', {
                         // Painel Direito Inferior
                         {
                             xtype: 'panel',
-                            flex: 1,
-                            layout: {
-                                type: 'hbox',
-                                pack: 'start',
-                                align: 'stretch'
-                            },
-                            items: [
-                                {
-                                    xtype: 'coadd-spectral-distribution',
-                                    reference: 'SpectralChart',
-                                    flex: 1,
-                                    bind: {
-                                        store: '{spectral}'
-                                    }
-                                },
-                                {
-                                    xtype: 'panel',
-                                    flex: 1
-                                }
-                            ]
+                            //title: 'Inferior',
+                            flex: 1
                         }
                     ]
                 }

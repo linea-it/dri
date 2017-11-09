@@ -320,7 +320,8 @@ Ext.define('Explorer.view.system.SystemController', {
         // Aladin
         aladin.goToPosition(position);
 
-        aladin.setFov(180);
+        // Coadd Objects o zoom deve ser mais proximo
+        aladin.setFov(0.07);
 
         // Aladin Raio
         aladin.drawRadius(
