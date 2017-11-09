@@ -14,16 +14,17 @@ Ext.define('UserQuery.view.dialog.OpenDialogController', {
 
         refs.btnConfirm.setDisabled(true);
 
-        // define os dados da treeview
-        me.getView().setLoading(true, 'Loading queries...');
+        // busca lista que queries
         Api.getQueries({
+            cache: false,
             proxy: 'toTreeStore',
+            request: function(){
+                me.getView().setLoading(true, 'Loading queries...');
+            },
             response: function(error, store){
                 me.getView().setLoading(false);
                 
-                if (error){
-                    console.log(error);
-                }else{
+                if (!error){
                     refs.treepanel.setStore(store);
                 }
             }
@@ -46,10 +47,8 @@ Ext.define('UserQuery.view.dialog.OpenDialogController', {
 });
 
 Api.proxy('toTreeStore', function(result){
-    result.my_queries.forEach(function(item){
-        item.leaf = true;
-    });
-    result.samples.forEach(function(item){
+    result.forEach(function(item){
+        item.text = item.name;
         item.leaf = true;
     });
 
@@ -57,8 +56,8 @@ Api.proxy('toTreeStore', function(result){
         root: {
             expanded: true,
             children: [
-                {text: 'My Queries', expanded: true, isgroup:true, children:result.my_queries},
-                {text: 'Samples', expanded: true, isgroup:true, children:result.samples}
+                {text: 'My Queries', expanded: true, isgroup:true, children:result},
+                {text: 'Samples', expanded: true, isgroup:true, children:[]}
             ]
         }
     });

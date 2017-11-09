@@ -39,15 +39,15 @@ Ext.define('UserQuery.view.main.Main', {
             },
             {xtype: 'button', tooltip:'Open', handler:'btnOpen_onClick', iconCls: 'x-fa fa-folder-open'},
             '-',
-            {xtype: 'button', tooltip:'Delete', bind:{disabled:'{!activeQuery.exist}'}, iconCls: 'x-fa fa-trash-o'},
+            {xtype: 'button', tooltip:'Delete', bind:{disabled:'{!activeQuery.exist}'}, handler:'btnDelete_onClick', iconCls: 'x-fa fa-trash-o'},
             '-',
-            {xtype: 'button', tooltip:'Save', iconCls: 'x-fa fa-floppy-o', handler:'btnSave_onClick',
+            {xtype: 'button', tooltip:'Save', reference:'btnSave', iconCls: 'x-fa fa-floppy-o', handler:'btnSave_onClick',
                 // menu: {xtype: 'menu', plain: true, items: {
                 //     text: 'Save As',
                 //     handler: 'mnuSaveAs_onClick'
                 // }}
             },
-            {xtype: 'button', tooltip:'Start Job', handler:'btnStartJob_onClick',  iconCls: 'x-fa fa-play'},
+            {xtype: 'button', tooltip:'Start Job', bind:{disabled:'{!activeQuery.exist}'}, handler:'btnStartJob_onClick',  iconCls: 'x-fa fa-play'},
             // '->',
             // {xtype: 'button', text:'My Jobs', tooltip:'My Jobs', iconCls: 'x-fa fa-info-circle'}
         ]},
@@ -55,7 +55,7 @@ Ext.define('UserQuery.view.main.Main', {
         // client area
         {xtype: 'container', reference:'ctnArea', flex:1, bodyPadding: 15, style:{opacity:'0'}, layout:'border', items:[
             // accordion
-            {xtype: 'panel', region:'west', split:true, width:300, minWidth:100, bind:{title:'{activeQuery.releaseText}'}, layout:{type:'accordion', titleCollapse:false, animate:true}, items:[
+            {xtype: 'panel', region:'west', split:true, width:300, minWidth:100, bind:{title:'{activeRelease.display}'}, layout:{type:'accordion', titleCollapse:false, animate:true}, items:[
                 // tables of release
                 {title: 'Input Tables', layout:'fit', items:[
                     {xtype: 'treepanel', reference:'tvwInputTables', rootVisible:false, 
@@ -87,14 +87,14 @@ Ext.define('UserQuery.view.main.Main', {
                 ]},
                 
                 // tables of external catalog
-                {title: 'External Catalog', layout:'fit', reference:'accExternalCatalog',
+                /*{title: 'External Catalog', layout:'fit', reference:'accExternalCatalog',
                     listeners:{
                         expand: 'accExternalCatalog_onExpand'
                     },
                     items:[
                         {xtype: 'treepanel', reference:'tvwExternalCatalog', rootVisible:false}
                     ]
-                },
+                },*/
 
                 // tables of user
                 {title: 'My Tables', layout:'fit', items:[
@@ -111,9 +111,9 @@ Ext.define('UserQuery.view.main.Main', {
                         }
                     },
                     items: [
-                        {xtype: 'textfield',     fieldLabel: 'Name',         name:'name', width:'100%'},
+                        {xtype: 'textfield',     fieldLabel: 'Name',         name:'name', reference:'name', width:'100%'},
                         {xtype: 'textfield',     fieldLabel: 'Description',  name:'description', width:'100%'},
-                        {xtype: 'textareafield', fieldLabel: 'SQL Sentence', name:'sql', reference:'sql', width:'100%', flex:1},
+                        {xtype: 'textareafield', fieldLabel: 'SQL Sentence', name:'query', reference:'query', width:'100%', flex:1},
                         {xtype:'container', width:'100%', layout:{type:'hbox', pack:'end'}, defaults:{margin:'0 0 0 10'}, items:[
                             {xtype:'button', text:'Check', reference:'btnCheck', handler:'btnCheck_onClick'},
                             {xtype:'button', text:'Preview', reference:'btnPreview', handler:'btnPreview_onClick'}

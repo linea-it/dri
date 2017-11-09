@@ -4,21 +4,25 @@ Ext.define('UserQuery.view.service.Api', {
     alternateClassName: 'Api',
 
     URL: {
-        doLogin: '/dri/api/api-auth/login/next=',
-        getUser: '/dri/api/logged/get_logged/?format=json',
-        getReleases: '/dri/api/releases/',
-        getTables: '/dri/api/catalog/',
-        getFields: '/dri/api/productcontent/' // ?pcn_product_id=25
+        doLogin:     '/dri/api/api-auth/login/next=',
+        queryCRUD:   '/dri/api/userquery/',
+        getUser:     {method:'GET',  url:'/dri/api/logged/get_logged/?format=json'},
+        getReleases: {method:'GET',  url:'/dri/api/releases/'},
+        getTables:   {method:'GET',  url:'/dri/api/catalog/'},
+        getFields:   {method:'GET',  url:'/dri/api/productcontent/'}, // ?pcn_product_id=25
+        getQueries:  {method:'GET',  url:'/dri/api/userquery/'},
+        validate:    {method:'POST', url:'/dri/api/userquery_validate/'},
+        preview:     {method:'POST', url:'/dri/api/userquery_inspect/'},
         // http://dri.com/dri/api/catalog/get_class_tree_by_group/?external_catalog=true&group__in=objects_catalog,targets,value_added_catalogs,external_catalogs&node=root
 
     },
 
     getUser: function(definition){
-        this.send('GET', this.URL.getUser, definition);
+        this.send(this.URL.getUser, definition);
     },
 
     getReleases: function(definition){
-        this.send('GET', this.URL.getReleases, definition);
+        this.send(this.URL.getReleases, definition);
     },
 
     getRelease: function(definition){
@@ -31,23 +35,36 @@ Ext.define('UserQuery.view.service.Api', {
             responseCallback (error, releaseData);
         }
 
-        this.send('GET', this.URL.getReleases, definition);
+        this.send(this.URL.getReleases, definition);
     },
 
     getTables: function(definition){
-        this.send('GET', this.URL.getTables, definition);
+        this.send(this.URL.getTables, definition);
     },
 
     getFields: function(definition){
-        this.send('GET', this.URL.getFields, definition);
+        this.send(this.URL.getFields, definition);
     },
 
     getQueries: function(definition){
-        var me = this;
+        this.send(this.URL.getQueries, definition);
+    },
 
-        setTimeout(function(){
-            me.responseAnalyse( null, getQueriesTest(), definition );
-        }, 2000);
+    save: function(definition){
+        definition.params = definition.params || {};
+        this[definition.params.id ? 'update' : 'insert'](this.URL.queryCRUD, definition);
+    },
+
+    remove: function(definition){
+        this.delete(this.URL.queryCRUD, definition);
+    },
+
+    validate: function(definition){
+        this.send(this.URL.validate, definition);
+    },
+
+    preview: function(definition){
+        this.send(this.URL.preview, definition);
     },
 
     getJobs: function(definition){
@@ -113,16 +130,6 @@ function getJobsTest(){
     }
 }
 
-function hash(str) {
-    var hash = 0;
-    if (str.length == 0) return hash;
-    for (i = 0; i < str.length; i++) {
-        char = str.charCodeAt(i);
-        hash = ((hash<<5)-hash)+char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    return hash;
-}
 
 // limite de tempo de execução e limite de linhas
 
