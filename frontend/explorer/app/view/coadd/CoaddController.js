@@ -187,7 +187,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
     },
 
     onLoadDatasets: function (store) {
-        console.log("onLoadDatasets")
+        // console.log("onLoadDatasets")
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
             cmb = visiomatic.lookupReference('cmbCurrentDataset');

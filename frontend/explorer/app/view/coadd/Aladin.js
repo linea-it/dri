@@ -15,7 +15,6 @@ Ext.define('Explorer.view.coadd.Aladin', {
             enableGoto: false,
             enableShift: false,
             infoEnabled: false,
-            enableLayersControl: false,
             toolbarPosition: 'top',
             showFilters: false
 
