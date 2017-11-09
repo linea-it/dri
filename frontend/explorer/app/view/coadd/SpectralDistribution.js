@@ -19,7 +19,7 @@ Ext.define('Explorer.view.coadd.SpectralDistribution', {
         top: 40,
         right: 20,
         bottom: 20,
-        left: 40
+        left: 20
     },
 
     sprites: [{
