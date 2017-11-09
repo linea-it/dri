@@ -42,7 +42,7 @@ class JobViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic,)
 
 
-class QueryValidateViewSet(viewsets.ModelViewSet):
+class QueryValidate(viewsets.ModelViewSet):
     """
     Validate query
     """
@@ -51,63 +51,82 @@ class QueryValidateViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     def create(self, request):
-        data = request.data
-        query_id = data.get("id", None)
-        raw_sql = data.get("raw_sql", None)
-
-        if query_id is None:
-            raise Exception("Query Id is a mandatory parameter")
-
-        q = self._get_row_by_id_or_raise_exception(query_id)
-
-        if not self._is_user_authorized(q):
-            raise Exception("User not authorized to perform this action")
-
-        rqv = RawQueryValidator(raw_sql)
-        return JsonResponse(rqv.get_json_response())
-
-    @staticmethod
-    def _get_row_by_id_or_raise_exception(id):
         try:
-            return Query.objects.get(pk=id)
+            data = request.data
+            sql_sentence = data.get("sql_sentence", None)
+
+            rqv = RawQueryValidator(sql_sentence)
+            return JsonResponse(rqv.get_json_response())
+
         except Exception as e:
-            raise Exception("Id has no match on database")
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
 
     def _is_user_authorized(self, q):
         return q.owner == self.request.user or q.is_public
 
 
-class QueryInspectViewSet(viewsets.ModelViewSet):
+class QueryPreview(viewsets.ModelViewSet):
     http_method_names = ['post', ]
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
 
     def create(self, request):
-        data = request.data
-        line_number = data.get("line_number", None)
-        raw_sql = data.get("raw_sql", None)
-
-        db = DBBase('userquery')
-        sql = raw_sql + " " + db.database.get_raw_sql_limit(line_number)
-
-        result = db.fetchall_dict(sql)
-        return JsonResponse(result, safe=False)
-
-
-class CreateTableViewSet(viewsets.ModelViewSet):
-    http_method_names = ['post', ]
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def create(self, request):
-        data = request.data
-        sql = data.get("raw_sql", None)
-        table = data.get("table_name", None)
-
         try:
-            create_table.delay(table, sql, schema=None, timeout=None)
-            return HttpResponse(status=201)
+            data = request.data
+            sql_sentence = data.get("sql_sentence", None)
+
+            # review number of elements to show
+            line_number = 10
+            db = DBBase('userquery')
+            sql = sql_sentence + " " + db.database.get_raw_sql_limit(line_number)
+            result = db.fetchall_dict(sql)
+
+            response = {"count": len(result),
+                        "message": None,
+                        "results": result}
+            return JsonResponse(response, safe=False)
+
         except Exception as e:
             print(str(e))
-            return HttpResponse(status=400)
+            return JsonResponse({'message': str(e)}, status=400)
 
+
+class CreateTable(viewsets.ModelViewSet):
+    http_method_names = ['post', ]
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def create(self, request):
+        try:
+            data = request.data
+            table_name = data.get("table_name", None)
+            id = data.get("id", None)
+
+            q = Query.objects.get(pk=id)
+
+            if not self._is_user_authorized(q):
+                raise Exception("User not authorized to perform this action")
+
+            rqv = RawQueryValidator(q.sql_sentence)
+            if rqv.engine.has_table(table_name, None):
+                raise Exception("Table exists - choose a different name")
+
+            if rqv.is_query_validated():
+                q.is_validate = True
+                q.save()
+            else:
+                raise Exception("The table exists: %s" % rqv.validation_error_message())
+
+            q = Job(table_name=table_name,
+                    owner=self.request.user,
+                    sql_sentence=q.sql_sentence)
+            q.save()
+            create_table.delay(table_name, q.sql_sentence, q.id, schema=None, timeout=None)
+            return HttpResponse(status=200)
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
+
+    def _is_user_authorized(self, q):
+        return q.owner == self.request.user or q.is_public
