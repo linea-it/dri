@@ -270,29 +270,12 @@ Ext.define('Sky.view.footprint.FootprintController', {
     },
 
     gotoPosition: function(value){
+        console.log('gotoPosition')
         var me = this,
-            aladin = me.lookupReference('aladin').getAladin();
+            aladin = me.lookupReference('aladin');
 
-        aladin.gotoObject(value);
+        aladin.goToPosition(value);
 
-        /*
-        var me = this,
-            o = visiomatic.Visiomatic.strToSystem(value);
-
-        if (visiomatic.processing) return;
-
-        if (o){
-            //converte para ra/dec, se estiver em HMG
-            if (o.system=='HMS'){
-                visiomatic.processing = true;
-                return visiomatic.Visiomatic.hmsToLatLng(value, function(latlng){
-                    visiomatic.processing = false;
-                    me.toVisiomatic([latlng.lng, latlng.lat]);
-                });
-            }else{
-                me.toVisiomatic([o.value.lng, o.value.lat]);
-            }
-        }*/
     },
 
     onActivate: function(){
@@ -301,7 +284,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
         //obtém as coordenadas e o zoom da url
         coordinate = ((location.hash.split('/')[2] || '').replace(/,/g, '.').split('|')) || null;
         zoom = ((location.hash.split('/')[3] || '').replace(/,/g, '.')) || null;
-        
+
         //define no aladin as coordenadas e o zoom
         if (coordinate[0] && zoom){
             footprint = this.getView().down('footprint-aladin');

@@ -167,15 +167,19 @@ def get_token(request):
 @api_view(['GET'])
 def teste(request):
     if request.method == 'GET':
-        return Response(dict({'status': "success"}))
-
         # from activity_statistic.reports import ActivityReports
         # import datetime
         #
         # yesterday = datetime.date.today() - datetime.timedelta(days=1)
         #
+        # # ActivityReports().get_all_visits_consolidate_by_month()
+        #
         # ActivityReports().report_email_unique_visits(yesterday)
+
         #
         # visits = ActivityReports().unique_visits_by_date(year=yesterday.year, month=yesterday.month, day=yesterday.day)
         # return Response(dict({'data': visits}))
+
+
+        return Response(dict({'status': "success"}))
 

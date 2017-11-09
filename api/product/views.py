@@ -43,12 +43,12 @@ class ProductFilter(django_filters.FilterSet):
     band = django_filters.MethodFilter()
     class_name = django_filters.MethodFilter()
     process = django_filters.MethodFilter()
+    release = django_filters.MethodFilter()
 
     class Meta:
         model = Product
         fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id',
-                  'releases',
-                  'tags', 'class_name']
+                  'releases', 'tags', 'class_name', 'release',]
 
     def filter_group(self, queryset, value):
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
@@ -64,6 +64,9 @@ class ProductFilter(django_filters.FilterSet):
 
     def filter_process(self, queryset, value):
         return queryset.filter(prd_process_id__epr_original_id=str(value))
+
+    def filter_release(self, queryset, value):
+        return queryset.filter(releases__id=int(value))
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -86,10 +89,11 @@ class ProductViewSet(viewsets.ModelViewSet):
 class CatalogFilter(django_filters.FilterSet):
     group = django_filters.MethodFilter()
     group__in = django_filters.MethodFilter()
+    release = django_filters.MethodFilter()
 
     class Meta:
         model = Product
-        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'group', 'group__in']
+        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'group', 'group__in', 'release']
 
     def filter_group(self, queryset, value):
         # product -> product_class -> product_group
@@ -98,6 +102,10 @@ class CatalogFilter(django_filters.FilterSet):
     def filter_group__in(self, queryset, value):
         # product -> product_class -> product_group
         return queryset.filter(prd_class__pcl_group__pgr_name__in=value.split(','))
+
+    def filter_release(self, queryset, value):
+        return queryset.filter(releases__id=int(value))
+
 
 
 class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):

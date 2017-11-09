@@ -1,12 +1,6 @@
-from django.core.urlresolvers import reverse, resolve
-from django.contrib.auth.models import AnonymousUser, User
-from rest_framework import status
+from django.core.urlresolvers import resolve
+from django.contrib.auth.models import User
 from rest_framework.test import APITestCase
-from django.test import TestCase
-from rest_framework.test import APIRequestFactory
-from rest_framework.test import force_authenticate
-from userquery.models import UserQuery
-from userquery.serializers import UserQuerySerializer
 
 
 class UserQueryAPITestCase(APITestCase):
@@ -16,7 +10,7 @@ class UserQueryAPITestCase(APITestCase):
 
     def test_list_userquery_route(self):
         route = resolve('/userquery/')
-        self.assertEqual(route.func.__name__, 'UserQueryViewSet')
+        self.assertEqual(route.func.__name__, 'QueryViewSet')
 
     def test_list_userquery(self):
         response = self.client.get('/userquery/')
@@ -24,12 +18,12 @@ class UserQueryAPITestCase(APITestCase):
 
     def test_create_userquery(self):
         # put new userquery
-        queryName = 'query1'
+        query_name = 'query1'
         post_data = {
-            'name': queryName,
+            'name': query_name,
             'description': 'query1 description',
             'query': 'select 1',
-            'tablename': 'table_name',
+            'table_name': 'table_name',
             'is_public': True,
         }
         response = self.client.post('/userquery/', post_data, format='json')
@@ -39,11 +33,13 @@ class UserQueryAPITestCase(APITestCase):
         response = self.client.get('/userquery/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['name'], queryName)
+        self.assertEqual(response.data[0]['name'], query_name)
 
-        # change userquery name
-        queryName = 'newquery1'
-        put_data = {'name': queryName}
+        query_name = 'newquery1'
+        put_data = {
+            'name': query_name,
+            'table_name': 'new_table_name',
+            'query': 'new_query'}
         response = self.client.put('/userquery/1/', put_data, format='json')
         self.assertEqual(response.status_code, 200)
 
@@ -51,7 +47,7 @@ class UserQueryAPITestCase(APITestCase):
         response = self.client.get('/userquery/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0]['name'], queryName)
+        self.assertEqual(response.data[0]['name'], query_name)
 
         # delete query
         response = self.client.delete('/userquery/1/')

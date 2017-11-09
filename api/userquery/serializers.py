@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import UserQuery
-from django.contrib.auth.models import User
+from .models import Query
 
 
 class UserQuerySerializer(serializers.HyperlinkedModelSerializer):
@@ -8,14 +7,16 @@ class UserQuerySerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.ReadOnlyField()
 
     class Meta:
-        model = UserQuery
+        model = Query
         fields = (
             'id',
-            'owner',
             'name',
+            'description',
+            'owner',
+            'creation_date',
+            'last_edition_date',
+            'table_name',
             'query',
-            'tablename',
-            'creationdate',
-            'is_public',
-            'description'
+            'is_validate',
+            'is_public'
         )
