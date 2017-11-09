@@ -62,9 +62,6 @@ class QueryValidate(viewsets.ModelViewSet):
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
 
-    def _is_user_authorized(self, q):
-        return q.owner == self.request.user or q.is_public
-
 
 class QueryPreview(viewsets.ModelViewSet):
     http_method_names = ['post', ]
@@ -124,6 +121,31 @@ class CreateTable(viewsets.ModelViewSet):
             q.save()
             create_table.delay(table_name, q.sql_sentence, q.id, schema=None, timeout=None)
             return HttpResponse(status=200)
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
+
+    def _is_user_authorized(self, q):
+        return q.owner == self.request.user or q.is_public
+
+
+class TableProperties(viewsets.ModelViewSet):
+    http_method_names = ['get', ]
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def list(self, request):
+        try:
+            jobs = Job.objects.filter(Q(owner=request.user) &
+                                      Q(job_status='ok'))
+
+            db = DBBase('userquery')
+            response = {}
+            for job in jobs:
+                response[job.table_name] = db.get_table_columns(job.table_name)
+
+            return JsonResponse(response)
+
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
