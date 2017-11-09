@@ -68,7 +68,8 @@
         "font-awesome",
         "common",
         "visiomatic",
-        "aladin"
+        "aladin",
+        "charts"
     ],
 
     /**
