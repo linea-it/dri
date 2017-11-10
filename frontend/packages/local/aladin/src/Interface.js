@@ -142,8 +142,12 @@ Ext.define('aladin.Interfaces', {
             tools.push({
                 xtype: 'button',
                 scope: me,
-                iconCls: 'aladin-layer-button',
-                handler: me.onShowLayerBox
+                iconCls: 'x-fa fa-picture-o',
+                tooltip: 'Image Layer',
+                menu: me.createImageLayersMenuItems(),
+                menuAlign: 'tr',
+                arrowVisible: false,
+                itemId: 'BtnImageLayers'
             });
         }
 
@@ -476,6 +480,64 @@ Ext.define('aladin.Interfaces', {
         items = me.createColorMapMenuItems();
 
         btn.setMenu(items);
-    }
+    },
+
+
+    createImageLayersMenuItems: function () {
+        // console.log('createImageLayersMenuItems()');
+        var me = this,
+            externalSurveys = me.getExternalSurveys(),
+            desSurveys = me.getSurveys(),
+            items = [],
+            survey, currentSurvey;
+
+        if ((desSurveys != null) && (desSurveys.length > 0)) {
+            for (var i in desSurveys) {
+                desSurvey = desSurveys[i];
+
+                if (desSurvey.id != 'empty_survey') {
+
+                    items.push({
+                        xtype: 'menucheckitem',
+                        text: desSurvey["name"],
+                        group: 'imageSurveys',
+                        survey: desSurvey,
+                        scope: me,
+                        checked: true,
+                        checkHandler: me.selectExternalSurvey
+                    });
+                }
+            }
+            items.push('-');
+        }
+
+        for (var i in externalSurveys) {
+            survey = externalSurveys[i];
+
+            items.push({
+                xtype: 'menucheckitem',
+                text: survey["name"],
+                group: 'imageSurveys',
+                survey: survey,
+                scope: me,
+                checkHandler: me.selectExternalSurvey
+            });
+        }
+
+        return items;
+    },
+
+    updateImageLayersMenuItems: function () {
+        var me = this,
+            btn = me.down('#BtnImageLayers'),
+            items;
+
+        if (btn) {
+            items = me.createImageLayersMenuItems();
+
+            btn.setMenu(items);
+        }
+    },
+
 
 });

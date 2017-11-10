@@ -13,6 +13,7 @@ Ext.define('Explorer.view.coadd.CoaddModel', {
         'common.store.Datasets',
         'common.model.Dataset',
         'Explorer.model.Product',
+        'Explorer.store.SpectralDistributions'
     ],
 
     data: {
@@ -79,5 +80,9 @@ Ext.define('Explorer.view.coadd.CoaddModel', {
             type: 'footprints',
             pageSize: 0
         },
+
+        spectral: {
+            type: 'spectral-distribution'
+        }
     }
 });
