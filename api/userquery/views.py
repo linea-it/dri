@@ -113,7 +113,7 @@ class CreateTable(viewsets.ModelViewSet):
                 q.is_validate = True
                 q.save()
             else:
-                raise Exception("The table exists: %s" % rqv.validation_error_message())
+                raise Exception("Invalid query: %s" % rqv.validation_error_message())
 
             q = Job(table_name=table_name,
                     owner=self.request.user,
