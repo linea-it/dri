@@ -75,7 +75,7 @@ class QueryPreview(viewsets.ModelViewSet):
 
             # review number of elements to show
             line_number = 10
-            db = DBBase('userquery')
+            db = DBBase('catalog')
             sql = sql_sentence + " " + db.database.get_raw_sql_limit(line_number)
             result = db.fetchall_dict(sql)
 
@@ -139,7 +139,7 @@ class TableProperties(viewsets.ModelViewSet):
             jobs = Job.objects.filter(Q(owner=request.user) &
                                       Q(job_status='ok'))
 
-            db = DBBase('userquery')
+            db = DBBase('catalog')
             response = {}
             for job in jobs:
                 response[job.table_name] = db.get_table_columns(job.table_name)
