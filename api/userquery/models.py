@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.conf import settings
-from coadd.models import Release
 
 
 class Query(models.Model):
@@ -14,8 +13,7 @@ class Query(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name='Owner', default=None)
-    release = models.ForeignKey(
-        Release, related_name='job', on_delete=models.CASCADE, verbose_name='Release')
+    release = models.ForeignKey('coadd.Release')
     creation_date = models.DateTimeField(
         auto_now_add=True, null=True, blank=True, verbose_name='Creation Date',
         help_text='Creation Date')

@@ -19,13 +19,20 @@ class QueryAPITestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create_query(self):
+        # put new release
+        post_data = {
+            'rls_name': 'rls_test',
+        }
+        response = self.client.post('/releases/', post_data, format='json')
+        self.assertEqual(response.status_code, 201)
+
         # put new userquery
         query_name = 'query1'
         post_data = {
             'name': query_name,
             'description': 'query1 description',
             'sql_sentence': 'select 1',
-            'table_name': 'table_name',
+            'release': 1,
             'is_public': True,
         }
         response = self.client.post('/userquery_query/', post_data, format='json')
@@ -40,8 +47,10 @@ class QueryAPITestCase(APITestCase):
         query_name = 'newquery1'
         put_data = {
             'name': query_name,
-            'table_name': 'new_table_name',
-            'sql_sentence': 'new_query'}
+            'sql_sentence': 'new_query',
+            'description': 'query1 description',
+            'release': 1,
+        }
         response = self.client.put('/userquery_query/1/', put_data, format='json')
         self.assertEqual(response.status_code, 200)
 

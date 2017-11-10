@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import *
 
 
-class QuerySerializer(serializers.HyperlinkedModelSerializer):
+class QuerySerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     id = serializers.ReadOnlyField()
 
