@@ -252,9 +252,6 @@ class DBBase:
             return con.execute(create_stm)
 
     def create_table_raw_sql(self, table, sql, schema=None, timeout=None):
-        if self.engine.has_table(table, schema):
-            raise Exception("Table exists - choose a different name")
-
         table_name = table
 
         if schema is not None and schema is not "":
@@ -268,8 +265,8 @@ class DBBase:
             t.start()
         try:
             con.execute(sql_create_table)
-        except:
-            raise Exception("Timeout for query execution")
+        except Exception as e:
+            raise Exception("Timeout for query execution - %s" % str(e))
         t.cancel()
 
     # ----------------------------- Drop Table ----------------------
