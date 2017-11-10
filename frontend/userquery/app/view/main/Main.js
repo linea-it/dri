@@ -3,17 +3,19 @@ Ext.define('UserQuery.view.main.Main', {
     xtype: 'app-main',
 
     requires: [
+        'Ext.app.ViewModel',
         'Ext.plugin.Viewport',
         'Ext.window.MessageBox',
 
         'UserQuery.view.main.MainController',
+        'UserQuery.view.main.MainModel',
 
         'common.header.Toolbar',
         'common.footer.Footer'
     ],
 
     controller: 'main',
-    viewModel: {},
+    viewModel: 'main',
 
     layout: {
         type: 'vbox',
@@ -25,14 +27,9 @@ Ext.define('UserQuery.view.main.Main', {
     },
 
     items: [
-        // header bar
+        //header bar
         {
-            xtype: 'dri-header',
-            viewModel: {
-                data: {
-                    name: 'User Query'
-                }
-            }
+            xtype: 'dri-header'
         },
 
         // toolbar

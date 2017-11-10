@@ -1,22 +1,22 @@
-Ext.define('UserQuery.store.QueryStore', {
-    extend: 'Ext.data.Store',
+// Ext.define('UserQuery.store.QueryStore', {
+//     extend: 'Ext.data.Store',
 
-    alias: 'store.querystore',
-    alternateClassName: 'QueryStore',
+//     alias: 'store.querystore',
+//     alternateClassName: 'QueryStore',
 
-    fields: [
-        'name', 'email', 'phone'
-    ],
+//     fields: [
+//         'name', 'email', 'phone'
+//     ],
 
-    data: { items: [
-        { name: 'Jean Luc'}
-    ]},
+//     data: { items: [
+//         { name: 'Jean Luc'}
+//     ]},
 
-    proxy: {
-        type: 'memory',
-        reader: {
-            type: 'json',
-            rootProperty: 'items'
-        }
-    }
-});
+//     proxy: {
+//         type: 'memory',
+//         reader: {
+//             type: 'json',
+//             rootProperty: 'items'
+//         }
+//     }
+// });
