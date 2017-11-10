@@ -1,5 +1,6 @@
 # Create your tasks here
 from __future__ import absolute_import, unicode_literals
+from django.utils import timezone
 from celery import shared_task
 from lib.sqlalchemy_wrapper import DBBase
 
@@ -18,4 +19,5 @@ def create_table(table, sql, id, schema=None, timeout=None):
         q.job_status = 'ok'
     except:
         q.job_status = 'er'
+    q.end_date_time = timezone.now()
     q.save()
