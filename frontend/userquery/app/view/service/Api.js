@@ -5,14 +5,15 @@ Ext.define('UserQuery.view.service.Api', {
 
     URL: {
         doLogin:     '/dri/api/api-auth/login/next=',
-        queryCRUD:   '/dri/api/userquery/',
+        queryCRUD:   '/dri/api/userquery_query/',
         getUser:     {method:'GET',  url:'/dri/api/logged/get_logged/?format=json'},
         getReleases: {method:'GET',  url:'/dri/api/releases/'},
         getTables:   {method:'GET',  url:'/dri/api/catalog/'},
         getFields:   {method:'GET',  url:'/dri/api/productcontent/'}, // ?pcn_product_id=25
-        getQueries:  {method:'GET',  url:'/dri/api/userquery/'},
+        getQueries:  {method:'GET',  url:'/dri/api/userquery_query/'},
         validate:    {method:'POST', url:'/dri/api/userquery_validate/'},
         preview:     {method:'POST', url:'/dri/api/userquery_inspect/'},
+        startJob:    {method:'POST', url:'/dri/api/userquery_create_table/'}
         // http://dri.com/dri/api/catalog/get_class_tree_by_group/?external_catalog=true&group__in=objects_catalog,targets,value_added_catalogs,external_catalogs&node=root
 
     },
@@ -76,15 +77,7 @@ Ext.define('UserQuery.view.service.Api', {
     },
 
     startJob: function(definition){
-        var me = this;
-        var jobs = getJobsTest();
-
-        jobs.push(definition.data);
-        sessionStorage.setItem('jobs', JSON.stringify(jobs));
-
-        setTimeout(function(){
-            me.responseAnalyse( null, definition, definition );
-        }, 2000);
+        this.send(this.URL.startJob, definition);
     },
 
     doLogin: function(){

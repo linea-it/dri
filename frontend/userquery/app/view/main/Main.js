@@ -113,7 +113,7 @@ Ext.define('UserQuery.view.main.Main', {
                     items: [
                         {xtype: 'textfield',     fieldLabel: 'Name',         name:'name', reference:'name', width:'100%'},
                         {xtype: 'textfield',     fieldLabel: 'Description',  name:'description', width:'100%'},
-                        {xtype: 'textareafield', fieldLabel: 'SQL Sentence', name:'query', reference:'query', width:'100%', flex:1},
+                        {xtype: 'textareafield', fieldLabel: 'SQL Sentence', name:'sql_sentence', reference:'sql_sentence', width:'100%', flex:1},
                         {xtype:'container', width:'100%', layout:{type:'hbox', pack:'end'}, defaults:{margin:'0 0 0 10'}, items:[
                             {xtype:'button', text:'Check', reference:'btnCheck', handler:'btnCheck_onClick'},
                             {xtype:'button', text:'Preview', reference:'btnPreview', handler:'btnPreview_onClick'}

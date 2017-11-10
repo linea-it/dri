@@ -26,7 +26,7 @@ Ext.define('UserQuery.view.main.MainController', {
                 Api.doLogin();
             }else{
                 vm.set('initialized', true);
-   
+                
                 me.createEmptyQuery();
                 removeSplash();               
             }
@@ -36,7 +36,7 @@ Ext.define('UserQuery.view.main.MainController', {
     afterRender: function(){
         var refs = this.getReferences();
         
-        new Ext.dd.DropTarget(refs.query.getEl(), {
+        new Ext.dd.DropTarget(refs.sql_sentence.getEl(), {
             ddGroup: 'TreeDD', // mesmo ddGroup definido na treeview
             notifyEnter: function(ddSource, e, data){
                 // 
@@ -115,11 +115,28 @@ Ext.define('UserQuery.view.main.MainController', {
     btnStartJob_onClick: function(button){
         var me = this;
         var dialog = new StartJobDialog({animateTarget : button.getEl()});
+        var query = me.getActiveQuery();
 
-        dialog.open(function(table){
+        dialog.open(function(tableName){
             Api.startJob({
-
-            })
+                cache: false,
+                params: {
+                    'table_name': tableName,
+                    'id': query.id
+                },
+                request: function(){
+                    me.setLoading(true, 'Starting job...');
+                },
+                response: function(error, result){
+                    me.setLoading(false);
+                    console.log(result);
+                    // if (!error){
+                    //     Ext.toast('Query data saved', null, 't');
+                    //     query.changed = false;
+                    //     me.updateActiveQuery(query);
+                    // }
+                }
+            });
         });
     },
 
@@ -129,9 +146,12 @@ Ext.define('UserQuery.view.main.MainController', {
         var refs = me.getReferences();
         var vm = me.getViewModel();
         var query = me.getActiveQuery();
+        var release = me.getActiveRelease();
         var data = refs.frmQuery.getForm().getValues();
         
         data.id = query.id;
+        data.release = release.id;
+
         // TODO: no banco de dados não deve ser obrigatório esse campo
         data.table_name = data.name.toLowerCase().replace(/\ /g, '');
 
@@ -146,6 +166,7 @@ Ext.define('UserQuery.view.main.MainController', {
 
                 if (!error){
                     Ext.toast('Query data saved', null, 't');
+                    query.changed = false;
                     me.updateActiveQuery(query);
                 }
             }
@@ -189,7 +210,7 @@ Ext.define('UserQuery.view.main.MainController', {
             });
         }
     },
-
+    
     // evento: ao clicar no botão check
     btnCheck_onClick: function(){
         var me = this;
@@ -197,18 +218,29 @@ Ext.define('UserQuery.view.main.MainController', {
         var query = me.getActiveQuery();
         
         Api.validate({
+            cache: false,
             params:{
                 id: query.id,
-                raw_sql: refs.query.getValue()
+                sql_sentence: refs.sql_sentence.getValue()
             },
             request: function(){
                 me.setLoading(true, 'Check in progress...');
             },
-            response: function(error, query){
+            response: function(error, result){
                 me.setLoading(false);
+                result = result || {};
 
                 if (!error){
-                    Ext.toast('Query validate success', null, 't');
+                    if (result.is_validated){
+                        Ext.toast('Query validate success', null, 't');
+                    }else{
+                        Ext.MessageBox.show({
+                            title: 'Query validate error',
+                            msg: result.error_message.split('[')[0],
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.MessageBox.WARNING
+                        });
+                    }
                 }
             }
         });
@@ -230,33 +262,27 @@ Ext.define('UserQuery.view.main.MainController', {
 
         // executa o sql no servidor
         Api.preview({
+            cache: false,
             params:{
                 line_number: 0,
-                raw_sql: refs.query.getValue()
+                sql_sentence: refs.sql_sentence.getValue()
             },
             request: function(){
                 me.setLoading(true, 'Preview in progress...');
             },
-            response: function(error, columns){
+            response: function(error, result){
+                var f, i = 0;
+
                 me.setLoading(false);
 
                 if (!error){
-                    var columns = [
-                        {text: 'ID', field:'id'},
-                        {text: 'RA (deg)', field:'ra'},
-                        {text: 'Dev (deg)', field:'dec'},
-                        {text: 'Radius', field:'radius_iso_mpc'},
-                        {text: 'Z_INIT', field:'z_init'}
-                    ];
-
                     // define as colunas da grid
-                    columns.forEach(function(col, index){
-                        var column = Ext.create('Ext.grid.column.Column', {text:col.text, dataIndex: col.field});
-                        refs.grdPreview.headerCt.insert(index, column);
-                    });
+                    for (f in result.results[0]){
+                        refs.grdPreview.headerCt.insert(i++, Ext.create('Ext.grid.column.Column', {text:f, dataIndex:f}));
+                    }
 
                     // define os dados da grid
-                    refs.grdPreview.getStore().loadData(previewResponse().results)
+                    refs.grdPreview.getStore().loadData(result.results)
                 }
             }
         });
@@ -337,17 +363,17 @@ Ext.define('UserQuery.view.main.MainController', {
     form_onDataChange: function(field, newVal, oldVal) {
         var refs = this.getReferences();
         var vm = this.getViewModel();
-        var query = this.getActiveQuery();
-
-        if (query){
-            query.changed = true;
-        }
-
+        var query = this.getActiveQuery() || {};
+        
+        query.changed = true;
+        
         vm.set('activeQuery.'+field.name, newVal);
+        var sqlExist = Boolean(vm.get('activeQuery.sql_sentence'));
 
-        refs.btnSave.setDisabled( !Boolean(vm.get('activeQuery.query')) || !Boolean(vm.get('activeQuery.name')) )
-        refs.btnCheck.setDisabled( !Boolean(vm.get('activeQuery.query')) )
-        refs.btnPreview.setDisabled( !Boolean(vm.get('activeQuery.query')) )
+        refs.btnSave.setDisabled( !sqlExist || !Boolean(vm.get('activeQuery.name')) )
+        refs.btnCheck.setDisabled( !sqlExist )
+        refs.btnPreview.setDisabled( !sqlExist );
+        //refs.btnStartJob.setDisabled( true ); //!sqlExist || query.changed || !query.exist);
     },
 
     setActiveRelease: function(release){
@@ -398,13 +424,14 @@ Ext.define('UserQuery.view.main.MainController', {
 
         // obtém dados da release da query
         (function doGetRelease(){
+            console.warn('resolver o problema do release tá retornando uma url ao invés de número, ver TODO abaixo');
             Api.getRelease({
                 cache: true,
                 params:{ 
-                    id: query.release || 1 //TODO: remover || 1, usei isso pq ainda não tem esse campo na query
+                    id: query.release.split ? query.release.split('/releases/')[1].replace('/', '') : query.release  //TODO: tá retornando uma url, deve ser número, por isso essa gambiarra
                 },
                 request: function(){
-                    me.setLoading(true, 'Load release data...');                
+                    me.setLoading(true, 'Loading release data...');                
                 },
                 response: function(error, release){
                     me.setLoading(false);
@@ -413,6 +440,14 @@ Ext.define('UserQuery.view.main.MainController', {
                 }
             });
         }())
+    },
+
+    getActiveQuery: function(){
+        return this.getViewModel().get('activeQuery');
+    },
+
+    getActiveRelease: function(release){
+        return this.getViewModel().get('activeRelease');
     },
 
     updateActiveQuery: function(query){
@@ -425,10 +460,6 @@ Ext.define('UserQuery.view.main.MainController', {
         query.exist = query.id ? true : false;
         refs.frmQuery.getForm().setValues(query);
         vm.set('activeQuery', query);
-    },
-
-    getActiveQuery: function(){
-        return this.getViewModel().get('activeQuery');
     },
 
     clearQuery: function(){
@@ -448,7 +479,8 @@ Ext.define('UserQuery.view.main.MainController', {
     createEmptyQuery: function(release_id){
         this.setActiveQuery({
             name:  "MyQuery" + (myQueryNumber++),
-            release: release_id || 1
+            release: release_id || 1,
+            changed: false
         });
     },
 
