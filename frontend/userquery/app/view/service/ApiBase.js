@@ -1,16 +1,23 @@
 var cacheStorage = sessionStorage;
+var requestIdIndex = 0;
 
 Ext.define('UserQuery.view.service.ApiBase', {
     cache: location.href.includes('/dev/'),
 
     _proxy: {},
+    _complete:{},
 
     proxy: function(name, callback){
         this._proxy[name] = callback;
     },
 
-    responseAnalyse: function(error, result, definition){
+    responseComplete: function(requestId, callback){
+        this._complete[requestId] = callback;
+    },
+
+    responseAnalyse: function(error, result, definition, requestId){
         var proxy;
+        var me = this;
 
         if (typeof(definition)=='function'){
             definition(error, result);
@@ -22,6 +29,24 @@ Ext.define('UserQuery.view.service.ApiBase', {
             }
             
             definition.response(error, result);
+        }
+
+        setTimeout(function(){
+            if (me._complete[requestId]){
+                me._complete[requestId]();
+            }
+            delete(me._complete[requestId]);
+        },10)
+    },
+
+    parallel: function(apis, callback){
+        var i, q = apis.length;
+        
+        for (i=0; i<q; i++){
+            this.responseComplete(apis[i], function(){
+                q--;
+                if (q==0) callback();
+            });
         }
     },
 
@@ -77,6 +102,7 @@ Ext.define('UserQuery.view.service.ApiBase', {
         var i, d, r, id;
         var me = this;
         var params = definition.params || {};
+        var requestId = 'ri_'+(++requestIdIndex)
         
         api = typeof(api)=='string' ? {method:'GET', url:api} : Object.assign({}, api);
         api.method = api.method || 'GET';
@@ -86,7 +112,8 @@ Ext.define('UserQuery.view.service.ApiBase', {
 
         r = me.getCache(id, definition.cache);
         if (r){
-            return me.responseAnalyse(null, r, definition);
+            me.responseAnalyse(null, r, definition, requestId);
+            return requestId
         }
 
         if (typeof(definition.request)=='function'){
@@ -110,7 +137,7 @@ Ext.define('UserQuery.view.service.ApiBase', {
                     me.setCache(id, json, definition.cache);
                 }
 
-                me.responseAnalyse(json.error ? json : null, json.error ? response : json, definition);
+                me.responseAnalyse(json.error ? json : null, json.error ? response : json, definition, requestId);
             },
             failure: function (response, opts) {
                 if (definition.errorMessage!==false){
@@ -120,14 +147,16 @@ Ext.define('UserQuery.view.service.ApiBase', {
                         buttons: Ext.MessageBox.OK,
                         icon: Ext.MessageBox.WARNING,
                         fn: function(){
-                            me.responseAnalyse(response, null, definition);
+                            me.responseAnalyse(response, null, definition, requestId);
                         }
                     });
                 }else{
-                    me.responseAnalyse(response, null, definition);
+                    me.responseAnalyse(response, null, definition, requestId);
                 }
             }
         });
+
+        return requestId;
     },
 
     insert: function(url, definition){
@@ -136,7 +165,7 @@ Ext.define('UserQuery.view.service.ApiBase', {
             url:url
         };
 
-        this.send(api, definition);
+        return this.send(api, definition);
     },
 
     update: function(url, definition){
@@ -145,7 +174,7 @@ Ext.define('UserQuery.view.service.ApiBase', {
             url:url + (definition.params ? definition.params.id || 'id' : 'id') + '/'
         };
 
-        this.send(api, definition);
+        return this.send(api, definition);
     },
 
     delete: function(url, definition){
@@ -154,6 +183,6 @@ Ext.define('UserQuery.view.service.ApiBase', {
             url:url + (definition.params ? definition.params.id || 'id' : 'id') + '/'
         };
 
-        this.send(api, definition);
+        return this.send(api, definition);
     }
 });

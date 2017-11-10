@@ -36,8 +36,12 @@ Ext.define('UserQuery.view.dialog.OpenDialogController', {
         });
     },
 
+    dialog_onCancel: function(){
+        this._query = null;
+    },
+
     dialog_onClose: function(){
-        if (this._callback){
+        if (this._callback && this._query){
             this._callback(this._query);    
         }
 

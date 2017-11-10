@@ -21,16 +21,44 @@ Ext.define('UserQuery.view.main.MainController', {
         
         vm.set('initialized', false);
         
-        Api.getUser(function(error, user){
-            if (error) {
-                Api.doLogin();
-            }else{
+        Api.parallel([
+            // verifica se o usuário está autenticado
+            Api.getUser(function(error, user){
+                if (error) {
+                    Api.doLogin();
+                }
+            }),
+
+            // busca a lista de releases
+            Api.getReleases(function(error, releases){
+                var items = [];
+
+                if (!error){
+                    releases.forEach(function(release){
+                        items.push({
+                            text: release.rls_display_name,
+                            data: release,
+                            handler: 'mnuItemRelease_onClick'
+                        })
+                    });
+    
+                    me.pnlLeftToolDownMenu = Ext.create('Ext.menu.Menu', {
+                        //plain: true, 
+                        title: '<div style="width:100%;background:whitesmoke;text-align:center;padding:4px;font-weight:bold;">Select Release</div>',
+                        items: items
+                    });
+                    
+                }
+            })],
+
+            // quanto todas as api's responderem
+            function(){
                 vm.set('initialized', true);
-                
                 me.createEmptyQuery();
-                removeSplash();               
+                removeSplash();
             }
-        });
+        );
+
     },
 
     afterRender: function(){
@@ -78,13 +106,17 @@ Ext.define('UserQuery.view.main.MainController', {
 
                 // arrasto de coluna
                 if (d.pcn_column_name){
-                    var p = refs.tvwInputTables.getRootNode().findChild('id', d.parentId, true);
+                    var p = refs[ d.is_mytable ? 'tvwMyTables' : 'tvwInputTables'].getRootNode().findChild('id', d.parentId, true);
                     var dt = p.getData();
 
                     textareafield.setValue( value + ' ' + (dt.tbl_schema ? dt.tbl_schema+'.' : '') + dt.tbl_name + '.' + d.pcn_column_name);
                 }
             }
         });
+    },
+
+    mnuItemRelease_onClick: function(item){
+        this.createEmptyQuery(item.config.data.id);
     },
 
     // evento: ao clicar no botão da toolbar abrir query
@@ -289,6 +321,12 @@ Ext.define('UserQuery.view.main.MainController', {
 
     },
 
+    pnlLeftToolDown_onClick: function(e, el,o, tool) {
+        if (this.pnlLeftToolDownMenu) {
+            this.pnlLeftToolDownMenu.showBy(tool);
+        }
+    },
+
     // evento: ao expandir um nó das input tables
     tvwInputTables_onExpanded: function(node){
         if (node.isRoot() || node.childNodes.length>0){
@@ -348,15 +386,101 @@ Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
+    // evento: ao expandir o item accordion my tables
+    accMyTables_onExpand: function(){
+        var refs = this.getReferences();
+        var el = refs.tvwMyTables.getEl();
+        var query = this.getActiveQuery();
+        
+        Api.getMyTables({
+            request: function(){
+                el.mask("Loading tables...", 'x-mask-loading');               
+            },
+            response: function(error, tables){
+                var tb, item, children = [], fields;
+
+                el.unmask();
+
+                for (tb in tables){
+                    fields = [];
+                    item = tables[tb];
+
+                    item.forEach(function(f){
+                        fields.push({
+                            text: f,
+                            table_name: tb,
+                            pcn_column_name: f,
+                            is_mytable: true,
+                            leaf: true
+                        })
+                    });
+
+                    children.push({
+                        text: tb,
+                        tbl_name: tb,
+                        is_mytable: true,
+                        children: fields
+                    })
+                }
+                
+                // preenche a tree external catalogs com as tabelas
+                refs.tvwMyTables.setStore(Ext.create('Ext.data.TreeStore', {
+                    root: {
+                        children: children
+                    }
+                }));
+            }
+        });
+    },
+
+    pnlJobs_onExpand: function(){
+        var refs = this.getReferences();
+        var el = refs.tvwJobList.getEl();
+
+        Api.getJobs({
+            cache: false,
+            request: function(){
+                el.mask("Loading Jobs...", 'x-mask-loading');
+            },
+            response: function(error, jobs){
+                var status = {
+                    'st': 'fa-hourglass-3', // 'Starting',
+                    'rn': 'fa-hourglass-3', // 'Running',
+                    'ok': 'fa-check',       // 'Done'
+                    'er': 'fa-frown-o'      // 'Error'
+                };
+
+                el.unmask();
+                
+                jobs.forEach(function(item){
+                    item.text = item.table_name;
+                    item.leaf = true;
+                    item.iconCls = 'x-fa ' + status[item.job_status];
+                });
+
+                // preenche a tree external catalogs com as tabelas
+                refs.tvwJobList.setStore(Ext.create('Ext.data.TreeStore', {
+                    root: {
+                        children: jobs
+                    }
+                }));
+            }
+        });
+    },
+
     // evento: ao selecionar um job da lista do painel direito
     tvwJobList_onSelectionChange: function(tv, node){
         var refs = this.getReferences();
+        var data = node.data;
         
-        refs.ctnJobDetail.setHtml('<h3>JOB '+node.data.text+' Detail</h3>'+
+        refs.ctnJobDetail.setHtml('<h3>JOB '+data.text+' Detail</h3>'+
                                   '<table>'+
-                                  '<tr><td>Status: </td><td>Running</td></tr>'+
-                                  '<tr><td>Start: </td><td>2017-11-06 10:00:01</td></tr>'+
-                                  '<tr><td>End: </td><td></td></tr>');
+                                  '<tr><td>Status: </td><td>'+data.job_status+'</td></tr>'+
+                                  '<tr><td>Start: </td><td>'+data.start_date_time+'</td></tr>'+
+                                  '<tr><td>End: </td><td>'+data.end_date_time+'</td></tr>'+                                
+                                  '<tr><td>Table Name: </td><td>'+data.table_name+'</td></tr>'+
+                                  '<tr><td>Owner: </td><td>'+data.owner+'</td></tr>'
+                                );
     },
 
     // evento: ao ser modificado qualquer dado do formulário query
@@ -478,7 +602,7 @@ Ext.define('UserQuery.view.main.MainController', {
 
     createEmptyQuery: function(release_id){
         this.setActiveQuery({
-            name:  "MyQuery" + (myQueryNumber++),
+            name:  "Unnamed Query " + (myQueryNumber++),
             release: release_id || 1,
             changed: false
         });

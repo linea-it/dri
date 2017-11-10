@@ -9,21 +9,23 @@ Ext.define('UserQuery.view.service.Api', {
         getUser:     {method:'GET',  url:'/dri/api/logged/get_logged/?format=json'},
         getReleases: {method:'GET',  url:'/dri/api/releases/'},
         getTables:   {method:'GET',  url:'/dri/api/catalog/'},
+        getMyTables: {method:'GET',  url:'/dri/api/userquery_table/'},
         getFields:   {method:'GET',  url:'/dri/api/productcontent/'}, // ?pcn_product_id=25
         getQueries:  {method:'GET',  url:'/dri/api/userquery_query/'},
+        getJobs:     {method:'GET',  url:'/dri/api/userquery_job/'},
         validate:    {method:'POST', url:'/dri/api/userquery_validate/'},
-        preview:     {method:'POST', url:'/dri/api/userquery_inspect/'},
+        preview:     {method:'POST', url:'/dri/api/userquery_preview/'},
         startJob:    {method:'POST', url:'/dri/api/userquery_create_table/'}
         // http://dri.com/dri/api/catalog/get_class_tree_by_group/?external_catalog=true&group__in=objects_catalog,targets,value_added_catalogs,external_catalogs&node=root
 
     },
 
     getUser: function(definition){
-        this.send(this.URL.getUser, definition);
+        return this.send(this.URL.getUser, definition);
     },
 
     getReleases: function(definition){
-        this.send(this.URL.getReleases, definition);
+        return this.send(this.URL.getReleases, definition);
     },
 
     getRelease: function(definition){
@@ -36,48 +38,48 @@ Ext.define('UserQuery.view.service.Api', {
             responseCallback (error, releaseData);
         }
 
-        this.send(this.URL.getReleases, definition);
+        return this.send(this.URL.getReleases, definition);
     },
 
     getTables: function(definition){
-        this.send(this.URL.getTables, definition);
+        return this.send(this.URL.getTables, definition);
+    },
+
+    getMyTables: function(definition){
+        return this.send(this.URL.getMyTables, definition);
     },
 
     getFields: function(definition){
-        this.send(this.URL.getFields, definition);
+        return this.send(this.URL.getFields, definition);
     },
 
     getQueries: function(definition){
-        this.send(this.URL.getQueries, definition);
+        return this.send(this.URL.getQueries, definition);
+    },
+
+    getJobs: function(definition){
+        return this.send(this.URL.getJobs, definition);
     },
 
     save: function(definition){
         definition.params = definition.params || {};
-        this[definition.params.id ? 'update' : 'insert'](this.URL.queryCRUD, definition);
+        return this[definition.params.id ? 'update' : 'insert'](this.URL.queryCRUD, definition);
     },
 
     remove: function(definition){
-        this.delete(this.URL.queryCRUD, definition);
+        return this.delete(this.URL.queryCRUD, definition);
     },
 
     validate: function(definition){
-        this.send(this.URL.validate, definition);
+        return this.send(this.URL.validate, definition);
     },
 
     preview: function(definition){
-        this.send(this.URL.preview, definition);
-    },
-
-    getJobs: function(definition){
-        var me = this;
-
-        setTimeout(function(){
-            me.responseAnalyse( null, getJobsTest(), definition );
-        }, 2000);
+        return this.send(this.URL.preview, definition);
     },
 
     startJob: function(definition){
-        this.send(this.URL.startJob, definition);
+        return this.send(this.URL.startJob, definition);
     },
 
     doLogin: function(){

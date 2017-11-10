@@ -24,6 +24,7 @@ Ext.define('UserQuery.view.dialog.NewDialog', {
 
     listeners: {
         open   : 'dialog_onOpen',
+        cancel : 'dialog_onCancel',
         close  : 'dialog_onClose'
     }
 });

@@ -36,8 +36,12 @@ Ext.define('UserQuery.view.dialog.NewDialogController', {
 
     },
 
+    dialog_onCancel: function(){
+        this._release = null;
+    },
+
     dialog_onClose: function(){
-        if (this._callback){
+        if (this._callback && this._release){
             this._callback(this._release);
         }
 
