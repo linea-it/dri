@@ -10,7 +10,7 @@ from userquery.models import Job
 @shared_task(name="create_table")
 def create_table(table, sql, id, schema=None, timeout=None):
 
-    db = DBBase('userquery')
+    db = DBBase('catalog')
     q = Job.objects.get(pk=id)
     q.job_status = 'rn'
     q.save()
