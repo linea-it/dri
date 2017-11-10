@@ -50,7 +50,23 @@ Ext.define('Explorer.view.system.System', {
                             xtype: 'system-form',
                             reference: 'properties-form',
                             split: true,
-                            //margin: '0 0 10 0'
+                            bbar: [
+                                {
+                                    xtype: 'button',
+                                    text: 'SIMBAD',
+                                    handler: 'onClickSimbad'
+                                },
+                                {
+                                    xtype: 'button',
+                                    text: 'NED',
+                                    handler: 'onClickNed'
+                                },
+                                {
+                                    xtype: 'button',
+                                    text: 'VizieR',
+                                    handler: 'onClickVizier'
+                                }
+                            ]                            
                         },
                         // Inferior Esquerdo
                         {
@@ -107,7 +123,7 @@ Ext.define('Explorer.view.system.System', {
                                         storeSurveys: '{surveys}',
                                         storeTags: '{tags}',
                                         storeTiles: '{tiles}'
-                                    },                                    
+                                    },
                                 }
                             ]
                         },

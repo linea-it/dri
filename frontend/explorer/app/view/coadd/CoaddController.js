@@ -179,12 +179,15 @@ Ext.define('Explorer.view.coadd.CoaddController', {
 
         vm.set('position', position);
 
+        // Criar os dados para o plot Spectral Distribution (Flux)
+        me.loadSpectralDistribution();
+
         view.setLoading(false);
 
     },
 
     onLoadDatasets: function (store) {
-        console.log("onLoadDatasets")
+        // console.log("onLoadDatasets")
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
             cmb = visiomatic.lookupReference('cmbCurrentDataset');
@@ -298,8 +301,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
         // Aladin
         aladin.goToPosition(position);
 
-        // Coadd Objects o zoom deve ser mais proximo
-        aladin.setFov(0.01);
+        aladin.setFov(180);
 
         // Marcar com um ponto o Objeto
         aladin.plotObject(data);
@@ -387,4 +389,89 @@ Ext.define('Explorer.view.coadd.CoaddController', {
         ]);
     },
 
+    onClickSimbad: function () {
+        console.log('onClickSimbad()');
+        // Criar uma URL para o Servico SIMBAD
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('object_data'),
+            radius = .1,
+            url; // Arcmin
+
+        url = Ext.String.format(
+            "http://simbad.u-strasbg.fr/simbad/sim-coo?Coord={0}+{1}&CooFrame=FK5&CooEpoch=2000&Radius={2}&Radius.unit=arcmin&submit=submit+query",
+            object._meta_ra, object._meta_dec, radius)
+
+        window.open(url, '_blank')
+
+    },
+
+    onClickNed: function () {
+        console.log('onClickNed')
+        // Criar uma URL para o Servico NED
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('object_data'),
+            radius = .1,
+            url; // Arcmin
+
+        url = Ext.String.format(
+            "https://ned.ipac.caltech.edu/cgi-bin/objsearch?search_type=Near+Position+Search&in_csys=Equatorial&in_equinox=J2000.0&lon={0}&lat={1}&radius={2}",
+            object._meta_ra, object._meta_dec, radius)
+
+        window.open(url, '_blank')
+    },
+
+    onClickVizier: function () {
+        console.log('onClickVizier')
+        // Criar uma URL para o Servico VizierCDS
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('object_data'),
+            radius = .01,
+            url; // Arcmin
+
+        url = Ext.String.format(
+            "http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=II/246&-c={0},{1},eq=J2000&-c.rs={2}",
+            object._meta_ra, object._meta_dec, radius)
+
+        window.open(url, '_blank')
+    },
+
+
+    loadSpectralDistribution: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('object_data'),
+            spectral = vm.getStore('spectral'),
+            mags = ['mag_auto_g', 'mag_auto_r', 'mag_auto_i',
+                    'mag_auto_z', 'mag_auto_y'],
+            wavelengths = [474, 645.5, 783.5, 926, 1008],
+            wavelength, mag_auto, flux, min, max;
+
+        for (var property in object) {
+            var prop = property.toLowerCase();
+
+            // nao incluir as propriedades _meta
+            if (mags.indexOf(prop) !== -1) {
+
+                mag_auto = parseFloat(parseFloat(object[prop]).toFixed(2));
+
+                if ((parseInt(mag_auto) !== 99) && (parseInt(mag_auto) !== 0)) {
+                    flux = (-0.4 * mag_auto);
+                    flux = parseFloat(flux.toFixed(1));
+                }
+
+                wavelength = wavelengths[mags.indexOf(prop)];
+
+                spectral.add({
+                    flux: flux,
+                    mag_auto: mag_auto,
+                    wavelength: wavelength,
+                    property: prop
+                })
+
+            }
+        }
+    }
 });
