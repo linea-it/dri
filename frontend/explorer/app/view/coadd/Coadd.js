@@ -60,11 +60,11 @@ Ext.define('Explorer.view.coadd.Coadd', {
                                     text: 'NED',
                                     handler: 'onClickNed'
                                 },
-                                {
-                                    xtype: 'button',
-                                    text: 'VizieR',
-                                    handler: 'onClickVizier'
-                                }
+                                // {
+                                //     xtype: 'button',
+                                //     text: 'VizieR',
+                                //     handler: 'onClickVizier'
+                                // }
                             ]
                         },
                         // Inferior Esquerdo
