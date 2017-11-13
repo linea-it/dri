@@ -9,6 +9,7 @@ Ext.define('common.header.Toolbar', {
     extend: 'Ext.toolbar.Toolbar',
 
     requires: [
+        'common.data.proxy.Django',
         'common.ToolbarController',
         'common.contact.Contact',
         'common.help.Tutorials'

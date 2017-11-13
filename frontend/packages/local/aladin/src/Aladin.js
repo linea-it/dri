@@ -47,7 +47,7 @@ Ext.define('aladin.Aladin', {
             showReticle: true,
             showZoomControl: true,
             showFullscreenControl: true,
-            showLayersControl: true,
+            showLayersControl: false,
             showGotoControl: false,
             showShareControl: false,
             showCatalog: true,
@@ -87,7 +87,7 @@ Ext.define('aladin.Aladin', {
         },
 
         // LayersControl
-        enableLayersControl: false,
+        enableLayersControl: true,
 
         // Habilitar a toolbar
         enableToolbar: true,
@@ -159,7 +159,131 @@ Ext.define('aladin.Aladin', {
         enableShift: false,
 
         // toolbar position (left or top)
-        toolbarPosition: 'left'
+        toolbarPosition: 'left',
+
+        // Aladin default surveys
+        externalSurveys: [
+            {
+                "id": "P/2MASS/color",
+                "url": "http://alasky.u-strasbg.fr/2MASS/Color",
+                "name": "2MASS colored",
+                "maxOrder": 9,
+                "frame": "equatorial",
+                "format": "jpeg"
+            },
+            {
+                "id": "P/DSS2/color",
+                "url": "http://alasky.u-strasbg.fr/DSS/DSSColor",
+                "name": "DSS colored",
+                "maxOrder": 9,
+                "frame": "equatorial",
+                "format": "jpeg"
+            },
+            {
+                "id": "P/DSS2/red",
+                "url": "http://alasky.u-strasbg.fr/DSS/DSS2Merged",
+                "name": "DSS2 Red (F+R)",
+                "maxOrder": 9,
+                "frame": "equatorial",
+                "format": "jpeg fits"
+            },
+            {
+                "id": "P/Fermi/color",
+                "url": "http://alasky.u-strasbg.fr/Fermi/Color",
+                "name": "Fermi color",
+                "maxOrder": 3,
+                "frame": "equatorial",
+                "format": "jpeg"
+            },
+            {
+                "id": "P/Finkbeiner",
+                "url": "http://alasky.u-strasbg.fr/FinkbeinerHalpha",
+                "maxOrder": 3,
+                "frame": "galactic",
+                "format": "jpeg fits",
+                "name": "Halpha"
+            },
+            {
+                "id": "P/GALEXGR6/AIS/color",
+                "url": "http://alasky.u-strasbg.fr/GALEX/GR6-02-Color",
+                "name": "GALEX Allsky Imaging Survey colored",
+                "maxOrder": 8,
+                "frame": "equatorial",
+                "format": "jpeg"
+            },
+            {
+                "id": "P/IRIS/color",
+                "url": "http://alasky.u-strasbg.fr/IRISColor",
+                "name": "IRIS colored",
+                "maxOrder": 3,
+                "frame": "galactic",
+                "format": "jpeg"
+            },
+            {
+                "id": "P/Mellinger/color",
+                "url": "http://alasky.u-strasbg.fr/MellingerRGB",
+                "name": "Mellinger colored",
+                "maxOrder": 4,
+                "frame": "galactic",
+                "format": "jpeg"
+            },
+            {
+                "id": "P/SDSS9/color",
+                "url": "http://alasky.u-strasbg.fr/SDSS/DR9/color",
+                "name": "SDSS9 colored",
+                "maxOrder": 10,
+                "frame": "equatorial",
+                "format": "jpeg"
+            },
+            {
+                "id": "P/SPITZER/color",
+                "url": "http://alasky.u-strasbg.fr/SpitzerI1I2I4color",
+                "name": "IRAC color I1,I2,I4 - (GLIMPSE, SAGE, SAGE-SMC, SINGS)",
+                "maxOrder": 9,
+                "frame": "galactic",
+                "format": "jpeg"
+            },
+            {
+                "id": "P/VTSS/Ha",
+                "url": "http://alasky.u-strasbg.fr/VTSS/Ha",
+                "maxOrder": 3,
+                "frame": "galactic",
+                "format": "png jpeg fits",
+                "name": "VTSS-Ha"
+            },
+            {
+                "id": "P/XMM/EPIC",
+                "url": "http://saada.u-strasbg.fr/xmmallsky",
+                "name": "XMM-Newton stacked EPIC images (no phot. normalization)",
+                "maxOrder": 7,
+                "frame": "equatorial",
+                "format": "png fits"
+            },
+            {
+                "id": "P/XMM/PN/color",
+                "url": "http://saada.unistra.fr/xmmpnsky",
+                "name": "XMM PN colored",
+                "maxOrder": 7,
+                "frame": "equatorial",
+                "format": "png jpeg"
+            },
+            {
+                "id": "P/allWISE/color",
+                "url": "http://alasky.u-strasbg.fr/AllWISE/RGB-W4-W2-W1/",
+                "name": "AllWISE color",
+                "maxOrder": 8,
+                "frame": "equatorial",
+                "format": "jpeg"
+            },
+            {
+                "id": "P/GLIMPSE360",
+                "url": "http://www.spitzer.caltech.edu/glimpse360/aladin/data",
+                "name": "GLIMPSE360",
+                "maxOrder": 9,
+                "frame": "equatorial",
+                "format": "jpeg"
+            }
+        ]
     },
 
     /**
@@ -333,20 +457,6 @@ Ext.define('aladin.Aladin', {
             alSurvey,
             token;
 
-//        token = window.localStorage['token'];
-//
-//        if (token) {
-//            var realSend = XMLHttpRequest.prototype.send;
-//
-//            XMLHttpRequest.prototype.send = function () {
-//                this.setRequestHeader('Authorization', 'Basic a');
-//                this.setRequestHeader('Token', token);
-//
-//                realSend.apply(this, arguments);
-//            };
-//
-//        }
-
         newSurvey = Ext.Object.merge(empty, survey);
 
         alSurvey = aladin.createImageSurvey(
@@ -387,8 +497,8 @@ Ext.define('aladin.Aladin', {
             selectedSurvey = surveys[0];
         }
 
-        // marcar a flag que indica ser o primeiro survey
-        // me.isFirstSurvey = true;
+        // Adicionar esses surveys ao menu Image Survey
+        me.updateImageLayersMenuItems();
 
         me.setImageSurvey(selectedSurvey);
 
@@ -413,7 +523,11 @@ Ext.define('aladin.Aladin', {
         var me = this,
             aladin = me.getAladin();
 
-        return aladin.getBaseImageLayer();
+        if (aladin) {
+            return aladin.getBaseImageLayer();
+        } else {
+            return null;
+        }
     },
 
     setImageSurvey: function (imageSurvey) {
@@ -735,7 +849,7 @@ Ext.define('aladin.Aladin', {
     },
 
     changeMapSurvey: function (menuitem) {
-        console.log('menuitem: %o', menuitem);
+        // console.log('menuitem: %o', menuitem);
 
         var me = this,
             aladin = me.getAladin(),
@@ -751,8 +865,16 @@ Ext.define('aladin.Aladin', {
 
         mapSurvey = me.createImageSurvey(survey);
 
-        console.log(survey);
         aladin.setImageSurvey(mapSurvey.id);
+    },
+
+    selectExternalSurvey: function (menuitem) {
+        // console.log('selectExternalSurvey(%o)', menuitem);
+        var me = this,
+            aladin = me.getAladin(),
+            externalSurvey = menuitem.survey;
+
+        aladin.setImageSurvey(externalSurvey.id);
     },
 
     exportAsPng: function () {

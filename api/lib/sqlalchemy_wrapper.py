@@ -6,10 +6,12 @@ from sqlalchemy import exc as sa_exc
 from sqlalchemy.dialects import oracle
 from sqlalchemy.dialects import sqlite
 from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.sql import select, and_
+from sqlalchemy.sql import select, and_, text
 from sqlalchemy.sql.expression import Executable, ClauseElement
 from sqlalchemy.sql.expression import literal_column, between
 from sqlalchemy.schema import Sequence
+
+import threading
 
 
 class DBOracle:
@@ -248,6 +250,24 @@ class DBBase:
             create_stm = self.CreateTableAs(tablename, stm, self.dialect)
             print(create_stm)
             return con.execute(create_stm)
+
+    def create_table_raw_sql(self, table, sql, schema=None, timeout=None):
+        table_name = table
+
+        if schema is not None and schema is not "":
+            table_name = "%s.%s" % (schema, table)
+
+        sql_create_table = text('CREATE TABLE %s AS %s' % (table_name, sql))
+
+        con = self.engine.connect()
+        t = threading.Timer(timeout, con.close)
+        if timeout:
+            t.start()
+        try:
+            con.execute(sql_create_table)
+        except Exception as e:
+            raise Exception("Timeout for query execution - %s" % str(e))
+        t.cancel()
 
     # ----------------------------- Drop Table ----------------------
     class DropTable(Executable, ClauseElement):
