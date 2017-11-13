@@ -60,13 +60,13 @@ Ext.define('Explorer.view.system.System', {
                                     xtype: 'button',
                                     text: 'NED',
                                     handler: 'onClickNed'
-                                },
-                                {
-                                    xtype: 'button',
-                                    text: 'VizieR',
-                                    handler: 'onClickVizier'
                                 }
-                            ]                            
+                                // {
+                                //     xtype: 'button',
+                                //     text: 'VizieR',
+                                //     handler: 'onClickVizier'
+                                // }
+                            ]
                         },
                         // Inferior Esquerdo
                         {
