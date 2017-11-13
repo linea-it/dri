@@ -270,7 +270,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
     },
 
     gotoPosition: function(value){
-        console.log('gotoPosition')
+        // console.log('gotoPosition')
         var me = this,
             aladin = me.lookupReference('aladin');
 
