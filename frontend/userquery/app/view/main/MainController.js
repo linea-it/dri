@@ -1,6 +1,6 @@
 
 Ext.require('UserQuery.view.service.Api');
-Ext.require('UserQuery.store.QueryStore');
+//Ext.require('UserQuery.store.QueryStore');
 Ext.require('UserQuery.view.dialog.NewDialog');
 Ext.require('UserQuery.view.dialog.OpenDialog');
 Ext.require('UserQuery.view.dialog.StartJobDialog');
@@ -511,6 +511,62 @@ Ext.define('UserQuery.view.main.MainController', {
         var me = this;
         var refs = me.getReferences();
         
+        /* Api.sequence([
+            // busca dados da release
+            function(next){
+                return Api.getRelease({
+                    cache: true,
+                    params:{ 
+                        id: query.release.split ? query.release.split('/releases/')[1].replace('/', '') : query.release  //TODO: tá retornando uma url, deve ser número, por isso essa gambiarra
+                    },
+                    request: function(){
+                        me.setLoading(true, 'Loading release data...');                
+                    },
+                    response: function(error, release){
+                        me.setLoading(false);
+                        me.setActiveRelease(release);
+                        next(release);
+                    }
+                });
+            },
+
+            // busca lista de tabelas da release
+            function(next, release){
+                return Api.getTables({
+                    cache: true,
+                    params:{
+                        release: release.id,
+                        group: 'targets'
+                    },
+                    request: function(){
+                        me.setLoading(true, 'Load release tables...');                
+                    },
+                    response: function(error, tables){
+                        me.setLoading(false);
+                        next(tables);
+                    }
+                });
+            },
+
+            // preenche a treeview com a lista de tabelas da release, limpa o form
+            function(next, tables){
+                refs.ctnArea.setStyle({opacity:1});
+                
+                me.clearQuery();
+                me.updateActiveQuery(query);
+                
+                // preenche a tree com as tabelas da release
+                tables.forEach(function(item){
+                    item.text = item.tbl_name;
+                });
+                refs.tvwInputTables.setStore(Ext.create('Ext.data.TreeStore', {
+                    root: { // expanded: true,
+                        children: tables
+                    }
+                }));
+            }
+        ])*/
+
         // obtém lista de tabelas da release
         function doGetTables(release){
             Api.getTables({
