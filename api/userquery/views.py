@@ -98,6 +98,7 @@ class CreateTable(viewsets.ModelViewSet):
         try:
             data = request.data
             table_name = data.get("table_name", None)
+            display_name = data.get("display_name", None)
             id = data.get("id", None)
 
             q = Query.objects.get(pk=id)
@@ -116,6 +117,7 @@ class CreateTable(viewsets.ModelViewSet):
                 raise Exception("Invalid query: %s" % rqv.validation_error_message())
 
             q = Job(table_name=table_name,
+                    display_name=display_name,
                     owner=self.request.user,
                     sql_sentence=q.sql_sentence)
             q.save()
