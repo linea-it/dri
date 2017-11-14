@@ -98,22 +98,27 @@ def contact_us(request):
 
         # Dados da Mensagem
         name = request.data.get('name', None)
-        from_email = request.data.get('from', None)
-        subject = request.data.get('subject', None)
+        user_email = request.data.get('from', None)
+        subject = "[DRI] %s" % request.data.get('subject', None)
         message = request.data.get('message', None)
 
         # Dados Tecnicos
         current_url = request.data.get('current_url', None)
         current_user = request.data.get('current_user', None)
 
-        if name is not None and from_email is not None and subject is not None and message is not None:
-
-            to_email = settings.EMAIL_HELPDESK
-
+        if name is not None and user_email is not None and subject is not None and message is not None:
             try:
+                to_email = settings.EMAIL_HELPDESK
+                from_email = settings.EMAIL_HELPDESK_CONTACT
+
+                message_header = (
+                "Name: %s\nUsername: %s\nEmail: %s\nMessage:\n" % (name, request.user.username, user_email))
+
+                body = message_header + message
+
                 send_mail(
                     subject,
-                    message,
+                    body,
                     from_email,
                     [to_email],
                     fail_silently=False,
@@ -123,6 +128,7 @@ def contact_us(request):
 
             except SMTPException as e:
                 return Response(e, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 def get_providers():
     try:
@@ -144,16 +150,17 @@ def get_providers():
             result = []
             for provider in registry.get_list():
                 if (isinstance(provider, OAuth2Provider)
-                        or isinstance(provider, OAuthProvider)):
+                    or isinstance(provider, OAuthProvider)):
                     try:
                         app = SocialApp.objects.get(provider=provider.id,
-                                              sites=site)
+                                                    sites=site)
                         result.append(str(app.provider))
                     except SocialApp.DoesNotExist:
                         app2 = ''
             return str(result)
     except:
         pass
+
 
 @api_view(['GET'])
 def get_token(request):
@@ -163,6 +170,7 @@ def get_token(request):
         except:
             token = Token.objects.create(user=request.user)
         return Response(dict({'token': token.key}))
+
 
 @api_view(['GET'])
 def teste(request):
@@ -182,4 +190,3 @@ def teste(request):
 
 
         return Response(dict({'status': "success"}))
-
