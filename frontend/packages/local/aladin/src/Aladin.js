@@ -300,7 +300,7 @@ Ext.define('aladin.Aladin', {
             tile: null,
             tag: null,
             release: null,
-            release_name: ''
+            release_name: '',
         }
     },
 
