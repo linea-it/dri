@@ -3,7 +3,7 @@ from sqlalchemy.sql import text
 
 
 class RawQueryValidator(DBBase):
-    def __init__(self, raw_sql, db='userquery'):
+    def __init__(self, raw_sql, db='catalog'):
         super(RawQueryValidator, self).__init__(db)
 
         with self.engine.connect() as con:
@@ -24,4 +24,3 @@ class RawQueryValidator(DBBase):
     def get_json_response(self):
         return dict({'is_validated': self._is_query_validated,
                     'error_message': self._validation_error_message})
-
