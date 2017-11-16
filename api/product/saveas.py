@@ -69,11 +69,9 @@ class SaveAs:
             user=user,
         )
 
-        columns = catalog_db.column_names
-
         stm = catalog_db.create_stm(
             filters=conditions,
-            columns=columns
+            prevent_ambiguously=True
         )
 
         # Schema onde a tabela sera criada, no NCSA + Oracle a tabela sera criada no user/schema do proprio DRI
@@ -156,6 +154,9 @@ class SaveAs:
             "class": original_product.prd_class.pcl_name,
             "description": description
         }])
+
+        self.logger.debug("Register Data:")
+        self.logger.debug(data)
 
         # Registar o novo produto
         import_product = Import()
