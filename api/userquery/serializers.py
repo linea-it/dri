@@ -31,6 +31,7 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'table_name',
+            'display_name',
             'owner',
             'start_date_time',
             'end_date_time',
