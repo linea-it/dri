@@ -127,16 +127,26 @@ class SaveAs:
         self.logger.info("Register the new table as a product")
 
         # Releases
+        self.logger.info("Loading Releases")
         releases = list()
         for mRelease in original_product.releases.all():
             releases.append(mRelease.rls_name)
 
+        self.logger.debug(releases)
+
         # Tags
+        self.logger.info("Loading Tags")
         tags = list()
         for mTag in original_product.tags.all():
-            tags.append(mTag.rls_name)
+            tags.append(mTag.tag_name)
 
+        self.logger.debug(tags)
+
+        # Associations
+        self.logger.info("Loading Associations")
         associations = Association().get_association_list_by_product_id(original_product.pk)
+
+        self.logger.debug(associations)
 
         # Dados para o registro
         data = list([{
@@ -155,7 +165,7 @@ class SaveAs:
             "description": description
         }])
 
-        self.logger.debug("Register Data:")
+        self.logger.debug("Register Data")
         self.logger.debug(data)
 
         # Registar o novo produto
