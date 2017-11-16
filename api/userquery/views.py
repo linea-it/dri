@@ -6,12 +6,14 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from django.db.models import Q
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.contrib.auth.models import User
 
 from .models import *
 from .permissions import IsOwnerOrPublic
 from .serializers import *
 from .tasks import create_table
 from .db import RawQueryValidator
+from . import settings as userquery_setting
 
 from lib.sqlalchemy_wrapper import DBBase
 
@@ -83,9 +85,8 @@ class QueryPreview(viewsets.ModelViewSet):
         try:
             data = request.data
             sql_sentence = data.get("sql_sentence", None)
+            line_number = data.get("line_number", 10)
 
-            # review number of elements to show
-            line_number = 10
             db = DBBase('catalog')
             sql = sql_sentence + " " + db.database.get_raw_sql_limit(line_number)
             result = db.fetchall_dict(sql)
@@ -129,7 +130,9 @@ class CreateTable(viewsets.ModelViewSet):
                     owner=self.request.user,
                     sql_sentence=q.sql_sentence)
             q.save()
-            create_table.delay(q.id, request.user.pk, table_name, schema=None, timeout=None)
+
+            timeout = self._time_out_query_execution(request)
+            create_table.delay(q.id, request.user.pk, table_name, schema=None, timeout=timeout)
             return HttpResponse(status=200)
         except Exception as e:
             print(str(e))
@@ -137,6 +140,14 @@ class CreateTable(viewsets.ModelViewSet):
 
     def _is_user_authorized(self, q):
         return q.owner == self.request.user or q.is_public
+
+    def _time_out_query_execution(self, request):
+        user = User.objects.get(pk=request.user.pk)
+        try:
+            user.groups.get(name='NCSA')
+            return userquery_setting.TIME_OUT_QUERY_EXECUTION_NCSA_USER_IN_SECONDS
+        except Exception as e:
+            return userquery_setting.TIME_OUT_QUERY_EXECUTION_NON_NCSA_USER_IN_SECONDS
 
 
 class TableProperties(viewsets.ModelViewSet):

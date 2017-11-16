@@ -41,7 +41,7 @@ class Job(models.Model):
         ('er', 'Error'),
     )
     table_name = models.CharField(
-        max_length=128, null=False, unique=True, verbose_name='Name')
+        max_length=128, null=False, unique=False, verbose_name='Name')
     display_name = models.CharField(
         max_length=128, null=False, verbose_name='Name')
     owner = models.ForeignKey(
