@@ -22,8 +22,8 @@ class Query(models.Model):
         help_text='Last Edition Date')
     sql_sentence = models.CharField(
         max_length=2048, null=False, verbose_name='Sql Sentence')
-    is_validate = models.BooleanField(
-        default=False, verbose_name='Is Query Validated')
+    is_sample = models.BooleanField(
+        default=False, verbose_name='Is a sample query')
     is_public = models.BooleanField(
         default=False, verbose_name='Is Public',
         help_text='Is Public default True')

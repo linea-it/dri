@@ -17,7 +17,6 @@ class QuerySerializer(serializers.ModelSerializer):
             'creation_date',
             'last_edition_date',
             'sql_sentence',
-            'is_validate',
             'is_public'
         )
 

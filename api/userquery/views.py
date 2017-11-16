@@ -24,14 +24,25 @@ class QueryViewSet(viewsets.ModelViewSet):
     serializer_class = QuerySerializer
 
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
-    permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic,)
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic)
 
     def get_queryset(self):
-        return self.queryset.filter(Q(owner=self.request.user) |
-                                    Q(is_public=True))
+        return self.queryset.filter((Q(owner=self.request.user) | Q(is_public=True)) &
+                                    Q(is_sample=False))
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+class SampleViewSet(viewsets.ModelViewSet):
+    queryset = Query.objects.filter()
+    serializer_class = QuerySerializer
+
+    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic,)
+
+    def get_queryset(self):
+        return self.queryset.filter(is_sample=True)
 
 
 class JobViewSet(viewsets.ModelViewSet):
@@ -110,10 +121,7 @@ class CreateTable(viewsets.ModelViewSet):
             if rqv.engine.has_table(table_name, None):
                 raise Exception("Table exists - choose a different name")
 
-            if rqv.is_query_validated():
-                q.is_validate = True
-                q.save()
-            else:
+            if not rqv.is_query_validated():
                 raise Exception("Invalid query: %s" % rqv.validation_error_message())
 
             q = Job(table_name=table_name,
