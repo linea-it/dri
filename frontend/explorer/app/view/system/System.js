@@ -10,7 +10,8 @@ Ext.define('Explorer.view.system.System', {
         'Explorer.view.system.Properties',
         'Explorer.view.system.Visiomatic',
         'Explorer.view.system.Aladin',
-        'Explorer.view.system.MembersGrid'
+        'Explorer.view.system.MembersGrid',
+        'Explorer.view.system.SpacialDistribution'
     ],
 
     controller: 'system',
@@ -143,7 +144,22 @@ Ext.define('Explorer.view.system.System', {
                                     listeners: {
                                         select: 'onSelectSystemMember'
                                     }
-                                }
+                                },
+                                {
+                                    xtype: 'system-spacial-distribution',
+                                    title: 'Spacial Distribution'
+
+                                },
+                                {
+                                    // xtype: 'system-spacial-distribution',
+                                    xtype: 'panel',
+                                    title: 'z and Mag Distribution'
+                                },
+                                {
+                                    // xtype: 'system-spacial-distribution',
+                                    xtype: 'panel',
+                                    title: 'CMD'
+                                },
                             ]
                         }
                     ]
