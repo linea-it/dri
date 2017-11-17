@@ -66,6 +66,18 @@ Ext.define('UserQuery.view.service.ApiBase', {
         }
     },
 
+    sequence: function(apis){
+        var me = this; 
+        var index = 0; 
+        var q = apis.length;
+        
+        next();
+
+        function next(p1,p2,p3){
+            apis[index++](next, p1, p2, p3);
+        }
+    },
+
     getCache: function(url, useCache){
         var cache;
         

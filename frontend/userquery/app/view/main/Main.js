@@ -36,10 +36,22 @@ Ext.define('UserQuery.view.main.Main', {
         {
             xtype: 'toolbar',
             region: 'north',
-            items: [{
+            items: [
+                // {
+                //     xtype: 'button',
+                //     tooltip: 'New',
+                //     handler: 'btnNew_onClick',
+                //     iconCls: 'x-fa fa-file-o',
+                //     // menu: {xtype: 'menu', plain: true, items: {
+                //     //     xtype: 'button',
+                //     //     text: 'User options',
+                //     //     handler: 'onBtnNew_Click'
+                //     // }}
+                // },
+                {
                     xtype: 'button',
-                    tooltip: 'New',
-                    handler: 'btnNew_onClick',
+                    tooltip: 'Clear Query',
+                    handler: 'btnClear_onClick',
                     iconCls: 'x-fa fa-file-o',
                     // menu: {xtype: 'menu', plain: true, items: {
                     //     xtype: 'button',
@@ -47,16 +59,17 @@ Ext.define('UserQuery.view.main.Main', {
                     //     handler: 'onBtnNew_Click'
                     // }}
                 },
-                {
-                    xtype: 'button',
-                    tooltip: 'Open',
-                    handler: 'btnOpen_onClick',
-                    iconCls: 'x-fa fa-folder-open'
-                },
+                // {
+                //     xtype: 'button',
+                //     tooltip: 'Open',
+                //     handler: 'btnOpen_onClick',
+                //     iconCls: 'x-fa fa-folder-open'
+                // },
                 '-',
                 {
                     xtype: 'button',
                     tooltip: 'Delete',
+                    disabled: true,
                     bind: {
                         disabled: '{!activeQuery.exist}'
                     },
@@ -65,19 +78,21 @@ Ext.define('UserQuery.view.main.Main', {
                 },
                 '-',
                 {
-                    xtype: 'button',
+                    xtype: 'splitbutton',
                     tooltip: 'Save',
+                    disabled: true,
                     reference: 'btnSave',
                     iconCls: 'x-fa fa-floppy-o',
                     handler: 'btnSave_onClick',
-                    // menu: {xtype: 'menu', plain: true, items: {
-                    //     text: 'Save As',
-                    //     handler: 'mnuSaveAs_onClick'
-                    // }}
+                    menu: {xtype: 'menu', plain: true, items: {
+                        text: 'Save As',
+                        handler: 'mnuSaveAs_onClick'
+                    }}
                 },
                 {
                     xtype: 'button',
                     tooltip: 'Start Job',
+                    disabled: true,
                     bind: {
                         disabled: '{!activeQuery.exist}'
                     },
@@ -103,17 +118,36 @@ Ext.define('UserQuery.view.main.Main', {
                 // accordion
                 {
                     xtype: 'panel',
+                    reference: 'pnlRelease',
                     region: 'west',
                     split: true,
                     width: 300,
                     minWidth: 100,
-                    tools: [{
-                        type: 'down',
-                        tooltip: 'Change Release',
-                        handler: 'pnlLeftToolDown_onClick'
-                    }],
+                    // tools: [{
+                    //     type: 'down',
+                    //     tooltip: 'Change Release',
+                    //     handler: 'pnlLeftToolDown_onClick'
+                    // }],
+                    header: {
+                        xtype: 'header',
+                        titlePosition: 0,
+                        padding: '6',
+                        items: [{
+                            xtype: 'combobox',  // or use Ext.create('class') instead of lazy instantiation
+                            reference: 'cmbReleases',
+                            width: '100%',
+                            displayField: 'rls_display_name',
+                            editable: false,
+                            queryMode: 'local',
+                            valueField: 'id',
+                            emptyText: 'Select Release',
+                            listeners:{
+                                select: 'cmbReleases_onSelect'
+                            }
+                        }]
+                    },
                     bind: {
-                        title: '{activeRelease.display}'
+                        //title: '{activeRelease.display}'
                     },
                     layout: {
                         type: 'accordion',
@@ -145,14 +179,14 @@ Ext.define('UserQuery.view.main.Main', {
                         },
 
                         // tables of external catalog
-                        /*{title: 'External Catalog', layout:'fit', reference:'accExternalCatalog',
+                        {title: 'External Catalog', layout:'fit', reference:'accExternalCatalog',
                             listeners:{
                                 expand: 'accExternalCatalog_onExpand'
                             },
                             items:[
                                 {xtype: 'treepanel', reference:'tvwExternalCatalog', rootVisible:false}
                             ]
-                        },*/
+                        },
 
                         // tables of user
                         {
@@ -175,6 +209,24 @@ Ext.define('UserQuery.view.main.Main', {
                                     }
                                 }
                             }]
+                        },
+
+                        // queries of user
+                        {
+                            title: 'My Queries',
+                            layout: 'fit',
+                            reference: 'accMyQueries',
+                            listeners:{
+                                expand: 'accMyQueries_onExpand'
+                            },
+                            items: [{
+                                xtype: 'treepanel',
+                                reference: 'tvwMyQueries',
+                                rootVisible: false,
+                                listeners: {
+                                    select: 'tvwMyQueries_onSelect'
+                                }
+                            }]
                         }
                     ]
                 },
@@ -184,7 +236,7 @@ Ext.define('UserQuery.view.main.Main', {
                     xtype: 'panel',
                     region: 'center',
                     bind: {
-                        title: '{activeQuery.name}'
+                        title: 'Query Definition' // '{activeQuery.name}'
                     },
                     layout: 'border',
                     items: [{
@@ -200,20 +252,20 @@ Ext.define('UserQuery.view.main.Main', {
                             },
                             items: [{
                                     xtype: 'textfield',
-                                    fieldLabel: 'Name',
+                                    fieldLabel: 'Name* ',
                                     name: 'name',
                                     reference: 'name',
                                     width: '100%'
                                 },
                                 {
                                     xtype: 'textfield',
-                                    fieldLabel: 'Description',
+                                    fieldLabel: 'Description* ',
                                     name: 'description',
                                     width: '100%'
                                 },
                                 {
                                     xtype: 'textareafield',
-                                    fieldLabel: 'SQL Sentence',
+                                    fieldLabel: 'SQL Sentence* ',
                                     name: 'sql_sentence',
                                     reference: 'sql_sentence',
                                     width: '100%',
