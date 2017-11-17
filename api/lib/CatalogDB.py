@@ -320,7 +320,8 @@ class TargetObjectsDBHelper(CatalogTable):
 
         self.user = user
 
-    def create_stm(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None):
+    def create_stm(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None,
+                   prevent_ambiguously=False):
 
         self.set_filters(filters)
         self.set_query_columns(columns)
@@ -373,10 +374,12 @@ class TargetObjectsDBHelper(CatalogTable):
             for column in self.table.c:
                 query_columns.append(column)
 
-            query_columns.append(catalog_rating.c.id.label('meta_rating_id'))
-            query_columns.append(catalog_rating.c.rating.label('meta_rating'))
-            query_columns.append(catalog_reject.c.id.label('meta_reject_id'))
-            query_columns.append(catalog_reject.c.reject.label('meta_reject'))
+            # Se a Flag Prevent Ambiguos for True nao adicionar essas colunas pois vai gerar erro no banco de dados.
+            if not prevent_ambiguously:
+                query_columns.append(catalog_rating.c.id.label('meta_rating_id'))
+                query_columns.append(catalog_rating.c.rating.label('meta_rating'))
+                query_columns.append(catalog_reject.c.id.label('meta_reject_id'))
+                query_columns.append(catalog_reject.c.reject.label('meta_reject'))
 
         else:
             # Usar apenas as colunas selecionadas

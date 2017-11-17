@@ -6,6 +6,7 @@ from rest_framework.authentication import TokenAuthentication, SessionAuthentica
 from django.db.models import Q
 from django.http import HttpResponse
 from django.http import JsonResponse
+from django.contrib.auth.models import User
 
 from .models import *
 from .permissions import IsOwnerOrPublic
@@ -24,14 +25,36 @@ class QueryViewSet(viewsets.ModelViewSet):
     serializer_class = QuerySerializer
 
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
-    permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic,)
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic)
 
     def get_queryset(self):
-        return self.queryset.filter(Q(owner=self.request.user) |
-                                    Q(is_public=True))
+        return self.queryset.filter((Q(owner=self.request.user) | Q(is_public=True)) &
+                                    Q(is_sample=False))
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+class SampleViewSet(viewsets.ModelViewSet):
+    queryset = Query.objects.filter()
+    serializer_class = QuerySerializer
+
+    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic,)
+
+    def get_queryset(self):
+        return self.queryset.filter(is_sample=True)
+
+
+class TableViewSet(viewsets.ModelViewSet):
+    queryset = Table.objects.filter()
+    serializer_class = TableSerializer
+
+    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
 
 
 class JobViewSet(viewsets.ModelViewSet):
@@ -72,9 +95,8 @@ class QueryPreview(viewsets.ModelViewSet):
         try:
             data = request.data
             sql_sentence = data.get("sql_sentence", None)
+            line_number = data.get("line_number", 10)
 
-            # review number of elements to show
-            line_number = 10
             db = DBBase('catalog')
             sql = sql_sentence + " " + db.database.get_raw_sql_limit(line_number)
             result = db.fetchall_dict(sql)
@@ -98,6 +120,7 @@ class CreateTable(viewsets.ModelViewSet):
         try:
             data = request.data
             table_name = data.get("table_name", None)
+            display_name = data.get("display_name", None)
             id = data.get("id", None)
 
             q = Query.objects.get(pk=id)
@@ -109,17 +132,16 @@ class CreateTable(viewsets.ModelViewSet):
             if rqv.engine.has_table(table_name, None):
                 raise Exception("Table exists - choose a different name")
 
-            if rqv.is_query_validated():
-                q.is_validate = True
-                q.save()
-            else:
+            if not rqv.is_query_validated():
                 raise Exception("Invalid query: %s" % rqv.validation_error_message())
 
-            q = Job(table_name=table_name,
+            q = Job(display_name=display_name,
                     owner=self.request.user,
                     sql_sentence=q.sql_sentence)
             q.save()
-            create_table.delay(table_name, q.sql_sentence, q.id, schema=None, timeout=None)
+
+            timeout = self._time_out_query_execution(request)
+            create_table.delay(q.id, request.user.pk, table_name, schema=None, timeout=timeout)
             return HttpResponse(status=200)
         except Exception as e:
             print(str(e))
@@ -127,6 +149,14 @@ class CreateTable(viewsets.ModelViewSet):
 
     def _is_user_authorized(self, q):
         return q.owner == self.request.user or q.is_public
+
+    def _time_out_query_execution(self, request):
+        user = User.objects.get(pk=request.user.pk)
+        try:
+            user.groups.get(name='NCSA')
+            return settings.USER_QUERY_EXECUTION_NCSA_USER_IN_SECONDS
+        except Exception as e:
+            return settings.USER_QUERY_EXECUTION_NON_NCSA_USER_IN_SECONDS
 
 
 class TableProperties(viewsets.ModelViewSet):
@@ -136,15 +166,18 @@ class TableProperties(viewsets.ModelViewSet):
 
     def list(self, request):
         try:
-            jobs = Job.objects.filter(Q(owner=request.user) &
-                                      Q(job_status='ok'))
+            tables = Table.objects.filter(owner=request.user)
 
             db = DBBase('catalog')
-            response = {}
-            for job in jobs:
-                response[job.table_name] = db.get_table_columns(job.table_name)
+            response = []
+            for table in tables:
+                response.append({
+                    'display_name':table.display_name, 
+                    'table_name':table.table_name,
+                    'cols': db.get_table_columns(table.table_name)
+                })
 
-            return JsonResponse(response)
+            return JsonResponse(response, safe=False)
 
         except Exception as e:
             print(str(e))

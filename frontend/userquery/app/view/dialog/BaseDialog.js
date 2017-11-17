@@ -52,9 +52,14 @@ Ext.define('UserQuery.view.dialog.BaseDialog', {
         this.callParent(arguments);
     },
 
-    open: function(callback){
+    open: function(){
+        var arg0 = arguments[0];
+        var arg1 = arguments[1];
+        var arg2 = arguments[2];
+        var arg3 = arguments[3];
+
         this.show();
-        this.fireEvent('open', callback);
+        this.fireEvent('open', arg0, arg1, arg2, arg3);
     },
 
     setLoading: function(state, text){

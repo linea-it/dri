@@ -38,7 +38,8 @@ Ext.define('aladin.Interfaces', {
                 zIndex: 29
             },
             tpl: [
-                '<spam>{release}</spam> <spam>{tag}</spam>',
+                // '<spam>{release}</spam> <spam>{tag}</spam>',
+                '</br><spam>{image_survey}</spam>',
                 '</br><spam>{tilename}</spam>',
                 '</br><spam>RA, Dec (deg): {location}</spam>' +
                 '</br><div style="white-space:nowrap;">Mouse RA, Dec (deg): {mlocation}</div>'
@@ -56,7 +57,8 @@ Ext.define('aladin.Interfaces', {
             tile = vm.get('tile'),
             tag = vm.get('tag'),
             release = vm.get('release_name'),
-            data,
+            data, currentSurvey,
+            image_survey = '',
             tl = '',
             tg = '',
             rl = '';
@@ -69,7 +71,13 @@ Ext.define('aladin.Interfaces', {
             tl = tile.get('tli_tilename');
         }
 
+        currentSurvey = me.getImageSurvey();
+        if ((currentSurvey) && (currentSurvey.id != 'empty_survey')){
+            image_survey = currentSurvey.name;
+        }
+
         data = {
+            image_survey: image_survey,
             location: vm.get('location'),
             mlocation: vm.get('mlocation'),
             release: rl,

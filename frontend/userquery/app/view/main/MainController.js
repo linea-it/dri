@@ -4,6 +4,7 @@ Ext.require('UserQuery.view.service.Api');
 Ext.require('UserQuery.view.dialog.NewDialog');
 Ext.require('UserQuery.view.dialog.OpenDialog');
 Ext.require('UserQuery.view.dialog.StartJobDialog');
+Ext.require('UserQuery.view.dialog.SaveAsDialog');
 
 var myQueryNumber = 1;
 
@@ -14,56 +15,40 @@ Ext.define('UserQuery.view.main.MainController', {
     activeQuery: {},
     activeRelease: {},
 
-    init: function(){
+    afterRender: function(){
+        var refs = this.getReferences();
         var me = this;
         var refs = me.getReferences();
         var vm = me.getViewModel();
+        this.status = {};
         
         vm.set('initialized', false);
-        
+
         Api.parallel([
             // verifica se o usuário está autenticado
             Api.getUser(function(error, user){
-                if (error) {
-                    Api.doLogin();
-                }
+                if (error) Api.doLogin();
             }),
 
             // busca a lista de releases
             Api.getReleases(function(error, releases){
-                var items = [];
-
                 if (!error){
-                    releases.forEach(function(release){
-                        items.push({
-                            text: release.rls_display_name,
-                            data: release,
-                            handler: 'mnuItemRelease_onClick'
-                        })
-                    });
-    
-                    me.pnlLeftToolDownMenu = Ext.create('Ext.menu.Menu', {
-                        //plain: true, 
-                        title: '<div style="width:100%;background:whitesmoke;text-align:center;padding:4px;font-weight:bold;">Select Release</div>',
-                        items: items
-                    });
-                    
+                    refs.cmbReleases.setStore(Ext.create('Ext.data.Store', {
+                        fields: ['id', 'rls_display_name'],
+                        data : releases
+                    }));
                 }
             })],
 
-            // quanto todas as api's responderem
+            // quanto todas as api's responderem, remove o splash screen e exibe a aplicação
             function(){
                 vm.set('initialized', true);
-                me.createEmptyQuery();
+                //me.createEmptyQuery();
+                refs.ctnArea.setStyle({opacity:1});
                 removeSplash();
             }
         );
 
-    },
-
-    afterRender: function(){
-        var refs = this.getReferences();
-        
         new Ext.dd.DropTarget(refs.sql_sentence.getEl(), {
             ddGroup: 'TreeDD', // mesmo ddGroup definido na treeview
             notifyEnter: function(ddSource, e, data){
@@ -92,6 +77,8 @@ Ext.define('UserQuery.view.main.MainController', {
                 var data = ddSource.dragData
                 var d = data.records[0].data;
                 var textareafield = Ext.getCmp(this.el.id);
+                var table = d.tbl_name || d.table_name; //my tables retorna table_name e input tables retorna tbl_name
+                var schema = d.tbl_schema || d.schema;
                 var value = textareafield.getValue();
 
                 //this.el = textarea .getValue()
@@ -99,8 +86,8 @@ Ext.define('UserQuery.view.main.MainController', {
                 //data.fromPosition [x,y]
 
                 //arrasto de tabela
-                if (d.tbl_name){
-                    textareafield.setValue( value + ' ' + (d.tbl_schema ? d.tbl_schema+'.' : '') + d.tbl_name  );
+                if (table){
+                    textareafield.setValue( value + ' ' + (schema ? schema+'.' : '') + table  );
                     //d.tbl_schema null or text
                 }
 
@@ -115,9 +102,13 @@ Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
-    mnuItemRelease_onClick: function(item){
-        this.createEmptyQuery(item.config.data.id);
+    cmbReleases_onSelect: function(sender, item){
+        this.createEmptyQuery(item.data.id);
     },
+
+    // mnuItemRelease_onClick: function(item){
+    //     this.createEmptyQuery(item.config.data.id);
+    // },
 
     // evento: ao clicar no botão da toolbar abrir query
     btnOpen_onClick: function(button){
@@ -143,30 +134,50 @@ Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
+    btnClear_onClick: function(){
+        var refs = this.getReferences();
+
+        this.clearQuery();
+        this.getViewModel().set('activeQuery', null);
+        
+        refs.tvwMyQueries.getSelectionModel().deselectAll();
+        refs.tvwInputTables.setRootNode(null);
+    },
+    
     // evento: ao clicar no botão start job
     btnStartJob_onClick: function(button){
         var me = this;
+        var refs = me.getReferences();
         var dialog = new StartJobDialog({animateTarget : button.getEl()});
         var query = me.getActiveQuery();
+        var formData = refs.frmQuery.getForm().getValues();
 
-        dialog.open(function(tableName){
+        dialog.open(formData, function(data){
+            data.id = query.id;
+            
             Api.startJob({
                 cache: false,
-                params: {
-                    'table_name': tableName,
-                    'id': query.id
-                },
+                params: data,
+                //errorMessage: false,
                 request: function(){
                     me.setLoading(true, 'Starting job...');
                 },
                 response: function(error, result){
                     me.setLoading(false);
-                    console.log(result);
-                    // if (!error){
-                    //     Ext.toast('Query data saved', null, 't');
-                    //     query.changed = false;
-                    //     me.updateActiveQuery(query);
-                    // }
+
+                    if (!error){
+                        Ext.toast('JOB started success', null, 't');
+                    }else{
+                        // Ext.MessageBox.show({
+                        //     title: 'Server Side Failure',
+                        //     msg: response.status + ' ' + response.statusText, // + '<br>' + response.responseText,
+                        //     buttons: Ext.MessageBox.OK,
+                        //     icon: Ext.MessageBox.WARNING,
+                        //     fn: function(){
+                        //         me.responseAnalyse(response, null, definition, requestId);
+                        //     }
+                        // });
+                    }
                 }
             });
         });
@@ -174,33 +185,23 @@ Ext.define('UserQuery.view.main.MainController', {
 
     // evento: ao clicar no botão save
     btnSave_onClick: function(){
-        var me = this;
-        var refs = me.getReferences();
-        var vm = me.getViewModel();
-        var query = me.getActiveQuery();
-        var release = me.getActiveRelease();
+        var refs = this.getReferences();
+        var query = this.getActiveQuery();
         var data = refs.frmQuery.getForm().getValues();
         
-        data.id = query.id;
-        data.release = release.id;
+        this.saveQuery(query.id, data);
+    },
 
-        // TODO: no banco de dados não deve ser obrigatório esse campo
-        data.table_name = data.name.toLowerCase().replace(/\ /g, '');
+    mnuSaveAs_onClick: function(button){
+        var me = this;
+        var refs = this.getReferences();
+        var dataForm = refs.frmQuery.getForm().getValues();
+        var dialog = new SaveAsDialog({animateTarget : button.getEl()});
 
-        Api.save({
-            cache: false,
-            params: data,
-            request: function(){
-                me.setLoading(true, 'Saving...');
-            },
-            response: function(error, query){
-                me.setLoading(false);
-
-                if (!error){
-                    Ext.toast('Query data saved', null, 't');
-                    query.changed = false;
-                    me.updateActiveQuery(query);
-                }
+        dialog.open(function(data){
+            if (data){
+                data.sql_sentence = dataForm.sql_sentence;
+                me.saveQuery(null, data);
             }
         });
     },
@@ -237,6 +238,9 @@ Ext.define('UserQuery.view.main.MainController', {
                     if (!error){
                         Ext.toast('Query deleted', null, 't');
                         me.createEmptyQuery();
+
+                        //remove a query da lista my queries
+                        me.loadMyQueries(true);
                     }
                 }
             });
@@ -296,7 +300,7 @@ Ext.define('UserQuery.view.main.MainController', {
         Api.preview({
             cache: false,
             params:{
-                line_number: 0,
+                line_number: 10,
                 sql_sentence: refs.sql_sentence.getValue()
             },
             request: function(){
@@ -353,12 +357,20 @@ Ext.define('UserQuery.view.main.MainController', {
         });        
     },
 
+    tvwMyQueries_onSelect: function(sender, node){
+        if (!node.data.isgroup){
+            this.setActiveQuery( clone(node.data) );
+        }
+    },
+
     // evento: ao expandir o item accordion external catalog
     accExternalCatalog_onExpand: function(){
         var refs = this.getReferences();
         var el = refs.tvwExternalCatalog.getEl();
         var query = this.getActiveQuery();
         
+        return console.warn('Remover return');
+
         Api.getTables({
             cache: true,
             params:{
@@ -386,6 +398,10 @@ Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
+    accMyQueries_onExpand: function(){
+        this.loadMyQueries();
+    },
+
     // evento: ao expandir o item accordion my tables
     accMyTables_onExpand: function(){
         var refs = this.getReferences();
@@ -397,36 +413,40 @@ Ext.define('UserQuery.view.main.MainController', {
                 el.mask("Loading tables...", 'x-mask-loading');               
             },
             response: function(error, tables){
-                var tb, item, children = [], fields;
+                var tb, item, table, cols, arr = [];
 
                 el.unmask();
 
-                for (tb in tables){
-                    fields = [];
-                    item = tables[tb];
+                if (error){
+                    return;
+                }
 
-                    item.forEach(function(f){
-                        fields.push({
-                            text: f,
-                            table_name: tb,
-                            pcn_column_name: f,
-                            is_mytable: true,
-                            leaf: true
-                        })
+                for (table_name in tables){
+                    table = tables[table_name];
+                    cols = [];
+
+                    table.cols.forEach(function(field_name){
+                        cols.push({
+                            text: field_name,
+                            pcn_column_name: field_name,
+                            leaf: true,
+                            is_mytable: true
+                        });
                     });
 
-                    children.push({
-                        text: tb,
-                        tbl_name: tb,
+                    arr.push({
+                        text: table.display_name,
+                        table_name: table.table_name,
+                        tbl_name: table.table_name,
                         is_mytable: true,
-                        children: fields
+                        children: cols
                     })
-                }
+                }                
                 
                 // preenche a tree external catalogs com as tabelas
                 refs.tvwMyTables.setStore(Ext.create('Ext.data.TreeStore', {
                     root: {
-                        children: children
+                        children: arr
                     }
                 }));
             }
@@ -453,7 +473,7 @@ Ext.define('UserQuery.view.main.MainController', {
                 el.unmask();
                 
                 jobs.forEach(function(item){
-                    item.text = item.table_name;
+                    item.text = item.display_name;
                     item.leaf = true;
                     item.iconCls = 'x-fa ' + status[item.job_status];
                 });
@@ -475,11 +495,15 @@ Ext.define('UserQuery.view.main.MainController', {
         
         refs.ctnJobDetail.setHtml('<h3>JOB '+data.text+' Detail</h3>'+
                                   '<table>'+
-                                  '<tr><td>Status: </td><td>'+data.job_status+'</td></tr>'+
-                                  '<tr><td>Start: </td><td>'+data.start_date_time+'</td></tr>'+
-                                  '<tr><td>End: </td><td>'+data.end_date_time+'</td></tr>'+                                
-                                  '<tr><td>Table Name: </td><td>'+data.table_name+'</td></tr>'+
-                                  '<tr><td>Owner: </td><td>'+data.owner+'</td></tr>'
+                                    '<tr><td style="font-weight:bold;">ID: </td><td>'+data.id+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">Status: </td><td>'+data.job_status+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">Start: </td><td>'+data.start_date_time+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">End: </td><td>'+data.end_date_time+'</td></tr>'+                                
+                                    '<tr><td style="font-weight:bold;white-space:nowrap;">Table Name: </td><td>'+data.table_name+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">Owner: </td><td>'+data.owner+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">Timeout: </td><td>'+data.timeout+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">SQL: </td><td>'+data.sql_sentence+'</td></tr>'+
+                                  '</table>'
                                 );
     },
 
@@ -487,22 +511,27 @@ Ext.define('UserQuery.view.main.MainController', {
     form_onDataChange: function(field, newVal, oldVal) {
         var refs = this.getReferences();
         var vm = this.getViewModel();
+        var release = this.getActiveRelease();
         var query = this.getActiveQuery() || {};
+        var data = refs.frmQuery.getForm().getValues();
         
         query.changed = true;
         
         vm.set('activeQuery.'+field.name, newVal);
         var sqlExist = Boolean(vm.get('activeQuery.sql_sentence'));
 
-        refs.btnSave.setDisabled( !sqlExist || !Boolean(vm.get('activeQuery.name')) )
+        refs.btnSave.setDisabled( !release || !Boolean(data.description && data.name && data.sql_sentence) )
         refs.btnCheck.setDisabled( !sqlExist )
         refs.btnPreview.setDisabled( !sqlExist );
         //refs.btnStartJob.setDisabled( true ); //!sqlExist || query.changed || !query.exist);
     },
 
     setActiveRelease: function(release){
+        var refs = this.getReferences();
         var vm = this.getViewModel();
         
+        refs.cmbReleases.setValue(release.id);
+
         release.display = release.rls_display_name;
         vm.set('activeRelease', release);
     },
@@ -510,8 +539,9 @@ Ext.define('UserQuery.view.main.MainController', {
     setActiveQuery: function(query){
         var me = this;
         var refs = me.getReferences();
+        var activeRelease;
         
-        /* Api.sequence([
+        Api.sequence([
             // busca dados da release
             function(next){
                 return Api.getRelease({
@@ -523,8 +553,8 @@ Ext.define('UserQuery.view.main.MainController', {
                         me.setLoading(true, 'Loading release data...');                
                     },
                     response: function(error, release){
+                        activeRelease = release;
                         me.setLoading(false);
-                        me.setActiveRelease(release);
                         next(release);
                     }
                 });
@@ -553,11 +583,12 @@ Ext.define('UserQuery.view.main.MainController', {
                 refs.ctnArea.setStyle({opacity:1});
                 
                 me.clearQuery();
+                me.setActiveRelease(activeRelease);
                 me.updateActiveQuery(query);
                 
                 // preenche a tree com as tabelas da release
                 tables.forEach(function(item){
-                    item.text = item.tbl_name;
+                    item.text = item.prd_display_name;
                 });
                 refs.tvwInputTables.setStore(Ext.create('Ext.data.TreeStore', {
                     root: { // expanded: true,
@@ -565,9 +596,10 @@ Ext.define('UserQuery.view.main.MainController', {
                     }
                 }));
             }
-        ])*/
+        ])
 
         // obtém lista de tabelas da release
+        /*
         function doGetTables(release){
             Api.getTables({
                 cache: true,
@@ -620,6 +652,7 @@ Ext.define('UserQuery.view.main.MainController', {
                 }
             });
         }())
+        */
     },
 
     getActiveQuery: function(){
@@ -652,16 +685,128 @@ Ext.define('UserQuery.view.main.MainController', {
             refs.grdPreview.headerCt.remove(c);
         }
 
+        refs.cmbReleases.reset();
         refs.frmQuery.getForm().reset();
         refs.grdPreview.getView().refresh();
     },
 
+    saveQuery: function(id, data){
+        var me = this;
+        var release = me.getActiveRelease();
+        
+        data.id = id;
+        data.release = release.id;
+
+        // TODO: no banco de dados não deve ser obrigatório esse campo
+        data.table_name = data.name.toLowerCase().replace(/\ /g, '');
+
+        Api.save({
+            cache: false,
+            params: data,
+            request: function(){
+                me.setLoading(true, 'Saving...');
+            },
+            response: function(error, queryResponse){
+                me.setLoading(false);
+                
+                // nova query, muda o status para ser recarregada a lista de queries
+                if (!id){
+                    me.loadMyQueriesStatus = null;
+                }
+
+                if (!error){
+                    Ext.toast('Query data saved', null, 't');
+                    queryResponse.changed = false;
+                    me.updateActiveQuery(queryResponse);
+                    me.loadMyQueries(true);
+                }
+            }
+        });
+    },
+
     createEmptyQuery: function(release_id){
+        var refs = this.getReferences();
+                
+        refs.tvwMyQueries.getSelectionModel().deselectAll();
+
         this.setActiveQuery({
             name:  "Unnamed Query " + (myQueryNumber++),
             release: release_id || 1,
             changed: false
         });
+    },
+
+    loadMyQueries: function(force){
+        var queries, samples;
+        var me = this;
+        var refs = this.getReferences();
+        var query = this.getActiveQuery() || {};
+        var el = refs.tvwMyQueries.getEl();
+        var err = 0;
+        
+        // status carregando ou carregado, retorna
+        if ( !(force===true) && 'loading done'.includes(me.loadMyQueriesStatus)){
+            return;
+        }
+
+        me.loadMyQueriesStatus = 'loading';
+
+        // busca lista que queries e samples
+        el.mask("Loading queries...", 'x-mask-loading'); 
+        Api.parallel([
+
+            // lista queries
+            Api.getQueries({
+                cache: false,
+                response: function(error, result){
+                    err += error ? 1 : 0;
+                    
+                    if (!error){
+                        result.forEach(function(item){
+                            item.text = item.name;
+                            item.leaf = true;
+                        });    
+                    }
+
+                    queries = result || [];
+                }
+            }),
+
+            // lista samples
+            Api.getSamples({
+                cache: false,
+                response: function(error, result){
+                    err += error ? 1 : 0;
+
+                    if (!error){
+                        result.forEach(function(item){
+                            item.text = item.name;
+                            item.leaf = true;
+                        });    
+                    }
+
+                    samples = result || [];
+                }
+            })],
+
+            //api's acima finalizadas
+            function(){
+                el.unmask();
+
+                me.loadMyQueriesStatus = err>0 ? 'error' : 'done';
+                    
+                refs.tvwMyQueries.setStore(Ext.create('Ext.data.TreeStore', {
+                    root: {
+                        expanded: true,
+                        children: [
+                            {text: 'My Queries', expanded: true, isgroup:true, children:queries},
+                            {text: 'Samples', expanded: true, isgroup:true, children:samples}
+                        ]
+                    }
+                }));                    
+            
+            }
+        );
     },
 
     setLoading: function(state, text){
@@ -677,6 +822,14 @@ Ext.define('UserQuery.view.main.MainController', {
         this.loadingMask[state ? 'show' : "hide"]();
     }
 });
+
+function clone(obj){
+    try{
+        return JSON.parse(JSON.stringify(obj));
+    }catch(e){
+        return null;
+    }
+}
 
 // onItemSelected: function (sender, record) {
 //     Ext.Msg.confirm('Confirm', 'Are you sure?', 'onConfirm', this);

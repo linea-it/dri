@@ -49,6 +49,7 @@ EMAIL_NOTIFICATION = 'ncsa-portal@desportal.cosmology.illinois.edu'
 # Lista de email que receberam uma copia de todas as notificacoes
 EMAIL_NOTIFICATION_COPY_TO = list()
 EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
+EMAIL_HELPDESK_CONTACT = 'contato-dri@linea.gov.br'
 EMAIL_HOST = 'smtp.linea.gov.br'
 EMAIL_PORT = '<porta do smtp>'
 EMAIL_HOST_USER = '<usuario que vai ser usado no smtp>'
@@ -71,6 +72,10 @@ DES_CUTOUT_SERVICE = {
     # Tempo de delay para a task check_jobs em minutos
     'CUTOUT_TASK_CHECK_JOBS_DELAY': 1
 }
+
+# USER_QUERY
+USER_QUERY_EXECUTION_NCSA_USER_IN_SECONDS = None
+USER_QUERY_EXECUTION_NON_NCSA_USER_IN_SECONDS = 20
 
 # Logging is disabled due errors in testing and production environment, this must be investigated.
 # for developers, it safe to disable the follows lines

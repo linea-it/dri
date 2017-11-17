@@ -5,13 +5,18 @@ Ext.define('UserQuery.view.dialog.StartJobDialogController', {
 
     alias: 'controller.startjobdialog',
     
-    dialog_onOpen: function(callback){
+    dialog_onOpen: function(data, callback){
         // TODO
         // verifica se o job já está em andamento
-
+        
         var me = this;
         var refs = me.getReferences();
         
+        refs.frmForm.getForm().setValues({
+            display_name: 'job ' + data.name,
+            table_name: data.name.replace(/\W+/g, "_")
+        });
+
         me._query = null;
         me._callback = callback;
 
@@ -40,18 +45,18 @@ Ext.define('UserQuery.view.dialog.StartJobDialogController', {
         });
     },
 
-    dialog_onCancel: function(){
-        this._cancel = true;
+    dialog_onClose: function(){
+        delete(this._callback);
     },
 
-    dialog_onClose: function(){
+    dialog_onConfirm: function(){
+        var data;
         var refs = this.getReferences();
 
-        if (this._callback && !this._cancel){
-            this._callback(refs.txtName.getValue());    
+        if (this._callback){
+            data = refs.frmForm.getForm().getValues();
+            this._callback(data);    
         }
-
-        delete(this._callback);
     }
 });
 

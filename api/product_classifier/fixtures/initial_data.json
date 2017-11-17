@@ -1271,7 +1271,7 @@
     "pcl_name": "unmatched_clusters",
     "pcl_group": 1,
     "pcl_display_name": "Unmatched Clusters",
-    "pcl_is_system": false
+    "pcl_is_system": true
   }
 },
 {
@@ -1282,6 +1282,16 @@
     "pcl_group": 13,
     "pcl_display_name": "NImages",
     "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 155,
+  "fields": {
+    "pcl_name": "matched_clusters",
+    "pcl_group": 1,
+    "pcl_display_name": "Matched Clusters",
+    "pcl_is_system": true
   }
 },
 {
@@ -25787,6 +25797,20 @@
     "pcc_display_name": "Cross identification",
     "pcc_ucd": "meta.id.cross",
     "pcc_unit": "",
+    "pcc_reference": "",
+    "pcc_mandatory": false
+  }
+},
+{
+  "model": "product_classifier.productclasscontent",
+  "pk": 3487,
+  "fields": {
+    "pcc_class": 2,
+    "pcc_category": null,
+    "pcc_name": "mass",
+    "pcc_display_name": "Mass",
+    "pcc_ucd": "",
+    "pcc_unit": "M_sum/h",
     "pcc_reference": "",
     "pcc_mandatory": false
   }

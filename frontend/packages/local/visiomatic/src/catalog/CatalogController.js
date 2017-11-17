@@ -291,10 +291,17 @@ Ext.define('visiomatic.catalog.CatalogController', {
         overlay.set('count', store.count());
 
         if (!successful) {
+
+            var message = operation.error.statusText;
+
+            if (operation.error.status == 0) {
+                // Timeout ou falha na comunicação
+                message = "Communication Failure or Time out"
+            }
             // Error no Servidor
             msg = Ext.String.format(
                 'Sorry, there was a server error, and this operation can not be performed.</br>' +
-                'Error: {0} - {1}', operation.error.status, operation.error.statusText);
+                'Error: {0} - {1}', operation.error.status, message);
 
             overlay.set('status', 'error');
             overlay.set('status_message', msg);
