@@ -169,11 +169,15 @@ class TableProperties(viewsets.ModelViewSet):
             tables = Table.objects.filter(owner=request.user)
 
             db = DBBase('catalog')
-            response = {}
+            response = []
             for table in tables:
-                response[table.table_name] = db.get_table_columns(table.table_name)
+                response.append({
+                    'display_name':table.display_name, 
+                    'table_name':table.table_name,
+                    'cols': db.get_table_columns(table.table_name)
+                })
 
-            return JsonResponse(response)
+            return JsonResponse(response, safe=False)
 
         except Exception as e:
             print(str(e))

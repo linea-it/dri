@@ -413,7 +413,7 @@ Ext.define('UserQuery.view.main.MainController', {
                 el.mask("Loading tables...", 'x-mask-loading');               
             },
             response: function(error, tables){
-                var tb, item, children = [], fields = [];
+                var tb, item, table, cols, arr = [];
 
                 el.unmask();
 
@@ -421,16 +421,32 @@ Ext.define('UserQuery.view.main.MainController', {
                     return;
                 }
 
-                tables.forEach(function(table){
-                    table.text = table.display_name;
-                    table.is_mytable = true;
-                    table.children = fields;
-                });
+                for (table_name in tables){
+                    table = tables[table_name];
+                    cols = [];
+
+                    table.cols.forEach(function(field_name){
+                        cols.push({
+                            text: field_name,
+                            pcn_column_name: field_name,
+                            leaf: true,
+                            is_mytable: true
+                        });
+                    });
+
+                    arr.push({
+                        text: table.display_name,
+                        table_name: table.table_name,
+                        tbl_name: table.table_name,
+                        is_mytable: true,
+                        children: cols
+                    })
+                }                
                 
                 // preenche a tree external catalogs com as tabelas
                 refs.tvwMyTables.setStore(Ext.create('Ext.data.TreeStore', {
                     root: {
-                        children: tables
+                        children: arr
                     }
                 }));
             }
@@ -495,6 +511,7 @@ Ext.define('UserQuery.view.main.MainController', {
     form_onDataChange: function(field, newVal, oldVal) {
         var refs = this.getReferences();
         var vm = this.getViewModel();
+        var release = this.getActiveRelease();
         var query = this.getActiveQuery() || {};
         var data = refs.frmQuery.getForm().getValues();
         
@@ -503,7 +520,7 @@ Ext.define('UserQuery.view.main.MainController', {
         vm.set('activeQuery.'+field.name, newVal);
         var sqlExist = Boolean(vm.get('activeQuery.sql_sentence'));
 
-        refs.btnSave.setDisabled(!Boolean(data.description && data.name && data.sql_sentence) )
+        refs.btnSave.setDisabled( !release || !Boolean(data.description && data.name && data.sql_sentence) )
         refs.btnCheck.setDisabled( !sqlExist )
         refs.btnPreview.setDisabled( !sqlExist );
         //refs.btnStartJob.setDisabled( true ); //!sqlExist || query.changed || !query.exist);

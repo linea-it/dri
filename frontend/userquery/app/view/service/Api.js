@@ -9,7 +9,7 @@ Ext.define('UserQuery.view.service.Api', {
         getUser:     {method:'GET',  url:'/dri/api/logged/get_logged/?format=json'},
         getReleases: {method:'GET',  url:'/dri/api/releases/'},
         getTables:   {method:'GET',  url:'/dri/api/catalog/'},
-        getMyTables: {method:'GET',  url:'/dri/api/userquery_table/'},
+        getMyTables: {method:'GET',  url:'/dri/api/userquery_properties/'},
         getFields:   {method:'GET',  url:'/dri/api/productcontent/'}, // ?pcn_product_id=25
         getQueries:  {method:'GET',  url:'/dri/api/userquery_query/'},
         getSamples:  {method:'GET',  url:'/dri/api/userquery_sample/'},
