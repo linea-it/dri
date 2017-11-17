@@ -47,6 +47,17 @@ class SampleViewSet(viewsets.ModelViewSet):
         return self.queryset.filter(is_sample=True)
 
 
+class TableViewSet(viewsets.ModelViewSet):
+    queryset = Table.objects.filter()
+    serializer_class = TableSerializer
+
+    authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
+
+
 class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
@@ -125,8 +136,7 @@ class CreateTable(viewsets.ModelViewSet):
             if not rqv.is_query_validated():
                 raise Exception("Invalid query: %s" % rqv.validation_error_message())
 
-            q = Job(table_name=table_name,
-                    display_name=display_name,
+            q = Job(display_name=display_name,
                     owner=self.request.user,
                     sql_sentence=q.sql_sentence)
             q.save()

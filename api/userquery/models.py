@@ -27,7 +27,6 @@ class Query(models.Model):
     is_public = models.BooleanField(
         default=False, verbose_name='Is Public',
         help_text='Is Public default True')
-    # TODO: missing release and database - Use foreign key;
 
     def __str__(self):
         return self.name
@@ -40,8 +39,6 @@ class Job(models.Model):
         ('ok', 'Done'),
         ('er', 'Error'),
     )
-    table_name = models.CharField(
-        max_length=128, null=False, unique=False, verbose_name='Name')
     display_name = models.CharField(
         max_length=128, null=False, verbose_name='Name')
     owner = models.ForeignKey(
@@ -66,3 +63,16 @@ class Job(models.Model):
         default='st',
         verbose_name='Status'
     )
+
+
+class Table(models.Model):
+    table_name = models.CharField(
+        max_length=128, null=False, unique=True, verbose_name='Name')
+    display_name = models.CharField(
+        max_length=128, null=False, verbose_name='Display name')
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        verbose_name='Owner', default=None)
+    schema = models.CharField(
+        max_length=128, null=True, verbose_name='Schema')
