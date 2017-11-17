@@ -166,13 +166,12 @@ class TableProperties(viewsets.ModelViewSet):
 
     def list(self, request):
         try:
-            jobs = Job.objects.filter(Q(owner=request.user) &
-                                      Q(job_status='ok'))
+            tables = Table.objects.filter(owner=request.user)
 
             db = DBBase('catalog')
             response = {}
-            for job in jobs:
-                response[job.table_name] = db.get_table_columns(job.table_name)
+            for table in tables:
+                response[table.table_name] = db.get_table_columns(table.table_name)
 
             return JsonResponse(response)
 
