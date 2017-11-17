@@ -136,7 +136,7 @@ Ext.define('UserQuery.view.service.ApiBase', {
         api.method = api.method || 'GET';
         api.url = this.prepareUrl(api.url, params);
 
-        id = 'api' + this.hash(api.method + '|' + api.url + (params ? JSON.stringify(params) : ''));
+        id = definition.cacheId || ('api' + this.hash(api.method + '|' + api.url + (params ? JSON.stringify(params) : '')));
 
         r = me.getCache(id, definition.cache);
         if (r){
@@ -156,7 +156,7 @@ Ext.define('UserQuery.view.service.ApiBase', {
                 var json;
                 
                 try {
-                    json = JSON.parse(response.status == 204 ? '{}' : response.responseText);
+                    json = JSON.parse(response.status == 204 ? '{}' : response.responseText || '{}');
                 } catch (error) {
                     json = {error:true, message:'Invalidate JSON Response'};
                 }
@@ -168,18 +168,35 @@ Ext.define('UserQuery.view.service.ApiBase', {
                 me.responseAnalyse(json.error ? json : null, json.error ? response : json, definition, requestId);
             },
             failure: function (response, opts) {
+                var JSONError
+                var str = '';
+
+                try {
+                    JSONError = JSON.parse(response.responseText);
+                    if (JSONError.message && Array.isArray(JSONError.message)){
+                        JSONError.message.forEach(function(msg){
+                            str += (msg + '\n');
+                        })
+                    }
+
+                    JSONError.status = response.status;
+                    JSONError.statusText = response.responseText;
+                } catch (e) {
+                    JSONError = response;
+                }
+
                 if (definition.errorMessage!==false){
                     Ext.MessageBox.show({
                         title: 'Server Side Failure',
-                        msg: response.status + ' ' + response.statusText, // + '<br>' + response.responseText,
+                        msg: JSONError.status + '<br/>' + (JSONError.message ? JSONError.message.split('\n').join('<br/>') : JSONError.statusText),
                         buttons: Ext.MessageBox.OK,
                         icon: Ext.MessageBox.WARNING,
                         fn: function(){
-                            me.responseAnalyse(response, null, definition, requestId);
+                            me.responseAnalyse(JSONError, null, definition, requestId);
                         }
                     });
                 }else{
-                    me.responseAnalyse(response, null, definition, requestId);
+                    me.responseAnalyse(JSONError, null, definition, requestId);
                 }
             }
         });

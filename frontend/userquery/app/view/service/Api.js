@@ -12,6 +12,7 @@ Ext.define('UserQuery.view.service.Api', {
         getMyTables: {method:'GET',  url:'/dri/api/userquery_table/'},
         getFields:   {method:'GET',  url:'/dri/api/productcontent/'}, // ?pcn_product_id=25
         getQueries:  {method:'GET',  url:'/dri/api/userquery_query/'},
+        getSamples:  {method:'GET',  url:'/dri/api/userquery_sample/'},
         getJobs:     {method:'GET',  url:'/dri/api/userquery_job/'},
         validate:    {method:'POST', url:'/dri/api/userquery_validate/'},
         preview:     {method:'POST', url:'/dri/api/userquery_preview/'},
@@ -55,6 +56,10 @@ Ext.define('UserQuery.view.service.Api', {
 
     getQueries: function(definition){
         return this.send(this.URL.getQueries, definition);
+    },
+
+    getSamples: function(definition){
+        return this.send(this.URL.getSamples, definition);
     },
 
     getJobs: function(definition){

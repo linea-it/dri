@@ -103,6 +103,8 @@ Ext.define('UserQuery.view.main.MainController', {
                 var data = ddSource.dragData
                 var d = data.records[0].data;
                 var textareafield = Ext.getCmp(this.el.id);
+                var table = d.tbl_name || d.table_name; //my tables retorna table_name e input tables retorna tbl_name
+                var schema = d.tbl_schema || d.schema;
                 var value = textareafield.getValue();
 
                 //this.el = textarea .getValue()
@@ -110,8 +112,8 @@ Ext.define('UserQuery.view.main.MainController', {
                 //data.fromPosition [x,y]
 
                 //arrasto de tabela
-                if (d.tbl_name){
-                    textareafield.setValue( value + ' ' + (d.tbl_schema ? d.tbl_schema+'.' : '') + d.tbl_name  );
+                if (table){
+                    textareafield.setValue( value + ' ' + (schema ? schema+'.' : '') + table  );
                     //d.tbl_schema null or text
                 }
 
@@ -182,17 +184,26 @@ Ext.define('UserQuery.view.main.MainController', {
             Api.startJob({
                 cache: false,
                 params: data,
+                //errorMessage: false,
                 request: function(){
                     me.setLoading(true, 'Starting job...');
                 },
                 response: function(error, result){
                     me.setLoading(false);
-                    console.log(result);
-                    // if (!error){
-                    //     Ext.toast('Query data saved', null, 't');
-                    //     query.changed = false;
-                    //     me.updateActiveQuery(query);
-                    // }
+
+                    if (!error){
+                        Ext.toast('JOB started success', null, 't');
+                    }else{
+                        // Ext.MessageBox.show({
+                        //     title: 'Server Side Failure',
+                        //     msg: response.status + ' ' + response.statusText, // + '<br>' + response.responseText,
+                        //     buttons: Ext.MessageBox.OK,
+                        //     icon: Ext.MessageBox.WARNING,
+                        //     fn: function(){
+                        //         me.responseAnalyse(response, null, definition, requestId);
+                        //     }
+                        // });
+                    }
                 }
             });
         });
@@ -253,6 +264,9 @@ Ext.define('UserQuery.view.main.MainController', {
                     if (!error){
                         Ext.toast('Query deleted', null, 't');
                         me.createEmptyQuery();
+
+                        //remove a query da lista my queries
+                        me.loadMyQueries(true);
                     }
                 }
             });
@@ -312,7 +326,7 @@ Ext.define('UserQuery.view.main.MainController', {
         Api.preview({
             cache: false,
             params:{
-                line_number: 0,
+                line_number: 10,
                 sql_sentence: refs.sql_sentence.getValue()
             },
             request: function(){
@@ -425,36 +439,24 @@ Ext.define('UserQuery.view.main.MainController', {
                 el.mask("Loading tables...", 'x-mask-loading');               
             },
             response: function(error, tables){
-                var tb, item, children = [], fields;
+                var tb, item, children = [], fields = [];
 
                 el.unmask();
 
-                for (tb in tables){
-                    fields = [];
-                    item = tables[tb];
-
-                    item.forEach(function(f){
-                        fields.push({
-                            text: f,
-                            table_name: tb,
-                            pcn_column_name: f,
-                            is_mytable: true,
-                            leaf: true
-                        })
-                    });
-
-                    children.push({
-                        text: tb,
-                        tbl_name: tb,
-                        is_mytable: true,
-                        children: fields
-                    })
+                if (error){
+                    return;
                 }
+
+                tables.forEach(function(table){
+                    table.text = table.display_name;
+                    table.is_mytable = true;
+                    table.children = fields;
+                });
                 
                 // preenche a tree external catalogs com as tabelas
                 refs.tvwMyTables.setStore(Ext.create('Ext.data.TreeStore', {
                     root: {
-                        children: children
+                        children: tables
                     }
                 }));
             }
@@ -481,7 +483,7 @@ Ext.define('UserQuery.view.main.MainController', {
                 el.unmask();
                 
                 jobs.forEach(function(item){
-                    item.text = item.table_name;
+                    item.text = item.display_name;
                     item.leaf = true;
                     item.iconCls = 'x-fa ' + status[item.job_status];
                 });
@@ -503,11 +505,15 @@ Ext.define('UserQuery.view.main.MainController', {
         
         refs.ctnJobDetail.setHtml('<h3>JOB '+data.text+' Detail</h3>'+
                                   '<table>'+
-                                  '<tr><td>Status: </td><td>'+data.job_status+'</td></tr>'+
-                                  '<tr><td>Start: </td><td>'+data.start_date_time+'</td></tr>'+
-                                  '<tr><td>End: </td><td>'+data.end_date_time+'</td></tr>'+                                
-                                  '<tr><td>Table Name: </td><td>'+data.table_name+'</td></tr>'+
-                                  '<tr><td>Owner: </td><td>'+data.owner+'</td></tr>'
+                                    '<tr><td style="font-weight:bold;">ID: </td><td>'+data.id+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">Status: </td><td>'+data.job_status+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">Start: </td><td>'+data.start_date_time+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">End: </td><td>'+data.end_date_time+'</td></tr>'+                                
+                                    '<tr><td style="font-weight:bold;white-space:nowrap;">Table Name: </td><td>'+data.table_name+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">Owner: </td><td>'+data.owner+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">Timeout: </td><td>'+data.timeout+'</td></tr>'+
+                                    '<tr><td style="font-weight:bold;">SQL: </td><td>'+data.sql_sentence+'</td></tr>'+
+                                  '</table>'
                                 );
     },
 
@@ -721,6 +727,7 @@ Ext.define('UserQuery.view.main.MainController', {
                     Ext.toast('Query data saved', null, 't');
                     queryResponse.changed = false;
                     me.updateActiveQuery(queryResponse);
+                    me.loadMyQueries(true);
                 }
             }
         });
@@ -738,47 +745,77 @@ Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
-    loadMyQueries: function(){
+    loadMyQueries: function(force){
+        var queries, samples;
         var me = this;
         var refs = this.getReferences();
         var query = this.getActiveQuery() || {};
         var el = refs.tvwMyQueries.getEl();
+        var err = 0;
         
         // status carregando ou carregado, retorna
-        if ('loading done'.includes(me.loadMyQueriesStatus)){
+        if ( !(force===true) && 'loading done'.includes(me.loadMyQueriesStatus)){
             return;
         }
 
         me.loadMyQueriesStatus = 'loading';
 
-        // busca lista que queries
-        Api.getQueries({
-            cache: false,
-            request: function(){
-                el.mask("Loading queries...", 'x-mask-loading'); 
-            },
-            response: function(error, result){
-                me.loadMyQueriesStatus = error ? 'error' : 'done';
-                el.unmask();
-                
-                if (!error){
-                    result.forEach(function(item){
-                        item.text = item.name;
-                        item.leaf = true;
-                    });
+        // busca lista que queries e samples
+        el.mask("Loading queries...", 'x-mask-loading'); 
+        Api.parallel([
+
+            // lista queries
+            Api.getQueries({
+                cache: false,
+                response: function(error, result){
+                    err += error ? 1 : 0;
                     
-                    refs.tvwMyQueries.setStore(Ext.create('Ext.data.TreeStore', {
-                        root: {
-                            expanded: true,
-                            children: [
-                                {text: 'My Queries', expanded: true, isgroup:true, children:result},
-                                {text: 'Samples', expanded: true, isgroup:true, children:[]}
-                            ]
-                        }
-                    }));                    
+                    if (!error){
+                        result.forEach(function(item){
+                            item.text = item.name;
+                            item.leaf = true;
+                        });    
+                    }
+
+                    queries = result || [];
                 }
+            }),
+
+            // lista samples
+            Api.getSamples({
+                cache: false,
+                response: function(error, result){
+                    err += error ? 1 : 0;
+
+                    if (!error){
+                        result.forEach(function(item){
+                            item.text = item.name;
+                            item.leaf = true;
+                        });    
+                    }
+
+                    samples = result || [];
+                }
+            })],
+
+            //api's acima finalizadas
+            function(){
+                el.unmask();
+
+                me.loadMyQueriesStatus = err>0 ? 'error' : 'done';
+                    
+                refs.tvwMyQueries.setStore(Ext.create('Ext.data.TreeStore', {
+                    root: {
+                        expanded: true,
+                        children: [
+                            {text: 'My Queries', expanded: true, isgroup:true, children:queries},
+                            {text: 'Samples', expanded: true, isgroup:true, children:samples}
+                        ]
+                    }
+                }));                    
+            
             }
-        });
+        );
     },
 
     setLoading: function(state, text){

@@ -356,6 +356,7 @@ Ext.define('UserQuery.view.main.Main', {
                         },
                         {
                             xtype: 'container',
+                            width: '100%',
                             reference: 'ctnJobDetail',
                             html: 'JOB Detail'
                         }
