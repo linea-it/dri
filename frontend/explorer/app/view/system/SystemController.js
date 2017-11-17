@@ -551,7 +551,7 @@ Ext.define('Explorer.view.system.SystemController', {
             url; // Arcmin
 
         url = Ext.String.format(
-            "https://ned.ipac.caltech.edu/cgi-bin/objsearch?search_type=Near+Position+Search&in_csys=Equatorial&in_equinox=J2000.0&lon={0}&lat={1}&radius={2}",
+            "https://ned.ipac.caltech.edu/cgi-bin/objsearch?search_type=Near+Position+Search&in_csys=Equatorial&in_equinox=J2000.0&lon={0}d&lat={1}d&radius={2}",
             me.parseRA(object._meta_ra), object._meta_dec, radius)
 
         window.open(url, '_blank')

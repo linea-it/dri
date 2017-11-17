@@ -42,12 +42,13 @@ Ext.define('Sky.view.main.MainController', {
             mainCard = refs.mainCardPanel,
             mainLayout = mainCard.getLayout(),
             sky = mainCard.child('component[routeId=\'sky\']'),
-            ctrl = mainLayout.getActiveItem().getController();
+            ctrl;
 
         // A Pesquisa sempre redireciona para o Footprint, por que a coordenada
         // pode nao ser na mesma tile. entao e necessario a busca no ceu inteiro
         me.setActivePanel(sky);
 
+        ctrl = sky.getController();
         ctrl.gotoPosition(value);
 
     },

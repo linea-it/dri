@@ -27,9 +27,14 @@
 .mapmaker-comment-position{
     background-image: url(common/images/mapmaker_comment-pos.png);
 }
+
+.leaflet-control-wcs-input {
+    width: 170px;
+}
 .visiomatic-mouse-position{
     background: #F4F4F4!important;
     padding: 7px 0px;
+    width: 280px;
 }
 .visiomatic-mouse-position-label{
     padding:0 6px;

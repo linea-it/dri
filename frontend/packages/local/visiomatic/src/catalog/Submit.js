@@ -24,17 +24,18 @@ Ext.define('visiomatic.catalog.Submit', {
                         {
                             xtype: 'fieldcontainer',
                             layout: 'hbox',
-                            defaults: {
-                                flex: 1,
-                                hideLabel: true
-                            },
                             items: [
                                 {
-                                    xtype: 'colorfield',
-                                    labelAlign: 'top',
+                                    xtype: 'tbtext',
+                                    html: 'Color:',
+                                    width: 40
+                                },
+                                {
+                                    xtype: 'colorbutton',
                                     bind: '{currentColor}',
-                                    width: 100,
-                                    margin: '0 10 0 0',
+                                    width: 50,
+                                    margin: '0 20 0 5',
+                                    tooltip: 'Choose a color. Click on the color and then on ok.'
                                 },
                                 {
                                     xtype: 'checkboxfield',
@@ -42,6 +43,7 @@ Ext.define('visiomatic.catalog.Submit', {
                                     boxLabel: 'Draw Ellipse',
                                     bind: '{drawEllipse}',
                                     reference: 'chkEllipse',
+                                    flex: 1
                                 }
                             ]
                         },
@@ -59,7 +61,7 @@ Ext.define('visiomatic.catalog.Submit', {
             ],
             buttons: [
                 {
-                    text: 'GO',
+                    text: 'Apply',
                     handler: 'onClickOverlay'
                 }
 

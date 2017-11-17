@@ -93,6 +93,32 @@ Ext.define('Sky.view.dataset.Dataset', {
                         },
                         {
                             xtype: 'button',
+                            iconCls: 'x-fa fa-map-marker',
+                            tooltip: 'Show/Hide Pin',
+                            enableToggle: true,
+                            pressed: true,
+                            toggleHandler: 'showHideMarker'
+                        },
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-arrows',
+                            tooltip: 'Center Tile',
+                            handler: 'onCenterTile',
+                            bind: {
+                                disabled: '{is_empty}'
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-comments',
+                            tooltip: 'Show/Hide Comments',
+                            enableToggle: true,
+                            pressed: true,
+                            toggleHandler: 'showHideComments',
+                            disabled: true
+                        },
+                        {
+                            xtype: 'button',
                             reference: 'btnCrop',
                             iconCls: 'x-fa fa-crop',
                             enableToggle: true,
@@ -112,24 +138,7 @@ Ext.define('Sky.view.dataset.Dataset', {
                             bind: {
                                 disabled: '{is_empty}'
                             }
-                        }
-                        /*{
-                            xtype: 'button',
-                            iconCls: 'x-fa fa-map-marker',
-                            tooltip: 'Show/Hide Pin',
-                            enableToggle: true,
-                            pressed: true,
-                            toggleHandler: 'showHideMarker'
-                        }*/
-                        /*,
-                        {
-                            xtype: 'button',
-                            iconCls: 'x-fa fa-comments',
-                            tooltip: 'Show/Hide Comments',
-                            enableToggle: true,
-                            pressed: true,
-                            toggleHandler: 'showHideComments'
-                        }*/
+                        },
                     ]
                 }
             ]

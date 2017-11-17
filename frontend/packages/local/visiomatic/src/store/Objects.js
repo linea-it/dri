@@ -15,11 +15,11 @@ Ext.define('visiomatic.store.Objects', {
 
     model: 'visiomatic.model.Object',
 
-    pageSize: 2000,
+    pageSize: 5000,
 
     proxy: {
         type: 'django',
-        timeout: 60000,
+        timeout: 90000,
         api: {
             read    : '/dri/api/catalogobjects/'
         }

@@ -19,12 +19,9 @@ Ext.define('Target.store.Objects', {
 
     proxy: {
         type: 'django',
-        timeout: 60000,
+        timeout: 180000, // 3 minutos de timeout
         api: {
-            // create  : '/PRJSUB/TileViewer/setCatalogObject',
             read    : '/dri/api/target/'
-            // update  : '/PRJSUB/TargetViewer/updateTargetObject'
-            // destroy : '/PRJSUB/TileViewer/deleteCatalogObject'
         }
     }
 });

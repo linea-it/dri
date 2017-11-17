@@ -49,6 +49,7 @@ EMAIL_NOTIFICATION = 'ncsa-portal@desportal.cosmology.illinois.edu'
 # Lista de email que receberam uma copia de todas as notificacoes
 EMAIL_NOTIFICATION_COPY_TO = list()
 EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
+EMAIL_HELPDESK_CONTACT = 'contato-dri@linea.gov.br'
 EMAIL_HOST = 'smtp.linea.gov.br'
 EMAIL_PORT = '<porta do smtp>'
 EMAIL_HOST_USER = '<usuario que vai ser usado no smtp>'
