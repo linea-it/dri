@@ -427,6 +427,8 @@ Ext.define('Explorer.view.system.SystemController', {
         // Aladin
         aladin.plotSystemMembers('system_members', members);
 
+        vm.set('have_members', true);
+
     },
 
     onSelectSystemMember: function (selModel, member) {
