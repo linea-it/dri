@@ -11,7 +11,8 @@ Ext.define('Explorer.view.system.System', {
         'Explorer.view.system.Visiomatic',
         'Explorer.view.system.Aladin',
         'Explorer.view.system.MembersGrid',
-        'Explorer.view.system.SpacialDistribution'
+        'Explorer.view.system.SpacialDistribution',
+        'Explorer.view.system.ZMagDistribution'
     ],
 
     controller: 'system',
@@ -146,19 +147,30 @@ Ext.define('Explorer.view.system.System', {
                                     }
                                 },
                                 {
+                                    // xtype: 'system-spacial-distribution',
+                                    xtype: 'system-zmag-distribution',
+                                    title: 'z and Mag Distribution',
+                                    bind: {
+                                        store: "{members}",
+                                        disabled: "{!have_members}"
+                                    }
+                                },
+                                {
                                     xtype: 'system-spacial-distribution',
-                                    title: 'Spacial Distribution'
-
+                                    title: 'Spacial Distribution',
+                                    bind: {
+                                        // store: "{members}",
+                                        disabled: "{!have_members}"
+                                    }
                                 },
                                 {
                                     // xtype: 'system-spacial-distribution',
                                     xtype: 'panel',
-                                    title: 'z and Mag Distribution'
-                                },
-                                {
-                                    // xtype: 'system-spacial-distribution',
-                                    xtype: 'panel',
-                                    title: 'CMD'
+                                    title: 'CMD',
+                                    bind: {
+                                        // store: "{members}",
+                                        disabled: "{!have_members}"
+                                    }
                                 },
                             ]
                         }
