@@ -13,7 +13,6 @@ from .permissions import IsOwnerOrPublic
 from .serializers import *
 from .tasks import create_table
 from .db import RawQueryValidator
-from . import settings as userquery_setting
 
 from lib.sqlalchemy_wrapper import DBBase
 
@@ -155,9 +154,9 @@ class CreateTable(viewsets.ModelViewSet):
         user = User.objects.get(pk=request.user.pk)
         try:
             user.groups.get(name='NCSA')
-            return userquery_setting.TIME_OUT_QUERY_EXECUTION_NCSA_USER_IN_SECONDS
+            return settings.USER_QUERY_EXECUTION_NCSA_USER_IN_SECONDS
         except Exception as e:
-            return userquery_setting.TIME_OUT_QUERY_EXECUTION_NON_NCSA_USER_IN_SECONDS
+            return settings.USER_QUERY_EXECUTION_NON_NCSA_USER_IN_SECONDS
 
 
 class TableProperties(viewsets.ModelViewSet):
