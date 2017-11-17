@@ -25,7 +25,8 @@ Ext.define('Explorer.view.system.ZMagDistribution', {
 
         // var data = d3.range(128).map(d3.randomBates(10));
         var x = d3.scaleLinear()
-            .domain([d3.min(data), d3.max(data)])
+            // .domain([0, d3.max(data)])
+            .domain([0, 1])
             .range([0, width]);
 
         var bins = d3.histogram()
