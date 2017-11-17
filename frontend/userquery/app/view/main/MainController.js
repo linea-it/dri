@@ -15,48 +15,32 @@ Ext.define('UserQuery.view.main.MainController', {
     activeQuery: {},
     activeRelease: {},
 
-    init: function(){
+    afterRender: function(){
+        var refs = this.getReferences();
         var me = this;
         var refs = me.getReferences();
         var vm = me.getViewModel();
-        
         this.status = {};
-        vm.set('initialized', false);
         
+        vm.set('initialized', false);
+
         Api.parallel([
             // verifica se o usuário está autenticado
             Api.getUser(function(error, user){
-                if (error) {
-                    Api.doLogin();
-                }
+                if (error) Api.doLogin();
             }),
 
             // busca a lista de releases
             Api.getReleases(function(error, releases){
-                var items = [];
-                
                 if (!error){
-                    // releases.forEach(function(release){
-                    //     items.push({
-                    //         text: release.rls_display_name,
-                    //         data: release,
-                    //         handler: 'mnuItemRelease_onClick'
-                    //     })
-                    // });
-                    
-                    me.releasesList = releases;
-                    //refs.cmbReleases.setData(items);
-
-                    // me.pnlLeftToolDownMenu = Ext.create('Ext.menu.Menu', {
-                    //     //plain: true, 
-                    //     title: '<div style="width:100%;background:whitesmoke;text-align:center;padding:4px;font-weight:bold;">Select Release</div>',
-                    //     items: items
-                    // });
-                    
+                    refs.cmbReleases.setStore(Ext.create('Ext.data.Store', {
+                        fields: ['id', 'rls_display_name'],
+                        data : releases
+                    }));
                 }
             })],
 
-            // quanto todas as api's responderem
+            // quanto todas as api's responderem, remove o splash screen e exibe a aplicação
             function(){
                 vm.set('initialized', true);
                 //me.createEmptyQuery();
@@ -64,16 +48,6 @@ Ext.define('UserQuery.view.main.MainController', {
                 removeSplash();
             }
         );
-
-    },
-
-    afterRender: function(){
-        var refs = this.getReferences();
-
-        refs.cmbReleases.setStore(Ext.create('Ext.data.Store', {
-            fields: ['id', 'rls_display_name'],
-            data : this.releasesList
-        }));
 
         new Ext.dd.DropTarget(refs.sql_sentence.getEl(), {
             ddGroup: 'TreeDD', // mesmo ddGroup definido na treeview

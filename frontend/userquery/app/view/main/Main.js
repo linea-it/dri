@@ -6,6 +6,7 @@ Ext.define('UserQuery.view.main.Main', {
         'Ext.app.ViewModel',
         'Ext.plugin.Viewport',
         'Ext.window.MessageBox',
+        'Ext.window.Toast',
 
         'UserQuery.view.main.MainController',
         'UserQuery.view.main.MainModel',
@@ -322,34 +323,14 @@ Ext.define('UserQuery.view.main.Main', {
                     listeners:{
                         expand: 'pnlJobs_onExpand'
                     },
-                    items: [{
+                    items: [
+                        
+                        {
                             xtype: 'treelist',
                             reference: 'tvwJobList',
                             flex: 1,
                             width: '100%',
                             rootVisible: false,
-                            // store: {
-                            //     root: {
-                            //         expanded: true,
-                            //         children: [{
-                            //                 text: 'My Job 01',
-                            //                 leaf: true,
-                            //                 iconCls: 'x-fa fa-hourglass-3'
-                            //             },
-                            //             {
-                            //                 text: 'My Job 02',
-                            //                 leaf: true,
-                            //                 iconCls: 'x-fa fa-hourglass-3'
-                            //             },
-                            //             {
-                            //                 text: 'My Job 03',
-                            //                 leaf: true,
-                            //                 iconCls: 'x-fa fa-frown-o',
-                            //                 cls: 'rednode'
-                            //             }
-                            //         ]
-                            //     }
-                            // },
                             listeners: {
                                 selectionchange: 'tvwJobList_onSelectionChange'
                             }
