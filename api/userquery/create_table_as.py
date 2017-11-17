@@ -12,6 +12,7 @@ from lib.sqlalchemy_wrapper import DBBase
 
 from common.notify import Notify
 from userquery.models import Job
+from userquery.models import Table
 
 
 class CreateTableAs:
@@ -63,6 +64,12 @@ class CreateTableAs:
         try:
             db.create_table_raw_sql(self.table_name, self.job.sql_sentence, schema=self.schema, timeout=self.timeout)
             self.is_table_successfully_created = True
+
+            table = Table(table_name=self.table_name,
+                          display_name=self.job.display_name,
+                          owner=self.job.owner,
+                          schema=self.schema)
+            table.save()
         except Exception as e:
             self.error_message = str(e)
             self.logger.debug("CreateTableAs Error: %s" % self.error_message)
@@ -93,7 +100,7 @@ class CreateTableAs:
             body = render_to_string("job_notification_finish.html", {
                 "username": self.user.username,
                 "url": url,
-                "table_name": self.job.table_name
+                "table_name": self.table_name
             })
 
             Notify().send_email(subject, body, self.user.email)

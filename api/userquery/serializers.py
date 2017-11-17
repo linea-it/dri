@@ -17,7 +17,6 @@ class QuerySerializer(serializers.ModelSerializer):
             'creation_date',
             'last_edition_date',
             'sql_sentence',
-            'is_validate',
             'is_public'
         )
 
@@ -30,7 +29,6 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
         model = Job
         fields = (
             'id',
-            'table_name',
             'display_name',
             'owner',
             'start_date_time',
@@ -38,4 +36,19 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
             'sql_sentence',
             'job_status',
             'timeout',
+        )
+
+
+class TableSerializer(serializers.HyperlinkedModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+    id = serializers.ReadOnlyField()
+
+    class Meta:
+        model = Table
+        fields = (
+            'id',
+            'table_name',
+            'display_name',
+            'owner',
+            'schema'
         )
