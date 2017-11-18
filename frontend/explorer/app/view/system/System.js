@@ -11,7 +11,9 @@ Ext.define('Explorer.view.system.System', {
         'Explorer.view.system.Visiomatic',
         'Explorer.view.system.Aladin',
         'Explorer.view.system.MembersGrid',
-        'Explorer.view.system.SpacialDistribution'
+        'Explorer.view.system.SpacialDistribution',
+        'Explorer.view.system.ZDistribution',
+        'Explorer.view.system.MagDistribution'
     ],
 
     controller: 'system',
@@ -146,19 +148,49 @@ Ext.define('Explorer.view.system.System', {
                                     }
                                 },
                                 {
+                                    xtype: 'panel',
+                                    title: 'z and Mag Distribution',
+                                    layout: {
+                                        type: 'hbox',
+                                        pack: 'start',
+                                        align: 'stretch'
+                                    },
+                                    items: [
+                                        {
+                                            xtype: 'system-z-distribution',
+                                            bind: {
+                                                store: "{members}",
+                                            },
+                                            flex: 1
+                                        },
+                                        {
+                                            xtype: 'system-mag-distribution',
+                                            bind: {
+                                                store: "{members}",
+                                            },
+                                            flex: 1
+                                        },
+                                    ],
+                                    bind: {
+                                        disabled: "{!have_members}"
+                                    }
+                                },
+                                {
                                     xtype: 'system-spacial-distribution',
-                                    title: 'Spacial Distribution'
-
+                                    title: 'Spacial Distribution',
+                                    bind: {
+                                        // store: "{members}",
+                                        disabled: "{!have_members}"
+                                    }
                                 },
                                 {
                                     // xtype: 'system-spacial-distribution',
                                     xtype: 'panel',
-                                    title: 'z and Mag Distribution'
-                                },
-                                {
-                                    // xtype: 'system-spacial-distribution',
-                                    xtype: 'panel',
-                                    title: 'CMD'
+                                    title: 'CMD',
+                                    bind: {
+                                        // store: "{members}",
+                                        disabled: "{!have_members}"
+                                    }
                                 },
                             ]
                         }
