@@ -112,10 +112,6 @@ Ext.define('Sky.view.dataset.DatasetController', {
             fov = view.getFov(),
             visiomatic = me.lookupReference('visiomatic');
 
-        if (fov > 0.60) {
-            fov = 0.60;
-        }
-
         visiomatic.setView(radec.ra, radec.dec, fov);
 
         //PIN (Marcador estilo google)
@@ -286,7 +282,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
     },
 
     onCenterTile: function () {
-        console.log('onCenterTile()')
+        // console.log('onCenterTile()')
         var me = this,
             vm = me.getViewModel(),
             currentDataset = vm.get('currentDataset'),
@@ -294,7 +290,6 @@ Ext.define('Sky.view.dataset.DatasetController', {
             fov = 2,
             visiomatic = me.lookupReference('visiomatic');
 
-        console.log(currentDataset)
         visiomatic.setView(currentDataset.get('tli_ra'), currentDataset.get('tli_dec'), fov);
     },
 

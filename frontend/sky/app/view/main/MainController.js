@@ -31,9 +31,6 @@ Ext.define('Sky.view.main.MainController', {
         'dataset/:dataset/:coordinate/:fov': {
             action: 'onDataset'
         },
-        'dataset/:dataset/:coordinate': {
-            action: 'onDataset'
-        }
     },
 
     doSearch: function(value){
@@ -172,8 +169,8 @@ Ext.define('Sky.view.main.MainController', {
 
     //exibindo o VisiOmatic
     onDataset: function (dataset, coordinate, fov) {
-        var headerBar = this.getView().down('dri-header-sky'),
-            newView = Ext.create('Sky.view.dataset.Dataset', {
+        // console.log("onDataset(%o, %o, %o)", dataset, coordinate, fov);
+        var newView = Ext.create('Sky.view.dataset.Dataset', {
                 hideMode: 'offsets',
                 routeId: 'tile',
                 layout: 'fit',
@@ -181,6 +178,7 @@ Ext.define('Sky.view.main.MainController', {
                 coordinate: coordinate,
                 fov: fov
             }),
+            headerBar = this.getView().down('dri-header-sky'),
             headerRefs = headerBar.getReferences();
 
         headerRefs.searchGlobal.show();
@@ -191,6 +189,5 @@ Ext.define('Sky.view.main.MainController', {
 
         //define o título da barra superior
         headerBar.getViewModel().set('name', 'Image Viewer');
-    }
-
+    },
 });
