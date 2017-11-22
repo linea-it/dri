@@ -20,7 +20,11 @@ Ext.define('Sky.view.dataset.Dataset', {
         fov: null,
         radec: null,
 
-        defaultFov: 0.5,
+        // Fov para centralizar a tile
+        defaultFov: 2.43,
+
+        // Fov para centralizar em um objeto
+        defaultMinFov: 0.60,
 
         // Available datasets (store)
         datasets: null,
@@ -214,10 +218,17 @@ Ext.define('Sky.view.dataset.Dataset', {
 
         me.setRadec(radec);
 
-        if (fov) {
-            me.setFov(fov.replace(',', '.'));
-        } else {
+        // Se o parametro fov for == -1 centraliza a tile
+        if (fov == -1) {
             me.setFov(me.getDefaultFov());
+
+        } else {
+
+            fov = parseFloat(fov.replace(',', '.'));
+            if (fov > me.getDefaultMinFov()) {
+                fov = me.getDefaultMinFov();
+            }
+            me.setFov(fov);
         }
 
         coordinate = radec.ra + ', ' + radec.dec;

@@ -209,14 +209,15 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
     onDblClickAladin: function (radec) {
         this.getView().fireEvent('ondblclick');
-        this.toVisiomatic(radec, true, true);
+        this.toVisiomatic(radec, true, false);
     },
 
     onShift: function (radec) {
-        this.toVisiomatic(radec, true);
+        this.toVisiomatic(radec, true, true);
     },
 
-    toVisiomatic: function (radec, clearSearch) {
+    toVisiomatic: function (radec, clearSearch, centralized) {
+        // console.log('toVisiomatic(%o, %o, %o)', radec, clearSearch, centralized)
         var me = this,
             vm = me.getViewModel(),
             vw = me.getView(),
@@ -242,10 +243,19 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
         if (dataset) {
 
+            // Centraliza na coordenada
             if (ra > 0) {
                 coordinate = ra.replace('.', ',') + '+' + dec.replace('.', ',');
             } else {
                 coordinate = ra.replace('.', ',') + dec.replace('.', ',');
+            }
+
+            if (centralized) {
+                // Centraliza na tile
+                fov = -1;
+                ra = "" + dataset.get('tli_ra');
+                dec = "" + dataset.get('tli_dec');
+                coordinate = ra.replace('.', ',') + '+' + dec.replace('.', ',');
             }
 
             coordinate = encodeURIComponent(coordinate);
