@@ -7,13 +7,18 @@
 Ext.define('Sky.view.footprint.FootprintController', {
     extend: 'Ext.app.ViewController',
 
+    requires: [
+        'common.link.LinkPrompt'
+    ],
+
     alias: 'controller.footprint',
 
     listen: {
         component: {
             'footprint': {
                 loadpanel: 'onLoadPanel',
-                updatepanel: 'onUpdatePanel'
+                updatepanel: 'onUpdatePanel',
+                beforedeactivate: 'onBeforeDeactivate'
             },
             'footprint-aladin': {
                 ondblclick: 'onDblClickAladin',
@@ -32,6 +37,8 @@ Ext.define('Sky.view.footprint.FootprintController', {
             }
         }
     },
+
+    winGetLink: null,
 
     onLoadPanel: function (release) {
         var me = this;
@@ -302,6 +309,39 @@ Ext.define('Sky.view.footprint.FootprintController', {
             aladin.gotoPosition(coordinate[0], coordinate[1]);
             aladin.setZoom(zoom);
         }
+    },
+
+    getLink: function () {
+        // console.log('getLink()');
+        var me = this,
+            aladin = me.lookupReference('aladin'),
+            fov = aladin.getFov()[0].toFixed(2),
+            radec = aladin.getRaDec(),
+            release = me.getView().getRelease(),
+            href = window.location.href,
+            host = href.split('/#')[0],
+            hash;
+
+        coordinate = radec[0].toString().replace('.', ',') + '|' + radec[1].toString().replace('.', ',');
+
+        link = Ext.String.format('{0}/#sky/{1}/{2}/{3}', host, release, coordinate, fov);
+
+        me.winGetLink = Ext.create('common.link.LinkPrompt', {
+            link: link
+        });
+
+        me.winGetLink.show();
+    },
+
+    onBeforeDeactivate: function () {
+        // console.log("onBeforeDeactivate()");
+        var me = this;
+
+        if (me.winGetLink !== null) {
+            me.winGetLink.close();
+            me.winGetLink = null;
+        }
+
     }
 
 });

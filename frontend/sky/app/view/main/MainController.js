@@ -142,7 +142,6 @@ Ext.define('Sky.view.main.MainController', {
     //exibindo o Aladin
     onSky: function (release, coordinate, fov) {
         var me = this,
-            headerBar = me.getView().down('dri-header-sky'),
             newView = Ext.create('Sky.view.footprint.Footprint', {
                 hideMode: 'offsets',
                 routeId: 'sky',
@@ -156,6 +155,7 @@ Ext.define('Sky.view.main.MainController', {
                     }
                 }
             }),
+            headerBar = me.getView().down('dri-header-sky'),
             headerRefs = headerBar.getReferences();
 
         headerRefs.searchGlobal.show();

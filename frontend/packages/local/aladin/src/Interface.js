@@ -244,7 +244,7 @@ Ext.define('aladin.Interfaces', {
 
         // Auxiliar Tools
         auxTools = me.getAuxTools();
-
+        
         if (auxTools.length > 0) {
             Ext.each(auxTools, function (tool) {
                 tools.push(tool);
