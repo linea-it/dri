@@ -12,8 +12,8 @@ Ext.define('Explorer.view.system.System', {
         'Explorer.view.system.Aladin',
         'Explorer.view.system.MembersGrid',
         'Explorer.view.system.SpacialDistribution',
-        'Explorer.view.system.ZDistribution',
-        'Explorer.view.system.MagDistribution'
+        'Explorer.view.system.ZMagDistribution',
+        'Explorer.view.system.Cmd'
     ],
 
     controller: 'system',
@@ -148,30 +148,11 @@ Ext.define('Explorer.view.system.System', {
                                     }
                                 },
                                 {
-                                    xtype: 'panel',
+                                    // xtype: 'system-spacial-distribution',
+                                    xtype: 'system-zmag-distribution',
                                     title: 'z and Mag Distribution',
-                                    layout: {
-                                        type: 'hbox',
-                                        pack: 'start',
-                                        align: 'stretch'
-                                    },
-                                    items: [
-                                        {
-                                            xtype: 'system-z-distribution',
-                                            bind: {
-                                                store: "{members}",
-                                            },
-                                            flex: 1
-                                        },
-                                        {
-                                            xtype: 'system-mag-distribution',
-                                            bind: {
-                                                store: "{members}",
-                                            },
-                                            flex: 1
-                                        },
-                                    ],
                                     bind: {
+                                        store: "{members}",
                                         disabled: "{!have_members}"
                                     }
                                 },
@@ -184,11 +165,10 @@ Ext.define('Explorer.view.system.System', {
                                     }
                                 },
                                 {
-                                    // xtype: 'system-spacial-distribution',
-                                    xtype: 'panel',
+                                    xtype: 'system-cmd',
                                     title: 'CMD',
                                     bind: {
-                                        // store: "{members}",
+                                        store: "{members}",
                                         disabled: "{!have_members}"
                                     }
                                 },
