@@ -413,35 +413,37 @@ Ext.define('Target.view.preview.PreviewController', {
                 });
                 members.load({
                     callback: function () {
-                        loaded--;
-                        loadMembersAndCommentsComplete();
+                        // Remover o load do botao
+                        btnMembers.setIconCls('x-fa fa-dot-circle-o');
+                        // Exibir os objetos membros
+                        me.onLoadSystemMembers(this);
                     }
                 });
 
                 //carrega os comentários de posição
-                loaded++;
-                coordinates = '[[' + me.activeDataset.get('tli_urall') + ',' + me.activeDataset.get('tli_udecll') + '],' +
-                               '[' + me.activeDataset.get('tli_uraur') + ',' + me.activeDataset.get('tli_udecur') + ']]';
+                // loaded++;
+                // coordinates = '[[' + me.activeDataset.get('tli_urall') + ',' + me.activeDataset.get('tli_udecll') + '],' +
+                //                '[' + me.activeDataset.get('tli_uraur') + ',' + me.activeDataset.get('tli_udecur') + ']]';
+                //
+                // comments.filter([{
+                //     property: 'coordinates',
+                //     value: coordinates
+                // }]);
+                // comments.load({
+                //     callback: function () {
+                //         loaded--;
+                //         loadMembersAndCommentsComplete();
+                //     }
+                // });
 
-                comments.filter([{
-                    property: 'coordinates',
-                    value: coordinates
-                }]);
-                comments.load({
-                    callback: function () {
-                        loaded--;
-                        loadMembersAndCommentsComplete();
-                    }
-                });
-
-                function loadMembersAndCommentsComplete() {
-                    if (loaded == 0) {
-                        // Remover o load do botao
-                        btnMembers.setIconCls('x-fa fa-dot-circle-o');
-                        // Exibir os objetos membros
-                        me.onLoadSystemMembers(members, comments, refs.btnComments.pressed);
-                    }
-                }
+                // function loadMembersAndCommentsComplete() {
+                //     if (loaded == 0) {
+                //         // Remover o load do botao
+                //         btnMembers.setIconCls('x-fa fa-dot-circle-o');
+                //         // Exibir os objetos membros
+                //         me.onLoadSystemMembers(members, comments, refs.btnComments.pressed);
+                //     }
+                // }
             }
 
         } else {
@@ -463,13 +465,14 @@ Ext.define('Target.view.preview.PreviewController', {
         }
     },
 
-    onLoadSystemMembers: function (members, comments/*cometários por posição*/, showComments) {
+    onLoadSystemMembers: function (members) {
+        console.log('onLoadSystemMembers(%o)', members)
         var me = this,
             vm = me.getViewModel(),
             visiomatic = me.lookupReference('visiomatic'),
             lmembers;
 
-        lmembers = visiomatic.overlayCatalog('catalog_teste', members, null, comments, showComments);
+        lmembers = visiomatic.overlayCatalog('catalog_teste', members);
 
         vm.set('overlayMembers', lmembers);
     },
