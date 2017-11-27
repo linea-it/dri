@@ -1,4 +1,6 @@
 import logging
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import viewsets
 from rest_framework import permissions
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
@@ -27,12 +29,38 @@ class QueryViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic)
 
+    def create(self, request, *args, **kwargs):
+        if not self._is_a_valid_request_to_save(request):
+            return JsonResponse({'message': 'The field name already exists for this user'}, status=400)
+        return super(QueryViewSet, self).create(request, args, kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        if not self._is_a_valid_request_to_save(request):
+            return JsonResponse({'message': 'The field name already exists for this user'}, status=400)
+        return super(QueryViewSet, self).update(request, args, kwargs)
+
+    def perform_update(self, serializer):
+        serializer.save(owner=self.request.user)
+
     def get_queryset(self):
         return self.queryset.filter((Q(owner=self.request.user) | Q(is_public=True)) &
                                     Q(is_sample=False))
 
-    def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
+    def _is_a_valid_request_to_save(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if self._is_table_name_already_defined_by_the_user(serializer.validated_data['name']):
+            return False
+        return True
+
+    def _is_table_name_already_defined_by_the_user(self, name):
+        q = Query.objects.filter(Q(owner=self.request.user) &
+                                 Q(name=name))
+        print(str(q.query))
+        return True if len(q) > 0 else False
 
 
 class SampleViewSet(viewsets.ModelViewSet):
@@ -61,8 +89,12 @@ class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
 
+    http_method_names = ['get', ]
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic,)
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user)
 
 
 class QueryValidate(viewsets.ModelViewSet):
@@ -119,11 +151,13 @@ class CreateTable(viewsets.ModelViewSet):
     def create(self, request):
         try:
             data = request.data
-            table_name = data.get("table_name", None)
             display_name = data.get("display_name", None)
-            id = data.get("id", None)
+            _id = data.get("id", None)
 
-            q = Query.objects.get(pk=id)
+            # review - displayName_userId
+            table_name = display_name.replace(' ', '_') + "_" + str(self.request.user.pk)
+
+            q = Query.objects.get(pk=_id)
 
             if not self._is_user_authorized(q):
                 raise Exception("User not authorized to perform this action")
@@ -172,8 +206,8 @@ class TableProperties(viewsets.ModelViewSet):
             response = []
             for table in tables:
                 response.append({
-                    'display_name':table.display_name, 
-                    'table_name':table.table_name,
+                    'display_name': table.display_name,
+                    'table_name': table.table_name,
                     'cols': db.get_table_columns(table.table_name)
                 })
 

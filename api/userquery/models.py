@@ -5,6 +5,7 @@ from django.conf import settings
 
 
 class Query(models.Model):
+    # the same user can't have repeated names.
     name = models.CharField(
         max_length=128, null=False, verbose_name='Name')
     description = models.CharField(

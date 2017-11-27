@@ -58,7 +58,7 @@ class CreateTableAs:
             self._notify_user_by_email_failure(self.error_message)
 
     def _create_table_by_job_id(self):
-        self.logger.debug("_create_table_by_job_id - job_id: %s" % self.job.pk)
+        self.logger.info("_create_table_by_job_id - job_id: %s" % self.job.pk)
 
         db = DBBase('catalog')
         try:
@@ -72,7 +72,7 @@ class CreateTableAs:
             table.save()
         except Exception as e:
             self.error_message = str(e)
-            self.logger.debug("CreateTableAs Error: %s" % self.error_message)
+            self.logger.info("CreateTableAs Error: %s" % self.error_message)
 
     def _notify_by_email_start(self):
         if self.user.email:
