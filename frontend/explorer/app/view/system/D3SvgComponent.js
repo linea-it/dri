@@ -12,14 +12,19 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
 
         baseCls: Ext.baseCSSPrefix + 'd3',
 
-        padding: {
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0
+        svgMargin: {
+            top: 50,
+            left:50,
+            right: 50,
+            bottom:50
         },
 
-        store: null
+        store: null,
+
+        xAxisTitle: null,
+        yAxisTitle: null,
+
+        plotTitle: null
     },
 
     d3: null,
@@ -51,17 +56,15 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
     scene: null,
     sceneRect: null, // object with scene's position and dimensions: x, y, width, height
 
-    height: '100%',
-
     initComponent: function () {
-        console.log("initComponent()")
+        // console.log("initComponent()")
         var me = this;
 
         me.callParent(arguments);
 
         if (window.d3) {
             me.d3 = window.d3;
-            console.log("D3 version: %o", me.d3.version);
+            // console.log("D3 version: %o", me.d3.version);
 
 
             me.on('resize', 'onElementResize', me);
@@ -76,7 +79,7 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
     },
 
     handleResize: function (size, instantly) {
-        console.log("handleResize(%o)", size)
+        // console.log("handleResize(%o)", size)
         var me = this,
             el = me.getEl();
 
@@ -103,10 +106,10 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
     },
 
     resizeHandler: function (size) {
-        console.log("resizeHandler(%o)", size)
+        // console.log("resizeHandler(%o)", size)
         var me = this,
             svg = me.getSvg(),
-            paddingCfg = me.getPadding(),
+            svgMargin = me.getSvgMargin(),
             isRtl = me.getInherited().rtl,
             wrapper = me.getWrapper(),
             wrapperClipRect = me.getWrapperClipRect(),
@@ -119,18 +122,18 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
             return;
         }
 
+        me.clearScene();
+
         svg
             .attr('width', width)
             .attr('height', height);
 
         rect = me.sceneRect || (me.sceneRect = {});
 
-        rect.x = isRtl ? paddingCfg.right : paddingCfg.left;
-        rect.y = paddingCfg.top;
-        rect.width = width - paddingCfg.left - paddingCfg.right;
-        rect.height = height - paddingCfg.top - paddingCfg.bottom;
-
-
+        rect.x = isRtl ? svgMargin.right : svgMargin.left;
+        rect.y = svgMargin.top;
+        rect.width = width - svgMargin.left - svgMargin.right;
+        rect.height = height - svgMargin.top - svgMargin.bottom;
 
         wrapper
             .attr('transform', 'translate(' + rect.x + ',' + rect.y + ')');
@@ -139,6 +142,7 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
             .attr('width', rect.width)
             .attr('height', rect.height);
 
+        me.sceneRect = rect;
         me.onSceneResize(scene, rect);
         me.fireEvent('sceneresize', me, scene, rect);
     },
@@ -146,7 +150,6 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
     getSvg: function () {
         var me = this,
             el = me.getEl();
-
 
         // Spec: https://www.w3.org/TR/SVG/struct.html
         // Note: foreignObject is not supported in IE11 and below (can't use HTML elements inside SVG).
@@ -221,7 +224,6 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
 
 
     destroy: function () {
-        console.log("destroy()");
         this.getSvg().remove();
         this.callParent();
     },
@@ -261,8 +263,13 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
      * @param {Number} rect.width
      * @param {Number} rect.height
      */
-    onSceneResize: Ext.emptyFn,
+    onSceneResize: function (scene, rect) {
+        var me = this;
 
+        me.performLayout(scene, rect);
+    },
+
+    performLayout: Ext.emptyFn,
 
     showScene: function () {
         this.scene && this.scene.classed(this.defaultCls.hidden, false);
@@ -289,7 +296,53 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
     setStore: function (store) {
 
         this.store = store;
+    },
+
+    createAxisTitles: function () {
+        // console.log('createAxisTitles');
+        var me = this,
+            scene = me.getScene(),
+            svgMargin = me.getSvgMargin(),
+            rect = me.sceneRect,
+            xAxisTitle = me.getXAxisTitle(),
+            yAxisTitle = me.getYAxisTitle();
+
+        // text label for the x axis
+        if (xAxisTitle) {
+            scene
+                .append("text")
+                .attr("transform",
+                      "translate(" + (rect.width/2) + " ," +
+                                     (rect.height + (svgMargin.bottom/2)) + ")")
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .text(xAxisTitle);
+        }
+        if (yAxisTitle) {
+            scene.append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", 0 - svgMargin.left)
+                .attr("x",0 - (rect.height / 2))
+                .attr("dy", "1em")
+                .style("text-anchor", "middle")
+                .text(yAxisTitle);
+        }
+    },
+
+    createPlotTitle: function () {
+        var me = this,
+            scene = me.getScene(),
+            svgMargin = me.getSvgMargin(),
+            rect = me.sceneRect,
+            plotTitle = me.getPlotTitle();
+
+        if (plotTitle) {
+            scene.append("text")
+                .attr("x", (rect.width / 2))
+                .attr("y", 0 - (svgMargin.top / 2))
+                .attr("text-anchor", "middle")
+                .style("font-size", "1.2em")
+                .text(plotTitle);
+        }
     }
-
-
 });

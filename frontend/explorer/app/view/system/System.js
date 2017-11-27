@@ -11,8 +11,9 @@ Ext.define('Explorer.view.system.System', {
         'Explorer.view.system.Visiomatic',
         'Explorer.view.system.Aladin',
         'Explorer.view.system.MembersGrid',
-        'Explorer.view.system.SpacialDistribution',
-        'Explorer.view.system.ZMagDistribution',
+        'Explorer.view.system.SpatialDistribution',
+        'Explorer.view.system.ZDistribution',
+        'Explorer.view.system.MagDistribution',
         'Explorer.view.system.Cmd'
     ],
 
@@ -98,8 +99,7 @@ Ext.define('Explorer.view.system.System', {
                         // Painel Direito Superior
                         {
                             xtype: 'panel',
-                            // title: 'Superior',
-                            height: 300,
+                            flex:1,
                             split: true,
                             layout: {
                                 type: 'hbox',
@@ -148,21 +148,40 @@ Ext.define('Explorer.view.system.System', {
                                     }
                                 },
                                 {
-                                    // xtype: 'system-spacial-distribution',
-                                    xtype: 'system-zmag-distribution',
+                                    xtype: 'panel',
                                     title: 'z and Mag Distribution',
+                                    layout: {
+                                        type: 'hbox',
+                                        pack: 'start',
+                                        align: 'stretch'
+                                    },
                                     bind: {
-                                        store: "{members}",
                                         disabled: "{!have_members}"
-                                    }
+                                    },
+                                    items: [
+                                        {
+                                            xtype: 'system-z-distribution',
+                                            flex: 1,
+                                            bind: {
+                                                store: "{members}",
+                                            }
+                                        },
+                                        {
+                                            xtype: 'system-mag-distribution',
+                                            flex: 1,
+                                            bind: {
+                                                store: "{members}",
+                                            }
+                                        }
+                                    ]
                                 },
                                 {
-                                    xtype: 'system-spacial-distribution',
-                                    title: 'Spacial Distribution',
-                                    bind: {
-                                        // store: "{members}",
-                                        disabled: "{!have_members}"
-                                    }
+                                    xtype: 'system-spatial-distribution',
+                                    title: 'Spatial Distribution',
+                                    disabled: true
+                                    // bind: {
+                                    //     disabled: "{!have_members}"
+                                    // }
                                 },
                                 {
                                     xtype: 'system-cmd',

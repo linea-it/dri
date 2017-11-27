@@ -1,7 +1,7 @@
-Ext.define('Explorer.view.system.SpacialDistribution', {
+Ext.define('Explorer.view.system.SpatialDistribution', {
     extend: 'Explorer.view.system.D3SvgComponent',
 
-    xtype: 'system-spacial-distribution',
+    xtype: 'system-spatial-distribution',
     // width: 600,
     // height:500,
     //
