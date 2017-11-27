@@ -19,6 +19,13 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
             bottom:50
         },
 
+        legend: {
+            width: 0,
+            height: 0,
+            y: 20,
+            iconSize: 20
+        },
+
         store: null,
 
         xAxisTitle: null,
@@ -116,6 +123,7 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
             scene = me.getScene(),
             width = size && size.width,
             height = size && size.height,
+            legend = me.getLegend(),
             rect;
 
         if (!(width && height)) {
@@ -132,7 +140,7 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
 
         rect.x = isRtl ? svgMargin.right : svgMargin.left;
         rect.y = svgMargin.top;
-        rect.width = width - svgMargin.left - svgMargin.right;
+        rect.width = width - svgMargin.left - svgMargin.right - legend.width;
         rect.height = height - svgMargin.top - svgMargin.bottom;
 
         wrapper
