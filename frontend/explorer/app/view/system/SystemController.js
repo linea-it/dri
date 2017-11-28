@@ -257,12 +257,14 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     onChangeImage: function () {
+        // console.log('onChangeImage')
         var me = this,
             vm = me.getViewModel(),
             product = vm.get('currentProduct'),
             object = vm.get('object'),
             visiomatic = me.lookupReference('visiomatic'),
             aladin = me.lookupReference('aladin'),
+            members = vm.getStore('members')
             fov = 0.07;
 
         visiomatic.setView(
@@ -278,6 +280,8 @@ Ext.define('Explorer.view.system.SystemController', {
             'arcmin');
 
         visiomatic.showHideRadius(true);
+
+        me.onLoadSystemMembers(members);
 
     },
 
