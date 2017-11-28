@@ -148,6 +148,14 @@ Ext.define('UserQuery.view.service.ApiBase', {
             definition.request();
         }
 
+        r = Object.assign({}, params)
+        for (i in params) {
+            if (params[i]===undefined){
+                delete(r[i]);
+            }
+        }
+        params = r;
+
         Ext.Ajax.request({
             url: api.url,
             method: api.method,
