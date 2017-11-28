@@ -2,7 +2,7 @@ import logging
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
-from rest_framework import permissions
+from rest_framework import permissions, filters
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
 
 from django.db.models import Q
@@ -15,6 +15,7 @@ from .permissions import IsOwnerOrPublic
 from .serializers import *
 from .tasks import create_table
 from .db import RawQueryValidator
+from .target_viewer import register_table_in_the_target_viewer
 
 from lib.sqlalchemy_wrapper import DBBase
 
@@ -47,7 +48,7 @@ class QueryViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return self.queryset.filter((Q(owner=self.request.user) | Q(is_public=True)) &
-                                    Q(is_sample=False))
+                                    Q(is_sample=False)).order_by('name')
 
     def _is_a_valid_request_to_save(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -83,7 +84,7 @@ class TableViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
+        return self.queryset.filter(owner=self.request.user).order_by('display_name')
 
     def destroy(self, request, *args, **kwargs):
         try:
@@ -97,7 +98,6 @@ class TableViewSet(viewsets.ModelViewSet):
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
-
 
 
 class JobViewSet(viewsets.ModelViewSet):
@@ -235,3 +235,22 @@ class TableProperties(viewsets.ModelViewSet):
 
     def _is_user_authorized(self, q):
         return q.owner == self.request.user or q.is_public
+
+
+class TargetViewerRegister(viewsets.ModelViewSet):
+    http_method_names = ['post', ]
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def create(self, request):
+        try:
+            data = request.data
+            _id = data.get("id", None)
+
+            q = Table.objects.get(pk=_id)
+            register_table_in_the_target_viewer(self.request.user, q.schema, q.table_name, q.display_name)
+            return HttpResponse(status=200)
+
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
