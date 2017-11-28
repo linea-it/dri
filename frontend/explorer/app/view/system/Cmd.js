@@ -3,9 +3,9 @@ Ext.define('Explorer.view.system.Cmd', {
 
     xtype: 'system-cmd',
 
-    plotTitle: 'CMD',
-    xAxisTitle: 'r',
-    yAxisTitle: 'g-r',
+    // plotTitle: 'CMD',
+    // xAxisTitle: 'r',
+    // yAxisTitle: 'g-r',
 
     config: {
 
@@ -55,7 +55,7 @@ Ext.define('Explorer.view.system.Cmd', {
     },
 
     performLayout: function (scene, rect) {
-        console.log('performLayout(%o, %o)', scene, rect);
+        // console.log('performLayout(%o, %o)', scene, rect);
 
         var me = this,
             width = rect.width,
@@ -294,6 +294,12 @@ Ext.define('Explorer.view.system.Cmd', {
         var me = this;
 
         me.showHideSerie(serie, true);
+
+        me.setPlotTitle(serie.title);
+
+        me.setXAxisTitle(serie.xAxisTitle);
+
+        me.setYAxisTitle(serie.yAxisTitle);
     },
 
     deactiveAllSeries: function () {

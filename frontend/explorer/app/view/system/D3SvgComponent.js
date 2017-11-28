@@ -31,7 +31,9 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
         xAxisTitle: null,
         yAxisTitle: null,
 
-        plotTitle: null
+        plotTitle: null,
+
+        ready: false,
     },
 
     d3: null,
@@ -72,7 +74,6 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
         if (window.d3) {
             me.d3 = window.d3;
             // console.log("D3 version: %o", me.d3.version);
-
 
             me.on('resize', 'onElementResize', me);
 
@@ -274,6 +275,7 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
     onSceneResize: function (scene, rect) {
         var me = this;
 
+        me.setReady(true);
         me.performLayout(scene, rect);
     },
 
@@ -302,8 +304,36 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
     },
 
     setStore: function (store) {
-
         this.store = store;
+
+    },
+
+    setPlotTitle: function (title) {
+        var me = this;
+
+        me.plotTitle = title;
+
+        if (me.getReady()) {
+            me.createPlotTitle()
+        }
+    },
+
+    setXAxisTitle: function (xAxisTitle) {
+        var me = this;
+
+        me.xAxisTitle = xAxisTitle;
+        if (me.getReady()) {
+            me.createAxisTitles()
+        }
+    },
+
+    setYAxisTitle: function (yAxisTitle) {
+        var me = this;
+
+        me.yAxisTitle = yAxisTitle;
+        if (me.getReady()) {
+            me.createAxisTitles()
+        }
     },
 
     createAxisTitles: function () {
@@ -313,12 +343,18 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
             svgMargin = me.getSvgMargin(),
             rect = me.sceneRect,
             xAxisTitle = me.getXAxisTitle(),
-            yAxisTitle = me.getYAxisTitle();
+            yAxisTitle = me.getYAxisTitle(),
+            xId = "xAxisTitle-"+me.getId(),
+            yId = "yAxisTitle-"+me.getId();
+
+        d3.select("#"+xId).remove();
+        d3.select("#"+yId).remove();
 
         // text label for the x axis
         if (xAxisTitle) {
             scene
                 .append("text")
+                .attr("id", xId)
                 .attr("transform",
                       "translate(" + (rect.width/2) + " ," +
                                      (rect.height + (svgMargin.bottom/2)) + ")")
@@ -328,6 +364,7 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
         }
         if (yAxisTitle) {
             scene.append("text")
+                .attr("id", yId)
                 .attr("transform", "rotate(-90)")
                 .attr("y", 0 - svgMargin.left)
                 .attr("x",0 - (rect.height / 2))
@@ -342,15 +379,24 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
             scene = me.getScene(),
             svgMargin = me.getSvgMargin(),
             rect = me.sceneRect,
-            plotTitle = me.getPlotTitle();
+            plotTitle = me.getPlotTitle(),
+            id = "plotTitle-" + me.getId();
+
+        title = d3.select("#"+id)
+        if (title) {
+            title.remove();
+        }
 
         if (plotTitle) {
             scene.append("text")
+                .attr("id", id)
                 .attr("x", (rect.width / 2))
                 .attr("y", 0 - (svgMargin.top / 2))
                 .attr("text-anchor", "middle")
                 .style("font-size", "1.2em")
                 .text(plotTitle);
         }
-    }
+    },
+
+
 });
