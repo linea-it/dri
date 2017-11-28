@@ -89,9 +89,7 @@ class TableViewSet(viewsets.ModelViewSet):
         try:
             # drop table
             db = DBBase('catalog')
-            data = request.data
-            _id = data.get("id", None)
-            q = Table.objects.get(pk=_id)
+            q = Table.objects.get(pk=kwargs['pk'])
 
             db.drop_table(q.table_name, schema=q.schema)
 
