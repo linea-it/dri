@@ -11,9 +11,10 @@ Ext.define('Explorer.view.system.System', {
         'Explorer.view.system.Visiomatic',
         'Explorer.view.system.Aladin',
         'Explorer.view.system.MembersGrid',
-        'Explorer.view.system.SpacialDistribution',
+        'Explorer.view.system.SpatialDistribution',
         'Explorer.view.system.ZDistribution',
-        'Explorer.view.system.MagDistribution'
+        'Explorer.view.system.MagDistribution',
+        'Explorer.view.system.Cmd'
     ],
 
     controller: 'system',
@@ -26,11 +27,12 @@ Ext.define('Explorer.view.system.System', {
         var me = this;
 
         Ext.apply(this, {
-            layout: {
-                type: 'hbox',
-                pack: 'start',
-                align: 'stretch'
-            },
+            // layout: {
+            //     type: 'hbox',
+            //     pack: 'start',
+            //     align: 'stretch'
+            // },
+            layout: 'border',
             defaults: {
                 frame: true
             },
@@ -38,9 +40,11 @@ Ext.define('Explorer.view.system.System', {
                 // Painel Esquerdo
                 {
                     xtype: 'panel',
+                    region: 'west',
                     width: 300,
                     margin: '0 10 0 0',
-                    split: true,
+                    // split: true,
+                    collapsible: true,
                     reference: 'detailPanel',
                     layout: {
                         type: 'vbox',
@@ -83,6 +87,7 @@ Ext.define('Explorer.view.system.System', {
                 // Painel Direito
                 {
                     xtype: 'panel',
+                    region: 'center',
                     flex: 1,
                     split: true,
                     layout: {
@@ -98,8 +103,7 @@ Ext.define('Explorer.view.system.System', {
                         // Painel Direito Superior
                         {
                             xtype: 'panel',
-                            // title: 'Superior',
-                            height: 300,
+                            flex:1,
                             split: true,
                             layout: {
                                 type: 'hbox',
@@ -141,7 +145,8 @@ Ext.define('Explorer.view.system.System', {
                                     title: 'System Members',
                                     reference: 'members-grid',
                                     bind: {
-                                        store: '{members}'
+                                        store: '{members}',
+                                        selection: '{selected_member}'
                                     },
                                     listeners: {
                                         select: 'onSelectSystemMember'
@@ -155,41 +160,43 @@ Ext.define('Explorer.view.system.System', {
                                         pack: 'start',
                                         align: 'stretch'
                                     },
+                                    bind: {
+                                        disabled: "{!have_members}"
+                                    },
                                     items: [
                                         {
                                             xtype: 'system-z-distribution',
+                                            flex: 1,
                                             bind: {
                                                 store: "{members}",
-                                            },
-                                            flex: 1
+                                            }
                                         },
                                         {
                                             xtype: 'system-mag-distribution',
+                                            flex: 1,
                                             bind: {
                                                 store: "{members}",
-                                            },
-                                            flex: 1
-                                        },
-                                    ],
-                                    bind: {
-                                        disabled: "{!have_members}"
-                                    }
+                                            }
+                                        }
+                                    ]
                                 },
                                 {
-                                    xtype: 'system-spacial-distribution',
-                                    title: 'Spacial Distribution',
-                                    bind: {
-                                        // store: "{members}",
-                                        disabled: "{!have_members}"
-                                    }
+                                    xtype: 'system-spatial-distribution',
+                                    title: 'Spatial Distribution',
+                                    disabled: true
+                                    // bind: {
+                                    //     disabled: "{!have_members}"
+                                    // }
                                 },
                                 {
-                                    // xtype: 'system-spacial-distribution',
-                                    xtype: 'panel',
+                                    xtype: 'system-cmd',
                                     title: 'CMD',
                                     bind: {
-                                        // store: "{members}",
+                                        store: "{members}",
                                         disabled: "{!have_members}"
+                                    },
+                                    listeners: {
+                                        clickpoint: 'onCmdClickPoint'
                                     }
                                 },
                             ]

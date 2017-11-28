@@ -306,16 +306,8 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         //limpa o preview
         preview.clear();
-
-        if (records.length > 0) {
-            vm.set('haveResults', true);
-
-        } else {
-            vm.set('haveResults', false);
-        }
-
         objectsGrid.setLoading(false);
-
+                
         if (!successful) {
             // Se teve alguma falha limpar a grid.
             me.clearObjects();
@@ -327,6 +319,13 @@ Ext.define('Target.view.objects.ObjectsController', {
                 buttons: Ext.MessageBox.OK,
                 icon: Ext.MessageBox.WARNING
             });
+        } else {
+            if (records.length > 0) {
+                vm.set('haveResults', true);
+
+            } else {
+                vm.set('haveResults', false);
+            }
         }
     },
 
