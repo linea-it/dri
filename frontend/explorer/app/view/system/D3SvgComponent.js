@@ -58,6 +58,8 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
         hidden: Ext.baseCSSPrefix + 'd3-hidden'
     },
 
+    proportionalSize: true,
+
     /**
      * @private
      * See {@link #getScene}.
@@ -133,6 +135,12 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
 
         me.clearScene();
 
+        // Para tamanho proporciona a lagura deve ter o mesmo tamanho que
+        // a altura;
+        if (me.proportionalSize) {
+            width = height + legend.width;
+
+        }
         svg
             .attr('width', width)
             .attr('height', height);

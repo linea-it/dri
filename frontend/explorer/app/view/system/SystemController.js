@@ -539,7 +539,7 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     onClickSimbad: function () {
-        console.log('onClickSimbad()');
+        // console.log('onClickSimbad()');
         // Criar uma URL para o Servico SIMBAD
         var me = this,
             vm = me.getViewModel(),
@@ -556,7 +556,7 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     onClickNed: function () {
-        console.log('onClickNed')
+        // console.log('onClickNed')
         // Criar uma URL para o Servico NED
         var me = this,
             vm = me.getViewModel(),
@@ -572,7 +572,7 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     onClickVizier: function () {
-        console.log('onClickVizier')
+        // console.log('onClickVizier')
         // Criar uma URL para o Servico VizierCDS
         var me = this,
             vm = me.getViewModel(),
@@ -588,7 +588,7 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     onCmdClickPoint: function (record, cmd) {
-        console.log('onCmdClickPoint(%o)', record);
+        // console.log('onCmdClickPoint(%o)', record);
         // Realca o objeto no preview do visiomatic
         this.highlightSystemMember(record, true);
     }

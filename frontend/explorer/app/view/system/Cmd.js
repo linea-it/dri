@@ -41,9 +41,16 @@ Ext.define('Explorer.view.system.Cmd', {
         },
         plotData: [],
 
+        svgMargin: {
+            top: 50,
+            left:50,
+            right: 100,
+            bottom:50
+        },
+
         legend: {
-            width: 100,
-            height: 100,
+            width: 0,
+            height: 0,
             y: 20,
             // Tamanho do quadrado ou circulo com a cor da serie
             iconSize: 20,
@@ -53,6 +60,11 @@ Ext.define('Explorer.view.system.Cmd', {
 
         colorScale: null
     },
+
+    idleTimeout: null,
+    idleDelay: 350,
+
+    proportionalSize: false,
 
     performLayout: function (scene, rect) {
         // console.log('performLayout(%o, %o)', scene, rect);
@@ -64,15 +76,12 @@ Ext.define('Explorer.view.system.Cmd', {
             data = me.loadData(me.getStore(), dataSeries),
             axisPadding = 0.2;
 
-//        console.log(data)
-
         var color = d3.scaleOrdinal(d3['schemeCategory10'])
         me.setColorScale(color);
 
-
         // Axis Domain with multiple series Ex:
         // https://gist.github.com/mbostock/3884955#file-index-html-L52
-        var x = d3.scaleLinear()
+        me.x = d3.scaleLinear()
             .range([0, width])
             .domain([
                 d3.min(data, function(s){return d3.min(s.values, function (d) {
@@ -81,7 +90,9 @@ Ext.define('Explorer.view.system.Cmd', {
                     return d.x + axisPadding;})}),
             ])
 
-        var y = d3.scaleLinear()
+        me.xAxis = d3.axisBottom(me.x)
+
+        me.y = d3.scaleLinear()
             .range([height, 0])
             .domain([
                 d3.min(data, function(s){return d3.min(s.values, function (d) {
@@ -90,24 +101,37 @@ Ext.define('Explorer.view.system.Cmd', {
                     return d.y + axisPadding;})}),
             ])
 
-        // https://bl.ocks.org/mbostock/db6b4335bf1662b413e7968910104f0f
-        // var zoom = d3.zoom()
-        //     .scaleExtent([1, 40])
-        //     .translateExtent([[-100, -100], [width + 90, height + 100]])
-        //     .on("zoom", zoomed);
+        me.yAxis = d3.axisLeft(me.y)
 
-       // X Axis Group
-       scene.append("g")
+        // Quadrado de selecao para o zoom
+        // https://bl.ocks.org/EfratVil/d956f19f2e56a05c31fb6583beccfda7
+        me.brush = d3.brush()
+            .extent([[0, 0], [width, height]])
+            .on("end", function () {
+                me.onBrushendend()
+            });
+
+        // X Axis Group
+        me.gx = scene.append("g")
            .attr("class", "axis axis--x")
+           .attr('id', "axis--x")
            .attr("transform", "translate(0," + height + ")")
-           .call(d3.axisBottom(x));
+           .call(me.xAxis);
 
-       // Y Axis Group
-       scene.append("g")
+        // Y Axis Group
+        me.gy =scene.append("g")
            .attr("class", "axis axis--y")
-           .call(d3.axisLeft(y));
+           .attr('id', "axis--y")
+           .call(me.yAxis);
 
-       scene.selectAll(".series")
+        me.scene.append("g")
+           .attr("class", "brush")
+           .call(me.brush);
+
+        me.scatter = scene.append("g")
+             .attr("id", "scatterplot")
+
+        me.scatter.selectAll(".series")
             .data(data)
             .enter().append("g")
                 .attr("class", "series")
@@ -126,24 +150,25 @@ Ext.define('Explorer.view.system.Cmd', {
                 .attr("class", "dot")
                 .attr("r", 3.5)
                 .attr("cx", function(d) {
-                    return x(d.x); })
-                .attr("cy", function(d) { return y(d.y); })
+                    return me.x(d.x); })
+                .attr("cy", function(d) { return me.y(d.y); })
                 .on("mouseover", function (d) {me.onMouseOverPoint(d, this);})
                 .on("mouseout", function (d) {me.onMouseOutPoint(d, this);})
                 .on("click", function (d) {me.onClickPoint(d, this);})
 
-       // Adiciona as Labels nos Axis
-       me.createAxisTitles();
 
-       // Adiciona o Titulo do Plot
-       me.createPlotTitle()
+        // Adiciona as Labels nos Axis
+        me.createAxisTitles();
 
-       // Adiciona o Box da Legenda
-       me.createLegendBox(scene, rect, data)
+        // Adiciona o Titulo do Plot
+        me.createPlotTitle()
 
-       // Activa a primeira serie, todas as series iniciam desativadas
-       me.deactiveAllSeries();
-       me.activeSerie(data[0]);
+        // Adiciona o Box da Legenda
+        me.createLegendBox(scene, rect, data)
+
+        // Activa a primeira serie, todas as series iniciam desativadas
+        me.deactiveAllSeries();
+        me.activeSerie(data[0]);
     },
 
 
@@ -341,6 +366,7 @@ Ext.define('Explorer.view.system.Cmd', {
         elPoint
             .attr("r", 6)
             .attr('fill-opacity', 1)
+            .style("cursor", "pointer")
 
     },
 
@@ -358,6 +384,7 @@ Ext.define('Explorer.view.system.Cmd', {
         elPoint
             .attr("r", 3.5)
             .attr('fill-opacity', null)
+            .style("cursor", "default")
 
 
     },
@@ -370,6 +397,61 @@ Ext.define('Explorer.view.system.Cmd', {
         record = store.findRecord("_meta_id", data.id);
 
         me.fireEvent('clickpoint', record, me)
+    },
+
+    onBrushendend: function () {
+        // console.log('onBrushendend()')
+        var me = this,
+            scene = me.getScene(),
+            data = me.plotData,
+            axisPadding = 0.2;
+
+        me.s = d3.event.selection;
+
+        if (!me.s) {
+            if (!me.idleTimeout) return me.idleTimeout = setTimeout(function () {
+                me.idleTimeout = null;
+            }, me.idleDelay);
+
+            //me.x.domain(d3.extent(data, function (d) { return d.x; })).nice();
+            me.y.domain(d3.extent(data, function (d) { return d.y; })).nice();
+
+            me.x.domain([
+                d3.min(data, function(s){return d3.min(s.values, function (d) {
+                    return d.x - axisPadding;})}),
+                d3.max(data, function(s){return d3.max(s.values, function (d) {
+                    return d.x + axisPadding;})}),
+            ])
+
+            me.y.domain([
+                d3.min(data, function(s){return d3.min(s.values, function (d) {
+                    return d.y - axisPadding;})}),
+                d3.max(data, function(s){return d3.max(s.values, function (d) {
+                    return d.y + axisPadding;})}),
+            ])
+
+        } else {
+
+            me.x.domain([me.s[0][0], me.s[1][0]].map(me.x.invert, me.x));
+            me.y.domain([me.s[1][1], me.s[0][1]].map(me.y.invert, me.y));
+            scene.select(".brush").call(me.brush.move, null);
+        }
+        me.zoom();
+
+    },
+
+    zoom: function () {
+        var me = this,
+            scene = me.getScene(),
+            t;
+
+        t = me.scatter.transition().duration(750);
+            d3.select("#axis--x").transition(t).call(me.xAxis);
+            d3.select("#axis--y").transition(t).call(me.yAxis);
+            me.scatter.selectAll("circle").transition(t)
+                .attr("cx", function (d) { return me.x(d.x); })
+                .attr("cy", function (d) { return me.y(d.y); });
+
     }
 
 });

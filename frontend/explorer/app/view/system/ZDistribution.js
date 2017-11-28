@@ -7,6 +7,8 @@ Ext.define('Explorer.view.system.ZDistribution', {
     xAxisTitle: 'Redshift',
     yAxisTitle: 'N',
 
+    proportionalSize: false,
+
     performLayout: function (scene, rect) {
         console.log('performLayout(%o, %o)', scene, rect);
 

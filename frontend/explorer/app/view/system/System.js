@@ -27,11 +27,12 @@ Ext.define('Explorer.view.system.System', {
         var me = this;
 
         Ext.apply(this, {
-            layout: {
-                type: 'hbox',
-                pack: 'start',
-                align: 'stretch'
-            },
+            // layout: {
+            //     type: 'hbox',
+            //     pack: 'start',
+            //     align: 'stretch'
+            // },
+            layout: 'border',
             defaults: {
                 frame: true
             },
@@ -39,9 +40,11 @@ Ext.define('Explorer.view.system.System', {
                 // Painel Esquerdo
                 {
                     xtype: 'panel',
+                    region: 'west',
                     width: 300,
                     margin: '0 10 0 0',
-                    split: true,
+                    // split: true,
+                    collapsible: true,
                     reference: 'detailPanel',
                     layout: {
                         type: 'vbox',
@@ -84,6 +87,7 @@ Ext.define('Explorer.view.system.System', {
                 // Painel Direito
                 {
                     xtype: 'panel',
+                    region: 'center',
                     flex: 1,
                     split: true,
                     layout: {
