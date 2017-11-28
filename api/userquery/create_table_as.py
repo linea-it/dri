@@ -74,6 +74,8 @@ class CreateTableAs:
             self.error_message = str(e)
             self.logger.info("CreateTableAs Error: %s" % self.error_message)
 
+            db.drop_table(self.table_name, schema=self.schema)
+
     def _notify_by_email_start(self):
         if self.user.email:
             self.logger.info("Sending mail notification.")

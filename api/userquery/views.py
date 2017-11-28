@@ -78,11 +78,28 @@ class TableViewSet(viewsets.ModelViewSet):
     queryset = Table.objects.filter()
     serializer_class = TableSerializer
 
+    http_method_names = ['get', 'delete']
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
         return self.queryset.filter(owner=self.request.user)
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            # drop table
+            db = DBBase('catalog')
+            data = request.data
+            _id = data.get("id", None)
+            q = Table.objects.get(pk=_id)
+
+            db.drop_table(q.table_name, schema=q.schema)
+
+            return super(TableViewSet, self).destroy(request, args, kwargs)
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
+
 
 
 class JobViewSet(viewsets.ModelViewSet):
@@ -156,6 +173,7 @@ class CreateTable(viewsets.ModelViewSet):
 
             # review - displayName_userId
             table_name = display_name.replace(' ', '_') + "_" + str(self.request.user.pk)
+            table_name = table_name.lower()
 
             q = Query.objects.get(pk=_id)
 
@@ -163,7 +181,7 @@ class CreateTable(viewsets.ModelViewSet):
                 raise Exception("User not authorized to perform this action")
 
             rqv = RawQueryValidator(q.sql_sentence)
-            if rqv.engine.has_table(table_name, None):
+            if rqv.table_exists(table_name, None):
                 raise Exception("Table exists - choose a different name")
 
             if not rqv.is_query_validated():
