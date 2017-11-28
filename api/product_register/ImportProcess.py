@@ -4,7 +4,8 @@ from coadd.models import Release, Tag
 from common.models import Filter
 from django.db.models import Q
 from lib.CatalogDB import CatalogDB
-from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation
+from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation, \
+    ProductRelated
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ProcessRelease
 from rest_framework import status
@@ -24,6 +25,13 @@ class Import():
         self.context = {
             'request': request
         }
+
+        # Esta propriedade e usada apenas se no mesmo processo tiver 2 produtos um de Galaxy Cluster e um de Cluster Member
+        # dict({
+        # 'galaxy_clusters': ProductModel
+        # 'cluster_memebers': ProductModel
+        # })
+        self._gc_cm = dict({})
 
         # Ticket server para identificar o owner do processo quando
         # o processo esta sendo importado por outro sistema, nesse caso o user logado
@@ -183,6 +191,10 @@ class Import():
             else:
                 raise Exception("Product Type '%s' not implemented yet." % product.get('type'))
 
+        # Verificar a classe dos produtos se for galaxy cluster ou cluster members deve ser feita a ligacao entre as 2
+        if ('galaxy_clusters' in self._gc_cm) and ('cluster_members' in self._gc_cm):
+            self.link_galaxy_cluster_with_cluster_members()
+
     # =============================< CATALOG >=============================
     def register_catalog(self, data):
         """
@@ -210,7 +222,6 @@ class Import():
         if data.get('class') is not 'coadd_objects':
             count = self.db.get_count(data.get('table'), schema=data.get('schema', None))
 
-
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))
 
@@ -232,7 +243,7 @@ class Import():
 
         product, created = Catalog.objects.update_or_create(
             prd_owner=self.owner,
-            prd_name=data.get('name'),
+            prd_name=data.get('name').replace(' ', '_').lower(),
             tbl_database=data.get('database', None),
             tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
@@ -265,6 +276,10 @@ class Import():
 
             # Registar as colunas do catalogo
             self.register_catalog_content(product, data, created)
+
+            # se um processo tiver mais de um produto e eles forem galaxy_clusters e cluster_members
+            if (product.prd_class.pcl_name == 'galaxy_clusters') or (product.prd_class.pcl_name == 'cluster_members'):
+                self._gc_cm[product.prd_class.pcl_name] = product
 
             return True
         else:
@@ -316,6 +331,7 @@ class Import():
             for p in data.get("association"):
                 if ('property' in p and p.get('property') is not None) and ('ucd' in p and p.get('ucd') is not None):
                     meta.append(p)
+
         else:
             # Se o produto for da classe coadd_objects fazer a associacao de colunas
             #  Tem um diferenca que o Y1A1 a coluna coadd_object tem outro nome
@@ -413,6 +429,37 @@ class Import():
             except Tag.DoesNotExist:
                 raise Exception("this Tag '%s' is not valid." % tag_name)
 
+    def link_galaxy_cluster_with_cluster_members(self):
+        """
+            Este metodo so e executado caso um processo possua 2 produtos
+            1 da classe galaxy_clusters e outro da classe cluster_members
+            esses produtos devem ser linkados atraves do model ProductRelated
+            e necessario que o produto de members tenha uma propriedade com ucd meta.id.cross.
+        :return:
+        """
+
+        gc = self._gc_cm.get('galaxy_clusters')
+        cm = self._gc_cm.get('cluster_members')
+
+        # descobrir a propriedade que tem a associacao de cross_identification no produto de cluster members
+        try:
+            cross_identification = ProductContent.objects.get(pcn_product_id=cm.pk, pcn_ucd='meta.id.cross')
+
+            prd_related = ProductRelated.objects.update_or_create(
+                prl_product=gc,
+                defaults={
+                    "prl_related": cm,
+                    "prl_cross_identification": cross_identification
+                }
+            )
+
+
+        except ProductContent.DoesNotExist:
+            raise Exception(
+                "this cluster members product %s does not have a property with ucd meta.id.cross to be associated with "
+                "the galaxy cluster product." % cm.prd_display_name)
+
+
     # =============================< MAP >=============================
     def register_map(self, data):
         if not self.db:
@@ -444,7 +491,7 @@ class Import():
 
         product, created = Map.objects.update_or_create(
             prd_owner=self.owner,
-            prd_name=data.get('name'),
+            prd_name=data.get('name').replace(' ', '_').lower(),
             tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
             defaults={
@@ -545,7 +592,7 @@ class Import():
 
         product, created = Mask.objects.update_or_create(
             prd_owner=self.owner,
-            prd_name=data.get('name'),
+            prd_name=data.get('name').replace(' ', '_').lower(),
             tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
             defaults={

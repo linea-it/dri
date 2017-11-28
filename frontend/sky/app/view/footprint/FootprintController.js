@@ -7,13 +7,18 @@
 Ext.define('Sky.view.footprint.FootprintController', {
     extend: 'Ext.app.ViewController',
 
+    requires: [
+        'common.link.LinkPrompt'
+    ],
+
     alias: 'controller.footprint',
 
     listen: {
         component: {
             'footprint': {
                 loadpanel: 'onLoadPanel',
-                updatepanel: 'onUpdatePanel'
+                updatepanel: 'onUpdatePanel',
+                beforedeactivate: 'onBeforeDeactivate'
             },
             'footprint-aladin': {
                 ondblclick: 'onDblClickAladin',
@@ -32,6 +37,8 @@ Ext.define('Sky.view.footprint.FootprintController', {
             }
         }
     },
+
+    winGetLink: null,
 
     onLoadPanel: function (release) {
         var me = this;
@@ -209,14 +216,15 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
     onDblClickAladin: function (radec) {
         this.getView().fireEvent('ondblclick');
-        this.toVisiomatic(radec, true, true);
+        this.toVisiomatic(radec, true, false);
     },
 
     onShift: function (radec) {
-        this.toVisiomatic(radec, true);
+        this.toVisiomatic(radec, true, true);
     },
 
-    toVisiomatic: function (radec, clearSearch) {
+    toVisiomatic: function (radec, clearSearch, centralized) {
+        // console.log('toVisiomatic(%o, %o, %o)', radec, clearSearch, centralized)
         var me = this,
             vm = me.getViewModel(),
             vw = me.getView(),
@@ -242,10 +250,19 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
         if (dataset) {
 
+            // Centraliza na coordenada
             if (ra > 0) {
                 coordinate = ra.replace('.', ',') + '+' + dec.replace('.', ',');
             } else {
                 coordinate = ra.replace('.', ',') + dec.replace('.', ',');
+            }
+
+            if (centralized) {
+                // Centraliza na tile
+                fov = -1;
+                ra = "" + dataset.get('tli_ra');
+                dec = "" + dataset.get('tli_dec');
+                coordinate = ra.replace('.', ',') + '+' + dec.replace('.', ',');
             }
 
             coordinate = encodeURIComponent(coordinate);
@@ -292,6 +309,39 @@ Ext.define('Sky.view.footprint.FootprintController', {
             aladin.gotoPosition(coordinate[0], coordinate[1]);
             aladin.setZoom(zoom);
         }
+    },
+
+    getLink: function () {
+        // console.log('getLink()');
+        var me = this,
+            aladin = me.lookupReference('aladin'),
+            fov = aladin.getFov()[0].toFixed(2),
+            radec = aladin.getRaDec(),
+            release = me.getView().getRelease(),
+            href = window.location.href,
+            host = href.split('/#')[0],
+            hash;
+
+        coordinate = radec[0].toString().replace('.', ',') + '|' + radec[1].toString().replace('.', ',');
+
+        link = Ext.String.format('{0}/#sky/{1}/{2}/{3}', host, release, coordinate, fov);
+
+        me.winGetLink = Ext.create('common.link.LinkPrompt', {
+            link: link
+        });
+
+        me.winGetLink.show();
+    },
+
+    onBeforeDeactivate: function () {
+        // console.log("onBeforeDeactivate()");
+        var me = this;
+
+        if (me.winGetLink !== null) {
+            me.winGetLink.close();
+            me.winGetLink = null;
+        }
+
     }
 
 });
