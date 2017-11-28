@@ -432,6 +432,11 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     onSelectSystemMember: function (selModel, member) {
+        this.highlightSystemMember(member);
+
+    },
+
+    highlightSystemMember: function (member, sincGrid) {
         var me = this,
             vm = me.getViewModel(),
             product = vm.get('currentProduct'),
@@ -440,6 +445,7 @@ Ext.define('Explorer.view.system.SystemController', {
             visiomatic = me.lookupReference('visiomatic'),
             aladin = me.lookupReference('aladin'),
             fov = visiomatic.getFov(),
+            grid = me.lookup('members-grid'),
             position;
 
         visiomatic.setView(
@@ -464,6 +470,12 @@ Ext.define('Explorer.view.system.SystemController', {
         position = String(member.get('_meta_ra')) + ',' + String(member.get('_meta_dec'));
         aladin.goToPosition(position);
 
+        vm.set('selected_member', member);
+
+        // if (sincGrid) {
+            // index = grid.getStore().find('_meta_id', member.get('_meta_id'));
+            // grid.getView().getRow(index).scrollIntoView();
+        //}
     },
 
     /**
@@ -573,5 +585,11 @@ Ext.define('Explorer.view.system.SystemController', {
             me.parseRA(object._meta_ra), object._meta_dec, radius)
 
         window.open(url, '_blank')
+    },
+
+    onCmdClickPoint: function (record, cmd) {
+        console.log('onCmdClickPoint(%o)', record);
+        // Realca o objeto no preview do visiomatic
+        this.highlightSystemMember(record, true);
     }
 });

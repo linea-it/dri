@@ -347,8 +347,8 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
             xId = "xAxisTitle-"+me.getId(),
             yId = "yAxisTitle-"+me.getId();
 
-        d3.select("#"+xId).remove();
-        d3.select("#"+yId).remove();
+        me.d3.select("#"+xId).remove();
+        me.d3.select("#"+yId).remove();
 
         // text label for the x axis
         if (xAxisTitle) {
@@ -382,7 +382,7 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
             plotTitle = me.getPlotTitle(),
             id = "plotTitle-" + me.getId();
 
-        title = d3.select("#"+id)
+        title = me.d3.select("#"+id)
         if (title) {
             title.remove();
         }

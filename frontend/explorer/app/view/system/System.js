@@ -141,7 +141,8 @@ Ext.define('Explorer.view.system.System', {
                                     title: 'System Members',
                                     reference: 'members-grid',
                                     bind: {
-                                        store: '{members}'
+                                        store: '{members}',
+                                        selection: '{selected_member}'
                                     },
                                     listeners: {
                                         select: 'onSelectSystemMember'
@@ -189,6 +190,9 @@ Ext.define('Explorer.view.system.System', {
                                     bind: {
                                         store: "{members}",
                                         disabled: "{!have_members}"
+                                    },
+                                    listeners: {
+                                        clickpoint: 'onCmdClickPoint'
                                     }
                                 },
                             ]

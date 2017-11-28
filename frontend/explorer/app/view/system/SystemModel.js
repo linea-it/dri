@@ -24,7 +24,8 @@ Ext.define('Explorer.view.system.SystemModel', {
         property_id: null,
         overlayMembers: null,
         position: null,
-        have_members: false
+        have_members: false,
+        selected_member: null
     },
 
     links: {

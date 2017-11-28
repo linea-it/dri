@@ -128,6 +128,9 @@ Ext.define('Explorer.view.system.Cmd', {
                 .attr("cx", function(d) {
                     return x(d.x); })
                 .attr("cy", function(d) { return y(d.y); })
+                .on("mouseover", function (d) {me.onMouseOverPoint(d, this);})
+                .on("mouseout", function (d) {me.onMouseOutPoint(d, this);})
+                .on("click", function (d) {me.onClickPoint(d, this);})
 
        // Adiciona as Labels nos Axis
        me.createAxisTitles();
@@ -161,28 +164,32 @@ Ext.define('Explorer.view.system.Cmd', {
             dataSeries.gr.values.push({
                 "id": record.get('_meta_id'),
                 "x": mag_r,
-                "y": mag_g - mag_r
+                "y": mag_g - mag_r,
+                "serie": "g-r"
             })
 
             // r-i Serie
             dataSeries.ri.values.push({
                 "id": record.get('_meta_id'),
                 "x": mag_i,
-                "y": mag_r - mag_i
+                "y": mag_r - mag_i,
+                "serie": "r-i"
             })
 
             // i-z Serie
             dataSeries.iz.values.push({
                 "id": record.get('_meta_id'),
                 "x": mag_z,
-                "y": mag_i - mag_z
+                "y": mag_i - mag_z,
+                "serie": "i-z"
             })
 
             // z-y Serie
             dataSeries.zy.values.push({
                 "id": record.get('_meta_id'),
                 "x": mag_y,
-                "y": mag_z - mag_y
+                "y": mag_z - mag_y,
+                "serie": "z-y"
             })
         })
 
@@ -317,6 +324,52 @@ Ext.define('Explorer.view.system.Cmd', {
         var me = this;
 
         me.showHideSerie(serie, false);
+    },
+
+    onMouseOverPoint: function (data, point) {
+        var me = this,
+            elPoint = d3.select(point),
+            gSerie = d3.select("#serie-" + data.serie);
+
+        // coloca todos os outros pontos transparentes
+        gSerie
+            .transition()
+            .duration(300)
+            .attr('fill-opacity', 0.2)
+
+        // Destaca o Objeto em Foco
+        elPoint
+            .attr("r", 6)
+            .attr('fill-opacity', 1)
+
+    },
+
+    onMouseOutPoint: function (data, point) {
+        var me = this,
+            elPoint = d3.select(point),
+            gSerie = d3.select("#serie-" + data.serie);
+
+        // coloca todos os pontos ao estado normal
+        gSerie
+            .transition()
+            .duration(300)
+            .attr('fill-opacity', null)
+
+        elPoint
+            .attr("r", 3.5)
+            .attr('fill-opacity', null)
+
+
+    },
+
+    onClickPoint: function (data, point) {
+        var me = this,
+            store = me.getStore(),
+            record;
+
+        record = store.findRecord("_meta_id", data.id);
+
+        me.fireEvent('clickpoint', record, me)
     }
 
 });
