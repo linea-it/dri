@@ -4,6 +4,7 @@ Ext.define('Explorer.view.system.System', {
     xtype: 'system',
 
     requires: [
+        'Ext.layout.container.Border',
         'Explorer.view.system.SystemController',
         'Explorer.view.system.SystemModel',
         'Explorer.view.system.Form',
