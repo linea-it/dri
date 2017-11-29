@@ -37,8 +37,8 @@ class DBOracle:
     def get_dialect(self):
         return oracle
 
-    def get_raw_sql_limit(self, line_number):
-        return "FETCH FIRST %s ROWS ONLY" % line_number
+    def get_raw_sql_limit(self, offset, limit):
+        return "OFFSET %s ROWS FETCH NEXT %s ROWS ONLY" % (offset, limit)
 
 
 class DBSqlite:
@@ -130,6 +130,12 @@ class DBBase:
             warnings.simplefilter("ignore", category=sa_exc.SAWarning)
 
             return [value['name'] for value in self.inspect.get_columns(table, schema)]
+
+    def get_table_properties(self, table, schema=None):
+        values = []
+        for value in self.inspect.get_columns(table, schema):
+            values.append({'name': value['name'], 'type': str(value['type'])})
+        return values
 
     def get_count(self, table, schema=None):
         with self.engine.connect() as con:
@@ -278,7 +284,7 @@ class DBBase:
     @compiles(DropTable)
     def _drop_table(element, compiler, **kw):
         _schema = "%s." % element.schema if element.schema is not None else ''
-        return "DROP TABLE %s%s" % (_schema, element.name)
+        return "DROP TABLE %s%s" % (_schema, element.table)
 
     def drop_table(self, table, schema=None):
         """
