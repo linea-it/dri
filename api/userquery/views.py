@@ -5,7 +5,7 @@ from rest_framework import viewsets
 from rest_framework import permissions, filters
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
 
-from django.db.models import Q
+from django.db.models import Q, Case, Value, When
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -109,7 +109,13 @@ class JobViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic,)
 
     def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
+        return self.queryset.filter(owner=self.request.user).order_by(
+            Case(
+                When(job_status='st', then=Value('0')),
+                When(job_status='rn', then=Value('1')),
+                default=Value('2')),
+            'start_date_time'
+        )
 
 
 class QueryValidate(viewsets.ModelViewSet):
