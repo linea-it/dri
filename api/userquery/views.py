@@ -221,10 +221,12 @@ class TableProperties(viewsets.ModelViewSet):
             table_name = data.get("table_name", None)
 
             db = DBBase('catalog')
+
+            if not db.table_exists(table_name, schema=schema):
+                raise Exception("Schema/table does not exist")
+
             response = {
-                    'schema': schema,
-                    'table_name': table_name,
-                    'columns': db.get_table_columns(table_name)
+                    'columns': db.get_table_properties(table_name, schema=schema)
                 }
 
             return JsonResponse(response, safe=False)

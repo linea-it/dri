@@ -40,6 +40,13 @@ class DBOracle:
     def get_raw_sql_limit(self, offset, limit):
         return "OFFSET %s ROWS FETCH NEXT %s ROWS ONLY" % (offset, limit)
 
+    def get_raw_sql_table_properties_(self, table, schema=None):
+        sql = "SELECT column_name, data_type FROM all_tab_columns WHERE table_name = '%s'" % table
+        if schema:
+            sql += " AND owner = '%s'" % schema
+
+        return sql
+
 
 class DBSqlite:
     def __init__(self, db):
@@ -57,6 +64,9 @@ class DBSqlite:
 
     def get_raw_sql_limit(self, line_number):
         return "LIMIT(%s)" % line_number
+
+    def get_table_properties(self, table, schema=None):
+        raise("Implement this method")
 
 
 # classe generica - nao ligada a este problema
@@ -132,10 +142,8 @@ class DBBase:
             return [value['name'] for value in self.inspect.get_columns(table, schema)]
 
     def get_table_properties(self, table, schema=None):
-        values = []
-        for value in self.inspect.get_columns(table, schema):
-            values.append({'name': value['name'], 'type': str(value['type'])})
-        return values
+        sql = self.database.get_raw_sql_table_properties_(table, schema=schema)
+        return self.fetchall_dict(sql)
 
     def get_count(self, table, schema=None):
         with self.engine.connect() as con:
