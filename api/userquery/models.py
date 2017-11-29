@@ -9,7 +9,7 @@ class Query(models.Model):
     name = models.CharField(
         max_length=128, null=False, verbose_name='Name')
     description = models.CharField(
-        max_length=256, null=False, verbose_name='Description')
+        max_length=256, null=True, blank=True, verbose_name='Description')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
