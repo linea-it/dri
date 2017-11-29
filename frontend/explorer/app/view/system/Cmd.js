@@ -1,6 +1,10 @@
 Ext.define('Explorer.view.system.Cmd', {
     extend: 'Explorer.view.system.D3SvgComponent',
 
+    requires: [
+        'Explorer.view.system.D3SvgComponent',
+    ],
+
     xtype: 'system-cmd',
 
     // plotTitle: 'CMD',
