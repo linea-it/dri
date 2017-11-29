@@ -23,7 +23,9 @@ Ext.define('Explorer.view.system.SystemModel', {
         object_data: null,
         property_id: null,
         overlayMembers: null,
-        position: null
+        position: null,
+        have_members: false,
+        selected_member: null
     },
 
     links: {
@@ -87,6 +89,6 @@ Ext.define('Explorer.view.system.SystemModel', {
         tiles: {
             type: 'footprints',
             pageSize: 0
-        },            
+        },
     }
 });

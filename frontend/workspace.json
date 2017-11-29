@@ -37,7 +37,8 @@
         "target",
         "products",
         "explorer",
-        "userquery"
+        "userquery",
+        "d3teste"
     ],
 
     /**

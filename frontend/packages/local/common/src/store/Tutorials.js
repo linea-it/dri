@@ -16,6 +16,12 @@ Ext.define('common.store.Tutorials', {
     proxy: {
         type: 'django',
         url: '/dri/api/tutorial/'
-    }
+    },
 
+    sorters: [
+        {
+            property: 'ttr_title',
+            direction: 'ASC'
+        }
+    ]
 });

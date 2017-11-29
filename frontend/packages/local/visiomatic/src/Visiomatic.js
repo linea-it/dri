@@ -122,8 +122,8 @@ Ext.define('visiomatic.Visiomatic', {
             weight: 1,
             opacity: 0.5,
             smoothFactor: 1,
-            centerPadding: 0.005, // Deg
-            size: 0.010 // Deg
+            centerPadding: 0.001, // Deg
+            size: 0.005, // Deg
         },
 
         release: null,
@@ -1421,10 +1421,10 @@ Ext.define('visiomatic.Visiomatic', {
 
         // centerPadding e a distancia que as linhas vao ter a partir do centro.
         centerPadding = ((labelOptions.centerPadding) ?
-                labelOptions.centerPadding : 0.005);
+                labelOptions.centerPadding : 0.001);
 
         size = ((labelOptions.size) ?
-                labelOptions.size : 0.010);
+                labelOptions.size : 0.005);
 
         lineTop       = [l.latLng((dec + centerPadding), ra), l.latLng((dec + size), ra)];
         lineBottom    = [l.latLng((dec - centerPadding), ra), l.latLng((dec - size), ra)];

@@ -15,7 +15,7 @@ class ProductClassViewSet(viewsets.ModelViewSet):
 
     search_fields = ('pcl_name', 'pcl_display_name')
 
-    filter_fields = ('id', 'pcl_name', 'pcl_display_name',)
+    filter_fields = ('id', 'pcl_name', 'pcl_display_name', 'pcl_group')
 
     ordering_fields = ('id', 'pcl_name', 'pcl_display_name')
 
