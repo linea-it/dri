@@ -165,7 +165,8 @@ Ext.define('UserQuery.view.main.Main', {
                                 reference: 'tvwInputTables',
                                 rootVisible: false,
                                 listeners: {
-                                    itemexpand: 'tvwInputTables_onExpanded'
+                                    itemexpand: 'tvwInputTables_onExpanded',
+                                    itemcontextmenu: 'treeView_onContextMenu'
                                 },
                                 viewConfig: {
                                     plugins: {
@@ -174,7 +175,10 @@ Ext.define('UserQuery.view.main.Main', {
                                         enableDrop: false,
                                         ddGroup: 'TreeDD'
                                     }
-                                }
+                                },
+                                contextMenuItems: [
+                                    {text: 'Preview', itemId:'preview', handler:'tvwInputTables_onContextMenuClick'}
+                                ]
                             }]
                         },
 
@@ -234,7 +238,8 @@ Ext.define('UserQuery.view.main.Main', {
                                     reference: 'tvwOtherTables',
                                     rootVisible:false,
                                     listeners:{
-                                        itemexpand: 'tvwOtherTables_onExpanded'
+                                        itemexpand: 'tvwOtherTables_onExpanded',
+                                        itemcontextmenu: 'treeView_onContextMenu'
                                     },
                                     viewConfig: {
                                         plugins: {
@@ -243,7 +248,11 @@ Ext.define('UserQuery.view.main.Main', {
                                             enableDrop: false,
                                             ddGroup: 'TreeDD'
                                         }
-                                    }
+                                    },
+                                    contextMenuItems: [
+                                        {text: 'Preview', itemId:'preview', handler:'tvwOtherTables_onContextMenuClick'}
+                                    ]
+
                                 }
                             ]
                         },
