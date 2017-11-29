@@ -104,7 +104,7 @@ router.register(r'userquery_table', userquery_views.TableViewSet)
 router.register(r'userquery_validate', userquery_views.QueryValidate, base_name='validate_query')
 router.register(r'userquery_preview', userquery_views.QueryPreview, base_name='preview_query')
 router.register(r'userquery_create_table', userquery_views.CreateTable, base_name='create_table')
-router.register(r'userquery_properties', userquery_views.TableProperties, base_name='table')
+router.register(r'userquery_property', userquery_views.TableProperties, base_name='table')
 router.register(r'userquery_target', userquery_views.TargetViewerRegister, base_name='target_viewer_register')
 
 # Aladin API

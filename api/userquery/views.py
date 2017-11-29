@@ -133,19 +133,19 @@ class QueryValidate(viewsets.ModelViewSet):
             return JsonResponse({'message': str(e)}, status=400)
 
 
-class QueryPreview(viewsets.ModelViewSet):
-    http_method_names = ['post', ]
+class QueryPreview(viewsets.ViewSet):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
-    permission_classes = (permissions.IsAuthenticated,)
 
     def create(self, request):
         try:
             data = request.data
             sql_sentence = data.get("sql_sentence", None)
-            line_number = data.get("line_number", 10)
+
+            offset = data.get('offset', 0)
+            limit = data.get('limit', 10)
 
             db = DBBase('catalog')
-            sql = sql_sentence + " " + db.database.get_raw_sql_limit(line_number)
+            sql = sql_sentence + " " + db.database.get_raw_sql_limit(offset, limit)
             result = db.fetchall_dict(sql)
 
             response = {"count": len(result),
@@ -210,22 +210,22 @@ class CreateTable(viewsets.ModelViewSet):
 
 
 class TableProperties(viewsets.ModelViewSet):
-    http_method_names = ['get', ]
+    http_method_names = ['post', ]
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def list(self, request):
+    def create(self, request):
         try:
-            tables = Table.objects.filter(owner=request.user)
+            data = request.data
+            schema = data.get("schema", None)
+            table_name = data.get("table_name", None)
 
             db = DBBase('catalog')
-            response = []
-            for table in tables:
-                response.append({
-                    'display_name': table.display_name,
-                    'table_name': table.table_name,
-                    'cols': db.get_table_columns(table.table_name)
-                })
+            response = {
+                    'schema': schema,
+                    'table_name': table_name,
+                    'columns': db.get_table_columns(table_name)
+                }
 
             return JsonResponse(response, safe=False)
 
