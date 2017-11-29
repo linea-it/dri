@@ -19,12 +19,12 @@ Ext.define('UserQuery.view.dialog.StartJobDialog', {
             xtype: 'form',
             reference: 'frmForm',
             items:[
-                {
-                    xtype: 'textfield',
-                    fieldLabel: 'Display Name* ',
-                    name: 'display_name',
-                    width: '100%'
-                },
+                // {
+                //     xtype: 'textfield',
+                //     fieldLabel: 'Display Name* ',
+                //     name: 'display_name',
+                //     width: '100%'
+                // },
                 {
                     xtype: 'textfield',
                     fieldLabel: 'Output Table* ',
@@ -37,12 +37,12 @@ Ext.define('UserQuery.view.dialog.StartJobDialog', {
                     fieldLabel: 'Register DRI',
                     name: 'register'
                 },
-                {
-                    xtype: 'textfield',
-                    fieldLabel: 'Timeout',
-                    name: 'timeout',
-                    value: 0
-                }
+                // {
+                //     xtype: 'textfield',
+                //     fieldLabel: 'Timeout',
+                //     name: 'timeout',
+                //     value: 0
+                // }
             ]
         }
     ],
