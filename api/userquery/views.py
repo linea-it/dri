@@ -177,7 +177,7 @@ class CreateTable(viewsets.ModelViewSet):
 
             # review - displayName_userId
             table_name = display_name.replace(' ', '_') + "_" + str(self.request.user.pk)
-            table_name = table_name.lower()
+            table_name = table_name.upper()
 
             q = Query.objects.get(pk=_id)
 
