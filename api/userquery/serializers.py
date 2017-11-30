@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from product.models import Product
 
 
 class QuerySerializer(serializers.ModelSerializer):
@@ -42,6 +43,8 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
 class TableSerializer(serializers.HyperlinkedModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     id = serializers.ReadOnlyField()
+    product_id = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all(), many=False)
 
     class Meta:
         model = Table
@@ -50,5 +53,6 @@ class TableSerializer(serializers.HyperlinkedModelSerializer):
             'table_name',
             'display_name',
             'owner',
-            'schema'
+            'schema',
+            'product_id'
         )
