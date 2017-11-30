@@ -13,13 +13,17 @@ from lib.sqlalchemy_wrapper import DBBase
 from common.notify import Notify
 from userquery.models import Job
 from userquery.models import Table
+from product.models import Product
+
+from .target_viewer import register_table_in_the_target_viewer
 
 
 class CreateTableAs:
-    def __init__(self, job_id, user_id, table_name, schema=None, timeout=None):
+    def __init__(self, job_id, user_id, table_name, associate_target_viewer, schema=None, timeout=None):
         self.table_name = table_name
         self.schema = schema
         self.timeout = timeout
+        self.associate_target_viewer = associate_target_viewer
 
         self.user = User.objects.get(pk=user_id)
         self.job = Job.objects.get(pk=job_id)
@@ -30,11 +34,13 @@ class CreateTableAs:
         # state variables
         self.is_table_successfully_created = False
         self.error_message = None
+        self.table = None
 
     def do_all(self):
         self._notify_by_email_start()
         self._update_job_status_before_table_creation()
         self._create_table_by_job_id()
+        self._associate_target_viewer()
         self._update_job_status_after_table_creation_attempt()
         self._send_notifications_by_email_after_table_creation_attempt()
 
@@ -58,21 +64,27 @@ class CreateTableAs:
             self._notify_user_by_email_failure(self.error_message)
 
     def _create_table_by_job_id(self):
-        self.logger.debug("_create_table_by_job_id - job_id: %s" % self.job.pk)
+        self.logger.info("_create_table_by_job_id - job_id: %s" % self.job.pk)
 
         db = DBBase('catalog')
         try:
             db.create_table_raw_sql(self.table_name, self.job.sql_sentence, schema=self.schema, timeout=self.timeout)
             self.is_table_successfully_created = True
 
-            table = Table(table_name=self.table_name,
-                          display_name=self.job.display_name,
-                          owner=self.job.owner,
-                          schema=self.schema)
-            table.save()
+            self.table = Table(table_name=self.table_name,
+                               display_name=self.job.display_name,
+                               owner=self.job.owner,
+                               schema=self.schema)
+            self.table.save()
         except Exception as e:
             self.error_message = str(e)
-            self.logger.debug("CreateTableAs Error: %s" % self.error_message)
+            self.logger.info("CreateTableAs Error: %s" % self.error_message)
+
+            db.drop_table(self.table_name, schema=self.schema)
+
+    def _associate_target_viewer(self):
+        if self.associate_target_viewer:
+            register_table_in_the_target_viewer(self.user, self.table.pk)
 
     def _notify_by_email_start(self):
         if self.user.email:

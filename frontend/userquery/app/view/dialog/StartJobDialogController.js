@@ -9,40 +9,38 @@ Ext.define('UserQuery.view.dialog.StartJobDialogController', {
         // TODO
         // verifica se o job já está em andamento
         
-        var me = this;
-        var refs = me.getReferences();
+        // var me = this;
+        // var refs = me.getReferences();
         
-        refs.frmForm.getForm().setValues({
-            display_name: 'job ' + data.name,
-            table_name: data.name.replace(/\W+/g, "_")
-        });
+        // refs.frmForm.getForm().setValues({
+        //     display_name: 'job ' + data.name,
+        //     table_name: data.name.replace(/\W+/g, "_")
+        // });
 
-        me._query = null;
-        me._callback = callback;
+        // me._query = null;
+        this._callback = callback;
 
-        return
+        // refs.btnConfirm.setDisabled(true);
 
-        refs.btnConfirm.setDisabled(true);
-
-        // define os dados da treeview
-        me.getView().setLoading(true, 'Loading queries...');
-        Api.getQueries({
-            proxy: 'toTreeStore',
-            response: function(error, store){
-                me.getView().setLoading(false);
+        // // define os dados da treeview
+        // me.getView().setLoading(true, 'Loading queries...');
+        // Api.getQueries({
+        //     proxy: 'toTreeStore',
+        //     response: function(error, store){
+        //         me.getView().setLoading(false);
                 
-                if (error){
-                    console.log(error);
-                }else{
-                    refs.treepanel.setStore(store);
-                }
-            }
-        });
+        //         if (error){
+        //             console.log(error);
+        //         }else{
+        //             refs.treepanel.setStore(store);
+        //         }
+        //     }
+        // });
         
-        refs.treepanel.getSelectionModel().on('select', function(sm, node, index) {
-            me._query = node.data.isgroup ? null : node.data;
-            refs.btnConfirm.setDisabled(node.data.isgroup);
-        });
+        // refs.treepanel.getSelectionModel().on('select', function(sm, node, index) {
+        //     me._query = node.data.isgroup ? null : node.data;
+        //     refs.btnConfirm.setDisabled(node.data.isgroup);
+        // });
     },
 
     dialog_onClose: function(){

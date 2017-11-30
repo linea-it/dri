@@ -166,7 +166,7 @@ Ext.define('UserQuery.view.main.Main', {
                                 rootVisible: false,
                                 listeners: {
                                     itemexpand: 'tvwInputTables_onExpanded',
-                                    itemcontextmenu: 'treeView_onContextMenu'
+                                    itemcontextmenu: 'treeView_onContextMenu'                                    
                                 },
                                 viewConfig: {
                                     plugins: {
@@ -191,7 +191,22 @@ Ext.define('UserQuery.view.main.Main', {
                                 {
                                     xtype: 'treepanel',
                                     reference: 'tvwExternalCatalog',
-                                    rootVisible:false
+                                    rootVisible:false,
+                                    viewConfig: {
+                                        plugins: {
+                                            ptype: 'treeviewdragdrop',
+                                            enableDrag: true,
+                                            enableDrop: false,
+                                            ddGroup: 'TreeDD'
+                                        }
+                                    },
+                                    contextMenuItems: [
+                                        {text: 'Preview', itemId:'preview', handler:'tvwExternalCatalog_onContextMenuClick'}
+                                    ],
+                                    listeners:{
+                                        itemcontextmenu: 'treeView_onContextMenu',
+                                        itemexpand: 'tvwExternalCatalog_onExpanded'
+                                    }
                                 }
                             ]
                         },
@@ -219,10 +234,13 @@ Ext.define('UserQuery.view.main.Main', {
                                 contextMenuItems: [
                                     {text: 'Rename',  itemId:'rename',  handler:'tvwMyTables_onContextMenuClick'},
                                     {text: 'Preview', itemId:'preview', handler:'tvwMyTables_onContextMenuClick'},
-                                    {text: 'Delete',  itemId:'delete',  handler:'tvwMyTables_onContextMenuClick'}
+                                    {text: 'Delete',  itemId:'delete',  handler:'tvwMyTables_onContextMenuClick'},
+                                    '-',
+                                    {text: 'Target',  itemId:'target',  handler:'tvwMyTables_onContextMenuClick', xx_config:function(item, record){ item.disabled = true }}
                                 ],
                                 listeners:{
-                                    itemcontextmenu: 'treeView_onContextMenu'
+                                    itemcontextmenu: 'treeView_onContextMenu',
+                                    itemexpand: 'tvwMyTables_onExpanded'
                                 }
                             }]
                         },
@@ -330,7 +348,7 @@ Ext.define('UserQuery.view.main.Main', {
                                 },
                                 {
                                     xtype: 'textfield',
-                                    fieldLabel: 'Description* ',
+                                    fieldLabel: 'Description',
                                     name: 'description',
                                     width: '100%'
                                 },
@@ -410,7 +428,13 @@ Ext.define('UserQuery.view.main.Main', {
                                         {
                                             xtype: 'grid',
                                             reference: 'grdJobs',
-                                            store: Ext.create('Ext.data.Store')
+                                            store: Ext.create('Ext.data.Store'),
+                                            viewConfig: { 
+                                                //stripeRows: false, 
+                                                getRowClass: function(record) { 
+                                                    return record.get('row_cls') || 'row-cls'; 
+                                                } 
+                                            }
                                         }
                                     ]
                                 }

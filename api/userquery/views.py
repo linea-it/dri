@@ -1,9 +1,12 @@
 import logging
+import copy
+from rest_framework.response import Response
+from rest_framework import status
 from rest_framework import viewsets
-from rest_framework import permissions
+from rest_framework import permissions, filters
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
 
-from django.db.models import Q
+from django.db.models import Q, Case, Value, When
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -13,6 +16,7 @@ from .permissions import IsOwnerOrPublic
 from .serializers import *
 from .tasks import create_table
 from .db import RawQueryValidator
+from .target_viewer import register_table_in_the_target_viewer
 
 from lib.sqlalchemy_wrapper import DBBase
 
@@ -27,12 +31,38 @@ class QueryViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic)
 
-    def get_queryset(self):
-        return self.queryset.filter((Q(owner=self.request.user) | Q(is_public=True)) &
-                                    Q(is_sample=False))
+    def create(self, request, *args, **kwargs):
+        if not self._is_a_valid_request_to_save(request):
+            return JsonResponse({'message': 'The field name already exists for this user'}, status=400)
+        return super(QueryViewSet, self).create(request, args, kwargs)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    def update(self, request, *args, **kwargs):
+        if not self._is_a_valid_request_to_save(request):
+            return JsonResponse({'message': 'The field name already exists for this user'}, status=400)
+        return super(QueryViewSet, self).update(request, args, kwargs)
+
+    def perform_update(self, serializer):
+        serializer.save(owner=self.request.user)
+
+    def get_queryset(self):
+        return self.queryset.filter((Q(owner=self.request.user) | Q(is_public=True)) &
+                                    Q(is_sample=False)).order_by('name')
+
+    def _is_a_valid_request_to_save(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        if self._is_table_name_already_defined_by_the_user(serializer.validated_data['name']):
+            return False
+        return True
+
+    def _is_table_name_already_defined_by_the_user(self, name):
+        q = Query.objects.filter(Q(owner=self.request.user) &
+                                 Q(name=name))
+        print(str(q.query))
+        return True if len(q) > 0 else False
 
 
 class SampleViewSet(viewsets.ModelViewSet):
@@ -50,19 +80,43 @@ class TableViewSet(viewsets.ModelViewSet):
     queryset = Table.objects.filter()
     serializer_class = TableSerializer
 
+    http_method_names = ['get', 'delete']
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user)
+        return self.queryset.filter(owner=self.request.user).order_by('display_name')
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            # drop table
+            db = DBBase('catalog')
+            q = Table.objects.get(pk=kwargs['pk'])
+
+            db.drop_table(q.table_name, schema=q.schema)
+
+            return super(TableViewSet, self).destroy(request, args, kwargs)
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
 
 
 class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all()
     serializer_class = JobSerializer
 
+    http_method_names = ['get', ]
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic,)
+
+    def get_queryset(self):
+        return self.queryset.filter(owner=self.request.user).order_by(
+            Case(
+                When(job_status='st', then=Value('0')),
+                When(job_status='rn', then=Value('1')),
+                default=Value('2')),
+            'start_date_time'
+        )
 
 
 class QueryValidate(viewsets.ModelViewSet):
@@ -86,19 +140,19 @@ class QueryValidate(viewsets.ModelViewSet):
             return JsonResponse({'message': str(e)}, status=400)
 
 
-class QueryPreview(viewsets.ModelViewSet):
-    http_method_names = ['post', ]
+class QueryPreview(viewsets.ViewSet):
     authentication_classes = (SessionAuthentication, BasicAuthentication)
-    permission_classes = (permissions.IsAuthenticated,)
 
     def create(self, request):
         try:
             data = request.data
             sql_sentence = data.get("sql_sentence", None)
-            line_number = data.get("line_number", 10)
+
+            offset = data.get('offset', 0)
+            limit = data.get('limit', 10)
 
             db = DBBase('catalog')
-            sql = sql_sentence + " " + db.database.get_raw_sql_limit(line_number)
+            sql = sql_sentence + " " + db.database.get_raw_sql_limit(offset, limit)
             result = db.fetchall_dict(sql)
 
             response = {"count": len(result),
@@ -119,17 +173,22 @@ class CreateTable(viewsets.ModelViewSet):
     def create(self, request):
         try:
             data = request.data
-            table_name = data.get("table_name", None)
             display_name = data.get("display_name", None)
-            id = data.get("id", None)
+            associate_target_viewer = data.get("associate_target_viewer", False)
+            _id = data.get("id", None)
 
-            q = Query.objects.get(pk=id)
+            table_name = self._set_internal_table_name(display_name, self.request.user.pk)
+
+            q = Query.objects.get(pk=_id)
+
+            if type(associate_target_viewer) is not bool:
+                raise Exception("associate_target_viewer must be a boolean type")
 
             if not self._is_user_authorized(q):
                 raise Exception("User not authorized to perform this action")
 
             rqv = RawQueryValidator(q.sql_sentence)
-            if rqv.engine.has_table(table_name, None):
+            if rqv.table_exists(table_name, None):
                 raise Exception("Table exists - choose a different name")
 
             if not rqv.is_query_validated():
@@ -141,7 +200,7 @@ class CreateTable(viewsets.ModelViewSet):
             q.save()
 
             timeout = self._time_out_query_execution(request)
-            create_table.delay(q.id, request.user.pk, table_name, schema=None, timeout=timeout)
+            create_table.delay(q.id, request.user.pk, table_name, associate_target_viewer, schema=None, timeout=timeout)
             return HttpResponse(status=200)
         except Exception as e:
             print(str(e))
@@ -149,6 +208,17 @@ class CreateTable(viewsets.ModelViewSet):
 
     def _is_user_authorized(self, q):
         return q.owner == self.request.user or q.is_public
+
+    def _set_internal_table_name(self, display_name, user_id):
+        table_name = copy.deepcopy(display_name)
+
+        name = table_name.replace(' ', '_').lower().strip().strip('\n') + '_' + str(user_id)
+
+        # Retirar qualquer caracter que nao seja alfanumerico exceto '_'
+        table_name = ''.join(e for e in name if e.isalnum() or e == '_')
+
+        # Limitar a 40 characteres
+        return table_name[:40]
 
     def _time_out_query_execution(self, request):
         user = User.objects.get(pk=request.user.pk)
@@ -160,22 +230,29 @@ class CreateTable(viewsets.ModelViewSet):
 
 
 class TableProperties(viewsets.ModelViewSet):
-    http_method_names = ['get', ]
+    http_method_names = ['post', ]
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
 
-    def list(self, request):
+    def create(self, request):
         try:
-            tables = Table.objects.filter(owner=request.user)
+            data = request.data
+            schema = data.get("schema", None)
+            table_name = data.get("table_name", None)
 
+            if not table_name:
+                raise Exception("Table is a mandatory field")
+
+            # review - create table is saving using UPPER_CASE
+            table_name = table_name.upper()
             db = DBBase('catalog')
-            response = []
-            for table in tables:
-                response.append({
-                    'display_name':table.display_name, 
-                    'table_name':table.table_name,
-                    'cols': db.get_table_columns(table.table_name)
-                })
+
+            if not db.table_exists(table_name, schema=schema):
+                raise Exception("Schema/table does not exist")
+
+            response = {
+                    'columns': db.get_table_properties(table_name, schema=schema)
+                }
 
             return JsonResponse(response, safe=False)
 
@@ -185,3 +262,25 @@ class TableProperties(viewsets.ModelViewSet):
 
     def _is_user_authorized(self, q):
         return q.owner == self.request.user or q.is_public
+
+
+class TargetViewerRegister(viewsets.ModelViewSet):
+    http_method_names = ['post', ]
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def create(self, request):
+        try:
+            data = request.data
+            _id = data.get("id", None)
+
+            if not _id:
+                raise Exception("id is a mandatory field")
+
+            q = Table.objects.get(pk=_id)
+            register_table_in_the_target_viewer(self.request.user, q.pk)
+            return HttpResponse(status=200)
+
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
