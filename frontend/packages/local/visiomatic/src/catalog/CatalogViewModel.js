@@ -27,7 +27,7 @@ Ext.define('visiomatic.catalog.CatalogViewModel', {
         visiomatic: null,
         currentColor: '1dff00',
         currentFilters: null,
-        drawEllipse: false,
+        pointType: 0,
         pointSize: 1
     },
 
