@@ -4,7 +4,8 @@ Ext.define('visiomatic.catalog.Submit', {
     xtype: 'visiomatic-catalogs-submit',
 
     requires: [
-        'Ext.ux.colorpick.Field'
+        'Ext.ux.colorpick.Field',
+        'Ext.ux.colorpick.Button'
     ],
 
     initComponent: function () {
@@ -33,7 +34,7 @@ Ext.define('visiomatic.catalog.Submit', {
                                 {
                                     xtype: 'colorbutton',
                                     bind: '{currentColor}',
-                                    width: 50,
+                                    width: 55,
                                     margin: '0 20 0 5',
                                     tooltip: 'Choose a color. Click on the color and then on ok.'
                                 },
@@ -44,8 +45,18 @@ Ext.define('visiomatic.catalog.Submit', {
                                     bind: '{drawEllipse}',
                                     reference: 'chkEllipse',
                                     flex: 1
-                                }
+                                },
                             ]
+                        },
+                        {
+                            xtype: 'numberfield',
+                            name: 'pointsize',
+                            fieldLabel: 'Size',
+                            labelWidth: 40,
+                            width: 100,
+                            bind: '{pointSize}',
+                            minValue: 1,
+                            maxValue: 10
                         },
                         {
                             xtype: 'button',
