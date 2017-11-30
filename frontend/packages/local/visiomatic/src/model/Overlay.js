@@ -17,7 +17,8 @@ Ext.define('visiomatic.model.Overlay', {
         {name: 'layers'},
         {name: 'objects'},
         {name: 'filters'},
-        {name: 'objectUrl'}
+        {name: 'objectUrl'},
+        {name: 'pointSize', type: 'float'}
 
     ]
 

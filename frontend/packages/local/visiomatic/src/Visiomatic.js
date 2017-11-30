@@ -154,11 +154,13 @@ Ext.define('visiomatic.Visiomatic', {
 
         showCrosshair: false,
         enableContextMenu: true,
-        mlocate:''
+        mlocate:'',
+
+        showComments: false,
     },
 
     _winCatalogOverlay: null,
-    _showComments: null,
+
 
     bind: {
         release: '{release}',
@@ -918,7 +920,7 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
-    overlayCatalog: function (title, storeMembers, options, storeCommentsPosition, showComments) {
+    overlayCatalog: function (title, storeMembers, options) {
         var me = this,
             l = me.libL,
             map = me.getMap(),
@@ -926,8 +928,7 @@ Ext.define('visiomatic.Visiomatic', {
             catalogOptions = me.getCatalogOptions(),
             pathOptions, collection, feature, lCatalog;
 
-        pathOptions = catalogOptions;
-        me._showComments = showComments || false;
+        pathOptions = Ext.Object.merge(catalogOptions, options);
 
         collection = {
             type: 'FeatureCollection',
@@ -1026,7 +1027,9 @@ Ext.define('visiomatic.Visiomatic', {
                 circle = l.ellipse(latlng, path_options);
 
                 // adiciona o ícone de comentário por objeto
-                if (feature.properties._meta_comments) {
+                if ((me.getShowComments()) &&
+                    (feature.properties._meta_comments)) {
+
                     me.createCommentIcon(latlng, circle);
                 }
 
@@ -1041,18 +1044,6 @@ Ext.define('visiomatic.Visiomatic', {
 
         // chama a função de exibição do menu de contexto
         .on('contextmenu', me.onLayerContextMenu, me);
-
-        // adiciona os ícones de comentário por posição
-        if (storeCommentsPosition) {
-            storeCommentsPosition.each(function (record) {
-                var latlng = {
-                    lat: record.get('pst_dec'),
-                    lng: record.get('pst_ra')
-                };
-
-                me.createCommentIcon(latlng);
-            });
-        }
 
         map.addLayer(lCatalog);
 
@@ -1191,28 +1182,28 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     showHideComments: function (layer, state) {
-        var me = this, l, q,
-            map = me.getMap();
-
-        map.eachLayer(function(l){
-            //comentário por posição
-            if (l.targetPosition){
-                l.getElement().style.display = state ? '' : 'none';
-            }
-        });
-
-        // se comentário de objeto
-        if (layer !== null) {
-            for (i in layer._layers) {
-                l = layer._layers[i];
-                q = l.feature.properties._meta_comments;
-
-                //se tem comentário(s), oculta ou exibe o ícone
-                if (q>0){
-                    l.commentMaker._icon.style.display = state ? '' : 'none';
-                }
-            }
-        }
+        // var me = this, l, q,
+        //     map = me.getMap();
+        //
+        // map.eachLayer(function(l){
+        //     //comentário por posição
+        //     if (l.targetPosition){
+        //         l.getElement().style.display = state ? '' : 'none';
+        //     }
+        // });
+        //
+        // // se comentário de objeto
+        // if (layer !== null) {
+        //     for (i in layer._layers) {
+        //         l = layer._layers[i];
+        //         q = l.feature.properties._meta_comments;
+        //
+        //         //se tem comentário(s), oculta ou exibe o ícone
+        //         if (q>0){
+        //             l.commentMaker._icon.style.display = state ? '' : 'none';
+        //         }
+        //     }
+        // }
     },
 
     onLayerContextMenu: function(event){
@@ -1250,69 +1241,69 @@ Ext.define('visiomatic.Visiomatic', {
             commentMaker.targetPosition = latlng
         }
 
-        commentMaker.getElement().style.display = me._showComments ? '' : 'none';
+        commentMaker.getElement().style.display = me.getShowComments() ? '' : 'none';
     },
 
     updateComment: function (layer, comment, total) {
-        var me     = this, circle, id,
-            map    = me.getMap(),
-            layers = layer ? layer._layers : null,
-            layerComment = false,
-            latlng = {
-                lat: comment.get('pst_dec'),
-                lng: comment.get('pst_ra')
-            };
-
-        // se comentário de posição
-        if (comment.isCommentPosition){
-            map.eachLayer(function(l){
-                //comentário por posição
-                if (l.targetPosition){
-                    if (latlng.lat==l.targetPosition.lat && latlng.lng==l.targetPosition.lng){
-                        layerComment = l;
-                    }
-                }
-            });
-
-            // já tem o ícone na imagem
-            if (layerComment){
-                // remove se não tem mais comentários
-                layerComment.getElement().style.display = total==0 ? 'none' : '';
-            }
-            // ainda não tem o ícone na imagem
-            else{
-                // adiciona se tem comentário
-                if (total>0){
-                    me.createCommentIcon(latlng);
-                }
-            }
-        }
-
-        // se comentário de objeto
-        else if (layers){
-            for (i in layers){
-                circle  = layers[i];
-                id = circle.feature.id;
-
-                if (id==comment.data.object_id){
-                    //já tem o ícone
-                    if (circle.commentMaker){
-                        //remove se não tem mais comentário
-                        circle.commentMaker.getElement().style.display = total==0 ? 'none' : '';
-                    }
-                    //não tem o ícone
-                    else{
-                        //adiciona se tem comentário
-                        if (total>0){
-                            me.createCommentIcon(circle._latlng, circle);
-                        }
-                    }
-
-                    circle.feature.properties._meta_comments = total;
-                }
-
-            }
-        }
+        // var me     = this, circle, id,
+        //     map    = me.getMap(),
+        //     layers = layer ? layer._layers : null,
+        //     layerComment = false,
+        //     latlng = {
+        //         lat: comment.get('pst_dec'),
+        //         lng: comment.get('pst_ra')
+        //     };
+        //
+        // // se comentário de posição
+        // if (comment.isCommentPosition){
+        //     map.eachLayer(function(l){
+        //         //comentário por posição
+        //         if (l.targetPosition){
+        //             if (latlng.lat==l.targetPosition.lat && latlng.lng==l.targetPosition.lng){
+        //                 layerComment = l;
+        //             }
+        //         }
+        //     });
+        //
+        //     // já tem o ícone na imagem
+        //     if (layerComment){
+        //         // remove se não tem mais comentários
+        //         layerComment.getElement().style.display = total==0 ? 'none' : '';
+        //     }
+        //     // ainda não tem o ícone na imagem
+        //     else{
+        //         // adiciona se tem comentário
+        //         if (total>0){
+        //             me.createCommentIcon(latlng);
+        //         }
+        //     }
+        // }
+        //
+        // // se comentário de objeto
+        // else if (layers){
+        //     for (i in layers){
+        //         circle  = layers[i];
+        //         id = circle.feature.id;
+        //
+        //         if (id==comment.data.object_id){
+        //             //já tem o ícone
+        //             if (circle.commentMaker){
+        //                 //remove se não tem mais comentário
+        //                 circle.commentMaker.getElement().style.display = total==0 ? 'none' : '';
+        //             }
+        //             //não tem o ícone
+        //             else{
+        //                 //adiciona se tem comentário
+        //                 if (total>0){
+        //                     me.createCommentIcon(circle._latlng, circle);
+        //                 }
+        //             }
+        //
+        //             circle.feature.properties._meta_comments = total;
+        //         }
+        //
+        //     }
+        // }
 
     },
 
