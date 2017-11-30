@@ -33,7 +33,15 @@ Ext.define('Sky.view.footprint.Footprint', {
                     listeners: {
                         ondblclick: 'onDblClickAladin',
                         gotoposition: 'onAladinGoToPosition'
-                    }
+                    },
+                    auxTools: [
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-link',
+                            tooltip: 'Get Link',
+                            handler: 'getLink'
+                        }
+                    ]
                 }
             ]
         });

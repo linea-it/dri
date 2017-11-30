@@ -2018,7 +2018,8 @@ L.Catalog = {
 		});
 	},
 
-	vizierURL: 'http://vizier.u-strasbg.fr/viz-bin'
+	// vizierURL: 'http://vizier.u-strasbg.fr/viz-bin'
+	vizierURL: 'https://vizier.cfa.harvard.edu/viz-bin'
 
 };
 
