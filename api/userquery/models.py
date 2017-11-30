@@ -77,3 +77,5 @@ class Table(models.Model):
         verbose_name='Owner', default=None)
     schema = models.CharField(
         max_length=128, null=True, verbose_name='Schema')
+    product = models.ForeignKey(
+        'product.Product', verbose_name='Product', related_name='product', null=True, default=None)

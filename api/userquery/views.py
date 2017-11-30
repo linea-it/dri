@@ -1,4 +1,5 @@
 import logging
+import copy
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
@@ -173,13 +174,15 @@ class CreateTable(viewsets.ModelViewSet):
         try:
             data = request.data
             display_name = data.get("display_name", None)
+            associate_target_viewer = data.get("associate_target_viewer", False)
             _id = data.get("id", None)
 
-            # review - displayName_userId
-            table_name = display_name.replace(' ', '_') + "_" + str(self.request.user.pk)
-            table_name = table_name.upper()
+            table_name = self._set_internal_table_name(display_name, self.request.user.pk)
 
             q = Query.objects.get(pk=_id)
+
+            if type(associate_target_viewer) is not bool:
+                raise Exception("associate_target_viewer must be a boolean type")
 
             if not self._is_user_authorized(q):
                 raise Exception("User not authorized to perform this action")
@@ -197,7 +200,7 @@ class CreateTable(viewsets.ModelViewSet):
             q.save()
 
             timeout = self._time_out_query_execution(request)
-            create_table.delay(q.id, request.user.pk, table_name, schema=None, timeout=timeout)
+            create_table.delay(q.id, request.user.pk, table_name, associate_target_viewer, schema=None, timeout=timeout)
             return HttpResponse(status=200)
         except Exception as e:
             print(str(e))
@@ -205,6 +208,17 @@ class CreateTable(viewsets.ModelViewSet):
 
     def _is_user_authorized(self, q):
         return q.owner == self.request.user or q.is_public
+
+    def _set_internal_table_name(self, display_name, user_id):
+        table_name = copy.deepcopy(display_name)
+
+        name = table_name.replace(' ', '_').lower().strip().strip('\n') + '_' + str(user_id)
+
+        # Retirar qualquer caracter que nao seja alfanumerico exceto '_'
+        table_name = ''.join(e for e in name if e.isalnum() or e == '_')
+
+        # Limitar a 40 characteres
+        return table_name[:40]
 
     def _time_out_query_execution(self, request):
         user = User.objects.get(pk=request.user.pk)
@@ -226,6 +240,11 @@ class TableProperties(viewsets.ModelViewSet):
             schema = data.get("schema", None)
             table_name = data.get("table_name", None)
 
+            if not table_name:
+                raise Exception("Table is a mandatory field")
+
+            # review - create table is saving using UPPER_CASE
+            table_name = table_name.upper()
             db = DBBase('catalog')
 
             if not db.table_exists(table_name, schema=schema):
@@ -255,8 +274,11 @@ class TargetViewerRegister(viewsets.ModelViewSet):
             data = request.data
             _id = data.get("id", None)
 
+            if not _id:
+                raise Exception("id is a mandatory field")
+
             q = Table.objects.get(pk=_id)
-            register_table_in_the_target_viewer(self.request.user, q.schema, q.table_name, q.display_name)
+            register_table_in_the_target_viewer(self.request.user, q.pk)
             return HttpResponse(status=200)
 
         except Exception as e:
