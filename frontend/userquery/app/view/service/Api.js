@@ -87,6 +87,10 @@ Ext.define('UserQuery.view.service.Api', {
         return this.send(this.URL.startJob, definition);
     },
 
+    dropTable: function(definition){
+        return this.delete(this.URL.getMyTables.url, definition);
+    },
+
     doLogin: function(){
         var protocol = window.location.protocol;
         var pathname = window.location.pathname;
