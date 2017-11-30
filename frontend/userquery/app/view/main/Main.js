@@ -166,7 +166,7 @@ Ext.define('UserQuery.view.main.Main', {
                                 rootVisible: false,
                                 listeners: {
                                     itemexpand: 'tvwInputTables_onExpanded',
-                                    itemcontextmenu: 'treeView_onContextMenu'
+                                    itemcontextmenu: 'treeView_onContextMenu'                                    
                                 },
                                 viewConfig: {
                                     plugins: {
@@ -222,7 +222,8 @@ Ext.define('UserQuery.view.main.Main', {
                                     {text: 'Delete',  itemId:'delete',  handler:'tvwMyTables_onContextMenuClick'}
                                 ],
                                 listeners:{
-                                    itemcontextmenu: 'treeView_onContextMenu'
+                                    itemcontextmenu: 'treeView_onContextMenu',
+                                    itemexpand: 'tvwMyTables_onExpanded'
                                 }
                             }]
                         },

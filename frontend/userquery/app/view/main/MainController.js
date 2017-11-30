@@ -367,6 +367,24 @@ Ext.define('UserQuery.view.main.MainController', {
         }
     },
 
+    tvwMyTables_onExpanded: function(node){
+        if (node.isRoot() || node.childNodes.length>0){
+            return;
+        }
+        
+        this.loadFields({
+            schema: node.get('data_schema'),
+            table: node.get('data_table'),
+            request: function(){
+                node.set('cls', 'x-grid-tree-loading');
+            },
+            response: function(fields){
+                node.appendChild(fields);
+                node.set('cls', '');
+            }
+        });
+    },
+
     tvwInputTables_onContextMenuClick: function(item){
         var me = this;
         var config = item.config;
@@ -793,23 +811,11 @@ Ext.define('UserQuery.view.main.MainController', {
 
                 for (table_name in tables){
                     table = tables[table_name];
-                    cols = [];
-
-                    table.cols.forEach(function(field_name){
-                        cols.push({
-                            text: field_name,
-                            data_schema: null,
-                            data_table: table.table_name,
-                            data_field: field_name,
-                            leaf: true
-                        });
-                    });
-
+                    
                     arr.push({
                         text: table.table_name, // display_name,
-                        data_schema: table.tbl_schema,
-                        data_table: table.table_name,
-                        children: cols
+                        data_schema: table.schema,
+                        data_table: table.table_name
                     })
                 }                
                 
@@ -1049,21 +1055,26 @@ Ext.define('UserQuery.view.main.MainController', {
     },
 
     loadFields: function(options){
+
         Api.getFields({
             cache: true,
             params:{
-                pcn_product_id: options.table
+                schema: options.schema,
+                table_name: options.table
             },
             request: function(){
                 options.request ? options.request() : null;
             },
-            response: function(error, fields){
-                fields.forEach(function(item){
-                    item.text = item.pcn_column_name;
-                    item.data_schema = options.schema;
-                    item.data_table = options.table
-                    item.data_field = item.pcn_column_name;
-                    item.leaf = true;
+            response: function(error, results){
+                var fields = [];
+                results.columns.forEach(function(item){
+                    fields.push({
+                        text: item,
+                        data_schema: options.schema,
+                        data_table: options.table,
+                        data_field: item,
+                        leaf: true
+                    });
                 });
 
                 options.response ? options.response(fields) : null;
