@@ -29,7 +29,7 @@ Ext.define('visiomatic.catalog.Submit', {
                                 {
                                     xtype: 'tbtext',
                                     html: 'Color:',
-                                    width: 40
+                                    width: 45
                                 },
                                 {
                                     xtype: 'colorbutton',
@@ -37,26 +37,45 @@ Ext.define('visiomatic.catalog.Submit', {
                                     width: 55,
                                     margin: '0 20 0 5',
                                     tooltip: 'Choose a color. Click on the color and then on ok.'
-                                },
-                                {
-                                    xtype: 'checkboxfield',
-                                    name: 'draw_ellipse',
-                                    boxLabel: 'Draw Ellipse',
-                                    bind: '{drawEllipse}',
-                                    reference: 'chkEllipse',
-                                    flex: 1
-                                },
+                                }
                             ]
                         },
                         {
-                            xtype: 'numberfield',
-                            name: 'pointsize',
-                            fieldLabel: 'Size',
-                            labelWidth: 40,
-                            width: 100,
-                            bind: '{pointSize}',
-                            minValue: 1,
-                            maxValue: 10
+                            xtype: 'fieldcontainer',
+                            layout: 'hbox',
+                            items: [
+                                {
+                                    xtype: 'combobox',
+                                    labelWidth: 45,
+                                    flex: 1,
+                                    reference: 'cmbPointType',
+                                    fieldLabel: 'Marker',
+                                    displayField: 'name',
+                                    valueField: 'name',
+                                    queryMode: 'local',
+                                    store: {
+                                        fields: ['name'],
+                                        data: [
+                                            {'name': 'circle'},
+                                            {'name': 'ellipse'},
+                                            {'name': 'square'},
+                                            {'name': 'triangle'}
+                                        ]
+                                    },
+                                    value: 'circle',
+                                },
+                                {
+                                    xtype: 'numberfield',
+                                    name: 'pointsize',
+                                    fieldLabel: 'Size',
+                                    labelWidth: 40,
+                                    width: 100,
+                                    bind: '{pointSize}',
+                                    minValue: 1,
+                                    maxValue: 10,
+                                    margin: '0 0 0 5',
+                                },
+                            ]
                         },
                         {
                             xtype: 'button',

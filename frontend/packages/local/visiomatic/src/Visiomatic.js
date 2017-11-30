@@ -113,7 +113,8 @@ Ext.define('visiomatic.Visiomatic', {
             fillOpacity: 0.01, // Transparencia nos marcadores.
             color: '#2db92d', //Stroke color
             interactive: true,
-            radius: 0.001 // radius do marker circulo em graus
+            pointType: 'circle', //'circle', 'ellipse', 'triangle', 'square'
+            pointSize: 0.001 // tamanho utilizado para criar os makers em graus
         },
 
         // Draw Crosshair Path Options http://leafletjs.com/reference-1.0.3.html#path
@@ -969,8 +970,6 @@ Ext.define('visiomatic.Visiomatic', {
 
             // desenha os objetos (círculos pequenos e comentários de objeto)
             pointToLayer: function (feature, latlng) {
-                var radius = pathOptions.radius,
-                    opts = pathOptions, circle;
 
                 if (feature.is_system) {
                     // se o objeto for um sistema usar a propriedade radius em arcmin
@@ -982,16 +981,13 @@ Ext.define('visiomatic.Visiomatic', {
                     }
                 }
 
-                // Desenhar apenas o circulo
-                majAxis = radius;
-                minAxis = radius;
-                posAngle = 90;
-
                 // Desenhar ellipse.
-                if ((options) && (options.ellipse == true)) {
+                if (pathOptions.pointType === 'ellipse') {
+                    var majAxis = 0.001,
+                        minAxis = 0.001,
+                        posAngle = 90;
 
                     try {
-
                         var a_image = feature.properties._meta_a_image,
                             b_image = feature.properties._meta_b_image,
                             theta_image = feature.properties._meta_theta_image;
@@ -1007,33 +1003,75 @@ Ext.define('visiomatic.Visiomatic', {
                         }
                     }
                     catch (err) {}
+
+                    pathOptions.majAxis = majAxis,
+                    pathOptions.minAxis = minAxis,
+                    pathOptions.posAngle = posAngle
+
+                    return l.ellipse(latlng, pathOptions);
                 }
+                
+                else if (pathOptions.pointType === 'square') {
+                    // Desenha um Quadrado
+                    var bounds = [
+                        [latlng.lat-pathOptions.pointSize,
+                            latlng.lng-pathOptions.pointSize],
+                        [latlng.lat+pathOptions.pointSize,
+                            latlng.lng+pathOptions.pointSize],
+                    ]
 
-                path_options = Ext.Object.merge(opts, {
-                    majAxis: majAxis,
-                    minAxis: minAxis,
-                    posAngle: posAngle
-                });
+                    var rectangle = l.rectangle(bounds, pathOptions)
 
-                path_options = Ext.Object.merge(path_options, options);
+                    return rectangle
 
-                // tornar o objeto clicavel
-                path_options.interactive = true;
+                } else if (pathOptions.pointType === 'triangle') {
+                    // Desenha um triangulo em volta do ponto
+                    var baseline, leftline, rightline, triangle, bl, ll, rl;
 
-                // Usei ellipse por ja estar em degrees a funcao circulo
-                // estava em pixels
-                // usei o mesmo valor de raio para os lados da ellipse para
-                // gerar um circulo por ser um circulo o angulo tanto faz.
-                circle = l.ellipse(latlng, path_options);
+                    // lat = dec, lng = ra
+                    baseline = [
+                        l.latLng(latlng.lat-pathOptions.pointSize,
+                            latlng.lng-pathOptions.pointSize),
+                        l.latLng(latlng.lat-pathOptions.pointSize,
+                            latlng.lng+pathOptions.pointSize)
+                    ]
+                    rightline = [
+                        l.latLng(latlng.lat - pathOptions.pointSize,
+                            latlng.lng - pathOptions.pointSize),
+                        l.latLng(latlng.lat + pathOptions.pointSize,
+                            latlng.lng)
+                    ]
+                    leftline = [
+                        l.latLng(latlng.lat - pathOptions.pointSize,
+                            latlng.lng + pathOptions.pointSize),
+                        l.latLng(latlng.lat + pathOptions.pointSize,
+                            latlng.lng)
+                    ]
 
-                // adiciona o ícone de comentário por objeto
-                if ((me.getShowComments()) &&
-                    (feature.properties._meta_comments)) {
+                    bl = l.polyline(baseline, pathOptions);
+                    rl = l.polyline(rightline, pathOptions);
+                    ll = l.polyline(leftline, pathOptions);
 
-                    me.createCommentIcon(latlng, circle);
+
+                    triangle = new l.LayerGroup([bl, rl, ll]);
+
+                    return triangle;
                 }
+                else {
+                    // Por default marca com um circulo
 
-                return circle;
+                    pathOptions.majAxis = pathOptions.pointSize;
+                    pathOptions.minAxis = pathOptions.pointSize;
+                    pathOptions.posAngle = 90;
+
+                    // Usei ellipse por ja estar em degrees a funcao circulo
+                    // estava em pixels
+                    // usei o mesmo valor de raio para os lados da ellipse para
+                    // gerar um circulo por ser um circulo o angulo tanto faz.
+                    circle = l.ellipse(latlng, pathOptions);
+
+                    return circle;
+                }
             }
         })
         .bindPopup(me.createOverlayPopup)
