@@ -548,12 +548,14 @@ Ext.define('Explorer.view.system.SystemController', {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('object_data'),
-            radius = 2,
-            url; // Arcmin
+            ra = parseFloat(me.parseRA(object._meta_ra)).toFixed(4),
+            dec = parseFloat(object._meta_dec).toFixed(4),
+            radius = 2, // Arcmin
+            url;
 
         url = Ext.String.format(
             "http://simbad.u-strasbg.fr/simbad/sim-coo?Coord={0}+{1}&CooFrame=FK5&CooEpoch=2000&Radius={2}&Radius.unit=arcmin&submit=submit+query",
-            me.parseRA(object._meta_ra), object._meta_dec, radius)
+            ra, dec, radius)
 
         window.open(url, '_blank')
 
@@ -565,12 +567,14 @@ Ext.define('Explorer.view.system.SystemController', {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('object_data'),
-            radius = 2,
-            url; // Arcmin
+            ra = parseFloat(me.parseRA(object._meta_ra)).toFixed(2),
+            dec = parseFloat(object._meta_dec).toFixed(2),
+            radius = 2, // Arcmin
+            url;
 
         url = Ext.String.format(
             "https://ned.ipac.caltech.edu/cgi-bin/objsearch?search_type=Near+Position+Search&in_csys=Equatorial&in_equinox=J2000.0&lon={0}d&lat={1}d&radius={2}",
-            me.parseRA(object._meta_ra), object._meta_dec, radius)
+            ra, dec, radius)
 
         window.open(url, '_blank')
     },
