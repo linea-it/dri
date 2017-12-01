@@ -165,9 +165,9 @@ Ext.define('UserQuery.view.main.Main', {
                                 reference: 'tvwInputTables',
                                 rootVisible: false,
                                 listeners: {
-                                    itemexpand: 'tvwInputTables_onExpanded'
+                                    itemexpand: 'tvwInputTables_onExpanded',
+                                    itemcontextmenu: 'treeView_onContextMenu'                                    
                                 },
-
                                 viewConfig: {
                                     plugins: {
                                         ptype: 'treeviewdragdrop',
@@ -175,17 +175,39 @@ Ext.define('UserQuery.view.main.Main', {
                                         enableDrop: false,
                                         ddGroup: 'TreeDD'
                                     }
-                                }
+                                },
+                                contextMenuItems: [
+                                    {text: 'Preview', itemId:'preview', handler:'tvwInputTables_onContextMenuClick'}
+                                ]
                             }]
                         },
 
                         // tables of external catalog
-                        {title: 'External Catalog', layout:'fit', reference:'accExternalCatalog',
+                        {title: 'External Tables', layout:'fit', reference:'accExternalCatalog',
                             listeners:{
                                 expand: 'accExternalCatalog_onExpand'
                             },
                             items:[
-                                {xtype: 'treepanel', reference:'tvwExternalCatalog', rootVisible:false}
+                                {
+                                    xtype: 'treepanel',
+                                    reference: 'tvwExternalCatalog',
+                                    rootVisible:false,
+                                    viewConfig: {
+                                        plugins: {
+                                            ptype: 'treeviewdragdrop',
+                                            enableDrag: true,
+                                            enableDrop: false,
+                                            ddGroup: 'TreeDD'
+                                        }
+                                    },
+                                    contextMenuItems: [
+                                        {text: 'Preview', itemId:'preview', handler:'tvwExternalCatalog_onContextMenuClick'}
+                                    ],
+                                    listeners:{
+                                        itemcontextmenu: 'treeView_onContextMenu',
+                                        itemexpand: 'tvwExternalCatalog_onExpanded'
+                                    }
+                                }
                             ]
                         },
 
@@ -208,8 +230,49 @@ Ext.define('UserQuery.view.main.Main', {
                                         enableDrop: false,
                                         ddGroup: 'TreeDD'
                                     }
+                                },
+                                contextMenuItems: [
+                                    {text: 'Rename',  itemId:'rename',  handler:'tvwMyTables_onContextMenuClick'},
+                                    {text: 'Preview', itemId:'preview', handler:'tvwMyTables_onContextMenuClick'},
+                                    {text: 'Delete',  itemId:'delete',  handler:'tvwMyTables_onContextMenuClick'},
+                                    '-',
+                                    {text: 'Target',  itemId:'target',  handler:'tvwMyTables_onContextMenuClick', xx_config:function(item, record){ item.disabled = true }}
+                                ],
+                                listeners:{
+                                    itemcontextmenu: 'treeView_onContextMenu',
+                                    itemexpand: 'tvwMyTables_onExpanded'
                                 }
                             }]
+                        },
+
+                        // outers tables
+                        {title: 'Other Tables', layout:'fit', reference:'accOtherTables',
+                            listeners:{
+                                expand: 'accOtherTables_onExpand'
+                            },
+                            items:[
+                                {
+                                    xtype: 'treepanel',
+                                    reference: 'tvwOtherTables',
+                                    rootVisible:false,
+                                    listeners:{
+                                        itemexpand: 'tvwOtherTables_onExpanded',
+                                        itemcontextmenu: 'treeView_onContextMenu'
+                                    },
+                                    viewConfig: {
+                                        plugins: {
+                                            ptype: 'treeviewdragdrop',
+                                            enableDrag: true,
+                                            enableDrop: false,
+                                            ddGroup: 'TreeDD'
+                                        }
+                                    },
+                                    contextMenuItems: [
+                                        {text: 'Preview', itemId:'preview', handler:'tvwOtherTables_onContextMenuClick'}
+                                    ]
+
+                                }
+                            ]
                         },
 
                         // queries of user
@@ -217,22 +280,45 @@ Ext.define('UserQuery.view.main.Main', {
                             title: 'My Queries',
                             layout: 'fit',
                             reference: 'accMyQueries',
-                            listeners:{
-                                expand: 'accMyQueries_onExpand'
-                            },
                             items: [{
                                 xtype: 'treepanel',
                                 reference: 'tvwMyQueries',
                                 rootVisible: false,
                                 listeners: {
-                                    select: 'tvwMyQueries_onSelect'
-                                }
+                                    select: 'tvwMyQueries_onSelect',
+                                    itemcontextmenu: 'treeView_onContextMenu'
+                                },
+                                contextMenuItems: [
+                                    {text: 'Rename',  itemId:'rename',  handler:'tvwMyQueries_onContextMenuClick'},
+                                    {text: 'Delete',  itemId:'delete',  handler:'tvwMyQueries_onContextMenuClick'}
+                                ]
+                            }],
+                            listeners:{
+                                expand: 'accMyQueries_onExpand'
+                            }
+                        },
+
+                        // samples queries
+                        {
+                            title: 'Sample Queries',
+                            layout: 'fit',
+                            reference: 'accSampleQueries',
+                            listeners:{
+                                expand: 'accSampleQueries_onExpand'
+                            },
+                            items: [{
+                                xtype: 'treepanel',
+                                reference: 'tvwSampleQueries',
+                                rootVisible: false,
+                                // listeners: {
+                                //     select: 'tvwSampleQueries_onSelect'
+                                // }
                             }]
                         }
                     ]
                 },
 
-                // form panel
+                // center panel (form / tabs)
                 {
                     xtype: 'panel',
                     region: 'center',
@@ -240,7 +326,9 @@ Ext.define('UserQuery.view.main.Main', {
                         title: 'Query Definition' // '{activeQuery.name}'
                     },
                     layout: 'border',
-                    items: [{
+                    items: [
+                        // form
+                        {
                             xtype: 'form',
                             reference: 'frmQuery',
                             region: 'center',
@@ -260,7 +348,7 @@ Ext.define('UserQuery.view.main.Main', {
                                 },
                                 {
                                     xtype: 'textfield',
-                                    fieldLabel: 'Description* ',
+                                    fieldLabel: 'Description',
                                     name: 'description',
                                     width: '100%'
                                 },
@@ -298,51 +386,62 @@ Ext.define('UserQuery.view.main.Main', {
                                 }
                             ]
                         },
+
+                        // tabs panel
                         {
-                            xtype: 'grid',
+                            xtype: 'tabpanel',
                             region: 'south',
-                            reference: 'grdPreview',
+                            reference: 'tabBottom',
                             split: true,
                             height: 200,
-                            store: Ext.create('Ext.data.Store')
-                        }
-                    ]
-                },
-
-                // jobs panel
-                {
-                    xtype: 'panel',
-                    region: 'east',
-                    width: 300,
-                    layout: 'vbox',
-                    split: true,
-                    collapsible: true,
-                    collapsed: true,
-                    title: 'My Jobs',
-                    bodyPadding: 15,
-                    listeners:{
-                        expand: 'pnlJobs_onExpand'
-                    },
-                    items: [
-                        
-                        {
-                            xtype: 'treelist',
-                            reference: 'tvwJobList',
-                            flex: 1,
-                            width: '100%',
-                            rootVisible: false,
-                            listeners: {
-                                selectionchange: 'tvwJobList_onSelectionChange'
-                            }
+                            fullScreen: 'fit',
+                            defaults:{
+                                layout: 'fit',
+                            },
+                            items:[
+                                {
+                                    title: 'Table Preview',
+                                    items:[
+                                        {
+                                            xtype: 'grid',
+                                            reference: 'grdTable',
+                                            store: Ext.create('Ext.data.Store')
+                                        }
+                                    ]
+                                },
+                                {
+                                    title: 'SQL Preview',
+                                    items:[
+                                        {
+                                            xtype: 'grid',
+                                            reference: 'grdPreview',
+                                            store: Ext.create('Ext.data.Store'),
+                                        }
+                                    ]
+                                },
+                                {
+                                    title: 'My JOBs',
+                                    listeners:{
+                                        activate: 'tabMyJobs_onActivate'
+                                    },
+                                    items:[
+                                        {
+                                            xtype: 'grid',
+                                            reference: 'grdJobs',
+                                            store: Ext.create('Ext.data.Store'),
+                                            viewConfig: { 
+                                                //stripeRows: false, 
+                                                getRowClass: function(record) { 
+                                                    return record.get('row_cls') || 'row-cls'; 
+                                                } 
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
                         },
-                        {
-                            xtype: 'container',
-                            width: '100%',
-                            reference: 'ctnJobDetail',
-                            html: 'JOB Detail'
-                        }
                     ]
-                },
+                }
             ]
         },
 

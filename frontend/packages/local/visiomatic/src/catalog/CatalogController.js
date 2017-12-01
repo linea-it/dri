@@ -152,7 +152,9 @@ Ext.define('visiomatic.catalog.CatalogController', {
             color = vm.get('currentColor'),
             filters = vm.get('currentFilters'),
             overlays = vm.getStore('overlays'),
-            drawEllipse = vm.get('drawEllipse'),
+            cmbPointType = me.lookup('cmbPointType'),
+            pointType = cmbPointType.getValue(),
+            pointSize = (vm.get('pointSize') / 1000),
             overlay;
 
         vm.set('currentCatalog', catalog);
@@ -164,7 +166,8 @@ Ext.define('visiomatic.catalog.CatalogController', {
             visible: true,
             count: null,
             layers: null,
-            ellipse: drawEllipse,
+            pointType: pointType,
+            pointSize: pointSize,
             status: 'loading',
             filters: null
         });
@@ -346,8 +349,9 @@ Ext.define('visiomatic.catalog.CatalogController', {
                         store,
                         {
                             color: overlay.get('color'),
-                            ellipse: overlay.get('ellipse'),
-                            objectUrl: overlay.get('objectUrl')
+                            objectUrl: overlay.get('objectUrl'),
+                            pointType: overlay.get('pointType'),
+                            pointSize: overlay.get('pointSize')
                         });
 
             overlay.set('layers', layers);

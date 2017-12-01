@@ -48,7 +48,7 @@ Ext.define('visiomatic.catalog.CatalogOverlayWindow', {
                             xtype: 'visiomatic-catalogs-tree',
                             reference: 'CatalogsTree',
                             flex: 1,
-                            split: true,
+                            // split: true,
                             bind: {
                                 store: '{catalogs}'
                             },
@@ -58,10 +58,10 @@ Ext.define('visiomatic.catalog.CatalogOverlayWindow', {
                         },
                         {
                             xtype: 'visiomatic-catalogs-submit',
-                            split: true,
-                            height: 110,
+                            // split: true,
+                            height: 150,
                             bind: {
-                                disabled: '{!CatalogsTree.selection}'
+                                disabled: '{!CatalogsTree.selection.leaf}'
                             }
                         }
                     ]

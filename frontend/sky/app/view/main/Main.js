@@ -18,7 +18,8 @@ Ext.define('Sky.view.main.Main', {
         'Sky.view.main.MainModel',
         'Sky.view.search.SearchField',
         'common.header.Toolbar',
-        'common.footer.Footer'
+        'common.footer.Footer',
+        'Sky.view.main.Toolbar'
     ],
 
     controller: 'main',
