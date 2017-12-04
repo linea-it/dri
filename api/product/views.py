@@ -265,7 +265,10 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
         })
 
         # Se tiver mais de um grupo, as classes vao ficar como subdiretorio do grupo.
+        external_catalogs_vizier = None
         if groups is not None:
+
+            external_catalogs_vizier = self.get_external_catalogs()
 
             for class_name in classes:
                 c = classes.get(class_name)
@@ -275,13 +278,22 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                     nodeGroup.get(group_name).get('children').append(c)
 
             for group_name in nodeGroup:
-                result.get('children').append(nodeGroup.get(group_name))
 
+                nodeg = nodeGroup.get(group_name)
+
+                # Se ja tiver o grupo External Catalog adiciona os catalogos do vizier como children
+                if group_name == 'external_catalogs' and external_catalogs_vizier is not None:
+                    from pprint import pprint
+                    # pprint(external_catalogs_vizier.get('children')[0].get('children'))
+                    nodeg['children'].append(external_catalogs_vizier.get('children')[0])
+
+
+                result.get('children').append(nodeg)
 
             # Adiciona Catalogos Externos ex: Vizier
-            if 'external_catalogs' in groups:
-                external_catalogs = self.get_external_catalogs()
-                result.get('children').append(external_catalogs)
+            if 'external_catalogs' in groups and 'external_catalogs' not in nodeGroup:
+                result.get('children').append(external_catalogs_vizier)
+
 
         else:
             # Se tiver apenas um grupo basta retornar as classes
