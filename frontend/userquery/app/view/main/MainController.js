@@ -160,7 +160,7 @@ Ext.define('UserQuery.view.main.MainController', {
         dialog.open(formData, function(data){
             data.id = query.id;
 
-            //data.associate_target_viewer = data.associate_target_viewer==='on';
+            data.associate_target_viewer = data.associate_target_viewer==='on';
             
             Api.startJob({
                 cache: false,
@@ -270,34 +270,7 @@ Ext.define('UserQuery.view.main.MainController', {
         refs.btnSave.setDisabled( !release || !Boolean(data.name && data.sql_sentence) );
         refs.btnCheck.setDisabled( !sqlExist );
         refs.btnPreview.setDisabled( !sqlExist );
-        //r
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        efs.btnStartJob.setDisabled( true ); //!sqlExist || query.changed || !query.exist);
+        //refs.btnStartJob.setDisabled( true ); //!sqlExist || query.changed || !query.exist);
     },
 
     mnuSaveAs_onClick: function(button){
@@ -377,6 +350,7 @@ Ext.define('UserQuery.view.main.MainController', {
                     fn: function(button){
                         if (button=='yes'){
                             me.dropTable(item.record.get('data_id'), function(){
+                                me.loadMyTables();
                                 //remove o item da treeview
                                 //config.record.parentNode.removeChild(config.record)
                             });

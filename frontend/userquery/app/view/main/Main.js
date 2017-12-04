@@ -236,7 +236,11 @@ Ext.define('UserQuery.view.main.Main', {
                                     {text: 'Preview', itemId:'preview', handler:'tvwMyTables_onContextMenuClick'},
                                     {text: 'Delete',  itemId:'delete',  handler:'tvwMyTables_onContextMenuClick'},
                                     '-',
-                                    {text: 'Target',  itemId:'target',  handler:'tvwMyTables_onContextMenuClick', xx_config:function(item, record){ item.disabled = true }}
+                                    {text: 'Target',  itemId:'target',  handler:'tvwMyTables_onContextMenuClick',
+                                        config: function(item, record){ 
+                                            item.disabled = record.get('data_product_id') ? false : true;
+                                        }
+                                    }
                                 ],
                                 listeners:{
                                     itemcontextmenu: 'treeView_onContextMenu',
