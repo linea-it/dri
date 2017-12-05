@@ -45,6 +45,7 @@ Ext.define('UserQuery.view.main.MainController', {
                 //me.createEmptyQuery();
                 refs.ctnArea.setStyle({opacity:1});
                 removeSplash();
+                me.loadMyQueries();
             }
         );
 
