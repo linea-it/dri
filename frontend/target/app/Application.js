@@ -10,7 +10,8 @@ Ext.define('Target.Application', {
 
     requires: [
         'common.statistics.Events',
-        'common.token.GetToken'
+        'common.token.GetToken',
+        'common.data.Settings'
     ],
 
     defaultToken : 'home',
@@ -21,36 +22,19 @@ Ext.define('Target.Application', {
 
     init:function () {
         Ext.create('common.statistics.Events').init();
-        Ext.create('common.token.GetToken').init();
-        // console.log('init');
-        // Desabilitar os erros de Aria
-        // Ext.enableAriaButtons = false;
+        // Ext.create('common.token.GetToken').init();
 
-        // // Checar se o usuario esta logado
-        // Ext.Ajax.request({
-        //     url: '/dri/api/logged/get_logged/?format=json',
-        //     success: function (response) {
-        //         var data = JSON.parse(response.responseText);
+        var me = this;
 
-        //         // Identificar o usuario no Google Analitics
-        //         ga('set', 'userId', data.id);
+        // Exemplo de como recuperar uma configuracao do settings do Django
+        Settings.getSetting('TARGET_VIEWER_REGISTER_DB', me.setSetting, this);
 
-        //         Ext.create({
-        //             xtype: 'app-main'
-        //         });
-
-        //     },
-        //     failure: function (response, opts) {
-        //         var pathname = window.location.pathname,
-        //             hostname = window.location.host,
-        //             location;
-
-        //         location = Ext.String.format('http://{0}/dri/api/api-auth/login/?next={1}', hostname, pathname);
-
-        //         window.location.assign(location);
-
-        //     }
-        // });
+        // Exemplo de como recuperar varias variaveis do settings do Django
+        Settings.getSettings(
+            [
+                'TARGET_VIEWER_REGISTER_DB',
+                'TARGET_VIEWER_REGISTER_DB2'
+            ], me.setSettings, this);
 
     },
 
@@ -90,5 +74,15 @@ Ext.define('Target.Application', {
 
     onAppUpdate: function () {
         window.location.reload();
+    },
+
+    setSetting: function (data, response) {
+        console.log('setSetting(%o, %o)', data, response)
+        // console.log(this);
+    },
+
+    setSettings: function (data, response) {
+        console.log('setSettings(%o, %o)', data, response)
+        // console.log(this);
     }
 });
