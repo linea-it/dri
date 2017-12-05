@@ -9,6 +9,23 @@ Ext.define('Sky.view.home.HomeController', {
 
     alias: 'controller.home',
 
+    listen: {
+        store: {
+            '#releases': {
+                load: 'onLoadReleases'
+            },
+        }
+    },
+
+    onLoadReleases: function (store) {
+        // console.log('onLoadReleases(%o)', store)
+        var me = this;
+        // Se so houver um release redireciona direto para o sky
+        if (store.count() == 1) {
+            me.onChooseRelease(store.first().get('id'));
+        }
+    },
+
     onRowDblClick: function (grid, record) {
         var me = this;
 
@@ -30,7 +47,7 @@ Ext.define('Sky.view.home.HomeController', {
         var me = this,
             txtSearch = me.getReferences().txtSearch,
             store = me.getView().getStore();
-        
+
         if (txtSearch.getValue()){
             txtSearch.setValue('');
         }else{

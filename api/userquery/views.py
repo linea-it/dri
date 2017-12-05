@@ -174,7 +174,7 @@ class CreateTable(viewsets.ModelViewSet):
         try:
             data = request.data
             display_name = data.get("display_name", None)
-            associate_target_viewer = data.get("associate_target_viewer", False)
+            associate_target_viewer = bool(data.get("associate_target_viewer", False))
             _id = data.get("id", None)
 
             table_name = self._set_internal_table_name(display_name, self.request.user.pk)

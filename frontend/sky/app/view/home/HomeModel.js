@@ -10,7 +10,8 @@ Ext.define('Sky.view.home.HomeModel', {
 
         releases: {
             type: 'releases',
-            remoteFilter: true
+            remoteFilter: true,
+            storeId: 'releases'
         }
     }
 

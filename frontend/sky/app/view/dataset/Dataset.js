@@ -272,9 +272,9 @@ Ext.define('Sky.view.dataset.Dataset', {
             return false;
         }
 
-        if (store.count() > 1) {
+        if (store.count() > 0) {
             store.each(function (dataset) {
-                if (dataset.get('id') != currentDataset.get('id')) {
+                //if (dataset.get('id') != currentDataset.get('id')) {
                     item = {
                         xtype: 'menucheckitem',
                         text: dataset.get('release_display_name') + ' - ' + dataset.get('tag_display_name'),
@@ -285,7 +285,7 @@ Ext.define('Sky.view.dataset.Dataset', {
                     };
 
                     items.push(item);
-                }
+                //}
             });
 
             // Adicionar o botao magnetic

@@ -395,12 +395,14 @@ Ext.define('Explorer.view.coadd.CoaddController', {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('object_data'),
+            ra = parseFloat(object._meta_ra).toFixed(4),
+            dec = parseFloat(object._meta_dec).toFixed(4),
             radius = .1,
             url; // Arcmin
 
         url = Ext.String.format(
             "http://simbad.u-strasbg.fr/simbad/sim-coo?Coord={0}+{1}&CooFrame=FK5&CooEpoch=2000&Radius={2}&Radius.unit=arcmin&submit=submit+query",
-            object._meta_ra, object._meta_dec, radius)
+            ra, dec, radius)
 
         window.open(url, '_blank')
 
@@ -413,11 +415,13 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             vm = me.getViewModel(),
             object = vm.get('object_data'),
             radius = .1,
+            ra = parseFloat(object._meta_ra).toFixed(4),
+            dec = parseFloat(object._meta_dec).toFixed(4),
             url; // Arcmin
 
         url = Ext.String.format(
             "https://ned.ipac.caltech.edu/cgi-bin/objsearch?search_type=Near+Position+Search&in_csys=Equatorial&in_equinox=J2000.0&lon={0}d&lat={1}d&radius={2}",
-            object._meta_ra, object._meta_dec, radius)
+            ra, dec, radius)
 
         window.open(url, '_blank')
     },

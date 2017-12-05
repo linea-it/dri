@@ -40,7 +40,8 @@ class CreateTableAs:
         self._notify_by_email_start()
         self._update_job_status_before_table_creation()
         self._create_table_by_job_id()
-        self._associate_target_viewer()
+        if self.is_table_successfully_created:
+            self._associate_target_viewer()
         self._update_job_status_after_table_creation_attempt()
         self._send_notifications_by_email_after_table_creation_attempt()
 
@@ -66,8 +67,9 @@ class CreateTableAs:
     def _create_table_by_job_id(self):
         self.logger.info("_create_table_by_job_id - job_id: %s" % self.job.pk)
 
-        db = DBBase('catalog')
+        db = None
         try:
+            db = DBBase('catalog')
             db.create_table_raw_sql(self.table_name, self.job.sql_sentence, schema=self.schema, timeout=self.timeout)
             self.is_table_successfully_created = True
 
@@ -79,8 +81,8 @@ class CreateTableAs:
         except Exception as e:
             self.error_message = str(e)
             self.logger.info("CreateTableAs Error: %s" % self.error_message)
-
-            db.drop_table(self.table_name, schema=self.schema)
+            if db.table_exists(self.table_name, schema=self.schema):
+                db.drop_table(self.table_name, schema=self.schema)
 
     def _associate_target_viewer(self):
         if self.associate_target_viewer:
