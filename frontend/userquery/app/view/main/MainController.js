@@ -94,6 +94,26 @@ Ext.define('UserQuery.view.main.MainController', {
     /********************  EVENTS   ********************/
     //////////////////////////////////////////////////////
 
+    accInputTable_onCollapse: function(){
+        var refs = this.getReferences();
+        refs.tvwInputTables.collapseAll();
+    },
+
+    accExternalCatalog_onCollapse: function(){
+        var refs = this.getReferences();
+        refs.tvwExternalCatalog.collapseAll();
+    },
+
+    accMyTables_onCollapse: function(){
+        var refs = this.getReferences();
+        refs.tvwMyTables.collapseAll();
+    },
+
+    accOtherTables_onCollapse: function(){
+        var refs = this.getReferences();
+        refs.tvwOtherTables.collapseAll();
+    },
+
     accExternalCatalog_onExpand: function(){
         // this.loadExternalTables();
     },

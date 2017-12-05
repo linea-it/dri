@@ -69,7 +69,7 @@ Ext.define('UserQuery.view.main.Main', {
                 '-',
                 {
                     xtype: 'button',
-                    tooltip: 'Delete',
+                    tooltip: 'Delete Query',
                     disabled: true,
                     bind: {
                         disabled: '{!activeQuery.exist}'
@@ -80,7 +80,7 @@ Ext.define('UserQuery.view.main.Main', {
                 '-',
                 {
                     xtype: 'splitbutton',
-                    tooltip: 'Save',
+                    tooltip: 'Save Query',
                     disabled: true,
                     reference: 'btnSave',
                     iconCls: 'x-fa fa-floppy-o',
@@ -92,7 +92,7 @@ Ext.define('UserQuery.view.main.Main', {
                 },
                 {
                     xtype: 'button',
-                    tooltip: 'Start Job',
+                    tooltip: 'Execute Query',
                     disabled: true,
                     bind: {
                         disabled: '{!activeQuery.exist}'
@@ -160,6 +160,9 @@ Ext.define('UserQuery.view.main.Main', {
                         {
                             title: 'Input Tables',
                             layout: 'fit',
+                            listeners:{
+                                collapse: 'accInputTable_onCollapse'
+                            },
                             items: [{
                                 xtype: 'treepanel',
                                 reference: 'tvwInputTables',
@@ -177,7 +180,7 @@ Ext.define('UserQuery.view.main.Main', {
                                     }
                                 },
                                 contextMenuItems: [
-                                    {text: 'Preview', itemId:'preview', handler:'tvwInputTables_onContextMenuClick'}
+                                    {text: 'Content', itemId:'preview', handler:'tvwInputTables_onContextMenuClick'}
                                 ]
                             }]
                         },
@@ -185,7 +188,8 @@ Ext.define('UserQuery.view.main.Main', {
                         // tables of external catalog
                         {title: 'External Tables', layout:'fit', reference:'accExternalCatalog',
                             listeners:{
-                                expand: 'accExternalCatalog_onExpand'
+                                expand: 'accExternalCatalog_onExpand',
+                                collapse: 'accExternalCatalog_onCollapse'
                             },
                             items:[
                                 {
@@ -201,7 +205,7 @@ Ext.define('UserQuery.view.main.Main', {
                                         }
                                     },
                                     contextMenuItems: [
-                                        {text: 'Preview', itemId:'preview', handler:'tvwExternalCatalog_onContextMenuClick'}
+                                        {text: 'Content', itemId:'preview', handler:'tvwExternalCatalog_onContextMenuClick'}
                                     ],
                                     listeners:{
                                         itemcontextmenu: 'treeView_onContextMenu',
@@ -217,7 +221,8 @@ Ext.define('UserQuery.view.main.Main', {
                             layout: 'fit',
                             reference: 'accMyTables',
                             listeners:{
-                                expand: 'accMyTables_onExpand'
+                                expand: 'accMyTables_onExpand',
+                                collapse: 'accMyTables_onCollapse'
                             },
                             items: [{
                                 xtype: 'treepanel',
@@ -233,10 +238,10 @@ Ext.define('UserQuery.view.main.Main', {
                                 },
                                 contextMenuItems: [
                                     {text: 'Rename',  itemId:'rename',  handler:'tvwMyTables_onContextMenuClick'},
-                                    {text: 'Preview', itemId:'preview', handler:'tvwMyTables_onContextMenuClick'},
+                                    {text: 'Content', itemId:'preview', handler:'tvwMyTables_onContextMenuClick'},
                                     {text: 'Delete',  itemId:'delete',  handler:'tvwMyTables_onContextMenuClick'},
                                     '-',
-                                    {text: 'Target',  itemId:'target',  handler:'tvwMyTables_onContextMenuClick',
+                                    {text: 'View',  itemId:'target',  handler:'tvwMyTables_onContextMenuClick',
                                         config: function(item, record){ 
                                             item.disabled = record.get('data_product_id') ? false : true;
                                         }
@@ -250,9 +255,10 @@ Ext.define('UserQuery.view.main.Main', {
                         },
 
                         // outers tables
-                        {title: 'Other Tables', layout:'fit', reference:'accOtherTables',
+                        {title: 'Shared Tables', layout:'fit', reference:'accOtherTables',
                             listeners:{
-                                expand: 'accOtherTables_onExpand'
+                                expand: 'accOtherTables_onExpand',
+                                collapse: 'accOtherTables_onCollapse'
                             },
                             items:[
                                 {
@@ -272,7 +278,7 @@ Ext.define('UserQuery.view.main.Main', {
                                         }
                                     },
                                     contextMenuItems: [
-                                        {text: 'Preview', itemId:'preview', handler:'tvwOtherTables_onContextMenuClick'}
+                                        {text: 'Content', itemId:'preview', handler:'tvwOtherTables_onContextMenuClick'}
                                     ]
 
                                 }
