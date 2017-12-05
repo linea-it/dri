@@ -132,20 +132,33 @@ Ext.define('UserQuery.view.main.Main', {
                     header: {
                         xtype: 'header',
                         titlePosition: 0,
+                        title: 'Release: ',
                         padding: '6',
-                        items: [{
-                            xtype: 'combobox',  // or use Ext.create('class') instead of lazy instantiation
-                            reference: 'cmbReleases',
-                            width: '100%',
-                            displayField: 'rls_display_name',
-                            editable: false,
-                            queryMode: 'local',
-                            valueField: 'id',
-                            emptyText: 'Select Release',
-                            listeners:{
-                                select: 'cmbReleases_onSelect'
-                            }
-                        }]
+                        items: [
+                            {
+                                xtype:'container',
+                                layout:'hbox',
+                                width: '100%',
+                                items:[
+                                    {
+                                        xtype:'label',
+                                        html:'<div style="padding-top:2px;">Release: </div>'
+                                    },
+                                    {
+                                        xtype: 'combobox',  // or use Ext.create('class') instead of lazy instantiation
+                                        reference: 'cmbReleases',
+                                        flex:1,
+                                        displayField: 'rls_display_name',
+                                        editable: false,
+                                        queryMode: 'local',
+                                        valueField: 'id',
+                                        emptyText: 'Select Release',
+                                        listeners:{
+                                            select: 'cmbReleases_onSelect'
+                                        }
+                                    }
+                                ]
+                            }]
                     },
                     bind: {
                         //title: '{activeRelease.display}'
@@ -242,7 +255,7 @@ Ext.define('UserQuery.view.main.Main', {
                                     {text: 'Delete',  itemId:'delete',  handler:'tvwMyTables_onContextMenuClick'},
                                     '-',
                                     {text: 'View',  itemId:'target',  handler:'tvwMyTables_onContextMenuClick',
-                                        config: function(item, record){ 
+                                        config_item: function(item, record){ 
                                             item.disabled = record.get('data_product_id') ? false : true;
                                         }
                                     }

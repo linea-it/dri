@@ -169,14 +169,27 @@ Ext.define('UserQuery.view.service.ApiBase', {
                     json = {error:true, message:'Invalidate JSON Response'};
                 }
 
-                if (!json.error){
-                    me.setCache(id, json, definition.cache);
+                if (json.error && definition.errorMessage!==false){
+                    Ext.MessageBox.show({
+                        title: 'Server Side Failure',
+                        msg: json.message,
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING,
+                        fn: function(){
+                            me.responseAnalyse(json, response, definition, requestId);
+                        }
+                    });
+                }else{
+                    if (!json.error){
+                        me.setCache(id, json, definition.cache);
+                    }
+    
+                    me.responseAnalyse(json.error ? json : null, json.error ? response : json, definition, requestId);
                 }
 
-                me.responseAnalyse(json.error ? json : null, json.error ? response : json, definition, requestId);
             },
             failure: function (response, opts) {
-                var JSONError
+                var JSONError;
                 var str = '';
 
                 try {
@@ -184,7 +197,7 @@ Ext.define('UserQuery.view.service.ApiBase', {
                     if (JSONError.message && Array.isArray(JSONError.message)){
                         JSONError.message.forEach(function(msg){
                             str += (msg + '\n');
-                        })
+                        });
                     }
 
                     JSONError.status = response.status;
