@@ -108,7 +108,7 @@ Ext.define('common.header.Toolbar', {
                         handler: 'contact'
                     },
                     {
-                        text: 'Help',
+                        text: 'Tutorials',
                         iconCls: 'x-fa fa-question-circle',
                         reference: 'headermenututorials',
                         disabled: true,
