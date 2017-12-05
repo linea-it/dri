@@ -17,6 +17,9 @@ from .models import Site, Authorization, ExternalProcess, Export
 class Import():
     db = None
 
+    def __init__(self):
+        self._gc_cm = dict({})
+
     def start_import(self, request):
 
         self.user = request.user

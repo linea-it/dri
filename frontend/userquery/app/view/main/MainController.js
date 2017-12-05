@@ -45,6 +45,7 @@ Ext.define('UserQuery.view.main.MainController', {
                 //me.createEmptyQuery();
                 refs.ctnArea.setStyle({opacity:1});
                 removeSplash();
+                me.loadMyQueries();
             }
         );
 
@@ -93,6 +94,26 @@ Ext.define('UserQuery.view.main.MainController', {
     //////////////////////////////////////////////////////
     /********************  EVENTS   ********************/
     //////////////////////////////////////////////////////
+
+    accInputTable_onCollapse: function(){
+        var refs = this.getReferences();
+        refs.tvwInputTables.collapseAll();
+    },
+
+    accExternalCatalog_onCollapse: function(){
+        var refs = this.getReferences();
+        refs.tvwExternalCatalog.collapseAll();
+    },
+
+    accMyTables_onCollapse: function(){
+        var refs = this.getReferences();
+        refs.tvwMyTables.collapseAll();
+    },
+
+    accOtherTables_onCollapse: function(){
+        var refs = this.getReferences();
+        refs.tvwOtherTables.collapseAll();
+    },
 
     accExternalCatalog_onExpand: function(){
         // this.loadExternalTables();
@@ -309,8 +330,8 @@ Ext.define('UserQuery.view.main.MainController', {
         }
 
         items.forEach(function(item){
-            if ( typeof(item.config)=='function' ){
-                item.config(item, record);
+            if ( typeof(item.config_item)=='function' ){
+                item.config_item(item, record);
             }
             item.record = record;
         });
@@ -350,9 +371,7 @@ Ext.define('UserQuery.view.main.MainController', {
                     fn: function(button){
                         if (button=='yes'){
                             me.dropTable(item.record.get('data_id'), function(){
-                                me.loadMyTables();
-                                //remove o item da treeview
-                                //config.record.parentNode.removeChild(config.record)
+                                me.loadMyTables(true);
                             });
                         }
                     }
@@ -572,7 +591,7 @@ Ext.define('UserQuery.view.main.MainController', {
         }
     },
 
-    dropTable: function(table_id){
+    dropTable: function(table_id, next){
         var me = this;
         
         Api.dropTable({
@@ -590,7 +609,7 @@ Ext.define('UserQuery.view.main.MainController', {
                     Ext.toast('Table dropped', null, 't');
                     
                     //remove a tabela de sua lista
-                    me.loadMyQueries(true);
+                    me.loadMyTables(true);
                 }
             }
         });
@@ -640,7 +659,7 @@ Ext.define('UserQuery.view.main.MainController', {
         return Api.getTables({
             cache: true,
             params:{
-                release: release_id,
+                // release: release_id,
                 group: 'external_catalogs',
             },
             request: function(){
@@ -672,13 +691,14 @@ Ext.define('UserQuery.view.main.MainController', {
 
     },
 
-    loadMyTables: function(){
+    loadMyTables: function(force){
         var refs = this.getReferences();
         var el = refs.tvwMyTables.getEl();
         var query = this.getActiveQuery();
         var t;
         
         Api.getMyTables({
+            cache: false,
             request: function(){
                 el.mask("Loading tables...", 'x-mask-loading');
             },
@@ -821,7 +841,7 @@ Ext.define('UserQuery.view.main.MainController', {
                     {field:'total_run_time', display: 'Run Time'},
                     {field:'timeout', display:'Timeout'},
                     {field:'display_name', display:'Table Name'},
-                    {field:'sql_sentence', display:'Query'},
+                    {field:'sql_sentence', display:'Query', flex:1},
                 ];
                 var status = {
                     'st': 'row-grey', // 'fa-hourglass-3', // 'Starting',
@@ -1089,7 +1109,8 @@ Ext.define('UserQuery.view.main.MainController', {
                     
                 grid.headerCt.insert(i++, Ext.create('Ext.grid.column.Column', {
                     text: cols[c].display, 
-                    dataIndex: cols[c].field
+                    dataIndex: cols[c].field,
+                    flex: cols[c].flex || 0
                 }));
             }
         }else{
