@@ -73,6 +73,7 @@ Ext.define('visiomatic.catalog.Submit', {
                                     bind: '{pointSize}',
                                     minValue: 1,
                                     maxValue: 10,
+                                    step: 0.2,
                                     margin: '0 0 0 5',
                                 },
                             ]
