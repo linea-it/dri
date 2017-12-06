@@ -23,6 +23,16 @@ Ext.define('UserQuery.view.main.MainController', {
         
         vm.set('initialized', false);
 
+
+        // Api.getReleases(function(error, releases){
+        //     if (!error){
+        //         refs.cmbReleases.setStore(Ext.create('Ext.data.Store', {
+        //             fields: ['id', 'rls_display_name'],
+        //             data : releases
+        //         }));
+        //     }
+        // })
+
         Api.parallel([
             // verifica se o usuário está autenticado
             Api.getUser(function(error, user){
@@ -30,12 +40,17 @@ Ext.define('UserQuery.view.main.MainController', {
             }),
 
             // busca a lista de releases
-            Api.getReleases(function(error, releases){
-                if (!error){
-                    refs.cmbReleases.setStore(Ext.create('Ext.data.Store', {
-                        fields: ['id', 'rls_display_name'],
-                        data : releases
-                    }));
+            Api.getReleases({
+                params:{
+                    group: 'objects_catalog'
+                },
+                response: function(error, releases){
+                    if (!error){
+                        refs.cmbReleases.setStore(Ext.create('Ext.data.Store', {
+                            fields: ['release_id', 'release_display_name'],
+                            data : releases
+                        }));
+                    }
                 }
             })],
 
@@ -273,7 +288,7 @@ Ext.define('UserQuery.view.main.MainController', {
     },
 
     cmbReleases_onSelect: function(sender, item){
-        this.createEmptyQuery(item.data.id);
+        this.createEmptyQuery(item.data.release_id);
     },
 
     // ao ser modificado qualquer dado do formulário query

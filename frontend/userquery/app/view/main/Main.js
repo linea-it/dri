@@ -148,10 +148,10 @@ Ext.define('UserQuery.view.main.Main', {
                                         xtype: 'combobox',  // or use Ext.create('class') instead of lazy instantiation
                                         reference: 'cmbReleases',
                                         flex:1,
-                                        displayField: 'rls_display_name',
+                                        displayField: 'release_display_name',
                                         editable: false,
                                         queryMode: 'local',
-                                        valueField: 'id',
+                                        valueField: 'release_id',
                                         emptyText: 'Select Release',
                                         listeners:{
                                             select: 'cmbReleases_onSelect'
