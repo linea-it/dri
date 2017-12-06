@@ -155,6 +155,11 @@ class QueryPreview(viewsets.ViewSet):
             sql = sql_sentence + " " + db.database.get_raw_sql_limit(offset, limit)
             result = db.fetchall_dict(sql)
 
+            # make all values String to avoid errors during Json encoding.
+            for raw in result:
+                for k, v in raw.items():
+                    raw[k] = str(v)
+
             response = {"count": len(result),
                         "message": None,
                         "results": result}
