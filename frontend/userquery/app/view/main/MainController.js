@@ -192,6 +192,7 @@ Ext.define('UserQuery.view.main.MainController', {
                 },
                 response: function(error, result){
                     me.setLoading(false);
+                    me.loadMyJobs(false);
 
                     if (!error){
                         Ext.MessageBox.show({
@@ -493,6 +494,12 @@ Ext.define('UserQuery.view.main.MainController', {
     },
 
     tvwMyQueries_onSelect: function(sender, node){
+        if (!node.data.isgroup){
+            this.setActiveQuery( clone(node.data) );
+        }
+    },
+
+    tvwSampleQueries_onSelect: function(sender, node){
         if (!node.data.isgroup){
             this.setActiveQuery( clone(node.data) );
         }
@@ -821,21 +828,22 @@ Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
-    loadMyJobs: function(){
+    loadMyJobs: function(showMask){
         var me = this;
         var refs = me.getReferences();
         var el = refs.grdJobs.getEl();
 
+        showMask = showMask===undefined ? true : showMask;
         clearTimeout(me.tm);
 
         Api.getJobs({
             cache: false,
             request: function(){
-                el.mask("Loading Jobs...", 'x-mask-loading');
+                if (showMask && el) el.mask("Loading Jobs...", 'x-mask-loading');
             },
             response: function(error, jobs){
                 var colsMap = [
-                    // {field:'job_status', display:'Status'},
+                    {field:'status_name', display:'Status'},
                     {field:'start_date_time', display:'Start'},
                     {field:'end_date_time', display: 'End'},
                     {field:'total_run_time', display: 'Run Time'},
@@ -844,10 +852,10 @@ Ext.define('UserQuery.view.main.MainController', {
                     {field:'sql_sentence', display:'Query', flex:1},
                 ];
                 var status = {
-                    'st': 'row-grey', // 'fa-hourglass-3', // 'Starting',
-                    'rn': 'row-yellow', // 'fa-hourglass-3', // 'Running',
-                    'ok': 'row-green', // 'fa-check',       // 'Done'
-                    'er': 'row-red' // 'fa-frown-o'      // 'Error'
+                    'st': ['row-grey', 'Starting'],
+                    'rn': ['row-yellow', 'Running'],
+                    'ok': ['row-green', 'Done'],
+                    'er': ['row-red', 'Error']
                 };
 
                 jobs.forEach(function(job){
@@ -857,15 +865,17 @@ Ext.define('UserQuery.view.main.MainController', {
                     var seconds = parseInt((duration/1000)%60);
                     var minutes = parseInt((duration/(1000*60))%60);
                     var hours = parseInt((duration/(1000*60*60))%24);
+                    var arr = status[job.job_status] || [];
 
-                    job.row_cls = status[job.job_status];
+                    job.row_cls = arr[0];
+                    job.status_name = arr[1];
                     job.total_run_time = job.end_date_time ? (hours>9 ? hours : '0'+hours) + ':' + (minutes>9 ? minutes : '0'+minutes) + ':' + (seconds>9 ? seconds : '0'+seconds) : '';
                     job.end_date_time  = job.end_date_time || '';
                     job.start_date_time = job.start_date_time.substr(0,10) + ' ' + job.start_date_time.substr(11,11);
                     job.end_date_time = job.end_date_time.substr(0,10) + ' ' + job.end_date_time.substr(11,11);
                 });
 
-                el.unmask();
+                if (el) el.unmask();
 
                 // TODO: notificar usuário sobre alteração no status do job
                 // if (me.pendingJobs){
@@ -876,13 +886,13 @@ Ext.define('UserQuery.view.main.MainController', {
                 //         }
                 //     });
                 // }                
-                me.pendingJobs = jobs.filter(function(j){return j.job_status=='rn';});
+                me.pendingJobs = jobs.filter(function(j){return j.job_status=='rn' || j.job_status=='st';});
                 me.showDataPreview('grdJobs', jobs, colsMap);
-
+                
                 // se tem job pendente, atualizaa lista a cada 30 segundos
                 if (me.pendingJobs.length>0){
                     me.tm = setTimeout(function(){
-                        me.loadMyJobs();
+                        me.loadMyJobs(false);
                     }, 30000);
                 }
             }
