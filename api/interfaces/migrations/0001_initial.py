@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('app_long_description', models.TextField(blank=True, max_length=2048, null=True, verbose_name='Long Description')),
                 ('app_icon_cls', models.CharField(blank=True, help_text='CSS class used for small icons', max_length=128, null=True, verbose_name='Icon CSS Class')),
                 ('app_icon_src', models.CharField(blank=True, help_text='path to the applications icon.', max_length=1024, null=True, verbose_name='Icon Source')),
-                ('app_video_src', models.CharField(blank=True, help_text='Url to video. eg. https://www.youtube.com/embed/XGSy3_Czz8k', max_length=2048, null=True, verbose_name='Video Source')),
+                ('app_video_src', models.TextField(blank=True, help_text='Url to video. eg. https://www.youtube.com/embed/XGSy3_Czz8k', max_length=2048, null=True, verbose_name='Video Source')),
                 ('app_order', models.IntegerField(blank=True, help_text='Order in menu.', null=True, verbose_name='Order')),
                 ('app_disabled', models.BooleanField(default=False, help_text='mark True to disable this application in the menu.', verbose_name='Disabled')),
             ],
@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('ttr_title', models.CharField(default='', max_length=1024, verbose_name='Title')),
-                ('ttr_src', models.CharField(blank=True, help_text='Url to video. eg. https://www.youtube.com/embed/XGSy3_Czz8k', max_length=2048, null=True, verbose_name='Video Source')),
+                ('ttr_src', models.TextField(blank=True, help_text='Url to video. eg. https://www.youtube.com/embed/XGSy3_Czz8k', max_length=2048, null=True, verbose_name='Video Source')),
                 ('ttr_description', models.TextField(blank=True, max_length=2048, null=True, verbose_name='Description')),
                 ('application', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='interfaces.Application', verbose_name='Application')),
             ],
