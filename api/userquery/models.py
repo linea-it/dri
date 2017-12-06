@@ -21,7 +21,7 @@ class Query(models.Model):
     last_edition_date = models.DateTimeField(
         auto_now=True, null=True, blank=True, verbose_name='Last Edition Date',
         help_text='Last Edition Date')
-    sql_sentence = models.CharField(
+    sql_sentence = models.TextField(
         max_length=2048, null=False, verbose_name='Sql Sentence')
     is_sample = models.BooleanField(
         default=False, verbose_name='Is a sample query')
@@ -53,7 +53,7 @@ class Job(models.Model):
     end_date_time = models.DateTimeField(
         null=True, blank=True, verbose_name='Last Edition Date',
         help_text='Last Edition Date')
-    sql_sentence = models.CharField(
+    sql_sentence = models.TextField(
         max_length=2048, null=False, verbose_name='Sql_sentence')
     timeout = models.IntegerField(null=True, default=5,
                                   verbose_name='Query execution timeout in seconds')
