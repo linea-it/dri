@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from rest_framework import permissions, filters
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
 
-from django.db.models import Q, Case, Value, When
+from django.db.models import Q, Case, Value, When, F
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -115,7 +115,7 @@ class JobViewSet(viewsets.ModelViewSet):
                 When(job_status='st', then=Value('0')),
                 When(job_status='rn', then=Value('1')),
                 default=Value('2')),
-            'start_date_time'
+            F('start_date_time').desc()
         )
 
 
