@@ -1088,29 +1088,6 @@ Ext.define('UserQuery.view.main.MainController', {
         }
         grid.getView().refresh();
 
-        // formata os campos data/hora
-        // if (results.length>0){
-        //     for (i in results[0]){
-        //         d = new Date(results[0][i])
-        //         if ( !isNaN(d.getFullYear()) && d.getFullYear()>2000 && typeof(results[0][i])=='string'){
-        //             datatype[i] = 'date';
-        //         }
-        //     }
-
-        //     results.forEach(function(row){
-        //         for (i in row){
-        //             if (datatype[i] == 'date'){
-        //                 d = new Date(row[i])
-        //                 row[i] = row[i].substr(0,10) + ' ' +
-        //                          d.getHours() + ':' +
-        //                          d.getMinutes() + ':' +
-        //                          d.getSeconds() + ':' +
-        //                          d.getMilliseconds()   // HH:MM:SS:DD
-        //             }
-        //         }   
-        //     })
-        // }
-
         // define as colunas da grid
         if (cols){
             for (c in cols){
@@ -1387,3 +1364,21 @@ function clone(obj){
 //         }
 //     }
 // }
+
+
+function getColsOrder(sql, cols){
+    var a1 = [];
+    var a2 = (/\bselect\b\s+([\S\s]+?)from/i.exec(sql) || [""])[1].split(/\s*,\s*/g);
+
+    a2.forEach(function(c){
+        var s = c.trim().split(' ');
+        a1.push(s[s.length-1]);
+    });
+
+
+    return a1;
+}
+// getColsOrder("select top 10 a,b xx, c as yy from abc where a in ('a')", ['a','c', 'b']);
+
+
+
