@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from rest_framework import permissions, filters
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
 
-from django.db.models import Q, Case, Value, When
+from django.db.models import Q, Case, Value, When, F
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -32,37 +32,37 @@ class QueryViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic)
 
     def create(self, request, *args, **kwargs):
-        if not self._is_a_valid_request_to_save(request):
+        if not self._is_query_name_already_defined_by_the_user(request):
             return JsonResponse({'message': 'The field name already exists for this user'}, status=400)
         return super(QueryViewSet, self).create(request, args, kwargs)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-    def update(self, request, *args, **kwargs):
-        if not self._is_a_valid_request_to_save(request):
-            return JsonResponse({'message': 'The field name already exists for this user'}, status=400)
-        return super(QueryViewSet, self).update(request, args, kwargs)
-
-    def perform_update(self, serializer):
-        serializer.save(owner=self.request.user)
-
     def get_queryset(self):
         return self.queryset.filter((Q(owner=self.request.user) | Q(is_public=True)) &
                                     Q(is_sample=False)).order_by('name')
 
-    def _is_a_valid_request_to_save(self, request):
+    def _is_query_name_already_defined_by_the_user(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        if self._is_table_name_already_defined_by_the_user(serializer.validated_data['name']):
-            return False
-        return True
+        return self.__is_query_name_already_defined_by_the_user(serializer.validated_data['name'])
 
-    def _is_table_name_already_defined_by_the_user(self, name):
+    def __is_query_name_already_defined_by_the_user(self, name):
         q = Query.objects.filter(Q(owner=self.request.user) &
                                  Q(name=name))
-        print(str(q.query))
         return True if len(q) > 0 else False
+
+    def update(self, request, *args, **kwargs):
+        if self._is_query_name_already_defined_by_the_user(request):
+            # if is the own field, must accept
+            q = Query.objects.get(pk=kwargs['pk'])
+            if not q.name == request.data['name']:
+                return JsonResponse({'message': 'The field name already exists for this user'}, status=400)
+        return super(QueryViewSet, self).update(request, args, kwargs)
+
+    def perform_update(self, serializer):
+        serializer.save(owner=self.request.user)
 
 
 class SampleViewSet(viewsets.ModelViewSet):
@@ -80,7 +80,7 @@ class TableViewSet(viewsets.ModelViewSet):
     queryset = Table.objects.filter()
     serializer_class = TableSerializer
 
-    http_method_names = ['get', 'delete']
+    http_method_names = ['get', 'delete', 'put']
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
 
@@ -115,7 +115,7 @@ class JobViewSet(viewsets.ModelViewSet):
                 When(job_status='st', then=Value('0')),
                 When(job_status='rn', then=Value('1')),
                 default=Value('2')),
-            'start_date_time'
+            F('start_date_time').desc()
         )
 
 
@@ -154,6 +154,11 @@ class QueryPreview(viewsets.ViewSet):
             db = DBBase('catalog')
             sql = sql_sentence + " " + db.database.get_raw_sql_limit(offset, limit)
             result = db.fetchall_dict(sql)
+
+            # make all values String to avoid errors during Json encoding.
+            for raw in result:
+                for k, v in raw.items():
+                    raw[k] = str(v)
 
             response = {"count": len(result),
                         "message": None,

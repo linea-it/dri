@@ -148,10 +148,10 @@ Ext.define('UserQuery.view.main.Main', {
                                         xtype: 'combobox',  // or use Ext.create('class') instead of lazy instantiation
                                         reference: 'cmbReleases',
                                         flex:1,
-                                        displayField: 'rls_display_name',
+                                        displayField: 'release_display_name',
                                         editable: false,
                                         queryMode: 'local',
-                                        valueField: 'id',
+                                        valueField: 'release_id',
                                         emptyText: 'Select Release',
                                         listeners:{
                                             select: 'cmbReleases_onSelect'
@@ -356,9 +356,9 @@ Ext.define('UserQuery.view.main.Main', {
                                         xtype: 'treepanel',
                                         reference: 'tvwSampleQueries',
                                         rootVisible: false,
-                                        // listeners: {
-                                        //     select: 'tvwSampleQueries_onSelect'
-                                        // }
+                                        listeners: {
+                                            select: 'tvwSampleQueries_onSelect'
+                                        }
                                     }]
                                 }
                             ]
@@ -449,17 +449,7 @@ Ext.define('UserQuery.view.main.Main', {
                             },
                             items:[
                                 {
-                                    title: 'Table Preview',
-                                    items:[
-                                        {
-                                            xtype: 'grid',
-                                            reference: 'grdTable',
-                                            store: Ext.create('Ext.data.Store')
-                                        }
-                                    ]
-                                },
-                                {
-                                    title: 'SQL Preview',
+                                    title: 'Query Preview',
                                     items:[
                                         {
                                             xtype: 'grid',
@@ -468,6 +458,16 @@ Ext.define('UserQuery.view.main.Main', {
                                         }
                                     ]
                                 },
+                                {
+                                    title: 'Table Content',
+                                    items:[
+                                        {
+                                            xtype: 'grid',
+                                            reference: 'grdTable',
+                                            store: Ext.create('Ext.data.Store')
+                                        }
+                                    ]
+                                },                                
                                 {
                                     title: 'My JOBs',
                                     listeners:{

@@ -7,7 +7,8 @@ Ext.define('UserQuery.view.service.Api', {
         doLogin:     '/dri/api/api-auth/login/next=',
         queryCRUD:   '/dri/api/userquery_query/',
         getUser:     {method:'GET',  url:'/dri/api/logged/get_logged/?format=json'},
-        getReleases: {method:'GET',  url:'/dri/api/releases/'},
+        getRelease:  {method:'GET',  url:'/dri/api/releases/'},
+        getReleases: {method:'GET',  url:'/dri/api/catalog/'},
         getTables:   {method:'GET',  url:'/dri/api/catalog/'},
         getMyTables: {method:'GET',  url:'/dri/api/userquery_table/'},
         getFields:   {method:'POST', url:'/dri/api/userquery_property/'}, // productcontent/'}, // ?pcn_product_id=25
@@ -39,7 +40,7 @@ Ext.define('UserQuery.view.service.Api', {
             responseCallback (error, releaseData);
         }
 
-        return this.send(this.URL.getReleases, definition);
+        return this.send(this.URL.getRelease, definition);
     },
 
     getTables: function(definition){
