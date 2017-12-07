@@ -32,6 +32,10 @@ DATABASES = {
     }
 }
 
+# Esta configuracao e usada somente pela classe de authenticacao usando login do NCSA
+# deve ser preenchida com o nome da configuracao de database do NCSA
+NCSA_AUTHENTICATION_DB = "dessci"
+
 # Target Viewer Rating, Reject Schema
 SCHEMA_RATING_REJECT = None
 
