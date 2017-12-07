@@ -80,4 +80,4 @@ class Table(models.Model):
     product = models.ForeignKey(
         'product.Product', verbose_name='Product', related_name='product', null=True,
         blank=True, default=None)
-    release = models.ForeignKey('coadd.Release')
+    release = models.ForeignKey('coadd.Release', null=True, blank=True)

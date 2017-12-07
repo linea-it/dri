@@ -202,10 +202,10 @@ Ext.define('UserQuery.view.main.MainController', {
         }
 
         dialog.open(formData, function(data){
-            data.id = query.id;
-
             // data.associate_target_viewer = data.associate_target_viewer==='on';
+            data.id = query.id || null;
             data.release_id = release.id;
+            data.sql_sentence = formData.sql_sentence;
             
             Api.startJob({
                 cache: false,
@@ -316,7 +316,7 @@ Ext.define('UserQuery.view.main.MainController', {
         refs.btnSave.setDisabled( !release || !Boolean(data.name && data.sql_sentence) );
         refs.btnCheck.setDisabled( !sqlExist );
         refs.btnPreview.setDisabled( !sqlExist );
-        //refs.btnStartJob.setDisabled( true ); //!sqlExist || query.changed || !query.exist);
+        refs.btnStartJob.setDisabled( !sqlExist  || !release );
     },
 
     mnuSaveAs_onClick: function(button){
