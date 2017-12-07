@@ -141,7 +141,7 @@ Ext.define('UserQuery.view.service.ApiBase', {
         r = me.getCache(id, definition.cache);
         if (r){
             me.responseAnalyse(null, r, definition, requestId);
-            return requestId
+            return requestId;
         }
 
         if (typeof(definition.request)=='function'){

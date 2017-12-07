@@ -138,7 +138,7 @@ Ext.define('UserQuery.view.main.MainController', {
     accMyTables_onExpand: function(){
         //this.loadMyTables();
     },
-    
+
     accOtherTables_onExpand: function(){
         // this.loadOtherTables();
     },
@@ -192,11 +192,20 @@ Ext.define('UserQuery.view.main.MainController', {
         var dialog = new StartJobDialog({animateTarget : button.getEl()});
         var query = me.getActiveQuery();
         var formData = refs.frmQuery.getForm().getValues();
+        var release = me.getActiveRelease() || {};
+
+        if (release.id === undefined){
+            return Ext.MessageBox.show({
+                msg: 'Select release',
+                buttons: Ext.MessageBox.OK
+            });
+        }
 
         dialog.open(formData, function(data){
             data.id = query.id;
 
-            data.associate_target_viewer = data.associate_target_viewer==='on';
+            // data.associate_target_viewer = data.associate_target_viewer==='on';
+            data.release_id = release.id;
             
             Api.startJob({
                 cache: false,
@@ -288,7 +297,6 @@ Ext.define('UserQuery.view.main.MainController', {
     },
 
     cmbReleases_onSelect: function(sender, item){
-        console.log(item.data.release_id)
         this.createEmptyQuery(item.data.release_id);
     },
 
@@ -370,7 +378,26 @@ Ext.define('UserQuery.view.main.MainController', {
             case 'rename':
                 Ext.MessageBox.prompt('Rename', 'Name:', function(button, value){
                     if (value != table && value){
-                        alert('TODO: update table name (API)');
+                        Api.renameTable({
+                            cache: false,
+                            params: {
+                                id: item.record.get('data_id'),
+                                display_name: value
+                            },
+                            request: function(){
+                                me.setLoading(true, 'Operation in progress...');
+                            },
+                            response: function(error, query){
+                                me.setLoading(false);
+                
+                                if (!error){
+                                    Ext.toast('Success', null, 't');
+                                    
+                                    //remove a tabela de sua lista
+                                    me.loadMyTables(true);
+                                }
+                            }
+                        });
                     }
                 });
                 break;
@@ -1045,6 +1072,8 @@ Ext.define('UserQuery.view.main.MainController', {
                     me.tm = setTimeout(function(){
                         me.loadMyJobs(false);
                     }, 30000);
+                }else{
+                    me.loadMyTables();
                 }
             }
         });
