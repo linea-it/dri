@@ -14,7 +14,7 @@ class Query(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name='Owner', default=None)
-    release = models.ForeignKey('coadd.Release')
+    release = models.ForeignKey('coadd.Release', null=True, blank=True)
     creation_date = models.DateTimeField(
         auto_now_add=True, null=True, blank=True, verbose_name='Creation Date',
         help_text='Creation Date')
