@@ -96,7 +96,7 @@ Ext.define('UserQuery.view.service.ApiBase', {
 
     setCache: function(url, value, force){
         if (this.cache || force){
-            cacheStorage.setItem(url, JSON.stringify(value));
+            //cacheStorage.setItem(url, JSON.stringify(value));
         }
     },
 
