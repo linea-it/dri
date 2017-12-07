@@ -14,13 +14,16 @@ from common.notify import Notify
 from userquery.models import Job
 from userquery.models import Table
 from product.models import Product
+from coadd.models import Release
 
 from .target_viewer import register_table_in_the_target_viewer
 
 
 class CreateTableAs:
-    def __init__(self, job_id, user_id, table_name, associate_target_viewer, schema=None, timeout=None):
+    def __init__(self, job_id, user_id, table_name, release_id,
+                 associate_target_viewer, schema=None, timeout=None):
         self.table_name = table_name
+        self.release_id = release_id
         self.schema = schema
         self.timeout = timeout
         self.associate_target_viewer = associate_target_viewer
@@ -73,10 +76,12 @@ class CreateTableAs:
             db.create_table_raw_sql(self.table_name, self.job.sql_sentence, schema=self.schema, timeout=self.timeout)
             self.is_table_successfully_created = True
 
+            release = Release.objects.get(pk=self.release_id)
             self.table = Table(table_name=self.table_name,
                                display_name=self.job.display_name,
                                owner=self.job.owner,
-                               schema=self.schema)
+                               schema=self.schema,
+                               release=release)
             self.table.save()
         except Exception as e:
             self.error_message = str(e)
