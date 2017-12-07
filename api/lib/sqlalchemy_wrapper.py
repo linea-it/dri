@@ -47,6 +47,18 @@ class DBOracle:
 
         return sql
 
+    def get_create_auto_increment_column(self, table, column_name, schema=None):
+        table_name = table
+        if schema is not None and schema is not "":
+            table_name = "%s.%s" % (schema, table)
+
+        sql = list()
+        sql.append("alter table %(table)s add %(column_name)s number" % {"table": table_name, "column_name": column_name})
+        sql.append("create sequence seq_id" % {"table": table_name, "column_name": column_name})
+        sql.append("update %(table)s set %(column_name)s = seq_id.nextval" % {"table": table_name, "column_name": column_name})
+        sql.append("drop sequence seq_id" % {"table": table_name, "column_name": column_name})
+
+        return sql
 
 class DBSqlite:
     def __init__(self, db):
@@ -144,6 +156,12 @@ class DBBase:
     def get_table_properties(self, table, schema=None):
         sql = self.database.get_raw_sql_table_properties_(table, schema=schema)
         return self.fetchall_dict(sql)
+
+    def create_auto_increment_column(self, table, column_name, schema=None):
+        sql = self.database.get_create_auto_increment_column(table, column_name, schema=schema)
+        with self.engine.connect() as con:
+            for _sql in sql:
+                con.execute(_sql)
 
     def get_count(self, table, schema=None):
         with self.engine.connect() as con:
@@ -274,12 +292,15 @@ class DBBase:
         sql_create_table = text('CREATE TABLE %s AS %s' % (table_name, sql))
 
         con = self.engine.connect()
+        trans = con.begin()
         t = threading.Timer(timeout, con.close)
         if timeout:
             t.start()
         try:
             con.execute(sql_create_table)
+            trans.commit()
         except Exception as e:
+            trans.rollback()
             raise Exception("Timeout for query execution - %s" % str(e))
         t.cancel()
 

@@ -450,7 +450,7 @@ Ext.define('UserQuery.view.main.Main', {
                             },
                             items:[
                                 {
-                                    title: 'Query Preview',
+                                    title: 'Table Content',
                                     items:[
                                         {
                                             xtype: 'grid',
@@ -459,16 +459,16 @@ Ext.define('UserQuery.view.main.Main', {
                                         }
                                     ]
                                 },
-                                {
-                                    title: 'Table Content',
-                                    items:[
-                                        {
-                                            xtype: 'grid',
-                                            reference: 'grdTable',
-                                            store: Ext.create('Ext.data.Store')
-                                        }
-                                    ]
-                                },                                
+                                // {
+                                //     title: 'Table Content',
+                                //     items:[
+                                //         {
+                                //             xtype: 'grid',
+                                //             reference: 'grdTable',
+                                //             store: Ext.create('Ext.data.Store')
+                                //         }
+                                //     ]
+                                // },                                
                                 {
                                     title: 'My JOBs',
                                     listeners:{

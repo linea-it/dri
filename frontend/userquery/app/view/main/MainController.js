@@ -60,7 +60,9 @@ Ext.define('UserQuery.view.main.MainController', {
                 //me.createEmptyQuery();
                 refs.ctnArea.setStyle({opacity:1});
                 removeSplash();
+
                 me.loadMyQueries();
+                me.loadExternalTables();
             }
         );
 
@@ -202,7 +204,7 @@ Ext.define('UserQuery.view.main.MainController', {
         }
 
         dialog.open(formData, function(data){
-            // data.associate_target_viewer = data.associate_target_viewer==='on';
+            data.associate_target_viewer = 'on';
             data.id = query.id || null;
             data.release_id = release.id;
             data.sql_sentence = formData.sql_sentence;
@@ -403,7 +405,7 @@ Ext.define('UserQuery.view.main.MainController', {
                 break;
 
             case 'preview':  
-                this.sqlPreview( 'select * from ' + table, 'grdTable' );
+                this.sqlPreview( 'select * from ' + table, 'grdPreview' );
                 break;
 
             case 'delete':
@@ -434,7 +436,7 @@ Ext.define('UserQuery.view.main.MainController', {
 
         switch(config.itemId){
             case 'preview':  
-                this.sqlPreview( 'select * from ' + table, 'grdTable' );
+                this.sqlPreview( 'select * from ' + table, 'grdPreview' );
                 break;
         }
     },
@@ -482,7 +484,7 @@ Ext.define('UserQuery.view.main.MainController', {
 
         switch(config.itemId){
             case 'preview':  
-                this.sqlPreview( 'select * from ' + table, 'grdTable' );
+                this.sqlPreview( 'select * from ' + table, 'grdPreview' );
                 break;
         }
     },
@@ -494,7 +496,7 @@ Ext.define('UserQuery.view.main.MainController', {
 
         switch(config.itemId){
             case 'preview':  
-                this.sqlPreview( 'select * from ' + table, 'grdTable' );
+                this.sqlPreview( 'select * from ' + table, 'grdPreview' );
                 break;
         }
     },
@@ -519,7 +521,7 @@ Ext.define('UserQuery.view.main.MainController', {
     },
 
     tvwOtherTables_onExpanded: function(node){
-        if (node.isRoot() || node.childNodes.length>0){
+        if (node.isRoot() || node.childNodes.length>0 || node.data.isgroup){
             return;
         }
         
@@ -715,16 +717,10 @@ Ext.define('UserQuery.view.main.MainController', {
     loadExternalTables: function(){
         var refs = this.getReferences();
         var el = refs.tvwMyTables.getEl();
-        var release = this.getActiveRelease() || {};
         
-        if ( release.id===undefined){
-            return;
-        }
-
         return Api.getTables({
             cache: true,
             params:{
-                release: release.id,
                 group: 'external_catalogs',
             },
             request: function(){
@@ -872,15 +868,22 @@ Ext.define('UserQuery.view.main.MainController', {
 
             //api's acima finalizadas
             function(){
+                var arr = [];
+
                 el.unmask();
-                    
+                
+                if (targets && targets.length>0){
+                    arr.push({text: 'Targets', expanded: false, isgroup:true, ignore_context_menu:true, children:targets});
+                }
+
+                if (catalogs && catalogs.length>0){
+                    arr.push({text: 'Value_Added_Catalogs', expanded: false, isgroup:true, ignore_context_menu:true, children:catalogs});
+                }
+
                 refs.tvwOtherTables.setStore(Ext.create('Ext.data.TreeStore', {
                     root: {
                         expanded: false,
-                        children: [
-                            {text: 'Targets', expanded: false, isgroup:true, ignore_context_menu:true, children:targets},
-                            {text: 'Value_Added_Catalogs', expanded: false, isgroup:true, ignore_context_menu:true, children:catalogs}
-                        ]
+                        children: arr
                     }
                 }));                    
             
@@ -1140,7 +1143,7 @@ Ext.define('UserQuery.view.main.MainController', {
         var c, i, d, f;
         var datatype = {};
         var me = this;
-        var index = {'grdPreview':0, 'grdTable':1};
+        var index = {'grdPreview':0, 'grdJobs':1};
         var refs = me.getReferences();
         var grid = refs[gridName];
         var length = grid.headerCt.items.length;
@@ -1238,7 +1241,6 @@ Ext.define('UserQuery.view.main.MainController', {
 
                 //preenche as treeview que estiver aberta
                 me.loadInputTables();
-                me.loadExternalTables();
                 me.loadMyTables();
                 me.loadOtherTables();
             }
