@@ -62,7 +62,9 @@ class TableViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user).order_by('display_name')
+        release = self.request.query_params.get('release', None)
+        return self.queryset.filter(Q(owner=self.request.user) &
+                                    Q(release=release)).order_by('display_name')
 
     def destroy(self, request, *args, **kwargs):
         try:
@@ -156,24 +158,25 @@ class CreateTable(viewsets.ModelViewSet):
         try:
             data = request.data
             display_name = data.get("display_name", None)
-            associate_target_viewer = bool(data.get("associate_target_viewer", False))
+            associate_target_viewer = data.get("associate_target_viewer", "") == 'on'
             _id = data.get("id", None)
+            sql_sentence = data.get("sql_sentence", None)
             release_id = data.get("release_id", None)
 
-            table_name = self._set_internal_table_name(display_name, self.request.user.pk)
-
-            q = Query.objects.get(pk=_id)
+            if _id:
+                q = Query.objects.get(pk=_id)
+                sql_str = q.sql_sentence
+            elif sql_sentence:
+                sql_str = sql_sentence
+            else:
+                raise Exception("id or sql_sentence parameters must exist")
 
             if not release_id:
                 raise Exception("release_id is a mandatory field")
 
-            if type(associate_target_viewer) is not bool:
-                raise Exception("associate_target_viewer must be a boolean type")
+            table_name = self._set_internal_table_name(display_name, self.request.user.pk)
 
-            if not self._is_user_authorized(q):
-                raise Exception("User not authorized to perform this action")
-
-            rqv = RawQueryValidator(q.sql_sentence)
+            rqv = RawQueryValidator(sql_str)
             if rqv.table_exists(table_name, None):
                 raise Exception("Table exists - choose a different name")
 
@@ -182,7 +185,7 @@ class CreateTable(viewsets.ModelViewSet):
 
             q = Job(display_name=display_name,
                     owner=self.request.user,
-                    sql_sentence=q.sql_sentence)
+                    sql_sentence=sql_str)
             q.save()
 
             timeout = self._time_out_query_execution(request)
@@ -192,9 +195,6 @@ class CreateTable(viewsets.ModelViewSet):
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
-
-    def _is_user_authorized(self, q):
-        return q.owner == self.request.user or q.is_public
 
     def _set_internal_table_name(self, display_name, user_id):
         table_name = copy.deepcopy(display_name)
