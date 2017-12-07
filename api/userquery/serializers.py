@@ -22,7 +22,7 @@ class QuerySerializer(serializers.ModelSerializer):
         )
 
 
-class JobSerializer(serializers.HyperlinkedModelSerializer):
+class JobSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     id = serializers.ReadOnlyField()
 
@@ -40,7 +40,7 @@ class JobSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class TableSerializer(serializers.HyperlinkedModelSerializer):
+class TableSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     id = serializers.ReadOnlyField()
     product_id = serializers.PrimaryKeyRelatedField(
@@ -54,5 +54,6 @@ class TableSerializer(serializers.HyperlinkedModelSerializer):
             'display_name',
             'owner',
             'schema',
-            'product_id'
+            'product_id',
+            'release'
         )

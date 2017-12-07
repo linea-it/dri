@@ -7,21 +7,21 @@ from django.conf import settings
 class Query(models.Model):
     # the same user can't have repeated names.
     name = models.CharField(
-        max_length=128, null=False, verbose_name='Name')
+        max_length=128, unique=True, null=False, verbose_name='Name')
     description = models.CharField(
         max_length=256, null=True, blank=True, verbose_name='Description')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name='Owner', default=None)
-    release = models.ForeignKey('coadd.Release')
+    release = models.ForeignKey('coadd.Release', null=True, blank=True)
     creation_date = models.DateTimeField(
         auto_now_add=True, null=True, blank=True, verbose_name='Creation Date',
         help_text='Creation Date')
     last_edition_date = models.DateTimeField(
         auto_now=True, null=True, blank=True, verbose_name='Last Edition Date',
         help_text='Last Edition Date')
-    sql_sentence = models.CharField(
+    sql_sentence = models.TextField(
         max_length=2048, null=False, verbose_name='Sql Sentence')
     is_sample = models.BooleanField(
         default=False, verbose_name='Is a sample query')
@@ -53,7 +53,7 @@ class Job(models.Model):
     end_date_time = models.DateTimeField(
         null=True, blank=True, verbose_name='Last Edition Date',
         help_text='Last Edition Date')
-    sql_sentence = models.CharField(
+    sql_sentence = models.TextField(
         max_length=2048, null=False, verbose_name='Sql_sentence')
     timeout = models.IntegerField(null=True, default=5,
                                   verbose_name='Query execution timeout in seconds')
@@ -70,7 +70,7 @@ class Table(models.Model):
     table_name = models.CharField(
         max_length=128, null=False, unique=True, verbose_name='Name')
     display_name = models.CharField(
-        max_length=128, null=False, verbose_name='Display name')
+        max_length=128, null=False, unique=True, verbose_name='Display name')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -78,4 +78,6 @@ class Table(models.Model):
     schema = models.CharField(
         max_length=128, null=True, verbose_name='Schema')
     product = models.ForeignKey(
-        'product.Product', verbose_name='Product', related_name='product', null=True, default=None)
+        'product.Product', verbose_name='Product', related_name='product', null=True,
+        blank=True, default=None)
+    release = models.ForeignKey('coadd.Release')
