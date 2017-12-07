@@ -220,22 +220,33 @@ def get_setting(request):
         elif name is None and names is not None:
             names = names.split(',')
             data = {}
+            key = None
 
             for name in names:
+                orinal_name = name
+                if name.find("__") > -1:
+                    arr = name.split("__")
+                    print(arr)
+                    key = arr[0]
+                    name = arr[1].replace('__', '')
 
                 # Somente permitir variaveis que nao contenham dados sensiveis como senha por exemplo
                 if name not in not_available:
 
                     try:
-                        value = settings.__getattr__(name)
+                        if key is None:
+                            value = settings.__getattr__(name)
 
-                        data[name] = value
+                        else:
+                            value = settings.__getattr__(key)[name]
+
+                        data[orinal_name] = value
 
                     except:
-                        return Response(dict({"msg": "this variable \"%s\" not found" % name}), status=500)
+                        return Response(dict({"msg": "this variable \"%s\" not found" % orinal_name}), status=500)
 
                 else:
-                    return Response(dict({"msg": "this variable \"%s\" not available" % name}), status=500)
+                    return Response(dict({"msg": "this variable \"%s\" not available" % orinal_name}), status=500)
 
 
         return Response(data)

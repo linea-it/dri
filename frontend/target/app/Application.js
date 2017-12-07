@@ -10,7 +10,6 @@ Ext.define('Target.Application', {
 
     requires: [
         'common.statistics.Events',
-        'common.token.GetToken',
         'common.data.Settings'
     ],
 
@@ -22,26 +21,12 @@ Ext.define('Target.Application', {
 
     init:function () {
         Ext.create('common.statistics.Events').init();
-        // Ext.create('common.token.GetToken').init();
 
         var me = this;
-
-        // Exemplo de como recuperar uma configuracao do settings do Django
-        Settings.getSetting('TARGET_VIEWER_REGISTER_DB', me.setSetting, this);
-
-        // Exemplo de como recuperar varias variaveis do settings do Django
-        Settings.getSettings(
-            [
-                'TARGET_VIEWER_REGISTER_DB',
-                'TARGET_VIEWER_REGISTER_DB2'
-            ], me.setSettings, this);
 
     },
 
     launch: function () {
-        // TODO - Launch the application
-        // console.log('lauch');
-
         // Desabilitar os erros de Aria
         Ext.enableAriaButtons = false;
 
@@ -54,6 +39,13 @@ Ext.define('Target.Application', {
                 // Identificar o usuario no Google Analitics
                 if (window.ga) ga('set', 'userId', data.id);
 
+
+                // Recupera essas Settings do backend
+                Settings.loadSettings([
+                    'PRODUCT_REGISTER_DB_INTERFACE',
+                    'PRODUCT_REGISTER_FOLDERS',
+                    'DES_CUTOUT_SERVICE__AVAILABLE_RELEASES'
+                ])
             },
             failure: function (response, opts) {
                 var protocol = window.location.protocol,
@@ -74,15 +66,5 @@ Ext.define('Target.Application', {
 
     onAppUpdate: function () {
         window.location.reload();
-    },
-
-    setSetting: function (data, response) {
-        console.log('setSetting(%o, %o)', data, response)
-        // console.log(this);
-    },
-
-    setSettings: function (data, response) {
-        console.log('setSettings(%o, %o)', data, response)
-        // console.log(this);
     }
 });

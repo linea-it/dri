@@ -5,6 +5,8 @@ Ext.define('common.data.Settings', {
 
     url: '/dri/api/get_setting/',
 
+    teste: 'boo',
+
     getSetting: function (name, callback, scope) {
         // console.log('Get Setting(%o)', name);
         var me = this;
@@ -49,5 +51,17 @@ Ext.define('common.data.Settings', {
                 Ext.callback(callback, scope, [null])
             }
         });
-    }
+    },
+
+    loadSettings: function (vars) {
+        // console.log('loadSettings(%o)', vars);
+
+        var me = this;
+
+        me.getSettings(vars, function (data) {
+            for (var setting in data) {
+                me[setting] = data[setting];
+            }
+        }, me);
+    },
 });
