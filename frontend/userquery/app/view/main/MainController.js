@@ -204,7 +204,7 @@ Ext.define('UserQuery.view.main.MainController', {
         }
 
         dialog.open(formData, function(data){
-            // data.associate_target_viewer = data.associate_target_viewer==='on';
+            data.associate_target_viewer = 'on';
             data.id = query.id || null;
             data.release_id = release.id;
             data.sql_sentence = formData.sql_sentence;
