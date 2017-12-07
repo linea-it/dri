@@ -93,10 +93,11 @@ Ext.define('UserQuery.view.main.Main', {
                 {
                     xtype: 'button',
                     tooltip: 'Execute Query',
+                    reference: 'btnStartJob',
                     disabled: true,
-                    bind: {
-                        disabled: '{!activeQuery.exist}'
-                    },
+                    // bind: {
+                    //     disabled: '{!activeQuery.exist}'
+                    // },
                     handler: 'btnStartJob_onClick',
                     iconCls: 'x-fa fa-play'
                 },
@@ -449,7 +450,7 @@ Ext.define('UserQuery.view.main.Main', {
                             },
                             items:[
                                 {
-                                    title: 'Query Preview',
+                                    title: 'Table Content',
                                     items:[
                                         {
                                             xtype: 'grid',
@@ -458,16 +459,16 @@ Ext.define('UserQuery.view.main.Main', {
                                         }
                                     ]
                                 },
-                                {
-                                    title: 'Table Content',
-                                    items:[
-                                        {
-                                            xtype: 'grid',
-                                            reference: 'grdTable',
-                                            store: Ext.create('Ext.data.Store')
-                                        }
-                                    ]
-                                },                                
+                                // {
+                                //     title: 'Table Content',
+                                //     items:[
+                                //         {
+                                //             xtype: 'grid',
+                                //             reference: 'grdTable',
+                                //             store: Ext.create('Ext.data.Store')
+                                //         }
+                                //     ]
+                                // },                                
                                 {
                                     title: 'My JOBs',
                                     listeners:{

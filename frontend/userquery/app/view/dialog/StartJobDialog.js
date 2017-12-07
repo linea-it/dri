@@ -12,7 +12,8 @@ Ext.define('UserQuery.view.dialog.StartJobDialog', {
     title: 'Start Job',
     buttonConfirmText: 'Start',
 
-    height: 210,
+    height: 170,
+    width: 400,
 
     items: [
         {
@@ -32,11 +33,11 @@ Ext.define('UserQuery.view.dialog.StartJobDialog', {
                     reference: 'txtName',
                     width: '100%'
                 },
-                {
-                    xtype: 'checkbox',
-                    fieldLabel: 'Register DRI',
-                    name: 'associate_target_viewer'
-                },
+                // {
+                //     xtype: 'checkbox',
+                //     fieldLabel: 'Register DRI',
+                //     name: 'associate_target_viewer'
+                // },
                 // {
                 //     xtype: 'textfield',
                 //     fieldLabel: 'Timeout',
