@@ -21,11 +21,40 @@ Ext.define('Target.view.settings.CutoutJobForm', {
 
     config: {
         currentProduct: null,
-        currentSetting: null
+        currentSetting: null,
+
+        availableReleases: null
     },
 
     initComponent: function () {
-        var me = this;
+        var me = this,
+            vm = me.getViewModel(),
+            tags = vm.getStore('tags');
+
+        try {
+            me.availableReleases = Settings.DES_CUTOUT_SERVICE__AVAILABLE_RELEASES
+        }
+        catch (err) {
+            console.warn("Setting DES_CUTOUT_SERVICE__AVAILABLE_RELEASES not loaded.");
+        }
+
+        // Desabilitar outros releases caso esteja definido no settings no Backend
+        // Na secao DES_CUTOUT_SERVICE
+        toBeRemoved = []
+        if (me.availableReleases != null){
+            if ((Array.isArray(me.availableReleases)) &&
+                (me.availableReleases.length > 0)){
+
+                tags.each(function (record) {
+                    if (me.availableReleases.indexOf(record.get('name')) == -1) {
+                        toBeRemoved.push(record);
+                    }
+                })
+
+                tags.remove(toBeRemoved);
+            }
+        }
+
         Ext.apply(this, {
 
             items: [
