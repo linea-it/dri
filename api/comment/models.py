@@ -18,7 +18,7 @@ class Position(models.Model):
         verbose_name='Dec (deg)')
     pst_date = models.DateTimeField(
         auto_now_add=True, verbose_name='Date')
-    pst_comment = models.CharField(
+    pst_comment = models.TextField(
         max_length=2048, verbose_name='Comment')
 
     def __str__(self):
