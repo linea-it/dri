@@ -15,6 +15,7 @@ Ext.define('UserQuery.view.service.Api', {
         getQueries:  {method:'GET',  url:'/dri/api/userquery_query/'},
         getSamples:  {method:'GET',  url:'/dri/api/userquery_sample/'},
         getJobs:     {method:'GET',  url:'/dri/api/userquery_job/'},
+        renameTable: {method:'PATCH', url:'/dri/api/userquery_table/{id}/'},
         validate:    {method:'POST', url:'/dri/api/userquery_validate/'},
         preview:     {method:'POST', url:'/dri/api/userquery_preview/'},
         startJob:    {method:'POST', url:'/dri/api/userquery_create_table/'}
@@ -78,6 +79,10 @@ Ext.define('UserQuery.view.service.Api', {
 
     validate: function(definition){
         return this.send(this.URL.validate, definition);
+    },
+
+    renameTable: function(definition){
+        return this.send(this.URL.renameTable, definition);
     },
 
     preview: function(definition){
