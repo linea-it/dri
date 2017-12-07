@@ -93,10 +93,11 @@ Ext.define('UserQuery.view.main.Main', {
                 {
                     xtype: 'button',
                     tooltip: 'Execute Query',
+                    reference: 'btnStartJob',
                     disabled: true,
-                    bind: {
-                        disabled: '{!activeQuery.exist}'
-                    },
+                    // bind: {
+                    //     disabled: '{!activeQuery.exist}'
+                    // },
                     handler: 'btnStartJob_onClick',
                     iconCls: 'x-fa fa-play'
                 },
