@@ -134,21 +134,21 @@ Ext.define('UserQuery.view.main.MainController', {
         // this.loadExternalTables();
     },
 
+    // evento: ao expandir o item accordion my tables
+    accMyTables_onExpand: function(){
+        //this.loadMyTables();
+    },
+    
+    accOtherTables_onExpand: function(){
+        // this.loadOtherTables();
+    },
+
     accMyQueries_onExpand: function(){
         this.loadMyQueries();
     },
 
-    accOtherTables_onExpand: function(){
-        this.loadOtherTables();
-    },
-
     accSampleQueries_onExpand: function(){
         this.loadSampleQueries();
-    },
-
-    // evento: ao expandir o item accordion my tables
-    accMyTables_onExpand: function(){
-        this.loadMyTables();
     },
 
     // evento: ao clicar no botão da toolbar abrir query
@@ -288,6 +288,7 @@ Ext.define('UserQuery.view.main.MainController', {
     },
 
     cmbReleases_onSelect: function(sender, item){
+        console.log(item.data.release_id)
         this.createEmptyQuery(item.data.release_id);
     },
 
@@ -645,13 +646,19 @@ Ext.define('UserQuery.view.main.MainController', {
         return this.getViewModel().get('activeRelease');
     },
 
-    loadInputTables: function(release_id, next){
+    loadInputTables: function(){
         var me = this;
+        var refs = me.getReferences();
+        var release = this.getActiveRelease() || {};
+        
+        if ( release.id===undefined){
+            return;
+        }
 
         return Api.getTables({
             cache: true,
             params:{
-                release: release_id,
+                release: release.id,
                 group: 'objects_catalog', // 'targets'
             },
             request: function(){
@@ -666,22 +673,31 @@ Ext.define('UserQuery.view.main.MainController', {
                         item.data_schema = item.tbl_schema;
                         item.data_table = item.tbl_name;
                     });
-                }
 
-                next(tables || []);
+                    refs.tvwInputTables.setStore(Ext.create('Ext.data.TreeStore', {
+                        root: { // expanded: true,
+                            children: tables
+                        }
+                    }));
+                }
             }
         });
     
     },
 
-    loadExternalTables: function(release_id){
+    loadExternalTables: function(){
         var refs = this.getReferences();
         var el = refs.tvwMyTables.getEl();
+        var release = this.getActiveRelease() || {};
+        
+        if ( release.id===undefined){
+            return;
+        }
 
         return Api.getTables({
             cache: true,
             params:{
-                // release: release_id,
+                release: release.id,
                 group: 'external_catalogs',
             },
             request: function(){
@@ -713,14 +729,22 @@ Ext.define('UserQuery.view.main.MainController', {
 
     },
 
-    loadMyTables: function(force){
+    loadMyTables: function(){
         var refs = this.getReferences();
         var el = refs.tvwMyTables.getEl();
         var query = this.getActiveQuery();
+        var release = this.getActiveRelease() || {};
         var t;
         
+        if ( release.id===undefined){
+            return;
+        }
+
         Api.getMyTables({
             cache: false,
+            params:{
+                release: release.id
+            },
             request: function(){
                 el.mask("Loading tables...", 'x-mask-loading');
             },
@@ -752,6 +776,118 @@ Ext.define('UserQuery.view.main.MainController', {
                         children: arr
                     }
                 }));
+            }
+        });
+    },
+
+    loadOtherTables: function(){
+        var targets, catalogs;
+        var me = this;
+        var refs = this.getReferences();
+        var query = this.getActiveQuery() || {};
+        var release = this.getActiveRelease() || {};
+        var el = refs.tvwOtherTables.getEl();
+        var err = 0;
+        
+        // status carregando ou carregado, ou sem release selecionada, retorna
+        if (release.id===undefined){
+            return;
+        }
+
+        // busca lista de targets
+        el.mask("Loading tables...", 'x-mask-loading'); 
+        Api.parallel([
+
+            // lista de targets
+            Api.getTables({
+                cache: false,
+                params:{
+                    release: release.id,
+                    group: 'targets'
+                },
+                response: function(error, result){
+                    err += error ? 1 : 0;
+                    
+                    if (!error){
+                        result.forEach(function(item){
+                            item.text = item.prd_display_name;
+                            item.data_schema = item.tbl_schema;
+                            item.data_table = item.tbl_name;
+                            //item.leaf = true;
+                        });    
+                    }
+
+                    targets = result || [];
+                }
+            }),
+
+            // lista de added catalogs
+            Api.getTables({
+                cache: false,
+                params:{
+                    release: release.id,
+                    group: 'value_added_catalogs'
+                },
+                response: function(error, result){
+                    err += error ? 1 : 0;
+
+                    if (!error){
+                        result.forEach(function(item){
+                            item.text = item.prd_display_name;
+                            item.data_schema = item.tbl_schema;
+                            item.data_table = item.tbl_name;
+                        });    
+                    }
+
+                    catalogs = result || [];
+                }
+            })],
+
+            //api's acima finalizadas
+            function(){
+                el.unmask();
+                    
+                refs.tvwOtherTables.setStore(Ext.create('Ext.data.TreeStore', {
+                    root: {
+                        expanded: false,
+                        children: [
+                            {text: 'Targets', expanded: false, isgroup:true, ignore_context_menu:true, children:targets},
+                            {text: 'Value_Added_Catalogs', expanded: false, isgroup:true, ignore_context_menu:true, children:catalogs}
+                        ]
+                    }
+                }));                    
+            
+            }
+        );
+    },
+
+    loadFields: function(options){
+
+        Api.getFields({
+            cache: true,
+            params:{
+                schema: options.schema,
+                table_name: options.table
+            },
+            request: function(){
+                if (options.request) options.request();
+            },
+            response: function(error, results){
+                var fields = [];
+                if (!error){
+                    results.columns.forEach(function(item){
+                        fields.push({
+                            text: item.column_name,
+                            data_schema: options.schema,
+                            data_table: options.table,
+                            data_field: item.column_name,
+                            qtip: 'data type: ' + item.data_type,
+                            leaf: true
+                        });
+                    });
+                }
+
+                if (options.response) options.response(fields);
             }
         });
     },
@@ -914,122 +1050,6 @@ Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
-    loadOtherTables: function(force){
-        var targets, catalogs;
-        var me = this;
-        var refs = this.getReferences();
-        var query = this.getActiveQuery() || {};
-        var release = this.getActiveRelease() || {};
-        var el = refs.tvwOtherTables.getEl();
-        var err = 0;
-        
-        // status carregando ou carregado, retorna
-        if ( force!==true && 'loading done'.includes(me.loadOtherStatus)){
-            return;
-        }
-
-        me.loadOtherStatus = 'loading';
-
-        // busca lista de targets
-        el.mask("Loading tables...", 'x-mask-loading'); 
-        Api.parallel([
-
-            // lista de targets
-            Api.getTables({
-                cache: false,
-                params:{
-                    release: release.id,
-                    group: 'targets'
-                },
-                response: function(error, result){
-                    err += error ? 1 : 0;
-                    
-                    if (!error){
-                        result.forEach(function(item){
-                            item.text = item.prd_display_name;
-                            item.data_schema = item.tbl_schema;
-                            item.data_table = item.tbl_name;
-                            //item.leaf = true;
-                        });    
-                    }
-
-                    targets = result || [];
-                }
-            }),
-
-            // lista de added catalogs
-            Api.getTables({
-                cache: false,
-                params:{
-                    release: release.id,
-                    group: 'value_added_catalogs'
-                },
-                response: function(error, result){
-                    err += error ? 1 : 0;
-
-                    if (!error){
-                        result.forEach(function(item){
-                            item.text = item.prd_display_name;
-                            item.data_schema = item.tbl_schema;
-                            item.data_table = item.tbl_name;
-                        });    
-                    }
-
-                    catalogs = result || [];
-                }
-            })],
-
-            //api's acima finalizadas
-            function(){
-                el.unmask();
-
-                me.loadOtherStatus = err>0 ? 'error' : 'done';
-                    
-                refs.tvwOtherTables.setStore(Ext.create('Ext.data.TreeStore', {
-                    root: {
-                        expanded: false,
-                        children: [
-                            {text: 'Targets', expanded: false, isgroup:true, ignore_context_menu:true, children:targets},
-                            {text: 'Value_Added_Catalogs', expanded: false, isgroup:true, ignore_context_menu:true, children:catalogs}
-                        ]
-                    }
-                }));                    
-            
-            }
-        );
-    },
-
-    loadFields: function(options){
-
-        Api.getFields({
-            cache: true,
-            params:{
-                schema: options.schema,
-                table_name: options.table
-            },
-            request: function(){
-                if (options.request) options.request();
-            },
-            response: function(error, results){
-                var fields = [];
-                if (!error){
-                    results.columns.forEach(function(item){
-                        fields.push({
-                            text: item.column_name,
-                            data_schema: options.schema,
-                            data_table: options.table,
-                            data_field: item.column_name,
-                            qtip: 'data type: ' + item.data_type,
-                            leaf: true
-                        });
-                    });
-                }
-
-                if (options.response) options.response(fields);
-            }
-        });
-    },
-
     saveQuery: function(id, data){
         var me = this;
         var release = me.getActiveRelease();
@@ -1091,7 +1111,7 @@ Ext.define('UserQuery.view.main.MainController', {
         var c, i, d, f;
         var datatype = {};
         var me = this;
-        var index = {'grdTable':0, 'grdPreview':1};
+        var index = {'grdPreview':0, 'grdTable':1};
         var refs = me.getReferences();
         var grid = refs[gridName];
         var length = grid.headerCt.items.length;
@@ -1159,7 +1179,7 @@ Ext.define('UserQuery.view.main.MainController', {
     setActiveQuery: function(query){
         var me = this;
         var refs = me.getReferences();
-        var activeRelease;
+        //var activeRelease;
         
         Api.sequence([
             // busca dados da release
@@ -1173,7 +1193,7 @@ Ext.define('UserQuery.view.main.MainController', {
                         me.setLoading(true, 'Loading release data...');                
                     },
                     response: function(error, release){
-                        activeRelease = release;
+                        //activeRelease = release;
                         me.setLoading(false);
                         next(release);
                     }
@@ -1182,28 +1202,37 @@ Ext.define('UserQuery.view.main.MainController', {
 
             // busca lista de tabelas da release
             function(next, release){
-                me.loadExternalTables(release.id);
-                return me.loadInputTables(release.id, next);
-            },
+                refs.ctnArea.setStyle({opacity:1});
+
+                me.setActiveRelease(release);
+                me.updateActiveQuery(query);
+
+                //preenche as treeview que estiver aberta
+                me.loadInputTables();
+                me.loadExternalTables();
+                me.loadMyTables();
+                me.loadOtherTables();
+            }
+            //,
 
             // preenche a treeview com a lista de tabelas da release, limpa o form
-            function(next, tables){
-                refs.ctnArea.setStyle({opacity:1});
+            // function(next, tables){
+            //     refs.ctnArea.setStyle({opacity:1});
                 
-                me.clearQuery();
-                me.setActiveRelease(activeRelease);
-                me.updateActiveQuery(query);
+            //     me.clearQuery();
+            //     me.setActiveRelease(activeRelease);
+            //     me.updateActiveQuery(query);
                 
-                // preenche a tree com as tabelas da release
-                tables.forEach(function(item){
-                    item.text = item.prd_display_name;
-                });
-                refs.tvwInputTables.setStore(Ext.create('Ext.data.TreeStore', {
-                    root: { // expanded: true,
-                        children: tables
-                    }
-                }));
-            }
+            //     // preenche a tree com as tabelas da release
+            //     tables.forEach(function(item){
+            //         item.text = item.prd_display_name;
+            //     });
+            //     refs.tvwInputTables.setStore(Ext.create('Ext.data.TreeStore', {
+            //         root: { // expanded: true,
+            //             children: tables
+            //         }
+            //     }));
+            // }
         ]);
 
         // obtém lista de tabelas da release
