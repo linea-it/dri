@@ -124,6 +124,7 @@ urlpatterns = [
     url(r'^vizier/', product_views.vizier_cds),
     url(r'^teste/', common_views.teste),
     url(r'^get_token', common_views.get_token),
+    url(r'^get_setting/$', common_views.get_setting),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'),
         {'extra_context': {'providers': providers}}),
 ]
