@@ -237,8 +237,10 @@ class TableProperties(viewsets.ModelViewSet):
             if not db.table_exists(table_name, schema=schema):
                 raise Exception("Schema/table does not exist")
 
+            columns = db.get_table_properties(table_name, schema=schema)
+            columns.sort(key=lambda k: k['column_name'])
             response = {
-                    'columns': db.get_table_properties(table_name, schema=schema)
+                    'columns': columns
                 }
 
             return JsonResponse(response, safe=False)
