@@ -25,7 +25,7 @@ Ext.define('visiomatic.download.FitsController', {
             vm = view.getViewModel(),
             store = vm.getStore('fitsFiles');
 
-        vm.set('catalog', catalog);
+        vm.set('tag', catalog);
         vm.set('tilename', tilename);
 
         store.filter([
@@ -34,7 +34,7 @@ Ext.define('visiomatic.download.FitsController', {
                 value: tilename
             },
             {
-                property:'catalog',
+                property:'tag',
                 value: catalog
             }
         ]);
