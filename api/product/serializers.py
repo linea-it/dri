@@ -214,6 +214,7 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
 
             'tbl_schema',
             'tbl_name',
+            'tbl_size',
 
             'release_id',
             'release_display_name',
