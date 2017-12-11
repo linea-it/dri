@@ -1070,17 +1070,24 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 //         }
                 //     });
                 // }                
+                me.pendingJobsLength = me.pendingJobsLength || 0;
                 me.pendingJobs = jobs.filter(function(j){return j.job_status=='rn' || j.job_status=='st';});
                 me.showDataPreview('grdJobs', jobs, colsMap);
                 
                 // se tem job pendente, atualizaa lista a cada 30 segundos
                 if (me.pendingJobs.length>0){
+                    if (me.pendingJobs.length<me.pendingJobsLength){
+                        me.loadMyTables();
+                    }
+
                     me.tm = setTimeout(function(){
                         me.loadMyJobs(false);
                     }, 30000);
                 }else{
                     me.loadMyTables();
                 }
+
+                me.pendingJobsLength = me.pendingJobs.length;
             }
         });
 
