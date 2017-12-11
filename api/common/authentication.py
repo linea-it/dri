@@ -65,9 +65,12 @@ class NcsaBackend(object):
         # TODO [CMP] this should have a connection management/pool
         dbname = self.get_database_name()
         db = DBBase(dbname)
-        stm = select([column('email'), column('firstname'), column('lastname')]).select_from(
-            table('des_users')).where(column('username') == username)
-        return db.fetchone_dict(stm)
+        # stm = select([column('email'), column('firstname'), column('lastname')]).select_from(
+        #     table('des_users')).where(column('username') == username)
+        # return db.fetchone_dict(stm)
+        sql = "SELECT email, firstname, lastname FROM DES_ADMIN.DES_USERS WHERE username = '%s'" % username
+        return db.fetchone_dict(sql)
+
 
     def ensure_group(self, name):
         try:

@@ -74,7 +74,8 @@ class TableViewSet(viewsets.ModelViewSet):
 
             db.drop_table(q.table_name, schema=q.schema)
 
-            return super(TableViewSet, self).destroy(request, args, kwargs)
+            q.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
@@ -166,8 +167,10 @@ class CreateTable(viewsets.ModelViewSet):
             if _id:
                 q = Query.objects.get(pk=_id)
                 sql_str = q.sql_sentence
+                query_name = q.name
             elif sql_sentence:
                 sql_str = sql_sentence
+                query_name = "Unnamed"
             else:
                 raise Exception("id or sql_sentence parameters must exist")
 
@@ -185,7 +188,8 @@ class CreateTable(viewsets.ModelViewSet):
 
             q = Job(display_name=display_name,
                     owner=self.request.user,
-                    sql_sentence=sql_str)
+                    sql_sentence=sql_str,
+                    query_name=query_name)
             q.save()
 
             timeout = self._time_out_query_execution(request)
@@ -237,8 +241,10 @@ class TableProperties(viewsets.ModelViewSet):
             if not db.table_exists(table_name, schema=schema):
                 raise Exception("Schema/table does not exist")
 
+            columns = db.get_table_properties(table_name, schema=schema)
+            columns.sort(key=lambda k: k['column_name'])
             response = {
-                    'columns': db.get_table_properties(table_name, schema=schema)
+                    'columns': columns
                 }
 
             return JsonResponse(response, safe=False)
