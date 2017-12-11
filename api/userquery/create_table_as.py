@@ -74,7 +74,8 @@ class CreateTableAs:
         try:
             db = DBBase('catalog')
             db.create_table_raw_sql(self.table_name, self.job.sql_sentence, schema=self.schema, timeout=self.timeout)
-            db.create_auto_increment_column(self.table_name, 'meta_id', schema=self.schema)
+            if self.associate_target_viewer:
+                db.create_auto_increment_column(self.table_name, 'meta_id', schema=self.schema)
             self.is_table_successfully_created = True
 
             release = Release.objects.get(pk=self.release_id)

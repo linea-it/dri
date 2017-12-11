@@ -193,7 +193,8 @@ Ext.define('UserQuery.view.main.Main', {
                                         rootVisible: false,
                                         listeners: {
                                             itemexpand: 'tvwInputTables_onExpanded',
-                                            itemcontextmenu: 'treeView_onContextMenu'                                    
+                                            itemcontextmenu: 'treeView_onContextMenu',
+                                            custom_itemcontextmenu: 'treeView_onContextMenu'               
                                         },
                                         viewConfig: {
                                             plugins: {

@@ -37,6 +37,7 @@ class JobSerializer(serializers.ModelSerializer):
             'sql_sentence',
             'job_status',
             'timeout',
+            'query_name'
         )
 
 
