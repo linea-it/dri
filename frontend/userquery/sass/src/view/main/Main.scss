@@ -12,3 +12,14 @@
     border-color: #666;
     background-color: #666;
 }
+
+.item-menu-button {
+    position:absolute;
+    right:10px;
+    cursor:pointer;
+    color:#2a6e9f!important;
+    font-size:12px!important;
+}
+.item-menu-button:hover {
+    color:black!important;
+}

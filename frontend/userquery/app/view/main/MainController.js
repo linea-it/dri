@@ -8,7 +8,7 @@ Ext.require('UserQuery.view.dialog.SaveAsDialog');
 
 var myQueryNumber = 1;
 
-Ext.define('UserQuery.view.main.MainController', {
+var main = Ext.define('UserQuery.view.main.MainController', {
     extend: 'Ext.app.ViewController',
 
     alias: 'controller.main',
@@ -348,13 +348,17 @@ Ext.define('UserQuery.view.main.MainController', {
         }
     },
 
-    treeView_onContextMenu: function(tree, record, item, index, e, eOpts ) {
-        var position, menu;
+    treeView_onContextMenu: function(tree, record, item, index, e, eOpts) {
         var items = tree.panel.config.contextMenuItems || [];
 
-        if (record.get('ignore_context_menu')){
-            return;
+        if (!record.get('ignore_context_menu')){
+            e.stopEvent();
+            this.showContextMenu(items, record, e.getX(), e.getY());
         }
+    },
+
+    showContextMenu: function(items, record, x, y){
+        var menu;
 
         items.forEach(function(item){
             if ( typeof(item.config_item)=='function' ){
@@ -364,11 +368,7 @@ Ext.define('UserQuery.view.main.MainController', {
         });
 
         menu = new Ext.menu.Menu({items: items});
-        position = [e.getX()-10, e.getY()-10];
-
-        e.stopEvent();
-
-        menu.showAt(position);
+        menu.showAt([x-10, y-10]);
     },
 
     tvwMyTables_onContextMenuClick: function(item){
@@ -698,7 +698,7 @@ Ext.define('UserQuery.view.main.MainController', {
 
                 if (!error){
                     tables.forEach(function(item){
-                        item.text = item.prd_display_name;
+                        item.text = textWithMenu(item.prd_display_name, me);
                         item.data_schema = item.tbl_schema;
                         item.data_table = item.tbl_name;
                     });
@@ -735,7 +735,7 @@ Ext.define('UserQuery.view.main.MainController', {
 
                 if (!error){
                     tables.forEach(function(item){
-                        item.text = item.prd_display_name;
+                        item.text = textWithMenu(item.prd_display_name, me);
                         item.data_schema = item.tbl_schema;
                         item.data_table = item.tbl_name;
                     });
@@ -753,6 +753,7 @@ Ext.define('UserQuery.view.main.MainController', {
     },
 
     loadMyTables: function(){
+        var me = this;
         var refs = this.getReferences();
         var el = refs.tvwMyTables.getEl();
         var query = this.getActiveQuery();
@@ -785,7 +786,7 @@ Ext.define('UserQuery.view.main.MainController', {
                     table = tables[t];
                     
                     arr.push({
-                        text: table.display_name,
+                        text: textWithMenu(table.display_name, me),
                         data_id: table.id,
                         data_schema: table.schema,
                         data_table: table.table_name,
@@ -833,7 +834,7 @@ Ext.define('UserQuery.view.main.MainController', {
                     
                     if (!error){
                         result.forEach(function(item){
-                            item.text = item.prd_display_name;
+                            item.text = textWithMenu(item.prd_display_name, me);
                             item.data_schema = item.tbl_schema;
                             item.data_table = item.tbl_name;
                             //item.leaf = true;
@@ -947,7 +948,7 @@ Ext.define('UserQuery.view.main.MainController', {
                     me.loadMyQueriesStatus = 'done';
 
                     result.forEach(function(item){
-                        item.text = item.name;
+                        item.text = textWithMenu(item.name, me);
                         item.leaf = true;
                     });    
                                     
@@ -1024,13 +1025,14 @@ Ext.define('UserQuery.view.main.MainController', {
             },
             response: function(error, jobs){
                 var colsMap = [
-                    {field:'status_name', display:'Status'},
-                    {field:'start_date_time', display:'Start'},
-                    {field:'end_date_time', display: 'End'},
-                    {field:'total_run_time', display: 'Run Time'},
-                    {field:'timeout', display:'Timeout'},
-                    {field:'display_name', display:'Table Name'},
-                    {field:'sql_sentence', display:'Query', flex:1},
+                    {field:'status_name',     display:'Status',     renderer: toolTipRenderer},
+                    {field:'start_date_time', display:'Start',      renderer: toolTipRenderer},
+                    {field:'end_date_time',   display: 'End',       renderer: toolTipRenderer},
+                    {field:'total_run_time',  display: 'Run Time',  renderer: toolTipRenderer},
+                    {field:'timeout',         display:'Timeout',    renderer: toolTipRenderer},
+                    {field:'display_name',    display:'Table Name', renderer: toolTipRenderer},
+                    {field:'query_name',      display:'Query Name', renderer: toolTipRenderer, flex:1}
+                    //{field:'sql_sentence', display:'Query', flex:1},
                 ];
                 var status = {
                     'st': ['row-grey', 'Starting'],
@@ -1054,6 +1056,7 @@ Ext.define('UserQuery.view.main.MainController', {
                     job.end_date_time  = job.end_date_time || '';
                     job.start_date_time = job.start_date_time.substr(0,10) + ' ' + job.start_date_time.substr(11,11);
                     job.end_date_time = job.end_date_time.substr(0,10) + ' ' + job.end_date_time.substr(11,11);
+                    job.query_name = job.query_name || 'Unnamed';
                 });
 
                 if (el) el.unmask();
@@ -1080,6 +1083,11 @@ Ext.define('UserQuery.view.main.MainController', {
                 }
             }
         });
+
+        function toolTipRenderer(value, meta, record) {
+            meta.tdAttr = 'data-qtip="' + record.get('sql_sentence') + '"';
+            return value;
+        }
     },
 
     saveQuery: function(id, data){
@@ -1148,6 +1156,8 @@ Ext.define('UserQuery.view.main.MainController', {
         var grid = refs[gridName];
         var length = grid.headerCt.items.length;
 
+        Ext.suspendLayouts();
+
         // limpa a grid
         for (i=0; i<length; i++){
             c = grid.headerCt.getComponent(0);
@@ -1164,7 +1174,8 @@ Ext.define('UserQuery.view.main.MainController', {
                 grid.headerCt.insert(i++, Ext.create('Ext.grid.column.Column', {
                     text: cols[c].display, 
                     dataIndex: cols[c].field,
-                    flex: cols[c].flex || 0
+                    flex: cols[c].flex || 0,
+                    renderer: cols[c].renderer || undefined
                 }));
             }
         }else{
@@ -1183,6 +1194,8 @@ Ext.define('UserQuery.view.main.MainController', {
 
         // define os dados da grid
         grid.getStore().loadData(results);
+
+        Ext.resumeLayouts(true);
     },
 
     setLoading: function(state, text){
@@ -1344,6 +1357,39 @@ function clone(obj){
     }
 }
 
+function textWithMenu(text, context){
+    return text +'<span class="x-tree-icon x-fa fa-caret-square-o-down item-menu-button" onclick="textWithMenuClick(this, \''+(context.view.id)+'\')"></span>';
+}
+
+function textWithMenuClick(el, id){
+    var tree, ctrl, items, record;
+    var r = el.getBoundingClientRect();
+    
+    while (el){
+        tree = Ext.getCmp(el.id);
+        
+        if (tree){
+            
+            break;
+        }
+
+        el = el.parentNode;
+    }
+
+    setTimeout(function(){
+        ctrl = Ext.getCmp(id);
+        items = tree.panel.config.contextMenuItems || [];
+        record = tree.getSelection()[0];
+        
+        if (!record.get('ignore_context_menu')){
+            //this.showContextMenu(items, record, e.getX(), e.getY());
+            ctrl.controller.showContextMenu(items, record, r.left+10, r.top+30);
+        }
+        //cmp.fireEvent('custom_itemcontextmenu', cmp);
+    },100);
+
+}
+
 // mnuItemRelease_onClick: function(item){
 //     this.createEmptyQuery(item.config.data.id);
 // },
@@ -1439,20 +1485,18 @@ function clone(obj){
 //         }
 //     }
 // }
+// function getColsOrder(sql, cols){
+//     var a1 = [];
+//     var a2 = (/\bselect\b\s+([\S\s]+?)from/i.exec(sql) || [""])[1].split(/\s*,\s*/g);
+
+//     a2.forEach(function(c){
+//         var s = c.trim().split(' ');
+//         a1.push(s[s.length-1]);
+//     });
 
 
-function getColsOrder(sql, cols){
-    var a1 = [];
-    var a2 = (/\bselect\b\s+([\S\s]+?)from/i.exec(sql) || [""])[1].split(/\s*,\s*/g);
-
-    a2.forEach(function(c){
-        var s = c.trim().split(' ');
-        a1.push(s[s.length-1]);
-    });
-
-
-    return a1;
-}
+//     return a1;
+// }
 // getColsOrder("select top 10 a,b xx, c as yy from abc where a in ('a')", ['a','c', 'b']);
 
 
