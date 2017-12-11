@@ -114,6 +114,12 @@ Ext.define('common.header.Toolbar', {
                         disabled: true,
                         handler: 'tutorials'
                     },
+                    {
+                        text: 'Help',
+                        iconCls: 'x-fa fa-question',
+                        reference: 'headermenuhelp',
+                        handler: 'help'
+                    },
                     '-',
                     {
                         text: 'Log out',
