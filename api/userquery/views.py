@@ -167,8 +167,10 @@ class CreateTable(viewsets.ModelViewSet):
             if _id:
                 q = Query.objects.get(pk=_id)
                 sql_str = q.sql_sentence
+                query_name = q.name
             elif sql_sentence:
                 sql_str = sql_sentence
+                query_name = "Unnamed"
             else:
                 raise Exception("id or sql_sentence parameters must exist")
 
@@ -186,7 +188,8 @@ class CreateTable(viewsets.ModelViewSet):
 
             q = Job(display_name=display_name,
                     owner=self.request.user,
-                    sql_sentence=sql_str)
+                    sql_sentence=sql_str,
+                    query_name=query_name)
             q.save()
 
             timeout = self._time_out_query_execution(request)

@@ -64,6 +64,8 @@ class Job(models.Model):
         default='st',
         verbose_name='Status'
     )
+    query_name = models.CharField(
+        max_length=128, default="Unnamed", verbose_name='Original query name')
 
 
 class Table(models.Model):
