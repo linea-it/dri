@@ -74,7 +74,8 @@ class TableViewSet(viewsets.ModelViewSet):
 
             db.drop_table(q.table_name, schema=q.schema)
 
-            return super(TableViewSet, self).destroy(request, args, kwargs)
+            q.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
