@@ -75,7 +75,9 @@ Ext.define('Target.view.catalog.Tree', {
                     xtype: 'datecolumn',
                     text: 'Date',
                     dataIndex: 'prd_date',
+                    width: 150,
                     sortable: true,
+                    format:'Y-m-d H:m:s',
                     filter: {
                         type: 'date'
                     }
@@ -100,7 +102,13 @@ Ext.define('Target.view.catalog.Tree', {
                     filter: {
                         type: 'number'
                     }
-                }
+                },
+                {
+                    text: 'Size',
+                    dataIndex: 'tbl_size',
+                    sortable: false,
+                },
+
             ],
             listeners: {
                 load: function (treeStore) {

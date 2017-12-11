@@ -41,4 +41,3 @@ Ext.define('Target.model.Catalog', {
     ]
 
 });
-
