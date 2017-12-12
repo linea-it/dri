@@ -33,7 +33,7 @@ class Product(models.Model):
     prd_date = models.DateTimeField(
         auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Date of registration.')
     prd_is_public = models.BooleanField(
-        default=False, verbose_name='Is Public', help_text='Is Public default True')
+        default=False, verbose_name='Is Public', help_text='Is Public default False')
 
     releases = models.ManyToManyField(
         Release,
