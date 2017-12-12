@@ -192,7 +192,7 @@ class CreateTable(viewsets.ModelViewSet):
                     query_name=query_name)
             q.save()
 
-            timeout = self._time_out_query_execution(request)
+            timeout = settings.USER_QUERY_EXECUTION_TIMEOUT
             create_table.delay(q.id, request.user.pk, table_name, release_id,
                                associate_target_viewer, schema=None, timeout=timeout)
             return HttpResponse(status=200)
@@ -210,14 +210,6 @@ class CreateTable(viewsets.ModelViewSet):
 
         # Limitar a 40 characteres
         return table_name[:40]
-
-    def _time_out_query_execution(self, request):
-        user = User.objects.get(pk=request.user.pk)
-        try:
-            user.groups.get(name='NCSA')
-            return settings.USER_QUERY_EXECUTION_NCSA_USER_IN_SECONDS
-        except Exception as e:
-            return settings.USER_QUERY_EXECUTION_NON_NCSA_USER_IN_SECONDS
 
 
 class TableProperties(viewsets.ModelViewSet):
@@ -241,13 +233,9 @@ class TableProperties(viewsets.ModelViewSet):
             if not db.table_exists(table_name, schema=schema):
                 raise Exception("Schema/table does not exist")
 
-            columns = db.get_table_properties(table_name, schema=schema)
-            columns.sort(key=lambda k: k['column_name'])
-            response = {
-                    'columns': columns
-                }
+            table_properties = db.get_table_properties(table_name, schema=schema)
 
-            return JsonResponse(response, safe=False)
+            return JsonResponse(table_properties, safe=False)
 
         except Exception as e:
             print(str(e))

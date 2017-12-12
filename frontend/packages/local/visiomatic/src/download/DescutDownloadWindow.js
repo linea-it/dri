@@ -39,17 +39,17 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
                     },
                     columns: [
                         {
-                            text: 'Tile Name',
-                            dataIndex: 'tilename',
+                            text: 'Filename',
+                            dataIndex: 'filename',
                             flex: 1
                         },
-                        {
-                            text: 'Band',
-                            dataIndex: 'band'
-                        },
+                        // {
+                        //     text: 'Band',
+                        //     dataIndex: 'band'
+                        // },
                         {
                             text: 'URL',
-                            dataIndex: 'url',
+                            dataIndex: 'file_source',
                             renderer: function (value, metadata, record) {
                                 return '<a href=' + value + '><i class="fa fa-download"> </i></a>';
                             }
@@ -77,9 +77,9 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
         this.close();
     },
 
-    loadFits: function (tilename, catalog) {
+    loadFits: function (tilename, tag) {
         var me = this;
         this.loadFits = tilename;
-        me.fireEvent('changeLoadFits', tilename, catalog);
+        me.fireEvent('changeLoadFits', tilename, tag);
     }
 });
