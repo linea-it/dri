@@ -56,5 +56,6 @@ class TableSerializer(serializers.ModelSerializer):
             'owner',
             'schema',
             'product_id',
-            'release'
+            'release',
+            'tbl_num_objects'
         )

@@ -79,11 +79,14 @@ class CreateTableAs:
             self.is_table_successfully_created = True
 
             release = Release.objects.get(pk=self.release_id)
+            table_properties = db.get_table_properties(self.table_name.upper(), schema=self.schema)
             self.table = Table(table_name=self.table_name,
                                display_name=self.job.display_name,
                                owner=self.job.owner,
                                schema=self.schema,
-                               release=release)
+                               release=release,
+                               tbl_num_objects=table_properties['table_rows'])
+
             self.table.save()
         except Exception as e:
             self.error_message = str(e)
