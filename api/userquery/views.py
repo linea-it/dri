@@ -194,7 +194,8 @@ class CreateTable(viewsets.ModelViewSet):
 
             timeout = settings.USER_QUERY_EXECUTION_TIMEOUT
             create_table.delay(q.id, request.user.pk, table_name, release_id,
-                               associate_target_viewer, schema=None, timeout=timeout)
+                               associate_target_viewer, timeout=timeout,
+                               schema=settings.DATABASES['catalog']['USER'].upper())
             return HttpResponse(status=200)
         except Exception as e:
             print(str(e))
