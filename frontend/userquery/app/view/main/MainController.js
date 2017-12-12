@@ -793,7 +793,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                         data_schema: table.schema,
                         data_table: table.table_name,
                         data_product_id: table.product_id,
-                        qtip: 'rows: ' + Ext.util.Format.number(table.ctl_num_objects, '0,000')
+                        qtip: 'rows: ' + Ext.util.Format.number(table.tbl_num_objects, '0,000')
                     });
                 }                
                 
