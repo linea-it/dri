@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from smtplib import SMTPException
-
+from common.notify import Notify
 
 class ActivityReports:
     def __init__(self):
@@ -190,7 +190,7 @@ class ActivityReports:
 
         # subject
         subject = (
-            "portal @ NCSA status %s - %s - %s" % (report_date.year, report_date.month, report_date.day))
+            "NCSA Status %s - %s - %s" % (report_date.year, report_date.month, report_date.day))
 
         # Recuperar as visitas unicas do dia.
         visits = self.unique_visits_by_date(
@@ -213,7 +213,7 @@ class ActivityReports:
         if len(visits) == 0:
             visits = False
 
-        d = date.today()
+
         body = render_to_string("unique_hits_on_day.html", {
             "today": report_date.strftime('%d/%m/%Y'),
             "visits": visits,
@@ -223,68 +223,8 @@ class ActivityReports:
             "sum_users": sum_users
         })
 
-        try:
-            msg = EmailMessage(
-                subject=subject,
-                body=body,
-                from_email=from_email,
-                to=[email_admin],
-            )
-
-            msg.content_subtype = "html"
-            msg.send(fail_silently=False)
-
-        except SMTPException as e:
-            raise (e)
-
-        except Exception as e:
-            raise (e)
-
-
-            # TODO Codigo gerado pelo Felipe, que precisa ser alterado para o novo app.
-            # def visits_and_recent_login(self):
-            #     users = User.objects.all()
-            #     results = []
-            #     for user in users:
-            #         statistics = Statistics.objects.filter(owner=user).order_by('-date')
-            #         if len(statistics) != 0:
-            #             results.append(dict({
-            #                 "user": user.email,
-            #                 "visits": len(statistics),
-            #                 "last_visit": str(statistics[0].date.date())
-            #             }))
-            #     return results
-            #
-            # def total_visits(self):
-            #     users = User.objects.all()
-            #     visits = []
-            #     for user in users:
-            #         statistics = Statistics.objects.filter(owner=user).order_by('-date')
-            #         if len(statistics) != 0:
-            #             visits.append(dict({
-            #                 "user": user.email,
-            #                 "visits": len(statistics),
-            #             }))
-            #
-            #     sorted_list = sorted(visits, key=lambda k: k['visits'])
-            #     number_of_visits = 0
-            #     result = dict()
-            #     result[str(number_of_visits) + '-' + str(number_of_visits + 4)] = 0
-            #     for visit in sorted_list:
-            #         if visit['visits'] <= number_of_visits + 4:
-            #             result[str(number_of_visits) + '-' + str(number_of_visits + 4)] += 1
-            #         else:
-            #             number_of_visits += 4
-            #             result[str(number_of_visits) + '-' + str(number_of_visits + 4)] = 1
-            #     total_visits = len(Statistics.objects.all())
-            #     return {"Total of users grouped by number of visits": result, "Total Visits": total_visits}
-            #
-            # def visits_per_month(self):
-            #     results = dict()
-            #     statistics = Statistics.objects.all().order_by('-date')
-            #     for statistic in statistics:
-            #         if statistic.date.strftime("%Y-%m") not in results.keys():
-            #             results[statistic.date.strftime("%Y-%m")] = 1
-            #         else:
-            #             results[statistic.date.strftime("%Y-%m")] += 1
-            #     return {"Visits Per Month": results}
+        Notify.send_email(
+            subject=subject,
+            body=body,
+            to=[email_admin],
+        )
