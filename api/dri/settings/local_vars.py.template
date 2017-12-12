@@ -80,8 +80,8 @@ DES_CUTOUT_SERVICE = {
 }
 
 ## USER_QUERY
-USER_QUERY_EXECUTION_NCSA_USER_IN_SECONDS = None
-USER_QUERY_EXECUTION_NON_NCSA_USER_IN_SECONDS = 20
+# Tempo de execucao de um job no User query.
+USER_QUERY_EXECUTION_TIMEOUT = 60
 
 ## TARGET VIEWER
 # Habilita ou desabilita a interface de registro de produtos pela opcao Database,

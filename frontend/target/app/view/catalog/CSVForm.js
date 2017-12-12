@@ -63,7 +63,9 @@ Ext.define('Target.view.catalog.CSVForm', {
                     xtype: 'textfield',
                     name: 'displayName',
                     fieldLabel: 'Name',
+                    minLength: 3,
                     maxLength: 30,
+                    allowBlank: false,
                     regex: /^[a-z0-9-_\s]+$/i,
                     regexText: 'Please use only letters and numbers separated ' +
                                 'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
