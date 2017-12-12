@@ -324,10 +324,10 @@ class Cutout(models.Model):
         max_length=5, verbose_name='Object ID', null=True, blank=True,
         help_text='The association is used to know which column will be considered as id.')
     ctt_object_ra = models.CharField(
-        max_length=7, verbose_name='RA', null=True, blank=True,
+        max_length=10, verbose_name='RA', null=True, blank=True,
         help_text='RA in degrees, the association will be used to identify the column')
     ctt_object_dec = models.CharField(
-        max_length=7, verbose_name='Dec', null=True, blank=True,
+        max_length=10, verbose_name='Dec', null=True, blank=True,
         help_text='Dec in degrees, the association will be used to identify the column')
     ctt_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
