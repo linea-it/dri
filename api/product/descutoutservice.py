@@ -666,25 +666,43 @@ class DesCutoutService:
             file_path = file_path.split(self.cutout_dir)[1]
             file_path = os.path.join(self.cutout_dir, file_path.strip('/'))
 
-        cutout, created = Cutout.objects.update_or_create(
-            cjb_cutout_job=cutoutjob,
-            ctt_file_name=filename,
-            ctt_file_type=type,
-            ctt_filter=filter,
-            ctt_object_id=object_id,
-            ctt_object_ra=object_ra,
-            ctt_object_dec=object_dec,
-            defaults={
-                "ctt_file_size": file_size,
-                "ctt_file_path": file_path,
-                "ctt_thumbname": thumbname,
-                "ctt_download_start_time": start,
-                "ctt_download_finish_time": finish
-            }
-        )
+        # Tratar Ra e Dec para 5 casas decimais
+        if object_ra is not None:
+            object_ra = float('%.5f' % float(object_ra))
 
-        self.logger.debug("Cutout ID %s Registred" % cutout.pk)
-        return cutout
+        if object_dec is not None:
+            object_dec = float('%.5f' % float(object_dec))
+
+
+        try:
+
+            cutout, created = Cutout.objects.update_or_create(
+                cjb_cutout_job=cutoutjob,
+                ctt_file_name=filename,
+                ctt_file_type=type,
+                ctt_filter=filter,
+                ctt_object_id=object_id,
+                ctt_object_ra=object_ra,
+                ctt_object_dec=object_dec,
+                defaults={
+                    "ctt_file_size": file_size,
+                    "ctt_file_path": file_path,
+                    "ctt_thumbname": thumbname,
+                    "ctt_download_start_time": start,
+                    "ctt_download_finish_time": finish
+                }
+            )
+
+            self.logger.debug("Cutout ID %s Registred" % cutout.pk)
+            return cutout
+
+        except Exception as e:
+            self.logger.error(e)
+
+            # Changing the CutoutJob Status for Error
+            self.change_cutoutjob_status(cutoutjob, "er")
+
+            raise(e)
 
 class CutoutJobNotify:
     def __init__(self):
