@@ -701,6 +701,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                         item.text = textWithMenu(item.prd_display_name, me);
                         item.data_schema = item.tbl_schema;
                         item.data_table = item.tbl_name;
+                        item.qtip = 'rows: ' + Ext.util.Format.number(item.ctl_num_objects, '0,000');
                     });
 
                     refs.tvwInputTables.setStore(Ext.create('Ext.data.TreeStore', {
@@ -738,6 +739,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                         item.text = textWithMenu(item.prd_display_name, me);
                         item.data_schema = item.tbl_schema;
                         item.data_table = item.tbl_name;
+                        item.qtip = 'rows: ' + Ext.util.Format.number(item.ctl_num_objects, '0,000');
                     });
                 }
 
@@ -790,7 +792,8 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                         data_id: table.id,
                         data_schema: table.schema,
                         data_table: table.table_name,
-                        data_product_id: table.product_id
+                        data_product_id: table.product_id,
+                        qtip: 'rows: ' + Ext.util.Format.number(table.ctl_num_objects, '0,000')
                     });
                 }                
                 
@@ -837,6 +840,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                             item.text = textWithMenu(item.prd_display_name, me);
                             item.data_schema = item.tbl_schema;
                             item.data_table = item.tbl_name;
+                            item.qtip = 'rows: ' + Ext.util.Format.number(item.ctl_num_objects, '0,000');
                             //item.leaf = true;
                         });    
                     }
@@ -860,6 +864,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                             item.text = item.prd_display_name;
                             item.data_schema = item.tbl_schema;
                             item.data_table = item.tbl_name;
+                            item.qtip = 'rows: ' + Ext.util.Format.number(item.ctl_num_objects, '0,000');
                         });    
                     }
 
@@ -1010,7 +1015,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
-    loadMyJobs: function(showMask){
+    loadMyJobs: function(showMask, selectTab){
         var me = this;
         var refs = me.getReferences();
         var el = refs.grdJobs.getEl();
@@ -1072,7 +1077,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 // }                
                 me.pendingJobsLength = me.pendingJobsLength || 0;
                 me.pendingJobs = jobs.filter(function(j){return j.job_status=='rn' || j.job_status=='st';});
-                me.showDataPreview('grdJobs', jobs, colsMap);
+                me.showDataPreview('grdJobs', jobs, colsMap, selectTab);
                 
                 // se tem job pendente, atualizaa lista a cada 30 segundos
                 if (me.pendingJobs.length>0){
@@ -1081,7 +1086,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                     }
 
                     me.tm = setTimeout(function(){
-                        me.loadMyJobs(false);
+                        me.loadMyJobs(false, false);
                     }, 30000);
                 }else{
                     me.loadMyTables();
@@ -1154,7 +1159,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
-    showDataPreview: function(gridName, results, cols){
+    showDataPreview: function(gridName, results, cols, selectTab){
         var c, i, d, f;
         var datatype = {};
         var me = this;
@@ -1195,7 +1200,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         }
 
         // muda para a aba da grid
-        if ( index[gridName] != undefined ){
+        if ( index[gridName] != undefined && selectTab!==false){
             refs.tabBottom.setActiveItem( index[gridName] );
         }
 
