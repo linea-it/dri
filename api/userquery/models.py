@@ -83,3 +83,6 @@ class Table(models.Model):
         'product.Product', verbose_name='Product', related_name='product', null=True,
         blank=True, default=None)
     release = models.ForeignKey('coadd.Release', null=True, blank=True)
+
+    tbl_num_objects = models.PositiveIntegerField(
+        verbose_name='Num of rows', null=True, blank=True)

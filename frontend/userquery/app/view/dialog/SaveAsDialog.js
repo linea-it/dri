@@ -28,7 +28,7 @@ Ext.define('UserQuery.view.dialog.SaveAsDialog', {
                 },
                 {
                     xtype: 'textfield',
-                    fieldLabel: 'Description* ',
+                    fieldLabel: 'Description ',
                     name: 'description',
                     width: '100%'
                 }

@@ -160,26 +160,21 @@ class CreateTable(viewsets.ModelViewSet):
             data = request.data
             display_name = data.get("display_name", None)
             associate_target_viewer = data.get("associate_target_viewer", "") == 'on'
-            _id = data.get("id", None)
+            query_name = data.get("query_name", None)
             sql_sentence = data.get("sql_sentence", None)
             release_id = data.get("release_id", None)
 
-            if _id:
-                q = Query.objects.get(pk=_id)
-                sql_str = q.sql_sentence
-                query_name = q.name
-            elif sql_sentence:
-                sql_str = sql_sentence
+            if not query_name:
                 query_name = "Unnamed"
-            else:
-                raise Exception("id or sql_sentence parameters must exist")
 
+            if not sql_sentence:
+                raise Exception("sql_sentence parameters must exist")
             if not release_id:
-                raise Exception("release_id is a mandatory field")
+                raise Exception("release_id parameters must exist")
 
             table_name = self._set_internal_table_name(display_name, self.request.user.pk)
 
-            rqv = RawQueryValidator(sql_str)
+            rqv = RawQueryValidator(sql_sentence)
             if rqv.table_exists(table_name, None):
                 raise Exception("Table exists - choose a different name")
 
@@ -188,13 +183,14 @@ class CreateTable(viewsets.ModelViewSet):
 
             q = Job(display_name=display_name,
                     owner=self.request.user,
-                    sql_sentence=sql_str,
+                    sql_sentence=sql_sentence,
                     query_name=query_name)
             q.save()
 
-            timeout = self._time_out_query_execution(request)
+            timeout = settings.USER_QUERY_EXECUTION_TIMEOUT
             create_table.delay(q.id, request.user.pk, table_name, release_id,
-                               associate_target_viewer, schema=None, timeout=timeout)
+                               associate_target_viewer, timeout=timeout,
+                               schema=settings.DATABASES['catalog']['USER'].upper())
             return HttpResponse(status=200)
         except Exception as e:
             print(str(e))
@@ -210,14 +206,6 @@ class CreateTable(viewsets.ModelViewSet):
 
         # Limitar a 40 characteres
         return table_name[:40]
-
-    def _time_out_query_execution(self, request):
-        user = User.objects.get(pk=request.user.pk)
-        try:
-            user.groups.get(name='NCSA')
-            return settings.USER_QUERY_EXECUTION_NCSA_USER_IN_SECONDS
-        except Exception as e:
-            return settings.USER_QUERY_EXECUTION_NON_NCSA_USER_IN_SECONDS
 
 
 class TableProperties(viewsets.ModelViewSet):
@@ -241,13 +229,9 @@ class TableProperties(viewsets.ModelViewSet):
             if not db.table_exists(table_name, schema=schema):
                 raise Exception("Schema/table does not exist")
 
-            columns = db.get_table_properties(table_name, schema=schema)
-            columns.sort(key=lambda k: k['column_name'])
-            response = {
-                    'columns': columns
-                }
+            table_properties = db.get_table_properties(table_name, schema=schema)
 
-            return JsonResponse(response, safe=False)
+            return JsonResponse(table_properties, safe=False)
 
         except Exception as e:
             print(str(e))
