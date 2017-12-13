@@ -160,26 +160,21 @@ class CreateTable(viewsets.ModelViewSet):
             data = request.data
             display_name = data.get("display_name", None)
             associate_target_viewer = data.get("associate_target_viewer", "") == 'on'
-            _id = data.get("id", None)
+            query_name = data.get("query_name", None)
             sql_sentence = data.get("sql_sentence", None)
             release_id = data.get("release_id", None)
 
-            if _id:
-                q = Query.objects.get(pk=_id)
-                sql_str = q.sql_sentence
-                query_name = q.name
-            elif sql_sentence:
-                sql_str = sql_sentence
+            if not query_name:
                 query_name = "Unnamed"
-            else:
-                raise Exception("id or sql_sentence parameters must exist")
 
+            if not sql_sentence:
+                raise Exception("sql_sentence parameters must exist")
             if not release_id:
-                raise Exception("release_id is a mandatory field")
+                raise Exception("release_id parameters must exist")
 
             table_name = self._set_internal_table_name(display_name, self.request.user.pk)
 
-            rqv = RawQueryValidator(sql_str)
+            rqv = RawQueryValidator(sql_sentence)
             if rqv.table_exists(table_name, None):
                 raise Exception("Table exists - choose a different name")
 
@@ -188,7 +183,7 @@ class CreateTable(viewsets.ModelViewSet):
 
             q = Job(display_name=display_name,
                     owner=self.request.user,
-                    sql_sentence=sql_str,
+                    sql_sentence=sql_sentence,
                     query_name=query_name)
             q.save()
 
