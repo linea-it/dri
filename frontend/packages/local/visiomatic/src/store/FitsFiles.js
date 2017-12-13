@@ -19,9 +19,13 @@ Ext.define('visiomatic.store.FitsFiles', {
 
     sorters: [
         {
-            property: 'tilename',
+            property: 'order',
             direction: 'ASC'
-        }
+        },
+        {
+            property: 'filename',
+            direction: 'ASC'
+        },
     ]
 
 });
