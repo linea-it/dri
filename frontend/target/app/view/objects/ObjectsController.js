@@ -266,6 +266,9 @@ Ext.define('Target.view.objects.ObjectsController', {
 
         if (catalog > 0) {
 
+            // flag indicando que nao ha nenhum filtro salvo ativo.
+            vm.set('haveFilter', false);
+
             store.clearFilter();
 
             store.getProxy().setExtraParam('product', catalog);
@@ -277,7 +280,15 @@ Ext.define('Target.view.objects.ObjectsController', {
 
             // Aplicar Filtros ao Produto
             if ((filters) && (filters.count() > 0)) {
+
                 filters.each(function (filter) {
+
+                    // Altera o valor da flag para indicar que ha um filtro salvo
+                    // sendo aplicado.
+                    if (filter.get('filterset') > 0) {
+                        vm.set('haveFilter', true);
+                    }
+
                     aFilters.push({
                         property: filter.get('fcd_property_name'),//property_name'),
                         operator: filter.get('fcd_operation'),
@@ -307,7 +318,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         //limpa o preview
         preview.clear();
         objectsGrid.setLoading(false);
-                
+
         if (!successful) {
             // Se teve alguma falha limpar a grid.
             me.clearObjects();

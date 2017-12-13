@@ -41,11 +41,8 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
                         align: 'stretch'
                     },
                     border: false,
-                    // bodyPadding: 10,
                     fieldDefaults: {
-                        msgTarget: 'side',
-//                        labelAlign: 'top',
-//                        labelWidth: 100,
+                        // msgTarget: 'side',
                         labelStyle: 'font-weight:bold'
                     },
                     items: [
@@ -55,6 +52,7 @@ Ext.define('Target.view.objects.SaveCatalogWindow', {
                             name: 'name',
                             allowBlank: false,
                             maxLength: 40,
+                            minLength: 3,
                             regex: /^[a-z0-9-_\s]+$/i,
                             regexText: 'Please use only letters and numbers separated by spaces \' \', minus sign \'-\' or underscore \'_\'.'
                         },

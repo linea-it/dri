@@ -155,7 +155,8 @@ def get_fits_by_tilename(request):
 
         files = os.listdir(tile_path)
 
-        data_source = os.path.join(settings.DATA_SOURCE, relative_path)
+
+        data_source = os.path.join(settings.DATA_SOURCE, relative_path) + "/"
 
         result = list()
 

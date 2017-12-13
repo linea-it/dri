@@ -51,7 +51,7 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
                             text: 'URL',
                             dataIndex: 'file_source',
                             renderer: function (value, metadata, record) {
-                                return '<a href=' + value + '><i class="fa fa-download"> </i></a>';
+                                return '<a href=' + value + ' target=\'_blank\'><i class="fa fa-download"> </i></a>';
                             }
                         }
                     ]

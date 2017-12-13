@@ -18,22 +18,11 @@ Ext.define('Target.view.objects.SaveCatalogController', {
     onChangeCatalog: function (currentCatalog, activeFilter) {
         var me = this,
             vm = me.getViewModel(),
-            filterSets = vm.getStore('filterSets'),
-            contents = Ext.data.StoreManager.lookup('multiselectColumnsStore');
+            filterSets = vm.getStore('filterSets');
 
         vm.set('activeFilter', activeFilter);
 
-        filterSets.addFilter({
-            property: 'product',
-            value: currentCatalog.get('id')
-        });
-
-        contents.addFilter({
-            property: 'pcn_product_id',
-            value: currentCatalog.get('id')
-        });
-        contents.load();
-
+        
     },
 
     onSaveCatalog: function () {
