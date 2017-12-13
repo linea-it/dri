@@ -21,6 +21,36 @@ Ext.define('UserQuery.Application', {
 
     launch: function () {
         // TODO - Launch the application
+        // console.log('lauch');
+
+        // Desabilitar os erros de Aria
+        Ext.enableAriaButtons = false;
+
+        // Checar se o usuario esta logado
+        Ext.Ajax.request({
+            url: '/dri/api/logged/get_logged/?format=json',
+            success: function (response) {
+                var data = JSON.parse(response.responseText);
+
+                // Identificar o usuario no Google Analitics
+                if (window.ga) ga('set', 'userId', data.id);
+
+            },
+            failure: function (response, opts) {
+                var protocol = window.location.protocol,
+                    pathname = window.location.pathname,
+                    hostname = window.location.host,
+                    location;
+
+                location = Ext.String.format(
+                    '{0}//{1}/dri/api/api-auth/login/?next={2}',
+                    protocol, hostname, pathname);
+
+                window.location.assign(location);
+
+            }
+        });
+
     },
 
     onAppUpdate: function () {

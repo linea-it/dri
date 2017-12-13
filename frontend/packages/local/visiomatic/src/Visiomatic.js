@@ -38,7 +38,7 @@ Ext.define('visiomatic.Visiomatic', {
             enableLineaOverlay: true
         },
 
-        prefix: '',
+        prefix: null,
 
         enableSidebar: true,
 
@@ -119,12 +119,12 @@ Ext.define('visiomatic.Visiomatic', {
 
         // Draw Crosshair Path Options http://leafletjs.com/reference-1.0.3.html#path
         crosshairOptions: {
-            color: '#90FA3A',
-            weight: 1,
-            opacity: 0.5,
+            color: '#FF4500',
+            weight: 2,
+            // opacity: 0.8,
             smoothFactor: 1,
             centerPadding: 0.001, // Deg
-            size: 0.005, // Deg
+            size: 0.003, // Deg
         },
 
         release: null,
@@ -177,71 +177,6 @@ Ext.define('visiomatic.Visiomatic', {
         if (window.L) {
             me.libL  = window.L;
 
-            //            // Registro do Catalogo
-            //            me.libL.Catalog.Y3A1 = me.libL.extend({}, me.libL.Catalog, {
-            //                name: 'Y3A1',
-            //                attribution: 'Des Y3A1 COADD OBJECT SUMMARY',
-            //                color: 'blue',
-            //                maglim: 23.0,
-            //                service: 'ScienceServer',
-            //                regionType: 'box',
-            //                authenticate: 'csrftoken',
-            //                url: 'http://' + host + '/dri/api/visiomatic/coadd_objects/' +
-            //                '?mime=csv' +
-            //                '&source=Y3A1_COADD_OBJECT_SUMMARY' +
-            //                '&columns=coadd_object_id,ra,dec,mag_auto_g,mag_auto_r,mag_auto_i,mag_auto_z,mag_auto_y,a_image,b_image,theta_j2000' +
-            //                '&coordinate={lng},{lat}' +
-            //                '&bounding={dlng},{dlat}' +
-            //                '&maglim={maglim}' +
-            //                '&limit=2000',
-            //                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
-            //                units: [],
-            //                objurl: 'http://' + host + '/dri/apps/explorer/#coadd/Y3A1_COADD_OBJECT_SUMMARY/{id}',
-            //                draw: function (feature, latlng) {
-            //                    return me.libL.ellipse(latlng, {
-            //                        majAxis: feature.properties.items[5] / 3600.0,
-            //                        minAxis: feature.properties.items[6] / 3600.0,
-            //                        posAngle: 90 - feature.properties.items[7],
-            //                        // Path Options http://leafletjs.com/reference-1.0.3.html#path
-            //                        weight: 1, //largura da borda em pixel
-            //                        opacity: 0.5, // transparencia da borda
-            //                        fillOpacity: 0.01 // Transparencia nos marcadores.
-            //                    });
-            //                }
-            //            });
-            //
-            //            me.libL.Catalog.Y1A1 = me.libL.extend({}, me.libL.Catalog, {
-            //                name: 'Y1A1',
-            //                attribution: 'Des Y1A1 COADD OBJECT',
-            //                color: 'blue',
-            //                maglim: 23.0,
-            //                service: 'ScienceServer',
-            //                regionType: 'box',
-            //                authenticate: 'csrftoken',
-            //                url: 'http://' + host + '/dri/api/visiomatic/coadd_objects/' +
-            //                '?mime=csv' +
-            //                '&source=y1a1_coadd_objects' +
-            //                '&columns=coadd_objects_id,ra,dec,mag_auto_g,mag_auto_r,mag_auto_i,mag_auto_z,mag_auto_y,a_image,b_image,theta_image' +
-            //                '&coordinate={lng},{lat}' +
-            //                '&bounding={dlng},{dlat}' +
-            //                '&maglim={maglim}' +
-            //                '&limit=2000',
-            //                properties: ['mag_auto_g', 'mag_auto_r', 'mag_auto_i', 'mag_auto_z', 'mag_auto_y'],
-            //                units: [],
-            //                objurl: 'http://' + host + '/dri/apps/explorer/#coadd/y1a1_coadd_objects/{id}',
-            //                draw: function (feature, latlng) {
-            //                    return me.libL.ellipse(latlng, {
-            //                        majAxis: feature.properties.items[5] / 3600.0,
-            //                        minAxis: feature.properties.items[6] / 3600.0,
-            //                        posAngle: feature.properties.items[7],
-            //                        // Path Options http://leafletjs.com/reference-1.0.3.html#path
-            //                        weight: 1, //largura da borda em pixel
-            //                        opacity: 0.5, // transparencia da borda
-            //                        fillOpacity: 0.01 // Transparencia nos marcadores.
-            //                    });
-            //                }
-            //            });
-
         } else {
             console.log('window.L ainda nao esta carregada, incluir no app.json a biblioteca Leaflet');
         }
@@ -288,7 +223,9 @@ Ext.define('visiomatic.Visiomatic', {
         map = libL.map(mapContainer, mapOptions);
 
         // set Prefix
-        map.attributionControl.setPrefix(me.getPrefix());
+        if (me.getPrefix()) {
+            map.attributionControl.setPrefix(me.getPrefix());
+        }
 
         // Add a Reticle to Map
         libL.control.reticle().addTo(map);
@@ -1010,7 +947,7 @@ Ext.define('visiomatic.Visiomatic', {
 
                     return l.ellipse(latlng, pathOptions);
                 }
-                
+
                 else if (pathOptions.pointType === 'square') {
                     // Desenha um Quadrado
                     var bounds = [
@@ -1590,9 +1527,10 @@ Ext.define('visiomatic.Visiomatic', {
         if (currentDataset.get('tli_tilename')) {
 
           tilename = currentDataset.get('tli_tilename');
+          tag = currentDataset.get('release_name');
 
           var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
-          winDownload.loadFits(tilename, 'Y3A1_COADD');
+          winDownload.loadFits(tilename, tag);
           winDownload.show();
 
         } else {

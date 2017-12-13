@@ -28,12 +28,14 @@ Ext.define('Sky.view.main.Toolbar', {
                     store:['',''],
                     menu: {
                         xtype: 'menu',
-                        items: [{
-                                    name:'latlng', text: 'RA, Dec (Deg)'
-                                },
-                                {
-                                    name:'HMS', text: 'RA, Dec (HMS)'
-                                }],
+                        items: [
+                            {
+                                name:'latlng', text: 'RA, Dec (Deg)'
+                            },
+                            // {
+                            //     name:'HMS', text: 'RA, Dec (HMS)'
+                            // }
+                        ],
                         listeners : {
                             click: function(button,item) {
                                 if (item){

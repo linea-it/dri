@@ -14,13 +14,16 @@ from common.notify import Notify
 from userquery.models import Job
 from userquery.models import Table
 from product.models import Product
+from coadd.models import Release
 
 from .target_viewer import register_table_in_the_target_viewer
 
 
 class CreateTableAs:
-    def __init__(self, job_id, user_id, table_name, associate_target_viewer, schema=None, timeout=None):
+    def __init__(self, job_id, user_id, table_name, release_id,
+                 associate_target_viewer, schema=None, timeout=None):
         self.table_name = table_name
+        self.release_id = release_id
         self.schema = schema
         self.timeout = timeout
         self.associate_target_viewer = associate_target_viewer
@@ -40,7 +43,8 @@ class CreateTableAs:
         self._notify_by_email_start()
         self._update_job_status_before_table_creation()
         self._create_table_by_job_id()
-        self._associate_target_viewer()
+        if self.is_table_successfully_created:
+            self._associate_target_viewer()
         self._update_job_status_after_table_creation_attempt()
         self._send_notifications_by_email_after_table_creation_attempt()
 
@@ -66,21 +70,29 @@ class CreateTableAs:
     def _create_table_by_job_id(self):
         self.logger.info("_create_table_by_job_id - job_id: %s" % self.job.pk)
 
-        db = DBBase('catalog')
+        db = None
         try:
+            db = DBBase('catalog')
             db.create_table_raw_sql(self.table_name, self.job.sql_sentence, schema=self.schema, timeout=self.timeout)
+            if self.associate_target_viewer:
+                db.create_auto_increment_column(self.table_name, 'meta_id', schema=self.schema)
             self.is_table_successfully_created = True
 
+            release = Release.objects.get(pk=self.release_id)
+            table_properties = db.get_table_properties(self.table_name.upper(), schema=self.schema)
             self.table = Table(table_name=self.table_name,
                                display_name=self.job.display_name,
                                owner=self.job.owner,
-                               schema=self.schema)
+                               schema=self.schema,
+                               release=release,
+                               tbl_num_objects=table_properties['table_rows'])
+
             self.table.save()
         except Exception as e:
             self.error_message = str(e)
             self.logger.info("CreateTableAs Error: %s" % self.error_message)
-
-            db.drop_table(self.table_name, schema=self.schema)
+            if db.table_exists(self.table_name, schema=self.schema):
+                db.drop_table(self.table_name, schema=self.schema)
 
     def _associate_target_viewer(self):
         if self.associate_target_viewer:

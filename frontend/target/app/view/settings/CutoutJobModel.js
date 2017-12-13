@@ -27,6 +27,7 @@ Ext.define('Target.view.settings.CutoutJobModel', {
         tags: {
             fields: ['name', 'displayName'],
             data: [
+                {name: 'y3a2_coadd',  displayName: 'Y3A2 COADD'},
                 {name: 'y3a1_coadd',  displayName: 'Y3A1 COADD'},
                 {name: 'y3a1_coadd_deep', displayName: 'Y3A1 COADD DEEP'},
                 {name: 'y1a1_coadd', displayName: 'Y1A1 COADD'},

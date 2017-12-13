@@ -62,7 +62,7 @@ Ext.define('Target.view.objects.Panel', {
                         tooltip: 'Save As',
                         handler: 'onClickSaveAs',
                         bind: {
-                            disabled: '{!haveResults}'
+                            disabled: '{!haveFilter}'
                         }
                     },
                     {

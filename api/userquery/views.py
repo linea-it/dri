@@ -6,7 +6,7 @@ from rest_framework import viewsets
 from rest_framework import permissions, filters
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
 
-from django.db.models import Q, Case, Value, When
+from django.db.models import Q, Case, Value, When, F
 from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.models import User
@@ -31,38 +31,12 @@ class QueryViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated, IsOwnerOrPublic)
 
-    def create(self, request, *args, **kwargs):
-        if not self._is_a_valid_request_to_save(request):
-            return JsonResponse({'message': 'The field name already exists for this user'}, status=400)
-        return super(QueryViewSet, self).create(request, args, kwargs)
-
     def perform_create(self, serializer):
-        serializer.save(owner=self.request.user)
-
-    def update(self, request, *args, **kwargs):
-        if not self._is_a_valid_request_to_save(request):
-            return JsonResponse({'message': 'The field name already exists for this user'}, status=400)
-        return super(QueryViewSet, self).update(request, args, kwargs)
-
-    def perform_update(self, serializer):
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
         return self.queryset.filter((Q(owner=self.request.user) | Q(is_public=True)) &
                                     Q(is_sample=False)).order_by('name')
-
-    def _is_a_valid_request_to_save(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        if self._is_table_name_already_defined_by_the_user(serializer.validated_data['name']):
-            return False
-        return True
-
-    def _is_table_name_already_defined_by_the_user(self, name):
-        q = Query.objects.filter(Q(owner=self.request.user) &
-                                 Q(name=name))
-        print(str(q.query))
-        return True if len(q) > 0 else False
 
 
 class SampleViewSet(viewsets.ModelViewSet):
@@ -80,12 +54,17 @@ class TableViewSet(viewsets.ModelViewSet):
     queryset = Table.objects.filter()
     serializer_class = TableSerializer
 
-    http_method_names = ['get', 'delete']
+    # http_method_names = ['get', 'delete', 'put']
     authentication_classes = (TokenAuthentication, SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
     def get_queryset(self):
-        return self.queryset.filter(owner=self.request.user).order_by('display_name')
+        release = self.request.query_params.get('release', None)
+        return self.queryset.filter(Q(owner=self.request.user) &
+                                    Q(release=release)).order_by('display_name')
 
     def destroy(self, request, *args, **kwargs):
         try:
@@ -95,7 +74,8 @@ class TableViewSet(viewsets.ModelViewSet):
 
             db.drop_table(q.table_name, schema=q.schema)
 
-            return super(TableViewSet, self).destroy(request, args, kwargs)
+            q.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
@@ -115,7 +95,7 @@ class JobViewSet(viewsets.ModelViewSet):
                 When(job_status='st', then=Value('0')),
                 When(job_status='rn', then=Value('1')),
                 default=Value('2')),
-            'start_date_time'
+            F('start_date_time').desc()
         )
 
 
@@ -155,6 +135,11 @@ class QueryPreview(viewsets.ViewSet):
             sql = sql_sentence + " " + db.database.get_raw_sql_limit(offset, limit)
             result = db.fetchall_dict(sql)
 
+            # make all values String to avoid errors during Json encoding.
+            for raw in result:
+                for k, v in raw.items():
+                    raw[k] = str(v)
+
             response = {"count": len(result),
                         "message": None,
                         "results": result}
@@ -174,20 +159,22 @@ class CreateTable(viewsets.ModelViewSet):
         try:
             data = request.data
             display_name = data.get("display_name", None)
-            associate_target_viewer = data.get("associate_target_viewer", False)
-            _id = data.get("id", None)
+            associate_target_viewer = data.get("associate_target_viewer", "") == 'on'
+            query_name = data.get("query_name", None)
+            sql_sentence = data.get("sql_sentence", None)
+            release_id = data.get("release_id", None)
+
+            if not query_name:
+                query_name = "Unnamed"
+
+            if not sql_sentence:
+                raise Exception("sql_sentence parameters must exist")
+            if not release_id:
+                raise Exception("release_id parameters must exist")
 
             table_name = self._set_internal_table_name(display_name, self.request.user.pk)
 
-            q = Query.objects.get(pk=_id)
-
-            if type(associate_target_viewer) is not bool:
-                raise Exception("associate_target_viewer must be a boolean type")
-
-            if not self._is_user_authorized(q):
-                raise Exception("User not authorized to perform this action")
-
-            rqv = RawQueryValidator(q.sql_sentence)
+            rqv = RawQueryValidator(sql_sentence)
             if rqv.table_exists(table_name, None):
                 raise Exception("Table exists - choose a different name")
 
@@ -196,18 +183,18 @@ class CreateTable(viewsets.ModelViewSet):
 
             q = Job(display_name=display_name,
                     owner=self.request.user,
-                    sql_sentence=q.sql_sentence)
+                    sql_sentence=sql_sentence,
+                    query_name=query_name)
             q.save()
 
-            timeout = self._time_out_query_execution(request)
-            create_table.delay(q.id, request.user.pk, table_name, associate_target_viewer, schema=None, timeout=timeout)
+            timeout = settings.USER_QUERY_EXECUTION_TIMEOUT
+            create_table.delay(q.id, request.user.pk, table_name, release_id,
+                               associate_target_viewer, timeout=timeout,
+                               schema=settings.DATABASES['catalog']['USER'].upper())
             return HttpResponse(status=200)
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
-
-    def _is_user_authorized(self, q):
-        return q.owner == self.request.user or q.is_public
 
     def _set_internal_table_name(self, display_name, user_id):
         table_name = copy.deepcopy(display_name)
@@ -219,14 +206,6 @@ class CreateTable(viewsets.ModelViewSet):
 
         # Limitar a 40 characteres
         return table_name[:40]
-
-    def _time_out_query_execution(self, request):
-        user = User.objects.get(pk=request.user.pk)
-        try:
-            user.groups.get(name='NCSA')
-            return settings.USER_QUERY_EXECUTION_NCSA_USER_IN_SECONDS
-        except Exception as e:
-            return settings.USER_QUERY_EXECUTION_NON_NCSA_USER_IN_SECONDS
 
 
 class TableProperties(viewsets.ModelViewSet):
@@ -250,11 +229,9 @@ class TableProperties(viewsets.ModelViewSet):
             if not db.table_exists(table_name, schema=schema):
                 raise Exception("Schema/table does not exist")
 
-            response = {
-                    'columns': db.get_table_properties(table_name, schema=schema)
-                }
+            table_properties = db.get_table_properties(table_name, schema=schema)
 
-            return JsonResponse(response, safe=False)
+            return JsonResponse(table_properties, safe=False)
 
         except Exception as e:
             print(str(e))

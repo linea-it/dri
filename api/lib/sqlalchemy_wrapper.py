@@ -40,13 +40,42 @@ class DBOracle:
     def get_raw_sql_limit(self, offset, limit):
         return "OFFSET %s ROWS FETCH NEXT %s ROWS ONLY" % (offset, limit)
 
-    def get_raw_sql_table_properties_(self, table, schema=None):
-        sql = "SELECT column_name, data_type FROM all_tab_columns WHERE table_name = '%s'" % table
+    def get_raw_sql_column_properties(self, table, schema=None):
+        sql = "SELECT column_name, data_type FROM all_tab_columns WHERE table_name='%s'" % table
         if schema:
-            sql += " AND owner = '%s'" % schema
-
+            sql += " AND owner='%s'" % schema
         return sql
 
+    def get_raw_sql_table_rows(self, table, schema=None):
+        sql = "SELECT NUM_ROWS FROM dba_tables WHERE TABLE_NAME='%s'" % table
+        if schema:
+            sql += " AND owner='%s'" % schema
+        return sql
+
+    def get_raw_sql_size_table_bytes(self, table, schema=None):
+        sql = "SELECT BYTES FROM dba_segments WHERE segment_type='TABLE' and segment_name='%s'" % table
+        if schema:
+            sql += " AND owner='%s'" % schema
+        return sql
+
+    def get_raw_sql_number_columns(self, table, schema=None):
+        sql = "SELECT COUNT(*) FROM all_tab_columns WHERE TABLE_NAME = '%s'" % table
+        if schema:
+            sql += " AND owner = '%s'" % schema
+        return sql
+
+    def get_create_auto_increment_column(self, table, column_name, schema=None):
+        table_name = table
+        if schema is not None and schema is not "":
+            table_name = "%s.%s" % (schema, table)
+
+        sql = list()
+        sql.append("alter table %(table)s add %(column_name)s number" % {"table": table_name, "column_name": column_name})
+        sql.append("create sequence seq_id" % {"table": table_name, "column_name": column_name})
+        sql.append("update %(table)s set %(column_name)s = seq_id.nextval" % {"table": table_name, "column_name": column_name})
+        sql.append("drop sequence seq_id" % {"table": table_name, "column_name": column_name})
+
+        return sql
 
 class DBSqlite:
     def __init__(self, db):
@@ -142,8 +171,35 @@ class DBBase:
             return [value['name'] for value in self.inspect.get_columns(table, schema)]
 
     def get_table_properties(self, table, schema=None):
-        sql = self.database.get_raw_sql_table_properties_(table, schema=schema)
-        return self.fetchall_dict(sql)
+        properties = dict()
+
+        sql = self.database.get_raw_sql_column_properties(table, schema=schema)
+        columns = self.fetchall_dict(sql)
+        columns.sort(key=lambda k: k['column_name'])
+        properties['columns'] = columns
+
+        sql = self.database.get_raw_sql_table_rows(table, schema=schema)
+        with self.engine.connect() as con:
+            queryset = con.execute(sql)
+        properties['table_rows'] = queryset.fetchone()[0]
+
+        sql = self.database.get_raw_sql_size_table_bytes(table, schema=schema)
+        with self.engine.connect() as con:
+            queryset = con.execute(sql)
+        properties['table_bytes'] = queryset.fetchone()[0]
+
+        sql = self.database.get_raw_sql_number_columns(table, schema=schema)
+        with self.engine.connect() as con:
+            queryset = con.execute(sql)
+        properties['table_num_columns'] = queryset.fetchone()[0]
+
+        return properties
+
+    def create_auto_increment_column(self, table, column_name, schema=None):
+        sql = self.database.get_create_auto_increment_column(table, column_name, schema=schema)
+        with self.engine.connect() as con:
+            for _sql in sql:
+                con.execute(_sql)
 
     def get_count(self, table, schema=None):
         with self.engine.connect() as con:
@@ -274,12 +330,15 @@ class DBBase:
         sql_create_table = text('CREATE TABLE %s AS %s' % (table_name, sql))
 
         con = self.engine.connect()
+        trans = con.begin()
         t = threading.Timer(timeout, con.close)
         if timeout:
             t.start()
         try:
             con.execute(sql_create_table)
+            trans.commit()
         except Exception as e:
+            trans.rollback()
             raise Exception("Timeout for query execution - %s" % str(e))
         t.cancel()
 

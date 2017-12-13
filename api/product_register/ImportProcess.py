@@ -17,6 +17,9 @@ from .models import Site, Authorization, ExternalProcess, Export
 class Import():
     db = None
 
+    def __init__(self):
+        self._gc_cm = dict({})
+
     def start_import(self, request):
 
         self.user = request.user
@@ -255,7 +258,7 @@ class Import():
                 "prd_version": data.get('version', None),
                 "prd_description": data.get('description', None),
                 "prd_date": date,
-                "prd_is_public": data.get('is_public', True),
+                "prd_is_public": data.get('is_public', False),
                 "tbl_rows": tbl_rows,
                 "tbl_num_columns": tbl_num_columns,
                 "tbl_size": tbl_size,

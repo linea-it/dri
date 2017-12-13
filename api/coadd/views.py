@@ -10,7 +10,9 @@ from rest_framework.response import Response
 from .models import Release, Tag, Tile, Dataset, Survey
 from .serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, \
     SurveySerializer, DatasetFootprintSerializer
-
+from django.conf import settings
+import os
+from urllib.parse import urljoin
 
 # Create your views here.
 class ReleaseViewSet(viewsets.ModelViewSet):
@@ -139,28 +141,55 @@ class SurveyViewSet(viewsets.ModelViewSet):
 @api_view(['GET'])
 def get_fits_by_tilename(request):
     if request.method == 'GET':
-        tilename = request.query_params.get('tilename', None)
-        catalog = request.query_params.get('catalog', None)
-        sql = (
-            "SELECT m.filename, m.filetype, m.band, f.path FROM proctag t, file_archive_info f, miscfile m WHERE t.pfw_attempt_id = m.pfw_attempt_id AND t.tag='" + catalog + "' AND f.filename=m.filename AND m.filetype NOT IN ('coadd_head_scamp', 'mangle_molys', 'mangle_polygons', 'mangle_csv_ccdgon', 'mangle_csv_cobjmoly', 'mangle_csv_molyccd', 'mangle_csv_molyccd', 'mangle_csv_molygon', 'coadd_psfex_model', 'coadd_qa_scamp', 'coadd_xml_scamp', 'coadd_xml_psfex', 'coadd_det_psfex_model') AND m.tilename = '" + tilename + "' ORDER BY m.filetype, m.filename")
 
-        db = DBBase('desoper')
-        tiles = db.engine.execute(sql)
-        fits_file = {}
-        result = []
-        for tile in tiles:
-            url = "https://desar2.cosmology.illinois.edu/DESFiles/desarchive/%s/%s.fz" % (
-                tile[3].replace("+", "%2B"), tile[0].replace("+", "%2B"))
-            fits_file.update({'url': url})
+        tag = request.query_params.get('tag', None).lower()
+        tilename = request.query_params.get('tilename', None).upper()
 
-            fits_file.update({
-                'tilename': tile[0]
-            })
+        # http://desportal2.cosmology.illinois.edu/data/releases/y3a2_coadd/tiles/DES0334-2332/DES0334-2332_r2682p01_g.fits.fz
 
-            fits_file.update({
-                'band': tile[2]
-            })
-            if tile[2] != None:
-                result.append(copy.copy(fits_file))
+        data_path = settings.DATA_DIR
+
+        relative_path = os.path.join('releases', tag, 'tiles', tilename)
+
+        tile_path = os.path.join(data_path, relative_path)
+
+        files = os.listdir(tile_path)
+
+
+        data_source = os.path.join(settings.DATA_SOURCE, relative_path) + "/"
+
+        result = list()
+
+        for filename in files:
+
+            file_source = urljoin(data_source, filename)
+
+            result.append(dict({
+                'filename': filename,
+                'file_source': file_source
+            }))
+
+
+        # sql = (
+        #     "SELECT m.filename, m.filetype, m.band, f.path FROM proctag t, file_archive_info f, miscfile m WHERE t.pfw_attempt_id = m.pfw_attempt_id AND t.tag='" + catalog + "' AND f.filename=m.filename AND m.filetype NOT IN ('coadd_head_scamp', 'mangle_molys', 'mangle_polygons', 'mangle_csv_ccdgon', 'mangle_csv_cobjmoly', 'mangle_csv_molyccd', 'mangle_csv_molyccd', 'mangle_csv_molygon', 'coadd_psfex_model', 'coadd_qa_scamp', 'coadd_xml_scamp', 'coadd_xml_psfex', 'coadd_det_psfex_model') AND m.tilename = '" + tilename + "' ORDER BY m.filetype, m.filename")
+        #
+        # db = DBBase('desoper')
+        # tiles = db.engine.execute(sql)
+        # fits_file = {}
+        # result = []
+        # for tile in tiles:
+        #     url = "https://desar2.cosmology.illinois.edu/DESFiles/desarchive/%s/%s.fz" % (
+        #         tile[3].replace("+", "%2B"), tile[0].replace("+", "%2B"))
+        #     fits_file.update({'url': url})
+        #
+        #     fits_file.update({
+        #         'tilename': tile[0]
+        #     })
+        #
+        #     fits_file.update({
+        #         'band': tile[2]
+        #     })
+        #     if tile[2] != None:
+        #         result.append(copy.copy(fits_file))
 
         return Response(dict({'results': result}))

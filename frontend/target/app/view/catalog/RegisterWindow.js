@@ -21,8 +21,21 @@ Ext.define('Target.view.catalog.RegisterWindow', {
 
     layout: 'fit',
 
+    config: {
+        enableRegisterDB: false,
+    },
+
     initComponent: function () {
         var me = this;
+
+        // Recuperar do Settigs no backend se a interface de registro pelo
+        // banco de dados estara disponivel.
+        try{
+            me.enableRegisterDB = Settings.PRODUCT_REGISTER_DB_INTERFACE;
+        }
+        catch (err){
+            console.warn("Setting PRODUCT_REGISTER_DB_INTERFACE not loaded.");
+        }
 
         Ext.apply(this, {
             items: [
@@ -47,7 +60,8 @@ Ext.define('Target.view.catalog.RegisterWindow', {
                                     me.fireEvent('newproduct', product);
                                     me.close();
                                 }
-                            }
+                            },
+                            hidden: !me.getEnableRegisterDB()
                         }
                     ]
                 }

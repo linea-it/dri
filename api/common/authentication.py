@@ -4,7 +4,7 @@ from sqlalchemy.sql import column
 from sqlalchemy.sql import select
 from sqlalchemy.sql import table
 from activity_statistic.models import Activity
-
+from django.conf import settings
 
 class NcsaBackend(object):
     # this method is needed by Django auth backend
@@ -20,9 +20,17 @@ class NcsaBackend(object):
 
         return None
 
+    def get_database_name(self):
+        try:
+            return settings.NCSA_AUTHENTICATION_DB
+
+        except:
+            raise Exception("configuration variable \"NCSA_AUTHENTICATION_DB\" was unset in local_vars")
+
     def check_user(self, username, password):
         try:
-            DBBase('dessci', [username, password])
+            dbname = self.get_database_name()
+            DBBase(dbname, [username, password])
             # [CMP] this should be not needed,
             # if a pool is used it will close all the connection of the pool
             # db.engine.dispose()
@@ -55,10 +63,14 @@ class NcsaBackend(object):
 
     def getUserInfo(self, username):
         # TODO [CMP] this should have a connection management/pool
-        db = DBBase('dessci')
-        stm = select([column('email'), column('firstname'), column('lastname')]).select_from(
-            table('des_users')).where(column('username') == username)
-        return db.fetchone_dict(stm)
+        dbname = self.get_database_name()
+        db = DBBase(dbname)
+        # stm = select([column('email'), column('firstname'), column('lastname')]).select_from(
+        #     table('des_users')).where(column('username') == username)
+        # return db.fetchone_dict(stm)
+        sql = "SELECT email, firstname, lastname FROM DES_ADMIN.DES_USERS WHERE username = '%s'" % username
+        return db.fetchone_dict(sql)
+
 
     def ensure_group(self, name):
         try:

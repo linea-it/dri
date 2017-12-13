@@ -32,6 +32,10 @@ DATABASES = {
     }
 }
 
+# Esta configuracao e usada somente pela classe de authenticacao usando login do NCSA
+# deve ser preenchida com o nome da configuracao de database do NCSA
+NCSA_AUTHENTICATION_DB = "dessci"
+
 # Target Viewer Rating, Reject Schema
 SCHEMA_RATING_REJECT = None
 
@@ -71,11 +75,20 @@ DES_CUTOUT_SERVICE = {
     'CUTOUT_SOURCE': '/data',
     # Tempo de delay para a task check_jobs em minutos
     'CUTOUT_TASK_CHECK_JOBS_DELAY': 1
+    # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos
+    'AVAILABLE_RELEASES': ['y3a2_coadd']
 }
 
-# USER_QUERY
-USER_QUERY_EXECUTION_NCSA_USER_IN_SECONDS = None
-USER_QUERY_EXECUTION_NON_NCSA_USER_IN_SECONDS = 20
+## USER_QUERY
+# Tempo de execucao de um job no User query.
+USER_QUERY_EXECUTION_TIMEOUT = 60
+
+## TARGET VIEWER
+# Habilita ou desabilita a interface de registro de produtos pela opcao Database,
+# esta Settings e usada apenas pelo frontend.
+PRODUCT_REGISTER_DB_INTERFACE = False
+# Habilita ou Desabilita a opcao de escolher o Folder na hora de registrar um produto.
+PRODUCT_REGISTER_FOLDERS = False
 
 # Logging is disabled due errors in testing and production environment, this must be investigated.
 # for developers, it safe to disable the follows lines

@@ -7,6 +7,7 @@ Ext.define('common.model.Dataset', {
         {name:'tag', type:'int'},
         {name:'tag_display_name', type:'string'},
         {name:'release', type:'int'},
+        {name:'release_name', type:'string'},
         {name:'release_display_name', type:'string'},
         {name:'tite', type:'int'},
         {name:'run', type:'string'},
@@ -137,4 +138,3 @@ Ext.define('common.model.Dataset', {
 
     }
 });
-

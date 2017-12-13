@@ -112,6 +112,22 @@ Ext.define('common.ToolbarController', {
 
     },
 
+    help: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            protocol = window.location.protocol,
+            host = window.location.host,
+            help_url = vm.get('help_url')
+            location;
+
+        location = Ext.String.format(
+                    '{0}//{1}/{2}',
+                    protocol, host, help_url);
+            ;
+
+        window.open(location, '_blank');
+    },
+
     loadUsername: function () {
         var me = this,
             vm = me.getViewModel();

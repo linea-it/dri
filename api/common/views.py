@@ -112,7 +112,7 @@ def contact_us(request):
                 from_email = settings.EMAIL_HELPDESK_CONTACT
 
                 message_header = (
-                "Name: %s\nUsername: %s\nEmail: %s\nMessage:\n" % (name, request.user.username, user_email))
+                    "Name: %s\nUsername: %s\nEmail: %s\nMessage:\n" % (name, request.user.username, user_email))
 
                 body = message_header + message
 
@@ -171,6 +171,85 @@ def get_token(request):
             token = Token.objects.create(user=request.user)
         return Response(dict({'token': token.key}))
 
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_setting(request):
+    if request.method == 'GET':
+
+        not_available = list([
+            'DATABASES',
+            'BASE_PROJECT',
+            'LOGGING',
+            'AUTHENTICATION_BACKENDS',
+            'AUTH_PASSWORD_VALIDATORS',
+            'DATABASE_ROUTERS',
+            'ALLOWED_HOSTS',
+            'SECRET_KEY',
+            'INSTALLED_APPS',
+            'REST_FRAMEWORK',
+            'SOCIALACCOUNT_PROVIDERS',
+            'CELERY_BROKER_URL'
+        ])
+
+        name = request.GET.get("name", None)
+        names = request.GET.get("names", None)
+
+        if name is None and names is None:
+            raise Exception("is necessary the name parameter with the identifier of the variable in the settings")
+
+
+        if name is not None:
+
+            data = {}
+
+            # Somente permitir variaveis que nao contenham dados sensiveis como senha por exemplo
+            if name not in not_available:
+
+                try:
+                    value = settings.__getattr__(name)
+
+                    data[name] = value
+
+                except:
+                    return Response(dict({"msg": "this variable \"%s\" not found" % name}), status=500)
+
+            else:
+                return Response(dict({"msg": "this variable \"%s\" not available" % name}), status=500)
+
+        elif name is None and names is not None:
+            names = names.split(',')
+            data = {}
+            key = None
+
+            for name in names:
+                orinal_name = name
+                if name.find("__") > -1:
+                    arr = name.split("__")
+                    print(arr)
+                    key = arr[0]
+                    name = arr[1].replace('__', '')
+
+                # Somente permitir variaveis que nao contenham dados sensiveis como senha por exemplo
+                if name not in not_available:
+
+                    try:
+                        if key is None:
+                            value = settings.__getattr__(name)
+
+                        else:
+                            value = settings.__getattr__(key)[name]
+
+                        data[orinal_name] = value
+
+                    except:
+                        return Response(dict({"msg": "this variable \"%s\" not found" % orinal_name}), status=500)
+
+                else:
+                    return Response(dict({"msg": "this variable \"%s\" not available" % orinal_name}), status=500)
+
+
+        return Response(data)
 
 @api_view(['GET'])
 def teste(request):
