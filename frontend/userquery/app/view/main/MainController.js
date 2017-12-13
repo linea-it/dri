@@ -762,7 +762,8 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     },
 
     loadExternalTables: function(){
-        var refs = this.getReferences();
+        var me = this;
+        var refs = me.getReferences();
         var el = refs.tvwMyTables.getEl();
         
         return Api.getTables({
