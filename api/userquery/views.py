@@ -216,7 +216,7 @@ class TableProperties(viewsets.ModelViewSet):
     def create(self, request):
         try:
             data = request.data
-            schema = data.get("schema", None)
+            schema = data.get("schema", None).upper()
             table_name = data.get("table_name", None)
 
             if not table_name:
