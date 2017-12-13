@@ -79,7 +79,7 @@ class CreateTableAs:
             self.is_table_successfully_created = True
 
             release = Release.objects.get(pk=self.release_id)
-            table_properties = db.get_table_properties(self.table_name.upper(), schema=self.schema)
+            table_properties = db.get_table_properties(self.table_name, schema=self.schema)
             self.table = Table(table_name=self.table_name,
                                display_name=self.job.display_name,
                                owner=self.job.owner,
