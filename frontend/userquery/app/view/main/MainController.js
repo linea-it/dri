@@ -178,13 +178,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     },
 
     btnClear_onClick: function(){
-        var refs = this.getReferences();
-
         this.clearQuery();
-        this.getViewModel().set('activeQuery', null);
-        
-        refs.tvwMyQueries.getSelectionModel().deselectAll();
-        refs.tvwInputTables.setRootNode(null);
     },
     
     // evento: ao clicar no botão start job
@@ -204,10 +198,11 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         }
 
         dialog.open(formData, function(data){
-            data.associate_target_viewer = 'on';
-            data.id = query.id || null;
+            data.associate_target_viewer = 'on'; // RN: todas devem ser registradas
+            data.id = null;                      // RN: não associar a query, usar o sql atual // query.id ||
             data.release_id = release.id;
             data.sql_sentence = formData.sql_sentence;
+            data.query_name = formData.name || 'Unnamed';
             
             Api.startJob({
                 cache: false,
@@ -243,12 +238,16 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     },
 
     // evento: ao clicar no botão save
-    btnSave_onClick: function(){
+    btnSave_onClick: function(button){
         var refs = this.getReferences();
         var query = this.getActiveQuery();
         var data = refs.frmQuery.getForm().getValues();
         
-        this.saveQuery(query.id, data);
+        if (query && query.is_sample){
+            this.mnuSaveAs_onClick(button);
+        }else{
+            this.saveQuery(query.id, data);
+        }
     },
 
     // evento: ao clicar no botão delete
@@ -539,14 +538,30 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     },
 
     tvwMyQueries_onSelect: function(sender, node){
+        var me = this;
+        var refs = me.getReferences();
+
         if (!node.data.isgroup){
-            this.setActiveQuery( clone(node.data) );
+            // me.alertQueryChanged(
+            //     function(){
+                    refs.tvwSampleQueries.getSelectionModel().deselectAll();
+                    me.setActiveQuery( clone(node.data) );
+                // }, 
+                // function(){
+                //     refs.tvwMyQueries.getSelectionModel().deselectAll();    
+                // });
         }
     },
 
     tvwSampleQueries_onSelect: function(sender, node){
+        var me = this;
+        var refs = me.getReferences();
+
         if (!node.data.isgroup){
-            this.setActiveQuery( clone(node.data) );
+            // me.alertQueryChanged(function(){
+                refs.tvwMyQueries.getSelectionModel().deselectAll();
+                me.setActiveQuery( clone(node.data) );            
+            // });
         }
     },
 
@@ -576,6 +591,28 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     //////////////////////////////////////////////////////
     /********************  METHODS   ********************/
     //////////////////////////////////////////////////////
+    alertQueryChanged: function(confirm, cancel){
+        var query = this.getActiveQuery() || {};
+        
+        if (query.changed === true){
+            Ext.MessageBox.show({
+                title: 'Current query changed',
+                msg: 'The current query was not saved, do you want to continue?',
+                buttons: Ext.Msg.YESNO,
+                icon: Ext.MessageBox.WARNING,
+                fn: function(button){
+                    if (button=='yes'){
+                        confirm();
+                    }else{
+                        cancel();
+                    }
+                }
+            });
+        }else{
+            confirm();
+        }
+    },
+
     clearQuery: function(){
         var me = this;
         var refs = me.getReferences();
@@ -589,6 +626,15 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         refs.cmbReleases.reset();
         refs.frmQuery.getForm().reset();
         refs.grdPreview.getView().refresh();
+
+        this.getViewModel().set('activeQuery', null);
+        
+        refs.tvwInputTables.setRootNode(null);
+        refs.tvwMyTables.setRootNode(null);
+        refs.tvwOtherTables.setRootNode(null);
+
+        refs.tvwMyQueries.getSelectionModel().deselectAll();
+        refs.tvwSampleQueries.getSelectionModel().deselectAll();
     },
 
     createEmptyQuery: function(release_id){
@@ -608,7 +654,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var query = me.getActiveQuery();
         
         Ext.MessageBox.show({
-            title: 'Cofirm Action',
+            title: 'Confirm Action',
             msg: 'Delete query "' + query.name + '"',
             buttons: Ext.Msg.YESNO,
             icon: Ext.MessageBox.WARNING,
@@ -716,7 +762,8 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     },
 
     loadExternalTables: function(){
-        var refs = this.getReferences();
+        var me = this;
+        var refs = me.getReferences();
         var el = refs.tvwMyTables.getEl();
         
         return Api.getTables({
@@ -793,7 +840,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                         data_schema: table.schema,
                         data_table: table.table_name,
                         data_product_id: table.product_id,
-                        qtip: 'rows: ' + Ext.util.Format.number(table.ctl_num_objects, '0,000')
+                        qtip: 'rows: ' + Ext.util.Format.number(table.tbl_num_objects, '0,000')
                     });
                 }                
                 
@@ -998,6 +1045,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                     result.forEach(function(item){
                         item.text = item.name;
                         item.leaf = true;
+                        item.is_sample = true;
                     });
                         
                     refs.tvwSampleQueries.setStore(Ext.create('Ext.data.TreeStore', {
@@ -1104,6 +1152,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
     saveQuery: function(id, data){
         var me = this;
+        var refs = me.getReferences();
         var release = me.getActiveRelease();
         
         data.id = id;
@@ -1129,6 +1178,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 if (!error){
                     Ext.toast('Query data saved', null, 't');
                     queryResponse.changed = false;
+                    
+                    refs.tvwSampleQueries.getSelectionModel().deselectAll();
+                    if (!id) refs.tvwMyQueries.getSelectionModel().deselectAll();
+
                     me.updateActiveQuery(queryResponse);
                     me.loadMyQueries(true);
                 }
