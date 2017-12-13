@@ -174,15 +174,11 @@ def get_fits_by_tilename(request):
         order += 1
         ordered_filters['irg'] = order
 
-        print(filters)
-
         for filename in files:
 
             file_source = urljoin(data_source, filename)
 
             extension = os.path.splitext(filename)[1]
-
-            print(extension)
 
             flr = None
             ord = None
