@@ -190,7 +190,7 @@ class CreateTable(viewsets.ModelViewSet):
             timeout = settings.USER_QUERY_EXECUTION_TIMEOUT
             create_table.delay(q.id, request.user.pk, table_name, release_id,
                                associate_target_viewer, timeout=timeout,
-                               schema=settings.DATABASES['catalog']['USER'].upper())
+                               schema=settings.DATABASES['catalog']['USER'])
             return HttpResponse(status=200)
         except Exception as e:
             print(str(e))
@@ -216,14 +216,12 @@ class TableProperties(viewsets.ModelViewSet):
     def create(self, request):
         try:
             data = request.data
-            schema = data.get("schema", None).upper()
+            schema = data.get("schema", None)
             table_name = data.get("table_name", None)
 
             if not table_name:
                 raise Exception("Table is a mandatory field")
 
-            # review - create table is saving using UPPER_CASE
-            table_name = table_name.upper()
             db = DBBase('catalog')
 
             if not db.table_exists(table_name, schema=schema):
