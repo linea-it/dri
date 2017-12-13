@@ -33,7 +33,7 @@ class Product(models.Model):
     prd_date = models.DateTimeField(
         auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Date of registration.')
     prd_is_public = models.BooleanField(
-        default=True, verbose_name='Is Public', help_text='Is Public default True')
+        default=False, verbose_name='Is Public', help_text='Is Public default False')
 
     releases = models.ManyToManyField(
         Release,
@@ -288,16 +288,16 @@ class CutOutJob(models.Model):
     cjb_label_font_size = models.PositiveIntegerField(
         verbose_name='Label Font Size', default=10, null=True, blank=True, help_text='Font size in px.')
 
-    cjb_cutouts_path = models.CharField(
-        max_length=2000, verbose_name='Cutout Paths',
+    cjb_cutouts_path = models.TextField(
+        max_length=4096, verbose_name='Cutout Paths',
         null=True, blank=True, default=None, help_text="Path of the directory where the cutouts of this job are.")
 
-    cjb_results_file = models.CharField(
-        max_length=2000, verbose_name='Result File',
+    cjb_results_file = models.TextField(
+        max_length=4096, verbose_name='Result File',
         null=True, blank=True, default=None, help_text="File that contains the links returned by the DesCutouts service")
 
-    cjb_matched_file = models.CharField(
-        max_length=2000, verbose_name='Matched File',
+    cjb_matched_file = models.TextField(
+        max_length=4096, verbose_name='Matched File',
         null=True, blank=True, default=None, help_text="File containing the relations between ra, dec with the image")
 
     cjb_start_time = models.DateTimeField(
@@ -324,17 +324,17 @@ class Cutout(models.Model):
         max_length=5, verbose_name='Object ID', null=True, blank=True,
         help_text='The association is used to know which column will be considered as id.')
     ctt_object_ra = models.CharField(
-        max_length=5, verbose_name='RA', null=True, blank=True,
+        max_length=10, verbose_name='RA', null=True, blank=True,
         help_text='RA in degrees, the association will be used to identify the column')
     ctt_object_dec = models.CharField(
-        max_length=5, verbose_name='Dec', null=True, blank=True,
+        max_length=10, verbose_name='Dec', null=True, blank=True,
         help_text='Dec in degrees, the association will be used to identify the column')
     ctt_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
     ctt_thumbname = models.CharField(
         max_length=255, verbose_name='Thumbname', null=True, blank=True, default=None)
-    ctt_file_path = models.CharField(
-        max_length=2000, verbose_name='File Path', null=True, blank=True, default=None)
+    ctt_file_path = models.TextField(
+        max_length=4096, verbose_name='File Path', null=True, blank=True, default=None)
     ctt_file_name = models.CharField(
         max_length=255, verbose_name='Filename ', null=True, blank=True, default=None)
     ctt_file_type = models.CharField(

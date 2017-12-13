@@ -419,35 +419,8 @@ Ext.define('Target.view.preview.PreviewController', {
                         me.onLoadSystemMembers(this);
                     }
                 });
-
-                //carrega os comentários de posição
-                // loaded++;
-                // coordinates = '[[' + me.activeDataset.get('tli_urall') + ',' + me.activeDataset.get('tli_udecll') + '],' +
-                //                '[' + me.activeDataset.get('tli_uraur') + ',' + me.activeDataset.get('tli_udecur') + ']]';
-                //
-                // comments.filter([{
-                //     property: 'coordinates',
-                //     value: coordinates
-                // }]);
-                // comments.load({
-                //     callback: function () {
-                //         loaded--;
-                //         loadMembersAndCommentsComplete();
-                //     }
-                // });
-
-                // function loadMembersAndCommentsComplete() {
-                //     if (loaded == 0) {
-                //         // Remover o load do botao
-                //         btnMembers.setIconCls('x-fa fa-dot-circle-o');
-                //         // Exibir os objetos membros
-                //         me.onLoadSystemMembers(members, comments, refs.btnComments.pressed);
-                //     }
-                // }
             }
-
         } else {
-            // relateds.clearFilter();
             relateds.removeAll(true);
 
             relateds.addFilter({
@@ -466,7 +439,7 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     onLoadSystemMembers: function (members) {
-        console.log('onLoadSystemMembers(%o)', members)
+        // console.log('onLoadSystemMembers(%o)', members)
         var me = this,
             vm = me.getViewModel(),
             visiomatic = me.lookupReference('visiomatic'),
@@ -487,13 +460,13 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     showHideComments: function (btn, state) {
-        var me = this,
-            visiomatic = me.lookupReference('visiomatic'),
-            vm = me.getViewModel(),
-            lmembers = vm.get('overlayMembers');
-
-        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - show_comments');
-        visiomatic.showHideComments(lmembers, state);
+        // var me = this,
+        //     visiomatic = me.lookupReference('visiomatic'),
+        //     vm = me.getViewModel(),
+        //     lmembers = vm.get('overlayMembers');
+        //
+        // Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - show_comments');
+        // visiomatic.showHideComments(lmembers, state);
 
     },
 

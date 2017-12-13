@@ -28,7 +28,9 @@ Ext.define('Target.view.objects.ObjectsModel', {
         catalog: 0,
         filters: null,
         mosaic_is_visible: false,
-        haveResults: false
+        haveResults: false,
+        // Se houver um filtro salvo ativo
+        haveFilter: false
     },
 
     stores: {
