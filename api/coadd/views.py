@@ -14,6 +14,8 @@ from django.conf import settings
 import os
 from urllib.parse import urljoin
 
+from common.models import Filter
+
 # Create your views here.
 class ReleaseViewSet(viewsets.ModelViewSet):
     """
@@ -160,13 +162,56 @@ def get_fits_by_tilename(request):
 
         result = list()
 
+
+        ordered_filters = dict({})
+        filters = Filter.objects.all().order_by('lambda_min')
+        order = 0
+        for f in filters:
+            ordered_filters[f.filter] = order
+            order += 1
+
+        ordered_filters['det'] = order
+        order += 1
+        ordered_filters['irg'] = order
+
+        print(filters)
+
         for filename in files:
 
             file_source = urljoin(data_source, filename)
 
+            extension = os.path.splitext(filename)[1]
+
+            print(extension)
+
+            flr = None
+            ord = None
+
+            # Se for um arquivo de imagem descobrir o filtro
+            if extension == '.fz':
+                parts = filename.split('_')
+                flr = parts[2].strip('_')
+                flr = flr.split('.')[0]
+                try:
+                    ord = ordered_filters[flr]
+                except:
+                    pass
+
+            if extension == '.tiff':
+                parts = filename.split('_')
+                flr = parts[2].strip('_')
+                flr = flr.split('.')[0]
+                try:
+                    ord = ordered_filters[flr]
+                except:
+                    pass
+
+
             result.append(dict({
                 'filename': filename,
-                'file_source': file_source
+                'file_source': file_source,
+                'filter': flr,
+                'order': ord
             }))
 
 
