@@ -54,8 +54,7 @@ class QueryViewSet(viewsets.ModelViewSet):
             # if enter the same query name
             q = Query.objects.get(pk=self.kwargs['pk'])
             if q.name == request.data['name']:
-                msg_error = "The same query name was inserted. Choose a different one"
-                return JsonResponse({'message': msg_error}, status=400)
+                return super(QueryViewSet, self).update(request, args, kwargs)
             msg_error = "This query name is already defined by this user"
             return JsonResponse({'message': msg_error}, status=400)
 
@@ -154,18 +153,12 @@ class TableViewSet(viewsets.ModelViewSet):
         return table_name[:40]
 
     def update(self, request, *args, **kwargs):
-        print("0")
         if self.is_display_name_used_by_user():
 
             # if enter the same query name
             q = Table.objects.get(pk=self.kwargs['pk'])
-            print("1")
             if q.display_name == request.data['display_name']:
-                print("2")
-                msg_error = "The same output table was inserted. Choose a different one"
-                print("3")
-                return JsonResponse({'message': msg_error}, status=400)
-            print("4")
+                return super(TableViewSet, self).update(request, args, kwargs)
             msg_error = "This output table is already defined by this user"
             return JsonResponse({'message': msg_error}, status=400)
 
