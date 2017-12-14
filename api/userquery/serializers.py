@@ -1,3 +1,4 @@
+from django.db import models
 from rest_framework import serializers
 from .models import *
 from product.models import Product
@@ -44,8 +45,7 @@ class JobSerializer(serializers.ModelSerializer):
 class TableSerializer(serializers.ModelSerializer):
     owner = serializers.ReadOnlyField(source='owner.username')
     id = serializers.ReadOnlyField()
-    product_id = serializers.PrimaryKeyRelatedField(
-        queryset=Product.objects.all(), many=False)
+    product_id = serializers.ReadOnlyField(source='product.id')
 
     class Meta:
         model = Table

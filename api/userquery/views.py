@@ -61,19 +61,13 @@ class TableViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-    def list(self, request, *args, **kwargs):
+    def get_object(self):
+        return Table.objects.get(pk=self.kwargs['pk'])
+
+    def get_queryset(self):
         release = self.request.query_params.get('release', None)
-        get_queryset = self.queryset.filter(Q(owner=self.request.user) &
-                                            Q(release=release)).order_by('display_name')
-        queryset = self.filter_queryset(get_queryset)
-
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+        return self.queryset.filter(Q(owner=self.request.user) &
+                                    Q(release=release)).order_by('display_name')
 
     def destroy(self, request, *args, **kwargs):
         try:
