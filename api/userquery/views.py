@@ -61,10 +61,19 @@ class TableViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
-    def get_queryset(self):
+    def list(self, request, *args, **kwargs):
         release = self.request.query_params.get('release', None)
-        return self.queryset.filter(Q(owner=self.request.user) &
-                                    Q(release=release)).order_by('display_name')
+        get_queryset = self.queryset.filter(Q(owner=self.request.user) &
+                                            Q(release=release)).order_by('display_name')
+        queryset = self.filter_queryset(get_queryset)
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
     def destroy(self, request, *args, **kwargs):
         try:
@@ -74,8 +83,7 @@ class TableViewSet(viewsets.ModelViewSet):
 
             db.drop_table(q.table_name, schema=q.schema)
 
-            q.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return super(TableViewSet, self).destroy(request, args, kwargs)
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
