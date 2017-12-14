@@ -38,6 +38,34 @@ class QueryViewSet(viewsets.ModelViewSet):
         return self.queryset.filter((Q(owner=self.request.user) | Q(is_public=True)) &
                                     Q(is_sample=False)).order_by('name')
 
+    def get_object(self):
+        return Query.objects.get(pk=self.kwargs['pk'])
+
+    def create(self, request, *args, **kwargs):
+        if self.is_query_name_used_by_user():
+            msg_error = "This query name is already defined by this user"
+            return JsonResponse({'message': msg_error}, status=400)
+
+        return super(QueryViewSet, self).create(request, args, kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if self.is_query_name_used_by_user():
+
+            # if enter the same query name
+            q = Query.objects.get(pk=self.kwargs['pk'])
+            if q.name == request.data['name']:
+                msg_error = "Choose a different query name"
+                return JsonResponse({'message': msg_error}, status=400)
+            msg_error = "This query name is already defined by this user"
+            return JsonResponse({'message': msg_error}, status=400)
+
+        return super(QueryViewSet, self).update(request, args, kwargs)
+
+    def is_query_name_used_by_user(self):
+        q = Query.objects.filter(Q(owner=self.request.user) &
+                                 Q(name=self.request.data['name']))
+        return True if len(q) > 0 else False
+
 
 class SampleViewSet(viewsets.ModelViewSet):
     queryset = Query.objects.filter()
