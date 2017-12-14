@@ -18,7 +18,7 @@ Ext.define('UserQuery.view.service.Api', {
         renameTable: {method:'PATCH', url:'/dri/api/userquery_table/{id}/'},
         validate:    {method:'POST', url:'/dri/api/userquery_validate/'},
         preview:     {method:'POST', url:'/dri/api/userquery_preview/'},
-        startJob:    {method:'POST', url:'/dri/api/userquery_create_table/'}
+        startJob:    {method:'POST', url:'/dri/api/userquery_table/'}
         // http://dri.com/dri/api/catalog/get_class_tree_by_group/?external_catalog=true&group__in=objects_catalog,targets,value_added_catalogs,external_catalogs&node=root
 
     },
