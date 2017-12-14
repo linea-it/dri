@@ -72,7 +72,7 @@ class Table(models.Model):
     table_name = models.CharField(
         max_length=128, null=False, unique=True, verbose_name='Name')
     display_name = models.CharField(
-        max_length=128, null=False, unique=True, verbose_name='Display name')
+        max_length=128, null=False, unique=False, verbose_name='Display name')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
