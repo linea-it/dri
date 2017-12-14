@@ -197,20 +197,20 @@ class DBBase:
         columns.sort(key=lambda k: k['column_name'])
         properties['columns'] = columns
 
-        sql = self.database.get_raw_sql_table_rows(table, schema=schema)
-        with self.engine.connect() as con:
-            queryset = con.execute(sql)
-        properties['table_rows'] = queryset.fetchone()[0]
-
-        sql = self.database.get_raw_sql_size_table_bytes(table, schema=schema)
-        with self.engine.connect() as con:
-            queryset = con.execute(sql)
-        properties['table_bytes'] = queryset.fetchone()[0]
-
-        sql = self.database.get_raw_sql_number_columns(table, schema=schema)
-        with self.engine.connect() as con:
-            queryset = con.execute(sql)
-        properties['table_num_columns'] = queryset.fetchone()[0]
+        # sql = self.database.get_raw_sql_table_rows(table, schema=schema)
+        # with self.engine.connect() as con:
+        #     queryset = con.execute(sql)
+        # properties['table_rows'] = queryset.fetchone()[0]
+#
+        # sql = self.database.get_raw_sql_size_table_bytes(table, schema=schema)
+        # with self.engine.connect() as con:
+        #     queryset = con.execute(sql)
+        # properties['table_bytes'] = queryset.fetchone()[0]
+#
+        # sql = self.database.get_raw_sql_number_columns(table, schema=schema)
+        # with self.engine.connect() as con:
+        #     queryset = con.execute(sql)
+        # properties['table_num_columns'] = queryset.fetchone()[0]
 
         return properties
 
