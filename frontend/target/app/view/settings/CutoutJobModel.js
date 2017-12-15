@@ -9,6 +9,10 @@ Ext.define('Target.view.settings.CutoutJobModel', {
         'Target.store.ProductDisplayContents'
     ],
 
+    data: {
+        enableRelease: false
+    },
+
     links: {
         currentProduct: {
             type: 'Target.model.Catalog',
