@@ -383,7 +383,8 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                             cache: false,
                             params: {
                                 id: item.record.get('data_id'),
-                                display_name: value
+                                display_name: value,
+                                table_name: item.record.get('data_table')
                             },
                             request: function(){
                                 me.setLoading(true, 'Operation in progress...');

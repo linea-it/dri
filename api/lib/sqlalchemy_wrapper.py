@@ -77,6 +77,13 @@ class DBOracle:
 
         return sql
 
+    def get_table_name(self, table):
+        return table.upper()
+
+    def get_schema_name(self, schema):
+        return schema.upper()
+
+
 class DBSqlite:
     def __init__(self, db):
         self.db = db
@@ -96,6 +103,12 @@ class DBSqlite:
 
     def get_table_properties(self, table, schema=None):
         raise("Implement this method")
+
+    def get_table_name(self, table):
+        return table
+
+    def get_schema_name(self, schema):
+        return schema
 
 
 # classe generica - nao ligada a este problema
@@ -171,6 +184,12 @@ class DBBase:
             return [value['name'] for value in self.inspect.get_columns(table, schema)]
 
     def get_table_properties(self, table, schema=None):
+        # Each database has its own rules related to name conventions. Here we
+        # suppose that schema and tables names are created without quotes
+        table = self.database.get_table_name(table)
+        if schema:
+            schema = self.database.get_schema_name(schema)
+
         properties = dict()
 
         sql = self.database.get_raw_sql_column_properties(table, schema=schema)
@@ -178,20 +197,20 @@ class DBBase:
         columns.sort(key=lambda k: k['column_name'])
         properties['columns'] = columns
 
-        sql = self.database.get_raw_sql_table_rows(table, schema=schema)
-        with self.engine.connect() as con:
-            queryset = con.execute(sql)
-        properties['table_rows'] = queryset.fetchone()[0]
-
-        sql = self.database.get_raw_sql_size_table_bytes(table, schema=schema)
-        with self.engine.connect() as con:
-            queryset = con.execute(sql)
-        properties['table_bytes'] = queryset.fetchone()[0]
-
-        sql = self.database.get_raw_sql_number_columns(table, schema=schema)
-        with self.engine.connect() as con:
-            queryset = con.execute(sql)
-        properties['table_num_columns'] = queryset.fetchone()[0]
+        # sql = self.database.get_raw_sql_table_rows(table, schema=schema)
+        # with self.engine.connect() as con:
+        #     queryset = con.execute(sql)
+        # properties['table_rows'] = queryset.fetchone()[0]
+#
+        # sql = self.database.get_raw_sql_size_table_bytes(table, schema=schema)
+        # with self.engine.connect() as con:
+        #     queryset = con.execute(sql)
+        # properties['table_bytes'] = queryset.fetchone()[0]
+#
+        # sql = self.database.get_raw_sql_number_columns(table, schema=schema)
+        # with self.engine.connect() as con:
+        #     queryset = con.execute(sql)
+        # properties['table_num_columns'] = queryset.fetchone()[0]
 
         return properties
 
@@ -213,6 +232,10 @@ class DBBase:
                 return result.fetchone()[0]
 
     def table_exists(self, table, schema=None):
+        table = self.database.get_table_name(table)
+        if schema:
+            schema = self.database.get_schema_name(schema)
+
         # Desabilitar os warnings na criacao da tabela
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=sa_exc.SAWarning)

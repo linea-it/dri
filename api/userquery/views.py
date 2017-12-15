@@ -38,6 +38,33 @@ class QueryViewSet(viewsets.ModelViewSet):
         return self.queryset.filter((Q(owner=self.request.user) | Q(is_public=True)) &
                                     Q(is_sample=False)).order_by('name')
 
+    def get_object(self):
+        return Query.objects.get(pk=self.kwargs['pk'])
+
+    def create(self, request, *args, **kwargs):
+        if self.is_query_name_used_by_user():
+            msg_error = "This query name is already defined by this user"
+            return JsonResponse({'message': msg_error}, status=400)
+
+        return super(QueryViewSet, self).create(request, args, kwargs)
+
+    def update(self, request, *args, **kwargs):
+        if self.is_query_name_used_by_user():
+
+            # if enter the same query name
+            q = Query.objects.get(pk=self.kwargs['pk'])
+            if q.name == request.data['name']:
+                return super(QueryViewSet, self).update(request, args, kwargs)
+            msg_error = "This query name is already defined by this user"
+            return JsonResponse({'message': msg_error}, status=400)
+
+        return super(QueryViewSet, self).update(request, args, kwargs)
+
+    def is_query_name_used_by_user(self):
+        q = Query.objects.filter(Q(owner=self.request.user) &
+                                 Q(name=self.request.data['name']))
+        return True if len(q) > 0 else False
+
 
 class SampleViewSet(viewsets.ModelViewSet):
     queryset = Query.objects.filter()
@@ -61,10 +88,89 @@ class TableViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
+    def get_object(self):
+        return Table.objects.get(pk=self.kwargs['pk'])
+
     def get_queryset(self):
         release = self.request.query_params.get('release', None)
         return self.queryset.filter(Q(owner=self.request.user) &
                                     Q(release=release)).order_by('display_name')
+
+    def create(self, request, *args, **kwargs):
+        if self.is_display_name_used_by_user():
+            msg_error = "This output table is already defined by this user"
+            return JsonResponse({'message': msg_error}, status=400)
+
+        try:
+            data = request.data
+            display_name = data.get("display_name", None)
+            associate_target_viewer = data.get("associate_target_viewer", "") == 'on'
+            query_name = data.get("query_name", None)
+            sql_sentence = data.get("sql_sentence", None)
+            release_id = data.get("release_id", None)
+
+            if not query_name:
+                query_name = "Unnamed"
+
+            if not sql_sentence:
+                raise Exception("sql_sentence parameters must exist")
+            if not release_id:
+                raise Exception("release_id parameters must exist")
+
+            table_name = self._set_internal_table_name(display_name, self.request.user.pk)
+
+            rqv = RawQueryValidator(sql_sentence)
+            if rqv.table_exists(table_name, None):
+                raise Exception("Table exists - choose a different name")
+
+            if not rqv.is_query_validated():
+                raise Exception("Invalid query: %s" % rqv.validation_error_message())
+
+            q = Job(display_name=display_name,
+                    owner=self.request.user,
+                    sql_sentence=sql_sentence,
+                    query_name=query_name)
+            q.save()
+
+            timeout = settings.USER_QUERY_EXECUTION_TIMEOUT
+            create_table.delay(q.id, request.user.pk, table_name, release_id,
+                               associate_target_viewer, timeout=timeout,
+                               schema=settings.DATABASES['catalog']['USER'])
+            return HttpResponse(status=200)
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
+
+    def _set_internal_table_name(self, display_name, user_id):
+        table_name = copy.deepcopy(display_name)
+
+        name = table_name.replace(' ', '_').lower().strip().strip('\n') + '_' + str(user_id)
+
+        # Retirar qualquer caracter que nao seja alfanumerico exceto '_'
+        table_name = ''.join(e for e in name if e.isalnum() or e == '_')
+
+        # Limitar a 40 characteres
+        return table_name[:40]
+
+    def update(self, request, *args, **kwargs):
+        if self.is_display_name_used_by_user():
+
+            # if enter the same query name
+            q = Table.objects.get(pk=self.kwargs['pk'])
+            if q.display_name == request.data['display_name']:
+                return super(TableViewSet, self).update(request, args, kwargs)
+            msg_error = "This output table is already defined by this user"
+            return JsonResponse({'message': msg_error}, status=400)
+
+        return super(TableViewSet, self).update(request, args, kwargs)
+
+    def is_display_name_used_by_user(self):
+        print(len(Table.objects.all()))
+        print(self.request.data['display_name'])
+        q = Table.objects.filter(Q(owner=self.request.user) &
+                                 Q(display_name=self.request.data['display_name']))
+        print(str(q.query))
+        return True if len(q) > 0 else False
 
     def destroy(self, request, *args, **kwargs):
         try:
@@ -74,8 +180,7 @@ class TableViewSet(viewsets.ModelViewSet):
 
             db.drop_table(q.table_name, schema=q.schema)
 
-            q.delete()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+            return super(TableViewSet, self).destroy(request, args, kwargs)
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
@@ -150,64 +255,6 @@ class QueryPreview(viewsets.ViewSet):
             return JsonResponse({'message': str(e)}, status=400)
 
 
-class CreateTable(viewsets.ModelViewSet):
-    http_method_names = ['post', ]
-    authentication_classes = (SessionAuthentication, BasicAuthentication)
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def create(self, request):
-        try:
-            data = request.data
-            display_name = data.get("display_name", None)
-            associate_target_viewer = data.get("associate_target_viewer", "") == 'on'
-            query_name = data.get("query_name", None)
-            sql_sentence = data.get("sql_sentence", None)
-            release_id = data.get("release_id", None)
-
-            if not query_name:
-                query_name = "Unnamed"
-
-            if not sql_sentence:
-                raise Exception("sql_sentence parameters must exist")
-            if not release_id:
-                raise Exception("release_id parameters must exist")
-
-            table_name = self._set_internal_table_name(display_name, self.request.user.pk)
-
-            rqv = RawQueryValidator(sql_sentence)
-            if rqv.table_exists(table_name, None):
-                raise Exception("Table exists - choose a different name")
-
-            if not rqv.is_query_validated():
-                raise Exception("Invalid query: %s" % rqv.validation_error_message())
-
-            q = Job(display_name=display_name,
-                    owner=self.request.user,
-                    sql_sentence=sql_sentence,
-                    query_name=query_name)
-            q.save()
-
-            timeout = settings.USER_QUERY_EXECUTION_TIMEOUT
-            create_table.delay(q.id, request.user.pk, table_name, release_id,
-                               associate_target_viewer, timeout=timeout,
-                               schema=settings.DATABASES['catalog']['USER'].upper())
-            return HttpResponse(status=200)
-        except Exception as e:
-            print(str(e))
-            return JsonResponse({'message': str(e)}, status=400)
-
-    def _set_internal_table_name(self, display_name, user_id):
-        table_name = copy.deepcopy(display_name)
-
-        name = table_name.replace(' ', '_').lower().strip().strip('\n') + '_' + str(user_id)
-
-        # Retirar qualquer caracter que nao seja alfanumerico exceto '_'
-        table_name = ''.join(e for e in name if e.isalnum() or e == '_')
-
-        # Limitar a 40 characteres
-        return table_name[:40]
-
-
 class TableProperties(viewsets.ModelViewSet):
     http_method_names = ['post', ]
     authentication_classes = (SessionAuthentication, BasicAuthentication)
@@ -222,8 +269,6 @@ class TableProperties(viewsets.ModelViewSet):
             if not table_name:
                 raise Exception("Table is a mandatory field")
 
-            # review - create table is saving using UPPER_CASE
-            table_name = table_name.upper()
             db = DBBase('catalog')
 
             if not db.table_exists(table_name, schema=schema):

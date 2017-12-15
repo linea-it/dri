@@ -7,7 +7,7 @@ from django.conf import settings
 class Query(models.Model):
     # the same user can't have repeated names.
     name = models.CharField(
-        max_length=128, unique=True, null=False, verbose_name='Name')
+        max_length=128, unique=False, null=False, verbose_name='Name')
     description = models.CharField(
         max_length=256, null=True, blank=True, verbose_name='Description')
     owner = models.ForeignKey(
@@ -72,7 +72,7 @@ class Table(models.Model):
     table_name = models.CharField(
         max_length=128, null=False, unique=True, verbose_name='Name')
     display_name = models.CharField(
-        max_length=128, null=False, unique=True, verbose_name='Display name')
+        max_length=128, null=False, unique=False, verbose_name='Display name')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

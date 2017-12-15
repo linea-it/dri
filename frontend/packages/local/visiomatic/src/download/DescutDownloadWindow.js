@@ -43,10 +43,10 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
                             dataIndex: 'filename',
                             flex: 1
                         },
-                        // {
-                        //     text: 'Band',
-                        //     dataIndex: 'band'
-                        // },
+                        {
+                            text: 'Filter',
+                            dataIndex: 'filter'
+                        },
                         {
                             text: 'URL',
                             dataIndex: 'file_source',
