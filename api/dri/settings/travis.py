@@ -43,5 +43,7 @@ DES_CUTOUT_SERVICE = {
     'PASSWORD': None,
     'CUTOUT_DIR': 'targets/cutouts',
     'CUTOUT_SOURCE': '/data',
-    'CUTOUT_TASK_CHECK_JOBS_DELAY': 1
+    'CUTOUT_TASK_CHECK_JOBS_DELAY': 1,
+    'AVAILABLE_RELEASES': None,
+    'MAX_OBJECTS': 300
 }
