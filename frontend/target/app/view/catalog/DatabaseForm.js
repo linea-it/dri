@@ -35,8 +35,32 @@ Ext.define('Target.view.catalog.DatabaseForm', {
         }
     },
 
+    config: {
+        enableFolder: false,
+        enablePublic: false
+    },
+
     initComponent: function () {
         var me = this;
+
+        // Recuperar do Settigs no backend se a interface de registro pelo
+        // banco de dados estara disponivel.
+        try{
+            me.enableFolder = Settings.PRODUCT_REGISTER_FOLDERS;
+        }
+        catch (err){
+            console.warn("Setting PRODUCT_REGISTER_FOLDERS not loaded.");
+        }
+
+        // Recuperar do Settigs no backend se a opcao de deixar a lista publica
+        // vai estar ativa
+        try{
+            me.enablePublic = Settings.PRODUCT_REGISTER_ENABLE_PUBLIC;
+        }
+        catch (err){
+            console.warn("Setting PRODUCT_REGISTER_ENABLE_PUBLIC not loaded.");
+        }
+
 
         Ext.apply(this, {
             bodyPadding: 10,
@@ -66,7 +90,8 @@ Ext.define('Target.view.catalog.DatabaseForm', {
                     bind: {
                         store: '{productclass}'
                     },
-                    value: 'objects'
+                    value: 'objects',
+                    hidden: !me.enableFolder,
                 },
                 {
                     xtype: 'combobox',
@@ -102,7 +127,8 @@ Ext.define('Target.view.catalog.DatabaseForm', {
                     xtype: 'checkbox',
                     boxLabel: 'Public',
                     name: 'isPublic',
-                    checked: false
+                    checked: false,
+                    hidden: !me.enablePublic,
                 },
                 {
                     xtype: 'textareafield',

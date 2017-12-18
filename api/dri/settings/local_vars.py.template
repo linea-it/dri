@@ -90,6 +90,9 @@ USER_QUERY_EXECUTION_TIMEOUT = 60
 PRODUCT_REGISTER_DB_INTERFACE = False
 # Habilita ou Desabilita a opcao de escolher o Folder na hora de registrar um produto.
 PRODUCT_REGISTER_FOLDERS = False
+# Habilita ou Desabilita a opção de registrar um produto como publico, pela interface.
+PRODUCT_REGISTER_ENABLE_PUBLIC = False
+
 
 # Logging is disabled due errors in testing and production environment, this must be investigated.
 # for developers, it safe to disable the follows lines

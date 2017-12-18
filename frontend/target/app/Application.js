@@ -44,6 +44,7 @@ Ext.define('Target.Application', {
                 Settings.loadSettings([
                     'PRODUCT_REGISTER_DB_INTERFACE',
                     'PRODUCT_REGISTER_FOLDERS',
+                    'PRODUCT_REGISTER_ENABLE_PUBLIC',
                     'DES_CUTOUT_SERVICE__AVAILABLE_RELEASES'
                 ])
             },
