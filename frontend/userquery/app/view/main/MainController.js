@@ -1083,7 +1083,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                     {field:'start_date_time', display:'Start',      renderer: toolTipRenderer},
                     {field:'end_date_time',   display: 'End',       renderer: toolTipRenderer},
                     {field:'total_run_time',  display: 'Run Time',  renderer: toolTipRenderer},
-                    {field:'timeout',         display:'Timeout',    renderer: toolTipRenderer},
+                    //{field:'timeout',         display:'Timeout',    renderer: toolTipRenderer},
                     {field:'display_name',    display:'Table Name', renderer: toolTipRenderer},
                     {field:'query_name',      display:'Query Name', renderer: toolTipRenderer, flex:1}
                     //{field:'sql_sentence', display:'Query', flex:1},
