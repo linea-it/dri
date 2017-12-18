@@ -191,6 +191,7 @@ Ext.define('UserQuery.view.service.ApiBase', {
             failure: function (response, opts) {
                 var JSONError;
                 var str = '';
+                var showErrorMessage;
 
                 try {
                     JSONError = JSON.parse(response.responseText);
@@ -206,7 +207,13 @@ Ext.define('UserQuery.view.service.ApiBase', {
                     JSONError = response;
                 }
 
-                if (definition.errorMessage!==false){
+                if (typeof(definition.error)=='function'){
+                    showErrorMessage = definition.error(JSONError) === true;
+                }else{
+                    showErrorMessage = definition.errorMessage !== false;
+                }
+
+                if (showErrorMessage){
                     Ext.MessageBox.show({
                         title: 'Server Side Failure',
                         msg: JSONError.status + '<br/>' + (JSONError.message ? JSONError.message.split('\n').join('<br/>') : JSONError.statusText),
