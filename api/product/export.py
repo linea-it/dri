@@ -23,6 +23,9 @@ class Export:
         # Get an instance of a logger
         self.logger = logging.getLogger("product_export")
 
+        self.exclude_columns = ['meta_reject', 'meta_reject_id', 'meta_rating', 'meta_rating_id']
+
+
     def create_export_dir(self, name):
         """
         Cria um diretorio onde vao ficar os aquivos gerados.
@@ -78,8 +81,12 @@ class Export:
         self.logger.info("Retrieving the columns for the headers")
         columns = list()
 
+
         for property in row:
-            columns.append(str(property.lower().strip()))
+            cname = str(property.lower().strip())
+
+            if cname not in self.exclude_columns:
+                columns.append(cname)
 
         self.logger.debug("Columns: [%s]" % ", ".join(columns))
 
@@ -108,6 +115,13 @@ class Export:
 
             columns = self.get_columns(rows[0])
 
+            lines = list()
+            for row in rows:
+                for ec in self.exclude_columns:
+                    row.pop(ec, None)
+
+                lines.append(row)
+
             self.logger.info("Creating csv file")
             with open(filename, 'w') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=columns)
@@ -116,7 +130,7 @@ class Export:
                 writer.writeheader()
 
                 self.logger.info("Writing the rows")
-                writer.writerows(rows)
+                writer.writerows(lines)
 
             csvfile.close()
             self.logger.info("Successfully created")

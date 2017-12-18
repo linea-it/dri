@@ -487,8 +487,8 @@ Ext.define('visiomatic.Visiomatic', {
             map = me.getMap(),
             latlng;
 
-        ra = parseFloat(parseFloat(ra).toFixed(3));
-        dec = parseFloat(parseFloat(dec).toFixed(3));
+        ra = parseFloat(parseFloat(ra).toFixed(5));
+        dec = parseFloat(parseFloat(dec).toFixed(5));
 
         latlng = libL.latLng(dec, ra);
         map.setView(latlng, map.options.crs.fovToZoom(map, fov, latlng));
@@ -723,9 +723,9 @@ Ext.define('visiomatic.Visiomatic', {
             coord;
 
         if (coordinate.dec > 0) {
-            coord = coordinate.ra.toFixed(3).replace('.', ',') + '+' + coordinate.dec.toFixed(3).replace('.', ',');
+            coord = coordinate.ra.toFixed(5).replace('.', ',') + '+' + coordinate.dec.toFixed(5).replace('.', ',');
         } else {
-            coord = coordinate.ra.toFixed(3).replace('.', ',') + coordinate.dec.toFixed(3).replace('.', ',');
+            coord = coordinate.ra.toFixed(5).replace('.', ',') + coordinate.dec.toFixed(5).replace('.', ',');
         }
 
         if (fov) {

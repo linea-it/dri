@@ -276,10 +276,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
                 if (!error){
                     if (result.is_validated){
-                        Ext.toast('Query validate success', null, 't');
+                        Ext.toast('Query validated successfully', null, 't');
                     }else{
                         Ext.MessageBox.show({
-                            title: 'Query validate error',
+                            title: 'Query validated error',
                             msg: result.error_message.split('[')[0],
                             buttons: Ext.Msg.OK,
                             icon: Ext.MessageBox.WARNING
@@ -1165,6 +1165,19 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         Api.save({
             cache: false,
             params: data,
+            error: function(error){
+                if (error.message == "This query name is already defined by this user"){
+                    
+                    Ext.MessageBox.show({
+                        title: 'Query not saved',
+                        msg: 'This query name is already defined by this user',
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING
+                    });
+
+                    return false;
+                }                
+            },
             request: function(){
                 me.setLoading(true, 'Saving...');
             },
