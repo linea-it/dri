@@ -83,14 +83,6 @@ Ext.define('Target.view.catalog.Tree', {
                     }
                 },
                 {
-                    text: 'Process',
-                    dataIndex: 'epr_original_id',
-                    sortable: true,
-                    filter: {
-                        type: 'number'
-                    }
-                },
-                {
                     text: 'Rows',
                     dataIndex: 'ctl_num_objects',
                     sortable: true,
@@ -98,17 +90,18 @@ Ext.define('Target.view.catalog.Tree', {
                         if (record.data.leaf) {
                             return value;
                         }
-                    },
-                    filter: {
-                        type: 'number'
                     }
                 },
                 {
-                    text: 'Size',
-                    dataIndex: 'tbl_size',
-                    sortable: false,
-                },
-
+                    text: 'Cols',
+                    dataIndex: 'ctl_num_columns',
+                    sortable: true,
+                    renderer: function (value, metadata, record) {
+                        if ((record.data.leaf) && (value > 0)){
+                            return value;
+                        }
+                    }
+                }
             ],
             listeners: {
                 load: function (treeStore) {
@@ -346,10 +339,15 @@ Ext.define('Target.view.catalog.Tree', {
 
         tpl = new Ext.XTemplate(
             '<div>',
-                '<spam><b>{prd_display_name}</b></spam>',
-
+                //'<spam><b>{prd_display_name}</b></spam>',
                 '<tpl if=\'description != ""\'>',
-                    '<p></br></br>{description}</p>',
+                    '<p><spam><b>Description:</b></spam>{description}</p>',
+                '</tpl>',
+                '<tpl if=\'epr_original_id != ""\'>',
+                    '<p><spam><b>Proccess: </b></spam>{epr_original_id}</p>',
+                '</tpl>',
+                '<tpl if=\'tbl_size != null\'>',
+                    '<p><spam><b>Size: </b></spam>{tbl_size}</p>',
                 '</tpl>',
                 '<tpl if=\'!tableExist\'>',
                     '</br><spam><b class=color-orange>Warning</b>: ',
@@ -360,8 +358,14 @@ Ext.define('Target.view.catalog.Tree', {
 
         tooltip = tpl.apply(record.data);
 
-        if (record.get('leaf')) {
-            meta.tdAttr = 'data-qtip=\"' + tooltip + '\"';
+        // So exibe popup se tiver descricao ou numero de processo.
+        if ((record.get('description') !== '')
+            || (record.get('epr_original_id') !== '')) {
+
+            if (record.get('leaf')) {
+                meta.tdAttr = 'data-qtip=\"' + tooltip + '\"';
+            }
+
         }
 
         return value;
