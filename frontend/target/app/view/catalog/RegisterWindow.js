@@ -61,7 +61,7 @@ Ext.define('Target.view.catalog.RegisterWindow', {
                                     me.close();
                                 }
                             },
-                            hidden: !me.getEnableRegisterDB()
+                            disabled: !me.getEnableRegisterDB()
                         }
                     ]
                 }

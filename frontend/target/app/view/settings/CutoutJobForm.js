@@ -42,6 +42,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
         // Na secao DES_CUTOUT_SERVICE
         toBeRemoved = []
         if (me.availableReleases != null){
+            vm.set('enableRelease', true);
             if ((Array.isArray(me.availableReleases)) &&
                 (me.availableReleases.length > 0)){
 
@@ -53,6 +54,9 @@ Ext.define('Target.view.settings.CutoutJobForm', {
 
                 tags.remove(toBeRemoved);
             }
+        } else {
+            // Esconde a combobox de Releases
+            vm.set('enableRelease', false);
         }
 
         Ext.apply(this, {
@@ -104,6 +108,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                         },
                         {
                             xtype: 'combobox',
+                            reference: 'CmbReleaseTag',
                             name: 'tag',
                             fieldLabel: 'Release TAG',
                             emptyText: 'Release tag for coadd cutouts',
@@ -114,7 +119,6 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             editable: true,
                             bind: {
                                 store: '{tags}',
-                                hidden: '{rdSingleEpoch.checked}',
                                 disabled: '{rdSingleEpoch.checked}'
                             }
                         },
@@ -238,6 +242,26 @@ Ext.define('Target.view.settings.CutoutJobForm', {
         });
 
         me.callParent(arguments);
+
+    },
+
+    afterRender: function () {
+        console.log('afterRender')
+        var me = this,
+            vm = me.getViewModel(),
+            se = me.lookup('rdSingleEpoch'),
+            cmbTag = me.lookup('CmbReleaseTag');
+
+        me.callParent(arguments);
+
+        // Esconder a combobox Tag de acordo com a settings no Backend
+        // Outra regra interfere na visibilidade da combo e a selecao de Single
+        // Epoch
+        if ((vm.get('enableRelease')) && (!se.checked)) {
+            cmbTag.setVisible(true)
+        } else {
+            cmbTag.setVisible(false)
+        }
     },
 
     setCurrentProduct: function (record) {

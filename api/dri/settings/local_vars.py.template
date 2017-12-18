@@ -75,8 +75,9 @@ DES_CUTOUT_SERVICE = {
     'CUTOUT_SOURCE': '/data',
     # Tempo de delay para a task check_jobs em minutos
     'CUTOUT_TASK_CHECK_JOBS_DELAY': 1
-    # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos
-    'AVAILABLE_RELEASES': ['y3a2_coadd']
+    # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos e None para
+    # desabilitar a opcao na interface
+    'AVAILABLE_RELEASES': None
 }
 
 ## USER_QUERY
