@@ -44,6 +44,9 @@ class DesCutoutService:
             self.data_dir = settings.DATA_DIR
             self.cutout_dir = params["CUTOUT_DIR"]
 
+            # Limit de Objetos que podem ser enviados ao descut
+            self.cutout_max_objects = params["MAX_OBJECTS"]
+
         except Exception as e:
             msg = ("Error in the Cutouts parameters in the settings. "
                    "Check the DES_CUTOUT_SERVICE section if it is configured correctly. ERROR: %s" % e)
@@ -547,7 +550,7 @@ class DesCutoutService:
 
         rows, count = catalog_db.query(
             columns=columns,
-            limit=100
+            limit=self.cutout_max_objects
         )
 
         # Criar um arquivo que servira de index para a associar os objetos as imagens

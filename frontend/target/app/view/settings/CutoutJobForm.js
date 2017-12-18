@@ -22,8 +22,9 @@ Ext.define('Target.view.settings.CutoutJobForm', {
     config: {
         currentProduct: null,
         currentSetting: null,
-
-        availableReleases: null
+        availableReleases: null,
+        objectsCount: null,
+        maxObjects: 300
     },
 
     initComponent: function () {
@@ -31,11 +32,21 @@ Ext.define('Target.view.settings.CutoutJobForm', {
             vm = me.getViewModel(),
             tags = vm.getStore('tags');
 
+        // recupera do settings os releases disponiveis no servico de cutout
         try {
             me.availableReleases = Settings.DES_CUTOUT_SERVICE__AVAILABLE_RELEASES
         }
         catch (err) {
             console.warn("Setting DES_CUTOUT_SERVICE__AVAILABLE_RELEASES not loaded.");
+        }
+
+        // recupera do settings a quantidade maxima de objetos que podem
+        // ser enviadas para o descut
+        try {
+            me.maxObjects = Settings.DES_CUTOUT_SERVICE__MAX_OBJECTS
+        }
+        catch (err) {
+            console.warn("Setting DES_CUTOUT_SERVICE__MAX_OBJECTS not loaded.");
         }
 
         // Desabilitar outros releases caso esteja definido no settings no Backend

@@ -77,7 +77,9 @@ DES_CUTOUT_SERVICE = {
     'CUTOUT_TASK_CHECK_JOBS_DELAY': 1
     # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos e None para
     # desabilitar a opcao na interface
-    'AVAILABLE_RELEASES': None
+    'AVAILABLE_RELEASES': None,
+    # Quantidade limit de objetos a ser passada para o descutout
+    'MAX_OBJECTS': 300
 }
 
 ## USER_QUERY
