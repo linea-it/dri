@@ -162,9 +162,32 @@ Ext.define('Target.view.settings.CutoutJobController', {
                     Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - create_mosaic');
 
                     // Fechar a Janela
-                    view.close();
+                    me.afterSubmitJob(view);
                 }
             });
+        }
+    },
+
+
+    afterSubmitJob: function (view) {
+        // console.log('afterSubmitJob(%o)', view);
+        var me = this,
+            objectsCount = view.getObjectsCount(),
+            maxObjects = view.getMaxObjects();
+
+        view.close();
+
+        // Checar a quantidade de objetos na lista se for maior que 100
+        // Mostar um popup informando a limitiacao do sistema
+        if (objectsCount > maxObjects) {
+            Ext.MessageBox.alert(
+                '',
+                "The cutout tool has currently a limit of "+maxObjects+" objects. We are working to fix this limitation.<br>"+
+                "The job will run in the background and you will be notified when it is finished.");
+        } else {
+            Ext.MessageBox.alert(
+               '',
+               "The job will run in the background and you will be notified when it is finished.");
         }
     },
 
@@ -197,3 +220,4 @@ Ext.define('Target.view.settings.CutoutJobController', {
     }
 
 });
+//
