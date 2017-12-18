@@ -1,4 +1,5 @@
 import warnings
+import collections
 
 from django.conf import settings
 from sqlalchemy import create_engine, inspect, MetaData, func, Table, Column, Integer, String, Float, Boolean
@@ -254,7 +255,7 @@ class DBBase:
             queryset = con.execute(stm)
             result = list()
             for row in queryset.fetchall():
-                result.append(dict(row))
+                result.append(collections.OrderedDict(row))
 
             return result
 

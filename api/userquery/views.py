@@ -129,12 +129,12 @@ class TableViewSet(viewsets.ModelViewSet):
             q = Job(display_name=display_name,
                     owner=self.request.user,
                     sql_sentence=sql_sentence,
+                    timeout=settings.USER_QUERY_EXECUTION_TIMEOUT,
                     query_name=query_name)
             q.save()
 
-            timeout = settings.USER_QUERY_EXECUTION_TIMEOUT
             create_table.delay(q.id, request.user.pk, table_name, release_id,
-                               associate_target_viewer, timeout=timeout,
+                               associate_target_viewer,
                                schema=settings.DATABASES['catalog']['USER'])
             return HttpResponse(status=200)
         except Exception as e:
@@ -165,11 +165,8 @@ class TableViewSet(viewsets.ModelViewSet):
         return super(TableViewSet, self).update(request, args, kwargs)
 
     def is_display_name_used_by_user(self):
-        print(len(Table.objects.all()))
-        print(self.request.data['display_name'])
         q = Table.objects.filter(Q(owner=self.request.user) &
                                  Q(display_name=self.request.data['display_name']))
-        print(str(q.query))
         return True if len(q) > 0 else False
 
     def destroy(self, request, *args, **kwargs):
