@@ -27,6 +27,15 @@ class NcsaBackend(object):
         except:
             raise Exception("configuration variable \"NCSA_AUTHENTICATION_DB\" was unset in local_vars")
 
+    def get_des_user_tablename(self):
+
+        try:
+            return settings.NCSA_AUTHENTICATION_USERS_TABLE
+
+        except:
+            raise Exception("configuration variable \"NCSA_AUTHENTICATION_USERS_TABLE\" was unset in local_vars")
+
+
     def check_user(self, username, password):
         try:
             dbname = self.get_database_name()
@@ -65,10 +74,10 @@ class NcsaBackend(object):
         # TODO [CMP] this should have a connection management/pool
         dbname = self.get_database_name()
         db = DBBase(dbname)
-        # stm = select([column('email'), column('firstname'), column('lastname')]).select_from(
-        #     table('des_users')).where(column('username') == username)
-        # return db.fetchone_dict(stm)
-        sql = "SELECT email, firstname, lastname FROM DES_ADMIN.DES_USERS WHERE username = '%s'" % username
+
+        des_user_table = self.get_des_user_tablename()
+
+        sql = "SELECT email, firstname, lastname FROM %s WHERE username = '%s'" % (des_user_table.upper(), username)
         return db.fetchone_dict(sql)
 
 
