@@ -411,7 +411,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
             case 'delete':
                 Ext.MessageBox.show({
                     title: 'Cofirm Action',
-                    msg: 'Drop table "' + item.record.get('text') + '"?',
+                    msg: 'Drop table "' + item.record.get('text').split('<span')[0] + '"?',
                     buttons: Ext.Msg.YESNO,
                     icon: Ext.MessageBox.WARNING,
                     fn: function(button){
