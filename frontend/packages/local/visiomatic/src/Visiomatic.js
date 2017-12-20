@@ -154,7 +154,7 @@ Ext.define('visiomatic.Visiomatic', {
         lcrosshair: null,
 
         showCrosshair: false,
-        enableContextMenu: true,
+        enableContextMenu: false,
         mlocate:'',
 
         showComments: false,
