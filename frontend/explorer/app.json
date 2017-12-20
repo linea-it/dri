@@ -223,7 +223,7 @@
         {
             "path": "https://d3js.org/d3.v4.min.js",
             "remote": true
-        },    
+        },
         // biblioteca Visiomatic
         {
             "path": "../packages/local/visiomatic/src/Leaflet/dist/leaflet.js"
@@ -235,7 +235,7 @@
             "path": "../packages/local/visiomatic/src/visiomatic/dist/jqplot-min.js"
         },
         {
-            "path": "../packages/local/visiomatic/src/visiomatic/dist/spectrum-min.js"
+            "path": "../packages/local/visiomatic/src/visiomatic/dist/spectrum.js"
         },
         {
             "path": "../packages/local/visiomatic/src/visiomatic/dist/visiomatic-src.js"
