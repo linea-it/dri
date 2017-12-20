@@ -12,6 +12,7 @@ Ext.define('common.store.Tiles', {
 
     proxy: {
         type: 'django',
+        timeout: 90000,
         url: '/dri/api/tiles/'
     },
 
