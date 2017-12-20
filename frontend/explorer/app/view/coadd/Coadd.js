@@ -94,7 +94,8 @@ Ext.define('Explorer.view.coadd.Coadd', {
                         {
                             xtype: 'panel',
                             // title: 'Superior',
-                            height: 500,
+                            flex:1,
+                            //height: 500,
                             layout: {
                                 type: 'hbox',
                                 pack: 'start',
