@@ -395,10 +395,10 @@ L.Projection.WCS.COE = L.Projection.WCS.conical.extend({
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 05/09/2016
+#	Last modified: 01/12/2017
 */
 
 L.CRS.WCS = L.extend({}, L.CRS, {
@@ -603,18 +603,19 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	},
 
 	// Parse a string of coordinates. Return undefined if parsing failed
-	parseCoords: function (str, cdsflag) {
-		var result;
-		if (cdsflag) {
-			// Special parsing for Sesame@CDS
-			result = /J\s(\d+\.?\d*)\s*,?\s*\+?(-?\d+\.?\d*)/g.exec(str);
-		} else {
-			result = /(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g.exec(str);
+	parseCoords: function (str) {
+		var result, latlng;
+
+		// Try VisiOmatic sexagesimal first
+		latlng = L.IIPUtils.hmsDMSToLatLng(str);
+		if (typeof latlng === 'undefined') {
+			// Parse regular deg, deg. The heading "J" is to support the Sesame@CDS output
+			result = /(?:%J\s|^)([-+]?\d+\.?\d*)\s*[,\s]+\s*([-+]?\d+\.?\d*)/g.exec(str);
+			if (result && result.length >= 3) {
+				latlng = L.latLng(Number(result[2]), Number(result[1]));
+			}
 		}
-
-		if (result && result.length >= 3) {
-			var latlng = L.latLng(Number(result[2]), Number(result[1]));
-
+		if (latlng) {
 			if (this.forceNativeCelsys) {
 				latlng = this.eqToCelsys(latlng);
 			}
@@ -736,7 +737,7 @@ L.CRS.wcs = function (options) {
 #	Copyright: (C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 27/06/2017
+#	Last modified: 01/12/2017
 */
 L.IIPUtils = {
 // Definitions for RegExp
@@ -745,9 +746,7 @@ L.IIPUtils = {
 
 // Ajax call to server
 	requestURL: function (url, purpose, action, context, timeout) {
-		var	httpRequest,
-				token,
-				urlPort;
+		var	httpRequest;
 
 		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
 			httpRequest = new XMLHttpRequest();
@@ -772,30 +771,6 @@ L.IIPUtils = {
 				alert('Time out while ' + purpose);
 			};
 		}
-		// TODO Implement authenticate by token
-		// token = window.localStorage['token'];
-		//
-		// if (
-		// 	window.location.origin.includes('desportal.cosmology.illinois.edu') &&
-		// 	token
-		// ) {
-		// 	urlArray = url.split('desportal.cosmology.illinois.edu')
-		//
-		// 	httpRequest.open('GET',
-		// 		urlArray[0] +
-		// 		window.location.host +
-		// 		urlArray[1]
-		// 	);
-		//
-		// 	httpRequest.setRequestHeader('Authorization', 'Basic a');
-		// 	httpRequest.setRequestHeader('Token', token);
-		//
-		//
-		// } else {
-		// 	httpRequest.open('GET', url);
-		//
-		// }
-
 		httpRequest.open('GET', url);
 
 		// Send Credrentials
@@ -808,8 +783,6 @@ L.IIPUtils = {
 		if ((context) && (context.options.authenticate === 'csrftoken')) {
 			httpRequest.setRequestHeader('X-CSRFToken', this.getCookie('csrftoken'));
 		}
-
-
 
 		if ((action)) {
 			httpRequest.onreadystatechange = function () {
@@ -950,6 +923,24 @@ L.IIPUtils = {
 		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
+	// Convert HMSDMS to degrees
+	hmsDMSToLatLng: function (str) {
+		var result;
+/* jshint ignore:start */ // Long regexp line (difficult to circumvent)
+		result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str);
+/* jshint ignore:end */
+		if (result && result.length >= 7) {
+			var	dd = Number(result[4]);
+
+			return L.latLng((dd < 0.0 ? -1.0 : 1.0) *
+			    (Math.abs(dd) + Number(result[5]) / 60.0 + Number(result[6]) / 3600.0),
+			    Number(result[1]) * 15.0 + Number(result[2]) / 4.0 + Number(result[3]) / 240.0);
+		} else {
+			return undefined;
+		}
+	},
+
+
 	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
 	getCookie: function (cname) {
 	    var name = cname + '=';
@@ -978,7 +969,7 @@ L.IIPUtils = {
 #
 #	Copyright:		(C) 2014-2017 IAP/CNRS/UPMC, IDES/Paris-Sud and C2RMF/CNRS
 #
-#	Last modified:		23/05/2017
+#	Last modified:		01/12/2017
 */
 
 L.TileLayer.IIP = L.TileLayer.extend({
@@ -1005,7 +996,9 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		channelUnits: [],
 		minMaxValues: [],
 		defaultChannel: 0,
-		credentials: false
+		credentials: false,
+		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame'
+
 		/*
 		pane: 'tilePane',
 		opacity: 1,
@@ -1351,8 +1344,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				curcrs = map.options.crs,
 				prevcrs = map._prevcrs,
 				maploadedflag = map._loaded,
-				// Default center coordinates
-				center = map.options.center ? map.options.center : newcrs.projparam.crval;
+				center;
 
 		if (maploadedflag) {
 			curcrs._prevLatLng = map.getCenter();
@@ -1377,48 +1369,46 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		} else if (newcrs._prevLatLng) {
 			center = newcrs._prevLatLng;
 			zoom = newcrs._prevZoom;
-		} else {
+		} else if (this.options.center) {
 			// Default center coordinates and zoom
-			if (this.options.center) {
-				var	latlng = newcrs.parseCoords(this.options.center);
-
-				if (latlng) {
-					if (this.options.fov) {
-						zoom = newcrs.fovToZoom(map, this.options.fov, latlng);
-					}
-					map.setView(latlng, zoom, {reset: true, animate: false});
-				} else {
-					// If not, ask Sesame@CDS!
-					L.IIPUtils.requestURL(
-						'http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' +
-						  this.options.center,
-						'getting coordinates for ' + this.options.center,
-						function (_this, httpRequest) {
-							if (httpRequest.readyState === 4) {
-								if (httpRequest.status === 200) {
-									var str = httpRequest.responseText,
-										latlng = newcrs.parseCoords(str, true);
-
-									if (latlng) {
-										if (_this.options.fov) {
-											zoom = newcrs.fovToZoom(map, _this.options.fov, latlng);
-										}
-										map.setView(latlng, zoom, {reset: true, animate: false});
-									} else {
-										map.setView(center, zoom, {reset: true, animate: false});
-										alert(str + ': Unknown location');
-									}
-								} else {
-									map.setView(center, zoom, {reset: true, animate: false});
-									alert('There was a problem with the request to the Sesame service at CDS');
-								}
-							}
-						}, this, 10
-					);
+			var latlng = (typeof this.options.center === 'string') ?
+			  newcrs.parseCoords(decodeURI(this.options.center)) :
+			  this.options.center;
+			if (latlng) {
+				if (this.options.fov) {
+					zoom = newcrs.fovToZoom(map, this.options.fov, latlng);
 				}
+				map.setView(latlng, zoom, {reset: true, animate: false});
 			} else {
-				map.setView(center, zoom, {reset: true, animate: false});
+				// If not, ask Sesame@CDS!
+				L.IIPUtils.requestURL(
+					this.options.sesameURL + '/-oI/A?' +
+					  this.options.center,
+					'getting coordinates for ' + this.options.center,
+					function (_this, httpRequest) {
+						if (httpRequest.readyState === 4) {
+							if (httpRequest.status === 200) {
+								var str = httpRequest.responseText,
+									latlng = newcrs.parseCoords(str);
+								if (latlng) {
+									if (_this.options.fov) {
+										zoom = newcrs.fovToZoom(map, _this.options.fov, latlng);
+									}
+									map.setView(latlng, zoom, {reset: true, animate: false});
+								} else {
+									map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+									alert(str + ': Unknown location');
+								}
+							} else {
+								map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+								alert('There was a problem with the request to the Sesame service at CDS');
+							}
+						}
+					}, this, 10
+				);
 			}
+		} else {
+			map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
 		}
 	},
 
@@ -1544,7 +1534,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 		// Compute tile size (IIP tile size can be less at image borders)
 		var	coords = tile.coords,
-			  z = coords.z;
+			z = this._getZoomForUrl();
+
 		if (z > this.iipMaxZoom) { z = this.iipMaxZoom; }
 		var sizeX = coords.x + 1 === this.iipGridSize[z].x ?
 			    this.iipImageSize[z].x % this.iipTileSize.x : this.iipTileSize.x,
@@ -1937,7 +1928,7 @@ L.ellipse = function (latlng, options) {
 #	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #	                         Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 30/07/2017
+#	Last modified: 08/12/2017
 */
 
 L.Catalog = {
@@ -1945,7 +1936,7 @@ L.Catalog = {
 
 	_csvToGeoJSON: function (str) {
 		// Check to see if the delimiter is defined. If not, then default to comma.
-		var badreg = new RegExp('#|--|^$'),
+		var badreg = new RegExp('#|--|objName|string|^$'),
 		 lines = str.split('\n'),
 		 geo = {type: 'FeatureCollection', features: []};
 
@@ -1973,13 +1964,17 @@ L.Catalog = {
 				var items = cell.slice(3),
 				    item;
 				for (var j in items) {
-					item = parseFloat(items[j]);
-					properties.items.push(isNaN(item) ? '--' : item);
+					properties.items.push(this.readProperty(items[j]));
 				}
 				geo.features.push(feature);
 			}
 		}
 		return geo;
+	},
+
+	readProperty: function (item) {
+		var	fitem = parseFloat(item);
+		return isNaN(fitem) ? '--' : fitem;
 	},
 
 	toGeoJSON: function (str) {
@@ -1998,13 +1993,15 @@ L.Catalog = {
 		}
 		str += '<TABLE style="margin:auto;">' +
 		       '<TBODY style="vertical-align:top;text-align:left;">';
-		for	(var i in this.properties) {
-			str += '<TR><TD>' + this.properties[i] + ':</TD>' +
-			       '<TD>' + feature.properties.items[i].toString() + ' ';
-			if (this.units[i]) {
-				str += this.units[i];
+		for (var i in this.properties) {
+			if (this.propertyMask === undefined || this.propertyMask[i] === true) {
+				str += '<TR><TD>' + this.properties[i] + ':</TD>' +
+				       '<TD>' + feature.properties.items[i].toString() + ' ';
+				if (this.units[i]) {
+					str += this.units[i];
+				}
+				str += '</TD></TR>';
 			}
-			str += '</TD></TR>';
 		}
 		str += '</TBODY></TABLE>';
 		return str;
@@ -2018,52 +2015,59 @@ L.Catalog = {
 		});
 	},
 
-	// vizierURL: 'http://vizier.u-strasbg.fr/viz-bin'
-	vizierURL: 'https://vizier.cfa.harvard.edu/viz-bin'
+	filter: function (feature) {
+		return true;
+	},
+
+	vizierURL: 'https://vizier.unistra.fr/viz-bin',
+	mastURL: 'https://archive.stsci.edu'
 
 };
 
 L.Catalog['2MASS'] = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: '2MASS',
+	className: 'logo-catalog-vizier',
 	attribution: '2MASS All-Sky Catalog of Point Sources (Cutri et al. 2003)',
 	color: 'red',
 	maglim: 17.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/246&' +
 	 '-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&' +
-	 '-out.max={nmax}',
+	 '-out.max={nmax}&-sort=Jmag',
 	properties: ['J', 'H', 'K'],
 	units: ['', '', ''],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 L.Catalog.SDSS = L.extend({}, L.Catalog, {
-	name: 'SDSS release 9',
-	attribution: 'SDSS Photometric Catalog, Release 9 (Adelman-McCarthy et al. 2012)',
+	service: 'Vizier@CDS',
+	name: 'SDSS release 12',
+	className: 'logo-catalog-vizier',
+	attribution: 'SDSS Photometric Catalog, Release 9 (Alam et al. 2015)',
 	color: 'yellow',
 	maglim: 25.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
-	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=V/139&' +
-	 '-out=SDSS9,RAJ2000,DEJ2000,umag,gmag,rmag,imag,zmag&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-sort=imag&-out.max={nmax}',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=V/147&' +
+	 '-out=SDSS12,RA_ICRS,DE_ICRS,umag,gmag,rmag,imag,zmag&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag',
 	properties: ['u', 'g', 'r', 'i', 'z'],
 	units: ['', '', '', '', ''],
-	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/139/sdss9&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 L.Catalog.PPMXL = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'PPMXL',
-	attribution: 'PPM-Extended, positions and proper motions by Roeser et al. 2008',
+	className: 'logo-catalog-vizier',
+	attribution: 'PPM-Extended, positions and proper motions (Roeser et al. 2008)',
 	color: 'green',
 	maglim: 20.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/317&' +
 	 '-out=PPMXL,RAJ2000,DEJ2000,Jmag,Hmag,Kmag,b1mag,b2mag,r1mag,r2mag,imag,pmRA,pmDE&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Jmag',
 	properties: ['J', 'H', 'K', 'b<sub>1</sub>', 'b<sub>2</sub>', 'r<sub>1</sub>',
 	             'r<sub>2</sub>', 'i',
 	             '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
@@ -2072,30 +2076,32 @@ L.Catalog.PPMXL = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.Abell = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'Abell clusters',
+	className: 'logo-catalog-vizier',
 	attribution: 'Rich Clusters of Galaxies (Abell et al. 1989) ',
 	color: 'orange',
 	maglim: 30.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VII/110A&' +
 	 '-out=ACO,_RAJ2000,_DEJ2000,m10,Rich,Dclass&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=m10',
 	properties: ['m<sub>10</sub>', 'Richness', 'D<sub>class</sub>'],
 	units: ['', '', ''],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VII/110A&-c={ra},{dec},eq=J2000&-c.rs=0.2'
 });
 
 L.Catalog.NVSS = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'NVSS',
+	className: 'logo-catalog-vizier',
 	attribution: '1.4GHz NRAO VLA Sky Survey (NVSS) (Condon et al. 1998)',
 	color: 'magenta',
 	maglim: 30.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/65/NVSS&' +
 	 '-out=NVSS,_RAJ2000,_DEJ2000,S1.4,MajAxis,MinAxis,PA&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-S1.4',
 	properties: ['S<sub>1.4GHz</sub>', 'Major axis', 'Minor axis', 'Position angle'],
 	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VIII/65/NVSS&-c={ra},{dec},eq=J2000&-c.rs=0.2',
@@ -2103,21 +2109,22 @@ L.Catalog.NVSS = L.extend({}, L.Catalog, {
 		return L.ellipse(latlng, {
 			majAxis: feature.properties.items[1] / 7200.0,
 			minAxis: feature.properties.items[2] / 7200.0,
-			posAngle: feature.properties.items[3] === '--' ? 90.0 : 90.0 - feature.properties.items[3]
+			posAngle: feature.properties.items[3] === '--' ? 0.0 : feature.properties.items[3]
 		});
 	}
 });
 
 L.Catalog.FIRST = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'FIRST',
+	className: 'logo-catalog-vizier',
 	attribution: 'The FIRST Survey Catalog (Helfand et al. 2015)',
 	color: 'blue',
 	maglim: 30.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/92/first14&' +
 	 '-out=FIRST,_RAJ2000,_DEJ2000,Fpeak,fMaj,fMin,fPA&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fpeak',
 	properties: ['F<sub>peak</sub>(1.4GHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
 	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VIII/92/first14&-c={ra},{dec},eq=J2000&-c.rs=0.2',
@@ -2125,21 +2132,22 @@ L.Catalog.FIRST = L.extend({}, L.Catalog, {
 		return L.ellipse(latlng, {
 			majAxis: feature.properties.items[1] / 7200.0,
 			minAxis: feature.properties.items[2] / 7200.0,
-			posAngle: feature.properties.items[3] === '--' ? 90.0 : 90.0 - feature.properties.items[3]
+			posAngle: feature.properties.items[3] === '--' ? 0.0 : feature.properties.items[3]
 		});
 	}
 });
 
 L.Catalog.AllWISE = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'AllWISE',
+	className: 'logo-catalog-vizier',
 	attribution: 'AllWISE Data Release (Cutri et al. 2013)',
 	color: 'red',
 	maglim: 18.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/328/allwise&' +
 	 '-out=AllWISE,_RAJ2000,_DEJ2000,W1mag,W2mag,W3mag,W4mag&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=W1mag',
 	properties: ['W1<sub>mag</sub> (3.4µm)', 'W2<sub>mag</sub> (4.6µm)',
 	  'W3<sub>mag</sub> (12µm)', 'W4<sub>mag</sub> (22µm)'],
 	units: ['', '', '', ''],
@@ -2147,50 +2155,128 @@ L.Catalog.AllWISE = L.extend({}, L.Catalog, {
 });
 
 L.Catalog.GALEX_AIS = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'GALEX AIS',
+	className: 'logo-catalog-vizier',
 	attribution: 'GALEX catalogs of UV sources: All-sky Imaging Survey (Bianchi et al. 2011)',
 	color: 'magenta',
 	maglim: 21.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/312/ais&' +
 	 '-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=FUV',
 	properties: ['FUV<sub>AB</sub>', 'NUV<sub>AB</sub>'],
 	units: ['', ''],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/312/ais&-c={ra},{dec},eq=J2000&-c.rs=0.2'
 });
 
 L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'Gaia DR1',
+	className: 'logo-catalog-vizier',
 	attribution: 'First Gaia Data Release (2016)',
 	color: 'green',
 	maglim: 20.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/337&' +
 	 '-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=<Gmag>',
 	properties: ['G', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 L.Catalog.URAT_1 = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
 	name: 'URAT1',
+	className: 'logo-catalog-vizier',
 	attribution: 'The first U.S. Naval Observatory Astrometric Robotic Telescope Catalog (Zacharias et al. 2015)',
 	color: 'yellow',
 	maglim: 17.0,
-	service: 'Vizier@CDS',
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/329&' +
 	 '-out=URAT1,RAJ2000,DEJ2000,f.mag,pmRA,pmDE&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}',
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=f.mag',
 	properties: ['f<sub>mag</sub>', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
+L.Catalog.PanStarrs = L.extend({}, L.Catalog, {
+	service: 'MAST@STScI',
+	name: 'Pan-Starrs1',
+	className: 'logo-catalog-mast',
+	attribution: 'The Pan-STARRS1 Database and Data Products (Flewelling et al. 2016)',
+	color: 'yellow',
+	maglim: 24.0,
+	magindex: 1,
+	regionType: 'cone',
+	url: L.Catalog.mastURL + '/panstarrs/search.php?' +
+	 'action=Search&target=&radius={drm}&ra={lng}&dec={lat}&equinox={sys}&nDetections=%3E+1&' +
+	 'selectedColumnsCsv=objname%2Cramean%2Cdecmean%2C' +
+	 'gmeankronmag%2Crmeankronmag%2Cimeankronmag%2Czmeankronmag%2Cymeankronmag%2CqualityFlag&' +
+	 'selectedColumnsList%5B%5D=rmeankronmag&availableColumns=objname&ordercolumn1=gmeankronmag&' +
+	 'coordformat=dec&outputformat=TSV&max_records={nmax}',
+	properties: ['g', 'r', 'i', 'z', 'y', 'quality'],
+	units: ['', '', '', '', '', ''],
+	propertyMask: [true, true, true, true, true, false],
+	readProperty: function (item) {
+		var	fitem = parseFloat(item);
+		return fitem < 0.0 ? '--' : fitem;
+	},
+	objurl: L.Catalog.mastURL + '/panstarrs/search.php?' +
+	 'action=Search&target=&radius=0.001&ra={ra}&dec={dec}&equinox=J2000&nDetections=%3E+1',
+	filter: function (feature) {
+		return parseFloat(feature.properties.items[5]) >= 40;
+	}
+});
+
+L.Catalog.GLEAM = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'GLEAM',
+	className: 'logo-catalog-vizier',
+	attribution: 'GaLactic and Extragalactic All-sky Murchison Wide Field Array (GLEAM)' +
+	    ' low-frequency extragalactic catalogue (Hurley-Walker et al. 2017)',
+	color: 'blue',
+	maglim: 30.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/100/gleamegc&' +
+	 '-out=GLEAM,RAJ2000,DEJ2000,Fintwide,awide,bwide,pawide&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fintwide',
+	properties: ['F<sub>int</sub>(170-231MHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
+	units: ['Jy', '&#8243;', '&#8243;', '&#176;'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=-source=VIII/100/gleamegc&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	draw: function (feature, latlng) {
+		return L.ellipse(latlng, {
+			majAxis: feature.properties.items[1] / 3600.0,
+			minAxis: feature.properties.items[2] / 3600.0,
+			posAngle: feature.properties.items[3] === '--' ? 0.0 : feature.properties.items[3]
+		});
+	}
+});
+
+L.Catalog.TGSS = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'TGSS',
+	className: 'logo-catalog-vizier',
+	attribution: 'The GMRT 150 MHz all-sky radio survey. TGSS ADR1 (Intema et al. 2017)',
+	color: 'blue',
+	maglim: 30.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=J/A%2bA/598/A78/table3&' +
+	 '-out=TGSSADR,RAJ2000,DEJ2000,Stotal,Maj,Min,PA&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Stotal',
+	properties: ['F<sub>peak</sub>(150MHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
+	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
+	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=-source=J/A%2bA/598/A78/table3&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	draw: function (feature, latlng) {
+		return L.ellipse(latlng, {
+			majAxis: feature.properties.items[1] / 7200.0,
+			minAxis: feature.properties.items[2] / 7200.0,
+			posAngle: feature.properties.items[3] === '--' ? 0.0 : feature.properties.items[3]
+		});
+	}
+});
 
 /*
 # SpinBox implements a number spinbox with adaptive step increment
@@ -3258,10 +3344,10 @@ source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugi
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 08/09/2016
+#	Last modified: 29/11/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -3561,7 +3647,7 @@ L.Control.IIP = L.Control.extend({
 	_addSwitchInput:	function (layer, box, label, attr, title, id, checked) {
 		var line = this._addDialogLine(label, box),
 			elem = this._addDialogElement(line),
-			flip = L.flipswitch(elem, {
+			flip = elem.flip = L.flipswitch(elem, {
 				checked: checked,
 				id: id,
 				title: title
@@ -3592,6 +3678,14 @@ L.Control.IIP = L.Control.extend({
 		}, this);
 
 		return elem;
+	},
+
+	_updateInput:	function (elem, value) {
+		if (elem.spinbox) {
+			elem.spinbox.value(value);
+		} else if (elem.flip) {
+			elem.flip.value(value);
+		}
 	},
 
 	_spinboxStep: function (min, max) {
@@ -3742,10 +3836,10 @@ L.control.iip = function (baseLayers, options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                          Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 29/11/2016
+#	Last modified: 08/12/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -3779,7 +3873,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		this._layers = {};
 		this._handlingClick = false;
 		this._sideClass = 'catalog';
-		this._catalogs =	catalogs ? catalogs : this.defaultCatalogs;
+		this._catalogs = catalogs ? catalogs : this.defaultCatalogs;
 	},
 
 	_initDialog: function () {
@@ -3787,8 +3881,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 			catalogs = this._catalogs,
 			box = this._addDialogBox(),
 			// CDS catalog overlay
-			line = this._addDialogLine('<a id="logo-cds" ' +
-			  'href="http://cds.u-strasbg.fr">&nbsp;</a>', box),
+			line = this._addDialogLine('', box),
 			elem = this._addDialogElement(line),
 			colpick = this._createColorPicker(
 				className + '-color',
@@ -3806,12 +3899,20 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 			catalogs.map(function (catalog) { return catalog.name; }),
 			undefined,
 			-1,
-			undefined,
+			function () {
+				var className = catalogs[catselect.selectedIndex - 1].className;
+				if (className === undefined) {
+					className = '';
+				}
+				L.DomUtil.setClass(catselect, this._className + '-select ' + className);
+				return;
+			},
 			'Select Catalog'
 		);
 
 		L.DomEvent.on(catselect, 'change keyup', function () {
-			catselect.title = catalogs[catselect.selectedIndex - 1].attribution;
+			var catalog = catalogs[catselect.selectedIndex - 1];
+			catselect.title = catalog.attribution + ' from ' + catalog.service;
 		}, this);
 
 		elem = this._addDialogElement(line);
@@ -3823,6 +3924,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 				catalog.color = colpick.value;
 				catselect.selectedIndex = 0;
 				catselect.title = 'Select Catalog';
+				L.DomUtil.setClass(catselect, this._className + '-select ');
 				this._getCatalog(catalog, this.options.timeOut);
 			}
 		}, 'Query catalog');
@@ -3931,6 +4033,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 					lng: center.lng.toFixed(6),
 					lat: center.lat.toFixed(6),
 					dr: dr.toFixed(4),
+					drm: (dr * 60.0).toFixed(4),
 					nmax: catalog.nmax + 1
 				})), 'querying ' + catalog.service + ' data', function (context, httpRequest) {
 					_this._loadCatalog(catalog, templayer, context, httpRequest);
@@ -3958,6 +4061,9 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 							return new L.LatLng(coords[1], coords[0], coords[2]);
 						}
 					},
+					filter: function (feature) {
+						return catalog.filter(feature);
+					},
 					pointToLayer: function (feature, latlng) {
 						return catalog.draw(feature, latlng);
 					},
@@ -3978,7 +4084,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 				  (excessflag ? '+ entries)' : ' entries)'));
 				if (excessflag) {
 					alert('Selected area is too large: ' + catalog.name +
-					  ' sample has been truncated to the first ' + catalog.nmax + ' sources.');
+					  ' sample has been truncated to the brightest ' + catalog.nmax + ' sources.');
 				}
 			} else {
 				if (httpRequest.status !== 0) {
@@ -4540,7 +4646,7 @@ L.control.iip.doc = function (url, options) {
 #	Copyright:		(C) 2014,2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #				                      Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified:		05/07/2017
+#	Last modified:		29/11/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -4560,6 +4666,38 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipimage';
 		this._sideClass = 'image';
+		this._initsettings = {};
+	},
+
+	// Copy image settings from layer
+	saveSettings: function (layer, settings) {
+		if (!settings) {
+			return;
+		}
+
+		settings.invertCMap = layer.iipInvertCMap;
+		settings.contrast = layer.iipContrast;
+		settings.colorSat = layer.iipColorSat;
+		settings.gamma = layer.iipGamma;
+		settings.quality = layer.iipQuality;
+	},
+
+	// Copy image settings back to layer and update widget values
+	loadSettings: function (layer, settings) {
+		if (!settings) {
+			return;
+		}
+
+		layer.iipInvertCMap = settings.invertCMap;
+		this._updateInput(this._input.invertCMap, settings.invertCMap);
+		layer.iipContrast = settings.contrast;
+		this._updateInput(this._input.contrast, settings.contrast);
+		layer.iipColorSat = settings.colorSat;
+		this._updateInput(this._input.colorSat, settings.colorSat);
+		layer.iipGamma = settings.gamma;
+		this._updateInput(this._input.gamma, settings.gamma);
+		layer.iipQuality = settings.quality;
+		this._updateInput(this._input.quality, settings.quality);
 	},
 
 	_initDialog: function () {
@@ -4568,29 +4706,51 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 			layer = this._layer,
 			map = this._map;
 
+		// _input will contain widget instances
+		this._input = {};
+
+		// copy initial IIP image parameters from the layer object
+		this.saveSettings(layer, this._initsettings);
+
 		// Invert
-		this._addSwitchInput(layer, this._dialog, 'Invert:', 'iipInvertCMap',
+		this._input.invertCMap = this._addSwitchInput(layer, this._dialog,
+		  'Invert:', 'iipInvertCMap',
 		  'Invert color map(s)', 'leaflet-invertCMap', layer.iipInvertCMap);
 
 		// Contrast
-		this._addNumericalInput(layer, this._dialog, 'Contrast:', 'iipContrast',
+		this._input.contrast = this._addNumericalInput(layer,
+		  this._dialog, 'Contrast:', 'iipContrast',
 		  'Adjust Contrast. 1.0: normal.', 'leaflet-contrastValue',
 		  layer.iipContrast, 0.05, 0.0, 10.0);
 
 		// Colour saturation
-		this._addNumericalInput(layer, this._dialog, 'Color Sat.:', 'iipColorSat',
+		this._input.colorSat = this._addNumericalInput(layer,
+		  this._dialog, 'Color Sat.:', 'iipColorSat',
 		  'Adjust Color Saturation. 0: B&W, 1.0: normal.', 'leaflet-colorsatvalue',
 		  layer.iipColorSat, 0.05, 0.0, 5.0, this._updateMix);
 
 		// Gamma
-		this._addNumericalInput(layer, this._dialog,  'Gamma:', 'iipGamma',
+		this._input.gamma = this._addNumericalInput(layer,
+		  this._dialog,  'Gamma:', 'iipGamma',
 		  'Adjust Gamma correction. The standard value is 2.2.',
 		  'leaflet-gammavalue', layer.iipGamma, 0.05, 0.5, 5.0);
 
 		// JPEG quality
-		this._addNumericalInput(layer, this._dialog,  'JPEG quality:', 'iipQuality',
+		this._input.quality = this._addNumericalInput(layer,
+		  this._dialog,  'JPEG quality:', 'iipQuality',
 		  'Adjust JPEG compression quality. 1: lowest, 100: highest',
 		  'leaflet-qualvalue', layer.iipQuality, 1, 1, 100);
+
+		// Reset settings button
+		var line = this._addDialogLine('Reset:', this._dialog),
+		    elem = this._addDialogElement(line);
+
+		this._createButton(className + '-button', elem, 'image-reset', function () {
+			_this.loadSettings(layer, _this._initsettings);
+			layer.updateMix();
+			layer.redraw();
+		}, 'Reset image settings');
+
 	},
 
 	_updateMix: function (layer) {
@@ -4614,10 +4774,10 @@ L.control.iip.image = function (options) {
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014,2015 Emmanuel Bertin - IAP/CNRS/UPMC,
-#                          Chiara Marmo - IDES/Paris-Sud
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
+#                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 24/11/2015
+#	Last modified: 22/11/2017
 */
 
 if (typeof require !== 'undefined') {
@@ -4709,7 +4869,7 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 				var map = _this._map,
 					latLng = map.getCenter(),
 					zoom = map.options.crs.options.nzoom - 1,
-				  point = map.project(latLng, zoom).round(),
+					point = map.project(latLng, zoom).floor().add([0.5, 0.5]),
 					rLatLng = map.unproject(point, zoom),
 					marker = this._spectrumMarker = L.circleMarker(rLatLng, {
 						color: speccolpick.value,
@@ -4724,8 +4884,8 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 				  {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
 				L.IIPUtils.requestURL(this._layer._url.replace(/\&.*$/g, '') +
 				  '&PFL=' + zoom.toString() + ':' +
-				  point.x.toFixed(0) + ',' + point.y.toFixed(0) + '-' +
-				  point.x.toFixed(0) + ',' + point.y.toFixed(0),
+				  (point.x - 0.5).toFixed(0) + ',' + (point.y - 0.5).toFixed(0) + '-' +
+				  (point.x - 0.5).toFixed(0) + ',' + (point.y - 0.5).toFixed(0),
 				  'getting IIP layer spectrum', this._plotSpectrum, this);
 			}, 'Plot a spectrum at the current map position');
 		}
@@ -4780,9 +4940,9 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 		}
 
 		L.IIPUtils.requestURL(this._layer._url.replace(/\&.*$/g, '') +
-			'&PFL=' + zoom.toString() + ':' + point1.x.toFixed(0) + ',' +
-			 point1.y.toFixed(0) + '-' + point2.x.toFixed(0) + ',' +
-			 point2.y.toFixed(0),
+			'&PFL=' + zoom.toString() + ':' + (point1.x - 0.5).toFixed(0) + ',' +
+			 (point1.y - 0.5).toFixed(0) + '-' + (point2.x - 0.5).toFixed(0) + ',' +
+			 (point2.y - 0.5).toFixed(0),
 			'getting IIP layer profile',
 			this._plotProfile, this);
 	},
@@ -6071,7 +6231,7 @@ L.control.sidebar = function (map, options) {
 #	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 27/06/2017
+#	Last modified: 30/11/2017
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -6083,7 +6243,8 @@ L.Control.WCS = L.Control.extend({
 			nativeCelsys: false
 		}],
 		centerQueryKey: 'center',
-		fovQueryKey: 'fov'
+		fovQueryKey: 'fov',
+		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame'
 	},
 
 	onAdd: function (map) {
@@ -6187,11 +6348,10 @@ L.Control.WCS = L.Control.extend({
 	},
 
 	panTo: function (str) {
-		var re = /^(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g,
-				result = re.exec(str),
-				wcs = this._map.options.crs,
-				coord = this.options.coordinates[this._currentCoord],
-				latlng = wcs.parseCoords(str);
+		var	wcs = this._map.options.crs,
+			coord = this.options.coordinates[this._currentCoord],
+			latlng = wcs.parseCoords(str);
+
 		if (latlng) {
 			if (wcs.pixelFlag) {
 				this._map.panTo(latlng);
@@ -6205,7 +6365,7 @@ L.Control.WCS = L.Control.extend({
 			}
 		} else {
 			// If not, ask Sesame@CDS!
-			L.IIPUtils.requestURL('http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' + str,
+			L.IIPUtils.requestURL(this.options.sesameURL + '/-oI/A?' + str,
 			 'getting coordinates for ' + str, this._getCoordinates, this, 10);
 		}
 	},
@@ -6214,7 +6374,7 @@ L.Control.WCS = L.Control.extend({
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				var str = httpRequest.responseText,
-					latlng = _this._map.options.crs.parseCoords(str, true);
+					latlng = _this._map.options.crs.parseCoords(str);
 
 				if (latlng) {
 					_this._map.panTo(latlng);
@@ -6294,6 +6454,7 @@ L.Control.LineaOverlay = L.Control.extend({
 L.Map.addInitHook(function () {
     if (this.options.enableLineaOverlay) {
 
+        console.log('entrou aqui')
         this.lineaoverlayControl = L.control.lineaoverlay();
         this.addControl(this.lineaoverlayControl);
     }
