@@ -135,7 +135,7 @@ Ext.define('aladin.Interfaces', {
         if (me.getEnableShift()) {
             tools.push({
                 xtype: 'button',
-                tooltip: 'Goto Visiomatic.',
+                tooltip: 'Switch between Aladdin / Visiomatic.',
                 iconCls: 'x-fa fa-exchange',
                 scope: me,
                 handler: me.onShift,
@@ -244,7 +244,7 @@ Ext.define('aladin.Interfaces', {
 
         // Auxiliar Tools
         auxTools = me.getAuxTools();
-        
+
         if (auxTools.length > 0) {
             Ext.each(auxTools, function (tool) {
                 tools.push(tool);
