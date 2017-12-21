@@ -57,6 +57,9 @@ Ext.define('Target.view.preview.PreviewController', {
             property: 'position',
             value: position
         }]);
+
+        // Limpar o Visiomatic a cada troca de objetos.
+        me.changeImage(null);
     },
 
     onLoadDatasets: function (store) {
