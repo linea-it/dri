@@ -223,6 +223,13 @@ Ext.define('Sky.view.footprint.FootprintController', {
         this.toVisiomatic(radec, true, false);
     },
 
+    onClickGoToImage: function () {
+        var me = this,
+            aladin = me.lookupReference('aladin');
+
+        this.toVisiomatic(aladin.getRaDec(), true, true);
+    },
+
     toVisiomatic: function (radec, clearSearch, centralized) {
         // console.log('toVisiomatic(%o, %o, %o)', radec, clearSearch, centralized)
         var me = this,
@@ -236,7 +243,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
         // TODO VERIFICAR ESSE BLOCO DE CODIGO PARECE NAO FAZER MAIS SENTIDO
         // NA VERSAO ATUAL !!!
-        // UMA BOA SOLUCAO E TODA A LOGICA DO SEARCH FICAR SEPARADA! 
+        // UMA BOA SOLUCAO E TODA A LOGICA DO SEARCH FICAR SEPARADA!
         value = txtCoordinateSearch.getValue();
         if (value){
             sys = visiomatic.Visiomatic.strToSystem(value);
