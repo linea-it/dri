@@ -96,10 +96,15 @@ def contact_us(request):
     """
     if request.method == 'POST':
 
+        try:
+            environment = settings.ENVIRONMENT_NAME
+        except:
+            raise Exception("The ENVIRONMENT_NAME variable is not configured in settings.")
+
         # Dados da Mensagem
         name = request.data.get('name', None)
         user_email = request.data.get('from', None)
-        subject = "[DRI] %s" % request.data.get('subject', None)
+        subject = "[DRI][%s] %s" % (environment, request.data.get('subject', None))
         message = request.data.get('message', None)
 
         # Dados Tecnicos
@@ -253,6 +258,12 @@ def get_setting(request):
 
 @api_view(['GET'])
 def send_statistic_email(request):
+    """
+    Este metodo e usado para enviar o email de estatistica a qualquer momento.
+    independente da task diaria.
+    :param request:
+    :return:
+    """
     if request.method == 'GET':
         from activity_statistic.reports import ActivityReports
         import datetime
@@ -269,18 +280,9 @@ def send_statistic_email(request):
 @api_view(['GET'])
 def teste(request):
     if request.method == 'GET':
-        # from activity_statistic.reports import ActivityReports
-        # import datetime
-        #
-        # yesterday = datetime.date.today() - datetime.timedelta(days=1)
-        #
-        # # ActivityReports().get_all_visits_consolidate_by_month()
-        #
-        # ActivityReports().report_email_unique_visits(yesterday)
 
-        #
-        # visits = ActivityReports().unique_visits_by_date(year=yesterday.year, month=yesterday.month, day=yesterday.day)
-        # return Response(dict({'data': visits}))
+        from product.garbagecolector import GarbageColectorProduct
 
+        GarbageColectorProduct().purge_products_expiration_time()
 
         return Response(dict({'status': "success"}))

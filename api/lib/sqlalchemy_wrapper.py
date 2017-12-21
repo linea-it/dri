@@ -374,7 +374,7 @@ class DBBase:
 
     @compiles(DropTable)
     def _drop_table(element, compiler, **kw):
-        _schema = "%s." % element.schema if element.schema is not None else ''
+        _schema = "%s." % element.schema if element.schema is not None and element.schema is not '' else ''
         return "DROP TABLE %s%s" % (_schema, element.table)
 
     def drop_table(self, table, schema=None):

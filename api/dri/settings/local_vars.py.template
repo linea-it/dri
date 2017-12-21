@@ -85,6 +85,10 @@ DES_CUTOUT_SERVICE = {
     'MAX_OBJECTS': 300
 }
 
+# Tempo limite em horas para que um produto fique disponivel, apos este tempo
+# o produto sera removido pelo garbage colector e sua tabela sera dropada. Use None para desabilitar.
+PRODUCT_EXPIRATION_TIME = 12
+
 ## USER_QUERY
 # Tempo de execucao de um job no User query.
 USER_QUERY_EXECUTION_TIMEOUT = 60
