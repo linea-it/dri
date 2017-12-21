@@ -35,6 +35,9 @@ DATABASES = {
 # Esta configuracao e usada somente pela classe de authenticacao usando login do NCSA
 # deve ser preenchida com o nome da configuracao de database do NCSA
 NCSA_AUTHENTICATION_DB = "dessci"
+# Nome da tabela onde ficam os dados do usuario com schema se tiver ex: DES_USERS para colaboracao e DES_ADMIN.DES_USERS para DR1 publico
+NCSA_AUTHENTICATION_USERS_TABLE = "DES_USERS"
+
 
 # Target Viewer Rating, Reject Schema
 SCHEMA_RATING_REJECT = None
@@ -75,8 +78,11 @@ DES_CUTOUT_SERVICE = {
     'CUTOUT_SOURCE': '/data',
     # Tempo de delay para a task check_jobs em minutos
     'CUTOUT_TASK_CHECK_JOBS_DELAY': 1
-    # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos
-    'AVAILABLE_RELEASES': ['y3a2_coadd']
+    # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos e None para
+    # desabilitar a opcao na interface
+    'AVAILABLE_RELEASES': None,
+    # Quantidade limit de objetos a ser passada para o descutout
+    'MAX_OBJECTS': 300
 }
 
 ## USER_QUERY
@@ -89,6 +95,9 @@ USER_QUERY_EXECUTION_TIMEOUT = 60
 PRODUCT_REGISTER_DB_INTERFACE = False
 # Habilita ou Desabilita a opcao de escolher o Folder na hora de registrar um produto.
 PRODUCT_REGISTER_FOLDERS = False
+# Habilita ou Desabilita a opção de registrar um produto como publico, pela interface.
+PRODUCT_REGISTER_ENABLE_PUBLIC = False
+
 
 # Logging is disabled due errors in testing and production environment, this must be investigated.
 # for developers, it safe to disable the follows lines

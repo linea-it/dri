@@ -112,20 +112,19 @@ Ext.define('common.ToolbarController', {
 
     },
 
-    help: function () {
+    onClickHelp: function () {
         var me = this,
             vm = me.getViewModel(),
             protocol = window.location.protocol,
             host = window.location.host,
-            help_url = vm.get('help_url')
-            location;
+            help_url = vm.get('help_url'),
+            newLocation;
 
-        location = Ext.String.format(
+        newLocation = Ext.String.format(
                     '{0}//{1}/{2}',
                     protocol, host, help_url);
-            ;
 
-        window.open(location, '_blank');
+        window.open(newLocation);
     },
 
     loadUsername: function () {

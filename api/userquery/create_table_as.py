@@ -21,11 +21,10 @@ from .target_viewer import register_table_in_the_target_viewer
 
 class CreateTableAs:
     def __init__(self, job_id, user_id, table_name, release_id,
-                 associate_target_viewer, schema=None, timeout=None):
+                 associate_target_viewer, schema=None):
         self.table_name = table_name
         self.release_id = release_id
         self.schema = schema
-        self.timeout = timeout
         self.associate_target_viewer = associate_target_viewer
 
         self.user = User.objects.get(pk=user_id)
@@ -73,7 +72,8 @@ class CreateTableAs:
         db = None
         try:
             db = DBBase('catalog')
-            db.create_table_raw_sql(self.table_name, self.job.sql_sentence, schema=self.schema, timeout=self.timeout)
+            db.create_table_raw_sql(self.table_name, self.job.sql_sentence, schema=self.schema,
+                                    timeout=self.job.timeout)
             if self.associate_target_viewer:
                 db.create_auto_increment_column(self.table_name, 'meta_id', schema=self.schema)
             self.is_table_successfully_created = True

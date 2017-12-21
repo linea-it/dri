@@ -13,15 +13,21 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from lib.CatalogDB import TargetObjectsDBHelper
+from lib.CatalogDB import TargetObjectsDBHelper, CatalogTable
 from product.association import Association
 from common.notify import Notify
 from .models import Product
+
+from userquery.models import Table
+
 
 class Export:
     def __init__(self):
         # Get an instance of a logger
         self.logger = logging.getLogger("product_export")
+
+        self.exclude_columns = ['meta_reject', 'meta_reject_id', 'meta_rating', 'meta_rating_id']
+
 
     def create_export_dir(self, name):
         """
@@ -78,8 +84,12 @@ class Export:
         self.logger.info("Retrieving the columns for the headers")
         columns = list()
 
+
         for property in row:
-            columns.append(str(property.lower().strip()))
+            cname = str(property.lower().strip())
+
+            if cname not in self.exclude_columns:
+                columns.append(cname)
 
         self.logger.debug("Columns: [%s]" % ", ".join(columns))
 
@@ -108,6 +118,13 @@ class Export:
 
             columns = self.get_columns(rows[0])
 
+            lines = list()
+            for row in rows:
+                for ec in self.exclude_columns:
+                    row.pop(ec, None)
+
+                lines.append(row)
+
             self.logger.info("Creating csv file")
             with open(filename, 'w') as csvfile:
                 writer = csv.DictWriter(csvfile, fieldnames=columns)
@@ -116,7 +133,7 @@ class Export:
                 writer.writeheader()
 
                 self.logger.info("Writing the rows")
-                writer.writerows(rows)
+                writer.writerows(lines)
 
             csvfile.close()
             self.logger.info("Successfully created")
@@ -127,6 +144,58 @@ class Export:
             return filename
         else:
             self.logger.error("Query returned no results")
+
+    def table_to_csv(self, table_id, export_dir, columns=None):
+        """
+        Le uma tabela criada pelo user_query e cria um csv com o resultado.
+        OBS: NAO recomendada para tabelas grandes. por que neste metodo todos as linhas
+        sao recuperadas ao mesmo tempo e e feito um for para inserir as linhas no csv.
+        :param export_dir: diretorio onde o arquivo csv vai ser gerado.
+        """
+
+        table = Table.objects.get(pk=table_id)
+
+        self.logger.info("Export table \"%s\" to csv" % table.display_name)
+
+        name = ("%s.csv" % table)
+
+        filename = os.path.join(export_dir, name)
+        self.logger.debug("Filename: %s" % filename)
+
+        catalogTable = CatalogTable(table.table_name, schema=table.schema, database='catalog')
+        # review columns selection
+        rows, count = catalogTable.query(catalogTable.column_names)
+
+        self.logger.debug("Row Count: %s" % count)
+
+        if count > 0:
+            columns = self.get_columns(rows[0])
+
+            lines = list()
+            for row in rows:
+                lines.append(row)
+
+            self.logger.info("Creating csv file")
+            with open(filename, 'w') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=columns)
+
+                self.logger.info("Writing the headers")
+                writer.writeheader()
+
+                self.logger.info("Writing the rows")
+                writer.writerows(lines)
+
+            csvfile.close()
+            self.logger.info("Successfully created")
+
+            file_size = humanize.naturalsize(os.path.getsize(filename))
+            self.logger.debug("File Size %s" % file_size)
+
+            return filename
+        else:
+            self.logger.error("Query returned no results")
+
+
 
     def csv_to_fits(self, csv, fits):
         self.logger.info("Export csv \"%s\" to fits" % csv)

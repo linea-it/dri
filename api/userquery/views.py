@@ -18,6 +18,8 @@ from .tasks import create_table
 from .db import RawQueryValidator
 from .target_viewer import register_table_in_the_target_viewer
 
+from product.export import Export
+
 from lib.sqlalchemy_wrapper import DBBase
 
 
@@ -129,12 +131,12 @@ class TableViewSet(viewsets.ModelViewSet):
             q = Job(display_name=display_name,
                     owner=self.request.user,
                     sql_sentence=sql_sentence,
+                    timeout=settings.USER_QUERY_EXECUTION_TIMEOUT,
                     query_name=query_name)
             q.save()
 
-            timeout = settings.USER_QUERY_EXECUTION_TIMEOUT
             create_table.delay(q.id, request.user.pk, table_name, release_id,
-                               associate_target_viewer, timeout=timeout,
+                               associate_target_viewer,
                                schema=settings.DATABASES['catalog']['USER'])
             return HttpResponse(status=200)
         except Exception as e:
@@ -165,11 +167,8 @@ class TableViewSet(viewsets.ModelViewSet):
         return super(TableViewSet, self).update(request, args, kwargs)
 
     def is_display_name_used_by_user(self):
-        print(len(Table.objects.all()))
-        print(self.request.data['display_name'])
         q = Table.objects.filter(Q(owner=self.request.user) &
                                  Q(display_name=self.request.data['display_name']))
-        print(str(q.query))
         return True if len(q) > 0 else False
 
     def destroy(self, request, *args, **kwargs):
@@ -243,6 +242,7 @@ class QueryPreview(viewsets.ViewSet):
             # make all values String to avoid errors during Json encoding.
             for raw in result:
                 for k, v in raw.items():
+                    print(k, v)
                     raw[k] = str(v)
 
             response = {"count": len(result),
@@ -306,3 +306,32 @@ class TargetViewerRegister(viewsets.ModelViewSet):
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
+
+
+class TableDownload(viewsets.ModelViewSet):
+    http_method_names = ['post', ]
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def create(self, request):
+        try:
+            data = request.data
+            _id = data.get("id", None)
+
+            if not _id:
+                raise Exception("id is a mandatory field")
+
+            # check if table exist
+            Table.objects.get(pk=_id)
+
+            # REVIEW - is user the owner of the table?
+            Export().table_to_csv(_id, "aaaaa")
+
+            return JsonResponse({}, safe=False)
+
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
+
+    def _is_user_authorized(self, q):
+        return q.owner == self.request.user or q.is_public
