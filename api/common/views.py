@@ -252,6 +252,21 @@ def get_setting(request):
         return Response(data)
 
 @api_view(['GET'])
+def send_statistic_email(request):
+    if request.method == 'GET':
+        from activity_statistic.reports import ActivityReports
+        import datetime
+
+        try:
+            ActivityReports().report_email_unique_visits(datetime.date.today())
+            return Response(dict({'status': "success"}))
+
+        except Exception as e:
+
+            return Response(dict({'status': "failure", "Exception": e}))
+
+
+@api_view(['GET'])
 def teste(request):
     if request.method == 'GET':
         # from activity_statistic.reports import ActivityReports
