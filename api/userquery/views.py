@@ -18,6 +18,8 @@ from .tasks import create_table
 from .db import RawQueryValidator
 from .target_viewer import register_table_in_the_target_viewer
 
+from product.export import Export
+
 from lib.sqlalchemy_wrapper import DBBase
 
 
@@ -240,6 +242,7 @@ class QueryPreview(viewsets.ViewSet):
             # make all values String to avoid errors during Json encoding.
             for raw in result:
                 for k, v in raw.items():
+                    print(k, v)
                     raw[k] = str(v)
 
             response = {"count": len(result),
@@ -303,3 +306,32 @@ class TargetViewerRegister(viewsets.ModelViewSet):
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
+
+
+class TableDownload(viewsets.ModelViewSet):
+    http_method_names = ['post', ]
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def create(self, request):
+        try:
+            data = request.data
+            _id = data.get("id", None)
+
+            if not _id:
+                raise Exception("id is a mandatory field")
+
+            # check if table exist
+            Table.objects.get(pk=_id)
+
+            # REVIEW - is user the owner of the table?
+            Export().table_to_csv(_id, "aaaaa")
+
+            return JsonResponse({}, safe=False)
+
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
+
+    def _is_user_authorized(self, q):
+        return q.owner == self.request.user or q.is_public
