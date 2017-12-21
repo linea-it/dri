@@ -282,6 +282,9 @@ class CatalogObjectsViewSet(ViewSet):
                             
                             Y3 - a correcao do Y3 e: 90 - theta_image. 
                             
+                            Glauber: 21/12/2017 - O Release publico DR1 Main deve ser tratado  
+                            igual ao Y3.
+                            
                             NAO foi testado outros releases por nao estarem registrados as suas tabelas coadd.
                         """
                         if meta_prop == '_meta_theta_image':
@@ -292,7 +295,7 @@ class CatalogObjectsViewSet(ViewSet):
                             if release_set:
                                 release = release_set.release.rls_name
                                 # Se tiver release e ele for o Y3 subtrair 90 graus
-                                if release == 'y3a1_coadd':
+                                if release == 'y3a1_coadd' or release == 'dr1_main':
                                     t_image = 90 - t_image
 
                                 else:
