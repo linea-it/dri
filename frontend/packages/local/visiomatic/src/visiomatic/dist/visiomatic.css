@@ -7,8 +7,11 @@
 #                                Chiara Marmo - IDES/Paris-Sud,
 #                                Ruven Pillay - C2RMF/CNRS
 #
-#	Last modified: 12/07/2017
+#	Last modified: 29/11/2017
 */
+.leaflet-container {
+  touch-action: none;
+}
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Global effects %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -488,14 +491,6 @@ input.leaflet-cmap:checked + label {
 	box-shadow: 1px 1px 2px black inset;
 }
 
-/*
-input.leaflet-cmap.invert + label {
-	transform: scaleY(-1.0);
-	-ms-transform: scaleY(-1.0);
-	-webkit-transform: scaleY(-1.0);
-}
-*/
-
 input#leaflet-cmap-grey + label {
 	background-image: url(images/icon-grey.svg);
 	border-radius: 4px 0px 0px 4px;
@@ -562,14 +557,6 @@ a#leaflet-control-iip-button-colormix-auto {
 }
 
 
-#logo-cds {
-	background: url(images/cds.png) no-repeat;
-	background-size: 2.4em;
-	background-position: center;
-	display: inline-block;
-	width: 32px;
-}
-
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Image %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -585,6 +572,11 @@ a#leaflet-iipimage-toggle {
 }
 .sidebar-left.image ~ .leaflet-left {
 	left: 234px;
+}
+
+a#leaflet-control-iip-button-image-reset {
+	background-image: url(images/icon-reset.svg);
+	border-radius: 4px 0px 0px 4px;
 }
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
@@ -618,6 +610,31 @@ a#leaflet-iipcatalog-toggle {
 #leaflet-iipcatalog div.leaflet-control-iip-select {
 	display: flow-root;
 }
+
+.logo-catalog-cds {
+	background: url(images/cds.png) no-repeat;
+	background-size: 2.4em;
+	background-position: center right 16px;
+	display: inline-block;
+	padding-right: 32px!important;
+}
+
+.logo-catalog-mast {
+	background: url(images/mast.png) no-repeat;
+	background-size: 2.4em;
+	background-position: center right 16px;
+	display: inline-block;
+	padding-right: 32px!important;
+}
+
+.logo-catalog-vizier {
+	background: url(images/vizier.png) no-repeat;
+	background-size: 2.4em;
+	background-position: center right 16px;
+	display: inline-block;
+	padding-right: 32px!important;
+}
+
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.IIP.Region %%%%%%%%%%%%%%%%%%%%%%%%%%%%*/

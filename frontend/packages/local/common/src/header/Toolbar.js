@@ -118,7 +118,7 @@ Ext.define('common.header.Toolbar', {
                         text: 'Help',
                         iconCls: 'x-fa fa-question',
                         reference: 'headermenuhelp',
-                        handler: 'help'
+                        handler: 'onClickHelp'
                     },
                     '-',
                     {

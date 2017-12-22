@@ -8,6 +8,14 @@ from django.conf import settings
 
 
 class Product(models.Model):
+    """
+        Este Model possui um Signal conectado a ele
+        toda vez que este model disparar o evento pre_delete
+        o metodo drop_product_table do arquivo .signals sera executado.
+        este metodo ira remover a tabela de catalogo a qual se refere o produto
+
+        OBS: este signal esta no final do arquivo. para evitar erros de import.
+    """
     prd_owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -34,6 +42,9 @@ class Product(models.Model):
         auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Date of registration.')
     prd_is_public = models.BooleanField(
         default=False, verbose_name='Is Public', help_text='Is Public default False')
+
+    prd_is_permanent = models.BooleanField(
+        default=False, verbose_name='Is Permanent', help_text='Is Permanent default False, True so this product is not removed by the garbage collector')
 
     releases = models.ManyToManyField(
         Release,
@@ -455,6 +466,8 @@ class BookmarkProduct(models.Model):
 
 # -------------------------------- Signals --------------------------------------
 # Esses signals connect devem ficar no final do arquivo para nao dar problema de import.
-from django.db.models.signals import post_save
-from .signals import start_des_cutout_job
+from django.db.models.signals import post_save, pre_delete
+from .signals import start_des_cutout_job, drop_product_table
+
 post_save.connect(start_des_cutout_job, sender=CutOutJob)
+pre_delete.connect(drop_product_table, sender=Product)

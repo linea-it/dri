@@ -138,6 +138,7 @@ Ext.define('Target.view.preview.Preview', {
                 toggleHandler: 'showHideComments',
                 tooltip: 'Show/Hide Comments',
                 pressed: true,
+                hidden: true,
                 bind: {
                     disabled: '{is_empty}'
                 }

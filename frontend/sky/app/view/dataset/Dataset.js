@@ -119,7 +119,8 @@ Ext.define('Sky.view.dataset.Dataset', {
                             enableToggle: true,
                             pressed: true,
                             toggleHandler: 'showHideComments',
-                            disabled: true
+                            disabled: true,
+                            hidden: true
                         },
                         {
                             xtype: 'button',

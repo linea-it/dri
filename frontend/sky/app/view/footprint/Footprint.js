@@ -40,6 +40,12 @@ Ext.define('Sky.view.footprint.Footprint', {
                             iconCls: 'x-fa fa-link',
                             tooltip: 'Get Link',
                             handler: 'getLink'
+                        },
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-arrow-right ',
+                            tooltip: 'Go to Image Viewer',
+                            handler: 'onClickGoToImage'
                         }
                     ]
                 }

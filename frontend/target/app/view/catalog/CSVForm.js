@@ -36,7 +36,8 @@ Ext.define('Target.view.catalog.CSVForm', {
     },
 
     config: {
-        enableFolder: false
+        enableFolder: false,
+        enablePublic: false
     },
 
     initComponent: function () {
@@ -49,6 +50,15 @@ Ext.define('Target.view.catalog.CSVForm', {
         }
         catch (err){
             console.warn("Setting PRODUCT_REGISTER_FOLDERS not loaded.");
+        }
+
+        // Recuperar do Settigs no backend se a opcao de deixar a lista publica
+        // vai estar ativa
+        try{
+            me.enablePublic = Settings.PRODUCT_REGISTER_ENABLE_PUBLIC;
+        }
+        catch (err){
+            console.warn("Setting PRODUCT_REGISTER_ENABLE_PUBLIC not loaded.");
         }
 
         Ext.apply(this, {
@@ -100,7 +110,8 @@ Ext.define('Target.view.catalog.CSVForm', {
                     xtype: 'checkbox',
                     boxLabel: 'Public',
                     name: 'isPublic',
-                    checked: false
+                    checked: false,
+                    hidden: !me.enablePublic,
                 },
                 {
                     xtype: 'textareafield',

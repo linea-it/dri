@@ -220,7 +220,14 @@ Ext.define('Sky.view.footprint.FootprintController', {
     },
 
     onShift: function (radec) {
-        this.toVisiomatic(radec, true, true);
+        this.toVisiomatic(radec, true, false);
+    },
+
+    onClickGoToImage: function () {
+        var me = this,
+            aladin = me.lookupReference('aladin');
+
+        this.toVisiomatic(aladin.getRaDec(), true, true);
     },
 
     toVisiomatic: function (radec, clearSearch, centralized) {
@@ -234,6 +241,9 @@ Ext.define('Sky.view.footprint.FootprintController', {
             txtCoordinateSearch = vw.txtCoordinateSearch,
             hash, dataset, ra, dec, coordinate, value, sys;
 
+        // TODO VERIFICAR ESSE BLOCO DE CODIGO PARECE NAO FAZER MAIS SENTIDO
+        // NA VERSAO ATUAL !!!
+        // UMA BOA SOLUCAO E TODA A LOGICA DO SEARCH FICAR SEPARADA!
         value = txtCoordinateSearch.getValue();
         if (value){
             sys = visiomatic.Visiomatic.strToSystem(value);
