@@ -39,6 +39,9 @@ NCSA_AUTHENTICATION_DB = "dessci"
 NCSA_AUTHENTICATION_USERS_TABLE = "DES_USERS"
 
 
+# Nome da tabela onde ficam os dados do usuario com schema se tiver ex: DES_USERS para colaboracao e DES_ADMIN.DES_USERS para DR1 publico
+NCSA_AUTHENTICATION_USERS_TABLE = "DES_USERS"
+
 # Target Viewer Rating, Reject Schema
 SCHEMA_RATING_REJECT = None
 
