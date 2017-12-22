@@ -21,9 +21,14 @@ class NcsaBackend(object):
     def authenticate(self, username=None, password=None):
         self.logger.info("Try NCSA Authentication")
         if self.check_user(username, password):
-            return self.ensure_user(username)
+            user = self.ensure_user(username)
 
-        return None
+            self.logger.info("Login successfully completed")
+            return user
+
+        else:
+            self.logger.info("Login failedd")
+            return None
 
     def get_database_name(self):
         try:
@@ -84,7 +89,7 @@ class NcsaBackend(object):
         user.last_name = user_info['lastname']
         user.save()
 
-        self.logger.info("New registered user")
+        self.logger.info("Updated user data")
 
         Activity(owner=user, event="new_user_ncsa").save()
         # TODO [CMP] the group NCSA should be better defined
