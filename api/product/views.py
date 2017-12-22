@@ -86,6 +86,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')
 
 
+
 class CatalogFilter(django_filters.FilterSet):
     group = django_filters.MethodFilter()
     group__in = django_filters.MethodFilter()
