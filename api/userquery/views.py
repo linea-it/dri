@@ -317,17 +317,23 @@ class TableDownload(viewsets.ModelViewSet):
         try:
             data = request.data
             _table_id = data.get("table_id", None)
-            _columns = data.get("columns", None)
+
+            # how to get an array depends on how it is sent
+            _columns = request.POST.getlist("columns", None) 
+            if not _columns:
+                _columns = data.get("columns", None)
 
             if not _table_id:
-                raise Exception("table_name is required")
+                raise Exception("table_id is required")
 
             # check if table exist
             # Table.objects.get(table_name=_table_name)
 
             # REVIEW - is user the owner of the table?
             export_table.delay(_table_id, request.user.pk, _columns)
+
             return HttpResponse(status=200)
+            #return JsonResponse({'columns': _columns}, status=200)
 
         except Exception as e:
             print(str(e))

@@ -430,7 +430,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 break;
             
             case 'download':
-                me.downloadCsv(item.record.get('data_schema'), item.record.get('data_table'), item.getTargetEl());
+                me.downloadCsv(item.record.get('data_schema'), item.record.get('data_table'), item.record.get('data_id'), item.getTargetEl());
                 break;
             
             case 'target':
@@ -699,7 +699,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         }
     },
 
-    downloadCsv: function(schema, table_name, targetElement){
+    downloadCsv: function(schema, table_name, table_id, targetElement){
         var me = this;
         var refs = me.getReferences();
         var dialog = new DownloadDialog({animateTarget: targetElement});
@@ -711,15 +711,11 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         //          {name:name, display:display}    
         //      ]
         //}
-        dialog.open({schema:schema, table_name:table_name}, function(columns){
-            console.log(columns);
-            return;
-
+        dialog.open({schema:schema, table_name:table_name}, function(columns) {
             if (columns.length>0){
                 Api.downloadTable({
                     params: {
-                        schema: schema,
-                        table_name: table_name,
+                        table_id: table_id,
                         columns: columns
                     },
                     request: function(){

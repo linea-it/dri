@@ -49,10 +49,11 @@ Ext.define('UserQuery.view.dialog.DownloadDialogController', {
         
         store.data.items.forEach(function(item){
             if (item.data.selected){
-                columns.push({
-                    column_name: item.data.column_name,
-                    display_name: item.data.display_name
-                });
+                columns.push(item.data.column_name.toLowerCase());
+                // columns.push({
+                //     column_name: item.data.column_name,
+                //     display_name: item.data.display_name
+                // });
             }
         });
 
