@@ -1,5 +1,6 @@
 from __future__ import absolute_import, unicode_literals
-from celery import shared_task
+from celery import shared_task, task
+from celery import chord
 
 from django.contrib.auth.models import User
 from .models import Table
@@ -30,39 +31,27 @@ def export_table(table_id, user_id, columns=None):
 
     logger = export.logger
 
-    logger.info("Starting Export Task for the table %s" % table_id)
+    logger.info("Starting Export Task for the table id=%s" % table_id)
     # logger.debug("User: %s" % user_id)
 
     try:
-        table = Table.objects.get(pk=table_id)
+        table = Table.objects.get(pk=int(table_id))
     except Table.DoesNotExist as e:
         logger.error("Table matching does not exist. Table Id: %s" % table_id)
         # TODO enviar email de error
 
     user = User.objects.get(pk=int(user_id))
+    # header = list()
 
     try:
-        #revire function --->
-        export.notify_user_export_start(user, table.display_name)
-
-        # Criar o diretorio de export
+        export.notify_user_export_start(user=user, display_name=table.display_name)
         export_dir = export.create_export_dir(name=table.table_name)
+        export.table_to_csv(table=table.table_name, schema=table.schema, export_dir=export_dir, columns=columns)
+        url = export.create_zip(export_dir)
+        export.notify_user_export_success(user_id=user_id, product_name=table.table_name, url=url)
 
-        export.table_to_csv() ######
-
-
-        # Cutouts
-        if cutoutjob_id not in [None, "", False, "false", "False", 0]:
-            header.append(
-                export_cutoutjob.s(
-                    cutoutjob_id,
-                    export_dir))
-
-        callback = export_create_zip.s(user.pk, product.prd_display_name, export_dir)
-
-        result = chord(header)(callback)
-
-        result.get()
+        # result = chord(header)(callback)
+        # result.get()
 
     except Exception as e:
         logger.error(e)
@@ -74,3 +63,14 @@ def export_table(table_id, user_id, columns=None):
         # encadeadas e um callback no final.
 
         # export_notify_user_failure(user, product)
+
+
+@task(name="export_create_zip")
+@shared_task
+def export_create_zip(self, user_id, product_name, export_dir):
+    """
+    Cria um arquivo zip com todos os arquivos gerados pelo export.
+    """
+    url = export.create_zip(export_dir)
+
+    export.notify_user_export_success(user_id, product_name, url)

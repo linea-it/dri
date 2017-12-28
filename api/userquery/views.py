@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from .models import *
 from .permissions import IsOwnerOrPublic
 from .serializers import *
-from .tasks import create_table
+from .tasks import create_table, export_table
 from .db import RawQueryValidator
 from .target_viewer import register_table_in_the_target_viewer
 
@@ -309,25 +309,25 @@ class TargetViewerRegister(viewsets.ModelViewSet):
 
 
 class TableDownload(viewsets.ModelViewSet):
-    http_method_names = ['post', ]
+    http_method_names = ['post']
     authentication_classes = (SessionAuthentication, BasicAuthentication)
     permission_classes = (permissions.IsAuthenticated,)
 
     def create(self, request):
         try:
             data = request.data
-            _id = data.get("id", None)
+            _table_id = data.get("table_id", None)
+            _columns = data.get("columns", None)
 
-            if not _id:
-                raise Exception("id is a mandatory field")
+            if not _table_id:
+                raise Exception("table_name is required")
 
             # check if table exist
-            Table.objects.get(pk=_id)
+            # Table.objects.get(table_name=_table_name)
 
             # REVIEW - is user the owner of the table?
-            Export().table_to_csv(_id, "aaaaa")
-
-            return JsonResponse({}, safe=False)
+            export_table.delay(_table_id, request.user.pk, _columns)
+            return HttpResponse(status=200)
 
         except Exception as e:
             print(str(e))
@@ -335,3 +335,4 @@ class TableDownload(viewsets.ModelViewSet):
 
     def _is_user_authorized(self, q):
         return q.owner == self.request.user or q.is_public
+

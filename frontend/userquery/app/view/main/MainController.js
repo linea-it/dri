@@ -1,10 +1,11 @@
 
 Ext.require('UserQuery.view.service.Api');
 //Ext.require('UserQuery.store.QueryStore');
+Ext.require('UserQuery.view.dialog.DownloadDialog');
 Ext.require('UserQuery.view.dialog.NewDialog');
 Ext.require('UserQuery.view.dialog.OpenDialog');
-Ext.require('UserQuery.view.dialog.StartJobDialog');
 Ext.require('UserQuery.view.dialog.SaveAsDialog');
+Ext.require('UserQuery.view.dialog.StartJobDialog');
 
 var myQueryNumber = 1;
 
@@ -32,7 +33,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         //         }));
         //     }
         // })
-
+        
         Api.parallel([
             // verifica se o usuário está autenticado
             Api.getUser(function(error, user){
@@ -63,6 +64,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
                 me.loadMyQueries();
                 me.loadExternalTables();
+
+                // setTimeout(function(){
+                //     me.downloadCsv('table_id');
+                // }, 400);
             }
         );
 
@@ -424,6 +429,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 });
                 break;
             
+            case 'download':
+                me.downloadCsv(item.record.get('data_schema'), item.record.get('data_table'), item.getTargetEl());
+                break;
+            
             case 'target':
                 window.open(location.href.split('/userquery')[0] + '/target/#cv/' + item.record.get('data_product_id'));
                 break;
@@ -688,6 +697,47 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 }
             });
         }
+    },
+
+    downloadCsv: function(schema, table_name, targetElement){
+        var me = this;
+        var refs = me.getReferences();
+        var dialog = new DownloadDialog({animateTarget: targetElement});
+        
+        // API
+        // userquery_download/{table_id}
+        // {
+        //      columns:[
+        //          {name:name, display:display}    
+        //      ]
+        //}
+        dialog.open({schema:schema, table_name:table_name}, function(columns){
+            console.log(columns);
+            return;
+
+            if (columns.length>0){
+                Api.downloadTable({
+                    params: {
+                        schema: schema,
+                        table_name: table_name,
+                        columns: columns
+                    },
+                    request: function(){
+                        me.setLoading(true, 'Operation in progress...');
+                    },
+                    response: function(error, query){
+                        me.setLoading(false);
+
+                        if (!error){
+                            Ext.MessageBox.show({
+                                msg: 'The job will run in the background and you will be notified when it is finished',
+                                buttons: Ext.MessageBox.OK
+                            });
+                        }
+                    }
+                });
+            }
+        });
     },
 
     dropTable: function(table_id, next){

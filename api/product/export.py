@@ -145,7 +145,7 @@ class Export:
         else:
             self.logger.error("Query returned no results")
 
-    def table_to_csv(self, table_id, export_dir, columns=None):
+    def table_to_csv(self, table, schema, export_dir, columns=None):
         """
         Le uma tabela criada pelo user_query e cria um csv com o resultado.
         OBS: NAO recomendada para tabelas grandes. por que neste metodo todos as linhas
@@ -153,18 +153,20 @@ class Export:
         :param export_dir: diretorio onde o arquivo csv vai ser gerado.
         """
 
-        table = Table.objects.get(pk=table_id)
-
-        self.logger.info("Export table \"%s\" to csv" % table.display_name)
+        self.logger.info("Export table \"%s\" to csv" % table)
 
         name = ("%s.csv" % table)
 
         filename = os.path.join(export_dir, name)
         self.logger.debug("Filename: %s" % filename)
 
-        catalogTable = CatalogTable(table.table_name, schema=table.schema, database='catalog')
+        catalogTable = CatalogTable(table, schema=schema, database='catalog')
+
         # review columns selection
-        rows, count = catalogTable.query(catalogTable.column_names)
+        if not columns:
+            columns = catalogTable.column_names
+
+        rows, count = catalogTable.query(columns)
 
         self.logger.debug("Row Count: %s" % count)
 
@@ -194,8 +196,6 @@ class Export:
             return filename
         else:
             self.logger.error("Query returned no results")
-
-
 
     def csv_to_fits(self, csv, fits):
         self.logger.info("Export csv \"%s\" to fits" % csv)
@@ -366,25 +366,26 @@ class Export:
 
         return url
 
-    def notify_user_export_start(self, user, product):
+    def notify_user_export_start(self, user, product=None, display_name=None):
         """
         Envia um email para o usuario informando que os arquivos estao sendo criados.
         """
         if user.email:
             self.logger.info("Sending mail notification START.")
 
+            if not display_name:
+                display_name = product.prd_display_name
+
             subject = "Download in Progress"
             body = render_to_string("export_notification_start.html", {
                 "username": user.username,
-                "target_display_name": product.prd_display_name
+                "target_display_name": display_name
             })
 
             Notify().send_email(subject, body, user.email)
 
         else:
             self.logger.info("It was not possible to notify the user, for not having the email registered.")
-
-
 
     def notify_user_export_success(self, user_id, product_name, url):
         """
@@ -412,7 +413,6 @@ class Export:
 
         else:
             self.logger.info("It was not possible to notify the user, for not having the email registered.")
-
 
     def notify_user_export_failure(self, user, product):
         """
