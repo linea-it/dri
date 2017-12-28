@@ -39,6 +39,9 @@ NCSA_AUTHENTICATION_DB = "dessci"
 NCSA_AUTHENTICATION_USERS_TABLE = "DES_USERS"
 
 
+# Nome da tabela onde ficam os dados do usuario com schema se tiver ex: DES_USERS para colaboracao e DES_ADMIN.DES_USERS para DR1 publico
+NCSA_AUTHENTICATION_USERS_TABLE = "DES_USERS"
+
 # Target Viewer Rating, Reject Schema
 SCHEMA_RATING_REJECT = None
 
@@ -84,6 +87,10 @@ DES_CUTOUT_SERVICE = {
     # Quantidade limit de objetos a ser passada para o descutout
     'MAX_OBJECTS': 300
 }
+
+# Tempo limite em horas para que um produto fique disponivel, apos este tempo
+# o produto sera removido pelo garbage colector e sua tabela sera dropada. Use None para desabilitar.
+PRODUCT_EXPIRATION_TIME = 12
 
 ## USER_QUERY
 # Tempo de execucao de um job no User query.
@@ -142,6 +149,14 @@ LOGGING = {
 #             'filename': os.path.join(LOG_DIR, 'product_import.log'),
 #             'formatter': 'simple'
 #         },
+#        'ncsa_authentication': {
+#            'level': 'DEBUG',
+#            'class': 'logging.handlers.RotatingFileHandler',
+#            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+#            'backupCount': 5,
+#            'filename': os.path.join(LOG_DIR, 'ncsa_authentication.log'),
+#            'formatter': 'simple',
+#        },
 #     },
 #     'loggers': {
 #         'django': {
@@ -169,5 +184,10 @@ LOGGING = {
 #             'level': 'DEBUG',
 #             'propagate': True,
 #         },
+#        'ncsa_authentication': {
+#            'handlers': ['ncsa_authentication'],
+#            'level': 'DEBUG',
+#            'propagate': True,
+#        },
 #     }
 }

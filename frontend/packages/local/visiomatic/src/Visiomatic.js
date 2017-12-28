@@ -154,7 +154,7 @@ Ext.define('visiomatic.Visiomatic', {
         lcrosshair: null,
 
         showCrosshair: false,
-        enableContextMenu: true,
+        enableContextMenu: false,
         mlocate:'',
 
         showComments: false,
@@ -416,6 +416,9 @@ Ext.define('visiomatic.Visiomatic', {
             me._winCatalogOverlay = null;
         }
 
+        // Forcar a remocao da imageLayer
+        me.removeImageLayer();
+
         options = options || {};
 
         if (imageLayer) {
@@ -436,6 +439,7 @@ Ext.define('visiomatic.Visiomatic', {
 
         me.image = image;
         if (!imageLayer) {
+
             imageLayer = libL.tileLayer.iip(image, args).addTo(map);
 
             me.setImageLayer(imageLayer);

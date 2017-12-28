@@ -29,7 +29,7 @@ class Release(models.Model):
 
 class Tile(models.Model):
     tli_tilename = models.CharField(
-        max_length=20, unique=True, verbose_name='Tilename')
+        db_index=True, max_length=20, unique=True, verbose_name='Tilename')
     tli_project = models.CharField(
         max_length=80, null=True, blank=True, verbose_name='Project')
     tli_ra = models.FloatField(
@@ -106,9 +106,9 @@ class Tag(models.Model):
 
 class Dataset(models.Model):
     tag = models.ForeignKey(
-        Tag, on_delete=models.CASCADE)
+        Tag, on_delete=models.CASCADE, db_index=True)
     tile = models.ForeignKey(
-        Tile, on_delete=models.CASCADE)
+        Tile, on_delete=models.CASCADE, db_index=True)
     run = models.CharField(
         null=True, blank=True, max_length=30, verbose_name='Run')
 

@@ -223,7 +223,7 @@ class ActivityReports:
             "sum_users": sum_users
         })
 
-        Notify.send_email(
+        Notify().send_email(
             subject=subject,
             body=body,
             to=[email_admin],
