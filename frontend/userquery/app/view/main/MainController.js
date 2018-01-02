@@ -46,11 +46,20 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                     group: 'objects_catalog'
                 },
                 response: function(error, releases){
+                    var release;
+
                     if (!error){
+                        release = releases[0];
+
                         refs.cmbReleases.setStore(Ext.create('Ext.data.Store', {
                             fields: ['release_id', 'release_display_name'],
                             data : releases
                         }));
+                        
+                        if (releases.length==2){
+                            refs.cmbReleases.setValue(release.release_id);
+                            me.createEmptyQuery(release.release_id);
+                        }
                     }
                 }
             })],

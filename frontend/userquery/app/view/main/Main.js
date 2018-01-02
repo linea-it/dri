@@ -67,17 +67,17 @@ Ext.define('UserQuery.view.main.Main', {
                 //     iconCls: 'x-fa fa-folder-open'
                 // },
                 '-',
-                {
-                    xtype: 'button',
-                    tooltip: 'Delete Query',
-                    disabled: true,
-                    bind: {
-                        disabled: '{!activeQuery.exist}'
-                    },
-                    handler: 'btnDelete_onClick',
-                    iconCls: 'x-fa fa-trash-o'
-                },
-                '-',
+                // {
+                //     xtype: 'button',
+                //     tooltip: 'Delete Query',
+                //     disabled: true,
+                //     bind: {
+                //         disabled: '{!activeQuery.exist}'
+                //     },
+                //     handler: 'btnDelete_onClick',
+                //     iconCls: 'x-fa fa-trash-o'
+                // },
+                // '-',
                 {
                     xtype: 'splitbutton',
                     tooltip: 'Save Query',
