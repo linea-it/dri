@@ -67,17 +67,17 @@ Ext.define('UserQuery.view.main.Main', {
                 //     iconCls: 'x-fa fa-folder-open'
                 // },
                 '-',
-                {
-                    xtype: 'button',
-                    tooltip: 'Delete Query',
-                    disabled: true,
-                    bind: {
-                        disabled: '{!activeQuery.exist}'
-                    },
-                    handler: 'btnDelete_onClick',
-                    iconCls: 'x-fa fa-trash-o'
-                },
-                '-',
+                // {
+                //     xtype: 'button',
+                //     tooltip: 'Delete Query',
+                //     disabled: true,
+                //     bind: {
+                //         disabled: '{!activeQuery.exist}'
+                //     },
+                //     handler: 'btnDelete_onClick',
+                //     iconCls: 'x-fa fa-trash-o'
+                // },
+                // '-',
                 {
                     xtype: 'splitbutton',
                     tooltip: 'Save Query',
@@ -264,6 +264,8 @@ Ext.define('UserQuery.view.main.Main', {
                                         contextMenuItems: [
                                             {text: 'Rename',  itemId:'rename',  handler:'tvwMyTables_onContextMenuClick'},
                                             {text: 'Content', itemId:'preview', handler:'tvwMyTables_onContextMenuClick'},
+                                            {text: 'Download',itemId:'download', handler:'tvwMyTables_onContextMenuClick'},
+                                            '-',
                                             {text: 'Delete',  itemId:'delete',  handler:'tvwMyTables_onContextMenuClick'},
                                             '-',
                                             {text: 'View',  itemId:'target',  handler:'tvwMyTables_onContextMenuClick',
