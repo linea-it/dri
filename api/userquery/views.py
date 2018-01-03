@@ -14,9 +14,11 @@ from django.contrib.auth.models import User
 from .models import *
 from .permissions import IsOwnerOrPublic
 from .serializers import *
-from .tasks import create_table
+from .tasks import create_table, export_table
 from .db import RawQueryValidator
 from .target_viewer import register_table_in_the_target_viewer
+
+from product.export import Export
 
 from lib.sqlalchemy_wrapper import DBBase
 
@@ -240,6 +242,7 @@ class QueryPreview(viewsets.ViewSet):
             # make all values String to avoid errors during Json encoding.
             for raw in result:
                 for k, v in raw.items():
+                    print(k, v)
                     raw[k] = str(v)
 
             response = {"count": len(result),
@@ -303,3 +306,39 @@ class TargetViewerRegister(viewsets.ModelViewSet):
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
+
+
+class TableDownload(viewsets.ModelViewSet):
+    http_method_names = ['post']
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def create(self, request):
+        try:
+            data = request.data
+            _table_id = data.get("table_id", None)
+
+            # how to get an array depends on how it is sent
+            _columns = request.POST.getlist("columns", None) 
+            if not _columns:
+                _columns = data.get("columns", None)
+
+            if not _table_id:
+                raise Exception("table_id is required")
+
+            # check if table exist
+            # Table.objects.get(table_name=_table_name)
+
+            # REVIEW - is user the owner of the table?
+            export_table.delay(_table_id, request.user.pk, _columns)
+
+            return HttpResponse(status=200)
+            #return JsonResponse({'columns': _columns}, status=200)
+
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
+
+    def _is_user_authorized(self, q):
+        return q.owner == self.request.user or q.is_public
+

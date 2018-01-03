@@ -13,10 +13,13 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from lib.CatalogDB import TargetObjectsDBHelper
+from lib.CatalogDB import TargetObjectsDBHelper, CatalogTable
 from product.association import Association
 from common.notify import Notify
 from .models import Product
+
+from userquery.models import Table
+
 
 class Export:
     def __init__(self):
@@ -120,6 +123,58 @@ class Export:
                 for ec in self.exclude_columns:
                     row.pop(ec, None)
 
+                lines.append(row)
+
+            self.logger.info("Creating csv file")
+            with open(filename, 'w') as csvfile:
+                writer = csv.DictWriter(csvfile, fieldnames=columns)
+
+                self.logger.info("Writing the headers")
+                writer.writeheader()
+
+                self.logger.info("Writing the rows")
+                writer.writerows(lines)
+
+            csvfile.close()
+            self.logger.info("Successfully created")
+
+            file_size = humanize.naturalsize(os.path.getsize(filename))
+            self.logger.debug("File Size %s" % file_size)
+
+            return filename
+        else:
+            self.logger.error("Query returned no results")
+
+    def table_to_csv(self, table, schema, export_dir, columns=None):
+        """
+        Le uma tabela criada pelo user_query e cria um csv com o resultado.
+        OBS: NAO recomendada para tabelas grandes. por que neste metodo todos as linhas
+        sao recuperadas ao mesmo tempo e e feito um for para inserir as linhas no csv.
+        :param export_dir: diretorio onde o arquivo csv vai ser gerado.
+        """
+
+        self.logger.info("Export table \"%s\" to csv" % table)
+
+        name = ("%s.csv" % table)
+
+        filename = os.path.join(export_dir, name)
+        self.logger.debug("Filename: %s" % filename)
+
+        catalogTable = CatalogTable(table, schema=schema, database='catalog')
+
+        # review columns selection
+        if not columns:
+            columns = catalogTable.column_names
+
+        rows, count = catalogTable.query(columns)
+
+        self.logger.debug("Row Count: %s" % count)
+
+        if count > 0:
+            columns = self.get_columns(rows[0])
+
+            lines = list()
+            for row in rows:
                 lines.append(row)
 
             self.logger.info("Creating csv file")
@@ -311,25 +366,26 @@ class Export:
 
         return url
 
-    def notify_user_export_start(self, user, product):
+    def notify_user_export_start(self, user, product=None, display_name=None):
         """
         Envia um email para o usuario informando que os arquivos estao sendo criados.
         """
         if user.email:
             self.logger.info("Sending mail notification START.")
 
+            if not display_name:
+                display_name = product.prd_display_name
+
             subject = "Download in Progress"
             body = render_to_string("export_notification_start.html", {
                 "username": user.username,
-                "target_display_name": product.prd_display_name
+                "target_display_name": display_name
             })
 
             Notify().send_email(subject, body, user.email)
 
         else:
             self.logger.info("It was not possible to notify the user, for not having the email registered.")
-
-
 
     def notify_user_export_success(self, user_id, product_name, url):
         """
@@ -357,7 +413,6 @@ class Export:
 
         else:
             self.logger.info("It was not possible to notify the user, for not having the email registered.")
-
 
     def notify_user_export_failure(self, user, product):
         """
