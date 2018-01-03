@@ -444,3 +444,5 @@ def import_target_list(user_id, data):
 
     if data.get('mime') == 'csv':
         importtargetlistcsv.start_import(user_id, data)
+
+
