@@ -7,7 +7,7 @@ from celery.task.schedules import crontab
 from django.conf import settings
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Garbage Colector %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
 @periodic_task(
-    run_every=(crontab(minute='*/10')),
+    run_every=(crontab(minute='*/30')),
     #run_every=10.0,
     name="garbage_colector",
     ignore_result=True

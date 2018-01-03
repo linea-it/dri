@@ -14,8 +14,6 @@ class GarbageColectorProduct:
         try:
             expiration_time = settings.PRODUCT_EXPIRATION_TIME
 
-            self.logger.info("Expiration Time: %s h" % expiration_time)
-
         except Exception as e:
             raise Exception("The PRODUCT_EXPIRATION_TIME variable is not configured in settings.")
 
@@ -24,6 +22,7 @@ class GarbageColectorProduct:
             self.logger.info("---------------------------------------------------------")
 
             self.logger.info("Remove all products that have time greater than the limit")
+            self.logger.info("Expiration Time: %s h" % expiration_time)
 
             today = datetime.today()
             date_expired = today - timedelta(hours=expiration_time)
