@@ -110,12 +110,8 @@ class NcsaBackend(object):
 
         des_user_table = self.get_des_user_tablename()
 
-        sql = "SELECT email, firstname, lastname FROM %s WHERE username = '%s'" % (des_user_table.upper(), username)
-        return db.fetchone_dict(sql)
-
-        des_user_table = self.get_des_user_tablename()
-
-        sql = "SELECT email, firstname, lastname FROM %s WHERE username = '%s'" % (des_user_table.upper(), username)
+        sql = "SELECT email, firstname, lastname FROM %s WHERE username = '%s'" % (
+        des_user_table.upper(), username.lower())
 
         self.logger.debug("SQL: %s" % sql)
 
