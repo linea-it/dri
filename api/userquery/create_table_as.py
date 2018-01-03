@@ -96,7 +96,7 @@ class CreateTableAs:
 
     def _associate_target_viewer(self):
         if self.associate_target_viewer:
-            register_table_in_the_target_viewer(self.user, self.table.pk)
+            register_table_in_the_target_viewer(user=self.user, table_pk=self.table.pk, release_id=self.release_id)
 
     def _notify_by_email_start(self):
         if self.user.email:
