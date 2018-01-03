@@ -47,7 +47,7 @@ class GarbageColectorProduct:
                 self.logger.info("Removing product: ID[%s] NAME[%s]" % (product.pk, product.prd_name))
                 try:
 
-                    # product.delete()
+                    product.delete()
                     self.logger.info("Removed: ID[%s]" % product.pk)
 
                 except Exception as e:
