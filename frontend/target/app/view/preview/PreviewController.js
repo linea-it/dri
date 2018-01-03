@@ -147,7 +147,7 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     changeImage: function (dataset) {
-        console.log("changeImage(%o)", dataset)
+        // console.log("changeImage(%o)", dataset)
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
             url,
