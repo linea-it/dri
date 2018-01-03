@@ -95,6 +95,8 @@ PRODUCT_EXPIRATION_TIME = 12
 ## USER_QUERY
 # Tempo de execucao de um job no User query.
 USER_QUERY_EXECUTION_TIMEOUT = 60
+# Limite de linhas de uma query
+USER_QUERY_MAX_ROWS = 300
 
 ## TARGET VIEWER
 # Habilita ou desabilita a interface de registro de produtos pela opcao Database,
