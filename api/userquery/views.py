@@ -110,6 +110,7 @@ class TableViewSet(viewsets.ModelViewSet):
             query_name = data.get("query_name", None)
             sql_sentence = data.get("sql_sentence", None)
             release_id = data.get("release_id", None)
+            release_name = data.get("release_name", None)
 
             if not query_name:
                 query_name = "Unnamed"
@@ -134,11 +135,13 @@ class TableViewSet(viewsets.ModelViewSet):
                     timeout=settings.USER_QUERY_EXECUTION_TIMEOUT,
                     query_name=query_name)
             q.save()
-
-            create_table.delay(q.id, request.user.pk, table_name, release_id,
-                               associate_target_viewer,
+            
+            create_table.delay(job_id=q.id, user_id=request.user.pk, table_name=table_name, release_id=release_id,
+                               release_name=release_name, associate_target_viewer=associate_target_viewer,
                                schema=settings.DATABASES['catalog']['USER'])
+
             return HttpResponse(status=200)
+        
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
@@ -295,12 +298,13 @@ class TargetViewerRegister(viewsets.ModelViewSet):
         try:
             data = request.data
             _id = data.get("id", None)
+            _release_name = data.get("release_name", None)
 
             if not _id:
                 raise Exception("id is a mandatory field")
 
             q = Table.objects.get(pk=_id)
-            register_table_in_the_target_viewer(self.request.user, q.pk)
+            register_table_in_the_target_viewer(user=self.request.user, table_pk=q.pk, release_name=_release_name)
             return HttpResponse(status=200)
 
         except Exception as e:

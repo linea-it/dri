@@ -5,7 +5,7 @@ from product.models import Product
 from userquery.models import Table
 
 
-def register_table_in_the_target_viewer(user, table_pk, release_id, description=None):
+def register_table_in_the_target_viewer(user, table_pk, release_name, description=None):
     logger = logging.getLogger('register_table_in_the_target_viewer')
     logger.info("Register the new table as a product")
 
@@ -21,7 +21,7 @@ def register_table_in_the_target_viewer(user, table_pk, release_id, description=
         "table": table.table_name,
         "filter": [],
         # review
-        "releases": ['y3a1_coadd'],
+        "releases": [release_name],
         "fields": [],
         "association": [],
         "type": "catalog",
