@@ -13,10 +13,17 @@ export = Export()
 
 
 @shared_task(name="create_table")
-def create_table(job_id, user_id, table_name, release_id,
-                 associate_target_viewer, schema=None):
-    create_table_as = CreateTableAs(job_id, user_id, table_name, release_id,
-                                    associate_target_viewer, schema=schema)
+def create_table(job_id, user_id, table_name, release_id, release_name, associate_target_viewer, schema=None):
+    create_table_as = CreateTableAs(
+        job_id=job_id, 
+        user_id=user_id, 
+        table_name=table_name, 
+        release_id=release_id,  
+        release_name=release_name,
+        associate_target_viewer=associate_target_viewer, 
+        schema=schema
+    )
+
     logger = create_table_as.logger
 
     logger.info("Task create_table_as has started")
