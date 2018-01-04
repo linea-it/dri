@@ -26,6 +26,7 @@ Ext.define('common.help.Tutorials', {
             minWidth: 300,
             minHeight: 280,
             resizable: true,
+            maximizable: true,
             modal: true,
             closeAction: 'destroy',
             items: [
