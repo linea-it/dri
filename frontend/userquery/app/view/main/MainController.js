@@ -215,6 +215,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
             data.associate_target_viewer = 'on'; // RN: todas devem ser registradas
             data.id = null;                      // RN: não associar a query, usar o sql atual // query.id ||
             data.release_id = release.id;
+            data.release_name = release.rls_name;
             data.sql_sentence = formData.sql_sentence;
             data.query_name = formData.name || 'Unnamed';
             

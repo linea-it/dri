@@ -20,13 +20,13 @@ from .target_viewer import register_table_in_the_target_viewer
 
 
 class CreateTableAs:
-    def __init__(self, job_id, user_id, table_name, release_id,
-                 associate_target_viewer, schema=None):
+    def __init__(self, job_id, user_id, table_name, release_id, release_name, associate_target_viewer, schema=None):
         self.table_name = table_name
         self.release_id = release_id
-        self.schema = schema
+        self.release_name = release_name
         self.associate_target_viewer = associate_target_viewer
-
+        self.schema = schema
+        
         self.user = User.objects.get(pk=user_id)
         self.job = Job.objects.get(pk=job_id)
 
@@ -42,8 +42,10 @@ class CreateTableAs:
         self._notify_by_email_start()
         self._update_job_status_before_table_creation()
         self._create_table_by_job_id()
+        
         if self.is_table_successfully_created:
             self._associate_target_viewer()
+        
         self._update_job_status_after_table_creation_attempt()
         self._send_notifications_by_email_after_table_creation_attempt()
 
@@ -96,7 +98,7 @@ class CreateTableAs:
 
     def _associate_target_viewer(self):
         if self.associate_target_viewer:
-            register_table_in_the_target_viewer(self.user, self.table.pk)
+            register_table_in_the_target_viewer(user=self.user, table_pk=self.table.pk, release_name=self.release_name)
 
     def _notify_by_email_start(self):
         if self.user.email:
