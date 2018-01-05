@@ -231,6 +231,10 @@ Ext.define('Explorer.view.system.SystemController', {
             url = dataset.get('image_src_ptif');
 
         if (dataset) {
+
+            visiomatic.setDataset(dataset.get('id'));
+            visiomatic.setCurrentDataset(dataset);
+
             if (url !== '') {
                 visiomatic.setImage(url);
 

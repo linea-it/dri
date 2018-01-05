@@ -7,13 +7,14 @@ Ext.define('Explorer.view.system.Form', {
         var me = this;
 
         Ext.apply(this, {
+            bodyPadding: '3',
             fieldDefaults: {
-                labelAlign: 'top',
+                //labelAlign: 'top',
                 readOnly: true
             },
             items: [
                 {
-                    xtype: 'fieldset',
+                    xtype: 'fieldcontainer',
                     defaultType: 'textfield',
                     defaults: {
                         anchor: '100%'

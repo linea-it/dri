@@ -12,6 +12,7 @@ Ext.define('Explorer.view.system.System', {
         'Explorer.view.system.Visiomatic',
         'Explorer.view.system.Aladin',
         'Explorer.view.system.MembersGrid',
+        'Explorer.view.system.VacGrid',
         'Explorer.view.system.SpatialDistribution',
         'Explorer.view.system.ZDistribution',
         'Explorer.view.system.MagDistribution',
@@ -111,9 +112,9 @@ Ext.define('Explorer.view.system.System', {
                                 pack: 'start',
                                 align: 'stretch'
                             },
-                            defaults: {
-                                frame: true
-                            },
+                            // defaults: {
+                            //     frame: true
+                            // },
                             items: [
                                 {
                                     xtype: 'system-visiomatic',
@@ -151,6 +152,18 @@ Ext.define('Explorer.view.system.System', {
                                     },
                                     listeners: {
                                         select: 'onSelectSystemMember'
+                                    }
+                                },
+                                {
+                                    xtype: 'system-vac-grid',
+                                    title: 'VAC',
+                                    reference: 'vac-grid',
+                                    bind: {
+                                        //store: '{members}',
+                                        //selection: '{selected_member}'
+                                    },
+                                    listeners: {
+                                        //select: 'onSelectSystemMember'
                                     }
                                 },
                                 {
