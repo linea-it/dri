@@ -641,15 +641,15 @@ var main = Ext.define('UserQuery.view.main.MainController', {
             refs.grdPreview.headerCt.remove(c);
         }
 
-        refs.cmbReleases.reset();
+        // refs.cmbReleases.reset();
         refs.frmQuery.getForm().reset();
         refs.grdPreview.getView().refresh();
 
         this.getViewModel().set('activeQuery', null);
         
-        refs.tvwInputTables.setRootNode(null);
-        refs.tvwMyTables.setRootNode(null);
-        refs.tvwOtherTables.setRootNode(null);
+        // refs.tvwInputTables.setRootNode(null);
+        // refs.tvwMyTables.setRootNode(null);
+        // refs.tvwOtherTables.setRootNode(null);
 
         refs.tvwMyQueries.getSelectionModel().deselectAll();
         refs.tvwSampleQueries.getSelectionModel().deselectAll();
