@@ -22,7 +22,6 @@ from product.export import Export
 
 from lib.sqlalchemy_wrapper import DBBase
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -140,8 +139,8 @@ class TableViewSet(viewsets.ModelViewSet):
                     query_name=query_name)
             q.save()
             
-            create_table.delay(job_id=q.id, user_id=request.user.pk, table_name=table_name, release_id=release_id,
-                               release_name=release_name, associate_target_viewer=associate_target_viewer,
+            create_table.delay(job_id=q.id, user_id=request.user.pk, table_name=table_name, table_display_name=display_name,
+                               release_id=release_id, release_name=release_name, associate_target_viewer=associate_target_viewer,
                                schema=settings.DATABASES['catalog']['USER'])
 
             return HttpResponse(status=200)
@@ -334,11 +333,12 @@ class TableDownload(viewsets.ModelViewSet):
             if not _table_id:
                 raise Exception("table_id is required")
 
-            # check if table exist
-            # Table.objects.get(table_name=_table_name)
+            q = Table.objects.get(pk=int(_table_id))
+            if not q:
+                raise Exception("Table %s not exists")
 
             # REVIEW - is user the owner of the table?
-            export_table.delay(_table_id, request.user.pk, _columns)
+            export_table.delay(table_id=_table_id, user_id=request.user.pk, columns=_columns)
 
             return HttpResponse(status=200)
             #return JsonResponse({'columns': _columns}, status=200)

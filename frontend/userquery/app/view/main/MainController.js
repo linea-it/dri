@@ -56,10 +56,8 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                             data : releases
                         }));
                         
-                        if (releases.length==2){
-                            refs.cmbReleases.setValue(release.release_id);
-                            me.createEmptyQuery(release.release_id);
-                        }
+                        refs.cmbReleases.setValue(release.release_id);
+                        me.createEmptyQuery(release.release_id);
                     }
                 }
             })],

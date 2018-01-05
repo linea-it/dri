@@ -17,11 +17,12 @@ from product.models import Product
 from coadd.models import Release
 
 from .target_viewer import register_table_in_the_target_viewer
-
+from .email import Email
 
 class CreateTableAs:
-    def __init__(self, job_id, user_id, table_name, release_id, release_name, associate_target_viewer, schema=None):
+    def __init__(self, job_id, user_id, table_name, table_display_name, release_id, release_name, associate_target_viewer, schema=None):
         self.table_name = table_name
+        self.table_display_name = table_display_name
         self.release_id = release_id
         self.release_name = release_name
         self.associate_target_viewer = associate_target_viewer
@@ -101,55 +102,33 @@ class CreateTableAs:
             register_table_in_the_target_viewer(user=self.user, table_pk=self.table.pk, release_name=self.release_name)
 
     def _notify_by_email_start(self):
-        if self.user.email:
-            self.logger.info("Sending mail notification.")
-            subject = "UserQuery - The creation of your table is being processed"
-
-            body = render_to_string("job_notification_start.html", {
-                "username": self.user.username,
-                "id_job": self.job.pk,
-                "table_name": self.table_name
-            })
-
-            Notify().send_email(subject, body, self.user.email)
-        else:
-            self.logger.info("The user don't have a registered email")
+        Email().send({
+            "email": self.user.email,
+            "template": "job_notification_start.html",
+            "subject": "The creation of your table is being processed",
+            "username": self.user.username,
+            "id_job": self.job.pk,
+            "table_name": self.table_name,
+            "table_display_name": self.table_display_name
+        })
 
     def _notify_by_email_finish(self):
-        if self.user.email:
-            self.logger.info("Sending mail notification.")
-            host = settings.BASE_HOST
-            url = urljoin(host, os.path.join("userquery_job/%s/" % str(self.job.pk)))
-
-            subject = "The table creation is finished"
-
-            body = render_to_string("job_notification_finish.html", {
-                "username": self.user.username,
-                "url": url,
-                "table_name": self.table_name
-            })
-
-            Notify().send_email(subject, body, self.user.email)
-        else:
-            self.logger.info("The user don't have a registered email")
+        Email().send({
+            "email": self.user.email,
+            "template": "job_notification_finish.html",
+            "subject": "The table creation is finished",
+            "username": self.user.username,
+            "id_job": self.job.pk,
+            "table_name": self.table_name,
+            "table_display_name": self.table_display_name
+        })
 
     def _notify_user_by_email_failure(self, error_message):
-        if self.user.email:
-            self.logger.info("Sending mail notification FAILURE.")
-
-            try:
-                from_email = settings.EMAIL_NOTIFICATION
-            except:
-                raise Exception("The EMAIL_NOTIFICATION variable is not configured in settings.")
-
-            subject = "The table creation failed"
-            body = render_to_string("job_notification_error.html", {
-                "username": self.user.username,
-                "table_name": self.table_name,
-                "error_message": error_message
-            })
-
-            Notify().send_email(subject, body, self.user.email)
-
-        else:
-            self.logger.info("The user don't have a registered email")
+        Email().send({
+            "email": self.user.email,
+            "template": "job_notification_error.html",
+            "subject": "The table creation failed",
+            "username": self.user.username,
+            "table_name": self.table_name,
+            "error_message": error_message
+        })
