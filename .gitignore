@@ -11,6 +11,9 @@
 # Diretorio de projeto pycharm
 /.idea/
 
+# Diretorio de projeto vscode
+/.vscode/
+
 # Others
 *.pyc
 __pycache__
