@@ -121,12 +121,16 @@ class TableViewSet(viewsets.ModelViewSet):
 
             table_name = self._set_internal_table_name(display_name, self.request.user.pk)
 
-            rqv = RawQueryValidator(sql_sentence)
+            # query validate and sentence row count
+            rqv = RawQueryValidator(raw_sql=sql_sentence, use_count=True)
             if rqv.table_exists(table_name, None):
                 raise Exception("Table exists - choose a different name")
 
             if not rqv.is_query_validated():
                 raise Exception("Invalid query: %s" % rqv.validation_error_message())
+
+            if rqv.get_sql_count()>settings.USER_QUERY_MAX_ROWS:
+                raise Exception("The query exceeded the limit of %s rows" % settings.USER_QUERY_MAX_ROWS)
 
             q = Job(display_name=display_name,
                     owner=self.request.user,
@@ -218,7 +222,7 @@ class QueryValidate(viewsets.ModelViewSet):
             data = request.data
             sql_sentence = data.get("sql_sentence", None)
 
-            rqv = RawQueryValidator(sql_sentence)
+            rqv = RawQueryValidator(raw_sql=sql_sentence, use_count=True)
             return JsonResponse(rqv.get_json_response())
 
         except Exception as e:

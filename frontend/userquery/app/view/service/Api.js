@@ -19,7 +19,8 @@ Ext.define('UserQuery.view.service.Api', {
         preview:       {method:'POST', url:'/dri/api/userquery_preview/'},
         renameTable:   {method:'PATCH', url:'/dri/api/userquery_table/{id}/'},
         startJob:      {method:'POST', url:'/dri/api/userquery_table/'},
-        validate:      {method:'POST', url:'/dri/api/userquery_validate/'}
+        validate:      {method:'POST', url:'/dri/api/userquery_validate/'},
+        enviroment:    {method:'GET',  url:'/dri/api/get_setting/names=PRODUCT_REGISTER_DB_INTERFACE,PRODUCT_REGISTER_FOLDERS,PRODUCT_REGISTER_ENABLE_PUBLIC,DES_CUTOUT_SERVICE__AVAILABLE_RELEASES,DES_CUTOUT_SERVICE__MAX_OBJECTS '}
         // http://dri.com/dri/api/catalog/get_class_tree_by_group/?external_catalog=true&group__in=objects_catalog,targets,value_added_catalogs,external_catalogs&node=root
 
     },
