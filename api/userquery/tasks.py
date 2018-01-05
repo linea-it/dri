@@ -1,23 +1,23 @@
 from __future__ import absolute_import, unicode_literals
-from celery import shared_task, task
+from celery import shared_task, task, app
 from celery import chord
 
 from django.contrib.auth.models import User
 from .models import Table
 from .create_table_as import CreateTableAs
+from .email import Email
 
 from product.export import Export
 
-
 export = Export()
 
-
 @shared_task(name="create_table")
-def create_table(job_id, user_id, table_name, release_id, release_name, associate_target_viewer, schema=None):
+def create_table(job_id, user_id, table_name, table_display_name, release_id, release_name, associate_target_viewer, schema=None):
     create_table_as = CreateTableAs(
         job_id=job_id, 
         user_id=user_id, 
         table_name=table_name, 
+        table_display_name=table_display_name,
         release_id=release_id,  
         release_name=release_name,
         associate_target_viewer=associate_target_viewer, 
@@ -30,35 +30,47 @@ def create_table(job_id, user_id, table_name, release_id, release_name, associat
     create_table_as.do_all()
 
 
-@shared_task(name="export_table")
-def export_table(table_id, user_id, columns=None):
+@shared_task(name="export_table", bind=True)
+def export_table(self, table_id, user_id, columns=None, job_id=None):
     """
     Este metodo vai exportar uma tabela para o formato csv
     """
 
+    job_id = self.request.id
     logger = export.logger
 
     logger.info("Starting Export Task for the table id=%s" % table_id)
-    # logger.debug("User: %s" % user_id)
 
     try:
         table = Table.objects.get(pk=int(table_id))
     except Table.DoesNotExist as e:
         logger.error("Table matching does not exist. Table Id: %s" % table_id)
-        # TODO enviar email de error
 
     user = User.objects.get(pk=int(user_id))
-    # header = list()
-
+    
     try:
-        export.notify_user_export_start(user=user, display_name=table.display_name)
+        Email().send({
+            "email": user.email,
+            "template": "download_notification_start.html",
+            "subject": "The process of your download is being processed",
+            "username": user.username,
+            "id_job": job_id,
+            "table_display_name": table.display_name
+        })
+        
         export_dir = export.create_export_dir(name=table.table_name)
         export.table_to_csv(table=table.table_name, schema=table.schema, export_dir=export_dir, columns=columns)
-        url = export.create_zip(export_dir)
-        export.notify_user_export_success(user_id=user_id, product_name=table.table_name, url=url)
 
-        # result = chord(header)(callback)
-        # result.get()
+        url = export.create_zip(export_dir)
+        Email().send({
+            "email": user.email,
+            "template": "download_notification_finish.html",
+            "subject": "The process of your download is finished",
+            "username": user.username,
+            "url": url,
+            "id_job": job_id,
+            "table_display_name": table.display_name
+        })
 
     except Exception as e:
         logger.error(e)
