@@ -1,10 +1,11 @@
 
 Ext.require('UserQuery.view.service.Api');
 //Ext.require('UserQuery.store.QueryStore');
+Ext.require('UserQuery.view.dialog.DownloadDialog');
 Ext.require('UserQuery.view.dialog.NewDialog');
 Ext.require('UserQuery.view.dialog.OpenDialog');
-Ext.require('UserQuery.view.dialog.StartJobDialog');
 Ext.require('UserQuery.view.dialog.SaveAsDialog');
+Ext.require('UserQuery.view.dialog.StartJobDialog');
 
 var myQueryNumber = 1;
 
@@ -32,7 +33,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         //         }));
         //     }
         // })
-
+        
         Api.parallel([
             // verifica se o usuário está autenticado
             Api.getUser(function(error, user){
@@ -45,11 +46,18 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                     group: 'objects_catalog'
                 },
                 response: function(error, releases){
+                    var release;
+
                     if (!error){
+                        release = releases[0];
+
                         refs.cmbReleases.setStore(Ext.create('Ext.data.Store', {
                             fields: ['release_id', 'release_display_name'],
                             data : releases
                         }));
+                        
+                        refs.cmbReleases.setValue(release.release_id);
+                        me.createEmptyQuery(release.release_id);
                     }
                 }
             })],
@@ -63,6 +71,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
                 me.loadMyQueries();
                 me.loadExternalTables();
+
+                // setTimeout(function(){
+                //     me.downloadCsv('table_id');
+                // }, 400);
             }
         );
 
@@ -201,6 +213,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
             data.associate_target_viewer = 'on'; // RN: todas devem ser registradas
             data.id = null;                      // RN: não associar a query, usar o sql atual // query.id ||
             data.release_id = release.id;
+            data.release_name = release.rls_name;
             data.sql_sentence = formData.sql_sentence;
             data.query_name = formData.name || 'Unnamed';
             
@@ -411,7 +424,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
             case 'delete':
                 Ext.MessageBox.show({
                     title: 'Cofirm Action',
-                    msg: 'Drop table "' + item.record.get('text') + '"?',
+                    msg: 'Drop table "' + item.record.get('text').split('<span')[0] + '"?',
                     buttons: Ext.Msg.YESNO,
                     icon: Ext.MessageBox.WARNING,
                     fn: function(button){
@@ -422,6 +435,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                         }
                     }
                 });
+                break;
+            
+            case 'download':
+                me.downloadCsv(item.record.get('data_schema'), item.record.get('data_table'), item.record.get('data_id'), item.getTargetEl());
                 break;
             
             case 'target':
@@ -624,15 +641,15 @@ var main = Ext.define('UserQuery.view.main.MainController', {
             refs.grdPreview.headerCt.remove(c);
         }
 
-        refs.cmbReleases.reset();
+        // refs.cmbReleases.reset();
         refs.frmQuery.getForm().reset();
         refs.grdPreview.getView().refresh();
 
         this.getViewModel().set('activeQuery', null);
         
-        refs.tvwInputTables.setRootNode(null);
-        refs.tvwMyTables.setRootNode(null);
-        refs.tvwOtherTables.setRootNode(null);
+        // refs.tvwInputTables.setRootNode(null);
+        // refs.tvwMyTables.setRootNode(null);
+        // refs.tvwOtherTables.setRootNode(null);
 
         refs.tvwMyQueries.getSelectionModel().deselectAll();
         refs.tvwSampleQueries.getSelectionModel().deselectAll();
@@ -688,6 +705,43 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 }
             });
         }
+    },
+
+    downloadCsv: function(schema, table_name, table_id, targetElement){
+        var me = this;
+        var refs = me.getReferences();
+        var dialog = new DownloadDialog({animateTarget: targetElement});
+        
+        // API
+        // userquery_download/{table_id}
+        // {
+        //      columns:[
+        //          {name:name, display:display}    
+        //      ]
+        //}
+        dialog.open({schema:schema, table_name:table_name}, function(columns) {
+            if (columns.length>0){
+                Api.downloadTable({
+                    params: {
+                        table_id: table_id,
+                        columns: columns
+                    },
+                    request: function(){
+                        me.setLoading(true, 'Operation in progress...');
+                    },
+                    response: function(error, query){
+                        me.setLoading(false);
+
+                        if (!error){
+                            Ext.MessageBox.show({
+                                msg: 'The job will run in the background and you will be notified when it is finished',
+                                buttons: Ext.MessageBox.OK
+                            });
+                        }
+                    }
+                });
+            }
+        });
     },
 
     dropTable: function(table_id, next){
@@ -1079,14 +1133,15 @@ var main = Ext.define('UserQuery.view.main.MainController', {
             },
             response: function(error, jobs){
                 var colsMap = [
+                    {field:'id',              display:'Job ID',     renderer: toolTipRenderer},
                     {field:'status_name',     display:'Status',     renderer: toolTipRenderer},
                     {field:'start_date_time', display:'Start',      renderer: toolTipRenderer},
                     {field:'end_date_time',   display: 'End',       renderer: toolTipRenderer},
                     {field:'total_run_time',  display: 'Run Time',  renderer: toolTipRenderer},
                     {field:'timeout',         display:'Timeout',    renderer: toolTipRenderer},
-                    {field:'display_name',    display:'Table Name', renderer: toolTipRenderer},
-                    {field:'query_name',      display:'Query Name', renderer: toolTipRenderer, flex:1}
-                    //{field:'sql_sentence', display:'Query', flex:1},
+                    {field:'display_name',    display:'Table Name', renderer: toolTipRenderer}
+                    // {field:'query_name',      display:'Query Name', renderer: toolTipRenderer, flex:1}
+                    // {field:'sql_sentence', display:'Query', flex:1},
                 ];
                 var status = {
                     'st': ['row-grey', 'Starting'],

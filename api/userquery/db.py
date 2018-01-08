@@ -3,17 +3,27 @@ from sqlalchemy.sql import text
 
 
 class RawQueryValidator(DBBase):
-    def __init__(self, raw_sql, db='catalog'):
+    def __init__(self, raw_sql, db='catalog', use_count=False):
         super(RawQueryValidator, self).__init__(db)
 
         with self.engine.connect() as con:
             try:
-                rs = con.execute(text(raw_sql)).fetchone()
+                self._count = -1
+
+                if use_count:
+                    row = con.execute('SELECT COUNT(*) FROM (' + raw_sql + ') B').fetchone()
+                    self._count = row[0]
+                else:
+                    con.execute(text(raw_sql)).fetchone()
+
                 self._is_query_validated = True
                 self._validation_error_message = None
             except Exception as e:
                 self._is_query_validated = False
                 self._validation_error_message = str(e)
+
+    def get_sql_count(self):
+        return self._count
 
     def is_query_validated(self):
         return self._is_query_validated

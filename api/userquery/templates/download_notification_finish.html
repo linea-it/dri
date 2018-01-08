@@ -69,10 +69,12 @@
                       </td>
                       <!-- Status Text -->
                       <td style="padding:0px;border:0px;padding:0px 20px 0px 0px;vertical-align:middle;border-top:1px solid #808080;border-bottom:1px solid #adadad">
-                        <span
-                            style="display:inline-block;margin-top:12px;vertical-align:middle"><a
-                            style="text-decoration:none;font-weight:bold;color:#57769d;text-decoration:underline;color:#32a32d"
-                            target="_blank" href="{{ url }}">The table {{ table_display_name }} has been created</a></span><img
+                        <span style="display:inline-block;margin-top:12px;vertical-align:middle">
+                            <a style="text-decoration:none;font-weight:bold;color:#57769d;text-decoration:underline;color:#32a32d"
+                            target="_blank"
+                            href="{{ url }}">Download has Finished</a>
+                        </span>
+                        <img
                           src="https://ci3.googleusercontent.com/proxy/FZisrqKof9ljV6lTdvKfGR3GGHesZnWGAqymMcYr78u_UUNyRfxC4VpqeUaJ2cngzTjf2XX5lAOR0thxfWZ4TnA53hdKSOL2fjNv=s0-d-e1-ft#https://travis-ci.org/images/mailer/arrow-success.png"
                           style="float:right" height="45">
                       </td>
@@ -92,7 +94,13 @@
                         <table width="100%" style="color: #777">
                           <tbody>
                           <tr>
-                            <td>The table <b>{{ table_display_name }}</b>, job_id <b>{{ id_job }}</b>, is available</td>
+                            <td>The download of the {{table_display_name}} table ended, job_id <b>{{ id_job }}</b>.</td>
+                          </tr>
+                          <tr>
+                            <td>The file can be accessed at this link</td>
+                          </tr>
+                          <tr>
+                            <td><a target="_blank" href="{{ url }}">{{ url }}</a></td>
                           </tr>
                           </tbody>
                         </table>
@@ -141,3 +149,4 @@
 </table>
 </body>
 </html>
+

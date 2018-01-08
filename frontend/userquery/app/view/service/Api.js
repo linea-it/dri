@@ -4,21 +4,23 @@ Ext.define('UserQuery.view.service.Api', {
     alternateClassName: 'Api',
 
     URL: {
-        doLogin:     '/dri/api/api-auth/login/next=',
-        queryCRUD:   '/dri/api/userquery_query/',
-        getUser:     {method:'GET',  url:'/dri/api/logged/get_logged/?format=json'},
-        getRelease:  {method:'GET',  url:'/dri/api/releases/'},
-        getReleases: {method:'GET',  url:'/dri/api/catalog/'},
-        getTables:   {method:'GET',  url:'/dri/api/catalog/'},
-        getMyTables: {method:'GET',  url:'/dri/api/userquery_table/'},
-        getFields:   {method:'POST', url:'/dri/api/userquery_property/'}, // productcontent/'}, // ?pcn_product_id=25
-        getQueries:  {method:'GET',  url:'/dri/api/userquery_query/'},
-        getSamples:  {method:'GET',  url:'/dri/api/userquery_sample/'},
-        getJobs:     {method:'GET',  url:'/dri/api/userquery_job/'},
-        renameTable: {method:'PATCH', url:'/dri/api/userquery_table/{id}/'},
-        validate:    {method:'POST', url:'/dri/api/userquery_validate/'},
-        preview:     {method:'POST', url:'/dri/api/userquery_preview/'},
-        startJob:    {method:'POST', url:'/dri/api/userquery_table/'}
+        doLogin:       '/dri/api/api-auth/login/next=',
+        downloadTable: {method:'POST', url:'/dri/api/userquery_download/'},
+        queryCRUD:     '/dri/api/userquery_query/',
+        getUser:       {method:'GET',  url:'/dri/api/logged/get_logged/?format=json'},
+        getRelease:    {method:'GET',  url:'/dri/api/releases/'},
+        getReleases:   {method:'GET',  url:'/dri/api/catalog/'},
+        getTables:     {method:'GET',  url:'/dri/api/catalog/'},
+        getMyTables:   {method:'GET',  url:'/dri/api/userquery_table/'},
+        getFields:     {method:'POST', url:'/dri/api/userquery_property/'}, // productcontent/'}, // ?pcn_product_id=25
+        getQueries:    {method:'GET',  url:'/dri/api/userquery_query/'},
+        getSamples:    {method:'GET',  url:'/dri/api/userquery_sample/'},
+        getJobs:       {method:'GET',  url:'/dri/api/userquery_job/'},
+        preview:       {method:'POST', url:'/dri/api/userquery_preview/'},
+        renameTable:   {method:'PATCH', url:'/dri/api/userquery_table/{id}/'},
+        startJob:      {method:'POST', url:'/dri/api/userquery_table/'},
+        validate:      {method:'POST', url:'/dri/api/userquery_validate/'},
+        enviroment:    {method:'GET',  url:'/dri/api/get_setting/names=PRODUCT_REGISTER_DB_INTERFACE,PRODUCT_REGISTER_FOLDERS,PRODUCT_REGISTER_ENABLE_PUBLIC,DES_CUTOUT_SERVICE__AVAILABLE_RELEASES,DES_CUTOUT_SERVICE__MAX_OBJECTS '}
         // http://dri.com/dri/api/catalog/get_class_tree_by_group/?external_catalog=true&group__in=objects_catalog,targets,value_added_catalogs,external_catalogs&node=root
 
     },
@@ -95,6 +97,10 @@ Ext.define('UserQuery.view.service.Api', {
 
     dropTable: function(definition){
         return this.delete(this.URL.getMyTables.url, definition);
+    },
+
+    downloadTable: function(definition){
+        return this.send(this.URL.downloadTable, definition);
     },
 
     doLogin: function(){

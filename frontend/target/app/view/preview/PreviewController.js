@@ -59,7 +59,7 @@ Ext.define('Target.view.preview.PreviewController', {
         }]);
 
         // Limpar o Visiomatic a cada troca de objetos.
-        me.changeImage(null);
+        //me.changeImage(null);
     },
 
     onLoadDatasets: function (store) {
@@ -147,7 +147,7 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     changeImage: function (dataset) {
-        //console.log("changeImage(%o)", dataset)
+        // console.log("changeImage(%o)", dataset)
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
             url,
@@ -160,18 +160,29 @@ Ext.define('Target.view.preview.PreviewController', {
         }
 
         if (dataset) {
-            visiomatic.setDataset(dataset.get('id'));
-            visiomatic.setCurrentDataset(dataset);
 
-            url = dataset.get('image_src_ptif');
-            if (url !== '') {
-                visiomatic.setImage(url, options);
+            if (visiomatic.getDataset() != dataset.get('id')) {
+
+                visiomatic.setDataset(dataset.get('id'));
+                visiomatic.setCurrentDataset(dataset);
+
+                url = dataset.get('image_src_ptif');
+                if (url !== '') {
+                    visiomatic.setImage(url, options);
+
+                } else {
+                    visiomatic.removeImageLayer();
+
+                }
 
             } else {
-                visiomatic.removeImageLayer();
+                // Caso a tile seja a mesma pula a etapa de setar a imagem
+                // no visiomatic, isso evita o erro que o visiomatic nao
+                // centraliza no objeto quando o anterior e muito proximo.
+                // https://github.com/linea-it/dri/issues/1024
+                me.showTarget();
 
             }
-
         } else {
             visiomatic.removeImageLayer();
         }

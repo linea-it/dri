@@ -14,12 +14,13 @@ from django.contrib.auth.models import User
 from .models import *
 from .permissions import IsOwnerOrPublic
 from .serializers import *
-from .tasks import create_table
+from .tasks import create_table, export_table
 from .db import RawQueryValidator
 from .target_viewer import register_table_in_the_target_viewer
 
-from lib.sqlalchemy_wrapper import DBBase
+from product.export import Export
 
+from lib.sqlalchemy_wrapper import DBBase
 
 logger = logging.getLogger(__name__)
 
@@ -108,6 +109,7 @@ class TableViewSet(viewsets.ModelViewSet):
             query_name = data.get("query_name", None)
             sql_sentence = data.get("sql_sentence", None)
             release_id = data.get("release_id", None)
+            release_name = data.get("release_name", None)
 
             if not query_name:
                 query_name = "Unnamed"
@@ -119,12 +121,16 @@ class TableViewSet(viewsets.ModelViewSet):
 
             table_name = self._set_internal_table_name(display_name, self.request.user.pk)
 
-            rqv = RawQueryValidator(sql_sentence)
+            # query validate and sentence row count
+            rqv = RawQueryValidator(raw_sql=sql_sentence, use_count=True)
             if rqv.table_exists(table_name, None):
                 raise Exception("Table exists - choose a different name")
 
             if not rqv.is_query_validated():
                 raise Exception("Invalid query: %s" % rqv.validation_error_message())
+
+            if rqv.get_sql_count()>settings.USER_QUERY_MAX_ROWS:
+                raise Exception("The query exceeded the limit of %s rows" % settings.USER_QUERY_MAX_ROWS)
 
             q = Job(display_name=display_name,
                     owner=self.request.user,
@@ -132,11 +138,13 @@ class TableViewSet(viewsets.ModelViewSet):
                     timeout=settings.USER_QUERY_EXECUTION_TIMEOUT,
                     query_name=query_name)
             q.save()
-
-            create_table.delay(q.id, request.user.pk, table_name, release_id,
-                               associate_target_viewer,
+            
+            create_table.delay(job_id=q.id, user_id=request.user.pk, table_name=table_name, table_display_name=display_name,
+                               release_id=release_id, release_name=release_name, associate_target_viewer=associate_target_viewer,
                                schema=settings.DATABASES['catalog']['USER'])
+
             return HttpResponse(status=200)
+        
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
@@ -214,7 +222,7 @@ class QueryValidate(viewsets.ModelViewSet):
             data = request.data
             sql_sentence = data.get("sql_sentence", None)
 
-            rqv = RawQueryValidator(sql_sentence)
+            rqv = RawQueryValidator(raw_sql=sql_sentence, use_count=True)
             return JsonResponse(rqv.get_json_response())
 
         except Exception as e:
@@ -240,6 +248,7 @@ class QueryPreview(viewsets.ViewSet):
             # make all values String to avoid errors during Json encoding.
             for raw in result:
                 for k, v in raw.items():
+                    print(k, v)
                     raw[k] = str(v)
 
             response = {"count": len(result),
@@ -292,14 +301,52 @@ class TargetViewerRegister(viewsets.ModelViewSet):
         try:
             data = request.data
             _id = data.get("id", None)
+            _release_name = data.get("release_name", None)
 
             if not _id:
                 raise Exception("id is a mandatory field")
 
             q = Table.objects.get(pk=_id)
-            register_table_in_the_target_viewer(self.request.user, q.pk)
+            register_table_in_the_target_viewer(user=self.request.user, table_pk=q.pk, release_name=_release_name)
             return HttpResponse(status=200)
 
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
+
+
+class TableDownload(viewsets.ModelViewSet):
+    http_method_names = ['post']
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def create(self, request):
+        try:
+            data = request.data
+            _table_id = data.get("table_id", None)
+
+            # how to get an array depends on how it is sent
+            _columns = request.POST.getlist("columns", None) 
+            if not _columns:
+                _columns = data.get("columns", None)
+
+            if not _table_id:
+                raise Exception("table_id is required")
+
+            q = Table.objects.get(pk=int(_table_id))
+            if not q:
+                raise Exception("Table %s not exists")
+
+            # REVIEW - is user the owner of the table?
+            export_table.delay(table_id=_table_id, user_id=request.user.pk, columns=_columns)
+
+            return HttpResponse(status=200)
+            #return JsonResponse({'columns': _columns}, status=200)
+
+        except Exception as e:
+            print(str(e))
+            return JsonResponse({'message': str(e)}, status=400)
+
+    def _is_user_authorized(self, q):
+        return q.owner == self.request.user or q.is_public
+

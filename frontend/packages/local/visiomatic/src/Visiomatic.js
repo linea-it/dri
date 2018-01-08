@@ -491,18 +491,20 @@ Ext.define('visiomatic.Visiomatic', {
             map = me.getMap(),
             latlng;
 
-        ra = parseFloat(parseFloat(ra).toFixed(5));
-        dec = parseFloat(parseFloat(dec).toFixed(5));
+        if (me.isReady()) {
+            ra = parseFloat(parseFloat(ra).toFixed(5));
+            dec = parseFloat(parseFloat(dec).toFixed(5));
 
-        latlng = libL.latLng(dec, ra);
-        map.setView(latlng, map.options.crs.fovToZoom(map, fov, latlng));
+            latlng = libL.latLng(dec, ra);
+            map.setView(latlng, map.options.crs.fovToZoom(map, fov, latlng));
 
-        if (me.getShowCrosshair()) {
+            if (me.getShowCrosshair()) {
 
-            if (!dontMoveCrosshair) {
-                me.drawCrosshair(ra, dec);
+                if (!dontMoveCrosshair) {
+                    me.drawCrosshair(ra, dec);
+                }
+
             }
-
         }
     },
 
