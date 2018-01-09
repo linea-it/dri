@@ -36,6 +36,10 @@ Ext.define('Explorer.view.system.SystemModel', {
         currentDataset: {
             type: 'common.model.Dataset',
             create: true
+        },
+        currentVacProduct: {
+            type: 'Explorer.model.Product',
+            create: true
         }
     },
 
@@ -89,6 +93,17 @@ Ext.define('Explorer.view.system.SystemModel', {
         tiles: {
             type: 'footprints',
             pageSize: 0
+        },
+
+        vacProducts: {
+            type: 'products'
+        },
+        vacProductDisplayContents: {
+            type: 'product-display-contents'
+        },
+        vacObjects: {
+            type: 'objects',
+            // pageSize: 20
         },
     }
 });

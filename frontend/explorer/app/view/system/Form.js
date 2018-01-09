@@ -43,7 +43,21 @@ Ext.define('Explorer.view.system.Form', {
                             bind: {
                                 value: '{object_data._meta_radius}'
                             }
-                        }
+                        },
+                        {
+                            xtype: 'combobox',
+                            fieldLabel: 'VAC',
+                            valueField: 'id',
+                            displayField: 'prd_display_name',
+                            queryMode: 'local',
+                            bind: {
+                                store: '{vacProducts}',
+                            },
+                            readOnly: false,
+                            listeners: {
+                                select: 'onSelectVacProduct'
+                            }
+                        },
                     ]
                 }
             ]
