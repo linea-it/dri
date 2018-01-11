@@ -280,9 +280,25 @@ def send_statistic_email(request):
 @api_view(['GET'])
 def teste(request):
     if request.method == 'GET':
+        # from product.models import CutOutJob
+        # from product.tasks import start_des_cutout_job_by_id, check_jobs_running
+        #
+        # cutoutjob = CutOutJob.objects.get(pk=78)
+        # print(cutoutjob.pk)
 
-        from product.garbagecolector import GarbageColectorProduct
 
-        GarbageColectorProduct().purge_products_expiration_time()
+        # Testar submissao
+        # cutoutjob.cjb_status = 'st'
+        # cutoutjob.save()
+        # start_des_cutout_job_by_id(78)
+
+        # Testar Check Status
+        # cutoutjob.cjb_status = 'rn'
+        # cutoutjob.save()
+        # check_jobs_running()
+
+        # from product.garbagecolector import GarbageColectorProduct
+        #
+        # GarbageColectorProduct().purge_products_expiration_time()
 
         return Response(dict({'status': "success"}))

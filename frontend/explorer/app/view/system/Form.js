@@ -7,13 +7,14 @@ Ext.define('Explorer.view.system.Form', {
         var me = this;
 
         Ext.apply(this, {
+            bodyPadding: '3',
             fieldDefaults: {
-                labelAlign: 'top',
+                //labelAlign: 'top',
                 readOnly: true
             },
             items: [
                 {
-                    xtype: 'fieldset',
+                    xtype: 'fieldcontainer',
                     defaultType: 'textfield',
                     defaults: {
                         anchor: '100%'
@@ -42,7 +43,21 @@ Ext.define('Explorer.view.system.Form', {
                             bind: {
                                 value: '{object_data._meta_radius}'
                             }
-                        }
+                        },
+                        {
+                            xtype: 'combobox',
+                            fieldLabel: 'VAC',
+                            valueField: 'id',
+                            displayField: 'prd_display_name',
+                            queryMode: 'local',
+                            bind: {
+                                store: '{vacProducts}',
+                            },
+                            readOnly: false,
+                            listeners: {
+                                select: 'onSelectVacProduct'
+                            }
+                        },
                     ]
                 }
             ]

@@ -35,7 +35,8 @@ Ext.define('Explorer.view.system.SystemController', {
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
-            products = vm.getStore('products');
+            products = vm.getStore('products'),
+            vacProducts = vm.getStore('vacProducts');
 
         view.setLoading(true);
 
@@ -55,6 +56,14 @@ Ext.define('Explorer.view.system.SystemController', {
             }
         });
 
+        vacProducts.addFilter({
+            property: 'class_name',
+            value: 'vac_cluster'
+        });
+
+        vacProducts.load({
+            callback: me.onLoadVacProducts
+        });
     },
 
     onLoadProduct: function (product) {
@@ -231,6 +240,10 @@ Ext.define('Explorer.view.system.SystemController', {
             url = dataset.get('image_src_ptif');
 
         if (dataset) {
+
+            visiomatic.setDataset(dataset.get('id'));
+            visiomatic.setCurrentDataset(dataset);
+
             if (url !== '') {
                 visiomatic.setImage(url);
 
@@ -480,6 +493,136 @@ Ext.define('Explorer.view.system.SystemController', {
             // index = grid.getStore().find('_meta_id', member.get('_meta_id'));
             // grid.getView().getRow(index).scrollIntoView();
         //}
+    },
+
+
+    // -------------------------- VACs -----------------------------------------
+
+    /**
+     * Executada quando a store de vacs e carregada.
+     */
+    onLoadVacProducts: Ext.emptyFn,
+
+    /**
+     * Executado quando e selecionado um Vac na combobox.
+     * Apenas seta no model o produto de vac selecionado e executa o metodo
+     * que vai carregar as propriedades do vac.
+     */
+    onSelectVacProduct: function (cmb, currentVacProduct) {
+        // console.log('onSelectVacProduct(%o)', currentVacProduct)
+
+        var me = this,
+            vm = me.getViewModel();
+        vm.set('currentVacProduct', currentVacProduct);
+
+        // Carregar as propriedades do produto de vac e depois os objetos.
+        me.loadVacProductContent(currentVacProduct);
+
+    },
+
+    /**
+     * Carrega as propriedades do produto de vac, reconfigura a grid e depois
+     * executa o metodo que vai fazer load dos objetos.
+     */
+    loadVacProductContent: function (product) {
+        // console.log('loadVacProductContent(%o)', product)
+        var me = this,
+            vm = me.getViewModel(),
+            displayContents = vm.getStore('vacProductDisplayContents'),
+            vacGrid = me.lookupReference('vac-grid');
+
+        displayContents.addFilter(
+            {
+                'property': 'pcn_product_id',
+                value: product.get('id')
+            }
+        );
+
+        displayContents.load({
+            callback: function () {
+                if (this.check_ucds()) {
+                    // Reconfigurar a Grid de Vac com a propriedades do catalogo
+                    vacGrid.reconfigureGrid(this);
+
+                    // Carregar os objectos do produto de vac
+                    me.loadVacObjects();
+                }
+            }
+        });
+
+    },
+
+    loadVacObjects: function () {
+        console.log('loadVacObjects()')
+
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('object'),
+            currentVacProduct = vm.get('currentVacProduct'),
+            vacObjects = vm.getStore('vacObjects'),
+            multiplier = 2,
+            vacRadius;
+
+        // Criar uma area quadrada 2x o tamanho do raio do cluster e fazer a query
+        // no produto de vac.
+        console.log(object)
+
+        // DIVIDIR O radius por 60 por que esta em arcmin
+        vacRadius = (object.get('_meta_radius') * multiplier) / 60;
+
+        // Desenhar um quadrado mostrando a area que foi usada na busca dos vacs
+        // me.drawVacArea(
+        //     object.get('_meta_ra'), object.get('_meta_dec'), vacRadius)
+
+        vacObjects.addFilter([
+            {
+                property: 'product',
+                value: currentVacProduct.get('id')
+            },
+            {
+                property: 'lon',
+                value: object.get('_meta_ra')
+            },
+            {
+                property: 'lat',
+                value: object.get('_meta_dec')
+            },
+            {
+                property: 'radius',
+                value: vacRadius
+            },
+        ])
+
+        vacObjects.load({
+            callback: function () {
+                console.log('Carregou os objectos do Vac')
+                me.onLoadVacObjects(this)
+            }
+        })
+    },
+
+    onLoadVacObjects: function (store) {
+        console.log('onLoadVacObjects(%o)', store);
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
+
+        lvacs = visiomatic.overlayCatalog('vac_objects', store, {
+            color: '#FF0000',
+            pointType: 'square'
+        });
+
+        visiomatic.showHideLayer(lvacs, true);
+    },
+
+    drawVacArea: function (ra, dec, radius) {
+        console.log('drawVacArea(%o, %o, %o)', ra, dec, radius);
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
+
+        upperRight = [ra + radius, dec + radius]
+        lowerLeft = [ra - radius, dec - radius]
+
+        visiomatic.drawRectangle(upperRight, lowerLeft);
     },
 
     /**
