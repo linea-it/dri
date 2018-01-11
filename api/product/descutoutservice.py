@@ -271,18 +271,22 @@ class DesCutoutService:
 
         """
         self.logger.info("Deleting job %s in DesCutout service" % jobid)
-        req = requests.delete(
-            self.host_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
 
-        data = req.json()
-        self.logger.debug(data)
+        if self.api_version == 1 and self.delete_job_after_download is True:
+            req = requests.delete(
+                self.host_check_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
 
-        if data["status"] != "error" and data["status"] == "ok":
-            self.logger.info("Deleted job!")
+            data = req.json()
+            self.logger.debug(data)
 
-            return True
+            if data["status"] != "error" and data["status"] == "ok":
+                self.logger.info("Deleted job!")
+
+                return True
+            else:
+                return False
         else:
-            return False
+            return True
 
     def parse_result_url(self, url):
         """
@@ -465,11 +469,10 @@ class DesCutoutService:
 
     def delete_job(self, cutoutjob):
 
-        if self.delete_job_after_download is True:
-            if cutoutjob.cjb_job_id is not None:
-                token = self.generate_token()
+        if cutoutjob.cjb_job_id is not None:
+            token = self.generate_token()
 
-                self.delete_job_results(token, cutoutjob.cjb_job_id)
+            self.delete_job_results(token, cutoutjob.cjb_job_id)
 
     def get_cutoutjobs_by_status(self, status):
 
