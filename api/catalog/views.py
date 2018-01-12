@@ -86,7 +86,6 @@ class TargetViewSet(ViewSet):
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(catalog.pk)
 
-        print(associations)
 
         # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
         schema_rating_reject = settings.SCHEMA_RATING_REJECT

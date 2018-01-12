@@ -517,8 +517,12 @@ Ext.define('Explorer.view.system.SystemController', {
         // console.log('onSelectVacProduct(%o)', currentVacProduct)
 
         var me = this,
-            vm = me.getViewModel();
+            vm = me.getViewModel(),
+            vacObjects = me.getStore('vacObjects');
+
         vm.set('currentVacProduct', currentVacProduct);
+
+        vacObjects.removeAll();
 
         // Carregar as propriedades do produto de vac e depois os objetos.
         me.loadVacProductContent(currentVacProduct);
