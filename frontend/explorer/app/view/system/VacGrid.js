@@ -7,7 +7,7 @@ Ext.define('Explorer.view.system.VacGrid', {
     xtype: 'system-vac-grid',
 
     requires:[
-        'Ext.grid.column.Number',
+        'Ext.grid.column.Number'
     ],
 
     /**
@@ -35,7 +35,84 @@ Ext.define('Explorer.view.system.VacGrid', {
             viewConfig: {
                 stripeRows: true,
                 markDirty: false,
-            }
+            },
+            tbar: [
+                {
+                    xtype: 'combobox',
+                    emptyText: 'choose the VAC catalog',
+                    width: 200,
+                    valueField: 'id',
+                    displayField: 'prd_display_name',
+                    queryMode: 'local',
+                    bind: {
+                        store: '{vacProducts}',
+                    },
+                    readOnly: false,
+                    listeners: {
+                        select: 'onSelectVacProduct'
+                    }
+                },
+                {
+                    xtype: 'button',
+                    iconCls: 'x-fa fa-eye',
+                    enableToggle: true,
+                    toggleHandler: 'changeVisibleOverlayVacs',
+                    pressed: true,
+                    tooltip: 'Show or hide objects in visiomatic'
+                },
+                {
+                    xtype: 'numberfield',
+                    minValue: 1,
+                    maxValue: 20,
+                    step: 0.1,
+                    fieldLabel: 'Radius (arcmin)',
+                    labelWidth: 100,
+                    width: 160,
+                    bind: "{vacRadius}",
+                },
+                '-',
+                {
+                    xtype: 'colorbutton',
+                    bind: '{vacOverlayColor}',
+                    width: 30,
+                    tooltip: 'Choose a color. Click on the color and then on ok.'
+                },
+                {
+                    xtype: 'combobox',
+                    displayField: 'name',
+                    valueField: 'name',
+                    queryMode: 'local',
+                    width: 80,
+                    store: {
+                        fields: ['name'],
+                        data: [
+                            {'name': 'circle'},
+                            {'name': 'ellipse'},
+                            {'name': 'square'},
+                            {'name': 'triangle'}
+                        ]
+                    },
+                    bind: {
+                        value: '{vacOverlaypointType}',
+                    }
+                },
+                {
+                    xtype: 'numberfield',
+                    fieldLabel: 'Size',
+                    labelWidth: 40,
+                    width: 100,
+                    bind: '{vacOverlayPointSize}',
+                    minValue: 1,
+                    maxValue: 10,
+                    step: 0.2,
+                },
+                {
+                    xtype: 'button',
+                    iconCls: 'x-tbar-loading',
+                    handler: 'loadVacObjects',
+                    tooltip: 'Refresh'
+                }
+            ]
         });
 
         me.callParent(arguments);

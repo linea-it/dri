@@ -203,6 +203,12 @@ Ext.define('Explorer.view.system.SystemController', {
             me.loadSystemMembers(product, object);
         }
 
+        // Setar um valor default para o raio utilizado na VacGrid
+        // por default 2 vezes o valor do raio
+        vacRadius = object.get('_meta_radius') * 2;
+        vm.set('vacRadius', vacRadius.toFixed(1));
+
+
     },
 
     onLoadDatasets: function (store) {
@@ -449,15 +455,14 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     onSelectSystemMember: function (selModel, member) {
-        this.highlightSystemMember(member);
+        this.highlightObject(member);
 
     },
 
-    highlightSystemMember: function (member, sincGrid) {
+    highlightObject: function (object, sincGrid) {
         var me = this,
             vm = me.getViewModel(),
             product = vm.get('currentProduct'),
-            object = vm.get('object'),
             lMarkPosition = vm.get('lMarkPosition'),
             visiomatic = me.lookupReference('visiomatic'),
             aladin = me.lookupReference('aladin'),
@@ -466,8 +471,8 @@ Ext.define('Explorer.view.system.SystemController', {
             position;
 
         visiomatic.setView(
-            member.get('_meta_ra'),
-            member.get('_meta_dec'),
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
             fov,
             true // Nao mover a crosshair
             );
@@ -477,17 +482,17 @@ Ext.define('Explorer.view.system.SystemController', {
         }
 
         lMarkPosition = visiomatic.markPosition(
-            member.get('_meta_ra'),
-            member.get('_meta_dec'),
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
             'x-fa fa-sort-desc fa-2x');
 
         vm.set('lMarkPosition', lMarkPosition);
 
         // Aladin
-        position = String(member.get('_meta_ra')) + ',' + String(member.get('_meta_dec'));
+        position = String(object.get('_meta_ra')) + ',' + String(object.get('_meta_dec'));
         aladin.goToPosition(position);
 
-        vm.set('selected_member', member);
+        vm.set('selected_member', object);
 
         // if (sincGrid) {
             // index = grid.getStore().find('_meta_id', member.get('_meta_id'));
@@ -552,23 +557,29 @@ Ext.define('Explorer.view.system.SystemController', {
 
     },
 
-    loadVacObjects: function () {
-        console.log('loadVacObjects()')
+    calculateVacRadius: function (cluster_radius) {
+        var me = this,
+            multiplier = 2;
 
+        // DIVIDIR O radius por 60 por que esta em arcmin
+        vacRadius = cluster_radius / 60;
+
+        return vacRadius.toFixed(3);
+    },
+
+    loadVacObjects: function () {
+        // console.log('loadVacObjects()')
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('object'),
             currentVacProduct = vm.get('currentVacProduct'),
             vacObjects = vm.getStore('vacObjects'),
-            multiplier = 2,
             vacRadius;
 
-        // Criar uma area quadrada 2x o tamanho do raio do cluster e fazer a query
-        // no produto de vac.
-        console.log(object)
+        vacObjects.clearFilter();
 
         // DIVIDIR O radius por 60 por que esta em arcmin
-        vacRadius = (object.get('_meta_radius') * multiplier) / 60;
+        vacRadius = me.calculateVacRadius(vm.get('vacRadius'));
 
         // Desenhar um quadrado mostrando a area que foi usada na busca dos vacs
         // me.drawVacArea(
@@ -595,35 +606,75 @@ Ext.define('Explorer.view.system.SystemController', {
 
         vacObjects.load({
             callback: function () {
-                console.log('Carregou os objectos do Vac')
                 me.onLoadVacObjects(this)
             }
         })
     },
 
     onLoadVacObjects: function (store) {
-        console.log('onLoadVacObjects(%o)', store);
+        // console.log('onLoadVacObjects(%o)', store);
         var me = this,
+            vm = me.getViewModel(),
             visiomatic = me.lookupReference('visiomatic');
+
+        // Toda vez que fizer load, remover a layers
+        if (vm.get('overlayVac') != null) {
+            visiomatic.showHideLayer(vm.get('overlayVac'), false);
+        }
 
         lvacs = visiomatic.overlayCatalog('vac_objects', store, {
-            color: '#FF0000',
-            pointType: 'square'
+            color: '#' + vm.get('vacOverlayColor'),
+            pointSize: (vm.get('vacOverlayPointSize') / 1000),
+            pointType: vm.get('vacOverlaypointType')
         });
 
-        visiomatic.showHideLayer(lvacs, true);
+        vm.set('overlayVac', lvacs);
+
+        me.showHideOverlayVacs()
     },
 
-    drawVacArea: function (ra, dec, radius) {
-        console.log('drawVacArea(%o, %o, %o)', ra, dec, radius);
+    changeVisibleOverlayVacs: function (btn, state) {
         var me = this,
+            vm = me.getViewModel();
+
+        vm.set('visibleOverlayVacs', state);
+
+        if (state) {
+            btn.setIconCls('x-fa fa-eye');
+        } else {
+            btn.setIconCls('x-fa fa-eye-slash');
+        }
+        me.showHideOverlayVacs();
+    },
+
+    showHideOverlayVacs: function () {
+        // console.log('showHideOverlayVacs()')
+        var me = this,
+            vm = me.getViewModel(),
+            state = vm.get('visibleOverlayVacs'),
+            lvacs = vm.get('overlayVac'),
             visiomatic = me.lookupReference('visiomatic');
 
-        upperRight = [ra + radius, dec + radius]
-        lowerLeft = [ra - radius, dec - radius]
-
-        visiomatic.drawRectangle(upperRight, lowerLeft);
+        visiomatic.showHideLayer(lvacs, state);
     },
+
+    onSelectVacObject: function (selModel, object) {
+        this.highlightObject(object);
+
+    },
+
+    // Para este metodo funcionar e necessario corrigir a funcao do visiomatic
+    // para objetos que estejam perto da borda da tile.
+    // drawVacArea: function (ra, dec, radius) {
+    //     console.log('drawVacArea(%o, %o, %o)', ra, dec, radius);
+    //     var me = this,
+    //         visiomatic = me.lookupReference('visiomatic');
+    //
+    //     upperRight = [ra + radius, dec + radius]
+    //     lowerLeft = [ra - radius, dec - radius]
+    //
+    //     visiomatic.drawRectangle(upperRight, lowerLeft);
+    // },
 
     /**
      * Retorna os tags que estao associados a um release
@@ -741,6 +792,6 @@ Ext.define('Explorer.view.system.SystemController', {
     onCmdClickPoint: function (record, cmd) {
         // console.log('onCmdClickPoint(%o)', record);
         // Realca o objeto no preview do visiomatic
-        this.highlightSystemMember(record, true);
+        this.highlightObject(record, true);
     }
 });

@@ -25,7 +25,13 @@ Ext.define('Explorer.view.system.SystemModel', {
         overlayMembers: null,
         position: null,
         have_members: false,
-        selected_member: null
+        selected_member: null,
+        visibleOverlayVacs: true,
+        overlayVac: null,
+        vacRadius: 1,
+        vacOverlayColor: '1B81BC',
+        vacOverlayPointSize: 1.2,
+        vacOverlaypointType: 'square'
     },
 
     links: {
@@ -103,7 +109,7 @@ Ext.define('Explorer.view.system.SystemModel', {
         },
         vacObjects: {
             type: 'objects',
-            // pageSize: 20
+            pageSize: 2000
         },
     }
 });

@@ -160,10 +160,9 @@ Ext.define('Explorer.view.system.System', {
                                     reference: 'vac-grid',
                                     bind: {
                                         store: '{vacObjects}',
-                                        //selection: '{selected_member}'
                                     },
                                     listeners: {
-                                        //select: 'onSelectSystemMember'
+                                        select: 'onSelectVacObject'
                                     }
                                 },
                                 {
