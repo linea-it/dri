@@ -36,8 +36,7 @@ class Association:
         properties = dict()
         contents = ProductContent.objects.filter(pcn_product_id=product_id)
         for pcontent in contents:
-            print(pcontent.pcn_ucd)
-            if pcontent.pcn_ucd is not None:
+            if pcontent.pcn_ucd is not None and pcontent.pcn_column_name is not None:
                 properties.update({
                     pcontent.pcn_ucd: pcontent.pcn_column_name.lower()
                 })
@@ -75,8 +74,7 @@ class Association:
 
         contents = ProductContent.objects.filter(pcn_product_id=product_id)
         for pcontent in contents:
-            print(pcontent.pcn_ucd)
-            if pcontent.pcn_ucd is not None:
+            if pcontent.pcn_ucd is not None and pcontent.pcn_column_name is not None:
                 properties.append(dict({
                     "ucd": pcontent.pcn_ucd,
                     "property": pcontent.pcn_column_name.lower()
