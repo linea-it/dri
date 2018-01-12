@@ -1370,7 +1370,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var me = this;
         var refs = me.getReferences();
         
-        if (query.exist){
+        if (query.id){
             Api.log( query.is_sample ? 'open_sample' : 'open_query');
         }
         
