@@ -10,6 +10,5 @@ Ext.define('visiomatic.VisiomaticModel', {
         release: null,
         tag: null,
         dataset: null
-
     }
 });
