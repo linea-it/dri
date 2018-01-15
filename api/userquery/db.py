@@ -11,10 +11,10 @@ class RawQueryValidator(DBBase):
                 self._count = -1
 
                 if use_count:
-                    sql = 'SELECT COUNT(*) FROM (' + raw_sql + ') B '
-
                     if maxrows>0:
-                        sql = sql + self.database.get_raw_sql_limit(0, maxrows)
+                        raw_sql = raw_sql + self.database.get_raw_sql_limit(0, maxrows)
+
+                    sql = 'SELECT COUNT(*) FROM (' + raw_sql + ') B '
 
                     row = con.execute(sql).fetchone()
                     self._count = row[0]
