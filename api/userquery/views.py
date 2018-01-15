@@ -122,7 +122,7 @@ class TableViewSet(viewsets.ModelViewSet):
             table_name = self._set_internal_table_name(display_name, self.request.user.pk)
 
             # query validate and sentence row count
-            rqv = RawQueryValidator(raw_sql=sql_sentence, use_count=True)
+            rqv = RawQueryValidator(raw_sql=sql_sentence, use_count=True, maxrows=settings.USER_QUERY_MAX_ROWS+5)
             if rqv.table_exists(table_name, None):
                 raise Exception("Table exists - choose a different name")
 

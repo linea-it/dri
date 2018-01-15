@@ -3,7 +3,7 @@ from sqlalchemy.sql import text
 
 
 class RawQueryValidator(DBBase):
-    def __init__(self, raw_sql, db='catalog', use_count=False):
+    def __init__(self, raw_sql, db='catalog', use_count=False, maxrows=0):
         super(RawQueryValidator, self).__init__(db)
 
         with self.engine.connect() as con:
@@ -11,7 +11,12 @@ class RawQueryValidator(DBBase):
                 self._count = -1
 
                 if use_count:
-                    row = con.execute('SELECT COUNT(*) FROM (' + raw_sql + ') B').fetchone()
+                    sql = 'SELECT COUNT(*) FROM (' + raw_sql + ') B '
+
+                    if maxrows>0:
+                        sql = sql + self.database.get_raw_sql_limit(0, maxrows)
+
+                    row = con.execute(sql).fetchone()
                     self._count = row[0]
                 else:
                     con.execute(text(raw_sql)).fetchone()
