@@ -19,6 +19,11 @@ class Association:
         for associate in associations:
             properties.append(associate.get('pcn_column_name').lower())
 
+        contents = ProductContent.objects.filter(pcn_product_id=product_id)
+        for pcontent in contents:
+            if pcontent.pcn_ucd is not None and pcontent.pcn_column_name is not None and pcontent.pcn_column_name not in properties:
+                properties.append(pcontent.pcn_column_name.lower())
+
         return properties
 
     def get_associations_by_product_id(self, product_id):

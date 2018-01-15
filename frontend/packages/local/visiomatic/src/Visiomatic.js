@@ -5,7 +5,7 @@ Ext.define('visiomatic.Visiomatic', {
         'visiomatic.VisiomaticModel',
         'visiomatic.VisiomaticController',
         'visiomatic.catalog.CatalogOverlayWindow',
-        'visiomatic.download.DescutDownloadWindow'
+        'visiomatic.download.DescutDownloadWindow',
     ],
 
     mixins: {
@@ -1059,6 +1059,7 @@ Ext.define('visiomatic.Visiomatic', {
             allProps = [],
             popup;
 
+
         Ext.each(mags, function (mag) {
             try {
                 mag_name = mag.slice(-1);
@@ -1076,6 +1077,14 @@ Ext.define('visiomatic.Visiomatic', {
 
             }
         });
+
+        // TODO esta propriedade e do VAC essa parte precisa de um refactor.
+        if (feature.properties._meta_photo_z) {
+            photoz = parseFloat(feature.properties._meta_photo_z)
+            tag_properties.push(
+                '<TR><TD><spam>photo-z</spam>: </TD>' +
+                '<TD>' + photoz.toFixed(2) + '</td></tr>');
+        }
 
         // Link para explorer
         if (feature.properties._meta_is_system) {
