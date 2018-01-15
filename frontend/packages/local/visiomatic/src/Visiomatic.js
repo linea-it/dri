@@ -1050,7 +1050,8 @@ Ext.define('visiomatic.Visiomatic', {
     createOverlayPopup: function (layer) {
         var feature = layer.feature,
             properties = feature.properties,
-            mags = ['_meta_mag_auto_g','_meta_mag_auto_r','_meta_mag_auto_i', '_meta_mag_auto_z', '_meta_mag_auto_y'],
+            mags = ['_meta_mag_auto_g','_meta_mag_auto_r','_meta_mag_auto_i',
+                '_meta_mag_auto_z', '_meta_mag_auto_y'],
             tag_mags = [],
             tag_properties = [],
             tag_id = feature.properties._meta_id,
@@ -1066,10 +1067,11 @@ Ext.define('visiomatic.Visiomatic', {
 
                 }
                 mag_value = properties[mag];
-
-                tag = '<TR><TD><spam>' + mag_name + '</spam>: </TD><TD>' + mag_value.toFixed(2) + '</td></tr>';
-                tag_mags.push(tag);
-
+                if (mag_value) {
+                    mag_value = parseFloat(mag_value);
+                    tag = '<TR><TD><spam>' + mag_name + '</spam>: </TD><TD>' + mag_value.toFixed(2) + '</td></tr>';
+                    tag_mags.push(tag);
+                }
             } catch (err) {
 
             }
@@ -1127,14 +1129,15 @@ Ext.define('visiomatic.Visiomatic', {
             }
         }
 
+        ra = parseFloat(feature.properties._meta_ra)
+        dec = parseFloat(feature.properties._meta_dec)
 
         popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
            '<TABLE style="margin:auto;">' +
            '<TBODY style="vertical-align:top;text-align:left;">' +
                 '<TR><TD><spam>ID</spam>: </TD><TD>' + tag_id + '</TD></TR>' +
                 '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
-                    feature.properties._meta_ra.toFixed(5) + ', '
-                    + feature.properties._meta_dec.toFixed(5) +
+                    ra.toFixed(5) + ', ' + dec.toFixed(5) +
                 '</td></tr>' +
                 tag_mags.join('') +
                 tag_properties.join('') +

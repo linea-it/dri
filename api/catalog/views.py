@@ -86,6 +86,7 @@ class TargetViewSet(ViewSet):
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(catalog.pk)
 
+
         # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
         schema_rating_reject = settings.SCHEMA_RATING_REJECT
 
@@ -100,7 +101,6 @@ class TargetViewSet(ViewSet):
         )
 
         rows, count = catalog_db.query(
-            # columns=list(["coadd_objects_id", "niter_model_g"]),
             ordering=request.query_params.get('ordering', None),
             limit=request.query_params.get('limit', None),
             start=request.query_params.get('offset', None),
@@ -121,22 +121,21 @@ class TargetViewSet(ViewSet):
                 "_meta_reject": None,
             })
 
+
             row.update({
-                "_meta_id": row.get(associations.get("meta.id;meta.main")),
-                "_meta_property_id": associations.get("meta.id;meta.main")
-            })
-            row.update({
-                "_meta_ra": row.get(associations.get("pos.eq.ra;meta.main")),
-                "_meta_property_ra": associations.get("pos.eq.ra;meta.main")
-            })
-            row.update({
-                "_meta_dec": row.get(associations.get("pos.eq.dec;meta.main")),
+                "_meta_property_id": associations.get("meta.id;meta.main"),
+                "_meta_property_ra": associations.get("pos.eq.ra;meta.main"),
                 "_meta_property_dec": associations.get("pos.eq.dec;meta.main")
             })
-            row.update({
-                "_meta_radius": row.get(associations.get("phys.angSize;src")),
-                "_meta_property_radius": associations.get("phys.angSize;src")
-            })
+
+            try:
+                # Raio so e obrigatorio para catalogo do tipo sistema
+                row.update({
+                    "_meta_radius": float(row.get(associations.get("phys.angSize;src"))),
+                    "_meta_property_radius": associations.get("phys.angSize;src")
+                })
+            except:
+                pass
 
             row.update({
                 "_meta_rating_id": row.get('meta_rating_id', None)
@@ -171,6 +170,38 @@ class TargetViewSet(ViewSet):
                 row.update({
                     "_meta_comments": None
                 })
+
+            essential_props = dict({
+                # Id
+                'meta.id;meta.main': '_meta_id',
+                # Coordinates
+                'pos.eq.ra;meta.main': '_meta_ra',
+                'pos.eq.dec;meta.main': '_meta_dec',
+                # Elipse
+                'phys.size.smajAxis;instr.det;meta.main': '_meta_a_image',
+                'phys.size.sminAxis;instr.det;meta.main': '_meta_b_image',
+                'pos.posAng;instr.det;meta.main': '_meta_theta_image',
+                # Magnitudes
+                'phot.mag;meta.main;em.opt.g': '_meta_mag_auto_g',
+                'phot.mag;meta.main;em.opt.r': '_meta_mag_auto_r',
+                'phot.mag;meta.main;em.opt.i': '_meta_mag_auto_i',
+                'phot.mag;meta.main;em.opt.z': '_meta_mag_auto_z',
+                'phot.mag;meta.main;em.opt.Y': '_meta_mag_auto_y',
+            })
+
+
+            for ucd in associations:
+                try:
+                    meta_prop = essential_props.get(ucd)
+                    if meta_prop:
+                        value = row.get(associations.get(ucd))
+
+                        row.update({
+                            meta_prop: value
+                        })
+
+                except:
+                    pass
 
         return Response(dict({
             'count': count,
