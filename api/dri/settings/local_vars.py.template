@@ -82,7 +82,7 @@ DES_CUTOUT_SERVICE = {
     # Url base que sera usada para exibir as imagens geradas esse parametro deve ser mapeado no dri.conf no apache
     'CUTOUT_SOURCE': '/data',
     # Tempo de delay para a task check_jobs em minutos
-    'CUTOUT_TASK_CHECK_JOBS_DELAY': 1
+    'CUTOUT_TASK_CHECK_JOBS_DELAY': 1,
     # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos e None para
     # desabilitar a opcao na interface
     'AVAILABLE_RELEASES': None,
