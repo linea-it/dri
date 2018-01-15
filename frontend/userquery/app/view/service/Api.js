@@ -109,6 +109,10 @@ Ext.define('UserQuery.view.service.Api', {
         var hostname = window.location.host;
 
         window.location.assign(`${protocol}//${hostname}${this.URL.doLogin}${pathname}`);
+    },
+
+    log: function(logText){
+        Ext.GlobalEvents.fireEvent('eventregister','UserQuery - ' + logText);
     }
 });
 
