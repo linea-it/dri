@@ -187,6 +187,9 @@ class TargetViewSet(ViewSet):
                 'phot.mag;meta.main;em.opt.i': '_meta_mag_auto_i',
                 'phot.mag;meta.main;em.opt.z': '_meta_mag_auto_z',
                 'phot.mag;meta.main;em.opt.Y': '_meta_mag_auto_y',
+                # Photo Z
+                'Photosrc.redshift.photZ': '_meta_photo_z',
+
             })
 
 
@@ -235,6 +238,8 @@ class CatalogObjectsViewSet(ViewSet):
         # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
         columns = Association().get_properties_associated(product_id)
 
+        print(columns)
+
         catalog_db = CatalogObjectsDBHelper(
             table=catalog.tbl_name,
             schema=catalog.tbl_schema,
@@ -266,6 +271,8 @@ class CatalogObjectsViewSet(ViewSet):
             'phot.mag;meta.main;em.opt.i': '_meta_mag_auto_i',
             'phot.mag;meta.main;em.opt.z': '_meta_mag_auto_z',
             'phot.mag;meta.main;em.opt.Y': '_meta_mag_auto_y',
+            # Photo Z
+            'Photosrc.redshift.photZ': '_meta_photo_z',
         })
 
         for row in rows:
@@ -298,6 +305,7 @@ class CatalogObjectsViewSet(ViewSet):
                 try:
                     meta_prop = essential_props.get(ucd)
                     if meta_prop:
+                        # print(row.get(associations.get(ucd)))
                         value = row.get(associations.get(ucd))
 
                         # TODO: Esse Bloco precisa de um refactoring
@@ -339,6 +347,8 @@ class CatalogObjectsViewSet(ViewSet):
                         row.update({
                             meta_prop: value
                         })
+
+                    # print("%s:%s" % (meta_prop, value))
 
                 except:
                     pass
