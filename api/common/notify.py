@@ -7,7 +7,7 @@ class Notify():
     def __init__(self):
         self.logger = logging.getLogger('django')
 
-    def send_email(self, subject, body, to, copy_to_adms=True):
+    def send_email(self, subject, body, to, copy_to_adms=True, html=True):
         """
         Envia um email, o body do email pode ser uma mensagem html.
         :param subject: Assunto do Email
@@ -56,8 +56,22 @@ class Notify():
                 from_email=from_email,
                 to=to,
             )
-            msg.content_subtype = "html"
+
+            if html is True:
+                msg.content_subtype = "html"
+
             msg.send(fail_silently=False)
 
         except Exception as e:
             self.logger.error(e)
+
+
+    def send_email_failure_helpdesk(self, subject, original_message):
+
+
+        try:
+            to = settings.EMAIL_HELPDESK
+        except:
+            raise Exception("The EMAIL_HELPDESK variable is not configured in settings.")
+
+        self.send_email(subject, original_message, to, False, False)
