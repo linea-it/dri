@@ -188,7 +188,7 @@ class TargetViewSet(ViewSet):
                 'phot.mag;meta.main;em.opt.z': '_meta_mag_auto_z',
                 'phot.mag;meta.main;em.opt.Y': '_meta_mag_auto_y',
                 # Photo Z
-                'Photosrc.redshift.photZ': '_meta_photo_z',
+                'src.redshift.phot': '_meta_photo_z',
 
             })
 
@@ -272,7 +272,7 @@ class CatalogObjectsViewSet(ViewSet):
             'phot.mag;meta.main;em.opt.z': '_meta_mag_auto_z',
             'phot.mag;meta.main;em.opt.Y': '_meta_mag_auto_y',
             # Photo Z
-            'Photosrc.redshift.photZ': '_meta_photo_z',
+            'src.redshift.phot': '_meta_photo_z',
         })
 
         for row in rows:
