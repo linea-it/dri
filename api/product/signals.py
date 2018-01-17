@@ -78,4 +78,5 @@ def drop_product_table(sender, instance, using, **kwargs):
                     schema=instance.table.tbl_schema)
 
         except Exception as e:
-            raise(e)
+            # Tenta dropar a tabela se nao conseguir nao faz nada.
+            pass

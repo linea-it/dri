@@ -157,6 +157,7 @@ class CatalogTable(CatalogDB):
     def set_filters(self, filters):
         # Seta os filtros a serem aplicados no create_stm
         if filters is not None and len(filters) > 0:
+
             for condition in filters:
                 column = condition.get("column").lower().strip()
 
@@ -173,9 +174,23 @@ class CatalogTable(CatalogDB):
             self.filters.append(condition)
 
     def parse_url_filters(self, url_filters):
+
         conditions = list()
 
         if url_filters is not None and len(url_filters) > 0:
+
+            square_condition = dict({
+                "lon": None,
+                "lat": None,
+                "radius": None,
+                "column": "coordinates",
+                "op": "coordinates",
+                "upperright": [],
+                "lowerleft": [],
+                "property_ra": self.associations.get("pos.eq.ra;meta.main"),
+                "property_dec": self.associations.get("pos.eq.dec;meta.main")
+            })
+
             for param in url_filters:
                 # para cara parametro vindo da url checar se e uma propriedade valida da tabela
                 # e Criar um filtro para ela
@@ -216,6 +231,33 @@ class CatalogTable(CatalogDB):
                         # Falhou ao criar a condicao de filtro por coordenadas provavelmente pela falta
                         # do atributo association
                         pass
+
+                # Query por quadrado usando formato lon, lat do centro e raio.
+                elif column == "lon" or column == "lat" or column == "radius":
+                    # Prepara um objeto com as variaveis necessarias para a criar um quadrado.
+                    square_condition[column] = url_filters.get(param)
+
+            # Verificar se foi criado um filtro por tipo quadrado.
+            if square_condition['lon'] is not None or square_condition['lat'] is not None or square_condition[
+                'radius'] is not None:
+                # criar as variaveis lowerleft e upperright
+
+                lon = float(square_condition['lon'])
+                lat = float(square_condition['lat'])
+                radius = float(square_condition['radius'])
+
+                lowerleft = [lon - radius,
+                             lat - radius]
+
+                upperright = [lon + radius,
+                              lat + radius]
+
+                square_condition.update({
+                    "lowerleft": lowerleft,
+                    "upperright": upperright
+                })
+
+                conditions.append(square_condition)
 
         return conditions
 
@@ -450,7 +492,9 @@ class TargetObjectsDBHelper(CatalogTable):
 
         # Targets podem ter filtros especias checar a existencia deles
         if self.filters is not None and len(self.filters) > 0:
+
             for condition in self.filters:
+
                 if condition.get("column").find("_meta_") is not -1:
                     # Filtro Especial onde a propriedade nao faz parte da tabela original
 
@@ -466,22 +510,13 @@ class TargetObjectsDBHelper(CatalogTable):
                         if condition.get("value") in ['True', 'true', '1', 't', 'y', 'yes']:
                             reject_filters = catalog_reject.c.reject == 1
 
-                    elif condition.get("column") == 'coordinates':
-                        value = json.loads(condition.get("value"))
+                elif condition.get("column") == 'coordinates':
 
-                        # Upper Right
-                        upperright = value[0]
-                        # Lower Left
-                        lowerleft = value[1]
-
-                        property_ra = self.associations.get("pos.eq.ra;meta.main")
-                        property_dec = self.associations.get("pos.eq.dec;meta.main")
-
-                        coordinate_filters = self.get_condition_square(
-                            lowerleft,
-                            upperright,
-                            property_ra,
-                            property_dec)
+                    coordinate_filters = self.get_condition_square(
+                        condition.get("lowerleft"),
+                        condition.get("upperright"),
+                        condition.get("property_ra"),
+                        condition.get("property_dec"))
 
                 else:
                     filters.append(condition)

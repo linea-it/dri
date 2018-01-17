@@ -25814,5 +25814,89 @@
     "pcc_reference": "",
     "pcc_mandatory": false
   }
+},
+{
+  "model": "product_classifier.productclasscontent",
+  "pk": 3488,
+  "fields": {
+    "pcc_class": 100,
+    "pcc_category": 5,
+    "pcc_name": "mag_auto_g",
+    "pcc_display_name": "Mag auto g",
+    "pcc_ucd": "phot.mag;meta.main;em.opt.g",
+    "pcc_unit": "",
+    "pcc_reference": "",
+    "pcc_mandatory": false
+  }
+},
+{
+  "model": "product_classifier.productclasscontent",
+  "pk": 3489,
+  "fields": {
+    "pcc_class": 100,
+    "pcc_category": 5,
+    "pcc_name": "mag_auto_r",
+    "pcc_display_name": "Mag auto r",
+    "pcc_ucd": "phot.mag;meta.main;em.opt.r",
+    "pcc_unit": "",
+    "pcc_reference": "",
+    "pcc_mandatory": false
+  }
+},
+{
+  "model": "product_classifier.productclasscontent",
+  "pk": 3490,
+  "fields": {
+    "pcc_class": 100,
+    "pcc_category": 5,
+    "pcc_name": "mag_auto_i",
+    "pcc_display_name": "Mag auto i",
+    "pcc_ucd": "phot.mag;meta.main;em.opt.i",
+    "pcc_unit": "",
+    "pcc_reference": "",
+    "pcc_mandatory": false
+  }
+},
+{
+  "model": "product_classifier.productclasscontent",
+  "pk": 3491,
+  "fields": {
+    "pcc_class": 100,
+    "pcc_category": 5,
+    "pcc_name": "mag_auto_z",
+    "pcc_display_name": "Mag auto z",
+    "pcc_ucd": "phot.mag;meta.main;em.opt.z",
+    "pcc_unit": "",
+    "pcc_reference": "",
+    "pcc_mandatory": false
+  }
+},
+{
+  "model": "product_classifier.productclasscontent",
+  "pk": 3492,
+  "fields": {
+    "pcc_class": 100,
+    "pcc_category": 5,
+    "pcc_name": "mag_auto_y",
+    "pcc_display_name": "Mag auto Y",
+    "pcc_ucd": "phot.mag;meta.main;em.opt.Y",
+    "pcc_unit": "",
+    "pcc_reference": "",
+    "pcc_mandatory": false
+  }
+},
+{
+  "model": "product_classifier.productclasscontent",
+  "pk": 3493,
+  "fields": {
+    "pcc_class": 100,
+    "pcc_category": 5,
+    "pcc_name": "photo_z",
+    "pcc_display_name": "Photo-z",
+    "pcc_ucd": "src.redshift.phot",
+    "pcc_unit": "",
+    "pcc_reference": "",
+    "pcc_mandatory": false
+  }
 }
 ]

@@ -34,9 +34,14 @@ class DesCutoutService:
             params = settings.DES_CUTOUT_SERVICE
             # self.logger.debug(params)
 
+            self.api_version = params["API_VERSION"]
+
             self.host = params["HOST"]
             self.user = params["USER"]
             self.password = params["PASSWORD"]
+            self.token = params["TOKEN"]
+
+            self.email = params["EMAIL"]
 
             self.check_jobs_task_delay = params["CUTOUT_TASK_CHECK_JOBS_DELAY"]
 
@@ -47,16 +52,22 @@ class DesCutoutService:
             # Limit de Objetos que podem ser enviados ao descut
             self.cutout_max_objects = params["MAX_OBJECTS"]
 
+            # Deletar os jobs no DESCUT depois de baixar as imagens
+            self.delete_job_after_download = params["DELETE_JOB_AFTER_DOWNLOAD"]
+
+            self.host_token = None
+            if params["API_GET_TOKEN"] is not None:
+                self.host_token = self.host + params["API_GET_TOKEN"]
+
+            self.host_create_jobs = self.host + params["API_CREATE_JOBS"]
+
+            self.host_check_jobs = self.host + params["API_CHECK_JOBS"]
+
+
         except Exception as e:
             msg = ("Error in the Cutouts parameters in the settings. "
                    "Check the DES_CUTOUT_SERVICE section if it is configured correctly. ERROR: %s" % e)
             raise Exception(msg)
-
-        self.host_token = self.host + "/api/token/"
-        self.host_jobs = self.host + "/api/jobs/"
-
-        self.logger.debug("host_token: %s" % self.host_token)
-        self.logger.debug("host_jobs: %s" % self.host_jobs)
 
         # Tipos de arquivos recebidos que nao sao imagens
         self.not_images = ["log", "csv", "stifflog"]
@@ -67,12 +78,9 @@ class DesCutoutService:
         # fazer os request sem verificar o certificado SSL / HTTPS
         self.verify_ssl = False
 
-
-        # TODO ter uma lista com as bandas para usar na associacao
-        # self.filters = dict({})
-        # filters = Filter.objects.all()
-        # for f in filters:
-        #     self.filter.update({f.filter:f.pk})
+        self.logger.debug("host_token: %s" % self.host_token)
+        self.logger.debug("host_create_jobs: %s" % self.host_create_jobs)
+        self.logger.debug("host_check_jobs: %s" % self.host_check_jobs)
 
     def generate_token(self):
         """
@@ -81,39 +89,50 @@ class DesCutoutService:
         """
         self.logger.info("Generating a new Authentication token")
 
-        # Create Authetication Token
-        req = requests.post(
-            self.host_token,
-            data={
-                "username": self.user,
-                "password": self.password
-            },
-            verify=self.verify_ssl)
+        if self.host_token is not None:
 
-        try:
-            self.logger.debug(req.text)
+            # Create Authetication Token
+            req = requests.post(
+                self.host_token,
+                data={
+                    "username": self.user,
+                    "password": self.password
+                },
+                verify=self.verify_ssl)
 
-            return req.json()["token"]
-        except Exception as e:
-            text = req.json()
-            msg = ("Token generation error %s - %s" % (req.status_code, text["message"]))
+            try:
+                self.logger.debug(req.text)
 
-            self.logger.critical(msg)
-        raise Exception(msg)
+                return req.json()["token"]
+            except Exception as e:
+                text = req.json()
+                msg = ("Token generation error %s - %s" % (req.status_code, text["message"]))
+
+                self.logger.critical(msg)
+
+            raise Exception(msg)
+
+        else:
+            return self.token
 
     def check_token_status(self, token):
         """
         Check Token status: Check the expiration time for a token
         Returns: bool()
         """
-        # print("Check the expiration time for a token")
-        req = requests.get(
-            self.host_token + "?token=" + token, verify=self.verify_ssl)
+        self.logger.info("Check the expiration time for a token")
 
-        if req.json()["status"].lower() == "ok":
-            return True
+        if self.host_token is not None:
+
+            req = requests.get(
+                self.host_token + "?token=" + token, verify=self.verify_ssl)
+
+            if req.json()["status"].lower() == "ok":
+                return True
+            else:
+                return False
         else:
-            return False
+            return True
 
     def create_job(self, token, data):
         """
@@ -130,18 +149,20 @@ class DesCutoutService:
                 "tag"          : "Y3A1_COADD",      # optional for "coadd" jobs (default: Y3A1_COADD, see Coadd Help page for more options)
                 "band"         : "g,r,i",           # optional for "single" epochs jobs (default: all bands)
                 "no_blacklist" : "false",           # optional for "single" epochs jobs (default: "false"). return or not blacklisted exposures
-                "list_only"    : "false",           # optional (default : "false") "true": will not generate pngs (faster)
+                "list_only"    : "false",           # required for DR1 public version (default : "false") "true": will not generate pngs (faster)
                 "email"        : "myemail@mmm.com"  # optional will send email when job is finished
+                "username"     : "Username"         # Required for DR1 public version
+
             }
         """
         self.logger.info("Sending request to create a new job in the Service")
 
         data["token"] = token
 
-        self.logger.debug("Host Jobs: %s" % self.host_jobs)
+        self.logger.debug("Host Jobs: %s" % self.host_create_jobs)
 
         req = requests.post(
-            self.host_jobs,
+            self.host_create_jobs,
             data=data,
             verify=self.verify_ssl
         )
@@ -150,15 +171,19 @@ class DesCutoutService:
 
         try:
             if req.json()["status"] == "ok":
-                self.logger.debug("Req: %s" % req.json())
+                self.logger.debug(req.text)
 
                 return req.json()
 
             else:
+                self.logger.warning(req.text)
                 msg = ("Create Job Error: " % req.json()["message"])
                 raise Exception(msg)
 
         except Exception as e:
+
+            self.logger.error(req.text)
+
             msg = ("Request Create Job error %s - %s" % (req.status_code, req.text))
 
             raise Exception(msg)
@@ -172,33 +197,72 @@ class DesCutoutService:
             None: quando o job ainda nao terminou
             False: quando o job retorna com status failure
         """
-        req = requests.get(
-            self.host_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
 
         self.logger.info("Get Results for job %s" % jobid)
 
-        self.logger.debug(req.text)
+        # TODO Diferenca entre Colaboracao e DR1 Public talvez transformar em metodos diferentes.
+        if self.api_version == 1:
 
-        data = req.json()
+            req = requests.get(
+                self.host_check_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
 
-        if data["status"] != "error" and data["job_status"] == "SUCCESS":
+            self.logger.debug(req.text)
 
-            if "links" in data and data["links"] is not None:
-                self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
+            data = req.json()
 
-                return data["links"]
-            else:
-                # Nao retornou a lista de resultado
-                self.logger.warning("Descut returned success, but not the list of download links.")
+            if data["status"] != "error" and data["job_status"] == "SUCCESS":
+
+                if "links" in data and data["links"] is not None:
+                    self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
+
+                    return data["links"]
+                else:
+                    # Nao retornou a lista de resultado
+                    self.logger.warning("Descut returned success, but not the list of download links.")
+                    return None
+
+            elif data["status"] != "error" and data["job_status"] == "PENDING":
+                # O job ainda nao terminou no servidor
+                self.logger.info("This job %s is still running" % jobid)
                 return None
 
-        elif data["status"] != "error" and data["job_status"] == "PENDING":
-            # O job ainda nao terminou no servidor
-            self.logger.info("This job %s is still running" % jobid)
-            return None
+            else:
+                return False
 
         else:
-            return False
+
+            data = {
+                "token": token,
+                "jobid": jobid
+            }
+            req = requests.post(
+                self.host_check_jobs,
+                data=data,
+                verify=self.verify_ssl,
+            )
+
+            self.logger.debug(req.text)
+
+            data = req.json()
+
+            if data["status"] != "error" and data["job_status"] == "SUCCESS":
+
+                if "files" in data and data["files"] is not None:
+                    self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
+
+                    return data["files"]
+                else:
+                    # Nao retornou a lista de resultado
+                    self.logger.warning("Descut returned success, but not the list of download links.")
+                    return None
+
+            elif data["status"] != "error" and data["job_status"] == "PENDING":
+                # O job ainda nao terminou no servidor
+                self.logger.info("This job %s is still running" % jobid)
+                return None
+
+            else:
+                return False
 
     def delete_job_results(self, token, jobid):
         """
@@ -206,18 +270,22 @@ class DesCutoutService:
 
         """
         self.logger.info("Deleting job %s in DesCutout service" % jobid)
-        req = requests.delete(
-            self.host_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
 
-        data = req.json()
-        self.logger.debug(data)
+        if self.api_version == 1 and self.delete_job_after_download is True:
+            req = requests.delete(
+                self.host_check_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
 
-        if data["status"] != "error" and data["status"] == "ok":
-            self.logger.info("Deleted job!")
+            data = req.json()
+            self.logger.debug(data)
 
-            return True
+            if data["status"] != "error" and data["status"] == "ok":
+                self.logger.info("Deleted job!")
+
+                return True
+            else:
+                return False
         else:
-            return False
+            return True
 
     def parse_result_url(self, url):
         """
@@ -292,12 +360,23 @@ class DesCutoutService:
             # Comment, este comentario e visivel so na interface do descut
             comment = "Science Server Cutout Job Id: %s Product ID: %s" % (job.pk, product_id)
 
-            data = {
+            data = dict({
                 "job_type": job.cjb_job_type,
                 "ra": objects.get("ra"),
                 "dec": objects.get("dec"),
-                "comment": comment
-            }
+                "comment": comment,
+            })
+
+            # Params Obrigatorios para DR1 public version
+            if self.api_version == 2:
+                data.update({
+                    "username": self.user,
+                    "password": self.password,
+                    "list_only": "false",
+                    "email": self.email,
+                    "jobname": comment
+                })
+
             if job.cjb_xsize:
                 data.update({"xsize": job.cjb_xsize})
             if job.cjb_ysize:
@@ -321,13 +400,19 @@ class DesCutoutService:
             try:
                 result = self.create_job(token, data)
 
-                self.logger.info(result["message"])
-
                 self.logger.info("Updating CutoutJob to keep job id returned")
 
-                self.logger.debug("Job ID: %s" % result["job"])
+                # Diferencas entre DR1 e Colaboracao
+                jobid = None
+                try:
+                    jobid = result["job"]
 
-                job.cjb_job_id = str(result["job"])
+                except:
+                    jobid = result["jobid"]
+
+                self.logger.debug("Job ID: %s" % jobid)
+
+                job.cjb_job_id = str(jobid)
                 job.save()
 
                 # Changing the CutoutJob Status for Running
@@ -381,6 +466,7 @@ class DesCutoutService:
             pass
 
     def delete_job(self, cutoutjob):
+
         if cutoutjob.cjb_job_id is not None:
             token = self.generate_token()
 
@@ -676,7 +762,6 @@ class DesCutoutService:
         if object_dec is not None:
             object_dec = float('%.5f' % float(object_dec))
 
-
         try:
 
             cutout, created = Cutout.objects.update_or_create(
@@ -705,18 +790,13 @@ class DesCutoutService:
             # Changing the CutoutJob Status for Error
             self.change_cutoutjob_status(cutoutjob, "er")
 
-            raise(e)
+            raise (e)
+
 
 class CutoutJobNotify:
     def __init__(self):
         # Get an instance of a logger
         self.logger = logging.getLogger("descutoutservice")
-
-    def send_email(self, subject, body, to):
-
-        self.logger.info("Sending mail notification.")
-
-        Notify().send_email(subject, body, to)
 
     def create_email_message(self, cutoutjob):
 
@@ -735,12 +815,18 @@ class CutoutJobNotify:
                 subject = "Mosaic Failed"
                 message = self.generate_failure_email(cutoutjob)
 
+                # Em caso de falha abre um ticket
+                self.generate_failure_ticket(cutoutjob)
+
             elif cutoutjob.cjb_status == 'je':
                 subject = "Mosaic Failed"
                 message = self.generate_failure_email(cutoutjob)
 
+                # Em caso de falha abre um ticket
+                self.generate_failure_ticket(cutoutjob)
+
             if message:
-                self.send_email(subject, message, to_email)
+                Notify().send_email(subject, message, to_email)
 
         else:
             self.logger.info("It was not possible to notify the user, for not having the email registered.")
@@ -822,6 +908,24 @@ class CutoutJobNotify:
             })
 
             return render_to_string("cutout_notification_error.html", context)
+
+        except Exception as e:
+            self.logger.error(e)
+
+    def generate_failure_ticket(self, cutoutjob):
+        try:
+
+            subject = "%s Mosaic Failed" % cutoutjob.pk
+
+            message = ("email: %s\nusername: %s\ncutoutjob: %s - %s\ntarget: %s - %s" % (cutoutjob.owner.username,
+                                                                                      cutoutjob.owner.email,
+                                                                                      cutoutjob.pk,
+                                                                                      cutoutjob.cjb_display_name,
+                                                                                      cutoutjob.cjb_product.pk,
+                                                                                      cutoutjob.cjb_product.prd_display_name))
+
+
+            Notify().send_email_failure_helpdesk(subject, message)
 
         except Exception as e:
             self.logger.error(e)

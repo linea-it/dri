@@ -1,4 +1,4 @@
-from .models import ProductContentAssociation
+from .models import ProductContentAssociation, ProductContent
 from .serializers import AssociationSerializer
 
 
@@ -19,6 +19,11 @@ class Association:
         for associate in associations:
             properties.append(associate.get('pcn_column_name').lower())
 
+        contents = ProductContent.objects.filter(pcn_product_id=product_id)
+        for pcontent in contents:
+            if pcontent.pcn_ucd is not None and pcontent.pcn_column_name is not None and pcontent.pcn_column_name not in properties:
+                properties.append(pcontent.pcn_column_name.lower())
+
         return properties
 
     def get_associations_by_product_id(self, product_id):
@@ -33,17 +38,25 @@ class Association:
             <ucd>:<product_content>...
         })
         """
-        # colunas associadas ao produto
+        properties = dict()
+        contents = ProductContent.objects.filter(pcn_product_id=product_id)
+        for pcontent in contents:
+            if pcontent.pcn_ucd is not None and pcontent.pcn_column_name is not None:
+                properties.update({
+                    pcontent.pcn_ucd: pcontent.pcn_column_name.lower()
+                })
+
+        # TODO Modelo antigo pode ser removido futuramente.
+        # colunas associadas ao produto utilizando o metodo antigo de associacao por classe
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
         serializer = AssociationSerializer(queryset, many=True)
         associations = serializer.data
-        properties = dict()
-
         for associate in associations:
             if associate.get('pcc_ucd'):
                 properties.update({
                     associate.get('pcc_ucd'): associate.get('pcn_column_name').lower()
                 })
+
 
         return properties
 
@@ -61,12 +74,23 @@ class Association:
             })
         ])
         """
-        # colunas associadas ao produto
+
+        properties = list()
+
+        contents = ProductContent.objects.filter(pcn_product_id=product_id)
+        for pcontent in contents:
+            if pcontent.pcn_ucd is not None and pcontent.pcn_column_name is not None:
+                properties.append(dict({
+                    "ucd": pcontent.pcn_ucd,
+                    "property": pcontent.pcn_column_name.lower()
+                }))
+
+
+        # TODO Modelo antigo pode ser removido futuramente.
+        # colunas associadas ao produto utilizando o metodo antigo de associacao por classe
         queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
         serializer = AssociationSerializer(queryset, many=True)
         associations = serializer.data
-
-        properties = list()
 
         for associate in associations:
             if associate.get('pcc_ucd'):

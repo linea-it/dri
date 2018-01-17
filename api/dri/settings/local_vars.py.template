@@ -71,6 +71,8 @@ EMAIL_ADMIN = 'dri@linea.gov.br'
 
 # DES Cutout Service
 DES_CUTOUT_SERVICE = {
+    # 1 para a versao do Descut Colaboracao 2 para versao Descut Public
+    'API_VERSION': 1,
     'HOST': 'https://descut.cosmology.illinois.edu',
     'USER': '<User required for cutout>',
     'PASSWORD': '<password required for cutout>',
@@ -80,12 +82,24 @@ DES_CUTOUT_SERVICE = {
     # Url base que sera usada para exibir as imagens geradas esse parametro deve ser mapeado no dri.conf no apache
     'CUTOUT_SOURCE': '/data',
     # Tempo de delay para a task check_jobs em minutos
-    'CUTOUT_TASK_CHECK_JOBS_DELAY': 1
+    'CUTOUT_TASK_CHECK_JOBS_DELAY': 1,
     # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos e None para
     # desabilitar a opcao na interface
     'AVAILABLE_RELEASES': None,
     # Quantidade limit de objetos a ser passada para o descutout
-    'MAX_OBJECTS': 300
+    'MAX_OBJECTS': 300,
+    # Token de authenticacao utilizado apenas para o DescutPublico para colaboracao usar None
+    'TOKEN': None,
+    # Esta opcao deve ser False para o DescutPublico e True para Colaboracao
+    'DELETE_JOB_AFTER_DOWNLOAD': True,
+    # Url para gerar o token, para o publico usar None.
+    'API_GET_TOKEN': '/api/token/',
+    # Url para a API reponsavel por criar os jobs
+    'API_CREATE_JOBS': '/api/jobs/',
+    # Url para a API responsavel por retornar o status dos jobs
+    'API_CHECK_JOBS': '/api/jobs/',
+    # No DescutPublico e necessario passar um email para onde seram enviadas as notificacoes do descut.
+    'EMAIL': 'glauber.costa@linea.gov.br'
 }
 
 # Tempo limite em horas para que um produto fique disponivel, apos este tempo
@@ -159,6 +173,14 @@ LOGGING = {
 #            'filename': os.path.join(LOG_DIR, 'ncsa_authentication.log'),
 #            'formatter': 'simple',
 #        },
+#        'garbage_colector': {
+#            'level': 'DEBUG',
+#            'class': 'logging.handlers.RotatingFileHandler',
+#            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+#            'backupCount': 5,
+#            'filename': os.path.join(LOG_DIR, 'garbage_colector.log'),
+#            'formatter': 'standard',
+#        },
 #     },
 #     'loggers': {
 #         'django': {
@@ -188,6 +210,11 @@ LOGGING = {
 #         },
 #        'ncsa_authentication': {
 #            'handlers': ['ncsa_authentication'],
+#            'level': 'DEBUG',
+#            'propagate': True,
+#        },
+#        'garbage_colector': {
+#            'handlers': ['garbage_colector'],
 #            'level': 'DEBUG',
 #            'propagate': True,
 #        },

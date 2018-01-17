@@ -217,6 +217,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
             data.sql_sentence = formData.sql_sentence;
             data.query_name = formData.name || 'Unnamed';
             
+            Api.log('run_job');
             Api.startJob({
                 cache: false,
                 params: data,
@@ -274,6 +275,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var refs = me.getReferences();
         var query = me.getActiveQuery();
         
+        Api.log('check_query');
         Api.validate({
             cache: false,
             params:{
@@ -392,6 +394,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
             case 'rename':
                 Ext.MessageBox.prompt('Rename', 'Name:', function(button, value){
                     if (value != table && value){
+                        Api.log('rename_table');
                         Api.renameTable({
                             cache: false,
                             params: {
@@ -442,6 +445,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 break;
             
             case 'target':
+                Api.log('view');
                 window.open(location.href.split('/userquery')[0] + '/target/#cv/' + item.record.get('data_product_id'));
                 break;
         }
@@ -636,6 +640,8 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var refs = me.getReferences();
         var c, i, length = refs.grdPreview.headerCt.items.length;
 
+        Api.log('clear');
+
         for (i=0; i<length; i++){
             c = refs.grdPreview.headerCt.getComponent(0);
             refs.grdPreview.headerCt.remove(c);
@@ -684,6 +690,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         });
 
         function doDelete(){
+            Api.log('delete_query');
             Api.remove({
                 cache: false,
                 params: {
@@ -721,6 +728,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         //}
         dialog.open({schema:schema, table_name:table_name}, function(columns) {
             if (columns.length>0){
+                Api.log('download_table');
                 Api.downloadTable({
                     params: {
                         table_id: table_id,
@@ -747,6 +755,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     dropTable: function(table_id, next){
         var me = this;
         
+        Api.log('delete_table');
         Api.dropTable({
             cache: false,
             params: {
@@ -1217,6 +1226,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         // TODO: no banco de dados não deve ser obrigatório esse campo
         data.table_name = data.name.toLowerCase().replace(/\ /g, '');
 
+        Api.log('save_query');
         Api.save({
             cache: false,
             params: data,
@@ -1262,6 +1272,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var me = this;
         
         // executa o sql no servidor
+        Api.log('preview_table');
         Api.preview({
             cache: false,
             params:{
@@ -1358,7 +1369,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     setActiveQuery: function(query){
         var me = this;
         var refs = me.getReferences();
-        //var activeRelease;
+        
+        if (query.id){
+            Api.log( query.is_sample ? 'open_sample' : 'open_query');
+        }
         
         Api.sequence([
             // busca dados da release

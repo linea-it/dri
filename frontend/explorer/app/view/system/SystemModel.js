@@ -25,7 +25,13 @@ Ext.define('Explorer.view.system.SystemModel', {
         overlayMembers: null,
         position: null,
         have_members: false,
-        selected_member: null
+        selected_member: null,
+        visibleOverlayVacs: true,
+        overlayVac: null,
+        vacRadius: 1,
+        vacOverlayColor: '1B81BC',
+        vacOverlayPointSize: 1.2,
+        vacOverlaypointType: 'square'
     },
 
     links: {
@@ -35,6 +41,10 @@ Ext.define('Explorer.view.system.SystemModel', {
         },
         currentDataset: {
             type: 'common.model.Dataset',
+            create: true
+        },
+        currentVacProduct: {
+            type: 'Explorer.model.Product',
             create: true
         }
     },
@@ -89,6 +99,17 @@ Ext.define('Explorer.view.system.SystemModel', {
         tiles: {
             type: 'footprints',
             pageSize: 0
+        },
+
+        vacProducts: {
+            type: 'products'
+        },
+        vacProductDisplayContents: {
+            type: 'product-display-contents'
+        },
+        vacObjects: {
+            type: 'objects',
+            pageSize: 2000
         },
     }
 });

@@ -18,7 +18,7 @@ Ext.define('Explorer.view.system.Visiomatic', {
     mapOptions: {
         fullscreenControl: true,
         zoom: 1,
-        enableLineaOverlay: false
+        enableLineaOverlay: true
     },
 
     initComponent: function () {

@@ -8,6 +8,10 @@ Ext.define('UserQuery.Application', {
 
     name: 'UserQuery',
 
+    requires: [
+        'common.statistics.Events'
+    ],
+
     quickTips: false,
     platformConfig: {
         desktop: {
@@ -18,6 +22,10 @@ Ext.define('UserQuery.Application', {
     stores: [
         // TODO: add global / shared stores here
     ],
+
+    init:function () {
+        Ext.create('common.statistics.Events').init();
+    },
 
     launch: function () {
         // TODO - Launch the application
