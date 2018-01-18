@@ -270,7 +270,7 @@ Ext.define('UserQuery.view.main.Main', {
                                             '-',
                                             {text: 'View',  itemId:'target',  handler:'tvwMyTables_onContextMenuClick',
                                                 config_item: function(item, record){ 
-                                                    item.disabled = record.get('data_product_id') ? false : true;
+                                                    item.disabled = record.product_id ? false : true;
                                                 }
                                             }
                                         ],
@@ -335,6 +335,7 @@ Ext.define('UserQuery.view.main.Main', {
                                         reference: 'tvwMyQueries',
                                         rootVisible: false,
                                         listeners: {
+                                            beforeselect: 'tvwMyQueries_onBeforeSelect',
                                             select: 'tvwMyQueries_onSelect',
                                             itemcontextmenu: 'treeView_onContextMenu'
                                         },
