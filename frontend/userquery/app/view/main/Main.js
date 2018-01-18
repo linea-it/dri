@@ -79,16 +79,16 @@ Ext.define('UserQuery.view.main.Main', {
                 // },
                 // '-',
                 {
-                    xtype: 'splitbutton',
+                    xtype: 'button', // 'splitbutton',
                     tooltip: 'Save Query',
                     disabled: true,
                     reference: 'btnSave',
                     iconCls: 'x-fa fa-floppy-o',
                     handler: 'btnSave_onClick',
-                    menu: {xtype: 'menu', plain: true, items: {
-                        text: 'Save As',
-                        handler: 'mnuSaveAs_onClick'
-                    }}
+                    // menu: {xtype: 'menu', plain: true, items: {
+                    //     text: 'Save As',
+                    //     handler: 'mnuSaveAs_onClick'
+                    // }}
                 },
                 {
                     xtype: 'button',
