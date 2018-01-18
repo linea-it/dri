@@ -459,7 +459,7 @@ Ext.define('Target.view.preview.PreviewController', {
             visiomatic = me.lookupReference('visiomatic'),
             lmembers;
 
-        lmembers = visiomatic.overlayCatalog('catalog_teste', members);
+        lmembers = visiomatic.overlayCatalog('System Members', members);
 
         vm.set('overlayMembers', lmembers);
     },

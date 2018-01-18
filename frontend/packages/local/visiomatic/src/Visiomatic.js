@@ -689,7 +689,7 @@ Ext.define('visiomatic.Visiomatic', {
             me = this,
             map = me.getMap();
 
-        this.cmpMousePosition.children[0].innerHTML = 'Mouse RA, Dec (' + (pos) + ')';
+        this.cmpMousePosition.children[0].innerHTML = 'Mouse RA, Dec: ' + (pos);
 
         me.currentPosition = {
             radec: [
