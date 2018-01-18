@@ -69,7 +69,6 @@ class DesCutoutService:
                    "Check the DES_CUTOUT_SERVICE section if it is configured correctly. ERROR: %s" % e)
             raise Exception(msg)
 
-
         # Tipos de arquivos recebidos que nao sao imagens
         self.not_images = ["log", "csv", "stifflog"]
 
@@ -110,6 +109,7 @@ class DesCutoutService:
                 msg = ("Token generation error %s - %s" % (req.status_code, text["message"]))
 
                 self.logger.critical(msg)
+
             raise Exception(msg)
 
         else:
@@ -240,7 +240,6 @@ class DesCutoutService:
                 data=data,
                 verify=self.verify_ssl,
             )
-
 
             self.logger.debug(req.text)
 
@@ -412,7 +411,6 @@ class DesCutoutService:
                     jobid = result["jobid"]
 
                 self.logger.debug("Job ID: %s" % jobid)
-
 
                 job.cjb_job_id = str(jobid)
                 job.save()
@@ -800,12 +798,6 @@ class CutoutJobNotify:
         # Get an instance of a logger
         self.logger = logging.getLogger("descutoutservice")
 
-    def send_email(self, subject, body, to):
-
-        self.logger.info("Sending mail notification.")
-
-        Notify().send_email(subject, body, to)
-
     def create_email_message(self, cutoutjob):
 
         if cutoutjob.owner.email:
@@ -823,12 +815,18 @@ class CutoutJobNotify:
                 subject = "Mosaic Failed"
                 message = self.generate_failure_email(cutoutjob)
 
+                # Em caso de falha abre um ticket
+                self.generate_failure_ticket(cutoutjob)
+
             elif cutoutjob.cjb_status == 'je':
                 subject = "Mosaic Failed"
                 message = self.generate_failure_email(cutoutjob)
 
+                # Em caso de falha abre um ticket
+                self.generate_failure_ticket(cutoutjob)
+
             if message:
-                self.send_email(subject, message, to_email)
+                Notify().send_email(subject, message, to_email)
 
         else:
             self.logger.info("It was not possible to notify the user, for not having the email registered.")
@@ -910,6 +908,24 @@ class CutoutJobNotify:
             })
 
             return render_to_string("cutout_notification_error.html", context)
+
+        except Exception as e:
+            self.logger.error(e)
+
+    def generate_failure_ticket(self, cutoutjob):
+        try:
+
+            subject = "%s Mosaic Failed" % cutoutjob.pk
+
+            message = ("email: %s\nusername: %s\ncutoutjob: %s - %s\ntarget: %s - %s" % (cutoutjob.owner.username,
+                                                                                      cutoutjob.owner.email,
+                                                                                      cutoutjob.pk,
+                                                                                      cutoutjob.cjb_display_name,
+                                                                                      cutoutjob.cjb_product.pk,
+                                                                                      cutoutjob.cjb_product.prd_display_name))
+
+
+            Notify().send_email_failure_helpdesk(subject, message)
 
         except Exception as e:
             self.logger.error(e)
