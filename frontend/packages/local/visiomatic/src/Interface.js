@@ -44,6 +44,26 @@ Ext.define('visiomatic.Interface', {
         return tools;
     },
 
+    makeContextMenu: function () {
+        var me = this;
+        var menuItens = [];
+        
+        if (me.getEnableComments()) {
+            menuItens.push(
+                {
+                    text: 'Comment Position', 
+                    handler(event){
+                        me.onContextMenuPositionClick(event, this);
+                    }
+                }
+            );
+        }
+
+        menuItens = menuItens.concat( me.getContextMenuItens() );
+
+        return new Ext.menu.Menu({items: menuItens});
+    },
+
     makeMousePosition: function(){
         var map = this.getMap();
 
@@ -56,4 +76,3 @@ Ext.define('visiomatic.Interface', {
         });
     }
 });
-//var iii=0
