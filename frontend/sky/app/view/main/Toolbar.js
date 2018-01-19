@@ -76,6 +76,7 @@ Ext.define('Sky.view.main.Toolbar', {
     },
 
     fireEventGotoPosition: function(value){
+        this.lookup('txtCoordinateSearch').reset();
         this.fireEvent('dosearch', value);
     },
 
