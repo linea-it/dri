@@ -46,7 +46,7 @@ Ext.define('Sky.view.main.MainController', {
         me.setActivePanel(sky);
 
         ctrl = sky.getController();
-        ctrl.gotoPosition(value);
+        ctrl.gotoPosition(value, 0.6);
 
     },
 
@@ -91,6 +91,7 @@ Ext.define('Sky.view.main.MainController', {
     },
 
     setActivePanel: function (panel) {
+        // console.log("setActivePanel(%o)", panel)
         var me = this,
             refs = me.getReferences(),
             mainCard = refs.mainCardPanel,
@@ -108,21 +109,7 @@ Ext.define('Sky.view.main.MainController', {
             view = existingItem;
             view.updatePanel(arguments);
             mainLayout.setActiveItem(view);
-            if (view.refs && view.refs.aladin){
-                //view.refs.aladin.onActive();
-            }
         }
-
-        if (view != this.activePanel){
-            view.getController().onActivate({
-                action: me.aladinDblClick  ? 'dblclick' : '',
-                showPin: Boolean(this.activePanel && this.activePanel.showPin)
-            });
-            me.aladinDblClick = false;
-        }
-
-        view.showPin = false;
-        this.activePanel = view;
     },
 
     //exibindo a home

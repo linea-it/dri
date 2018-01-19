@@ -28,7 +28,8 @@ Ext.define('Sky.view.dataset.Dataset', {
 
         // Available datasets (store)
         datasets: null,
-        currentDataset: null
+        currentDataset: null,
+        pinned: false
     },
 
     bind: {
@@ -222,7 +223,12 @@ Ext.define('Sky.view.dataset.Dataset', {
         // Se o parametro fov for == -1 centraliza a tile
         if (fov == -1) {
             me.setFov(me.getDefaultFov());
+            me.setPinned(false);
+        } else if (fov == 0) {
+            // Pinned
+            me.setFov(0.05);
 
+            me.setPinned(true);
         } else {
 
             fov = parseFloat(fov.replace(',', '.'));
@@ -230,6 +236,7 @@ Ext.define('Sky.view.dataset.Dataset', {
                 fov = me.getDefaultMinFov();
             }
             me.setFov(fov);
+            me.setPinned(false);            
         }
 
         coordinate = radec.ra + ', ' + radec.dec;
