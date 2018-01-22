@@ -6,10 +6,12 @@ Ext.define('visiomatic.Visiomatic', {
         'visiomatic.VisiomaticController',
         'visiomatic.catalog.CatalogOverlayWindow',
         'visiomatic.download.DescutDownloadWindow',
+        'common.store.CommentsPosition'
     ],
 
     mixins: {
-        interface: 'visiomatic.Interface'
+        interface: 'visiomatic.Interface',
+        comments: 'visiomatic.Comments'
     },
 
     xtype: 'visiomatic',
@@ -143,7 +145,9 @@ Ext.define('visiomatic.Visiomatic', {
         contextMenuItens: [],
 
         enableComments: true,
-
+        showComments: true,
+        // Layers dos comentarios.
+        lComments: null,
         ////// buttons //////
 
         // Get Link
@@ -164,8 +168,6 @@ Ext.define('visiomatic.Visiomatic', {
 
         showCrosshair: false,
         mlocate:'',
-
-        showComments: false,
     },
 
     _winCatalogOverlay: null,
@@ -403,6 +405,9 @@ Ext.define('visiomatic.Visiomatic', {
         var me = this;
 
         me.currentDataset = currentDataset;
+
+        // Carregar os commentarios toda vez que o dataset for alterado.
+        me.loadComments();
 
     },
 
@@ -891,7 +896,7 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
-    overlayCatalog: function (title, storeMembers, options) {
+    overlayCatalog: function (title, store, options) {
         var me = this,
             l = me.libL,
             map = me.getMap(),
@@ -907,7 +912,7 @@ Ext.define('visiomatic.Visiomatic', {
         };
 
         // transfere para collection.features somente os objetos que estão dentro da imagem (tile)
-        storeMembers.each(function (record) {
+        store.each(function (record) {
 
             // Checar se objeto esta dentro dos limites da tile
             if (me.isInsideTile(record.get('_meta_ra'), record.get('_meta_dec'))) {
@@ -1027,6 +1032,12 @@ Ext.define('visiomatic.Visiomatic', {
                     triangle = new l.LayerGroup([bl, rl, ll]);
 
                     return triangle;
+
+                } else if (pathOptions.pointType === 'icon') {
+                    // TODO implementar a opcao de utilizar icone como marker.
+
+                    // Criar um Icone. utilizar o parametro
+                    // pathOptions.pointIcon para o icone.
                 }
                 else {
                     // Por default marca com um circulo
@@ -1200,31 +1211,6 @@ Ext.define('visiomatic.Visiomatic', {
                 map.removeLayer(layer);
             }
         }
-    },
-
-    showHideComments: function (layer, state) {
-        // var me = this, l, q,
-        //     map = me.getMap();
-        //
-        // map.eachLayer(function(l){
-        //     //comentário por posição
-        //     if (l.targetPosition){
-        //         l.getElement().style.display = state ? '' : 'none';
-        //     }
-        // });
-        //
-        // // se comentário de objeto
-        // if (layer !== null) {
-        //     for (i in layer._layers) {
-        //         l = layer._layers[i];
-        //         q = l.feature.properties._meta_comments;
-        //
-        //         //se tem comentário(s), oculta ou exibe o ícone
-        //         if (q>0){
-        //             l.commentMaker._icon.style.display = state ? '' : 'none';
-        //         }
-        //     }
-        // }
     },
 
     onLayerContextMenu: function(event){

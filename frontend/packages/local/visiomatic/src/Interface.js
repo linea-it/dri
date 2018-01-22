@@ -166,6 +166,5 @@ Ext.define('visiomatic.Interface', {
         var me = this;
 
         me.initCrop();
-    }
-
+    },
 });
