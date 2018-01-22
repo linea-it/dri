@@ -9,14 +9,14 @@ Ext.define('Target.view.preview.Visiomatic', {
 
     enableTools: false,
     enableMiniMap: true,
-    enableContextMenu: true,
-    enableComments: true,
-    contextMenuItens: [
+    enableLink: false,
+    // Exemplo para adicionar mais items ao menu de contexto.
+    // contextMenuItens: [
         // nesse caso o onCustomMenuItemClick deve está no Target.view.main.MainController
         // '-',
         // {
-        //     text: 'Custom menu item', 
+        //     text: 'Custom menu item',
         //     handler: 'onCustomMenuItemClick'
         // }
-    ]
+    // ]
 });

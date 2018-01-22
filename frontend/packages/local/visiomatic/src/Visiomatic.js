@@ -139,10 +139,10 @@ Ext.define('visiomatic.Visiomatic', {
         auxTools: [],
 
         // menu de contexto
-        enableContextMenu: false,
+        enableContextMenu: true,
         contextMenuItens: [],
 
-        enableComments: false,
+        enableComments: true,
 
         ////// buttons //////
 
@@ -150,6 +150,9 @@ Ext.define('visiomatic.Visiomatic', {
         enableLink: true,
         // Shift Visiomatic/Aladin
         enableShift: true,
+
+        // Crop
+        enableCrop: true,
 
         ready: false,
 
@@ -206,10 +209,6 @@ Ext.define('visiomatic.Visiomatic', {
 
         }
 
-        if (me.getEnableContextMenu()){
-            me.contextMenu = me.makeContextMenu();
-        }
-
         Ext.apply(this, {
             items: [
                 cmpVisiomatic
@@ -249,9 +248,8 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('overlaycatalog', me.showCatalogOverlayWindow, me);
         map.on('mouseup', me.savePreferences, me);
         map.on('keypress', me.savePreferences, me);
-        if (me.getEnableContextMenu()){
-            map.on('contextmenu', me.onContextMenuClick, me);
-        }
+        map.on('contextmenu', me.onContextMenuClick, me);
+
 
         // instancia de L.map
         me.setMap(map);
@@ -537,42 +535,21 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     onContextMenuClick: function (event) {
-        var me = this;
-        var map = me.getMap();
-        var target = event.target;
-        var xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
+        var me = this,
+            map = me.getMap(),
+            target = event.target,
+            xy = {
+                x:event.originalEvent.clientX,
+                y:event.originalEvent.clientY
+            },
+            contextMenu;
 
-        // target.latlng = event.latlng;
-        // me.contextMenuImage.target = target;
-        me.contextMenu.showAt(xy);
-    },
+        if (me.getEnableContextMenu()) {
 
-    onContextMenuPositionClick(event){
-        var comment = Ext.create('Ext.window.Window', {
-            title: 'Comments',
-            iconCls: 'x-fa fa-comments',
-            layout: 'fit',
-            closeAction: 'destroy',
-            constrainHeader:true,
-            width: 500,
-            height: 300,
-            autoShow:true,
-            onEsc: Ext.emptyFn,
-            items: [
-                {
-                    xtype: 'comments-position',
-                    listeners: {
-                        scope: this,
-                        // changecomments: 'onChangeComments'
-                    }
-                }
-            ]
-        });
+            contextMenu = me.makeContextMenu();
 
-        // comment
-        //     .down('comments-position')
-        //     .getController()
-        //     .loadComments(event, dataset);///*dec*/latlng.lat, /*ra*/latlng.lng, dataset);
+            contextMenu.showAt(xy);
+        }
     },
 
     removeImageLayer: function () {
@@ -604,6 +581,18 @@ Ext.define('visiomatic.Visiomatic', {
             'dec': parseFloat(latlng.lat)
         };
 
+    },
+
+    centerTile: function () {
+        console.log('centerTile()');
+        var me = this,
+            currentDataset = me.getCurrentDataset(),
+            fov = 2; // 2 graus e o suficiente para tile ficar completa
+
+        me.setView(
+            currentDataset.get('tli_ra'),
+            currentDataset.get('tli_dec'),
+            fov);
     },
 
     /**
@@ -1708,7 +1697,9 @@ Ext.define('visiomatic.Visiomatic', {
         var winDownload = Ext.create('visiomatic.crop.CropWindow', {
           image: hiddenlink,
           height: dy+100,
-          width: dx+100
+          width: dx+100,
+          minWidth: 300,
+          minHeight: 200
         });
         // hiddenlink.click();
     },
