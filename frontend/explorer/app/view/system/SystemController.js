@@ -437,18 +437,19 @@ Ext.define('Explorer.view.system.SystemController', {
     onLoadSystemMembers: function (members) {
         var me = this,
             vm = me.getViewModel(),
+            currentProduct = vm.get('currentProduct'),
             visiomatic = me.lookupReference('visiomatic'),
             aladin = me.lookupReference('aladin'),
             lmembers;
 
-        lmembers = visiomatic.overlayCatalog('sytem_members', members);
+        lmembers = visiomatic.overlayCatalog(currentProduct.get('prd_display_name'), members);
 
         visiomatic.showHideLayer(lmembers, true);
 
         vm.set('overlayMembers', lmembers);
 
         // Aladin
-        aladin.plotSystemMembers('system_members', members);
+        aladin.plotSystemMembers(currentProduct.get('prd_display_name'), members);
 
         vm.set('have_members', true);
 
@@ -619,6 +620,7 @@ Ext.define('Explorer.view.system.SystemController', {
         // console.log('onLoadVacObjects(%o)', store);
         var me = this,
             vm = me.getViewModel(),
+            currentVacProduct = vm.get('currentVacProduct'),
             visiomatic = me.lookupReference('visiomatic');
 
         // Toda vez que fizer load, remover a layers
@@ -626,7 +628,7 @@ Ext.define('Explorer.view.system.SystemController', {
             visiomatic.showHideLayer(vm.get('overlayVac'), false);
         }
 
-        lvacs = visiomatic.overlayCatalog('vac_objects', store, {
+        lvacs = visiomatic.overlayCatalog(currentVacProduct.get('prd_display_name'), store, {
             color: '#' + vm.get('vacOverlayColor'),
             pointSize: (vm.get('vacOverlayPointSize') / 1000),
             pointType: vm.get('vacOverlaypointType')
