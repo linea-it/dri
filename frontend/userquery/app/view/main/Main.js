@@ -12,7 +12,9 @@ Ext.define('UserQuery.view.main.Main', {
         'UserQuery.view.main.MainModel',
 
         'common.header.Toolbar',
-        'common.footer.Footer'
+        'common.footer.Footer',
+
+        'codemirror.Codemirror'
     ],
 
     controller: 'main',
@@ -405,13 +407,21 @@ Ext.define('UserQuery.view.main.Main', {
                                     width: '100%'
                                 },
                                 {
-                                    xtype: 'textareafield',
+                                    xtype: 'codemirror',
                                     fieldLabel: 'SQL Sentence* ',
                                     name: 'sql_sentence',
                                     reference: 'sql_sentence',
                                     width: '100%',
                                     flex: 1
                                 },
+                                // {
+                                //     xtype: 'textareafield',
+                                //     fieldLabel: 'SQL Sentence* ',
+                                //     name: 'sql_sentence',
+                                //     reference: 'sql_sentence',
+                                //     width: '100%',
+                                //     flex: 1
+                                // },
                                 {
                                     xtype: 'container',
                                     width: '100%',
