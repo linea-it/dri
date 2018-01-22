@@ -253,15 +253,36 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
     // evento: ao clicar no botão save
     btnSave_onClick: function(button){
-        var refs = this.getReferences();
-        var query = this.getActiveQuery();
+        var me = this;
+        var refs = me.getReferences();
+        var query = me.getActiveQuery();
         var data = refs.frmQuery.getForm().getValues();
         
         if (query && query.is_sample){
-            this.mnuSaveAs_onClick(button);
-        }else{
-            this.saveQuery(query.id, data);
+            me.mnuSaveAs_onClick(button);
+        } else {
+            me.alertOverwriteQuery(
+                // confirm
+                function(saveAs){
+                    if (saveAs){
+                        me.saveQuery(null, data);        
+                    } else {
+                        me.saveQuery(query.id, data);
+                    }
+                },
+
+                // cancel
+                function(){
+
+                }
+            );
         }
+
+        // if (query && query.is_sample){
+        //     this.mnuSaveAs_onClick(button);
+        // }else{
+        //     this.saveQuery(query.id, data);
+        // }
     },
 
     // evento: ao clicar no botão delete
@@ -323,8 +344,15 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var release = this.getActiveRelease();
         var query = this.getActiveQuery() || {};
         var data = refs.frmQuery.getForm().getValues();
+        var i;
         
         query.changed = true;
+        
+        if (query._oldValues){
+            for (i in query._oldValues){
+                query._valuesChanges[i] = (query._oldValues[i] != data[i]);
+            }
+        }
         
         vm.set('activeQuery.'+field.name, newVal);
         var sqlExist = Boolean(vm.get('activeQuery.sql_sentence'));
@@ -375,10 +403,12 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var menu;
 
         items.forEach(function(item){
-            if ( typeof(item.config_item)=='function' ){
-                item.config_item(item, record);
+            if (item != '-'){
+                if ( typeof(item.config_item)=='function' ){
+                    item.config_item(item, record);
+                }
+                item.record = record;
             }
-            item.record = record;
         });
 
         menu = new Ext.menu.Menu({items: items});
@@ -388,7 +418,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     tvwMyTables_onContextMenuClick: function(item){
         var me = this;
         var config = item.config;
-        var table = item.record.get('data_table');
+        var table = item.record.table_name;
 
         switch(config.itemId){
             case 'rename':
@@ -398,9 +428,9 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                         Api.renameTable({
                             cache: false,
                             params: {
-                                id: item.record.get('data_id'),
+                                id: item.record.id,
                                 display_name: value,
-                                table_name: item.record.get('data_table')
+                                table_name: item.record.table_name
                             },
                             request: function(){
                                 me.setLoading(true, 'Operation in progress...');
@@ -427,12 +457,12 @@ var main = Ext.define('UserQuery.view.main.MainController', {
             case 'delete':
                 Ext.MessageBox.show({
                     title: 'Cofirm Action',
-                    msg: 'Drop table "' + item.record.get('text').split('<span')[0] + '"?',
+                    msg: 'Drop table "' + item.record.display_name + '" ?',
                     buttons: Ext.Msg.YESNO,
                     icon: Ext.MessageBox.WARNING,
                     fn: function(button){
                         if (button=='yes'){
-                            me.dropTable(item.record.get('data_id'), function(){
+                            me.dropTable(item.record.id, function(){
                                 me.loadMyTables(true);
                             });
                         }
@@ -441,12 +471,12 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 break;
             
             case 'download':
-                me.downloadCsv(item.record.get('data_schema'), item.record.get('data_table'), item.record.get('data_id'), item.getTargetEl());
+                me.downloadCsv(item.record.schema, item.record.table_name, item.record.id, item.getTargetEl());
                 break;
             
             case 'target':
                 Api.log('view');
-                window.open(location.href.split('/userquery')[0] + '/target/#cv/' + item.record.get('data_product_id'));
+                window.open(location.href.split('/userquery')[0] + '/target/#cv/' + item.record.product_id);
                 break;
         }
     },
@@ -563,15 +593,33 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var me = this;
         var refs = me.getReferences();
 
-        if (!node.data.isgroup){
-            // me.alertQueryChanged(
-            //     function(){
-                    refs.tvwSampleQueries.getSelectionModel().deselectAll();
-                    me.setActiveQuery( clone(node.data) );
-                // }, 
-                // function(){
-                //     refs.tvwMyQueries.getSelectionModel().deselectAll();    
-                // });
+        refs.tvwSampleQueries.getSelectionModel().deselectAll();
+        me.setActiveQuery( clone(node.data) );
+    },
+
+    tvwMyQueries_onBeforeSelect: function(sender, record, index, eOpts){
+        var me = this;
+        var refs = me.getReferences();
+        
+        if (refs.tvwMyQueries.selectionInProgress){
+            refs.tvwMyQueries.selectionInProgress = false;
+            return true;
+        }
+
+        if (!record.data.isgroup){
+            me.alertQueryChanged(
+                // confirm
+                function(){
+                    refs.tvwMyQueries.selectionInProgress = true;
+                    refs.tvwMyQueries.getSelectionModel().select(record);
+                }, 
+
+                // cancel
+                function(){
+                    
+                });
+
+            return false;
         }
     },
 
@@ -580,10 +628,34 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var refs = me.getReferences();
 
         if (!node.data.isgroup){
-            // me.alertQueryChanged(function(){
-                refs.tvwMyQueries.getSelectionModel().deselectAll();
-                me.setActiveQuery( clone(node.data) );            
-            // });
+            refs.tvwMyQueries.getSelectionModel().deselectAll();
+            me.setActiveQuery( clone(node.data) );            
+        }
+    },
+
+    tvwSampleQueries_onBeforeSelect: function(sender, record, index, eOpts){
+        var me = this;
+        var refs = me.getReferences();
+        
+        if (refs.tvwSampleQueries.selectionInProgress){
+            refs.tvwSampleQueries.selectionInProgress = false;
+            return true;
+        }
+
+        if (!record.data.isgroup){
+            me.alertQueryChanged(
+                // confirm
+                function(){
+                    refs.tvwSampleQueries.selectionInProgress = true;
+                    refs.tvwSampleQueries.getSelectionModel().select(record);
+                }, 
+
+                // cancel
+                function(){
+                    
+                });
+
+            return false;
         }
     },
 
@@ -591,13 +663,16 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var me = this;
         var config = item.config;
         var refs = this.getReferences();
-        var query = this.getActiveQuery();
-
+        var query = item.record; // this.getActiveQuery();
+        
         switch(config.itemId){
             case 'rename':
                 Ext.MessageBox.prompt('Rename', 'Name:', function(button, value){
-                    if (value != config.record.get('data_table') && value){
+                    if (button!='cancel' && value && value != query.name){
                         var data = refs.frmQuery.getForm().getValues();
+                        for (var i in data){
+                            data[i] = query[i];
+                        }
                         data.name = value;
                         me.saveQuery(query.id, data);
                     }
@@ -605,7 +680,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 break;
 
             case 'delete':
-                me.deleteQuery();
+                me.deleteQuery(query);
                 break;
         }
     },
@@ -635,30 +710,66 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         }
     },
 
+    alertOverwriteQuery: function(confirm, cancel){
+        var query = this.getActiveQuery() || {};
+        
+        if (query.changed === true){
+            if (query._valuesChanges.name){
+                confirm(true);
+            } else if (query._valuesChanges.sql_sentence) {
+                Ext.MessageBox.show({
+                    title: 'Alert',
+                    msg: 'The current query will overwrite, do you want to continue?',
+                    buttons: Ext.Msg.YESNO,
+                    icon: Ext.MessageBox.WARNING,
+                    fn: function(button){
+                        if (button=='yes'){
+                            confirm();
+                        }else{
+                            cancel();
+                        }
+                    }
+                });
+            }
+        }else{
+            confirm();
+        }
+    },
+
     clearQuery: function(){
         var me = this;
         var refs = me.getReferences();
         var c, i, length = refs.grdPreview.headerCt.items.length;
 
-        Api.log('clear');
-
-        for (i=0; i<length; i++){
-            c = refs.grdPreview.headerCt.getComponent(0);
-            refs.grdPreview.headerCt.remove(c);
-        }
-
-        // refs.cmbReleases.reset();
-        refs.frmQuery.getForm().reset();
-        refs.grdPreview.getView().refresh();
-
-        this.getViewModel().set('activeQuery', null);
+        me.alertQueryChanged(
+            // confirm
+            function(){
+                Api.log('clear');
+                
+                for (i=0; i<length; i++){
+                    c = refs.grdPreview.headerCt.getComponent(0);
+                    refs.grdPreview.headerCt.remove(c);
+                }
         
-        // refs.tvwInputTables.setRootNode(null);
-        // refs.tvwMyTables.setRootNode(null);
-        // refs.tvwOtherTables.setRootNode(null);
+                // refs.cmbReleases.reset();
+                refs.frmQuery.getForm().reset();
+                refs.grdPreview.getView().refresh();
+        
+                me.getViewModel().set('activeQuery', null);
+                
+                // refs.tvwInputTables.setRootNode(null);
+                // refs.tvwMyTables.setRootNode(null);
+                // refs.tvwOtherTables.setRootNode(null);
+        
+                refs.tvwMyQueries.getSelectionModel().deselectAll();
+                refs.tvwSampleQueries.getSelectionModel().deselectAll();   
+            }, 
 
-        refs.tvwMyQueries.getSelectionModel().deselectAll();
-        refs.tvwSampleQueries.getSelectionModel().deselectAll();
+            // cancel
+            function(){
+                
+            });
+        
     },
 
     createEmptyQuery: function(release_id){
@@ -673,9 +784,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
-    deleteQuery: function(){
+    deleteQuery: function(query){
         var me = this;
-        var query = me.getActiveQuery();
+        
+        query = query || me.getActiveQuery();
         
         Ext.MessageBox.show({
             title: 'Confirm Action',
@@ -808,7 +920,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
                 if (!error){
                     tables.forEach(function(item){
-                        item.text = textWithMenu(item.prd_display_name, me);
+                        item.text = textWithMenu(item.prd_display_name, me, item);
                         item.data_schema = item.tbl_schema;
                         item.data_table = item.tbl_name;
                         item.qtip = 'rows: ' + Ext.util.Format.number(item.ctl_num_objects, '0,000');
@@ -847,7 +959,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
                 if (!error){
                     tables.forEach(function(item){
-                        item.text = textWithMenu(item.prd_display_name, me);
+                        item.text = textWithMenu(item.prd_display_name, me, item);
                         item.data_schema = item.tbl_schema;
                         item.data_table = item.tbl_name;
                         item.qtip = 'rows: ' + Ext.util.Format.number(item.ctl_num_objects, '0,000');
@@ -899,7 +1011,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                     table = tables[t];
                     
                     arr.push({
-                        text: textWithMenu(table.display_name, me),
+                        text: textWithMenu(table.display_name, me, table),
                         data_id: table.id,
                         data_schema: table.schema,
                         data_table: table.table_name,
@@ -948,7 +1060,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                     
                     if (!error){
                         result.forEach(function(item){
-                            item.text = textWithMenu(item.prd_display_name, me);
+                            item.text = textWithMenu(item.prd_display_name, me, item);
                             item.data_schema = item.tbl_schema;
                             item.data_table = item.tbl_name;
                             item.qtip = 'rows: ' + Ext.util.Format.number(item.ctl_num_objects, '0,000');
@@ -1064,7 +1176,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                     me.loadMyQueriesStatus = 'done';
 
                     result.forEach(function(item){
-                        item.text = textWithMenu(item.name, me);
+                        item.text = textWithMenu(item.name, me, item);
                         item.leaf = true;
                     });    
                                     
@@ -1491,6 +1603,13 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
         Object.assign(q, query);
 
+        query._oldValues = {
+            name: query.name,
+            description: query.description,
+            sql_sentence: query.sql_sentence 
+        };
+        query._valuesChanges = {};
+
         query.exist = query.id ? true : false;
         refs.frmQuery.getForm().setValues(query);
         vm.set('activeQuery', query);
@@ -1505,31 +1624,35 @@ function clone(obj){
     }
 }
 
-function textWithMenu(text, context){
-    return text +'<span class="x-tree-icon x-fa fa-caret-square-o-down item-menu-button" onclick="textWithMenuClick(this, \''+(context.view.id)+'\')"></span>';
+function textWithMenu(text, context, item){
+    var json = (JSON.stringify(item).replace(/"/g,"'"));
+    return text + '<span class="x-tree-icon x-fa fa-caret-square-o-down item-menu-button" ' +
+                  'onclick="textWithMenuClick(event, this, \''+(context.view.id)+'\','+ json +' )"></span>';
 }
 
-function textWithMenuClick(el, id){
-    var tree, ctrl, items, record;
+function textWithMenuClick(event, el, id, record){
+    var tree, ctrl, items;
     var r = el.getBoundingClientRect();
     
     while (el){
         tree = Ext.getCmp(el.id);
-        
+
         if (tree){
-            
             break;
         }
 
         el = el.parentNode;
     }
 
+    event.preventDefault();
+    event.stopPropagation();
+    
     setTimeout(function(){
         ctrl = Ext.getCmp(id);
         items = tree.panel.config.contextMenuItems || [];
-        record = tree.getSelection()[0];
+        // record = tree.getSelection()[0];
         
-        if (!record.get('ignore_context_menu')){
+        if (!record.ignore_context_menu){
             //this.showContextMenu(items, record, e.getX(), e.getY());
             ctrl.controller.showContextMenu(items, record, r.left+10, r.top+30);
         }
