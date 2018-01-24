@@ -81,16 +81,16 @@ Ext.define('UserQuery.view.main.Main', {
                 // },
                 // '-',
                 {
-                    xtype: 'splitbutton',
+                    xtype: 'button', // 'splitbutton',
                     tooltip: 'Save Query',
                     disabled: true,
                     reference: 'btnSave',
                     iconCls: 'x-fa fa-floppy-o',
                     handler: 'btnSave_onClick',
-                    menu: {xtype: 'menu', plain: true, items: {
-                        text: 'Save As',
-                        handler: 'mnuSaveAs_onClick'
-                    }}
+                    // menu: {xtype: 'menu', plain: true, items: {
+                    //     text: 'Save As',
+                    //     handler: 'mnuSaveAs_onClick'
+                    // }}
                 },
                 {
                     xtype: 'button',
@@ -272,7 +272,7 @@ Ext.define('UserQuery.view.main.Main', {
                                             '-',
                                             {text: 'View',  itemId:'target',  handler:'tvwMyTables_onContextMenuClick',
                                                 config_item: function(item, record){ 
-                                                    item.disabled = record.get('data_product_id') ? false : true;
+                                                    item.disabled = record.product_id ? false : true;
                                                 }
                                             }
                                         ],
@@ -337,6 +337,7 @@ Ext.define('UserQuery.view.main.Main', {
                                         reference: 'tvwMyQueries',
                                         rootVisible: false,
                                         listeners: {
+                                            beforeselect: 'tvwMyQueries_onBeforeSelect',
                                             select: 'tvwMyQueries_onSelect',
                                             itemcontextmenu: 'treeView_onContextMenu'
                                         },
