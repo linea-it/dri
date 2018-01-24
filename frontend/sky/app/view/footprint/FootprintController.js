@@ -46,6 +46,7 @@ Ext.define('Sky.view.footprint.FootprintController', {
     },
 
     onUpdatePanel: function (release) {
+        console.log()
         var me = this,
             aladin = me.lookupReference('aladin');
 
@@ -216,50 +217,37 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
     onDblClickAladin: function (radec) {
         this.getView().fireEvent('ondblclick');
-        this.toVisiomatic(radec, true, false);
+        this.toVisiomatic(radec, false, true);
     },
 
     onShift: function (radec) {
-        this.toVisiomatic(radec, true, false);
+        this.toVisiomatic(radec, false);
     },
 
     onClickGoToImage: function () {
         var me = this,
             aladin = me.lookupReference('aladin');
 
-        this.toVisiomatic(aladin.getRaDec(), true, true);
+        this.toVisiomatic(aladin.getRaDec(), true);
     },
 
-    toVisiomatic: function (radec, clearSearch, centralized) {
-        // console.log('toVisiomatic(%o, %o, %o)', radec, clearSearch, centralized)
+    toVisiomatic: function (radec, centralized, pinned) {
+        // console.log('toVisiomatic(%o, %o)', radec, centralized)
         var me = this,
             vm = me.getViewModel(),
             vw = me.getView(),
             store = vm.getStore('tiles'),
             aladin = me.lookupReference('aladin'),
-            fov = aladin.getFov()[0].toFixed(2).replace('.', ','),
-            txtCoordinateSearch = vw.txtCoordinateSearch,
+            fov = aladin.getFov(),
             hash, dataset, ra, dec, coordinate, value, sys;
 
-        // TODO VERIFICAR ESSE BLOCO DE CODIGO PARECE NAO FAZER MAIS SENTIDO
-        // NA VERSAO ATUAL !!!
-        // UMA BOA SOLUCAO E TODA A LOGICA DO SEARCH FICAR SEPARADA!
-        value = txtCoordinateSearch.getValue();
-        if (value){
-            sys = visiomatic.Visiomatic.strToSystem(value);
-            ra  = String(sys.value.lng);
-            dec = String(sys.value.lat);
-            vw.showPin = true;
-        }else{
-            ra = parseFloat(radec[0]).toFixed(3);
-            dec = parseFloat(radec[1]).toFixed(3);
-            vw.showPin = false;
-        }
+        ra = radec[0].toFixed(5);
+        dec = radec[1].toFixed(5);
+        fov = fov.toFixed(2).replace('.', ',');
 
         dataset = store.filterByRaDec(ra, dec);
 
         if (dataset) {
-
             // Centraliza na coordenada
             if (ra > 0) {
                 coordinate = ra.replace('.', ',') + '+' + dec.replace('.', ',');
@@ -277,18 +265,14 @@ Ext.define('Sky.view.footprint.FootprintController', {
 
             coordinate = encodeURIComponent(coordinate);
 
+            if (pinned) {
+                fov = 0;
+            }
+
             hash = 'dataset/' + dataset.get('id') + '/' + coordinate + '/' + fov;
 
             me.redirectTo(hash, true);
-
-            //Limpa a caixa de texto global search searchGlobal
-            if (clearSearch) txtCoordinateSearch.setValue('');
-
-
-        }else{
-            Ext.MessageBox.alert('Alert', 'There is no DES tile in the current release on this position.');
         }
-
     },
 
     onAladinGoToPosition: function (position, aladin) {
@@ -296,43 +280,40 @@ Ext.define('Sky.view.footprint.FootprintController', {
         me.toVisiomatic(position);
     },
 
-    gotoPosition: function(value){
+    gotoPosition: function(value, fov){
         // console.log('gotoPosition')
         var me = this,
             aladin = me.lookupReference('aladin');
 
         aladin.goToPosition(value);
-
-    },
-
-    onActivate: function(){
-        var me = this, coodinate, zoom, aladin, footprint;
-
-        //obtém as coordenadas e o zoom da url
-        coordinate = ((location.hash.split('/')[2] || '').replace(/,/g, '.').split('|')) || null;
-        zoom = ((location.hash.split('/')[3] || '').replace(/,/g, '.')) || null;
-
-        //define no aladin as coordenadas e o zoom
-        if (coordinate[0] && zoom){
-            footprint = this.getView().down('footprint-aladin');
-            aladin = footprint.getAladin();
-            aladin.gotoPosition(coordinate[0], coordinate[1]);
-            aladin.setZoom(zoom);
+        if (fov) {
+            aladin.setFov(fov);
         }
+
     },
 
     getLink: function () {
         // console.log('getLink()');
         var me = this,
             aladin = me.lookupReference('aladin'),
-            fov = aladin.getFov()[0].toFixed(2),
+            fov = aladin.getFov(),
             radec = aladin.getRaDec(),
             release = me.getView().getRelease(),
             href = window.location.href,
             host = href.split('/#')[0],
-            hash;
+            hash, ra, dec;
 
-        coordinate = radec[0].toString().replace('.', ',') + '|' + radec[1].toString().replace('.', ',');
+        ra = radec[0].toFixed(5);
+        dec = radec[1].toFixed(5);
+        fov = fov.toFixed(2).replace('.', ',');
+
+        if (ra > 0) {
+            coordinate = ra.replace('.', ',') + '+' + dec.replace('.', ',');
+        } else {
+            coordinate = ra.replace('.', ',') + dec.replace('.', ',');
+        }
+
+        coordinate = encodeURIComponent(coordinate);
 
         link = Ext.String.format('{0}/#sky/{1}/{2}/{3}', host, release, coordinate, fov);
 
@@ -351,7 +332,6 @@ Ext.define('Sky.view.footprint.FootprintController', {
             me.winGetLink.close();
             me.winGetLink = null;
         }
-
     }
 
 });

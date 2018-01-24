@@ -115,7 +115,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
         visiomatic.setView(radec.ra, radec.dec, fov);
 
         //PIN (Marcador estilo google)
-        if (me.showPin){
+        if (view.getPinned()){
             me.lMarker = visiomatic.markPosition(radec.ra, radec.dec, 'x-fa fa-map-marker fa-2x');
         }
     },
@@ -174,22 +174,37 @@ Ext.define('Sky.view.dataset.DatasetController', {
             current = vm.get('currentDataset'),
             release = current.get('release'),
             visiomatic = me.lookupReference('visiomatic'),
-            hash, coordinate, radec, fov;
+            fov = visiomatic.getFov(),
+            radec = visiomatic.getRaDec(),
+            hash, coordinate, coord;
 
         if (me.winGetLink != null) {
             me.winGetLink.close();
             me.winGetLink = null;
         }
 
-        fov        = visiomatic.getFov();
-        radec      = visiomatic.getRaDec();
-        coordinate = radec.ra.toString().replace('.', ',') + '|' + radec.dec.toString().replace('.', ',');
-        hash       = 'sky/' + release + '/' + coordinate + '/' + fov;
+        if (radec.ra < 0) {
+            // Essa correcao e necessaria por que as vezes o visiomatic
+            // coloca ra negativo para coordenadas perto do 360.
+            radec.ra = 360 + radec.ra;
+        }
 
-        me.redirectTo(hash);
+        if (radec.dec > 0) {
+            coord = radec.ra.toFixed(5).replace('.', ',') + '+' + radec.dec.toFixed(5).replace('.', ',');
+        } else {
+            coord = radec.ra.toFixed(5).replace('.', ',') + radec.dec.toFixed(5).replace('.', ',');
+        }
+
+        coordinate = encodeURIComponent(coord);
+
+        fov = fov.toFixed(2).replace('.', ',');
+
+        hash = 'sky/' + release + '/' + coordinate + '/' + fov;
 
         //Limpa a caixa de texto global search
         if (clearSearch) me.getView().txtCoordinateSearch.setValue('');
+
+        me.redirectTo(hash);
 
     },
 
@@ -326,22 +341,6 @@ Ext.define('Sky.view.dataset.DatasetController', {
         Ext.GlobalEvents.fireEvent('eventregister','SkyViewer - save_fits');
         visiomatic.showDownloadWindow();
 
-    },
-
-    onActivate: function (event) {
-        var me = this, coordinate, zoom, aladin,
-            visiomatic = me.lookupReference('visiomatic');
-
-        me.showPin = (event.showPin || event.action == 'dblclick');
-
-        //obtém as coordenadas e o zoom da url
-        coordinate = ((location.hash.split('/')[2] || '').replace(/%2C/g, '.').split('%2B')) || null;
-        zoom = ((location.hash.split('/')[3] || '').replace(/,/g, '.')) || null;
-
-        /*if (visiomatic.isReady()){
-            visiomatic.panTo(coordinate[0] + ',' + coordinate[1]);
-            visiomatic.getMap().setZoom(zoom);
-        }*/
     },
 
     //ao clicar em um item do menu de contexto de objeto do visiomatic

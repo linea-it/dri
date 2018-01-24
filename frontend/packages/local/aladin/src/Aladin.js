@@ -306,6 +306,10 @@ Ext.define('aladin.Aladin', {
 
     session: true,
 
+    preventDbClickFire: false,
+
+    runner: null,
+
     initComponent: function () {
         // console.log('Aladin - initComponent()');
 
@@ -350,6 +354,8 @@ Ext.define('aladin.Aladin', {
                 //onpanend: 'onPanEnd'
             }
         });
+
+        me.runner = Ext.create('Ext.util.TaskRunner', {});
 
         me.callParent(arguments);
     },
@@ -1124,7 +1130,7 @@ Ext.define('aladin.Aladin', {
         var me = this,
             aladin = me.getAladin();
 
-        return aladin.getFov();
+        return aladin.getFov()[0];
     },
 
     getFootprintByName: function (name) {
