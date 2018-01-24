@@ -636,7 +636,8 @@ Ext.define('Explorer.view.system.SystemController', {
 
         vm.set('overlayVac', lvacs);
 
-        me.showHideOverlayVacs()
+        me.showHideOverlayVacs();
+
     },
 
     changeVisibleOverlayVacs: function (btn, state) {
@@ -799,5 +800,5 @@ Ext.define('Explorer.view.system.SystemController', {
         // console.log('onCmdClickPoint(%o)', record);
         // Realca o objeto no preview do visiomatic
         this.highlightObject(record, true);
-    }
+    },
 });

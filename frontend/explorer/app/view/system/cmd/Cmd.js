@@ -1,4 +1,4 @@
-Ext.define('Explorer.view.system.Cmd', {
+Ext.define('Explorer.view.system.cmd.CmdBase', {
     extend: 'Explorer.view.system.D3SvgComponent',
 
     requires: [
@@ -7,43 +7,49 @@ Ext.define('Explorer.view.system.Cmd', {
 
     xtype: 'system-cmd',
 
-    // plotTitle: 'CMD',
-    // xAxisTitle: 'r',
-    // yAxisTitle: 'g-r',
-
     config: {
 
         dataSeries: {
-            gr: {
-                id: 'g-r',
-                title: '(g-r) vs. r',
-                xAxisTitle: 'r',
-                yAxisTitle: 'g-r',
-                values: []
-            },
-            ri: {
-                id: 'r-i',
-                title: '(r-i) vs. i',
-                xAxisTitle: 'i',
-                yAxisTitle: 'r-i',
-                values: []
-            },
-            iz: {
-                id: 'i-z',
-                title: '(i-z) vs. z',
-                xAxisTitle: 'z',
-                yAxisTitle: 'i-z',
-                values: []
-            },
-            zy: {
-                id: 'z-y',
-                title: '(z-y) vs. Y',
-                xAxisTitle: 'Y',
-                yAxisTitle: 'z-Y',
-                values: []
-            },
+            // gr: {
+            //     id: 'g-r',
+            //     title: '(g-r) vs. r',
+            //     xAxisTitle: 'r',
+            //     yAxisTitle: 'g-r',
+            //     values: []
+            // },
+            // vacgr: {
+            //     id: 'vac_g-r',
+            //     title: '(g-r) vs. r',
+            //     xAxisTitle: 'r',
+            //     yAxisTitle: 'g-r',
+            //     values: []
+            // },
+            // ri: {
+            //     id: 'r-i',
+            //     title: '(r-i) vs. i',
+            //     xAxisTitle: 'i',
+            //     yAxisTitle: 'r-i',
+            //     values: []
+            // },
+            // iz: {
+            //     id: 'i-z',
+            //     title: '(i-z) vs. z',
+            //     xAxisTitle: 'z',
+            //     yAxisTitle: 'i-z',
+            //     values: []
+            // },
+            // zy: {
+            //     id: 'z-y',
+            //     title: '(z-y) vs. Y',
+            //     xAxisTitle: 'Y',
+            //     yAxisTitle: 'z-Y',
+            //     values: []
+            // }
         },
         plotData: [],
+
+        // Deve ser uma instancia de uma store com os objetos de vacs
+        vacObjects: null,
 
         svgMargin: {
             top: 50,
@@ -62,7 +68,8 @@ Ext.define('Explorer.view.system.Cmd', {
             iconPadding: 5
         },
 
-        colorScale: null
+        colorScale: null,
+        baseId: ''
     },
 
     idleTimeout: null,
@@ -82,6 +89,8 @@ Ext.define('Explorer.view.system.Cmd', {
 
         var color = d3.scaleOrdinal(d3['schemeCategory10'])
         me.setColorScale(color);
+
+        me.setBaseId(me.getItemId() + "-");
 
         // Axis Domain with multiple series Ex:
         // https://gist.github.com/mbostock/3884955#file-index-html-L52
@@ -118,14 +127,14 @@ Ext.define('Explorer.view.system.Cmd', {
         // X Axis Group
         me.gx = scene.append("g")
            .attr("class", "axis axis--x")
-           .attr('id', "axis--x")
+           .attr('id', me.getBaseId() + "axis--x")
            .attr("transform", "translate(0," + height + ")")
            .call(me.xAxis);
 
         // Y Axis Group
         me.gy =scene.append("g")
            .attr("class", "axis axis--y")
-           .attr('id', "axis--y")
+           .attr('id', me.getBaseId() + "axis--y")
            .call(me.yAxis);
 
         me.scene.append("g")
@@ -133,14 +142,14 @@ Ext.define('Explorer.view.system.Cmd', {
            .call(me.brush);
 
         me.scatter = scene.append("g")
-             .attr("id", "scatterplot")
+             .attr("id", me.getBaseId() + "scatterplot")
 
         me.scatter.selectAll(".series")
             .data(data)
             .enter().append("g")
                 .attr("class", "series")
                 // Atribuo um ID para a serie
-                .attr('id', function(d){ return "serie-" + d.id; })
+                .attr('id', function(d){ return me.getBaseId() + "serie-" + d.id; })
                 .attr("active", false)
                 .style("fill", function(d, i) {return color(i);})
                 // Todos ocultos
@@ -175,11 +184,24 @@ Ext.define('Explorer.view.system.Cmd', {
         me.activeSerie(data[0]);
     },
 
+    reloadData: function () {
+        var me = this;
+        console.log('reloadData')
+        me.loadData(me.getStore(), me.getDataSeries());
+    },
 
     loadData: function (store, dataSeries) {
         // console.log('loadData(%o)', store)
         var me = this,
-            data = [];
+            vacObjects = me.getVacObjects(),
+            data = [],
+            gr = [],
+            ri = [],
+            iz = [],
+            zy = [],
+            vac_gr = [];
+
+        console.log(vacObjects);
 
         store.each(function (record) {
             // console.log(record)
@@ -190,15 +212,15 @@ Ext.define('Explorer.view.system.Cmd', {
                 mag_y = parseFloat(record.get('mag_y'));
 
             // g-r Serie
-            dataSeries.gr.values.push({
-                "id": record.get('_meta_id'),
-                "x": mag_r,
-                "y": mag_g - mag_r,
-                "serie": "g-r"
-            })
+            gr.push({
+                    "id": record.get('_meta_id'),
+                    "x": mag_r,
+                    "y": mag_g - mag_r,
+                    "serie": "g-r"
+                })
 
             // r-i Serie
-            dataSeries.ri.values.push({
+            ri.push({
                 "id": record.get('_meta_id'),
                 "x": mag_i,
                 "y": mag_r - mag_i,
@@ -206,7 +228,7 @@ Ext.define('Explorer.view.system.Cmd', {
             })
 
             // i-z Serie
-            dataSeries.iz.values.push({
+            iz.push({
                 "id": record.get('_meta_id'),
                 "x": mag_z,
                 "y": mag_i - mag_z,
@@ -214,7 +236,7 @@ Ext.define('Explorer.view.system.Cmd', {
             })
 
             // z-y Serie
-            dataSeries.zy.values.push({
+            zy.push({
                 "id": record.get('_meta_id'),
                 "x": mag_y,
                 "y": mag_z - mag_y,
@@ -222,11 +244,57 @@ Ext.define('Explorer.view.system.Cmd', {
             })
         })
 
-        data.push(dataSeries.gr);
-        data.push(dataSeries.ri);
-        data.push(dataSeries.iz);
-        data.push(dataSeries.zy);
+        if ('gr' in dataSeries) {
+            Ext.each(gr, function (record) {
+                dataSeries.gr.values.push(record);
+            })
+            data.push(dataSeries.gr);
+        }
 
+        if ('ri' in dataSeries) {
+            Ext.each(ri, function (record) {
+                dataSeries.ri.values.push(record);
+            })
+            data.push(dataSeries.ri);
+        }
+
+        if ('iz' in dataSeries) {
+            Ext.each(iz, function (record) {
+                dataSeries.iz.values.push(record);
+            })
+            data.push(dataSeries.iz);
+        }
+
+        if ('zy' in dataSeries) {
+            Ext.each(zy, function (record) {
+                dataSeries.zy.values.push(record);
+            })
+            data.push(dataSeries.zy);
+        }
+
+        // ------------------- VAC ------------------------------
+        vacObjects.each(function (record) {
+            var mag_g = parseFloat(record.get('mag_g')),
+                mag_r = parseFloat(record.get('mag_r')),
+                mag_i = parseFloat(record.get('mag_i')),
+                mag_z = parseFloat(record.get('mag_r')),
+                mag_y = parseFloat(record.get('mag_y'));
+
+            // g-r Serie
+            vac_gr.push({
+                    "id": record.get('_meta_id'),
+                    "x": mag_r,
+                    "y": mag_g - mag_r,
+                    "serie": "vac_g-r"
+                })
+        })
+
+        if ('vacgr' in dataSeries) {
+            Ext.each(vac_gr, function (record) {
+                dataSeries.vacgr.values.push(record);
+            })
+            data.push(dataSeries.vacgr);
+        }
 
         me.setPlotData(data);
         return data;
@@ -244,7 +312,7 @@ Ext.define('Explorer.view.system.Cmd', {
             .data(data)
             .enter().append("g")
             .attr("class", "legend")
-            .attr("id", function (d) { return "legendItem-" + d.id; })
+            .attr("id", function (d) { return me.getBaseId() + "legendItem-" + d.id; })
             .attr("transform", function(d, i) {
                 var size = config.iconSize + config.iconPadding
                 // Comeca do final do rect e ao y a cada item da legenda
@@ -273,8 +341,9 @@ Ext.define('Explorer.view.system.Cmd', {
 
     showHideSerie: function (serie, isVisible) {
         // console.log("showHideSerie(%o)", serie);
-        var legendItem =  d3.select("#legendItem-" + serie.id),
-            gSerie = d3.select("#serie-" + serie.id);
+        var me = this,
+            legendItem =  d3.select("#" + me.getBaseId() + "legendItem-" + serie.id),
+            gSerie = d3.select("#" + me.getBaseId() + "serie-" + serie.id);
 
         if (isVisible) {
             // Tornar Visivel
@@ -309,7 +378,7 @@ Ext.define('Explorer.view.system.Cmd', {
 
     changeSerie: function (serie) {
         var me = this,
-            gSerie = d3.select("#serie-" + serie.id),
+            gSerie = d3.select("#" + me.getBaseId() + "serie-" + serie.id),
             active = gSerie.attr("active") === 'true' ? true : false;
 
         // Se ja estiver ativa significa que clicou na mesma serie apenas
@@ -318,7 +387,7 @@ Ext.define('Explorer.view.system.Cmd', {
             me.deactiveSerie(serie);
 
         } else {
-            me.deactiveAllSeries();
+            //me.deactiveAllSeries();
             me.activeSerie(serie)
 
         }
@@ -331,7 +400,7 @@ Ext.define('Explorer.view.system.Cmd', {
 
         me.showHideSerie(serie, true);
 
-        me.setPlotTitle(serie.title);
+        //me.setPlotTitle(serie.title);
 
         me.setXAxisTitle(serie.xAxisTitle);
 
@@ -358,7 +427,7 @@ Ext.define('Explorer.view.system.Cmd', {
     onMouseOverPoint: function (data, point) {
         var me = this,
             elPoint = d3.select(point),
-            gSerie = d3.select("#serie-" + data.serie);
+            gSerie = d3.select("#" + me.getBaseId() + "serie-" + data.serie);
 
         // coloca todos os outros pontos transparentes
         gSerie
@@ -377,7 +446,7 @@ Ext.define('Explorer.view.system.Cmd', {
     onMouseOutPoint: function (data, point) {
         var me = this,
             elPoint = d3.select(point),
-            gSerie = d3.select("#serie-" + data.serie);
+            gSerie = d3.select("#" + me.getBaseId() + "serie-" + data.serie);
 
         // coloca todos os pontos ao estado normal
         gSerie
@@ -450,8 +519,8 @@ Ext.define('Explorer.view.system.Cmd', {
             t;
 
         t = me.scatter.transition().duration(750);
-            d3.select("#axis--x").transition(t).call(me.xAxis);
-            d3.select("#axis--y").transition(t).call(me.yAxis);
+            d3.select("#" + me.getBaseId() + "axis--x").transition(t).call(me.xAxis);
+            d3.select("#" + me.getBaseId() + "axis--y").transition(t).call(me.yAxis);
             me.scatter.selectAll("circle").transition(t)
                 .attr("cx", function (d) { return me.x(d.x); })
                 .attr("cy", function (d) { return me.y(d.y); });

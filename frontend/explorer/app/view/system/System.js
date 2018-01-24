@@ -16,7 +16,8 @@ Ext.define('Explorer.view.system.System', {
         'Explorer.view.system.SpatialDistribution',
         'Explorer.view.system.ZDistribution',
         'Explorer.view.system.MagDistribution',
-        'Explorer.view.system.Cmd'
+        // 'Explorer.view.system.Cmd',
+        'Explorer.view.system.cmd.CmdTab'
     ],
 
     controller: 'system',
@@ -29,11 +30,6 @@ Ext.define('Explorer.view.system.System', {
         var me = this;
 
         Ext.apply(this, {
-            // layout: {
-            //     type: 'hbox',
-            //     pack: 'start',
-            //     align: 'stretch'
-            // },
             layout: 'border',
             defaults: {
                 frame: true
@@ -70,11 +66,6 @@ Ext.define('Explorer.view.system.System', {
                                     text: 'NED',
                                     handler: 'onClickNed'
                                 }
-                                // {
-                                //     xtype: 'button',
-                                //     text: 'VizieR',
-                                //     handler: 'onClickVizier'
-                                // }
                             ]
                         },
                         // Inferior Esquerdo
@@ -201,17 +192,44 @@ Ext.define('Explorer.view.system.System', {
                                     //     disabled: "{!have_members}"
                                     // }
                                 },
+                                // {
+                                //     xtype: 'panel',
+                                //     title: 'CMD',
+                                //     layout: {
+                                //         type: 'hbox',
+                                //         pack: 'start',
+                                //         align: 'stretch'
+                                //     },
+                                //     bind: {
+                                //         disabled: "{!have_members}"
+                                //     },
+                                //     items: [
+                                //         {
+                                //             xtype: 'system-cmd',
+                                //             flex: 1,
+                                //             bind: {
+                                //                 store: "{members}",
+                                //             },
+                                //             listeners: {
+                                //                 clickpoint: 'onCmdClickPoint'
+                                //             }
+                                //         },
+                                //         {
+                                //             xtype: 'panel',
+                                //             flex: 1,
+                                //         }
+                                //     ]
+                                // },
                                 {
-                                    xtype: 'system-cmd',
-                                    title: 'CMD',
+                                    xtype: 'cmd-tab',
+                                    title: 'CMD Teste',
+                                    reference: 'CmdTab',
+                                    flex: 1,
+                                    scrollable: true,
                                     bind: {
-                                        store: "{members}",
                                         disabled: "{!have_members}"
                                     },
-                                    listeners: {
-                                        clickpoint: 'onCmdClickPoint'
-                                    }
-                                },
+                                }
                             ]
                         }
                     ]
