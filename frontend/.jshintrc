@@ -1,0 +1,14 @@
+{
+    "esversion": 6,
+    "undef": true,
+    "unused": true,
+    "latedef": true,
+    "browser": true,
+    "globals": {
+        "require": true,
+        "Ext": true,
+        "console": true,
+        "process": true,
+        "__dirname": true
+    }
+}
