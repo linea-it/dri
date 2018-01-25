@@ -48,8 +48,10 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
         },
         plotData: [],
 
+        // Deve ser uma instancia da Store com os members do sistema.
+        members: null,
         // Deve ser uma instancia de uma store com os objetos de vacs
-        vacObjects: null,
+        vacs: null,
 
         svgMargin: {
             top: 50,
@@ -77,6 +79,7 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
 
     proportionalSize: false,
 
+
     performLayout: function (scene, rect) {
         // console.log('performLayout(%o, %o)', scene, rect);
 
@@ -84,10 +87,14 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
             width = rect.width,
             height = rect.height,
             dataSeries = me.getDataSeries(),
-            data = me.loadData(me.getStore(), dataSeries),
+            data = me.loadData(),
             axisPadding = 0.2;
 
-        var color = d3.scaleOrdinal(d3['schemeCategory10'])
+        // var color = d3.scaleOrdinal(d3['schemeCategory20'])
+        var color = d3.scaleQuantize()
+            .domain([0,1])
+            .range(["#9EB0BB", "#1B81BC"])
+
         me.setColorScale(color);
 
         me.setBaseId(me.getItemId() + "-");
@@ -152,9 +159,14 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
                 .attr('id', function(d){ return me.getBaseId() + "serie-" + d.id; })
                 .attr("active", false)
                 .style("fill", function(d, i) {return color(i);})
-                // Todos ocultos
-                .style("opacity", 1)
-                .style("display", "none")
+                .style("opacity", function (d) {
+                    if ('opacity' in d) {
+                        return d.opacity
+                    } else {
+                        return 1
+                    }
+                })
+                // .style("display", "none")
             .selectAll(".dot")
                 .data(function (d) {
                     return d.values;
@@ -179,126 +191,175 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
         // Adiciona o Box da Legenda
         me.createLegendBox(scene, rect, data)
 
-        // Activa a primeira serie, todas as series iniciam desativadas
-        me.deactiveAllSeries();
-        me.activeSerie(data[0]);
+        // for (serie in data) {
+        //     me.activeSerie(serie);
+        // }
+
+        //me.activeSerie(data[0]);
     },
+
 
     reloadData: function () {
         var me = this;
-        console.log('reloadData')
-        me.loadData(me.getStore(), me.getDataSeries());
+        // me.loadData();
+
+        if ((me.scene) && (me.sceneRect)) {
+
+            me.clearScene();
+            me.performLayout(me.scene, me.sceneRect);
+        }
     },
 
-    loadData: function (store, dataSeries) {
-        // console.log('loadData(%o)', store)
+    loadData: function () {
+        console.log('loadData()');
+
         var me = this,
-            vacObjects = me.getVacObjects(),
-            data = [],
-            gr = [],
-            ri = [],
-            iz = [],
-            zy = [],
-            vac_gr = [];
+            dataSeries = me.getDataSeries(),
+            members = me.getMembers(),
+            vacs = me.getVacs(),
+            data = [];
 
-        console.log(vacObjects);
+        for (var serie_name in dataSeries) {
 
-        store.each(function (record) {
-            // console.log(record)
-            var mag_g = parseFloat(record.get('mag_g')),
-                mag_r = parseFloat(record.get('mag_r')),
-                mag_i = parseFloat(record.get('mag_i')),
-                mag_z = parseFloat(record.get('mag_r')),
-                mag_y = parseFloat(record.get('mag_y'));
+            var serie = dataSeries[serie_name];
 
-            // g-r Serie
-            gr.push({
-                    "id": record.get('_meta_id'),
-                    "x": mag_r,
-                    "y": mag_g - mag_r,
-                    "serie": "g-r"
-                })
+            if ((vacs != null) && (serie_name in vacs)) {
+                serie.values = vacs[serie_name];
+            }
 
-            // r-i Serie
-            ri.push({
-                "id": record.get('_meta_id'),
-                "x": mag_i,
-                "y": mag_r - mag_i,
-                "serie": "r-i"
-            })
+            if ((members != null) && (serie_name in members)) {
+                serie.values = members[serie_name];
 
-            // i-z Serie
-            iz.push({
-                "id": record.get('_meta_id'),
-                "x": mag_z,
-                "y": mag_i - mag_z,
-                "serie": "i-z"
-            })
+            }
 
-            // z-y Serie
-            zy.push({
-                "id": record.get('_meta_id'),
-                "x": mag_y,
-                "y": mag_z - mag_y,
-                "serie": "z-y"
-            })
-        })
-
-        if ('gr' in dataSeries) {
-            Ext.each(gr, function (record) {
-                dataSeries.gr.values.push(record);
-            })
-            data.push(dataSeries.gr);
-        }
-
-        if ('ri' in dataSeries) {
-            Ext.each(ri, function (record) {
-                dataSeries.ri.values.push(record);
-            })
-            data.push(dataSeries.ri);
-        }
-
-        if ('iz' in dataSeries) {
-            Ext.each(iz, function (record) {
-                dataSeries.iz.values.push(record);
-            })
-            data.push(dataSeries.iz);
-        }
-
-        if ('zy' in dataSeries) {
-            Ext.each(zy, function (record) {
-                dataSeries.zy.values.push(record);
-            })
-            data.push(dataSeries.zy);
-        }
-
-        // ------------------- VAC ------------------------------
-        vacObjects.each(function (record) {
-            var mag_g = parseFloat(record.get('mag_g')),
-                mag_r = parseFloat(record.get('mag_r')),
-                mag_i = parseFloat(record.get('mag_i')),
-                mag_z = parseFloat(record.get('mag_r')),
-                mag_y = parseFloat(record.get('mag_y'));
-
-            // g-r Serie
-            vac_gr.push({
-                    "id": record.get('_meta_id'),
-                    "x": mag_r,
-                    "y": mag_g - mag_r,
-                    "serie": "vac_g-r"
-                })
-        })
-
-        if ('vacgr' in dataSeries) {
-            Ext.each(vac_gr, function (record) {
-                dataSeries.vacgr.values.push(record);
-            })
-            data.push(dataSeries.vacgr);
+            if (serie.values.length) {
+                data.push(serie)
+            }
         }
 
         me.setPlotData(data);
         return data;
     },
+
+    // loadData: function () {
+    //     console.log('loadData()')
+    //     var me = this,
+    //         clusterMembers = me.getStore(),
+    //         vacObjects = me.getVacObjects(),
+    //         dataSeries = me.getDataSeries(),
+    //         data = [],
+    //         gr = [],
+    //         ri = [],
+    //         iz = [],
+    //         zy = [],
+    //         vac_gr = [];
+    //me.setPlotData(data);
+    //     clusterMembers.each(function (record) {
+    //         // console.log(record)
+    //         var mag_g = parseFloat(record.get('mag_g')),
+    //             mag_r = parseFloat(record.get('mag_r')),
+    //             mag_i = parseFloat(record.get('mag_i')),
+    //             mag_z = parseFloat(record.get('mag_r')),
+    //             mag_y = parseFloat(record.get('mag_y'));
+    //
+    //         // g-r Serie
+    //         gr.push({
+    //                 "id": record.get('_meta_id'),
+    //                 "x": mag_r,
+    //                 "y": mag_g - mag_r,
+    //                 "serie": "g-r"
+    //             })
+    //
+    //         // r-i Serie
+    //         ri.push({
+    //             "id": record.get('_meta_id'),
+    //             "x": mag_i,
+    //             "y": mag_r - mag_i,
+    //             "serie": "r-i"
+    //         })
+    //
+    //         // i-z Serie
+    //         iz.push({
+    //             "id": record.get('_meta_id'),
+    //             "x": mag_z,
+    //             "y": mag_i - mag_z,
+    //             "serie": "i-z"
+    //         })
+    //
+    //         // z-y Serie
+    //         zy.push({
+    //             "id": record.get('_meta_id'),
+    //             "x": mag_y,
+    //             "y": mag_z - mag_y,
+    //             "serie": "z-y"
+    //         })
+    //     })
+    //
+    //     if ('gr' in dataSeries) {
+    //         Ext.each(gr, function (record) {
+    //             dataSeries.gr.values.push(record);
+    //         })
+    //         data.push(dataSeries.gr);
+    //     }
+    //
+    //     if ('ri' in dataSeries) {
+    //         Ext.each(ri, function (record) {
+    //             dataSeries.ri.values.push(record);
+    //         })
+    //         data.push(dataSeries.ri);
+    //     }
+    //
+    //     if ('iz' in dataSeries) {
+    //         Ext.each(iz, function (record) {
+    //             dataSeries.iz.values.push(record);
+    //         })
+    //         data.push(dataSeries.iz);
+    //     }
+    //
+    //     if ('zy' in dataSeries) {
+    //         Ext.each(zy, function (record) {
+    //             dataSeries.zy.values.push(record);
+    //         })
+    //         data.push(dataSeries.zy);
+    //     }
+    //
+    //     // ------------------- VAC ------------------------------
+    //     // if ((vacObjects != null) && (vacObjects.count() != 0)) {
+    //     //     console.log('TEM OBJETOS NO VAC')
+    //     //     vacObjects.each(function (record) {
+    //     //         var mag_g = parseFloat(record.get('mag_g')),
+    //     //             mag_r = parseFloat(record.get('mag_r')),
+    //     //             mag_i = parseFloat(record.get('mag_i')),
+    //     //             mag_z = parseFloat(record.get('mag_r')),
+    //     //             mag_y = parseFloat(record.get('mag_y'));
+    //     //
+    //     //         // g-r Serie
+    //     //         vac_gr.push({
+    //     //                 "id": record.get('_meta_id'),
+    //     //                 "x": mag_r,
+    //     //                 "y": mag_g - mag_r,
+    //     //                 "serie": "vac_g-r"
+    //     //             })
+    //     //     })
+    //     //
+    //     //     if ('vacgr' in dataSeries) {
+    //     //         Ext.each(vac_gr, function (record) {
+    //     //             dataSeries.vacgr.values.push(record);
+    //     //         })
+    //     //         data.push(dataSeries.vacgr);
+    //     //     }
+    //     // }
+    //
+    //     if ('vacgr' in dataSeries) {
+    //         Ext.each(vac_gr, function (record) {
+    //             dataSeries.vacgr.values.push(record);
+    //         })
+    //         data.push(dataSeries.vacgr);
+    //     }
+    //
+    //     me.setPlotData(data);
+    //     return data;
+    // },
 
     createLegendBox: function (scene, rect, data) {
         // console.log('createLegendBox()')
@@ -351,7 +412,13 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
                 .attr("active", true)
                 .transition()
         		.duration(1000)
-                .style("opacity", 1)
+                .style("opacity", function (d) {
+                    if ('opacity' in d) {
+                        return d.opacity
+                    } else {
+                        return 1;
+                    }
+                })
                 .style("display", "block")
 
             legendItem
@@ -402,9 +469,9 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
 
         //me.setPlotTitle(serie.title);
 
-        me.setXAxisTitle(serie.xAxisTitle);
-
-        me.setYAxisTitle(serie.yAxisTitle);
+        // me.setXAxisTitle(serie.xAxisTitle);
+        //
+        // me.setYAxisTitle(serie.yAxisTitle);
     },
 
     deactiveAllSeries: function () {
@@ -467,9 +534,8 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
             store = me.getStore(),
             record;
 
-        record = store.findRecord("_meta_id", data.id);
 
-        me.fireEvent('clickpoint', record, me)
+        me.fireEvent('clickpoint', data.id, data.serie, me)
     },
 
     onBrushendend: function () {

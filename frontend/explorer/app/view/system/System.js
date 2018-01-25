@@ -229,6 +229,10 @@ Ext.define('Explorer.view.system.System', {
                                     bind: {
                                         disabled: "{!have_members}"
                                     },
+                                    listeners: {
+                                        activate: 'onActiveCmdTab',
+                                        clickpoint: 'onCmdClickPoint'
+                                    }
                                 }
                             ]
                         }
