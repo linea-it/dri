@@ -16,7 +16,7 @@ from .permissions import IsOwnerOrPublic
 from .serializers import *
 from .tasks import create_table, export_table
 from .db import RawQueryValidator
-from .target_viewer import register_table_in_the_target_viewer
+from .target_viewer import TargetViewer
 
 from product.export import Export
 
@@ -179,13 +179,17 @@ class TableViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         try:
-            # drop table
+            # drop table in database
             db = DBBase('catalog')
             q = Table.objects.get(pk=kwargs['pk'])
-
             db.drop_table(q.table_name, schema=q.schema)
 
-            return super(TableViewSet, self).destroy(request, args, kwargs)
+            # delete register in targetviewer
+            TargetViewer.unregister(q.product_id)
+
+            return JsonResponse({'message': 'ok'}, status=200)
+            # delete register in userquery
+            # return super(TableViewSet, self).destroy(request, args, kwargs)
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
@@ -314,7 +318,8 @@ class TargetViewerRegister(viewsets.ModelViewSet):
                 raise Exception("id is a mandatory field")
 
             q = Table.objects.get(pk=_id)
-            register_table_in_the_target_viewer(user=self.request.user, table_pk=q.pk, release_name=_release_name)
+            TargetViewer.register(user=self.request.user, table_pk=q.pk, release_name=_release_name)
+
             return HttpResponse(status=200)
 
         except Exception as e:
