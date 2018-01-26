@@ -179,10 +179,11 @@ class TableViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         try:
-            # drop table in database
+            # drop table in database if exists
             db = DBBase('catalog')
             q = Table.objects.get(pk=kwargs['pk'])
-            db.drop_table(q.table_name, schema=q.schema)
+            if (db.table_exists(table=q.table_name, schema=q.schema)):
+                db.drop_table(q.table_name, schema=q.schema)
 
             # delete register in targetviewer
             TargetViewer.unregister(q.product_id)
