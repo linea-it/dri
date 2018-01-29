@@ -187,7 +187,7 @@ Ext.define('Explorer.view.system.System', {
                                 },
                                 {
                                     xtype: 'cmd-tab',
-                                    title: 'CMD Teste',
+                                    title: 'CMD',
                                     reference: 'CmdTab',
                                     flex: 1,
                                     scrollable: true,
