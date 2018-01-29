@@ -173,7 +173,7 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
                 })
             .enter().append("circle")
                 .attr("class", "dot")
-                .attr("r", 3.5)
+                .attr("r", 2.5)
                 .attr("cx", function(d) {
                     return me.x(d.x); })
                 .attr("cy", function(d) { return me.y(d.y); })
@@ -500,20 +500,22 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
         gSerie
             .transition()
             .duration(300)
-            .attr('fill-opacity', 0.2)
+            .attr('fill-opacity', 0.4)
 
         // Destaca o Objeto em Foco
         elPoint
-            .attr("r", 6)
+            .attr("r", 3.5)
             .attr('fill-opacity', 1)
             .style("cursor", "pointer")
+            .style("fill", "#E34D1C")
 
     },
 
     onMouseOutPoint: function (data, point) {
         var me = this,
             elPoint = d3.select(point),
-            gSerie = d3.select("#" + me.getBaseId() + "serie-" + data.serie);
+            gSerie = d3.select("#" + me.getBaseId() + "serie-" + data.serie),
+            color = me.getColorScale();
 
         // coloca todos os pontos ao estado normal
         gSerie
@@ -522,9 +524,10 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
             .attr('fill-opacity', null)
 
         elPoint
-            .attr("r", 3.5)
+            .attr("r", 2.5)
             .attr('fill-opacity', null)
             .style("cursor", "default")
+            .style("fill", function(d, i) {return color(i);})
 
 
     },

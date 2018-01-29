@@ -69,45 +69,46 @@ Ext.define('Explorer.view.system.cmd.CmdTab', {
                         },
                     }
                 },
-                // {
-                //     itemId: 'cmd-ri',
-                //     plotTitle: '(r-i) vs. i',
-                //     dataSeries: {
-                //         ri: {
-                //             id: 'r-i',
-                //             title: '(r-i) vs. i',
-                //             xAxisTitle: 'i',
-                //             yAxisTitle: 'r-i',
-                //             values: []
-                //         },
-                //     },
-                // },
-                // {
-                //     itemId: 'cmd-iz',
-                //     plotTitle: '(i-z) vs. z',
-                //     dataSeries: {
-                //         iz: {
-                //             id: 'i-z',
-                //             title: '(i-z) vs. z',
-                //             xAxisTitle: 'z',
-                //             yAxisTitle: 'i-z',
-                //             values: []
-                //         },
-                //     },
-                // },
-                // {
-                //     itemId: 'cmd-zy',
-                //     plotTitle: '(i-z) vs. z',
-                //     dataSeries: {
-                //         zy: {
-                //             id: 'z-y',
-                //             title: '(z-y) vs. Y',
-                //             xAxisTitle: 'Y',
-                //             yAxisTitle: 'z-Y',
-                //             values: []
-                //         }
-                //     },
-                // }
+                {
+                    itemId: 'cmd-iz',
+                    plotTitle: '(i-z) vs. z',
+                    xAxisTitle: 'z',
+                    yAxisTitle: 'i-z',
+                    dataSeries: {
+                        vaciz: {
+                            id: 'vac_i-z',
+                            title: 'VAC',
+                            opacity: .6,
+                            values: []
+                        },
+                        iz: {
+                            id: 'i-z',
+                            title: '(i-z) vs. z',
+                            opacity: 1,
+                            values: []
+                        },
+                    }
+                },
+                {
+                    itemId: 'cmd-zy',
+                    plotTitle: '(z-y) vs. Y',
+                    xAxisTitle: 'Y',
+                    yAxisTitle: 'z-Y',
+                    dataSeries: {
+                        vaczy: {
+                            id: 'vac_z-y',
+                            title: 'VAC',
+                            opacity: .6,
+                            values: []
+                        },
+                        zy: {
+                            id: 'z-y',
+                            title: '(z-y) vs. Y',
+                            opacity: 1,
+                            values: []
+                        },
+                    }
+                },
             ]
         });
 
@@ -119,7 +120,9 @@ Ext.define('Explorer.view.system.cmd.CmdTab', {
             members = me.getMembers(),
             membersData = {
                 gr: [],
-                ri: []
+                ri: [],
+                iz: [],
+                zy: []
             };
 
         members.each(function (record) {
@@ -145,6 +148,22 @@ Ext.define('Explorer.view.system.cmd.CmdTab', {
                 "serie": "r-i"
             })
 
+            // i-z Serie
+            membersData.iz.push({
+                "id": record.get('_meta_id'),
+                "x": mag_z,
+                "y": mag_i - mag_z,
+                "serie": "i-z"
+            })
+
+            // z-Y Serie
+            membersData.zy.push({
+                "id": record.get('_meta_id'),
+                "x": mag_y,
+                "y": mag_z - mag_y,
+                "serie": "z-y"
+            })
+
         });
 
         return membersData;
@@ -155,7 +174,9 @@ Ext.define('Explorer.view.system.cmd.CmdTab', {
             vacs = me.getVacs(),
             vacsData = {
                 vacgr: [],
-                vacri: []
+                vacri: [],
+                vaciz: [],
+                vaczy: []
             };
 
         vacs.each(function (record) {
@@ -173,12 +194,30 @@ Ext.define('Explorer.view.system.cmd.CmdTab', {
                     "serie": "vac_g-r"
                 })
 
+            // r-i Serie
             vacsData.vacri.push({
                     "id": record.get('_meta_id'),
                     "x": mag_i,
                     "y": mag_r - mag_i,
                     "serie": "vac_r-i"
                 })
+
+            // i-z Serie
+            vacsData.vaciz.push({
+                    "id": record.get('_meta_id'),
+                    "x": mag_z,
+                    "y": mag_i - mag_z,
+                    "serie": "vac_i-z"
+                })
+
+            // z-Y Serie
+            vacsData.vaczy.push({
+                    "id": record.get('_meta_id'),
+                    "x": mag_y,
+                    "y": mag_z - mag_y,
+                    "serie": "vac_z-y"
+                })
+
         });
 
         return vacsData;
