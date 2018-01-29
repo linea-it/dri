@@ -16,7 +16,7 @@ from userquery.models import Table
 from product.models import Product
 from coadd.models import Release
 
-from .target_viewer import register_table_in_the_target_viewer
+from .target_viewer import TargetViewer
 from .email import Email
 
 class CreateTableAs:
@@ -99,7 +99,7 @@ class CreateTableAs:
 
     def _associate_target_viewer(self):
         if self.associate_target_viewer:
-            register_table_in_the_target_viewer(user=self.user, table_pk=self.table.pk, release_name=self.release_name)
+            TargetViewer.register(user=self.user, table_pk=self.table.pk, release_name=self.release_name)
 
     def _notify_by_email_start(self):
         Email().send({
