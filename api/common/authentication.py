@@ -27,7 +27,7 @@ class NcsaBackend(object):
             return user
 
         else:
-            self.logger.info("Login failedd")
+            self.logger.info("Login failed")
             return None
 
     def get_database_name(self):
@@ -47,6 +47,9 @@ class NcsaBackend(object):
     def check_user(self, username, password):
         try:
             dbname = self.get_database_name()
+
+            if dbname is None:
+                return False
 
             self.logger.info("Verify that the user has access to the [%s] Database" % dbname)
 

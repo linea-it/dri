@@ -8,7 +8,50 @@ ALLOWED_HOSTS = '*'
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 
-DEBUG = True
+# DEBUG = True
+#
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_PROJECT, 'db/dri.db'),
+#     },
+#     'catalog': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_PROJECT, 'db/catalog.db'),
+#     }
+# }
+#
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.ModelBackend',
+# )
+#
+# NCSA_AUTHENTICATION_DB = None
+# NCSA_AUTHENTICATION_USERS_TABLE = None
+
+
+import os
+
+# Just the 3 vars that the specific environment will use:
+# BASE_PROJECT, LOG_DIR, DATABASES
+
+# Substituir /home/glauber/dri pelo diretorio de intalacao do projeto.
+BASE_PROJECT = "/home/glauber/dri"
+# the hostname and port number of the current Server
+BASE_HOST = "http://dri.com"
+
+LOG_DIR = os.path.join(BASE_PROJECT, 'log')
+
+# Diretorio onde ficam os arquivos estaticos gerados pela aplicacao, arquivos como imagens, csvs, zips que necessitam
+# ter uma url acessivel para download.
+DATA_DIR = os.path.join(BASE_PROJECT, 'data')
+
+# Diretorio para arquivos temporarios, gerados pelo sistema e que ficaram disponiveis para o usuario fazer o download.
+# esse diretorio deve ser usado junto com o DATA_DIR, deve OBRIGATORIAMENTE ser um diretorio dentro do DATA_DIR
+DATA_TMP_DIR = 'tmp'
+
+# Url base para o diretorio onde os arquivos gerados pela aplicacao podem ser acessados pelo servidor web
+DATA_SOURCE = "/data"
+
 
 DATABASES = {
     'default': {
@@ -18,5 +61,234 @@ DATABASES = {
     'catalog': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_PROJECT, 'db/catalog.db'),
+    }
+}
+
+# Esta configuracao e usada somente pela classe de authenticacao usando login do NCSA
+# deve ser preenchida com o nome da configuracao de database do NCSA OU None para nao usar a authenticacao no ncsa
+# NCSA_AUTHENTICATION_DB = "dessci"
+NCSA_AUTHENTICATION_DB = None
+
+# Nome da tabela onde ficam os dados do usuario com schema se tiver ex: DES_USER para colaboracao e DES_ADMIN.DES_USER para DR1 publico ou None para desabilitar
+NCSA_AUTHENTICATION_USERS_TABLE = None
+
+# Habilita ou desabilita o link de signup no form de login. None desabilita e String com Url para o form de login para habilitar.
+# Default None, para public usar 'https://des.ncsa.illinois.edu/easyweb/signup/'
+NCSA_SIGNUP_LINK = None
+
+# Target Viewer Rating, Reject Schema
+SCHEMA_RATING_REJECT = None
+
+# Save As default Schema, Utilizado pela feature Target::Save As caso seja None, o schema utilizado
+# sera o mesmo do produto original mais vai requerer permissao. para o ncsa cada usuario tem um schema
+# utilizar o nome de usuario da conf 'catalog'
+SCHEMA_SAVE_AS = None
+
+# Email notification configs
+# Email utilizado para enviar as notificacoes do science server
+EMAIL_NOTIFICATION = 'noreply@desportal.cosmology.illinois.edu'
+# Lista de email que receberam uma copia de todas as notificacoes
+EMAIL_NOTIFICATION_COPY_TO = list([])
+EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
+EMAIL_HELPDESK_CONTACT = 'contato-dri@linea.gov.br'
+EMAIL_HOST = 'smtp.linea.gov.br'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = 'glauber.costa@linea.gov.br'
+EMAIL_HOST_PASSWORD = '123456'
+EMAIL_USE_TLS = True
+
+# Email que recebera as notificacoes e relatorios gerados pelo science server
+EMAIL_ADMIN = 'glauber.costa@linea.gov.br'
+
+# DES Cutout Service
+
+# # DESCUT Colaboracao
+DES_CUTOUT_SERVICE = {
+    # 1 para a versao do Descut Colaboracao 2 para versao Descut Public
+    'API_VERSION': 1,
+    'HOST': 'https://descut.cosmology.illinois.edu',
+    'USER': 'rcampisa',
+    'PASSWORD': 'rca2017',
+    # Path onde ficaram os arquivos de cutout, esse parametro sera usado em conjunto com DATA_DIR para criar o path
+    # absoluto para os arquivos.
+    'CUTOUT_DIR': 'targets/cutouts',
+    # Url base que sera usada para exibir as imagens geradas esse parametro deve ser mapeado no dri.conf no apache
+    'CUTOUT_SOURCE': '/data',
+    # Tempo de delay para a task check_jobs em minutos
+    'CUTOUT_TASK_CHECK_JOBS_DELAY': 1,
+    # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos
+    'AVAILABLE_RELEASES': [],
+    # Quantidade limit de objetos a ser passada para o descutout
+    'MAX_OBJECTS': 2,
+    # Token de authenticacao utilizado apenas para o DescutPublico para colaboracao usar None
+    'TOKEN': None,
+    # Esta opcao deve ser False para o DescutPublico e True para Colaboracao
+    'DELETE_JOB_AFTER_DOWNLOAD': True,
+    # Url para gerar o token, para o publico usar None.
+    'API_GET_TOKEN': '/api/token/',
+    # Url para a API reponsavel por criar os jobs
+    'API_CREATE_JOBS': '/api/jobs/',
+    # Url para a API responsavel por retornar o status dos jobs
+    'API_CHECK_JOBS': '/api/jobs/',
+    # No DescutPublico e necessario passar um email para onde seram enviadas as notificacoes do descut.
+    'EMAIL': 'glauber.costa@linea.gov.br'
+}
+
+SEND_DAILY_STATISTICS_EMAIL = False
+
+
+# Tempo limite em horas para que um produto fique disponivel, apos este tempo
+# o produto sera removido pelo garbage colector e sua tabela sera dropada. Use None para desabilitar.
+PRODUCT_EXPIRATION_TIME = None
+
+# USER_QUERY
+USER_QUERY_EXECUTION_TIMEOUT = None
+
+## TARGET VIEWER
+# Habilita ou desabilita a interface de registro de produtos pela opcao Database,
+# esta Settings e usada apenas pelo frontend.
+PRODUCT_REGISTER_DB_INTERFACE = True
+# Habilita ou Desabilita a opcao de escolher o Folder na hora de registrar um produto.
+PRODUCT_REGISTER_FOLDERS = True
+# Habilita ou Desabilita a opção de registrar um produto como publico, pela interface.
+PRODUCT_REGISTER_ENABLE_PUBLIC = False
+
+# Lista as Variaveis que vao ser exportadas para os templates do Django. https://pypi.python.org/pypi/django-settings-export
+SETTINGS_EXPORT = [
+    'NCSA_SIGNUP_LINK'
+]
+
+# Logging is disabled due errors in testing and production environment, this must be investigated.
+# for developers, it safe to disable the follows lines
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(message)s'
+        },
+    },
+    'handlers': {
+        'default': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_DIR, 'django.log'),
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+        'db_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(LOG_DIR, 'django_db.log'),
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+        # DRI APPS Logs
+        'descutoutservice': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join(LOG_DIR, 'cutout.log'),
+            'formatter': 'standard',
+        },
+        'downloads': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join(LOG_DIR, 'downloads.log'),
+            'formatter': 'standard',
+        },
+        'product_export': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join(LOG_DIR, 'product_export.log'),
+            'formatter': 'standard',
+        },
+        'product_import': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join(LOG_DIR, 'product_import.log'),
+            'formatter': 'standard',
+        },
+        'product_saveas': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join(LOG_DIR, 'product_saveas.log'),
+            'formatter': 'standard',
+        },
+        'ncsa_authentication': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join(LOG_DIR, 'ncsa_authentication.log'),
+            'formatter': 'standard',
+        },
+        'garbage_colector': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join(LOG_DIR, 'garbage_colector.log'),
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['default'],
+            'level': 'DEBUG',
+            'propagate': True
+        },
+        'django.db.backends': {
+            'handlers': ['db_handler'],
+            'level': 'DEBUG',
+            'propagate': False
+        },
+        # DRI APPS Logs
+        'descutoutservice': {
+            'handlers': ['descutoutservice'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'downloads': {
+            'handlers': ['downloads'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'product_export': {
+            'handlers': ['product_export'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'product_import': {
+            'handlers': ['product_import'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'product_saveas': {
+            'handlers': ['product_saveas'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'ncsa_authentication': {
+            'handlers': ['ncsa_authentication'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'garbage_colector': {
+            'handlers': ['garbage_colector'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
     }
 }
