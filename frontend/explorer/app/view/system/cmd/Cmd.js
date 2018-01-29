@@ -17,34 +17,7 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
             //     yAxisTitle: 'g-r',
             //     values: []
             // },
-            // vacgr: {
-            //     id: 'vac_g-r',
-            //     title: '(g-r) vs. r',
-            //     xAxisTitle: 'r',
-            //     yAxisTitle: 'g-r',
-            //     values: []
-            // },
-            // ri: {
-            //     id: 'r-i',
-            //     title: '(r-i) vs. i',
-            //     xAxisTitle: 'i',
-            //     yAxisTitle: 'r-i',
-            //     values: []
-            // },
-            // iz: {
-            //     id: 'i-z',
-            //     title: '(i-z) vs. z',
-            //     xAxisTitle: 'z',
-            //     yAxisTitle: 'i-z',
-            //     values: []
-            // },
-            // zy: {
-            //     id: 'z-y',
-            //     title: '(z-y) vs. Y',
-            //     xAxisTitle: 'Y',
-            //     yAxisTitle: 'z-Y',
-            //     values: []
-            // }
+            //etc..
         },
         plotData: [],
 
@@ -211,7 +184,7 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
     },
 
     loadData: function () {
-        console.log('loadData()');
+        // console.log('loadData()');
 
         var me = this,
             dataSeries = me.getDataSeries(),
@@ -240,126 +213,6 @@ Ext.define('Explorer.view.system.cmd.CmdBase', {
         me.setPlotData(data);
         return data;
     },
-
-    // loadData: function () {
-    //     console.log('loadData()')
-    //     var me = this,
-    //         clusterMembers = me.getStore(),
-    //         vacObjects = me.getVacObjects(),
-    //         dataSeries = me.getDataSeries(),
-    //         data = [],
-    //         gr = [],
-    //         ri = [],
-    //         iz = [],
-    //         zy = [],
-    //         vac_gr = [];
-    //me.setPlotData(data);
-    //     clusterMembers.each(function (record) {
-    //         // console.log(record)
-    //         var mag_g = parseFloat(record.get('mag_g')),
-    //             mag_r = parseFloat(record.get('mag_r')),
-    //             mag_i = parseFloat(record.get('mag_i')),
-    //             mag_z = parseFloat(record.get('mag_r')),
-    //             mag_y = parseFloat(record.get('mag_y'));
-    //
-    //         // g-r Serie
-    //         gr.push({
-    //                 "id": record.get('_meta_id'),
-    //                 "x": mag_r,
-    //                 "y": mag_g - mag_r,
-    //                 "serie": "g-r"
-    //             })
-    //
-    //         // r-i Serie
-    //         ri.push({
-    //             "id": record.get('_meta_id'),
-    //             "x": mag_i,
-    //             "y": mag_r - mag_i,
-    //             "serie": "r-i"
-    //         })
-    //
-    //         // i-z Serie
-    //         iz.push({
-    //             "id": record.get('_meta_id'),
-    //             "x": mag_z,
-    //             "y": mag_i - mag_z,
-    //             "serie": "i-z"
-    //         })
-    //
-    //         // z-y Serie
-    //         zy.push({
-    //             "id": record.get('_meta_id'),
-    //             "x": mag_y,
-    //             "y": mag_z - mag_y,
-    //             "serie": "z-y"
-    //         })
-    //     })
-    //
-    //     if ('gr' in dataSeries) {
-    //         Ext.each(gr, function (record) {
-    //             dataSeries.gr.values.push(record);
-    //         })
-    //         data.push(dataSeries.gr);
-    //     }
-    //
-    //     if ('ri' in dataSeries) {
-    //         Ext.each(ri, function (record) {
-    //             dataSeries.ri.values.push(record);
-    //         })
-    //         data.push(dataSeries.ri);
-    //     }
-    //
-    //     if ('iz' in dataSeries) {
-    //         Ext.each(iz, function (record) {
-    //             dataSeries.iz.values.push(record);
-    //         })
-    //         data.push(dataSeries.iz);
-    //     }
-    //
-    //     if ('zy' in dataSeries) {
-    //         Ext.each(zy, function (record) {
-    //             dataSeries.zy.values.push(record);
-    //         })
-    //         data.push(dataSeries.zy);
-    //     }
-    //
-    //     // ------------------- VAC ------------------------------
-    //     // if ((vacObjects != null) && (vacObjects.count() != 0)) {
-    //     //     console.log('TEM OBJETOS NO VAC')
-    //     //     vacObjects.each(function (record) {
-    //     //         var mag_g = parseFloat(record.get('mag_g')),
-    //     //             mag_r = parseFloat(record.get('mag_r')),
-    //     //             mag_i = parseFloat(record.get('mag_i')),
-    //     //             mag_z = parseFloat(record.get('mag_r')),
-    //     //             mag_y = parseFloat(record.get('mag_y'));
-    //     //
-    //     //         // g-r Serie
-    //     //         vac_gr.push({
-    //     //                 "id": record.get('_meta_id'),
-    //     //                 "x": mag_r,
-    //     //                 "y": mag_g - mag_r,
-    //     //                 "serie": "vac_g-r"
-    //     //             })
-    //     //     })
-    //     //
-    //     //     if ('vacgr' in dataSeries) {
-    //     //         Ext.each(vac_gr, function (record) {
-    //     //             dataSeries.vacgr.values.push(record);
-    //     //         })
-    //     //         data.push(dataSeries.vacgr);
-    //     //     }
-    //     // }
-    //
-    //     if ('vacgr' in dataSeries) {
-    //         Ext.each(vac_gr, function (record) {
-    //             dataSeries.vacgr.values.push(record);
-    //         })
-    //         data.push(dataSeries.vacgr);
-    //     }
-    //
-    //     me.setPlotData(data);
-    //     return data;
-    // },
 
     createLegendBox: function (scene, rect, data) {
         // console.log('createLegendBox()')
