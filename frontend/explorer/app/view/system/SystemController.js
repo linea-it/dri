@@ -636,7 +636,8 @@ Ext.define('Explorer.view.system.SystemController', {
 
         vm.set('overlayVac', lvacs);
 
-        me.showHideOverlayVacs()
+        me.showHideOverlayVacs();
+
     },
 
     changeVisibleOverlayVacs: function (btn, state) {
@@ -795,9 +796,22 @@ Ext.define('Explorer.view.system.SystemController', {
         window.open(url, '_blank')
     },
 
-    onCmdClickPoint: function (record, cmd) {
+    onCmdClickPoint: function (record, type, cmdTab) {
         // console.log('onCmdClickPoint(%o)', record);
         // Realca o objeto no preview do visiomatic
+        console.log(record)
         this.highlightObject(record, true);
+    },
+
+    onActiveCmdTab: function (panel) {
+        console.log('onActiveCmdTab(%o)', panel);
+        var me = this,
+            vm = me.getViewModel(),
+            clusterMembers = vm.getStore('members'),
+            vacObjects = vm.getStore('vacObjects');
+
+        panel.setMembers(clusterMembers);
+        panel.setVacs(vacObjects);
+        panel.reloadPlots();
     }
 });
