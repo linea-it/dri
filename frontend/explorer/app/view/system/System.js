@@ -16,7 +16,6 @@ Ext.define('Explorer.view.system.System', {
         'Explorer.view.system.SpatialDistribution',
         'Explorer.view.system.ZDistribution',
         'Explorer.view.system.MagDistribution',
-        // 'Explorer.view.system.Cmd',
         'Explorer.view.system.cmd.CmdTab'
     ],
 
@@ -103,9 +102,6 @@ Ext.define('Explorer.view.system.System', {
                                 pack: 'start',
                                 align: 'stretch'
                             },
-                            // defaults: {
-                            //     frame: true
-                            // },
                             items: [
                                 {
                                     xtype: 'system-visiomatic',
@@ -188,38 +184,7 @@ Ext.define('Explorer.view.system.System', {
                                     xtype: 'system-spatial-distribution',
                                     title: 'Spatial Distribution',
                                     disabled: true
-                                    // bind: {
-                                    //     disabled: "{!have_members}"
-                                    // }
                                 },
-                                // {
-                                //     xtype: 'panel',
-                                //     title: 'CMD',
-                                //     layout: {
-                                //         type: 'hbox',
-                                //         pack: 'start',
-                                //         align: 'stretch'
-                                //     },
-                                //     bind: {
-                                //         disabled: "{!have_members}"
-                                //     },
-                                //     items: [
-                                //         {
-                                //             xtype: 'system-cmd',
-                                //             flex: 1,
-                                //             bind: {
-                                //                 store: "{members}",
-                                //             },
-                                //             listeners: {
-                                //                 clickpoint: 'onCmdClickPoint'
-                                //             }
-                                //         },
-                                //         {
-                                //             xtype: 'panel',
-                                //             flex: 1,
-                                //         }
-                                //     ]
-                                // },
                                 {
                                     xtype: 'cmd-tab',
                                     title: 'CMD Teste',
