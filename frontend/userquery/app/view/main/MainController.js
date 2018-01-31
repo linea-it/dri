@@ -198,9 +198,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var me = this;
         var refs = me.getReferences();
         var dialog = new StartJobDialog({animateTarget : button.getEl()});
-        var query = me.getActiveQuery();
         var formData = refs.frmQuery.getForm().getValues();
         var release = me.getActiveRelease() || {};
+
+        formData.sql_sentence = refs.sql_sentence.getValue();
 
         if (release.id === undefined){
             return Ext.MessageBox.show({
