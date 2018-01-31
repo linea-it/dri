@@ -347,6 +347,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var data = refs.frmQuery.getForm().getValues();
         var i;
         
+        data.sql_sentence = refs.sql_sentence.getValue();
         query.changed = true;
         
         if (query._oldValues){
