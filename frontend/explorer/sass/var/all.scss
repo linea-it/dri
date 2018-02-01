@@ -3,3 +3,29 @@
  */
 
 $enable-font-awesome: dynamic(true);
+
+//--------------------------------------------------------
+// Create classes for full-size responsive items
+
+.big-100 {
+    @include responsivecolumn-item(100%);
+}
+
+.big-50 {
+    @include responsivecolumn-item(50%);
+}
+
+//--------------------------------------------------------
+// And classes for small-size responsive items
+
+.x-responsivecolumn-small {
+     > .small-100 {
+         @include responsivecolumn-item(100%);
+     }
+
+     > .small-50 {
+         @include responsivecolumn-item(50%);
+     }
+}
+
+//--------------------------------------------------------

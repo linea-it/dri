@@ -55,7 +55,20 @@ Ext.define('aladin.Events', {
                 // atualizar a coordenada atual
                 me.updateLocation(radec);
 
-                me.fireEvent('ondblclick', radec, me);
+                if (!me.preventDbClickFire) {
+                    me.preventDbClickFire = true;
+
+                    task = me.runner.newTask({
+                        run: function () {
+                            me.preventDbClickFire = false;
+                        },
+                        interval: 20,
+                        repeat: 1
+                    });
+                    task.start();
+
+                    me.fireEvent('ondblclick', radec, me);
+                }
             }
         });
     },

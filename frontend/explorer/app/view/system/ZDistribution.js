@@ -10,7 +10,7 @@ Ext.define('Explorer.view.system.ZDistribution', {
     proportionalSize: false,
 
     performLayout: function (scene, rect) {
-        console.log('performLayout(%o, %o)', scene, rect);
+        // console.log('performLayout(%o, %o)', scene, rect);
 
         var me = this,
             width = rect.width,
