@@ -266,45 +266,65 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
             filetype = filetype.strip()
 
             if filetype == "csv":
+                logger.info("Starting Task target_to_csv")
+
                 # Task To CSV
-                header.append(
-                    export_target_to_csv.s(
-                        product.pk,
-                        product.table.tbl_database,
-                        product.table.tbl_schema,
-                        product.table.tbl_name,
-                        conditions,
-                        export_dir,
-                        user_id
-                    )
+                export.table_to_csv_by_id(
+                    product_id=product.pk,
+                    database=product.table.tbl_database,
+                    schema=product.table.tbl_schema,
+                    table=product.table.tbl_name,
+                    filters=conditions,
+                    export_dir=export_dir,
+                    user_id=user_id
                 )
+
+                logger.info("Finished Task target_to_csv")
+
 
             elif filetype == "fits":
                 # Task To Fits
-                header.append(
-                    export_target_to_fits.s(
-                        product.pk,
-                        product.table.tbl_database,
-                        product.table.tbl_schema,
-                        product.table.tbl_name,
-                        conditions,
-                        export_dir,
-                        user_id
-                    )
+                logger.info("Starting Task target_to_fits")
+
+                # Primeiro deve gerar um csv para depois converter para fits.
+                csvfile = export.table_to_csv_by_id(
+                    product_id=product.pk,
+                    database=product.table.tbl_database,
+                    schema=product.table.tbl_schema,
+                    table=product.table.tbl_name,
+                    filters=conditions,
+                    export_dir=export_dir,
+                    user_id=user_id
                 )
+
+                logger.info("Csv File: %s" % csvfile)
+
+                fname, extension = os.path.splitext(csvfile)
+
+                fitsfile = "%s.fits" % fname
+                logger.debug("FITS FILE %s" % fitsfile)
+
+                fits = export.csv_to_fits(
+                    csv=csvfile,
+                    fits=fitsfile
+                )
+
+                logger.info("Finished Task target_to_fits")
+
 
         # Cutouts
         if cutoutjob_id not in [None, "", False, "false", "False", 0]:
-            header.append(
-                export_cutoutjob.s(
-                    cutoutjob_id,
-                    export_dir))
+            export_cutoutjob(cutoutjob_id, export_dir)
 
-        callback = export_create_zip.s(user.pk, product.prd_display_name, export_dir)
+        logger.debug("Teste: %s" % cutoutjob_id)
 
-        result = chord(header)(callback)
 
-        result.get()
+        # Cria um arquivo zip com todos os arquivos gerados pelo export.
+        url = export.create_zip(export_dir)
+
+        # Notifica o Usuario sobre o Download.
+        export.notify_user_export_success(user.pk, product.prd_display_name, url)
+
 
     except Exception as e:
         logger.error(e)
