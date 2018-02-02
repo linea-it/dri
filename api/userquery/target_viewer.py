@@ -1,5 +1,6 @@
 import logging
 
+from product.models import Product
 from product_register.ImportProcess import Import
 from product.models import Table as ProductTable
 from userquery.models import Table
