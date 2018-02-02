@@ -196,12 +196,9 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     // evento: ao clicar no botão start job
     btnStartJob_onClick: function(button){
         var me = this;
-        var refs = me.getReferences();
         var dialog = new StartJobDialog({animateTarget : button.getEl()});
-        var formData = refs.frmQuery.getForm().getValues();
+        var formData = me.getFormData();
         var release = me.getActiveRelease() || {};
-
-        formData.sql_sentence = refs.sql_sentence.getValue();
 
         if (release.id === undefined){
             return Ext.MessageBox.show({
@@ -252,12 +249,20 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
+    getFormData(){
+        var refs = this.getReferences();
+        var data = refs.frmQuery.getForm().getValues();
+
+        data.sql_sentence = refs.sql_sentence.getValue();
+
+        return data;
+    },
+
     // evento: ao clicar no botão save
     btnSave_onClick: function(button){
         var me = this;
-        var refs = me.getReferences();
         var query = me.getActiveQuery();
-        var data = refs.frmQuery.getForm().getValues();
+        var data = me.getFormData();
         
         if (query && query.is_sample){
             me.mnuSaveAs_onClick(button);
@@ -344,10 +349,9 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var vm = this.getViewModel();
         var release = this.getActiveRelease();
         var query = this.getActiveQuery() || {};
-        var data = refs.frmQuery.getForm().getValues();
+        var data = this.getFormData();
         var i;
         
-        data.sql_sentence = refs.sql_sentence.getValue();
         query.changed = true;
         
         if (query._oldValues){
@@ -367,8 +371,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
     mnuSaveAs_onClick: function(button){
         var me = this;
-        var refs = this.getReferences();
-        var dataForm = refs.frmQuery.getForm().getValues();
+        var dataForm = me.getFormData();
         var dialog = new SaveAsDialog({animateTarget : button.getEl()});
 
         dialog.open(function(data){
@@ -715,8 +718,8 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     alertOverwriteQuery: function(confirm, cancel){
         var query = this.getActiveQuery() || {};
         
-        if (query.changed === true){
-            if (query._valuesChanges.name){
+        if (query.changed === true && query.exist){
+            if (query._valuesChanges && query._valuesChanges.name){
                 confirm(true);
             } else if (query._valuesChanges.sql_sentence) {
                 Ext.MessageBox.show({
