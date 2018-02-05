@@ -11,12 +11,16 @@ from django.http import HttpResponse
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 
+print("Problema esta entre estes 2 prints")
 from .models import *
 from .permissions import IsOwnerOrPublic
 from .serializers import *
+print("Problema esta depois desta parte")
 from .tasks import create_table, export_table
+print("Problema esta antes desta parte")
 from .db import RawQueryValidator
 from .target_viewer import TargetViewer
+
 
 from product.export import Export
 
