@@ -19,6 +19,9 @@ Ext.define('Explorer.view.system.SystemModel', {
     data: {
         source: null,
         object_id: null,
+        display_ra: '',
+        display_dec: '',
+        display_radius: '',
         object: null,
         object_data: null,
         property_id: null,

@@ -62,10 +62,10 @@ Ext.define('Explorer.view.system.VacGrid', {
                 },
                 {
                     xtype: 'numberfield',
-                    minValue: 1,
-                    maxValue: 20,
+                    minValue: 0.1,
+                    maxValue: 5,
                     step: 0.1,
-                    fieldLabel: 'Radius (arcmin)',
+                    fieldLabel: 'Radius (system radius)',
                     labelWidth: 100,
                     width: 160,
                     bind: "{vacRadius}",
