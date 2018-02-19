@@ -205,10 +205,13 @@ Ext.define('Explorer.view.system.SystemController', {
 
         // Setar um valor default para o raio utilizado na VacGrid
         // por default 2 vezes o valor do raio
-        vacRadius = object.get('_meta_radius') * 2;
-        vm.set('vacRadius', vacRadius.toFixed(1));
+        // vacRadius = object.get('_meta_radius') * 2;
+        vm.set('vacRadius', 2);
 
-
+        // Formatar RA, Dec
+        vm.set('display_ra', parseFloat(object.get('_meta_ra')).toFixed(5));
+        vm.set('display_dec', parseFloat(object.get('_meta_dec')).toFixed(5));
+        vm.set('display_radius', parseFloat(object.get('_meta_radius')).toFixed(3));
     },
 
     onLoadDatasets: function (store) {
@@ -564,10 +567,11 @@ Ext.define('Explorer.view.system.SystemController', {
 
     calculateVacRadius: function (cluster_radius) {
         var me = this,
-            multiplier = 2;
+            vm = me.getViewModel(),
+            multiplier = vm.get('vacRadius')
 
         // DIVIDIR O radius por 60 por que esta em arcmin
-        vacRadius = cluster_radius / 60;
+        vacRadius = (cluster_radius * multiplier) / 60;
 
         return vacRadius.toFixed(3);
     },
@@ -584,11 +588,8 @@ Ext.define('Explorer.view.system.SystemController', {
         vacObjects.clearFilter();
 
         // DIVIDIR O radius por 60 por que esta em arcmin
-        vacRadius = me.calculateVacRadius(vm.get('vacRadius'));
+        vacRadius = me.calculateVacRadius(object.get('_meta_radius'));
 
-        // Desenhar um quadrado mostrando a area que foi usada na busca dos vacs
-        // me.drawVacArea(
-        //     object.get('_meta_ra'), object.get('_meta_dec'), vacRadius)
 
         vacObjects.addFilter([
             {
@@ -669,19 +670,6 @@ Ext.define('Explorer.view.system.SystemController', {
         this.highlightObject(object);
 
     },
-
-    // Para este metodo funcionar e necessario corrigir a funcao do visiomatic
-    // para objetos que estejam perto da borda da tile.
-    // drawVacArea: function (ra, dec, radius) {
-    //     console.log('drawVacArea(%o, %o, %o)', ra, dec, radius);
-    //     var me = this,
-    //         visiomatic = me.lookupReference('visiomatic');
-    //
-    //     upperRight = [ra + radius, dec + radius]
-    //     lowerLeft = [ra - radius, dec - radius]
-    //
-    //     visiomatic.drawRectangle(upperRight, lowerLeft);
-    // },
 
     /**
      * Retorna os tags que estao associados a um release
@@ -799,12 +787,12 @@ Ext.define('Explorer.view.system.SystemController', {
     onCmdClickPoint: function (record, type, cmdTab) {
         // console.log('onCmdClickPoint(%o)', record);
         // Realca o objeto no preview do visiomatic
-        console.log(record)
+        // console.log(record)
         this.highlightObject(record, true);
     },
 
     onActiveCmdTab: function (panel) {
-        console.log('onActiveCmdTab(%o)', panel);
+        // console.log('onActiveCmdTab(%o)', panel);
         var me = this,
             vm = me.getViewModel(),
             clusterMembers = vm.getStore('members'),
