@@ -102,7 +102,7 @@ Ext.define('Explorer.view.system.VacGrid', {
                     labelWidth: 40,
                     width: 100,
                     bind: '{vacOverlayPointSize}',
-                    minValue: 1,
+                    minValue: 0.2,
                     maxValue: 10,
                     step: 0.2,
                 },
