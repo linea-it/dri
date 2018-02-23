@@ -7,6 +7,7 @@ from sqlalchemy import desc
 from sqlalchemy import exc as sa_exc
 from sqlalchemy.sql import select, and_, or_
 from sqlalchemy.sql.expression import literal_column, between
+import math
 
 
 class CatalogDB(DBBase):
@@ -247,10 +248,11 @@ class CatalogTable(CatalogDB):
                 radius = float(square_condition['radius'])
 
                 lowerleft = [lon - radius,
-                             lat - radius]
+                             lat - radius * math.cos(lat * math.pi / 180.)]
 
                 upperright = [lon + radius,
-                              lat + radius]
+                              lat + radius * math.cos(lat * math.pi / 180.)]
+
 
                 square_condition.update({
                     "lowerleft": lowerleft,
@@ -275,6 +277,7 @@ class CatalogTable(CatalogDB):
 
         if urra > 360:
             urra = urra - 360
+
 
         # Verificar se o RA 0 esta entre llra e urra
         if (llra < 0 and urra < 0) or (llra > 0 and urra > 0):

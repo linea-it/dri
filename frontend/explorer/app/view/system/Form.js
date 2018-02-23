@@ -35,13 +35,13 @@ Ext.define('Explorer.view.system.Form', {
                         {
                             fieldLabel: 'RA, Dec (deg)',
                             bind: {
-                                value: '{object_data._meta_ra}, {object_data._meta_dec}'
+                                value: '{display_ra}, {display_dec}'
                             }
                         },
                         {
                             fieldLabel: 'Radius (arcmin)',
                             bind: {
-                                value: '{object_data._meta_radius}'
+                                value: '{display_radius}'
                             }
                         }
                     ]
