@@ -38,7 +38,8 @@
         "products",
         "explorer",
         "userquery",
-        "d3teste"
+        "d3teste",
+        "catalog_builder"
     ],
 
     /**
