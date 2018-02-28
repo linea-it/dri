@@ -154,7 +154,7 @@ Ext.define('Explorer.view.system.System', {
                                 },
                                 {
                                     xtype: 'panel',
-                                    title: 'z and Mag Distribution',
+                                    title: 'Properties Distribution',
                                     layout: {
                                         type: 'hbox',
                                         pack: 'start',
