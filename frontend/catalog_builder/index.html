@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
-    <title>Catalog Builder</title>
+    <title>CatalogBuilder</title>
 
     <!--
     <script type="text/javascript">
@@ -46,89 +46,9 @@
     </script>
     -->
 
-    <!-- splash screen -->
-    <style>
-        .x-treelist-item-icon.fa-frown-o {
-            color:red
-        }
-        .splash {
-            position:absolute;
-            top:0;
-            left:0;
-            right:0;
-            bottom:0;
-            margin:0;
-            background:#ececec;
-            z-index: 1000;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: monospace;
-            cursor: wait;
-        }
-        .splash svg{
-            -webkit-animation: scaleout 1.0s infinite ease-in-out;
-            animation: scaleout 1.0s infinite ease-in-out
-        }
-        .splash .box{
-            text-align: center;
-            box-shadow: 0 0 20px rgba(103, 103, 103, 0.41);
-            padding: 25px;
-            border-radius: 3px;
-            background: #ececec;
-            margin-top: -100px;
-        }
-        .splash.fade-out svg{
-            -webkit-animation: none;
-            animation: none;
-        }
-        .splash.fade-out{
-            transition: opacity 1s;
-            opacity: 0;
-        }
-        @-webkit-keyframes scaleout {
-            0% {
-                -webkit-transform: scale(0)
-            }
-        
-            100% {
-                -webkit-transform: scale(1);
-                opacity: 0
-            }
-        }        
-        @keyframes scaleout {
-            0% {
-                -webkit-transform: scale(0);
-                transform: scale(0)
-            }
-        
-            100% {
-                -webkit-transform: scale(1);
-                transform: scale(1);
-                opacity: 0
-            }
-        }        
-    </style>
-
     <!-- The line below must be kept intact for Sencha Cmd to build your application -->
-    <script id="microloader" data-app="ec311b0b-1ca2-4f2f-b672-f7e9bf9f9023" type="text/javascript" src="bootstrap.js"></script>
+    <script id="microloader" data-app="266e2df3-032f-40e5-b0dd-d1d4868ce3ed" type="text/javascript" src="bootstrap.js"></script>
 
 </head>
-<body>
-    <div class="splash">
-        <div style="text-align:center" class="boxx">
-            <div>Catalog Builder starting...</div>
-        </div>
-        <script>
-            function removeSplash(){
-                var splash = document.querySelector('.splash');
-                splash.className = 'splash fade-out';
-                setTimeout(function(){
-                    splash.parentNode.removeChild(splash);
-                },1000);
-            }
-        </script>
-    </div>
-</body>
+<body></body>
 </html>

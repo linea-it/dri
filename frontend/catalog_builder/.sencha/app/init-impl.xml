@@ -80,9 +80,9 @@
             <file path="${app.config.dir}/${build.environment}.properties" required="false"/>
             <file path="${app.config.dir}/build.properties" required="false"/>
             <!-- Pick up the defaults by framework/environment followed by general: -->
-            <file path="${app.config.dir}/${framework.name}.properties" required="true"/>
-            <file path="${app.config.dir}/${app.packager}.defaults.properties" required="false"/>
-            <file path="${app.config.dir}/${build.environment}.defaults.properties" required="true"/>
+            <file path="${framework.config.dir}/templates/App/.sencha/app/${framework.name}.properties" required="true"/>
+            <file path="${framework.config.dir}/templates/App/.sencha/app/${app.packager}.defaults.properties" required="false"/>
+            <file path="${framework.config.dir}/templates/App/.sencha/app/${build.environment}.defaults.properties" required="true"/>
             <file path="${app.config.dir}/defaults.properties" required="true"/>
         </x-load-properties>
 
@@ -231,23 +231,6 @@
         </if>
 
         <if>
-            <or>
-                <equals arg1="${app.output.js.filter}" arg2="all"/>
-                <equals arg1="${app.output.js.filter}" arg2="minimum"/>
-            </or>
-            <then>
-                <property name="enable.used.deps" value="false"/>
-            </then>
-        </if>
-        
-        <if>
-            <equals arg1="${app.output.js.filter}" arg2="used"/>
-            <then>
-                <property name="enable.used.deps" value="true"/>
-            </then>
-        </if>
-        
-        <if>
             <equals arg1="${app.toolkit}" arg2="modern"/>
             <then>
                 <property name="skip.slice" value="1"/>
@@ -380,19 +363,6 @@
         </condition>
         <property name="enable.split.framework" value="false"/>
 
-        <if>
-            <equals arg1="${app.output.js.filter}" arg2="used"/>
-            <then>
-                <property name="include.used.package.deps">
-                    include
-                        -usedPackagesDeps
-                    and
-                </property>
-            </then>
-        </if>
-        <property name="include.used.package.deps">
-            # no-op
-        </property> 
 
         <x-compile refid="${compiler.ref.id}"
                    dir="${app.dir}"
@@ -425,7 +395,9 @@
                 ${build.operations}
                 and
                 ${exclude.boot}
-                ${include.used.package.deps}
+                include
+                    -usedPackageDeps
+                and
                 save
                     page
             ]]>
@@ -445,7 +417,9 @@
                 ${build.operations}
                 and
                 ${exclude.boot}
-                ${include.used.package.deps}
+                include
+                    -usedPackageDeps
+                and
                 save
                     page
             ]]>

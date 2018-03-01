@@ -1,10 +1,8 @@
 {
     "name": "CatalogBuilder",
-    "namespace": "CatalogBuilder",
     "version": "1.0.0.0",
     "framework": "ext",
     "toolkit": "classic",
-    //"theme": "theme-triton",
     "theme": "theme-crisp",
 
     /**
@@ -19,7 +17,6 @@
     "requires": [
         "font-awesome",
         "common"
-        // "codemirror"
     ],
 
     /**
@@ -82,7 +79,7 @@
          *         // The file used to save sass variables edited via Sencha Inspector and Sencha Themer.
          *         // This file will automatically be applied to the end of the scss build.
          *         "var": "sass/save.scss",
-         *
+         *      
          *         // The directory used to save generated sass sources.
          *         // This directory will automatically be applied to the end of the scss build.
          *         "src": "sass/save"
@@ -206,18 +203,6 @@
      *
      */
     "js": [
-        // {
-        //     "path": "../packages/local/codemirror/src/codemirror/codemirror.min.js"
-        // },
-        // {
-        //     "path": "../packages/local/codemirror/src/codemirror/lang/sql.min.js"
-        // },
-        {
-            "path": "app/libs/trello-panels.js"
-        },
-        {
-            "path": "app/libs/properties.js"
-        },
         {
             "path": "${framework.dir}/build/ext-all-rtl-debug.js"
         },
@@ -253,15 +238,6 @@
      *      }
      */
     "css": [
-        // {
-        //     "path": "../packages/local/codemirror/src/codemirror/codemirror.css"
-        // },
-        {
-            "path": "app/libs/trello-panels.css"
-        },
-        {
-            "path": "app/libs/properties.css"
-        },
         {
             // this entry uses an ant variable that is the calculated
             // value of the generated output css file for the app,
@@ -325,7 +301,7 @@
      */
     "development": {
         "watch": {
-            "delay": 250F
+            "delay": 250
         }
     },
 
@@ -380,7 +356,7 @@
      *          "css": "${app.output.resources}/${app.name}-all.css",
      *          "js": {
      *              "path": "app.js",
-     *              // This setting constrols the output language level.  Set to 'ES6' to
+     *              // This setting constrols the output language level.  Set to 'ES6' to 
      *              // disable the transpiler
      *              "version": "ES5"
      *          },
@@ -520,5 +496,5 @@
      * Uniquely generated id for this application, used as prefix for localStorage keys.
      * Normally you should never change this value.
      */
-    "id": "ec311b0b-1ca2-4f2f-b672-f7e9bf9f9023"
+    "id": "266e2df3-032f-40e5-b0dd-d1d4868ce3ed"
 }
