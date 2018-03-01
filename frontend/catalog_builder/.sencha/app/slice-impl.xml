@@ -132,22 +132,10 @@
     <!-- Produces a bootstrap.js file for ext 4.2 slicer pages -->
     <target name="-generate-slicer-bootstrap" unless="framework.isV5">
         <local name="relpath"/>
-        <local name="cmd.dir.normalized"/>
         <x-get-relative-path from="${bootstrap.base.path}"
                              to="${framework.packages.dir}"
                              property="relpath"/>
 
-        <script language="javascript">
-            <![CDATA[
-                var dir = project.getProperty("cmd.dir") + '';
-                dir = dir.replace(/\\/g, '/');
-                if (dir.indexOf('/') !== 0) {
-                    dir = '/' + dir; 
-                }
-                project.setProperty("cmd.dir.normalized", dir);
-            ]]>
-        </script>
-        
         <x-bootstrap file="${bootstrap.example.js}"
                      basedir="${bootstrap.base.path}"
                      includeBoot="true"
@@ -157,7 +145,7 @@
                      overrideExcludeTags="">
 <![CDATA[
 Ext.Boot.loadSync([
-    "${cmd.dir.normalized}/ant/build/slicer/render.js",
+    "${cmd.dir}/ant/build/slicer/render.js",
     "${relpath}/ext-theme-base/sass/example/manifest.js",
     "${relpath}/ext-theme-base/sass/example/shortcuts.js",
     "custom.js"
