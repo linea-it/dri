@@ -18,73 +18,6 @@
     this is the standard js compile target that builds the output js file(s)
     -->
     <target name="-compile-js" depends="-detect-app-build-properties">
-
-        <property name="app.output.framework.include"
-                  value="package-sencha-core,framework,toolkit,package-core"/>
-
-        <property name="enable.used.deps" value="${app.has.uses}"/>
-        
-        <if>
-            <x-is-true value="${enable.used.deps}"/>
-            <then>
-                <x-compile refid="${compiler.ref.id}">
-                    # determine the base set of framework files
-                    exclude
-                        -all
-                    and
-                    include
-                        -tag=${app.output.framework.include}
-                    and
-                    save
-                        allframework
-                </x-compile>
-
-                <for param="file">
-                    <fileset dir="${workspace.build.dir}/temp" includes="**/deps.json"/>
-                    <sequential>
-                        <x-compile refid="${compiler.ref.id}">
-                            # now load the transitive set based on the json data
-                            exclude
-                                -all
-                            and
-                            include
-                                -json-data=@{file}
-                                -r
-                            and
-                            save
-                                deps
-                            and
-                            
-                            # add any needed deps to the page save set
-                            include
-                                -set=page
-                            and
-                            save
-                                page
-                        </x-compile>
-                    </sequential>
-                </for>
-            </then>
-            <else>
-                <if>
-                    <equals arg1="${app.output.js.filter}" arg2="all"/>
-                    <then>
-                        <x-compile refid="${compiler.ref.id}">
-                            # if filtering requirements is configured for 'all'
-                            # then just include all js content on the classpath to 
-                            # ensure all dependencies are provided for the used packages
-                            include 
-                                -all
-                            and
-                            save
-                                page
-                        </x-compile>
-                    </then>
-                </if>
-            </else>
-        </if>
-        
-        
         <if>
             <x-is-true value="${enable.split.mode}"/>
             <then>
@@ -125,6 +58,9 @@
                         <property name="build.js.framework.rtl"> </property>
                     </else>
                 </if>
+
+                <property name="app.output.framework.include"
+                          value="package-sencha-core,framework,toolkit,package-core"/>
 
                 <x-compile refid="${compiler.ref.id}">
                     <![CDATA[
@@ -183,6 +119,24 @@
             </then>
             <else>
                 <local name="framework.include.filter"/>
+                <if>
+                    <isset property="app.has.uses"/>
+                    <then>
+                        <property name="app.output.framework.include"
+                                  value="package-sencha-core,framework,toolkit,package-core"/>
+                        
+                        <property name="framework.include.filter">
+                            include
+                                -tag=${app.output.framework.include}
+                            and
+                        </property>
+                    </then>
+                    <else>
+                        <property name="framework.include.filter">
+                            #no-op
+                        </property>
+                    </else>
+                </if>
                 <x-compile refid="${compiler.ref.id}">
                     <![CDATA[
                         # build an all-classes.js file that contains
@@ -190,6 +144,7 @@
                         restore
                             page
                         and
+                        ${framework.include.filter}
                         ${build.optimize}
                         and
                         concat
