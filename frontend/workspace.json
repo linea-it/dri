@@ -39,7 +39,8 @@
         "explorer",
         "userquery",
         "d3teste",
-        "catalog_builder"
+        "catalog_builder",
+        "DynamicForm"
     ],
 
     /**
