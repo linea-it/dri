@@ -181,9 +181,16 @@ Ext.define('Explorer.view.system.System', {
                                     ]
                                 },
                                 {
-                                    xtype: 'system-spatial-distribution',
+                                    xtype: 'panel',
                                     title: 'Spatial Distribution',
-                                    disabled: true
+                                    layout: 'center',
+                                    items: [
+                                        {
+                                            xtype: 'system-spatial-distribution',
+                                            width: 600,
+                                            height: '100%',
+                                        }
+                                    ]
                                 },
                                 {
                                     xtype: 'cmd-tab',
