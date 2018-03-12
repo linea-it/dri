@@ -39,9 +39,10 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
 
 
     performLayout: function (scene, rect) {
-        console.log('performLayout(%o, %o)', scene, rect);
+        // console.log('performLayout(%o, %o)', scene, rect);
         var me = this;
 
+        me.setLoading(true);
 
         // Outer Container
         me._outerContainer = d3_container.container()
@@ -69,7 +70,7 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
             .attr("class", "outer")
             .attr("width", me._innerWidth)
             .attr("height", me._innerHeight)
-            .style("fill", "#ece6e6");
+            .style("fill", "#fff");
 
         me._content.call(me._innerContainer);
 
@@ -105,7 +106,7 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
             .attr("class", "inner")
             .attr("width", me._width)
             .attr("height", me._height)
-            .style("fill", "#bfe2f5");
+            .style("fill", "#fff");
 
 
         //Add clip path so points/line do not exceed boundaries
@@ -132,13 +133,67 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
             .attr("class", "tooltip")
             .style("opacity", 0);
 
-        d3.json("http://localhost:8000/density_map?source=199&lon=339.767467301912&lat=-43.0506700295725&radius=0.093")
-            .get(function(data) {
-                me.setPlotData(data);
-                me.updatePlot()
-            });
 
+        me.setLoading(false);
 
+    },
+
+    loadData: function (clusterSource, clusterId, vacSource, lon, lat, radius) {
+        var me = this;
+
+        params = {
+            "clusterSource": clusterSource,
+            "clusterId": clusterId,
+            "vacSource": vacSource,
+            "lon": lon,
+            "lat": lat,
+            "radius": radius
+        }
+
+        me.setLoading(true);
+
+        // Submit Catalog
+        Ext.Ajax.request({
+            cors: true,
+            method: 'GET',
+            url: '/dri/api/plugin/galaxy_cluster/',
+            timeout: 90000,
+            success: function (response) {
+                var data = JSON.parse(response.responseText);
+                // Fechar a janela de registro
+                me.setLoading(false);
+
+                if (data.success) {
+                    me.setPlotData(data);
+                    me.updatePlot()
+                } else {
+                    Ext.MessageBox.show({
+                        title: 'Failure',
+                        msg: data.message,
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING
+                    });
+                }
+            },
+            failure: function (response, opts) {
+                me.setLoading(false);
+
+                Ext.MessageBox.show({
+                    title: 'Server Side Failure',
+                    msg: response.status + ' ' + response.statusText,
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
+            },
+            // Headers necessarios para fazer um Post Autheticado no Django
+            headers: {
+                'Accept': 'application/json',
+                'Application': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRFToken': Ext.util.Cookies.get('csrftoken')
+            },
+            params: params
+        });
     },
 
     updatePlot: function () {
@@ -146,95 +201,97 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
         var me = this,
             data = me.getPlotData();
 
-        console.log(data)
+        if (data) {
 
-        // domain para a escala de cores
-        me._color.domain([data.zmin, data.zmax]);
+            // domain para a escala de cores
+            me._color.domain([data.zmin, data.zmax]);
 
-        // domain para as escalas
-        me._xScale.domain([data.xmax, data.xmin]);
-        me._yScale.domain([data.ymin, data.ymax]);
+            // domain para as escalas
+            me._xScale.domain([data.xmax, data.xmin]);
+            me._yScale.domain([data.ymin, data.ymax]);
 
-        // Adicionando os Axis
-        me._g.append("g")
-            .attr("class", "x axis axis--x")
-            .attr("transform", "translate(0," + me._height + ")")
-            .call(me._xAxis)
+            // Adicionando os Axis
+            me._g.append("g")
+                .attr("class", "x axis axis--x")
+                .attr("transform", "translate(0," + me._height + ")")
+                .call(me._xAxis)
 
-        me._g.append("g")
-            .attr("class", "y axis axis--y")
-            .call(me._yAxis)
+            me._g.append("g")
+                .attr("class", "y axis axis--y")
+                .call(me._yAxis)
 
-        // Heatmap
-        me._g.append("g")
-            .attr("class", "density-map")
-            .attr("clip-path", "url(#clip)")
-          .selectAll("path")
-          .data(data.values)
-          .enter().append("rect")
-            .attr('class', 'cell')
-            .attr('width', 4)
-            .attr('height', 4)
-            .attr('x', function(d) { return me._xScale(d.x)})
-            .attr('y', function(d) { return me._yScale(d.y)})
-            .attr("fill", function(d) {
-                return me._color(d.z);
-            })
-            .style("stroke-width", 0)
-            .on("mouseover", function(d) {
-                if (d.z > data.zmin) {
+            // Heatmap
+            me._g.append("g")
+                .attr("class", "density-map")
+                .attr("clip-path", "url(#clip)")
+              .selectAll("path")
+              .data(data.values)
+              .enter().append("rect")
+                .attr('class', 'cell')
+                .attr('width', 4)
+                .attr('height', 4)
+                .attr('x', function(d) { return me._xScale(d.x)})
+                .attr('y', function(d) { return me._yScale(d.y)})
+                .attr("fill", function(d) {
+                    return me._color(d.z);
+                })
+                .style("stroke-width", 0)
+                .on("mouseover", function(d) {
+                    if (d.z > data.zmin) {
+                        // me._tooltip.transition()
+                        //    .duration(200)
+                        //    .style("opacity", 1);
+                        // me._tooltip.html(d.z.toFixed(3))
+                        //    .style("top", (d3.event.pageY) + "px")
+                        //    .style("left", (d3.event.pageX + 15) + "px");
+                   }
+                })
+                .on("mouseout", function(d) {
                     // me._tooltip.transition()
-                    //    .duration(200)
-                    //    .style("opacity", 1);
-                    // me._tooltip.html(d.z.toFixed(3))
-                    //    .style("top", (d3.event.pageY) + "px")
-                    //    .style("left", (d3.event.pageX + 15) + "px");
-               }
-            })
-            .on("mouseout", function(d) {
-                // me._tooltip.transition()
-                //    .duration(500)
-                //    .style("opacity", 0);
-            });
+                    //    .duration(500)
+                    //    .style("opacity", 0);
+                });
 
 
-        // Cluster Radius
-        me.drawClusterRadius();
+            // Cluster Radius
+            me.drawClusterRadius();
 
-        // MPC Radius
-        me.drawMpcRadius();
+            // MPC Radius
+            me.drawMpcRadius();
 
-        // Grid Lines
-        // add the X gridlines
-        me._g.append("g")
-            .attr("class", "grid")
-            .attr("transform", "translate(0," + me._height + ")")
-            .call(me.make_x_gridlines()
-                .tickSize(-me._height)
-                .tickFormat("")
-            )
-            .style("stroke", "darkgrey")
-            .style("stroke-opacity", 0.4)
-            .style("shape-rendering", "crispEdges")
-            .style("stroke-dasharray", "2 2")
+            // Grid Lines
+            // add the X gridlines
+            me._g.append("g")
+                .attr("class", "grid")
+                .attr("transform", "translate(0," + me._height + ")")
+                .call(me.make_x_gridlines()
+                    .tickSize(-me._height)
+                    .tickFormat("")
+                )
+                .style("stroke", "darkgrey")
+                .style("stroke-opacity", 0.4)
+                .style("shape-rendering", "crispEdges")
+                .style("stroke-dasharray", "2 2")
 
-        // add the Y gridlines
-        me._g.append("g")
-            .attr("class", "grid")
-            .call(me.make_y_gridlines()
-                .tickSize(-me._width)
-                .tickFormat("")
-            )
-            .style("stroke", "darkgrey")
-            .style("stroke-opacity", 0.4)
-            .style("shape-rendering", "crispEdges")
-            .style("stroke-dasharray", "2 2")
+            // add the Y gridlines
+            me._g.append("g")
+                .attr("class", "grid")
+                .call(me.make_y_gridlines()
+                    .tickSize(-me._width)
+                    .tickFormat("")
+                )
+                .style("stroke", "darkgrey")
+                .style("stroke-opacity", 0.4)
+                .style("shape-rendering", "crispEdges")
+                .style("stroke-dasharray", "2 2")
 
-        me.updateLegend();
+            me.updateLegend();
 
-        me.drawAxisLabel();
+            me.drawAxisLabel();
 
-        me.drawAxisLabel();
+            me.drawAxisLabel();
+
+        }
     },
 
     updateLegend: function () {

@@ -29,6 +29,7 @@ Ext.define('Explorer.view.system.SystemModel', {
         position: null,
         have_members: false,
         selected_member: null,
+        have_vac: false,
         visibleOverlayVacs: true,
         overlayVac: null,
         vacRadius: 1,

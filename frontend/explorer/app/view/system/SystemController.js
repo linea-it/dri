@@ -525,6 +525,7 @@ Ext.define('Explorer.view.system.SystemController', {
             vacObjects = me.getStore('vacObjects');
 
         vm.set('currentVacProduct', currentVacProduct);
+        vm.set('have_vac', true);
 
         vacObjects.removeAll();
 
@@ -801,5 +802,34 @@ Ext.define('Explorer.view.system.SystemController', {
         panel.setMembers(clusterMembers);
         panel.setVacs(vacObjects);
         panel.reloadPlots();
+    },
+
+    // ------------------- Spatial Distribution --------------------
+    onActiveSpatialTab: function () {
+        console.log('onActiveSpatialTab()')
+        var me = this,
+            vm = me.getViewModel(),
+            densityMap = me.lookup("densityMap"),
+            clusterSource = vm.get("source"),
+            clusterId = vm.get("object_id"),
+            currentVacProduct = vm.get("currentVacProduct")
+            vacSource = currentVacProduct.get("id"),
+            object = vm.get("object"),
+            lon = object.get("_meta_ra"),
+            lat = object.get("_meta_dec"),
+            radius = vm.get("vacRadius");
+
+        // Exemplo local development
+        // clusterSource = 224
+        // clusterId = 61065
+        // vacSource = 199
+        // lon = 339.772607077276
+        // lat = -43.063088608118
+        // radius = 0.101
+
+        if (vacSource) {
+            densityMap.loadData(clusterSource, clusterId, vacSource, lon, lat, radius);
+        }
+
     }
 });

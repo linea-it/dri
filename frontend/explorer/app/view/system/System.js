@@ -184,13 +184,20 @@ Ext.define('Explorer.view.system.System', {
                                     xtype: 'panel',
                                     title: 'Spatial Distribution',
                                     layout: 'center',
+                                    bind: {
+                                        disabled: "{!have_vac}"
+                                    },
                                     items: [
                                         {
                                             xtype: 'system-spatial-distribution',
                                             width: 600,
                                             height: '100%',
+                                            reference: "densityMap"
                                         }
-                                    ]
+                                    ],
+                                    listeners: {
+                                        activate: 'onActiveSpatialTab',
+                                    }
                                 },
                                 {
                                     xtype: 'cmd-tab',
