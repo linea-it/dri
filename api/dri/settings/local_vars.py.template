@@ -125,7 +125,9 @@ PRODUCT_REGISTER_DB_INTERFACE = False
 PRODUCT_REGISTER_FOLDERS = False
 # Habilita ou Desabilita a opção de registrar um produto como publico, pela interface.
 PRODUCT_REGISTER_ENABLE_PUBLIC = False
-
+# Plugin Galaxy Cluster para o Explorer
+# Url para acessar o container com o plugin do galaxy cluster
+PLUGIN_GALAXY_CLUSTER_HOST = "http://localhost:8000"
 
 
 # Lista as Variaveis que vao ser exportadas para os templates do Django. https://pypi.python.org/pypi/django-settings-export
