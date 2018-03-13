@@ -810,7 +810,8 @@ Ext.define('Explorer.view.system.SystemController', {
         var me = this,
             vm = me.getViewModel(),
             densityMap = me.lookup("densityMap"),
-            clusterSource = vm.get("source"),
+            currentProduct = vm.get("currentProduct"),
+            clusterSource = currentProduct.get("id"),
             clusterId = vm.get("object_id"),
             currentVacProduct = vm.get("currentVacProduct")
             vacSource = currentVacProduct.get("id"),
