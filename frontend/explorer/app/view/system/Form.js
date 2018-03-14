@@ -43,7 +43,13 @@ Ext.define('Explorer.view.system.Form', {
                             bind: {
                                 value: '{display_radius}'
                             }
-                        }
+                        },
+                        {
+                            fieldLabel: 'Proccess Id',
+                            bind: {
+                                value: '{currentProduct.epr_original_id}'
+                            }
+                        }                        
                     ]
                 }
             ]
