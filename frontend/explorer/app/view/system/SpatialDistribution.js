@@ -157,7 +157,7 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
             cors: true,
             method: 'GET',
             url: '/dri/api/plugin/galaxy_cluster/',
-            timeout: 90000,
+            timeout: 12000,
             success: function (response) {
                 var data = JSON.parse(response.responseText);
                 // Fechar a janela de registro
