@@ -17,6 +17,7 @@ Ext.define('Explorer.model.Product', {
         {name:'is_owner', type:'boolean', defaultValue: false},
         {name:'tablename', type:'string'},
         {name: 'epr_original_id', type: 'string'},
+        {name: 'productlog', type: 'string'},
         // Nome do producto + process ID
         {
             name:'name_with_process_id',

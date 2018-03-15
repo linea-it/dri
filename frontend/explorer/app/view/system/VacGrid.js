@@ -111,6 +111,16 @@ Ext.define('Explorer.view.system.VacGrid', {
                     iconCls: 'x-tbar-loading',
                     handler: 'loadVacObjects',
                     tooltip: 'Refresh'
+                },
+                '-',
+                {
+                    xtype: "button",
+                    iconCls: 'fa fa-info',
+                    tooltip: "Product Log",
+                    bind: {
+                        href: '{currentVacProduct.productlog}',
+                        disabled: '{!currentVacProduct.productlog}'
+                    }
                 }
             ]
         });
