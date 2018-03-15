@@ -42,7 +42,7 @@ Ext.define('Explorer.view.system.VacGrid', {
                     emptyText: 'choose the VAC catalog',
                     width: 200,
                     valueField: 'id',
-                    displayField: 'prd_display_name',
+                    displayField: 'name_with_process_id',
                     queryMode: 'local',
                     bind: {
                         store: '{vacProducts}',

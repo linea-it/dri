@@ -49,7 +49,13 @@ Ext.define('Explorer.view.system.Form', {
                             bind: {
                                 value: '{currentProduct.epr_original_id}'
                             }
-                        }                        
+                        },
+                        {
+                            fieldLabel: 'VAC',
+                            bind: {
+                                value: '{vacCluster.epr_original_id} - {vacCluster.prd_display_name}'
+                            }
+                        }
                     ]
                 }
             ]
