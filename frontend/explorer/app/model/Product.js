@@ -15,7 +15,20 @@ Ext.define('Explorer.model.Product', {
         {name:'prd_date', type:'date'},
         {name:'prd_is_public', type:'boolean', defaultValue: false},
         {name:'is_owner', type:'boolean', defaultValue: false},
-        {name:'tablename', type:'string'}
+        {name:'tablename', type:'string'},
+        {name: 'epr_original_id', type: 'string'},
+        // Nome do producto + process ID
+        {
+            name:'name_with_process_id',
+            type:'string',
+            convert: function (value, record) {
+                if (record.get('epr_original_id')) {
+                    return record.get('epr_original_id') + ' - ' + record.get("prd_display_name");
+                } else {
+                    return record.get("prd_display_name");
+                }
+            }
+        },
     ]
 
 });

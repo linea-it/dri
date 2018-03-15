@@ -116,7 +116,7 @@ class PermissionAdmin(admin.ModelAdmin):
 
 
 class ProductRelatedAdmin(admin.ModelAdmin):
-    list_display = ('id', 'prl_product', 'prl_related', 'prl_cross_identification',)
+    list_display = ('id', 'prl_product', 'prl_related', 'prl_relation_type', 'prl_cross_identification',)
 
 
 class FiltersetdAdmin(admin.ModelAdmin):

@@ -19,10 +19,16 @@ Ext.define('Target.view.settings.SystemMembersController', {
 
         if (currentCatalog.get('pcl_is_system')) {
             // Checar se ja existe uma relacao com o produto
-            relateds.addFilter({
-                property: 'prl_product',
-                value: currentCatalog.get('id')
-            });
+            relateds.addFilter([
+                {
+                    property: 'prl_product',
+                    value: currentCatalog.get('id')
+                },
+                {
+                    property: 'prl_relation_type',
+                    value: "join"
+                }
+            ]);
             relateds.load({
                 callback: function () {
                     me.onLoadRelateds(this);
