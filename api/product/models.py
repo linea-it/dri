@@ -199,12 +199,27 @@ class ProductContentSetting(models.Model):
 
 
 class ProductRelated(models.Model):
+
+    relation_types = (
+        # join quando um produto esta ligado ao outro atraves de uma property com ucd meta.id.cross
+        ('join', 'Join'),
+        # input quando um produto foi usado como input na geracao do outro, o related representa o input.
+        ('input', 'Input'),
+    )
+
     prl_product = models.ForeignKey(
         Product, on_delete=models.CASCADE, verbose_name='Product'
     )
     prl_related = models.ForeignKey(
         Product, related_name="relateds", on_delete=models.CASCADE, verbose_name='Related Product'
     )
+    prl_relation_type = models.CharField(
+        max_length=10,
+        choices=relation_types,
+        default='join',
+        verbose_name='Relation Type'
+    )
+
     prl_cross_identification = models.ForeignKey(
         ProductContent, on_delete=models.CASCADE, verbose_name='Cross Identification', default=None,
         null=True, blank=True, help_text="Foreign key between the product and the related product",
