@@ -459,7 +459,7 @@ class ProductRelatedViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductRelatedSerializer
 
-    filter_fields = ('prl_product', 'prl_related', 'prl_cross_identification')
+    filter_fields = ('prl_product', 'prl_related', 'prl_relation_type', 'prl_cross_identification')
 
 
 class ProductContentAssociationViewSet(viewsets.ModelViewSet):

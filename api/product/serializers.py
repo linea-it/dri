@@ -98,21 +98,21 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_prl_related(self, obj):
         try:
-            related = ProductRelated.objects.get(prl_product=obj.pk)
+            related = ProductRelated.objects.get(prl_product=obj.pk, prl_relation_type="join")
             return related.prl_related.pk
         except:
             return None
 
     def get_prl_cross_identification(self, obj):
         try:
-            related = ProductRelated.objects.get(prl_product=obj.pk)
+            related = ProductRelated.objects.get(prl_product=obj.pk, prl_relation_type="join")
             return related.prl_cross_identification.pk
         except:
             return None
 
     def get_prl_cross_property(self, obj):
         try:
-            related = ProductRelated.objects.get(prl_product=obj.pk)
+            related = ProductRelated.objects.get(prl_product=obj.pk, prl_relation_type="join")
             return related.prl_cross_identification.pcn_column_name.lower()
         except:
             return None
@@ -593,6 +593,7 @@ class ProductRelatedSerializer(serializers.ModelSerializer):
             'id',
             'prl_product',
             'prl_related',
+            'prl_relation_type',
             'prl_cross_identification',
             'prl_cross_name'
         )

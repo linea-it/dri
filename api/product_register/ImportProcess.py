@@ -197,6 +197,8 @@ class Import():
             else:
                 raise Exception("Product Type '%s' not implemented yet." % product.get('type'))
 
+        print(self._products_classes)
+
         # Verificar a classe dos produtos se for galaxy cluster ou cluster members deve ser feita a ligacao entre as 2
         if ('galaxy_clusters' in self._products_classes) and ('cluster_members' in self._products_classes):
             self.link_galaxy_cluster_with_cluster_members()
@@ -262,7 +264,7 @@ class Import():
                 epr_name=data.get('pipeline', None),
                 epr_original_id=data.get('process_id', None),
                 defaults={
-                    "epr_username": self.owner,
+                    "epr_username": self.owner.username,
                 }
             )
 
@@ -476,7 +478,6 @@ class Import():
             e necessario que o produto de members tenha uma propriedade com ucd meta.id.cross.
         :return:
         """
-
         gc = self._products_classes.get('galaxy_clusters')
         cm = self._products_classes.get('cluster_members')
 
@@ -486,12 +487,12 @@ class Import():
 
             prd_related = ProductRelated.objects.update_or_create(
                 prl_product=gc,
+                prl_related=cm,
                 defaults={
-                    "prl_related": cm,
+                    "prl_relation_type": "join",
                     "prl_cross_identification": cross_identification
                 }
             )
-
 
         except ProductContent.DoesNotExist:
             raise Exception(
@@ -511,19 +512,15 @@ class Import():
         gc = self._products_classes.get('galaxy_clusters')
         vc = self._products_classes.get('vac_cluster')
 
-        print("VAC")
-        print(vc)
-
         # Criar uma relacao entre o produto de galaxy cluster e o vac que foi usado como input
-        # prd_related = ProductRelated.objects.update_or_create(
-        #     prl_product=gc,
-        #     defaults={
-        #         "prl_related": cm,
-        #         "prl_cross_identification": cross_identification
-        #     }
-        # )
-
-
+        prd_related = ProductRelated.objects.update_or_create(
+            prl_product=gc,
+            prl_related=vc,
+            defaults={
+                "prl_relation_type": "input",
+                "prl_cross_identification": None
+            }
+        )
 
 
     # =============================< MAP >=============================
