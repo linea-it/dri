@@ -366,12 +366,17 @@ Ext.define('visiomatic.catalog.CatalogController', {
             overlays = vm.getStore('overlays'),
             visiomatic = vm.get('visiomatic'),
             record = overlays.getAt(rowIndex),
-            layers = record.get('layers');
+            layers = record.get('layers'),
+            store = record.get('objects');
+
+        // Verificar se a requisicao esta em andamento e abortar
+        if (store.loading) {
+            store.getProxy().abort();
+        }
 
         // Remover as layers no visiomatic
         if (layers !== null) {
             visiomatic.showHideLayer(layers, false);
-
         }
 
         // remover o overlay da Store

@@ -2,6 +2,7 @@ import datetime
 import logging
 import os
 import time
+from urllib.parse import urljoin
 
 import humanize
 from django.contrib.auth.models import User
@@ -42,6 +43,8 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
     tablename = serializers.SerializerMethodField()
 
+    productlog = serializers.SerializerMethodField()
+
     class Meta:
         model = Product
 
@@ -63,7 +66,8 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             'prl_related',
             'prl_cross_identification',
             'prl_cross_property',
-            'tablename'
+            'tablename',
+            'productlog'
         )
 
     def get_pcl_name(self, obj):
@@ -98,21 +102,21 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_prl_related(self, obj):
         try:
-            related = ProductRelated.objects.get(prl_product=obj.pk)
+            related = ProductRelated.objects.get(prl_product=obj.pk, prl_relation_type="join")
             return related.prl_related.pk
         except:
             return None
 
     def get_prl_cross_identification(self, obj):
         try:
-            related = ProductRelated.objects.get(prl_product=obj.pk)
+            related = ProductRelated.objects.get(prl_product=obj.pk, prl_relation_type="join")
             return related.prl_cross_identification.pk
         except:
             return None
 
     def get_prl_cross_property(self, obj):
         try:
-            related = ProductRelated.objects.get(prl_product=obj.pk)
+            related = ProductRelated.objects.get(prl_product=obj.pk, prl_relation_type="join")
             return related.prl_cross_identification.pcn_column_name.lower()
         except:
             return None
@@ -123,6 +127,14 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
                 return "%s.%s" % (obj.table.tbl_schema, obj.table.tbl_name)
             else:
                 return obj.table.tbl_name
+        except:
+            return None
+
+    def get_productlog(self, obj):
+        try:
+            site = obj.prd_process_id.epr_site.sti_url
+            return urljoin(site, "VP/getViewProcessCon?process_id=%s" % obj.prd_process_id.epr_original_id)
+
         except:
             return None
 
@@ -593,6 +605,7 @@ class ProductRelatedSerializer(serializers.ModelSerializer):
             'id',
             'prl_product',
             'prl_related',
+            'prl_relation_type',
             'prl_cross_identification',
             'prl_cross_name'
         )
