@@ -451,6 +451,17 @@ class ProductContentViewSet(viewsets.ModelViewSet):
         return Response(ordered)
 
 
+class ProductRelatedFilter(django_filters.FilterSet):
+    prd_class = django_filters.MethodFilter()
+
+    class Meta:
+        model = ProductRelated
+        fields = ['prl_product', 'prl_related', 'prl_relation_type', 'prl_cross_identification', 'prd_class']
+
+    def filter_prd_class(self, queryset, value):
+        return queryset.filter(prl_related__prd_class__pcl_name=str(value))
+
+
 class ProductRelatedViewSet(viewsets.ModelViewSet):
     """
 
@@ -459,7 +470,10 @@ class ProductRelatedViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductRelatedSerializer
 
-    filter_fields = ('prl_product', 'prl_related', 'prl_cross_identification')
+    filter_backends = (filters.DjangoFilterBackend, )
+
+    filter_class = ProductRelatedFilter
+
 
 
 class ProductContentAssociationViewSet(viewsets.ModelViewSet):

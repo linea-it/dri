@@ -9,6 +9,8 @@ Ext.define('Explorer.view.system.SystemModel', {
         'Explorer.model.Product',
         'Explorer.store.Association',
         'Explorer.store.ProductDisplayContents',
+        'Explorer.store.ProductRelateds',
+        'Explorer.model.ProductRelated',
         'common.model.Dataset',
         'common.store.Surveys',
         'common.store.Tags',
@@ -35,7 +37,7 @@ Ext.define('Explorer.view.system.SystemModel', {
         vacRadius: 1,
         vacOverlayColor: '1B81BC',
         vacOverlayPointSize: 1.2,
-        vacOverlaypointType: 'square'
+        vacOverlaypointType: 'square',
     },
 
     links: {
@@ -47,10 +49,20 @@ Ext.define('Explorer.view.system.SystemModel', {
             type: 'common.model.Dataset',
             create: true
         },
+        // Vac selecionado na combobox da aba VAC
         currentVacProduct: {
             type: 'Explorer.model.Product',
             create: true
-        }
+        },
+        relatedVacCluster: {
+            type: 'Explorer.model.ProductRelated',
+            create: true
+        },
+        // Vac relacionado ao cluster utilizado como input para sua producao
+        vacCluster: {
+            type: 'Explorer.model.Product',
+            create: true
+        },
     },
 
     stores: {
@@ -114,6 +126,10 @@ Ext.define('Explorer.view.system.SystemModel', {
         vacObjects: {
             type: 'objects',
             pageSize: 2000
+        },
+        productRelateds: {
+            type: 'product_relateds',
+            autoLoad: false
         },
     }
 });

@@ -62,6 +62,7 @@ Ext.define('Explorer.view.system.SystemController', {
         });
 
         vacProducts.load({
+            scope: me,
             callback: me.onLoadVacProducts
         });
     },
@@ -82,7 +83,46 @@ Ext.define('Explorer.view.system.SystemController', {
         // Carregar as propriedades dos system members
         me.loadMembersContent(product);
 
+        // Load VAC cluster used with input in original proccess
+        me.loadVacCluster();
+
+
     },
+
+    loadVacCluster: function () {
+        console.log('loadVacCluster()')
+        var me = this,
+            vm = me.getViewModel(),
+            product = vm.get('currentProduct'),
+            relateds = vm.getStore("productRelateds");
+
+        relateds.addFilter([
+            {
+                property: 'prl_product',
+                value: product.get('id')
+            },
+            {
+                property: 'prl_relation_type',
+                value: "input"
+            },
+            {
+                property: 'prd_class',
+                value: "vac_cluster"
+            }
+        ]);
+
+        relateds.load({
+            callback: function (response) {
+                if (relateds.count() == 1) {
+                    vm.set('relatedVacCluster', relateds.first())
+
+                    me.linkVacRelatedWithVacProduct();
+                }
+            }
+        });
+    },
+
+
 
     loadAssociations: function (product) {
         var me = this,
@@ -510,8 +550,27 @@ Ext.define('Explorer.view.system.SystemController', {
     /**
      * Executada quando a store de vacs e carregada.
      */
-    onLoadVacProducts: Ext.emptyFn,
+    onLoadVacProducts: function () {
+        var me = this;
 
+        me.linkVacRelatedWithVacProduct()
+    },
+
+
+    linkVacRelatedWithVacProduct: function () {
+        // console.log("linkVacRelatedWithVacProduct()")
+        var me = this,
+            vm = me.getViewModel(),
+            relatedVacCluster = vm.get('relatedVacCluster'),
+            vacProducts = vm.getStore("vacProducts");
+
+        if (relatedVacCluster.get("id")) {
+            vacCluster = vacProducts.getAt(vacProducts.find("id", relatedVacCluster.get("prl_related")));
+
+            vm.set("vacCluster", vacCluster);
+
+        }
+    },
     /**
      * Executado quando e selecionado um Vac na combobox.
      * Apenas seta no model o produto de vac selecionado e executa o metodo

@@ -1,4 +1,4 @@
-Ext.define('Target.model.ProductRelated', {
+Ext.define('Explorer.model.ProductRelated', {
     extend: 'Ext.data.Model',
 
     requires: [

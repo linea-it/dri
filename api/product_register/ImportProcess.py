@@ -29,12 +29,14 @@ class Import():
             'request': request
         }
 
-        # Esta propriedade e usada apenas se no mesmo processo tiver 2 produtos um de Galaxy Cluster e um de Cluster Member
+        # Guarda um dict com a classe de cada produto e a intancia do ProductModel
+        # ex:
         # dict({
         # 'galaxy_clusters': ProductModel
         # 'cluster_memebers': ProductModel
+        # 'vac': ProductModel
         # })
-        self._gc_cm = dict({})
+        self._products_classes = dict({})
 
         # Ticket server para identificar o owner do processo quando
         # o processo esta sendo importado por outro sistema, nesse caso o user logado
@@ -167,6 +169,7 @@ class Import():
             except Tag.DoesNotExist:
                 raise Exception("this Tag '%s' is not valid." % tag_name)
 
+
     def process_export(self, process, data):
 
         # Associar Process a Export
@@ -194,9 +197,15 @@ class Import():
             else:
                 raise Exception("Product Type '%s' not implemented yet." % product.get('type'))
 
+        print(self._products_classes)
+
         # Verificar a classe dos produtos se for galaxy cluster ou cluster members deve ser feita a ligacao entre as 2
-        if ('galaxy_clusters' in self._gc_cm) and ('cluster_members' in self._gc_cm):
+        if ('galaxy_clusters' in self._products_classes) and ('cluster_members' in self._products_classes):
             self.link_galaxy_cluster_with_cluster_members()
+
+        # Verificar a classe dos produtos se for galaxy cluster e vac da classe vac_cluster
+        if ('galaxy_clusters' in self._products_classes) and ('vac_cluster' in self._products_classes):
+            self.link_galaxy_cluster_with_vac_cluster()
 
     # =============================< CATALOG >=============================
     def register_catalog(self, data):
@@ -244,6 +253,35 @@ class Import():
         else:
             date = datetime.now()
 
+
+        # Verificar se o process id do produto e igual ao proccess id do external_proccess
+        # TODO esta etapa deve ser substituida com a implementacao de import inputs ou provenance
+        if (self.process.epr_original_id != str(data.get("process_id"))):
+            # Se for diferente cria um novo external proccess para ser associado ao producto.
+            product_process, created = ExternalProcess.objects.update_or_create(
+                epr_site=self.site,
+                epr_owner=self.owner,
+                epr_name=data.get('pipeline', None),
+                epr_original_id=data.get('process_id', None),
+                defaults={
+                    "epr_username": self.owner.username,
+                }
+            )
+
+            if product_process:
+
+                add_release = True
+                # Associar um Release ao Processo
+                if 'releases' in data and len(data.get('releases')) > 0:
+                    self.process_release(product_process, data.get('releases'))
+                    add_release = False
+
+                if 'fields' in data and len(data.get('fields')) > 0:
+                    self.process_tags(product_process, data.get('fields'), add_release)
+
+        else:
+            product_process = self.process
+
         product, created = Catalog.objects.update_or_create(
             prd_owner=self.owner,
             prd_name=data.get('name').replace(' ', '_').lower(),
@@ -251,7 +289,7 @@ class Import():
             tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
             defaults={
-                "prd_process_id": self.process,
+                "prd_process_id": product_process,
                 "prd_class": cls,
                 "prd_display_name": data.get('display_name'),
                 "prd_product_id": data.get('product_id', None),
@@ -280,9 +318,9 @@ class Import():
             # Registar as colunas do catalogo
             self.register_catalog_content(product, data, created)
 
-            # se um processo tiver mais de um produto e eles forem galaxy_clusters e cluster_members
-            if (product.prd_class.pcl_name == 'galaxy_clusters') or (product.prd_class.pcl_name == 'cluster_members'):
-                self._gc_cm[product.prd_class.pcl_name] = product
+            # guarda a classe do produto e a instancia de ProductModel
+            self._products_classes[product.prd_class.pcl_name] = product
+
 
             return True
         else:
@@ -440,9 +478,8 @@ class Import():
             e necessario que o produto de members tenha uma propriedade com ucd meta.id.cross.
         :return:
         """
-
-        gc = self._gc_cm.get('galaxy_clusters')
-        cm = self._gc_cm.get('cluster_members')
+        gc = self._products_classes.get('galaxy_clusters')
+        cm = self._products_classes.get('cluster_members')
 
         # descobrir a propriedade que tem a associacao de cross_identification no produto de cluster members
         try:
@@ -450,17 +487,40 @@ class Import():
 
             prd_related = ProductRelated.objects.update_or_create(
                 prl_product=gc,
+                prl_related=cm,
                 defaults={
-                    "prl_related": cm,
+                    "prl_relation_type": "join",
                     "prl_cross_identification": cross_identification
                 }
             )
-
 
         except ProductContent.DoesNotExist:
             raise Exception(
                 "this cluster members product %s does not have a property with ucd meta.id.cross to be associated with "
                 "the galaxy cluster product." % cm.prd_display_name)
+
+
+    def link_galaxy_cluster_with_vac_cluster(self):
+        """
+            Este metodo e especifico para o processo de WAZP.
+            caso o processo tenha galaxy_cluster, cluster_members e vac_cluster
+            o vac na verdade e um imput mais ate este momento nao foi definido um metodo para registrar inputs de processos.
+            quando houver uma forma de importar os imputs este metodo devera ser removido.
+        :return:
+        """
+
+        gc = self._products_classes.get('galaxy_clusters')
+        vc = self._products_classes.get('vac_cluster')
+
+        # Criar uma relacao entre o produto de galaxy cluster e o vac que foi usado como input
+        prd_related = ProductRelated.objects.update_or_create(
+            prl_product=gc,
+            prl_related=vc,
+            defaults={
+                "prl_relation_type": "input",
+                "prl_cross_identification": None
+            }
+        )
 
 
     # =============================< MAP >=============================
