@@ -90,7 +90,7 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     loadVacCluster: function () {
-        console.log('loadVacCluster()')
+        // console.log('loadVacCluster()')
         var me = this,
             vm = me.getViewModel(),
             product = vm.get('currentProduct'),
@@ -568,7 +568,7 @@ Ext.define('Explorer.view.system.SystemController', {
             vacCluster = vacProducts.getAt(vacProducts.find("id", relatedVacCluster.get("prl_related")));
 
             vm.set("vacCluster", vacCluster);
-
+            vm.set('have_vac', true);
         }
     },
     /**
@@ -584,6 +584,7 @@ Ext.define('Explorer.view.system.SystemController', {
             vacObjects = me.getStore('vacObjects');
 
         vm.set('currentVacProduct', currentVacProduct);
+
 
         vacObjects.removeAll();
 
@@ -636,7 +637,7 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     loadVacObjects: function () {
-        // console.log('loadVacObjects()')
+        console.log('loadVacObjects()')
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('object'),
@@ -860,5 +861,37 @@ Ext.define('Explorer.view.system.SystemController', {
         panel.setMembers(clusterMembers);
         panel.setVacs(vacObjects);
         panel.reloadPlots();
+    },
+
+    // ------------------- Spatial Distribution --------------------
+    onActiveSpatialTab: function () {
+        // console.log('onActiveSpatialTab()')
+        var me = this,
+            vm = me.getViewModel(),
+            densityMap = me.lookup("densityMap"),
+            currentProduct = vm.get("currentProduct"),
+            clusterSource = currentProduct.get("id"),
+            clusterId = vm.get("object_id"),
+            currentVacProduct = vm.get("vacCluster")
+            vacSource = currentVacProduct.get("id"),
+            object = vm.get("object"),
+            lon = object.get("_meta_ra"),
+            lat = object.get("_meta_dec"),
+            radius = me.calculateVacRadius(object.get('_meta_radius'));
+
+
+        // https://desportal.cosmology.illinois.edu:8080/dri/api/plugin/galaxy_cluster/?_dc=1522860511754&clusterSource=226&clusterId=79346&vacSource=227&lon=339.967678342688&lat=-43.1382903206538&radius=0.032
+
+        // clusterSource=226
+        // clusterId=79346
+        // vacSource=227
+        // lon=339.967678342688
+        // lat=-43.1382903206538
+        // radius=0.032
+
+        if (vacSource) {
+            densityMap.loadData(clusterSource, clusterId, vacSource, lon, lat, radius);
+        }
+
     }
 });
