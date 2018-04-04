@@ -879,14 +879,6 @@ Ext.define('Explorer.view.system.SystemController', {
             lat = object.get("_meta_dec"),
             radius = me.calculateVacRadius(object.get('_meta_radius'));
 
-        // Exemplo local development
-        // clusterSource = 224
-        // clusterId = 61065
-        // vacSource = 199
-        // lon = 339.772607077276
-        // lat = -43.063088608118
-        // radius = 0.101
-
         if (vacSource) {
             densityMap.loadData(clusterSource, clusterId, vacSource, lon, lat, radius);
         }
