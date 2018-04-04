@@ -128,10 +128,25 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
 
 
         // Tooltip
-        //Add tool tip and hide it until invoked
-        me._tooltip = d3.select("body").append("div")
-            .attr("class", "tooltip")
+        me._tooltip = me._g.append("g")
+            .attr("class", "tooltip-box")
+            .attr("transform", "translate(" + (me._width + 70) + ",0)");
+
+        me._tooltip.append("rect")
+            // .attr("class", "inner")
+            .attr("width", 120)
+            .attr("height", 40)
+            .style("fill", "lightgray")
             .style("opacity", 0);
+
+
+
+        //Add tool tip and hide it until invoked
+        // me._tooltip = d3.select(me.getEl().dom).append("div")
+        //     .attr("class", "d3-tooltip")
+        //     .style("top", (me._height) + "px")
+        //     .style("left", (me._width + 50) + "px")
+        //     .style("opacity", 1);
 
 
         me.setLoading(false);
@@ -255,18 +270,23 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
                 .style("stroke-width", 0)
                 .on("mouseover", function(d) {
                     if (d.z > data.zmin) {
-                        // me._tooltip.transition()
-                        //    .duration(200)
-                        //    .style("opacity", 1);
-                        // me._tooltip.html(d.z.toFixed(3))
-                        //    .style("top", (d3.event.pageY) + "px")
-                        //    .style("left", (d3.event.pageX + 15) + "px");
+
+                        console.log("mouseover")
+                        me._tooltip.selectAll("rect")
+                            .style("opacity", 0.4)
+
+                        me._tooltip.append("text")
+                            .attr("class", "tootip-text label")
+                            .attr("x", 30)
+                            .attr("y", 15)
+                            .style("text-anchor", "start")
+                            .text(d.z.toFixed(3));
                    }
                 })
                 .on("mouseout", function(d) {
-                    // me._tooltip.transition()
-                    //    .duration(500)
-                    //    .style("opacity", 0);
+                    me._tooltip.selectAll("text").remove()
+                    me._tooltip.selectAll("rect")
+                        .style("opacity", 0)
                 });
 
 
@@ -478,6 +498,6 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
         return d3.line()
             .x(function(d) { return d.x; })
             .y(function(d) { return d.y; })
-    }
+    },
 
 });
