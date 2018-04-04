@@ -151,7 +151,7 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
         }
 
         if (me.getPlotData() != null) {
-            return;
+            me.updatePlot();
         }
 
         me.loadingWindow = Ext.MessageBox.show({
