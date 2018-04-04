@@ -150,6 +150,19 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
             "radius": radius
         }
 
+        if (me.getPlotData() != null) {
+            return;
+        }
+
+        me.loadingWindow = Ext.MessageBox.show({
+            msg: 'Loading data, please wait...',
+            progressText: 'Loagind...',
+            width: 200,
+            wait: {
+                interval: 200
+            }
+        });
+
         me.setLoading(true);
 
         // Submit Catalog
@@ -162,14 +175,15 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
                 var data = JSON.parse(response.responseText);
                 // Fechar a janela de registro
                 me.setLoading(false);
+                me.loadingWindow.close();
 
-                if (data.success) {
+                if (data.values) {
                     me.setPlotData(data);
                     me.updatePlot()
                 } else {
                     Ext.MessageBox.show({
                         title: 'Failure',
-                        msg: data.message,
+                        msg: "Sorry, there was an error in the server response.",
                         buttons: Ext.MessageBox.OK,
                         icon: Ext.MessageBox.WARNING
                     });
@@ -197,12 +211,11 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
     },
 
     updatePlot: function () {
-        console.log("updatePlot()")
+        // console.log("updatePlot()")
         var me = this,
             data = me.getPlotData();
 
         if (data) {
-
             // domain para a escala de cores
             me._color.domain([data.zmin, data.zmax]);
 
