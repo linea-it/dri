@@ -872,12 +872,12 @@ Ext.define('Explorer.view.system.SystemController', {
             currentProduct = vm.get("currentProduct"),
             clusterSource = currentProduct.get("id"),
             clusterId = vm.get("object_id"),
-            currentVacProduct = vm.get("currentVacProduct")
+            currentVacProduct = vm.get("vacCluster")
             vacSource = currentVacProduct.get("id"),
             object = vm.get("object"),
             lon = object.get("_meta_ra"),
             lat = object.get("_meta_dec"),
-            radius = vm.get("vacRadius");
+            radius = me.calculateVacRadius(object.get('_meta_radius'));
 
         // Exemplo local development
         // clusterSource = 224
