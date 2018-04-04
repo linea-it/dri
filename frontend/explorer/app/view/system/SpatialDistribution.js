@@ -136,6 +136,10 @@ Ext.define('Explorer.view.system.SpatialDistribution', {
 
         me.setLoading(false);
 
+        if (me.getPlotData() != null) {
+            me.updatePlot();
+        }
+
     },
 
     loadData: function (clusterSource, clusterId, vacSource, lon, lat, radius) {

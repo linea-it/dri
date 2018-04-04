@@ -882,12 +882,12 @@ Ext.define('Explorer.view.system.SystemController', {
 
         // https://desportal.cosmology.illinois.edu:8080/dri/api/plugin/galaxy_cluster/?_dc=1522860511754&clusterSource=226&clusterId=79346&vacSource=227&lon=339.967678342688&lat=-43.1382903206538&radius=0.032
 
-        // clusterSource=226
-        // clusterId=79346
-        // vacSource=227
-        // lon=339.967678342688
-        // lat=-43.1382903206538
-        // radius=0.032
+        clusterSource=226
+        clusterId=79346
+        vacSource=227
+        lon=339.967678342688
+        lat=-43.1382903206538
+        radius=0.032
 
         if (vacSource) {
             densityMap.loadData(clusterSource, clusterId, vacSource, lon, lat, radius);
