@@ -568,7 +568,7 @@ Ext.define('Explorer.view.system.SystemController', {
             vacCluster = vacProducts.getAt(vacProducts.find("id", relatedVacCluster.get("prl_related")));
 
             vm.set("vacCluster", vacCluster);
-
+            vm.set('have_vac', true);
         }
     },
     /**
@@ -584,7 +584,7 @@ Ext.define('Explorer.view.system.SystemController', {
             vacObjects = me.getStore('vacObjects');
 
         vm.set('currentVacProduct', currentVacProduct);
-        vm.set('have_vac', true);
+
 
         vacObjects.removeAll();
 
@@ -637,7 +637,7 @@ Ext.define('Explorer.view.system.SystemController', {
     },
 
     loadVacObjects: function () {
-        // console.log('loadVacObjects()')
+        console.log('loadVacObjects()')
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('object'),
