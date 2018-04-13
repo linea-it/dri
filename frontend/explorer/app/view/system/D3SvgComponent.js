@@ -170,7 +170,7 @@ Ext.define('Explorer.view.system.D3SvgComponent', {
 
         // Spec: https://www.w3.org/TR/SVG/struct.html
         // Note: foreignObject is not supported in IE11 and below (can't use HTML elements inside SVG).
-        return me.svg || (me.svg = me.d3.select(el.dom).append('svg').attr('version', '1.1'));
+        return me.svg || (me.svg = me.d3.select(el.dom).append('svg').attr('version', '1.1').attr("class","main_svg"));
     },
 
     getWrapper: function () {

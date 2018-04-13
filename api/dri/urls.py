@@ -126,6 +126,11 @@ urlpatterns = [
     url(r'^teste/', common_views.teste),
 
 
+    # Plugin externos em docker ex: galaxy_cluster
+    url(r'^plugin/galaxy_cluster', common_views.galaxy_cluster),
+
+
+
     url(r'^get_token', common_views.get_token),
     url(r'^get_setting/$', common_views.get_setting),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'),
