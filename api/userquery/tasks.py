@@ -11,7 +11,7 @@ from product.export import Export
 
 export = Export()
 
-@shared_task(name="create_table")
+@task(name="create_table")
 def create_table(job_id, user_id, table_name, table_display_name, release_id, release_name, associate_target_viewer, schema=None):
     create_table_as = CreateTableAs(
         job_id=job_id, 
@@ -29,8 +29,7 @@ def create_table(job_id, user_id, table_name, table_display_name, release_id, re
     logger.info("Task create_table_as has started")
     create_table_as.do_all()
 
-
-@shared_task(name="export_table", bind=True)
+@task(name="export_table", bind=True)
 def export_table(self, table_id, user_id, columns=None, job_id=None):
     """
     Este metodo vai exportar uma tabela para o formato csv
@@ -83,9 +82,7 @@ def export_table(self, table_id, user_id, columns=None, job_id=None):
 
         # export_notify_user_failure(user, product)
 
-
 @task(name="export_create_zip")
-@shared_task
 def export_create_zip(self, user_id, product_name, export_dir):
     """
     Cria um arquivo zip com todos os arquivos gerados pelo export.
