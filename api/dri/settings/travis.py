@@ -38,14 +38,34 @@ EMAIL_HOST_PASSWORD = '<senha do smtp>'
 EMAIL_USE_TLS = True
 
 DES_CUTOUT_SERVICE = {
-    'HOST': 'http://descut.cosmology.illinois.edu',
+    # 1 para a versao do Descut Colaboracao 2 para versao Descut Public
+    'API_VERSION': 1,
+    'HOST': 'https://descut.cosmology.illinois.edu',
     'USER': None,
     'PASSWORD': None,
+    # Path onde ficaram os arquivos de cutout, esse parametro sera usado em conjunto com DATA_DIR para criar o path
+    # absoluto para os arquivos.
     'CUTOUT_DIR': 'targets/cutouts',
+    # Url base que sera usada para exibir as imagens geradas esse parametro deve ser mapeado no dri.conf no apache
     'CUTOUT_SOURCE': '/data',
+    # Tempo de delay para a task check_jobs em minutos
     'CUTOUT_TASK_CHECK_JOBS_DELAY': 1,
-    'AVAILABLE_RELEASES': None,
-    'MAX_OBJECTS': 300
+    # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos
+    'AVAILABLE_RELEASES': [],
+    # Quantidade limit de objetos a ser passada para o descutout
+    'MAX_OBJECTS': 300,
+    # Token de authenticacao utilizado apenas para o DescutPublico para colaboracao usar None
+    'TOKEN': None,
+    # Esta opcao deve ser False para o DescutPublico e True para Colaboracao
+    'DELETE_JOB_AFTER_DOWNLOAD': True,
+    # Url para gerar o token, para o publico usar None.
+    'API_GET_TOKEN': '/api/token/',
+    # Url para a API reponsavel por criar os jobs
+    'API_CREATE_JOBS': '/api/jobs/',
+    # Url para a API responsavel por retornar o status dos jobs
+    'API_CHECK_JOBS': '/api/jobs/',
+    # No DescutPublico e necessario passar um email para onde seram enviadas as notificacoes do descut.
+    'EMAIL': 'glauber.costa@linea.gov.br'
 }
 
 NCSA_AUTHENTICATION_DB = None
