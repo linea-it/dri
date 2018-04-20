@@ -256,7 +256,7 @@ class Import():
 
         # Verificar se o process id do produto e igual ao proccess id do external_proccess
         # TODO esta etapa deve ser substituida com a implementacao de import inputs ou provenance
-        if (self.process.epr_original_id != str(data.get("process_id"))):
+        if self.process is not None and self.process.epr_original_id != str(data.get("process_id")):
             # Se for diferente cria um novo external proccess para ser associado ao producto.
             product_process, created = ExternalProcess.objects.update_or_create(
                 epr_site=self.site,
