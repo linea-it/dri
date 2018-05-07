@@ -20,6 +20,8 @@ Ext.define('Explorer.view.system.SystemController', {
         }
     },
 
+    runner: new Ext.util.TaskRunner(),
+
     onLoadPanel: function (source, object_id) {
         this.load(source);
 
@@ -554,6 +556,7 @@ Ext.define('Explorer.view.system.SystemController', {
         var me = this;
 
         me.linkVacRelatedWithVacProduct()
+
     },
 
 
@@ -569,8 +572,43 @@ Ext.define('Explorer.view.system.SystemController', {
 
             vm.set("vacCluster", vacCluster);
             vm.set('have_vac', true);
+
+            // No caso de ja haver um Vac de Input executar o metodo
+            // que seria executado pela selecao da combo.
+            // E necessario que ja tenha carregado o Objeto.
+            if (!vm.get('object')) {
+                if (!me.check_object_task) {
+                    me.check_object_task = me.runner.newTask({
+                        run: function () {
+                            console.log(vm.get('object'))
+                            if (vm.get('object')) {
+                              this.stop();
+                              me.onSelectVacProduct(null, vacCluster);
+                            }
+                        },
+                        interval: 3000
+                    });
+                    me.check_object_task.start()
+                }
+            }
         }
     },
+
+    // check_if_have_object: function () {
+    //   console.log('check_if_have_object()')
+    //     var me = this,
+    //         vm = me.getViewModel();
+    //     console.log(me);
+    //     console.log(me.check_object_task)
+    //     if (me.check_object_task) {
+    //         console.log(vm.get('object'))
+    //         if (vm.get('object')) {
+    //             // Executa o Load do Vac
+    //             me.onSelectVacProduct(null, vacCluster);
+    //             me.check_object_task.stop();
+    //         }
+    //     }
+    // },
     /**
      * Executado quando e selecionado um Vac na combobox.
      * Apenas seta no model o produto de vac selecionado e executa o metodo
@@ -598,31 +636,32 @@ Ext.define('Explorer.view.system.SystemController', {
      * executa o metodo que vai fazer load dos objetos.
      */
     loadVacProductContent: function (product) {
-        // console.log('loadVacProductContent(%o)', product)
+        console.log('loadVacProductContent(%o)', product)
         var me = this,
             vm = me.getViewModel(),
             displayContents = vm.getStore('vacProductDisplayContents'),
             vacGrid = me.lookupReference('vac-grid');
 
-        displayContents.addFilter(
-            {
-                'property': 'pcn_product_id',
-                value: product.get('id')
-            }
-        );
-
-        displayContents.load({
-            callback: function () {
-                if (this.check_ucds()) {
-                    // Reconfigurar a Grid de Vac com a propriedades do catalogo
-                    vacGrid.reconfigureGrid(this);
-
-                    // Carregar os objectos do produto de vac
-                    me.loadVacObjects();
+        if (product) {
+            displayContents.addFilter(
+                {
+                    'property': 'pcn_product_id',
+                    value: product.get('id')
                 }
-            }
-        });
+            );
 
+            displayContents.load({
+                callback: function () {
+                    if (this.check_ucds()) {
+                        // Reconfigurar a Grid de Vac com a propriedades do catalogo
+                        vacGrid.reconfigureGrid(this);
+
+                        // Carregar os objectos do produto de vac
+                        me.loadVacObjects();
+                    }
+                }
+            });
+        }
     },
 
     calculateVacRadius: function (cluster_radius) {
@@ -647,9 +686,12 @@ Ext.define('Explorer.view.system.SystemController', {
 
         vacObjects.clearFilter();
 
+        console.log('vacRadius', vacRadius)
+        console.log('currentVacProduct', currentVacProduct)
+        console.log('object', object)
+
         // DIVIDIR O radius por 60 por que esta em arcmin
         vacRadius = me.calculateVacRadius(object.get('_meta_radius'));
-
 
         vacObjects.addFilter([
             {

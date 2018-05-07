@@ -147,11 +147,23 @@ Ext.define('Explorer.view.system.System', {
                                     reference: 'vac-grid',
                                     bind: {
                                         store: '{vacObjects}',
+                                        inputVac: '{vacCluster}'
                                     },
                                     listeners: {
                                         select: 'onSelectVacObject'
                                     }
                                 },
+                                // {
+                                //     xtype: 'system-vac-grid',
+                                //     title: 'VAC',
+                                //     reference: 'vac-grid',
+                                //     bind: {
+                                //         store: '{vacObjects}',
+                                //     },
+                                //     listeners: {
+                                //         select: 'onSelectVacObject'
+                                //     }
+                                // },
                                 {
                                     xtype: 'panel',
                                     title: 'Properties Distribution',
