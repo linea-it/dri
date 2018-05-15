@@ -20,6 +20,8 @@ Ext.define('Explorer.view.system.SystemController', {
         }
     },
 
+    runner: new Ext.util.TaskRunner(),
+
     onLoadPanel: function (source, object_id) {
         this.load(source);
 
@@ -245,8 +247,9 @@ Ext.define('Explorer.view.system.SystemController', {
 
         // Setar um valor default para o raio utilizado na VacGrid
         // por default 2 vezes o valor do raio
-        // vacRadius = object.get('_meta_radius') * 2;
-        vm.set('vacRadius', 2);
+        vm.set('vacRadius', 3);
+        // Setar um valor defaul para o filtro em z
+        vm.set('vacZ', 3);
 
         // Formatar RA, Dec
         vm.set('display_ra', parseFloat(object.get('_meta_ra')).toFixed(5));
@@ -554,6 +557,7 @@ Ext.define('Explorer.view.system.SystemController', {
         var me = this;
 
         me.linkVacRelatedWithVacProduct()
+
     },
 
 
@@ -569,8 +573,28 @@ Ext.define('Explorer.view.system.SystemController', {
 
             vm.set("vacCluster", vacCluster);
             vm.set('have_vac', true);
+
+            // No caso de ja haver um Vac de Input executar o metodo
+            // que seria executado pela selecao da combo.
+            // E necessario que ja tenha carregado o Objeto.
+            if (!vm.get('object')) {
+                if (!me.check_object_task) {
+                    me.check_object_task = me.runner.newTask({
+                        run: function () {
+                            console.log(vm.get('object'))
+                            if (vm.get('object')) {
+                              this.stop();
+                              me.onSelectVacProduct(null, vacCluster);
+                            }
+                        },
+                        interval: 3000
+                    });
+                    me.check_object_task.start()
+                }
+            }
         }
     },
+
     /**
      * Executado quando e selecionado um Vac na combobox.
      * Apenas seta no model o produto de vac selecionado e executa o metodo
@@ -598,42 +622,58 @@ Ext.define('Explorer.view.system.SystemController', {
      * executa o metodo que vai fazer load dos objetos.
      */
     loadVacProductContent: function (product) {
-        // console.log('loadVacProductContent(%o)', product)
+        console.log('loadVacProductContent(%o)', product)
         var me = this,
             vm = me.getViewModel(),
             displayContents = vm.getStore('vacProductDisplayContents'),
             vacGrid = me.lookupReference('vac-grid');
 
-        displayContents.addFilter(
-            {
-                'property': 'pcn_product_id',
-                value: product.get('id')
-            }
-        );
-
-        displayContents.load({
-            callback: function () {
-                if (this.check_ucds()) {
-                    // Reconfigurar a Grid de Vac com a propriedades do catalogo
-                    vacGrid.reconfigureGrid(this);
-
-                    // Carregar os objectos do produto de vac
-                    me.loadVacObjects();
+        if (product) {
+            displayContents.addFilter(
+                {
+                    'property': 'pcn_product_id',
+                    value: product.get('id')
                 }
-            }
-        });
+            );
 
+            displayContents.load({
+                callback: function () {
+                    if (this.check_ucds()) {
+                        // Reconfigurar a Grid de Vac com a propriedades do catalogo
+                        vacGrid.reconfigureGrid(this);
+
+                        // Carregar os objectos do produto de vac
+                        me.loadVacObjects();
+                    }
+                }
+            });
+        }
     },
 
     calculateVacRadius: function (cluster_radius) {
         var me = this,
             vm = me.getViewModel(),
-            multiplier = vm.get('vacRadius')
+            multiplier = vm.get('vacRadius');
 
         // DIVIDIR O radius por 60 por que esta em arcmin
         vacRadius = (cluster_radius * multiplier) / 60;
 
         return vacRadius.toFixed(3);
+    },
+
+    calculateVacZ: function (cluster_z, cluster_sigma_dz) {
+        var me = this,
+            vm = me.getViewModel(),
+            multiplier = vm.get('vacZ'),
+            zmin, zmax;
+
+        zmin = cluster_z - multiplier * cluster_sigma_dz
+        zmax = cluster_z + multiplier * cluster_sigma_dz
+
+        z_range = [zmin, zmax];
+
+        return z_range;
+
     },
 
     loadVacObjects: function () {
@@ -647,9 +687,15 @@ Ext.define('Explorer.view.system.SystemController', {
 
         vacObjects.clearFilter();
 
+        console.log('vacRadius', vacRadius)
+        console.log('currentVacProduct', currentVacProduct)
+        console.log('object', object)
+
         // DIVIDIR O radius por 60 por que esta em arcmin
         vacRadius = me.calculateVacRadius(object.get('_meta_radius'));
 
+        // Calcular o Filtro em z
+        vacZ = me.calculateVacZ(object.get('zp'), object.get('sigma_dz'));
 
         vacObjects.addFilter([
             {
@@ -668,6 +714,11 @@ Ext.define('Explorer.view.system.SystemController', {
                 property: 'radius',
                 value: vacRadius
             },
+            {
+                property: 'z_best',
+                operator: 'range',
+                value: vacZ
+            }
         ])
 
         vacObjects.load({

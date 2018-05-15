@@ -17,6 +17,7 @@ Ext.define('Explorer.view.system.VacGrid', {
     */
     config: {
         ready: false,
+        inputVac: null
     },
 
     emptyText: 'No data to dysplay.',
@@ -39,11 +40,13 @@ Ext.define('Explorer.view.system.VacGrid', {
             tbar: [
                 {
                     xtype: 'combobox',
+                    itemId: 'cmbVacInput',
                     emptyText: 'choose the VAC catalog',
                     width: 200,
                     valueField: 'id',
                     displayField: 'name_with_process_id',
                     queryMode: 'local',
+                    hidden: true,
                     bind: {
                         store: '{vacProducts}',
                     },
@@ -51,6 +54,12 @@ Ext.define('Explorer.view.system.VacGrid', {
                     listeners: {
                         select: 'onSelectVacProduct'
                     }
+                },
+                {
+                  xtype: 'textfield',
+                  itemId: 'txtVacInput',
+                  readOnly: true,
+                  hidden: false
                 },
                 {
                     xtype: 'button',
@@ -65,10 +74,20 @@ Ext.define('Explorer.view.system.VacGrid', {
                     minValue: 0.1,
                     maxValue: 5,
                     step: 0.1,
-                    fieldLabel: 'Radius (system radius)',
-                    labelWidth: 140,
-                    width: 200,
+                    fieldLabel: 'WAZP Radius',
+                    // labelWidth: 100,
+                    width: 160,
                     bind: "{vacRadius}",
+                },
+                {
+                    xtype: 'numberfield',
+                    minValue: 0.1,
+                    maxValue: 5,
+                    step: 0.1,
+                    fieldLabel: 'z',
+                    labelWidth: 20,
+                    width: 80,
+                    bind: "{vacZ}",
                 },
                 '-',
                 {
@@ -285,5 +304,34 @@ Ext.define('Explorer.view.system.VacGrid', {
         }
 
         return value;
+    },
+
+    afterRender: function () {
+        var me = this,
+            vacCluster = me.getInputVac(),
+            cmb = me.down("#cmbVacInput"),
+            txt = me.down("#txtVacInput");
+
+        me.callParent(arguments);
+
+        if (vacCluster) {
+            // Ja tem vac desabilita a opcao de selecionar o vac,
+            // oculta a combobox e exibe um textfield com o nome do vac
+            cmb.setVisible(false);
+            txt.setVisible(true);
+            txt.setValue(vacCluster.get('name_with_process_id'));
+
+        } else {
+            cmb.setVisible(true);
+            txt.setVisible(false);
+            txt.setValue('');
+        }
+    },
+
+    setInputVac: function (vacCluster) {
+        var me = this;
+        if ((vacCluster) && (vacCluster.get('id') > 0)) {
+            me.inputVac = vacCluster;
+        }
     }
 });
