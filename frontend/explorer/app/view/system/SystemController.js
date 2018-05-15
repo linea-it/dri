@@ -247,8 +247,9 @@ Ext.define('Explorer.view.system.SystemController', {
 
         // Setar um valor default para o raio utilizado na VacGrid
         // por default 2 vezes o valor do raio
-        // vacRadius = object.get('_meta_radius') * 2;
-        vm.set('vacRadius', 2);
+        vm.set('vacRadius', 3);
+        // Setar um valor defaul para o filtro em z
+        vm.set('vacZ', 3);
 
         // Formatar RA, Dec
         vm.set('display_ra', parseFloat(object.get('_meta_ra')).toFixed(5));
@@ -594,21 +595,6 @@ Ext.define('Explorer.view.system.SystemController', {
         }
     },
 
-    // check_if_have_object: function () {
-    //   console.log('check_if_have_object()')
-    //     var me = this,
-    //         vm = me.getViewModel();
-    //     console.log(me);
-    //     console.log(me.check_object_task)
-    //     if (me.check_object_task) {
-    //         console.log(vm.get('object'))
-    //         if (vm.get('object')) {
-    //             // Executa o Load do Vac
-    //             me.onSelectVacProduct(null, vacCluster);
-    //             me.check_object_task.stop();
-    //         }
-    //     }
-    // },
     /**
      * Executado quando e selecionado um Vac na combobox.
      * Apenas seta no model o produto de vac selecionado e executa o metodo
@@ -667,12 +653,27 @@ Ext.define('Explorer.view.system.SystemController', {
     calculateVacRadius: function (cluster_radius) {
         var me = this,
             vm = me.getViewModel(),
-            multiplier = vm.get('vacRadius')
+            multiplier = vm.get('vacRadius');
 
         // DIVIDIR O radius por 60 por que esta em arcmin
         vacRadius = (cluster_radius * multiplier) / 60;
 
         return vacRadius.toFixed(3);
+    },
+
+    calculateVacZ: function (cluster_z, cluster_sigma_dz) {
+        var me = this,
+            vm = me.getViewModel(),
+            multiplier = vm.get('vacZ'),
+            zmin, zmax;
+
+        zmin = cluster_z - multiplier * cluster_sigma_dz
+        zmax = cluster_z + multiplier * cluster_sigma_dz
+
+        z_range = [zmin, zmax];
+
+        return z_range;
+
     },
 
     loadVacObjects: function () {
@@ -693,6 +694,9 @@ Ext.define('Explorer.view.system.SystemController', {
         // DIVIDIR O radius por 60 por que esta em arcmin
         vacRadius = me.calculateVacRadius(object.get('_meta_radius'));
 
+        // Calcular o Filtro em z
+        vacZ = me.calculateVacZ(object.get('zp'), object.get('sigma_dz'));
+
         vacObjects.addFilter([
             {
                 property: 'product',
@@ -710,6 +714,11 @@ Ext.define('Explorer.view.system.SystemController', {
                 property: 'radius',
                 value: vacRadius
             },
+            {
+                property: 'z_best',
+                operator: 'range',
+                value: vacZ
+            }
         ])
 
         vacObjects.load({

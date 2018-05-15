@@ -87,7 +87,7 @@ Ext.define('Explorer.view.system.VacGrid', {
                     fieldLabel: 'z',
                     labelWidth: 20,
                     width: 80,
-                    // bind: "{vacRadius}",
+                    bind: "{vacZ}",
                 },
                 '-',
                 {
