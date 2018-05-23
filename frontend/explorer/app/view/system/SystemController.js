@@ -695,7 +695,7 @@ Ext.define('Explorer.view.system.SystemController', {
         vacRadius = me.calculateVacRadius(object.get('_meta_radius'));
 
         // Calcular o Filtro em z
-        vacZ = me.calculateVacZ(object.get('zp'), object.get('sigma_dz'));
+        vacZ = me.calculateVacZ(object.get('zs'), object.get('sigma_dz'));
 
         vacObjects.addFilter([
             {
