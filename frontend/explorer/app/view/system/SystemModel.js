@@ -34,7 +34,8 @@ Ext.define('Explorer.view.system.SystemModel', {
         have_vac: false,
         visibleOverlayVacs: true,
         overlayVac: null,
-        vacRadius: 1,
+        vacRadius: 2,
+        vacZ: 2,
         vacOverlayColor: '1B81BC',
         vacOverlayPointSize: 1.2,
         vacOverlaypointType: 'square',
@@ -125,7 +126,7 @@ Ext.define('Explorer.view.system.SystemModel', {
         },
         vacObjects: {
             type: 'objects',
-            pageSize: 2000
+            pageSize: 10000
         },
         productRelateds: {
             type: 'product_relateds',
