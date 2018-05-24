@@ -282,8 +282,9 @@ class DBBase:
     def do_filter(self, table, filters):
         f = list()
         for _filter in filters:
+            column = self.get_column_obj(table, _filter['column'])
             op = _filter['op']
-
+            value = _filter['value']
             if op == "=":
                 op = "__eq__"
 
@@ -302,11 +303,19 @@ class DBBase:
             elif op == ">=":
                 op = "__ge__"
 
+            elif op == "range":
+                # between
+                op = None
+                value = value.split(",")
+                clause = between(column,float(value[0]), float(value[1]))
             else:
                 op = '__%s__' % op
 
-            column = self.get_column_obj(table, _filter['column'])
-            f.append(getattr(column, op)(_filter['value']))
+            if op is not None:
+                f.append(getattr(column, op)(value))
+            else:
+                f.append(clause)
+
         return f
 
     def create_columns_sql_format(self, table, columns):
