@@ -39,7 +39,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     onLoadPanel: function (dataset) {
         var me = this;
-
+        
         me.loadData(dataset);
     },
 
@@ -75,9 +75,11 @@ Ext.define('Sky.view.dataset.DatasetController', {
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
-            current = vm.get('currentDataset');
-
+            current = vm.get('currentDataset'),
+            release = current.get('release');
+        
         view.setLoading(false);
+        vm.set('release', release);
 
         // Setar a Imagem no Visiomatic
         me.changeImage(current);
@@ -317,17 +319,26 @@ Ext.define('Sky.view.dataset.DatasetController', {
         visiomatic.showHideComments(lmembers, state);
     },
 
-    gotoPosition: function (value) {
-        var visiomatic = this.lookupReference('visiomatic');
+    gotoPosition(value, searchResult) {
+        let coordinate, hash
+        let visiomatic = this.lookupReference('visiomatic');
+        let ra = searchResult.tli_ra.toString().replace('.', ',')
+        let dec = searchResult.tli_dec.toString().replace('.', ',')
+        let fov = 0 //pinned
 
-        visiomatic.coordinatesToLatLng(value, function (latlng) {
-            if (visiomatic.isInsideTile(latlng.lng, latlng.lat)) {
-                visiomatic.panTo(value);
-            }else {
-                Ext.MessageBox.alert('Alert', 'There is no DES tile in the current release on this position.');
-            }
-        });
-
+        if (searchResult){
+            coordinate = encodeURIComponent((ra > 0) ? `${ra}+${dec}` : `${ra}${dec}`)
+            hash = 'dataset/' + searchResult.id + '/' + coordinate + '/' + fov;
+            this.redirectTo(hash, true);
+        } else {
+            visiomatic.coordinatesToLatLng(value, function (latlng) {
+                if (visiomatic.isInsideTile(latlng.lng, latlng.lat)) {
+                    visiomatic.panTo(value);
+                }else {
+                    Ext.MessageBox.alert('Alert', 'There is no DES tile in the current release on this position.');
+                }
+            });
+        }
     },
 
     showHideCrop: function (btn, state) {
