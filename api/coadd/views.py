@@ -67,11 +67,15 @@ class DatasetFilter(django_filters.FilterSet):
     tag__in = django_filters.MethodFilter()
     tli_tilename = django_filters.CharFilter(name='tile__tli_tilename', label='Tilename')
     position = django_filters.MethodFilter()
+    release = django_filters.MethodFilter(action='filter_release')
 
     class Meta:
         model = Dataset
-        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', ]
+        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', 'release' ]
         order_by = True
+
+    def filter_release(self, queryset, value):
+        return queryset.filter(tag__tag_release__id=int(value))
 
     def filter_tag__in(self, queryset, value):
         return queryset.filter(tag__in=value.split(','))
