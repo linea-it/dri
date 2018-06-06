@@ -18,7 +18,14 @@ class Import():
     db = None
 
     def __init__(self):
-        self._gc_cm = dict({})
+        # Guarda um dict com a classe de cada produto e a intancia do ProductModel
+        # ex:
+        # dict({
+        # 'galaxy_clusters': ProductModel
+        # 'cluster_memebers': ProductModel
+        # 'vac': ProductModel
+        # })
+        self._products_classes = dict({})
 
     def start_import(self, request):
 
@@ -29,14 +36,6 @@ class Import():
             'request': request
         }
 
-        # Guarda um dict com a classe de cada produto e a intancia do ProductModel
-        # ex:
-        # dict({
-        # 'galaxy_clusters': ProductModel
-        # 'cluster_memebers': ProductModel
-        # 'vac': ProductModel
-        # })
-        self._products_classes = dict({})
 
         # Ticket server para identificar o owner do processo quando
         # o processo esta sendo importado por outro sistema, nesse caso o user logado
