@@ -132,15 +132,22 @@ class TableViewSet(viewsets.ModelViewSet):
             if rqv.get_sql_count()>settings.USER_QUERY_MAX_ROWS:
                 raise Exception("The query exceeded the limit of %s rows" % settings.USER_QUERY_MAX_ROWS)
 
-            q = Job(display_name=display_name,
+            # insert row in userquery_job table
+            table_userquery_job = Job(display_name=display_name,
                     owner=self.request.user,
                     sql_sentence=sql_sentence,
                     timeout=settings.USER_QUERY_EXECUTION_TIMEOUT,
                     query_name=query_name)
-            q.save()
-            
-            create_table.delay(job_id=q.id, user_id=request.user.pk, table_name=table_name, table_display_name=display_name,
-                               release_id=release_id, release_name=release_name, associate_target_viewer=associate_target_viewer,
+            table_userquery_job.save()         
+
+            # start celery job
+            create_table.delay(job_id=table_userquery_job.id, 
+                               user_id=request.user.pk, 
+                               table_name=table_name, 
+                               table_display_name=display_name,
+                               release_id=release_id, 
+                               release_name=release_name, 
+                               associate_target_viewer=associate_target_viewer,
                                schema=settings.DATABASES['catalog']['USER'])
 
             return HttpResponse(status=200)
