@@ -382,6 +382,7 @@ class ImportTargetListCSV:
             'description': description
         }])
 
+        self.logger.debug('Data: %s' % data)
         # Registar o novo produto
         import_product = Import()
 
