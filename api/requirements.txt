@@ -11,7 +11,7 @@ six==1.10.0
 sqlparse==0.1.19
 django-allauth==0.32.0
 SQLAlchemy==1.1.15
-celery==4.0.2
+celery==4.1.1
 amqp==2.1.4
 humanize==0.5.1
 django-celery-results==1.0.1
