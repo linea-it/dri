@@ -35,6 +35,12 @@ Ext.define('Sky.view.main.Toolbar', {
                             // {
                             //     name:'HMS', text: 'RA, Dec (HMS)'
                             // }
+                            {
+                                name:'tile', text: 'Tile ID'
+                            },
+                            {
+                                name:'tli_tilename', text: 'Tile Name'
+                            },
                         ],
                         listeners : {
                             click: function(button,item) {

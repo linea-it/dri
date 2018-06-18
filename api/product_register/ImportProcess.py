@@ -25,6 +25,7 @@ class Import():
         # 'cluster_memebers': ProductModel
         # 'vac': ProductModel
         # })
+
         self._products_classes = dict({})        
 
     def start_import(self, request):
