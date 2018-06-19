@@ -25,7 +25,8 @@ class Import():
         # 'cluster_memebers': ProductModel
         # 'vac': ProductModel
         # })
-        self._products_classes = dict({})
+
+        self._products_classes = dict({})        
 
     def start_import(self, request):
 
@@ -35,7 +36,6 @@ class Import():
         self.context = {
             'request': request
         }
-
 
         # Ticket server para identificar o owner do processo quando
         # o processo esta sendo importado por outro sistema, nesse caso o user logado
@@ -196,7 +196,7 @@ class Import():
             else:
                 raise Exception("Product Type '%s' not implemented yet." % product.get('type'))
 
-        print(self._products_classes)
+        
 
         # Verificar a classe dos produtos se for galaxy cluster ou cluster members deve ser feita a ligacao entre as 2
         if ('galaxy_clusters' in self._products_classes) and ('cluster_members' in self._products_classes):
