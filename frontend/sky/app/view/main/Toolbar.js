@@ -44,9 +44,17 @@ Ext.define('Sky.view.main.Toolbar', {
                         ],
                         listeners : {
                             click: function(button,item) {
+                                let textfield, button
+
                                 if (item){
-                                    this.up('button').setText(item.text);
-                                    me.fireEvent('changeCoordinateSystem', {name:item.name, textfield:me.getReferences().txtCoordinateSearch});
+                                    button = this.up('button')
+                                    textfield = me.getReferences().txtCoordinateSearch
+
+                                    // define o texto do botão e o emptytext da caixa de texto
+                                    button.setText(item.text)
+                                    textfield.setEmptyText(item.text)
+                                    
+                                    me.fireEvent('changeCoordinateSystem', {name:item.name, textfield:textfield});
                                 }
                             }
                         }
