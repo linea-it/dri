@@ -11,8 +11,9 @@ from product.export import Export
 
 export = Export()
 
-@task(name="create_table")
-def create_table(job_id, user_id, table_name, table_display_name, release_id, release_name, associate_target_viewer, schema=None):
+@task(bind=True)
+def create_table(self, job_id, user_id, table_name, table_display_name, release_id, release_name, associate_target_viewer, schema=None):
+    # instance, not create table in database
     create_table_as = CreateTableAs(
         job_id=job_id, 
         user_id=user_id, 
@@ -21,12 +22,15 @@ def create_table(job_id, user_id, table_name, table_display_name, release_id, re
         release_id=release_id,  
         release_name=release_name,
         associate_target_viewer=associate_target_viewer, 
+        task_id=self.request.id,
         schema=schema
     )
 
     logger = create_table_as.logger
 
-    logger.info("Task create_table_as has started")
+    logger.info("Task create_table_as has started\n")
+
+    # start teble creation process
     create_table_as.do_all()
 
 @task(name="export_table", bind=True)

@@ -20,13 +20,14 @@ from .target_viewer import TargetViewer
 from .email import Email
 
 class CreateTableAs:
-    def __init__(self, job_id, user_id, table_name, table_display_name, release_id, release_name, associate_target_viewer, schema=None):
+    def __init__(self, job_id, user_id, table_name, table_display_name, release_id, release_name, associate_target_viewer, task_id, schema=None):
         self.table_name = table_name
         self.table_display_name = table_display_name
         self.release_id = release_id
         self.release_name = release_name
         self.associate_target_viewer = associate_target_viewer
         self.schema = schema
+        self.task_id = task_id
         
         self.user = User.objects.get(pk=user_id)
         self.job = Job.objects.get(pk=job_id)
@@ -39,10 +40,10 @@ class CreateTableAs:
         self.error_message = None
         self.table = None
 
-    def do_all(self):
-        self._notify_by_email_start()
+    def do_all(self, ):
         self._update_job_status_before_table_creation()
         self._create_table_by_job_id()
+        self._notify_by_email_start()
         
         if self.is_table_successfully_created:
             self._associate_target_viewer()
@@ -52,6 +53,7 @@ class CreateTableAs:
 
     def _update_job_status_before_table_creation(self):
         self.job.job_status = 'rn'
+        self.job.job_id = self.task_id
         self.job.save()
 
     def _update_job_status_after_table_creation_attempt(self):
