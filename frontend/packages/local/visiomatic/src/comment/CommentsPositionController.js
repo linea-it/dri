@@ -3,25 +3,22 @@ Ext.define('visiomatic.comment.CommentsPositionController', {
 
     alias: 'controller.comment-position',
 
-    loadComments: function (event, dataset) {
-        var vm = this.getView().getViewModel(),
-            storeComments = vm.getStore('comments'),
-            targetPosition = event.targetPosition,
-            lat = targetPosition ? targetPosition.lat : event.latlng.lat,
-            lng = targetPosition ? targetPosition.lng : event.latlng.lng;
+    loadComments(datasetId, radec) {
+        let vm = this.getView().getViewModel()
+        let storeComments = vm.getStore('comments')
         
-        vm.set('pst_dataset', dataset.id);
-        vm.set('pst_dec',     lat);
-        vm.set('pst_ra',      lng);
+        vm.set('pst_dataset', datasetId);
+        vm.set('pst_ra',      radec[0]);
+        vm.set('pst_dec',     radec[1]);
         
         storeComments.filter([
-            /*{
+            {
                 property: 'pst_dataset',
-                value: dataset.id
-            },*/
+                value: datasetId
+            },
             {
                 property: 'coordinates',
-                value: '[['+ lng + ',' + lat+ '],['+ lng + ',' + lat+ ']]'
+                value: `[[${radec[0]},${radec[1]}],[${radec[0]},${radec[1]}]]`
             }
         ]);
 

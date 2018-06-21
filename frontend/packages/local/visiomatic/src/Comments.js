@@ -4,15 +4,13 @@ Ext.define('visiomatic.Comments', {
      * Este metodo e executado toda vez que o dataset e alterado.
      */
     loadComments: function () {
-        console.log('loadComments()');
         var me = this,
             currentDataset = me.getCurrentDataset(),
             storeComments;
 
-        if ((me.getEnableComments()) &&
-                (currentDataset != null) && (currentDataset.get('id') > 0)){
+        this.clearComments()
 
-            console.log("currentDataset: %o", currentDataset.get('id'));
+        if ((me.getEnableComments()) && (currentDataset != null) && (currentDataset.get('id') > 0)){
 
             // Current dataset e uma instancia completa do model dataset
             // Esta Store deve apontar para a API comment/position
@@ -38,12 +36,7 @@ Ext.define('visiomatic.Comments', {
      * Executado toda vez que a Store de Comentarios e carregada.
      */
     onLoadComments: function (store) {
-        console.log('onLoadComments()');
         var me = this
-
-        console.log("Count: %o", store.count())
-
-        console.log("First: %o", store.first())
 
         if (me.getShowComments()) {
             //com os objetos carregados executar o metodo overlayCatalog
@@ -55,8 +48,9 @@ Ext.define('visiomatic.Comments', {
             lComments = me.overlayCatalog('comments', store, {
                 // Path Options do leaflet para valores default mais no nosso caso
                 // devemos criar um tipo novo.
-                // pointType: 'icon'
-                // pointIcon: .....
+                pointType: 'icon',
+                pointIcon: 'mapmaker-comment comment-maker',
+                pointObjectType: 'comment'
             })
 
             // Este pointType 'icon' nao tem ainda criar um if dentro da funcao
@@ -70,13 +64,20 @@ Ext.define('visiomatic.Comments', {
     },
 
     showHideComments: function (state) {
-        console.log('showHideComments()');
         var me = this,
             map = me.getMap(),
             lComments = me.getLComments();
 
         if (lComments !== null) {
             me.showHideLayer(lComments, state);
+        }
+    },
+
+    clearComments(){
+        let lComments = this.getLComments();
+
+        if (lComments) {
+            lComments.clearLayers()
         }
     }
 });

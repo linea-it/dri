@@ -308,14 +308,11 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     onDeactivate: function () {
-        console.log('onDeactivate');
-
         var me = this;
 
         // Fechar a Janela de Overlay Catalogs caso ela esteja aberta
         if (me._winCatalogOverlay) {
             me._winCatalogOverlay.close();
-
         }
     },
 
@@ -405,7 +402,7 @@ Ext.define('visiomatic.Visiomatic', {
         var me = this;
 
         me.currentDataset = currentDataset;
-
+        
         // Carregar os commentarios toda vez que o dataset for alterado.
         me.loadComments();
 
@@ -548,11 +545,9 @@ Ext.define('visiomatic.Visiomatic', {
                 y:event.originalEvent.clientY
             },
             contextMenu;
-
+        
         if (me.getEnableContextMenu()) {
-
-            contextMenu = me.makeContextMenu();
-
+            contextMenu = me.makeContextMenu(event);
             contextMenu.showAt(xy);
         }
     },
@@ -589,7 +584,6 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     centerTile: function () {
-        console.log('centerTile()');
         var me = this,
             currentDataset = me.getCurrentDataset(),
             fov = 2; // 2 graus e o suficiente para tile ficar completa
@@ -717,16 +711,18 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     onMouseMove: function (event) {
-        var pos = String(event.latlng.lng.toFixed(5) + ', ' + event.latlng.lat.toFixed(5)),
-            me = this,
+        var ra  = event.latlng.lng,
+            dec = event.latlng.lat,
+            pos = String(ra.toFixed(5) + ', ' + dec.toFixed(5)),
+            me  = this,
             map = me.getMap();
 
         this.cmpMousePosition.children[0].innerHTML = 'Mouse RA, Dec: ' + (pos);
 
         me.currentPosition = {
             radec: [
-                event.latlng.lng.toFixed(5),
-                event.latlng.lat.toFixed(5)
+                ra,
+                dec
             ],
             container: [
                 event.containerPoint.x,
@@ -902,6 +898,7 @@ Ext.define('visiomatic.Visiomatic', {
             map = me.getMap(),
             wcs = map.options.crs,
             catalogOptions = me.getCatalogOptions(),
+            commentExists = {},
             pathOptions, collection, feature, lCatalog;
 
         pathOptions = Ext.Object.merge(catalogOptions, options);
@@ -946,6 +943,7 @@ Ext.define('visiomatic.Visiomatic', {
 
             // desenha os objetos (círculos pequenos e comentários de objeto)
             pointToLayer: function (feature, latlng) {
+                let pointMaker
 
                 if (feature.is_system) {
                     // se o objeto for um sistema usar a propriedade radius em arcmin
@@ -984,10 +982,9 @@ Ext.define('visiomatic.Visiomatic', {
                     pathOptions.minAxis = minAxis,
                     pathOptions.posAngle = posAngle
 
-                    return l.ellipse(latlng, pathOptions);
-                }
+                    pointMaker = l.ellipse(latlng, pathOptions)
 
-                else if (pathOptions.pointType === 'square') {
+                } else if (pathOptions.pointType === 'square') {
                     // Desenha um Quadrado
                     var bounds = [
                         [latlng.lat-pathOptions.pointSize,
@@ -996,13 +993,10 @@ Ext.define('visiomatic.Visiomatic', {
                             latlng.lng+pathOptions.pointSize],
                     ]
 
-                    var rectangle = l.rectangle(bounds, pathOptions)
-
-                    return rectangle
-
+                    pointMaker = l.rectangle(bounds, pathOptions)
                 } else if (pathOptions.pointType === 'triangle') {
                     // Desenha um triangulo em volta do ponto
-                    var baseline, leftline, rightline, triangle, bl, ll, rl;
+                    var baseline, leftline, rightline, bl, ll, rl;
 
                     // lat = dec, lng = ra
                     baseline = [
@@ -1028,20 +1022,27 @@ Ext.define('visiomatic.Visiomatic', {
                     rl = l.polyline(rightline, pathOptions);
                     ll = l.polyline(leftline, pathOptions);
 
-
-                    triangle = new l.LayerGroup([bl, rl, ll]);
-
-                    return triangle;
+                    pointMaker = new l.LayerGroup([bl, rl, ll])
 
                 } else if (pathOptions.pointType === 'icon') {
-                    // TODO implementar a opcao de utilizar icone como marker.
+                    let latlngId = `${latlng.lat}:${latlng.lng}`
+                    let iconAnchor = [8,44]
+                    let divIcon
 
-                    // Criar um Icone. utilizar o parametro
-                    // pathOptions.pointIcon para o icone.
-                }
-                else {
+                    // evita que seja plotado vários comentários em uma mesmo posição
+                    if (commentExists[latlngId]) return
+
+                    divIcon = l.divIcon({
+                        className: 'visiomatic-marker-position',
+                        iconAnchor: iconAnchor,
+                        html:'<i class="' + pathOptions.pointIcon + '"></i>'
+                    })
+                    
+                    commentExists[latlngId] = true
+                    pointMaker = l.marker(latlng, {icon: divIcon})
+                } else {
                     // Por default marca com um circulo
-
+                    pathOptions.pointType = 'circle'
                     pathOptions.majAxis = pathOptions.pointSize;
                     pathOptions.minAxis = pathOptions.pointSize;
                     pathOptions.posAngle = 90;
@@ -1050,10 +1051,12 @@ Ext.define('visiomatic.Visiomatic', {
                     // estava em pixels
                     // usei o mesmo valor de raio para os lados da ellipse para
                     // gerar um circulo por ser um circulo o angulo tanto faz.
-                    circle = l.ellipse(latlng, pathOptions);
-
-                    return circle;
+                    pointMaker = l.ellipse(latlng, pathOptions)
                 }
+
+                pointMaker.pointObjectType = pathOptions.pointObjectType
+
+                return pointMaker
             }
         })
         .bindPopup(me.createOverlayPopup)
@@ -1062,8 +1065,8 @@ Ext.define('visiomatic.Visiomatic', {
             alert('TODO: OPEN IN EXPLORER!');
         })
 
-        // chama a função de exibição do menu de contexto
-        .on('contextmenu', me.onLayerContextMenu, me);
+        // chama a função de exibição do menu de contexto quando click em cima de um comentário, círculo, etc.
+        .on('contextmenu', me.onContextMenuClick, me);
 
         map.addLayer(lCatalog);
 
@@ -1214,9 +1217,17 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     onLayerContextMenu: function(event){
+        
+        return 
         var me = this;
 
         me.isObjectContextMenu = true; //diz para cancelar o evento em onContextMenuClick
+        
+        debugger
+
+        if (event.layer.pointObjectType == 'comment') {
+
+        }
 
         // evento sobre um comentário de posição
         if (event.target.targetPosition){
@@ -1391,7 +1402,6 @@ Ext.define('visiomatic.Visiomatic', {
      * @return {I.GroupLayer} Return crosshair a groupLayer
      */
     drawCrosshair: function (ra, dec, options) {
-        // console.log("Zoomify - drawCrosshair()");
         var me = this,
             l = me.libL,
             map = me.getMap(),
@@ -1462,7 +1472,6 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     drawSmallCrosshair: function (ra, dec, options) {
-        // console.log("Zoomify - drawCrosshair()");
         var me = this,
             l = me.libL,
             map = me.getMap(),

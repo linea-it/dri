@@ -54,57 +54,75 @@ Ext.define('visiomatic.Interface', {
         return tools;
     },
 
-    makeContextMenu: function () {
-        var me = this,
-            menuItens = [],
-            currentDataset = me.getCurrentDataset();
+    makeContextMenu(event) {
+        let me = this
+        let menuItens = []
+        let currentDataset = me.getCurrentDataset();
+        let layer = event.layer
 
-        // Center Tile - e necessario ter uma instancia do currentDataset
-        if ((currentDataset != null) && (currentDataset.get('id') > 0)) {
-            menuItens.push({
-                text: 'Center Tile',
-                iconCls: 'x-fa fa-arrows',
-                scope: me,
-                handler: me.onContextMenuCenterTile
-            });
-        }
+        // Click sobre comentários e objetos
+        if (layer && layer.pointObjectType){
+            if (event.layer.pointObjectType=='comment' && me.getEnableComments()) {
+                
+                menuItens.push(
+                    {
+                        text: 'Comment Position',
+                        iconCls: 'x-fa fa-comments-o',
+                        radec: [layer.feature.properties.pst_ra, layer.feature.properties.pst_dec],
+                        scope: me,
+                        handler: me.onContextMenuCommentPosition
+                    }
+                );
+            }
+        } else {
 
-        // Comentarios por posicao
-        if (me.getEnableComments()) {
-            menuItens.push(
-                {
-                    text: 'Comment Position',
-                    iconCls: 'x-fa fa-comments-o',
+            // Center Tile - e necessario ter uma instancia do currentDataset
+            if ((currentDataset != null) && (currentDataset.get('id') > 0)) {
+                menuItens.push({
+                    text: 'Center Tile',
+                    iconCls: 'x-fa fa-arrows',
                     scope: me,
-                    handler: me.onContextMenuCommentPosition
-                }
-            );
-        }
+                    handler: me.onContextMenuCenterTile
+                });
+            }
 
-        // Crop
-        if (me.getEnableCrop()) {
-            menuItens.push(
-                {
-                    text: 'Crop',
-                    iconCls: 'x-fa fa-crop',
+            // Comentarios por posicao
+            if (me.getEnableComments()) {
+                menuItens.push(
+                    {
+                        text: 'Comment Position',
+                        iconCls: 'x-fa fa-comments-o',
+                        radec: [event.latlng.lng, event.latlng.lat],
+                        scope: me,
+                        handler: me.onContextMenuCommentPosition
+                    }
+                );
+            }
+
+            // Crop
+            if (me.getEnableCrop()) {
+                menuItens.push(
+                    {
+                        text: 'Crop',
+                        iconCls: 'x-fa fa-crop',
+                        scope: me,
+                        handler: me.onContextMenuCrop
+                    }
+                );
+            }
+
+            // Get Link
+            if (me.getEnableLink()) {
+                menuItens.push({
+                    text: 'Get link',
+                    iconCls: 'x-fa fa-link',
                     scope: me,
-                    handler: me.onContextMenuCrop
-                }
-            );
-        }
-
-        // Get Link
-        if (me.getEnableLink()) {
-            menuItens.push({
-                text: 'Get link',
-                iconCls: 'x-fa fa-link',
-                scope: me,
-                handler: me.onContextMenuGetLink
-            });
+                    handler: me.onContextMenuGetLink
+                });
+            }
         }
 
         menuItens = menuItens.concat( me.getContextMenuItens() );
-
 
         return Ext.create('Ext.menu.Menu', {
             items: menuItens
@@ -123,9 +141,9 @@ Ext.define('visiomatic.Interface', {
         });
     },
 
-    onContextMenuCommentPosition: function () {
-        // console.log('onClickCommentPosition()');
-        var comment = Ext.create('Ext.window.Window', {
+    onContextMenuCommentPosition(event) {
+        
+        let comment = Ext.create('Ext.window.Window', {
             title: 'Comments',
             iconCls: 'x-fa fa-comments',
             layout: 'fit',
@@ -138,9 +156,14 @@ Ext.define('visiomatic.Interface', {
             items: [
                 {
                     xtype: 'comments-position',
+                    radec: event.config.radec,
+                    datasetId: this.dataset,
                     listeners: {
                         scope: this,
-                        // changecomments: 'onChangeComments'
+                        changecomments(){
+                            this.loadComments()
+                            // showCatalogOverlayWindow
+                        }
                     }
                 }
             ]
@@ -148,21 +171,18 @@ Ext.define('visiomatic.Interface', {
     },
 
     onContextMenuCenterTile: function () {
-        // console.log('onContextMenuCenterTile()');
         var me = this;
 
         me.centerTile();
     },
 
     onContextMenuGetLink: function () {
-        // console.log('onContextMenuGetLink()');
         var me = this;
 
         this.getLinkToPosition();
     },
 
     onContextMenuCrop: function () {
-        // console.log('onContextMenuCrop()');
         var me = this;
 
         me.initCrop();
