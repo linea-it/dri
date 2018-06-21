@@ -1216,154 +1216,124 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
-    onLayerContextMenu: function(event){
-        
-        return 
-        var me = this;
+    // createCommentIcon: function(latlng, circle){
+    //     var me = this, m, commentMaker;
 
-        me.isObjectContextMenu = true; //diz para cancelar o evento em onContextMenuClick
-        
-        debugger
+    //     commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker')//+(circle?'':' mapmaker-comment-position'))
+    //         .on('contextmenu', me.onLayerContextMenu, me);
 
-        if (event.layer.pointObjectType == 'comment') {
+    //     if (circle){
+    //         circle.commentMaker = commentMaker;
+    //         commentMaker.targetObjet = circle;
+    //     }else{
+    //         commentMaker.targetPosition = latlng
+    //     }
 
-        }
+    //     commentMaker.getElement().style.display = me.getShowComments() ? '' : 'none';
+    // },
 
-        // evento sobre um comentário de posição
-        if (event.target.targetPosition){
-            me.showContextMenuImage(event);
-        }
+    // updateComment: function (layer, comment, total) {
+    //     // var me     = this, circle, id,
+    //     //     map    = me.getMap(),
+    //     //     layers = layer ? layer._layers : null,
+    //     //     layerComment = false,
+    //     //     latlng = {
+    //     //         lat: comment.get('pst_dec'),
+    //     //         lng: comment.get('pst_ra')
+    //     //     };
+    //     //
+    //     // // se comentário de posição
+    //     // if (comment.isCommentPosition){
+    //     //     map.eachLayer(function(l){
+    //     //         //comentário por posição
+    //     //         if (l.targetPosition){
+    //     //             if (latlng.lat==l.targetPosition.lat && latlng.lng==l.targetPosition.lng){
+    //     //                 layerComment = l;
+    //     //             }
+    //     //         }
+    //     //     });
+    //     //
+    //     //     // já tem o ícone na imagem
+    //     //     if (layerComment){
+    //     //         // remove se não tem mais comentários
+    //     //         layerComment.getElement().style.display = total==0 ? 'none' : '';
+    //     //     }
+    //     //     // ainda não tem o ícone na imagem
+    //     //     else{
+    //     //         // adiciona se tem comentário
+    //     //         if (total>0){
+    //     //             me.createCommentIcon(latlng);
+    //     //         }
+    //     //     }
+    //     // }
+    //     //
+    //     // // se comentário de objeto
+    //     // else if (layers){
+    //     //     for (i in layers){
+    //     //         circle  = layers[i];
+    //     //         id = circle.feature.id;
+    //     //
+    //     //         if (id==comment.data.object_id){
+    //     //             //já tem o ícone
+    //     //             if (circle.commentMaker){
+    //     //                 //remove se não tem mais comentário
+    //     //                 circle.commentMaker.getElement().style.display = total==0 ? 'none' : '';
+    //     //             }
+    //     //             //não tem o ícone
+    //     //             else{
+    //     //                 //adiciona se tem comentário
+    //     //                 if (total>0){
+    //     //                     me.createCommentIcon(circle._latlng, circle);
+    //     //                 }
+    //     //             }
+    //     //
+    //     //             circle.feature.properties._meta_comments = total;
+    //     //         }
+    //     //
+    //     //     }
+    //     // }
 
-        // evento sobre um objeto ou sobre o comentário de um objeto
-        else{
-            // sobre o comentário
-            if (event.target.targetObjet){
-                event.layer = {feature: event.target.targetObjet.feature};
-            }
-
-            me.showContextMenuObject(event);
-        }
-
-    },
-
-    createCommentIcon: function(latlng, circle){
-        var me = this, m, commentMaker;
-
-        commentMaker = me.markPosition(latlng, 'mapmaker-comment comment-maker')//+(circle?'':' mapmaker-comment-position'))
-            .on('contextmenu', me.onLayerContextMenu, me);
-
-        if (circle){
-            circle.commentMaker = commentMaker;
-            commentMaker.targetObjet = circle;
-        }else{
-            commentMaker.targetPosition = latlng
-        }
-
-        commentMaker.getElement().style.display = me.getShowComments() ? '' : 'none';
-    },
-
-    updateComment: function (layer, comment, total) {
-        // var me     = this, circle, id,
-        //     map    = me.getMap(),
-        //     layers = layer ? layer._layers : null,
-        //     layerComment = false,
-        //     latlng = {
-        //         lat: comment.get('pst_dec'),
-        //         lng: comment.get('pst_ra')
-        //     };
-        //
-        // // se comentário de posição
-        // if (comment.isCommentPosition){
-        //     map.eachLayer(function(l){
-        //         //comentário por posição
-        //         if (l.targetPosition){
-        //             if (latlng.lat==l.targetPosition.lat && latlng.lng==l.targetPosition.lng){
-        //                 layerComment = l;
-        //             }
-        //         }
-        //     });
-        //
-        //     // já tem o ícone na imagem
-        //     if (layerComment){
-        //         // remove se não tem mais comentários
-        //         layerComment.getElement().style.display = total==0 ? 'none' : '';
-        //     }
-        //     // ainda não tem o ícone na imagem
-        //     else{
-        //         // adiciona se tem comentário
-        //         if (total>0){
-        //             me.createCommentIcon(latlng);
-        //         }
-        //     }
-        // }
-        //
-        // // se comentário de objeto
-        // else if (layers){
-        //     for (i in layers){
-        //         circle  = layers[i];
-        //         id = circle.feature.id;
-        //
-        //         if (id==comment.data.object_id){
-        //             //já tem o ícone
-        //             if (circle.commentMaker){
-        //                 //remove se não tem mais comentário
-        //                 circle.commentMaker.getElement().style.display = total==0 ? 'none' : '';
-        //             }
-        //             //não tem o ícone
-        //             else{
-        //                 //adiciona se tem comentário
-        //                 if (total>0){
-        //                     me.createCommentIcon(circle._latlng, circle);
-        //                 }
-        //             }
-        //
-        //             circle.feature.properties._meta_comments = total;
-        //         }
-        //
-        //     }
-        // }
-
-    },
+    // },
 
     /**
      * Adiciona um maker em uma determinada posição, podendo ser chamada de duas formas:
      *      markPosition(ra, dec, iconCls);
      *      markPosition(latlng, iconCls);
      */
-    markPosition: function (ra, dec, iconCls) {
-        var me = this,
-            l = me.libL,
-            map = me.getMap(),
-            latlng, lmarkPosition, myIcon, iconAnchor;
+    // markPosition: function (ra, dec, iconCls) {
+    //     var me = this,
+    //         l = me.libL,
+    //         map = me.getMap(),
+    //         latlng, lmarkPosition, myIcon, iconAnchor;
 
-        if (arguments.length==2){
-            latlng = ra;
-            iconCls = dec;
-            iconAnchor = [12,25];//28];
-        }else{
-            latlng = l.latLng(dec, ra);
-            iconAnchor = [8,44];
-        }
+    //     if (arguments.length==2){
+    //         latlng = ra;
+    //         iconCls = dec;
+    //         iconAnchor = [12,25];//28];
+    //     }else{
+    //         latlng = l.latLng(dec, ra);
+    //         iconAnchor = [8,44];
+    //     }
 
-        if (iconCls) {
-            myIcon = l.divIcon({
-                className: 'visiomatic-marker-position',
-                iconAnchor: iconAnchor,
-                html:'<i class="' + iconCls + '"></i>'
-            });
+    //     if (iconCls) {
+    //         myIcon = l.divIcon({
+    //             className: 'visiomatic-marker-position',
+    //             iconAnchor: iconAnchor,
+    //             html:'<i class="' + iconCls + '"></i>'
+    //         });
 
-            lmarkPosition = l.marker(latlng, {icon: myIcon});
+    //         lmarkPosition = l.marker(latlng, {icon: myIcon});
 
-        } else {
+    //     } else {
 
-            lmarkPosition = l.marker(latlng);
-        }
+    //         lmarkPosition = l.marker(latlng);
+    //     }
 
-        lmarkPosition.addTo(map);
+    //     lmarkPosition.addTo(map);
 
-        return lmarkPosition;
+    //     return lmarkPosition;
 
-    },
+    // },
 
     setShowCrosshair: function (state) {
         var me = this,
@@ -1585,35 +1555,35 @@ Ext.define('visiomatic.Visiomatic', {
     /**
      * @description Exibe um menu de contexto
      */
-    showContextMenuImage: function(event){
-        var me     = this,
-            target = event.target,
-            xy     = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
+    // showContextMenuImage: function(event){
+    //     var me     = this,
+    //         target = event.target,
+    //         xy     = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
 
-        if (!me.getEnableContextMenu()) return;
+    //     if (!me.getEnableContextMenu()) return;
 
-        if (event.originalEvent.target.classList.contains('comment-maker') && !target.targetPosition){
-            return me.showContextMenuObject(event);
-        }
+    //     if (event.originalEvent.target.classList.contains('comment-maker') && !target.targetPosition){
+    //         return me.showContextMenuObject(event);
+    //     }
 
-        if (!this.contextMenuImage){
-            this.contextMenuImage = new Ext.menu.Menu({
-                items: [
-                    {
-                        id: 'comment-position',
-                        text: 'Comment Position',
-                        handler: function(item) {
-                            me.fireEvent('imageMenuItemClick', me.contextMenuImage.target, me.getCurrentDataset());
-                        }
-                    }
-                  ]
-            });
-        }
+    //     if (!this.contextMenuImage){
+    //         this.contextMenuImage = new Ext.menu.Menu({
+    //             items: [
+    //                 {
+    //                     id: 'comment-position',
+    //                     text: 'Comment Position',
+    //                     handler: function(item) {
+    //                         me.fireEvent('imageMenuItemClick', me.contextMenuImage.target, me.getCurrentDataset());
+    //                     }
+    //                 }
+    //               ]
+    //         });
+    //     }
 
-        target.latlng = event.latlng;
-        me.contextMenuImage.target = target;
-        me.contextMenuImage.showAt(xy);
-    },
+    //     target.latlng = event.latlng;
+    //     me.contextMenuImage.target = target;
+    //     me.contextMenuImage.showAt(xy);
+    // },
 
     initCrop: function() {
         var me = this,
@@ -1699,31 +1669,31 @@ Ext.define('visiomatic.Visiomatic', {
         // hiddenlink.click();
     },
 
-    showContextMenuObject: function(event){
-        var objectMenuItem,
-            me = this,
-            xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
+    // showContextMenuObject: function(event){
+    //     var objectMenuItem,
+    //         me = this,
+    //         xy = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
 
-        if (!me.getEnableContextMenu()) return;
+    //     if (!me.getEnableContextMenu()) return;
 
-        if (!this.contextMenuObject){
-            this.contextMenuObject = new Ext.menu.Menu({
-                items: [
-                    {
-                        id: 'comment-object',
-                        text: 'Comment Object',
-                        handler: function(item) {
-                            me.fireEvent('objectMenuItemClick', event, this.feature);
-                        }
-                    }]
-            });
-        }
+    //     if (!this.contextMenuObject){
+    //         this.contextMenuObject = new Ext.menu.Menu({
+    //             items: [
+    //                 {
+    //                     id: 'comment-object',
+    //                     text: 'Comment Object',
+    //                     handler: function(item) {
+    //                         me.fireEvent('objectMenuItemClick', event, this.feature);
+    //                     }
+    //                 }]
+    //         });
+    //     }
 
-        objectMenuItem = me.contextMenuObject.items.get("comment-object");
-        objectMenuItem.feature = event.layer ? event.layer.feature :  null;
+    //     objectMenuItem = me.contextMenuObject.items.get("comment-object");
+    //     objectMenuItem.feature = event.layer ? event.layer.feature :  null;
 
-        me.contextMenuObject.showAt(xy);
-    },
+    //     me.contextMenuObject.showAt(xy);
+    // },
 
     /**
      * Desenha um retangulo
