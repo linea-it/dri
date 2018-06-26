@@ -546,6 +546,10 @@ Ext.define('visiomatic.Visiomatic', {
             },
             contextMenu;
         
+        if (this.cancelBuble) return
+        this.cancelBuble = true
+        setTimeout(()=>{this.cancelBuble = false},100)
+
         if (me.getEnableContextMenu()) {
             contextMenu = me.makeContextMenu(event);
             contextMenu.showAt(xy);
@@ -1028,7 +1032,7 @@ Ext.define('visiomatic.Visiomatic', {
                     let latlngId = `${latlng.lat}:${latlng.lng}`
                     let iconAnchor = [8,44]
                     let divIcon
-
+                    
                     // evita que seja plotado vários comentários em uma mesmo posição
                     if (commentExists[latlngId]) return
 
@@ -1046,7 +1050,7 @@ Ext.define('visiomatic.Visiomatic', {
                     pathOptions.majAxis = pathOptions.pointSize;
                     pathOptions.minAxis = pathOptions.pointSize;
                     pathOptions.posAngle = 90;
-
+                    
                     // Usei ellipse por ja estar em degrees a funcao circulo
                     // estava em pixels
                     // usei o mesmo valor de raio para os lados da ellipse para
