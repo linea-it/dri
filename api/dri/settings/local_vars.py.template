@@ -42,6 +42,11 @@ NCSA_AUTHENTICATION_USERS_TABLE = "DES_USERS"
 # Nome da tabela onde ficam os dados do usuario com schema se tiver ex: DES_USERS para colaboracao e DES_ADMIN.DES_USERS para DR1 publico
 NCSA_AUTHENTICATION_USERS_TABLE = "DES_USERS"
 
+
+# Habilita ou desabilita o link de signup no form de login. None desabilita e String com Url para o form de login para habilitar.
+# Default None, para public usar 'https://des.ncsa.illinois.edu/easyweb/signup/'
+NCSA_SIGNUP_LINK = None
+
 # Target Viewer Rating, Reject Schema
 SCHEMA_RATING_REJECT = None
 
@@ -120,7 +125,16 @@ PRODUCT_REGISTER_DB_INTERFACE = False
 PRODUCT_REGISTER_FOLDERS = False
 # Habilita ou Desabilita a opção de registrar um produto como publico, pela interface.
 PRODUCT_REGISTER_ENABLE_PUBLIC = False
+# Plugin Galaxy Cluster para o Explorer
+# Url para acessar o container com o plugin do galaxy cluster
+PLUGIN_GALAXY_CLUSTER_HOST = "http://localhost:8000"
 
+
+# Lista as Variaveis que vao ser exportadas para os templates do Django. https://pypi.python.org/pypi/django-settings-export
+# OBRIGATORIO
+SETTINGS_EXPORT = [
+    'NCSA_SIGNUP_LINK'
+]
 
 # Logging is disabled due errors in testing and production environment, this must be investigated.
 # for developers, it safe to disable the follows lines

@@ -8,7 +8,7 @@ from smtplib import SMTPException
 from urllib.parse import urljoin
 from django.contrib.auth.models import User
 import humanize
-from astropy.table import Table
+from astropy.table import Table as asTable
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
@@ -95,7 +95,7 @@ class Export:
 
         return columns
 
-    def table_to_csv(self, product_id, table, export_dir, user_id, schema=None, database=None, filters=None):
+    def table_to_csv_by_id(self, product_id, table, export_dir, user_id, schema=None, database=None, filters=None):
         """
         Le uma tabela no banco de Catalogos e cria um csv com o resultado.
         OBS: NAO recomendada para tabelas grandes. por que neste metodo todos as linhas
@@ -202,7 +202,7 @@ class Export:
 
         try:
 
-            t = Table.read(csv, format='ascii.csv')
+            t = asTable.read(csv, format='ascii.csv')
 
             t.write(fits)
 

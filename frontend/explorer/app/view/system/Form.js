@@ -35,14 +35,66 @@ Ext.define('Explorer.view.system.Form', {
                         {
                             fieldLabel: 'RA, Dec (deg)',
                             bind: {
-                                value: '{object_data._meta_ra}, {object_data._meta_dec}'
+                                value: '{display_ra}, {display_dec}'
                             }
                         },
                         {
                             fieldLabel: 'Radius (arcmin)',
                             bind: {
-                                value: '{object_data._meta_radius}'
+                                value: '{display_radius}'
                             }
+                        },
+                        {
+                            xtype: 'fieldcontainer',
+                            fieldLabel: 'Proccess Id',
+                            defaults: {
+                                margin: '0 5 0 0'
+                            },
+                            layout: 'hbox',
+                            items: [
+                                {
+                                    xtype: "textfield",
+                                    width: 140,
+                                    bind: {
+                                        value: '{currentProduct.epr_original_id}'
+                                    }
+                                },
+                                {
+                                    xtype: "button",
+                                    iconCls: 'fa fa-info',
+                                    tooltip: "Product Log",
+                                    bind: {
+                                        href: '{currentProduct.productlog}',
+                                        disabled: '{!currentProduct.productlog}'
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'fieldcontainer',
+                            fieldLabel: 'VAC',
+                            defaults: {
+                                margin: '0 5 0 0'
+                            },
+                            layout: 'hbox',
+                            items: [
+                                {
+                                    xtype: "textfield",
+                                    width: 140,
+                                    bind: {
+                                        value: '{vacCluster.epr_original_id} - {vacCluster.prd_display_name}'
+                                    }
+                                },
+                                {
+                                    xtype: "button",
+                                    iconCls: 'fa fa-info',
+                                    tooltip: "Product Log",
+                                    bind: {
+                                        href: '{vacCluster.productlog}',
+                                        disabled: '{!vacCluster.productlog}'
+                                    }
+                                }
+                            ]
                         }
                     ]
                 }

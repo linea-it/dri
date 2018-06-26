@@ -18,7 +18,8 @@
      */
     "requires": [
         "font-awesome",
-        "common"
+        "common",
+        "codemirror"
     ],
 
     /**
@@ -206,6 +207,12 @@
      */
     "js": [
         {
+            "path": "../packages/local/codemirror/src/codemirror/codemirror.min.js"
+        },
+        {
+            "path": "../packages/local/codemirror/src/codemirror/lang/sql.min.js"
+        },
+        {
             "path": "${framework.dir}/build/ext-all-rtl-debug.js"
         },
         {
@@ -240,6 +247,9 @@
      *      }
      */
     "css": [
+        {
+            "path": "../packages/local/codemirror/src/codemirror/codemirror.css"
+        },
         {
             // this entry uses an ant variable that is the calculated
             // value of the generated output css file for the app,

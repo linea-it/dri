@@ -20,6 +20,8 @@ Ext.define('Explorer.view.system.SystemController', {
         }
     },
 
+    runner: new Ext.util.TaskRunner(),
+
     onLoadPanel: function (source, object_id) {
         this.load(source);
 
@@ -62,6 +64,7 @@ Ext.define('Explorer.view.system.SystemController', {
         });
 
         vacProducts.load({
+            scope: me,
             callback: me.onLoadVacProducts
         });
     },
@@ -82,7 +85,46 @@ Ext.define('Explorer.view.system.SystemController', {
         // Carregar as propriedades dos system members
         me.loadMembersContent(product);
 
+        // Load VAC cluster used with input in original proccess
+        me.loadVacCluster();
+
+
     },
+
+    loadVacCluster: function () {
+        // console.log('loadVacCluster()')
+        var me = this,
+            vm = me.getViewModel(),
+            product = vm.get('currentProduct'),
+            relateds = vm.getStore("productRelateds");
+
+        relateds.addFilter([
+            {
+                property: 'prl_product',
+                value: product.get('id')
+            },
+            {
+                property: 'prl_relation_type',
+                value: "input"
+            },
+            {
+                property: 'prd_class',
+                value: "vac_cluster"
+            }
+        ]);
+
+        relateds.load({
+            callback: function (response) {
+                if (relateds.count() == 1) {
+                    vm.set('relatedVacCluster', relateds.first())
+
+                    me.linkVacRelatedWithVacProduct();
+                }
+            }
+        });
+    },
+
+
 
     loadAssociations: function (product) {
         var me = this,
@@ -205,10 +247,14 @@ Ext.define('Explorer.view.system.SystemController', {
 
         // Setar um valor default para o raio utilizado na VacGrid
         // por default 2 vezes o valor do raio
-        vacRadius = object.get('_meta_radius') * 2;
-        vm.set('vacRadius', vacRadius.toFixed(1));
+        vm.set('vacRadius', 3);
+        // Setar um valor defaul para o filtro em z
+        vm.set('vacZ', 3);
 
-
+        // Formatar RA, Dec
+        vm.set('display_ra', parseFloat(object.get('_meta_ra')).toFixed(5));
+        vm.set('display_dec', parseFloat(object.get('_meta_dec')).toFixed(5));
+        vm.set('display_radius', parseFloat(object.get('_meta_radius')).toFixed(3));
     },
 
     onLoadDatasets: function (store) {
@@ -507,7 +553,47 @@ Ext.define('Explorer.view.system.SystemController', {
     /**
      * Executada quando a store de vacs e carregada.
      */
-    onLoadVacProducts: Ext.emptyFn,
+    onLoadVacProducts: function () {
+        var me = this;
+
+        me.linkVacRelatedWithVacProduct()
+
+    },
+
+
+    linkVacRelatedWithVacProduct: function () {
+        // console.log("linkVacRelatedWithVacProduct()")
+        var me = this,
+            vm = me.getViewModel(),
+            relatedVacCluster = vm.get('relatedVacCluster'),
+            vacProducts = vm.getStore("vacProducts");
+
+        if (relatedVacCluster.get("id")) {
+            vacCluster = vacProducts.getAt(vacProducts.find("id", relatedVacCluster.get("prl_related")));
+
+            vm.set("vacCluster", vacCluster);
+            vm.set('have_vac', true);
+
+            // No caso de ja haver um Vac de Input executar o metodo
+            // que seria executado pela selecao da combo.
+            // E necessario que ja tenha carregado o Objeto.
+            if (!vm.get('object')) {
+                if (!me.check_object_task) {
+                    me.check_object_task = me.runner.newTask({
+                        run: function () {
+                            console.log(vm.get('object'))
+                            if (vm.get('object')) {
+                              this.stop();
+                              me.onSelectVacProduct(null, vacCluster);
+                            }
+                        },
+                        interval: 3000
+                    });
+                    me.check_object_task.start()
+                }
+            }
+        }
+    },
 
     /**
      * Executado quando e selecionado um Vac na combobox.
@@ -523,6 +609,7 @@ Ext.define('Explorer.view.system.SystemController', {
 
         vm.set('currentVacProduct', currentVacProduct);
 
+
         vacObjects.removeAll();
 
         // Carregar as propriedades do produto de vac e depois os objetos.
@@ -535,45 +622,62 @@ Ext.define('Explorer.view.system.SystemController', {
      * executa o metodo que vai fazer load dos objetos.
      */
     loadVacProductContent: function (product) {
-        // console.log('loadVacProductContent(%o)', product)
+        console.log('loadVacProductContent(%o)', product)
         var me = this,
             vm = me.getViewModel(),
             displayContents = vm.getStore('vacProductDisplayContents'),
             vacGrid = me.lookupReference('vac-grid');
 
-        displayContents.addFilter(
-            {
-                'property': 'pcn_product_id',
-                value: product.get('id')
-            }
-        );
-
-        displayContents.load({
-            callback: function () {
-                if (this.check_ucds()) {
-                    // Reconfigurar a Grid de Vac com a propriedades do catalogo
-                    vacGrid.reconfigureGrid(this);
-
-                    // Carregar os objectos do produto de vac
-                    me.loadVacObjects();
+        if (product) {
+            displayContents.addFilter(
+                {
+                    'property': 'pcn_product_id',
+                    value: product.get('id')
                 }
-            }
-        });
+            );
 
+            displayContents.load({
+                callback: function () {
+                    if (this.check_ucds()) {
+                        // Reconfigurar a Grid de Vac com a propriedades do catalogo
+                        vacGrid.reconfigureGrid(this);
+
+                        // Carregar os objectos do produto de vac
+                        me.loadVacObjects();
+                    }
+                }
+            });
+        }
     },
 
     calculateVacRadius: function (cluster_radius) {
         var me = this,
-            multiplier = 2;
+            vm = me.getViewModel(),
+            multiplier = vm.get('vacRadius');
 
         // DIVIDIR O radius por 60 por que esta em arcmin
-        vacRadius = cluster_radius / 60;
+        vacRadius = (cluster_radius * multiplier) / 60;
 
         return vacRadius.toFixed(3);
     },
 
+    calculateVacZ: function (cluster_z, cluster_sigma_dz) {
+        var me = this,
+            vm = me.getViewModel(),
+            multiplier = vm.get('vacZ'),
+            zmin, zmax;
+
+        zmin = cluster_z - multiplier * cluster_sigma_dz
+        zmax = cluster_z + multiplier * cluster_sigma_dz
+
+        z_range = [zmin, zmax];
+
+        return z_range;
+
+    },
+
     loadVacObjects: function () {
-        // console.log('loadVacObjects()')
+        console.log('loadVacObjects()')
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('object'),
@@ -583,12 +687,15 @@ Ext.define('Explorer.view.system.SystemController', {
 
         vacObjects.clearFilter();
 
-        // DIVIDIR O radius por 60 por que esta em arcmin
-        vacRadius = me.calculateVacRadius(vm.get('vacRadius'));
+        console.log('vacRadius', vacRadius)
+        console.log('currentVacProduct', currentVacProduct)
+        console.log('object', object)
 
-        // Desenhar um quadrado mostrando a area que foi usada na busca dos vacs
-        // me.drawVacArea(
-        //     object.get('_meta_ra'), object.get('_meta_dec'), vacRadius)
+        // DIVIDIR O radius por 60 por que esta em arcmin
+        vacRadius = me.calculateVacRadius(object.get('_meta_radius'));
+
+        // Calcular o Filtro em z
+        vacZ = me.calculateVacZ(object.get('zs'), object.get('sigma_dz'));
 
         vacObjects.addFilter([
             {
@@ -607,6 +714,11 @@ Ext.define('Explorer.view.system.SystemController', {
                 property: 'radius',
                 value: vacRadius
             },
+            {
+                property: 'z_best',
+                operator: 'range',
+                value: vacZ
+            }
         ])
 
         vacObjects.load({
@@ -636,7 +748,8 @@ Ext.define('Explorer.view.system.SystemController', {
 
         vm.set('overlayVac', lvacs);
 
-        me.showHideOverlayVacs()
+        me.showHideOverlayVacs();
+
     },
 
     changeVisibleOverlayVacs: function (btn, state) {
@@ -668,19 +781,6 @@ Ext.define('Explorer.view.system.SystemController', {
         this.highlightObject(object);
 
     },
-
-    // Para este metodo funcionar e necessario corrigir a funcao do visiomatic
-    // para objetos que estejam perto da borda da tile.
-    // drawVacArea: function (ra, dec, radius) {
-    //     console.log('drawVacArea(%o, %o, %o)', ra, dec, radius);
-    //     var me = this,
-    //         visiomatic = me.lookupReference('visiomatic');
-    //
-    //     upperRight = [ra + radius, dec + radius]
-    //     lowerLeft = [ra - radius, dec - radius]
-    //
-    //     visiomatic.drawRectangle(upperRight, lowerLeft);
-    // },
 
     /**
      * Retorna os tags que estao associados a um release
@@ -795,9 +895,54 @@ Ext.define('Explorer.view.system.SystemController', {
         window.open(url, '_blank')
     },
 
-    onCmdClickPoint: function (record, cmd) {
+    onCmdClickPoint: function (record, type, cmdTab) {
         // console.log('onCmdClickPoint(%o)', record);
         // Realca o objeto no preview do visiomatic
+        // console.log(record)
         this.highlightObject(record, true);
+    },
+
+    onActiveCmdTab: function (panel) {
+        // console.log('onActiveCmdTab(%o)', panel);
+        var me = this,
+            vm = me.getViewModel(),
+            clusterMembers = vm.getStore('members'),
+            vacObjects = vm.getStore('vacObjects');
+
+        panel.setMembers(clusterMembers);
+        panel.setVacs(vacObjects);
+        panel.reloadPlots();
+    },
+
+    // ------------------- Spatial Distribution --------------------
+    onActiveSpatialTab: function () {
+        // console.log('onActiveSpatialTab()')
+        var me = this,
+            vm = me.getViewModel(),
+            densityMap = me.lookup("densityMap"),
+            currentProduct = vm.get("currentProduct"),
+            clusterSource = currentProduct.get("id"),
+            clusterId = vm.get("object_id"),
+            currentVacProduct = vm.get("vacCluster")
+            vacSource = currentVacProduct.get("id"),
+            object = vm.get("object"),
+            lon = object.get("_meta_ra"),
+            lat = object.get("_meta_dec"),
+            radius = me.calculateVacRadius(object.get('_meta_radius'));
+
+
+        // https://desportal.cosmology.illinois.edu:8080/dri/api/plugin/galaxy_cluster/?_dc=1522860511754&clusterSource=226&clusterId=79346&vacSource=227&lon=339.967678342688&lat=-43.1382903206538&radius=0.032
+
+        // clusterSource=226
+        // clusterId=79346
+        // vacSource=227
+        // lon=339.967678342688
+        // lat=-43.1382903206538
+        // radius=0.032
+
+        if (vacSource) {
+            densityMap.loadData(clusterSource, clusterId, vacSource, lon, lat, radius);
+        }
+
     }
 });

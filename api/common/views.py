@@ -18,6 +18,8 @@ import django_filters
 from rest_framework import filters
 from rest_framework.authtoken.models import Token
 from django.conf import settings
+import requests
+from urllib.parse import urljoin
 
 
 class FilterViewSet(viewsets.ModelViewSet):
@@ -203,7 +205,6 @@ def get_setting(request):
         if name is None and names is None:
             raise Exception("is necessary the name parameter with the identifier of the variable in the settings")
 
-
         if name is not None:
 
             data = {}
@@ -253,8 +254,8 @@ def get_setting(request):
                 else:
                     return Response(dict({"msg": "this variable \"%s\" not available" % orinal_name}), status=500)
 
-
         return Response(data)
+
 
 @api_view(['GET'])
 def send_statistic_email(request):
@@ -275,6 +276,41 @@ def send_statistic_email(request):
         except Exception as e:
 
             return Response(dict({'status': "failure", "Exception": e}))
+
+
+@api_view(['GET'])
+def galaxy_cluster(request):
+    if request.method == 'GET':
+        clusterSource = request.GET.get("clusterSource", None)
+        clusterId = request.GET.get("clusterId", None)
+        vacSource = request.GET.get("vacSource", None)
+        lon = request.GET.get("lon", None)
+        lat = request.GET.get("lat", None)
+        radius = request.GET.get("radius", None)
+
+        try:
+            host = settings.PLUGIN_GALAXY_CLUSTER_HOST
+        except:
+            raise Exception("The PLUGIN_GALAXY_CLUSTER_HOST variable is not configured in settings.")
+
+        params = "density_map?clusterSource=%s&clusterId=%s&vacSource=%s&lon=%s&lat=%s&radius=%s" % (
+        clusterSource, clusterId, vacSource, lon, lat, radius)
+
+
+        url = urljoin(host, params)
+
+        r = requests.get(url, timeout=160)
+
+        if r.status_code == 200:
+            print(r.json())
+            return Response(r.json())
+        else:
+
+            print(r.text)
+            try:
+                return Response(r.json())
+            except:
+                return Response(dict({"success": False}))
 
 
 @api_view(['GET'])

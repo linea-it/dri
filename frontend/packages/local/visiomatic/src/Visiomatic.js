@@ -654,10 +654,10 @@ Ext.define('visiomatic.Visiomatic', {
         }
 
         return {
-            lat: parseFloat(lat.toFixed(6)),
-            lng: parseFloat(lng.toFixed(6)),
-            dlat: parseFloat(dlat.toFixed(6)),
-            dlng: parseFloat(dlng.toFixed(6))
+            lat: parseFloat(lat),
+            lng: parseFloat(lng),
+            dlat: parseFloat(dlat),
+            dlng: parseFloat(dlng)
         };
     },
 
@@ -669,7 +669,7 @@ Ext.define('visiomatic.Visiomatic', {
      */
     getBox: function () {
         var me = this,
-            box, urra, urdec, llra, lldec, ur, ll;
+            box, urra, urdec, llra, lldec, ur, ll, rlat, rlon;
 
         bounding = me.getBounds();
 
@@ -678,10 +678,16 @@ Ext.define('visiomatic.Visiomatic', {
             bounding.lng = bounding.lng - 360;
         }
 
-        urra = parseFloat(bounding.lng + bounding.dlng / 2).toFixed(6);
-        urdec = parseFloat(bounding.lat + bounding.dlat / 2).toFixed(6);
-        llra = parseFloat(bounding.lng - bounding.dlng / 2).toFixed(6);
-        lldec = parseFloat(bounding.lat - bounding.dlat / 2).toFixed(6);
+        rlon = bounding.dlng / 2;
+        rlat = bounding.dlat /2;
+
+
+        llra = parseFloat(bounding.lng - rlon);
+        lldec = parseFloat(bounding.lat - (rlat * Math.cos(bounding.lat * Math.PI / 180.)));
+
+
+        urra = parseFloat(bounding.lng + rlon);
+        urdec = parseFloat(bounding.lat + (rlat * Math.cos(bounding.lat * Math.PI / 180.)));
 
         ur = [urra, urdec];
         ll = [llra, lldec];
@@ -689,7 +695,7 @@ Ext.define('visiomatic.Visiomatic', {
         box = [ur, ll];
 
         // Debugar o Box, desenha um retangulo representando a area visivel
-        // ldebugbox = me.drawRectangle(ur, ll, {color: '#1dff00', weight: 5});
+        //ldebugbox = me.drawRectangle(ur, ll, {color: '#1dff00', weight: 5});
 
         return box;
     },

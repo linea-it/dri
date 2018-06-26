@@ -9,6 +9,8 @@ Ext.define('Explorer.view.system.SystemModel', {
         'Explorer.model.Product',
         'Explorer.store.Association',
         'Explorer.store.ProductDisplayContents',
+        'Explorer.store.ProductRelateds',
+        'Explorer.model.ProductRelated',
         'common.model.Dataset',
         'common.store.Surveys',
         'common.store.Tags',
@@ -19,6 +21,9 @@ Ext.define('Explorer.view.system.SystemModel', {
     data: {
         source: null,
         object_id: null,
+        display_ra: '',
+        display_dec: '',
+        display_radius: '',
         object: null,
         object_data: null,
         property_id: null,
@@ -26,12 +31,14 @@ Ext.define('Explorer.view.system.SystemModel', {
         position: null,
         have_members: false,
         selected_member: null,
+        have_vac: false,
         visibleOverlayVacs: true,
         overlayVac: null,
-        vacRadius: 1,
+        vacRadius: 2,
+        vacZ: 2,
         vacOverlayColor: '1B81BC',
         vacOverlayPointSize: 1.2,
-        vacOverlaypointType: 'square'
+        vacOverlaypointType: 'square',
     },
 
     links: {
@@ -43,10 +50,20 @@ Ext.define('Explorer.view.system.SystemModel', {
             type: 'common.model.Dataset',
             create: true
         },
+        // Vac selecionado na combobox da aba VAC
         currentVacProduct: {
             type: 'Explorer.model.Product',
             create: true
-        }
+        },
+        relatedVacCluster: {
+            type: 'Explorer.model.ProductRelated',
+            create: true
+        },
+        // Vac relacionado ao cluster utilizado como input para sua producao
+        vacCluster: {
+            type: 'Explorer.model.Product',
+            create: true
+        },
     },
 
     stores: {
@@ -109,7 +126,11 @@ Ext.define('Explorer.view.system.SystemModel', {
         },
         vacObjects: {
             type: 'objects',
-            pageSize: 2000
+            pageSize: 10000
+        },
+        productRelateds: {
+            type: 'product_relateds',
+            autoLoad: false
         },
     }
 });

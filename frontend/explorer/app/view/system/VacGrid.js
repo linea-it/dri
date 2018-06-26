@@ -17,6 +17,7 @@ Ext.define('Explorer.view.system.VacGrid', {
     */
     config: {
         ready: false,
+        inputVac: null
     },
 
     emptyText: 'No data to dysplay.',
@@ -39,11 +40,13 @@ Ext.define('Explorer.view.system.VacGrid', {
             tbar: [
                 {
                     xtype: 'combobox',
+                    itemId: 'cmbVacInput',
                     emptyText: 'choose the VAC catalog',
                     width: 200,
                     valueField: 'id',
-                    displayField: 'prd_display_name',
+                    displayField: 'name_with_process_id',
                     queryMode: 'local',
+                    hidden: true,
                     bind: {
                         store: '{vacProducts}',
                     },
@@ -51,6 +54,12 @@ Ext.define('Explorer.view.system.VacGrid', {
                     listeners: {
                         select: 'onSelectVacProduct'
                     }
+                },
+                {
+                  xtype: 'textfield',
+                  itemId: 'txtVacInput',
+                  readOnly: true,
+                  hidden: false
                 },
                 {
                     xtype: 'button',
@@ -62,13 +71,23 @@ Ext.define('Explorer.view.system.VacGrid', {
                 },
                 {
                     xtype: 'numberfield',
-                    minValue: 1,
-                    maxValue: 20,
+                    minValue: 0.1,
+                    maxValue: 5,
                     step: 0.1,
-                    fieldLabel: 'Radius (arcmin)',
-                    labelWidth: 100,
+                    fieldLabel: 'WAZP Radius',
+                    // labelWidth: 100,
                     width: 160,
                     bind: "{vacRadius}",
+                },
+                {
+                    xtype: 'numberfield',
+                    minValue: 0.1,
+                    maxValue: 5,
+                    step: 0.1,
+                    fieldLabel: 'z',
+                    labelWidth: 20,
+                    width: 80,
+                    bind: "{vacZ}",
                 },
                 '-',
                 {
@@ -102,7 +121,7 @@ Ext.define('Explorer.view.system.VacGrid', {
                     labelWidth: 40,
                     width: 100,
                     bind: '{vacOverlayPointSize}',
-                    minValue: 1,
+                    minValue: 0.2,
                     maxValue: 10,
                     step: 0.2,
                 },
@@ -111,6 +130,16 @@ Ext.define('Explorer.view.system.VacGrid', {
                     iconCls: 'x-tbar-loading',
                     handler: 'loadVacObjects',
                     tooltip: 'Refresh'
+                },
+                '-',
+                {
+                    xtype: "button",
+                    iconCls: 'fa fa-info',
+                    tooltip: "Product Log",
+                    bind: {
+                        href: '{currentVacProduct.productlog}',
+                        disabled: '{!currentVacProduct.productlog}'
+                    }
                 }
             ]
         });
@@ -275,5 +304,34 @@ Ext.define('Explorer.view.system.VacGrid', {
         }
 
         return value;
+    },
+
+    afterRender: function () {
+        var me = this,
+            vacCluster = me.getInputVac(),
+            cmb = me.down("#cmbVacInput"),
+            txt = me.down("#txtVacInput");
+
+        me.callParent(arguments);
+
+        if (vacCluster) {
+            // Ja tem vac desabilita a opcao de selecionar o vac,
+            // oculta a combobox e exibe um textfield com o nome do vac
+            cmb.setVisible(false);
+            txt.setVisible(true);
+            txt.setValue(vacCluster.get('name_with_process_id'));
+
+        } else {
+            cmb.setVisible(true);
+            txt.setVisible(false);
+            txt.setValue('');
+        }
+    },
+
+    setInputVac: function (vacCluster) {
+        var me = this;
+        if ((vacCluster) && (vacCluster.get('id') > 0)) {
+            me.inputVac = vacCluster;
+        }
     }
 });

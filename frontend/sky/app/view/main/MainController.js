@@ -38,16 +38,46 @@ Ext.define('Sky.view.main.MainController', {
             refs = me.getReferences(),
             mainCard = refs.mainCardPanel,
             mainLayout = mainCard.getLayout(),
-            sky = mainCard.child('component[routeId=\'sky\']'),
-            ctrl;
+            activeView = mainLayout.getActiveItem(),
+            ctrl = me.activeControler,
+            sky;
+        
+        switch(me.searchBy){
+            case 'tile':
+            case 'tli_tilename':
+                Ext.Ajax.request({
+                    url: '/dri/api/dataset/?'+me.searchBy+'='+value+'&release='+activeView.viewModel.get('release')+'&format=json',
+                    success: function (response) {
+                        var data = JSON.parse(response.responseText);
+                        var val;
+                        
+                        if (data && data.length>0){
+                            val = data[0].tli_ra + ', ' + data[0].tli_dec
+                            ctrl.gotoPosition(val, data[0]);
+                        } else {
+                            alertTileNotFound()
+                        }
+                    },
+                    failure: function (response, opts) {
+                        alertTileNotFound();       
+                    }
+                });
 
-        // A Pesquisa sempre redireciona para o Footprint, por que a coordenada
-        // pode nao ser na mesma tile. entao e necessario a busca no ceu inteiro
-        me.setActivePanel(sky);
+                break;
 
-        ctrl = sky.getController();
-        ctrl.gotoPosition(value, 0.6);
+            default:
+                // A Pesquisa (RA, Dec) redireciona para o Footprint por que a coordenada
+                // pode nao ser na mesma tile. entao e necessario a busca no ceu inteiro
+                sky = mainCard.child('component[routeId=\'sky\']');
+                me.setActivePanel(sky);
 
+                ctrl = sky.getController()
+                ctrl.gotoPosition(value, 0.6);
+        }
+
+        function alertTileNotFound(){
+            Ext.MessageBox.alert('Alert', 'There is no DES tile in the current release on this tile_id or tile_name.');
+        }
     },
 
     /**
@@ -61,6 +91,8 @@ Ext.define('Sky.view.main.MainController', {
             ctrl = mainLayout.getActiveItem().getController(),
             value = item.textfield.value;
 
+        me.searchBy = item.name
+
         //converte para o sistema de métrica escolhido
         if (value){
             t1 = visiomatic.Visiomatic.strToSystem(value);
@@ -70,19 +102,26 @@ Ext.define('Sky.view.main.MainController', {
                 //se teve mudança
                 if (t1.name != t2){
 
-                    if (t2=='HMS'){
-                        v = visiomatic.Visiomatic.latLngToHMSDMS(t1.value);
-                        item.textfield.setValue(v);
-                    }
-
-                    else if (t2=='latlng'){
-                        if (visiomatic.processing) return;
-
-                        visiomatic.processing = true;
-                        visiomatic.Visiomatic.hmsToLatLng(value, function(latlng){
-                            visiomatic.processing = false;
-                            item.textfield.setValue(latlng.lng + ', ' + latlng.lat);
-                        });
+                    switch (t2){
+                        case 'HMS':
+                            v = visiomatic.Visiomatic.latLngToHMSDMS(t1.value);
+                            item.textfield.setValue(v);
+                            break;
+                        
+                        case 'latlng':
+                            if (!visiomatic.processing){
+                                visiomatic.processing = true;
+                                visiomatic.Visiomatic.hmsToLatLng(value, function(latlng){
+                                    visiomatic.processing = false;
+                                    item.textfield.setValue(latlng.lng + ', ' + latlng.lat);
+                                });
+                            }
+                            break;
+                        
+                        case 'tile':
+                        case 'tli_tilename':
+                            me.doSearch(value)
+                            break;
                     }
                 }
                 //ctrl.setSystemCoordinate(item.textfield.value);
@@ -90,7 +129,7 @@ Ext.define('Sky.view.main.MainController', {
         }
     },
 
-    setActivePanel: function (panel) {
+    setActivePanel: function (panel, release) {
         // console.log("setActivePanel(%o)", panel)
         var me = this,
             refs = me.getReferences(),
@@ -110,6 +149,8 @@ Ext.define('Sky.view.main.MainController', {
             view.updatePanel(arguments);
             mainLayout.setActiveItem(view);
         }
+
+        me.activeControler = view.getController()
     },
 
     //exibindo a home
@@ -169,7 +210,7 @@ Ext.define('Sky.view.main.MainController', {
             headerRefs = headerBar.getReferences();
 
         headerRefs.searchGlobal.show();
-
+        
         if (this.activePanel) newView.showPin = this.activePanel.showPin
         newView.txtCoordinateSearch = headerRefs.txtCoordinateSearch;
         this.setActivePanel(newView, dataset, coordinate, fov);

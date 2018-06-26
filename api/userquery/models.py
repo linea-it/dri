@@ -66,7 +66,7 @@ class Job(models.Model):
     )
     query_name = models.CharField(
         max_length=128, default="Unnamed", verbose_name='Original query name')
-
+    job_id = models.TextField(verbose_name='Job Cerely ID')
 
 class Table(models.Model):
     table_name = models.CharField(

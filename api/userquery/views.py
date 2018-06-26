@@ -16,7 +16,7 @@ from .permissions import IsOwnerOrPublic
 from .serializers import *
 from .tasks import create_table, export_table
 from .db import RawQueryValidator
-from .target_viewer import register_table_in_the_target_viewer
+from .target_viewer import TargetViewer
 
 from product.export import Export
 
@@ -132,15 +132,22 @@ class TableViewSet(viewsets.ModelViewSet):
             if rqv.get_sql_count()>settings.USER_QUERY_MAX_ROWS:
                 raise Exception("The query exceeded the limit of %s rows" % settings.USER_QUERY_MAX_ROWS)
 
-            q = Job(display_name=display_name,
+            # insert row in userquery_job table
+            table_userquery_job = Job(display_name=display_name,
                     owner=self.request.user,
                     sql_sentence=sql_sentence,
                     timeout=settings.USER_QUERY_EXECUTION_TIMEOUT,
                     query_name=query_name)
-            q.save()
-            
-            create_table.delay(job_id=q.id, user_id=request.user.pk, table_name=table_name, table_display_name=display_name,
-                               release_id=release_id, release_name=release_name, associate_target_viewer=associate_target_viewer,
+            table_userquery_job.save()         
+
+            # start celery job
+            create_table.delay(job_id=table_userquery_job.id, 
+                               user_id=request.user.pk, 
+                               table_name=table_name, 
+                               table_display_name=display_name,
+                               release_id=release_id, 
+                               release_name=release_name, 
+                               associate_target_viewer=associate_target_viewer,
                                schema=settings.DATABASES['catalog']['USER'])
 
             return HttpResponse(status=200)
@@ -179,13 +186,18 @@ class TableViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         try:
-            # drop table
+            # drop table in database if exists
             db = DBBase('catalog')
             q = Table.objects.get(pk=kwargs['pk'])
+            if (db.table_exists(table=q.table_name, schema=q.schema)):
+                db.drop_table(q.table_name, schema=q.schema)
 
-            db.drop_table(q.table_name, schema=q.schema)
+            # delete register in targetviewer
+            TargetViewer.unregister(q.product_id)
 
-            return super(TableViewSet, self).destroy(request, args, kwargs)
+            return JsonResponse({'message': 'ok'}, status=200)
+            # delete register in userquery
+            # return super(TableViewSet, self).destroy(request, args, kwargs)
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
@@ -314,7 +326,8 @@ class TargetViewerRegister(viewsets.ModelViewSet):
                 raise Exception("id is a mandatory field")
 
             q = Table.objects.get(pk=_id)
-            register_table_in_the_target_viewer(user=self.request.user, table_pk=q.pk, release_name=_release_name)
+            TargetViewer.register(user=self.request.user, table_pk=q.pk, release_name=_release_name)
+
             return HttpResponse(status=200)
 
         except Exception as e:

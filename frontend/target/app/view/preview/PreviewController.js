@@ -437,10 +437,16 @@ Ext.define('Target.view.preview.PreviewController', {
         } else {
             relateds.removeAll(true);
 
-            relateds.addFilter({
-                property: 'prl_product',
-                value: currentCatalog.get('id')
-            });
+            relateds.addFilter([
+                {
+                    property: 'prl_product',
+                    value: currentCatalog.get('id')
+                },
+                {
+                    property: 'prl_relation_type',
+                    value: "join"
+                },
+            ]);
             relateds.load({
                 callback: function () {
                     if (this.count() > 0) {

@@ -224,7 +224,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 # Enables or disables sending daily email access statistics.
 SEND_DAILY_STATISTICS_EMAIL = False
 
-
+SETTINGS_EXPORT = []
 
 # Run Test with Django Nose http://django-testing-docs.readthedocs.io/en/latest/coverage.html#coverage-reports
 # Use nose to run all tests
