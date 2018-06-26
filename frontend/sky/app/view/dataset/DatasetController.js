@@ -301,13 +301,9 @@ Ext.define('Sky.view.dataset.DatasetController', {
     onCenterTile: function () {
         // console.log('onCenterTile()')
         var me = this,
-            vm = me.getViewModel(),
-            currentDataset = vm.get('currentDataset'),
-            view = me.getView(),
-            fov = 2,
             visiomatic = me.lookupReference('visiomatic');
 
-        visiomatic.setView(currentDataset.get('tli_ra'), currentDataset.get('tli_dec'), fov);
+        visiomatic.centerTile();
     },
 
     showHideComments: function (btn, state) {
@@ -341,7 +337,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
         }
     },
 
-    showHideCrop: function (btn, state) {
+    onCrop: function () {
         var me = this,
             visiomatic = me.lookupReference('visiomatic');
 
