@@ -13,7 +13,6 @@ Ext.define('visiomatic.VisiomaticController', {
 
     // onAfterRender: function (sender, record) {
 
-    //     console.log(L);
     //     zoom = 1;
     //     args = {};
     //     var map = L.map(

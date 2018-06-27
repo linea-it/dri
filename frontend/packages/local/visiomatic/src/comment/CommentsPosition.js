@@ -1,4 +1,4 @@
-Ext.define('common.comment.CommentsPosition',{
+Ext.define('visiomatic.comment.CommentsPosition',{
     extend: 'Ext.Panel',
 
     requires:[
@@ -6,8 +6,8 @@ Ext.define('common.comment.CommentsPosition',{
         'Ext.form.field.HtmlEditor',
         'Ext.ux.PreviewPlugin',
         'Ext.window.Toast',
-        'common.comment.CommentsPositionModel',
-        'common.comment.CommentsPositionController'
+        'visiomatic.comment.CommentsPositionModel',
+        'visiomatic.comment.CommentsPositionController'
     ],
 
     xtype: 'comments-position',
@@ -23,9 +23,14 @@ Ext.define('common.comment.CommentsPosition',{
         align: 'stretch'
     },
 
-    initComponent: function () {
-        var me = this;
+    config: {
+        radec: null,
+        datasetId: null
+    },
 
+    initComponent: function () {
+        let me = this;
+        
         me.rowEditing = new Ext.grid.plugin.RowEditing({
             listeners: {
                 edit: function(editor, e){    
@@ -134,7 +139,7 @@ Ext.define('common.comment.CommentsPosition',{
                         {
                             text: '',
                             dataIndex: 'pst_comment',
-                            renderer:this.formatUser,
+                            renderer: this.formatUser,
                             flex:2,
                             menuDisabled: true,
                             editor : {
@@ -153,7 +158,17 @@ Ext.define('common.comment.CommentsPosition',{
             ]
         });
 
-        me.callParent(arguments);
+        me.callParent(arguments)
+    },
+
+    afterRender(){
+        let radec = this.getRadec()
+        let datasetId = this.getDatasetId()
+        let ctrl = this.getController()
+        
+        ctrl.loadComments(datasetId, radec)
+        
+        this.callParent(arguments)
     },
 
     /**
@@ -162,6 +177,7 @@ Ext.define('common.comment.CommentsPosition',{
      */
     formatUser: function (value, p, record) {
         var me = this,
+            tm, tmq = 5,
             id = Ext.id(),
             tpl = 
                 '<div class="user">'+
@@ -172,21 +188,31 @@ Ext.define('common.comment.CommentsPosition',{
                     '<div>{3}</div>'+
                 '</div>';
 
-        Ext.defer(function() {
-        Ext.widget('button', {
-            renderTo: id,
-            iconCls: 'x-fa fa-caret-down',
-            style: 'padding:0;margin-left:20px',
-            handler: function(data, event) {                
-                var xy = {x:event.event.clientX, y:event.event.clientY},
-                    menu = me.up('comments-position').contextMenu;
-                
-                menu.record = record;
-                menu.showAt(xy);
+        function renderButton(){
+            if (document.getElementById(id)){
+                return Ext.widget('button', {
+                    renderTo: id,
+                    iconCls: 'x-fa fa-caret-down',
+                    style: 'padding:0;margin-left:20px',
+                    handler: function(data, event) {                
+                        var xy = {x:event.event.clientX, y:event.event.clientY},
+                            menu = me.up('comments-position').contextMenu;
+                        
+                        menu.record = record;
+                        menu.showAt(xy);
+                    }
+                })
             }
-        });
-        }, 50);
-        
+
+            tmq--
+            if (tmq>0){
+                setTimeout(renderButton, 100)
+            }
+
+        }
+
+        setTimeout(renderButton, 100)
+
         return Ext.String.format(tpl, 
             record.get('owner'),               //{0} owner
             record.get('date') || 'Unknown',   //{1} date

@@ -1,7 +1,7 @@
 /**
  *
  */         
-Ext.define('common.comment.CommentsPositionModel', {
+Ext.define('visiomatic.comment.CommentsPositionModel', {
     extend: 'Ext.app.ViewModel',
 
     alias: 'viewmodel.comment-position',
