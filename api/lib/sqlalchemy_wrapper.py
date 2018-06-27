@@ -216,6 +216,9 @@ class DBBase:
         return properties
 
     def create_auto_increment_column(self, table, column_name, schema=None):
+        # only create the column if it does not exists.
+        if column_name in self.get_table_columns(table, schema=schema):
+            return
         sql = self.database.get_create_auto_increment_column(table, column_name, schema=schema)
         with self.engine.connect() as con:
             for _sql in sql:
