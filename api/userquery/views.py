@@ -138,7 +138,7 @@ class TableViewSet(viewsets.ModelViewSet):
                     sql_sentence=sql_sentence,
                     timeout=settings.USER_QUERY_EXECUTION_TIMEOUT,
                     query_name=query_name)
-            table_userquery_job.save()         
+            table_userquery_job.save()
 
             # start celery job
             create_table.delay(job_id=table_userquery_job.id, 
