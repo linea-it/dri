@@ -122,6 +122,41 @@ class TargetViewSet(ViewSet):
             })
 
 
+            essential_props = dict({
+                # Id
+                'meta.id;meta.main': '_meta_id',
+                # Coordinates
+                'pos.eq.ra;meta.main': '_meta_ra',
+                'pos.eq.dec;meta.main': '_meta_dec',
+                # Elipse
+                'phys.size.smajAxis;instr.det;meta.main': '_meta_a_image',
+                'phys.size.sminAxis;instr.det;meta.main': '_meta_b_image',
+                'pos.posAng;instr.det;meta.main': '_meta_theta_image',
+                # Magnitudes
+                'phot.mag;meta.main;em.opt.g': '_meta_mag_auto_g',
+                'phot.mag;meta.main;em.opt.r': '_meta_mag_auto_r',
+                'phot.mag;meta.main;em.opt.i': '_meta_mag_auto_i',
+                'phot.mag;meta.main;em.opt.z': '_meta_mag_auto_z',
+                'phot.mag;meta.main;em.opt.Y': '_meta_mag_auto_y',
+                # Photo Z
+                'src.redshift.phot': '_meta_photo_z',
+
+            })
+
+
+            for ucd in associations:
+                try:
+                    meta_prop = essential_props.get(ucd)
+                    if meta_prop:
+                        value = row.get(associations.get(ucd))
+
+                        row.update({
+                            meta_prop: value
+                        })
+
+                except:
+                    pass
+
             row.update({
                 "_meta_property_id": associations.get("meta.id;meta.main"),
                 "_meta_property_ra": associations.get("pos.eq.ra;meta.main"),
@@ -136,6 +171,7 @@ class TargetViewSet(ViewSet):
                 })
             except:
                 pass
+
 
             row.update({
                 "_meta_rating_id": row.get('meta_rating_id', None)
@@ -171,40 +207,7 @@ class TargetViewSet(ViewSet):
                     "_meta_comments": None
                 })
 
-            essential_props = dict({
-                # Id
-                'meta.id;meta.main': '_meta_id',
-                # Coordinates
-                'pos.eq.ra;meta.main': '_meta_ra',
-                'pos.eq.dec;meta.main': '_meta_dec',
-                # Elipse
-                'phys.size.smajAxis;instr.det;meta.main': '_meta_a_image',
-                'phys.size.sminAxis;instr.det;meta.main': '_meta_b_image',
-                'pos.posAng;instr.det;meta.main': '_meta_theta_image',
-                # Magnitudes
-                'phot.mag;meta.main;em.opt.g': '_meta_mag_auto_g',
-                'phot.mag;meta.main;em.opt.r': '_meta_mag_auto_r',
-                'phot.mag;meta.main;em.opt.i': '_meta_mag_auto_i',
-                'phot.mag;meta.main;em.opt.z': '_meta_mag_auto_z',
-                'phot.mag;meta.main;em.opt.Y': '_meta_mag_auto_y',
-                # Photo Z
-                'src.redshift.phot': '_meta_photo_z',
 
-            })
-
-
-            for ucd in associations:
-                try:
-                    meta_prop = essential_props.get(ucd)
-                    if meta_prop:
-                        value = row.get(associations.get(ucd))
-
-                        row.update({
-                            meta_prop: value
-                        })
-
-                except:
-                    pass
 
         return Response(dict({
             'count': count,
