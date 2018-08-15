@@ -465,7 +465,15 @@ Ext.define('Target.view.preview.PreviewController', {
             visiomatic = me.lookupReference('visiomatic'),
             lmembers;
 
-        lmembers = visiomatic.overlayCatalog('System Members', members);
+        lmembers = visiomatic.overlayCatalog('System Members', members, {
+            weight: 2, //largura da borda em pixel
+            opacity: 0.8, // transparencia da borda
+            fillOpacity: 0.01, // Transparencia nos marcadores.
+            color: '#2db92d', //Stroke color
+            interactive: true,
+            pointType: 'circle', //'circle', 'ellipse', 'triangle', 'square'
+            pointSize: 0.001 // tamanho utilizado para criar os makers em graus
+        });
 
         vm.set('overlayMembers', lmembers);
     },
