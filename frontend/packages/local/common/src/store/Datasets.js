@@ -20,6 +20,7 @@ Ext.define('common.store.Datasets', {
 
     proxy: {
         type: 'django',
+        timeout: 90000,
         url: '/dri/api/dataset/'
     }
 

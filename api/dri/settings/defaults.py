@@ -26,7 +26,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = []
 
-USE_OAUTH = False
+USE_OAUTH = True
 
 # Application definition
 
@@ -54,6 +54,8 @@ THIRD_PARTY_APPS = [
     'corsheaders',
     'django_filters',
     'url_filter',
+    'django_celery_results',
+    # 'django_nose'
 ]
 
 PROJECT_APPS = [
@@ -66,7 +68,9 @@ PROJECT_APPS = [
     'validation',
     'catalog',
     'interfaces',
-    'userquery'
+    'userquery',
+    'aladin',
+    'activity_statistic',
 ]
 
 if USE_OAUTH:
@@ -100,6 +104,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_settings_export.settings_export',
             ],
         },
     },
@@ -184,3 +189,49 @@ REST_FRAMEWORK = {
 }
 
 SITE_ID = 1
+
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS=True
+LOGIN_REDIRECT_URL = '/dri/apps/home/'
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_ADAPTER = 'validation.adapter.DriAccountAdapter'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'facebook': {
+        'SCOPE': ['email'],
+        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
+        'METHOD': 'oauth2',
+        'VERIFIED_EMAIL': False
+    },
+    'google': {
+        'SCOPE': ['email'],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    }
+}
+
+# CELERY SETTINGS
+# start celery with
+#  celery worker --workdir api --app dri -l info
+# or such configs will not be used
+CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+
+# Enables or disables sending daily email access statistics.
+SEND_DAILY_STATISTICS_EMAIL = False
+
+SETTINGS_EXPORT = []
+
+# Run Test with Django Nose http://django-testing-docs.readthedocs.io/en/latest/coverage.html#coverage-reports
+# Use nose to run all tests
+# TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+# Tell nose to measure coverage on the 'foo' and 'bar' apps
+# NOSE_ARGS = [
+#     '--with-coverage',
+#     '--cover-package=' + ','.join(PROJECT_APPS),
+# ]

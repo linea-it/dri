@@ -20,6 +20,7 @@ Ext.define('common.store.Footprints', {
 
     proxy: {
         type: 'django',
+        timeout: 90000,
         url: '/dri/api/footprints/',
         reader: {
             type: 'array'

@@ -16,7 +16,7 @@ Ext.define('Explorer.view.system.Properties', {
 
         Ext.apply(this, {
             columns: [
-                {text: 'Property',  dataIndex: 'property', width: 200},
+                {text: 'Property',  dataIndex: 'property', flex: 1},
                 {text: 'Value',  dataIndex: 'value', renderer: this.formatNumber, flex: 1}
             ],
             tbar: [

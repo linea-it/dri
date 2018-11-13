@@ -29,7 +29,7 @@ class Release(models.Model):
 
 class Tile(models.Model):
     tli_tilename = models.CharField(
-        max_length=20, unique=True, verbose_name='Tilename')
+        db_index=True, max_length=20, unique=True, verbose_name='Tilename')
     tli_project = models.CharField(
         max_length=80, null=True, blank=True, verbose_name='Project')
     tli_ra = models.FloatField(
@@ -106,9 +106,9 @@ class Tag(models.Model):
 
 class Dataset(models.Model):
     tag = models.ForeignKey(
-        Tag, on_delete=models.CASCADE)
+        Tag, on_delete=models.CASCADE, db_index=True)
     tile = models.ForeignKey(
-        Tile, on_delete=models.CASCADE)
+        Tile, on_delete=models.CASCADE, db_index=True)
     run = models.CharField(
         null=True, blank=True, max_length=30, verbose_name='Run')
 
@@ -120,15 +120,15 @@ class Dataset(models.Model):
 
     image_src_thumbnails = models.URLField(
         null=True, blank=True, verbose_name='Thumbnails PNG', default=None,
-        help_text=('Full url to image including the host and directory. '
-                   'example: http://{host}/data/releases/{release_name}/images/thumb')
+        help_text=('Full URL to image including the host and directory. '
+                   'Example: http://{host}/data/releases/{release_name}/images/thumb')
     )
 
     image_src_ptif = models.URLField(
         null=True, blank=True, verbose_name='Visiomatic PTIF', default=None,
-        help_text=('url complete for visiomatic ptif image, including the host and directory.'
-                   'use the release name and tilename to create the path. '
-                   'example: http://{host}/visiomatic?FIF=data/releases/{release_name}/images/visiomatic/{tilename}.ptif')
+        help_text=('Full URL for visiomatic ptif image, including the host and directory. '
+                   'Use the release name and tilename to create the path. '
+                   'Example: http://{host}/visiomatic?FIF=data/releases/{release_name}/images/visiomatic/{tilename}.ptif')
     )
 
     def __str__(self):
@@ -145,7 +145,10 @@ class Survey(models.Model):
     srv_display_name = models.CharField(
         max_length=80, verbose_name='Display Name')
     srv_url = models.URLField(
-        verbose_name='URL')
+        verbose_name='URL',
+        help_text=('Full URL to the aladin images path, including the host and directory. '
+                   'Example: http://{host}/data/releases/{release_name}/images/aladin/{band}')
+    )
     srv_target = models.CharField(
         max_length=25, null=True, blank=True, verbose_name='Target',
         help_text=(

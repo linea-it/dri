@@ -228,7 +228,7 @@
             "path": "../packages/local/visiomatic/src/visiomatic/dist/jqplot-min.js"
         },
         {
-            "path": "../packages/local/visiomatic/src/visiomatic/dist/spectrum-min.js"
+            "path": "../packages/local/visiomatic/src/visiomatic/dist/spectrum.js"
         },
         {
             "path": "../packages/local/visiomatic/src/visiomatic/dist/visiomatic-src.js"

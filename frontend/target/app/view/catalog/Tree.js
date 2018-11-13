@@ -9,7 +9,7 @@ Ext.define('Target.view.catalog.Tree', {
     requires: [
         'Target.view.catalog.CatalogController',
         'Target.view.catalog.CatalogModel',
-        'Target.view.catalog.RegisterForm',
+        'Target.view.catalog.RegisterWindow',
         'Ext.grid.filters.Filters'
     ],
 
@@ -38,7 +38,7 @@ Ext.define('Target.view.catalog.Tree', {
         bsfilters: null
     },
 
-    emptyText: 'No data to dysplay.',
+    emptyText: 'No data to display.',
 
     initComponent: function () {
         var me = this;
@@ -50,13 +50,8 @@ Ext.define('Target.view.catalog.Tree', {
                     text: 'Name',
                     flex: 2,
                     sortable: true,
-                    dataIndex: 'text'
-                    // renderer: function (value, metadata, record) {
-                    //     if(record.data.starred){
-                    //         metadata.innerCls = record.data.icon;
-                    //     }
-                    //     return value
-                    // },
+                    dataIndex: 'text',
+                    renderer: me.getTooltipName
                 },
                 {
                     text: 'Owner',
@@ -80,17 +75,11 @@ Ext.define('Target.view.catalog.Tree', {
                     xtype: 'datecolumn',
                     text: 'Date',
                     dataIndex: 'prd_date',
+                    width: 150,
                     sortable: true,
+                    format:'Y-m-d H:m:s',
                     filter: {
                         type: 'date'
-                    }
-                },
-                {
-                    text: 'Process',
-                    dataIndex: 'epr_original_id',
-                    sortable: true,
-                    filter: {
-                        type: 'number'
                     }
                 },
                 {
@@ -101,9 +90,16 @@ Ext.define('Target.view.catalog.Tree', {
                         if (record.data.leaf) {
                             return value;
                         }
-                    },
-                    filter: {
-                        type: 'number'
+                    }
+                },
+                {
+                    text: 'Cols',
+                    dataIndex: 'ctl_num_columns',
+                    sortable: true,
+                    renderer: function (value, metadata, record) {
+                        if ((record.data.leaf) && (value > 0)){
+                            return value;
+                        }
                     }
                 }
             ],
@@ -117,26 +113,6 @@ Ext.define('Target.view.catalog.Tree', {
                 }
             },
             tbar: [
-//                {
-//                    tooltip: 'Open this catalog',
-//                    iconCls: 'x-fa fa-folder-open-o',
-//                    width: 60,
-//                    scope: this,
-//                    handler: me.onClickView,
-//                    bind: {
-//                        disabled: '{!selectedCatalog}'
-//                    }
-//                },
-                // {
-                //     xtype: 'viewprocess-button',
-                //     tooltip:'More Information',
-                //     iconCls: 'x-fa fa-info-circle',
-                //     width: 60,
-                //     bind: {
-                //         disabled: '{!selectedCatalog.process_id}',
-                //         process: '{selectedCatalog.process_id}'
-                //     }
-                // },
                 // Button Starred Catalog
                 {
                     xtype: 'splitbutton',
@@ -169,19 +145,22 @@ Ext.define('Target.view.catalog.Tree', {
                     tooltip:'Remove Target List',
                     iconCls: 'x-fa fa-trash',
                     ui: 'soft-red',
-                    handler: 'onRemoveCatalog'
-                    // disabled: true
-                    // bind: {
-                    //     disabled: '{!selectedCatalog.editable}'
-                    // }
+                    handler: 'onRemoveCatalog',
+                    disabled: true,
+                    bind: {
+                        disabled: '{!selectedCatalog.editable}'
+                    }
                 },
                 {
                     xtype: 'textfield',
+                    reference: 'searchByName',
+                    // itemId: 'searchByName',
                     emptyText: 'Search by name',
                     width: 250,
                     triggers: {
                         clear: {
                             cls: 'x-form-clear-trigger',
+                            scope: this,
                             handler: this.cancelFilter,
                             hidden: true
                         },
@@ -190,6 +169,7 @@ Ext.define('Target.view.catalog.Tree', {
                         }
                     },
                     listeners: {
+                        scope: this,
                         change: me.filterByname,
                         buffer: 500
                     }
@@ -197,12 +177,8 @@ Ext.define('Target.view.catalog.Tree', {
                 {
                     tooltip: 'Refresh and Clear filters',
                     iconCls: 'x-fa fa-refresh',
+                    scope: this,
                     handler: me.refreshAndClear
-                },{
-                    tooltip: 'Cutout',
-                    iconCls: 'x-fa fa-cut',
-                    handler: me.cutout,
-                    hidden: true
                 }
             ]
         });
@@ -233,22 +209,11 @@ Ext.define('Target.view.catalog.Tree', {
             filters = [],
             baseFilters = [];
 
-        // me.getView().setLoading({
-        //     store: store
-        // });
-
-        // // Catalog not removed
-        // filters.push({
-        //     property:'product_flag_removed',
-        //     value: false
-        // });
-
         // Product Type = 'targets'
         filters.push({
             property:'group',
             value: type.toLowerCase()
         });
-
 
         // Guardar os filtros usados no load dos catologos
         baseFilters = Ext.clone(filters);
@@ -258,7 +223,6 @@ Ext.define('Target.view.catalog.Tree', {
     },
 
     onClickView: function () {
-        // console.log('onClickView()');
         var me = this,
             record = me.getSelectedCatalog();
 
@@ -266,28 +230,41 @@ Ext.define('Target.view.catalog.Tree', {
 
     },
 
-    onActionView: function (grid, rowIndex, colIndex, actionItem, event, record, row) {
-        // console.log('onActionView(%o)', arguments);
+    onActionView: function (grid, rowIndex, colIndex, actionItem, event, record) {
         this.viewRecord(record);
+
     },
 
     viewRecord: function (record) {
-        // console.log('viewRecord(%o)', arguments);
+        // So disparar o evento se o catalogo tiver a sua tabela disponivel
+        // https://github.com/linea-it/dri/issues/662
+        if ((record.get('tableExist') == true) &&
+            (record.get('leaf') == true )) {
 
-        this.fireEvent('selectcatalog', record, this);
+            this.fireEvent('selectcatalog', record, this);
+
+        } else {
+            if (record.get('leaf') == true ) {
+                // Avisar o usuario que a tabela esta indisponivel.
+                Ext.MessageBox.alert(
+                    'Warning',
+                    'The table for this product is not currently available or does not exist');
+            }
+        }
     },
 
     filterByname: function () {
-
-        var tree = this.up('treepanel'),
-            store = tree.getStore(),
-            value = this.getValue(),
+        var me = this,
+            txt = me.lookup('searchByName'),
+            // txt = me.down('#searchByName'),
+            store = me.getStore(),
+            value = txt.getValue(),
             fts = [],
             f;
 
         if (value.length > 0) {
 
-            this.getTrigger('clear').show();
+            txt.getTrigger('clear').show();
 
             // checar se a store esta em loading
             if (store.isLoading()) {
@@ -304,14 +281,13 @@ Ext.define('Target.view.catalog.Tree', {
             f = {
                 property: 'search',
                 value: value
-                // operator: 'like'
             };
 
             fts.push(f);
 
-            tree.filterCatalogs(fts);
+            me.filterCatalogs(fts);
         } else {
-            this.getTrigger('clear').hide();
+            me.cancelFilter();
         }
 
     },
@@ -341,170 +317,58 @@ Ext.define('Target.view.catalog.Tree', {
     },
 
     cancelFilter: function () {
+        var me = this,
+            txt = me.lookup('searchByName');
 
-        var tree = this.up('treepanel');
+        txt.reset();
 
-        this.reset();
+        txt.getTrigger('clear').hide();
 
-        tree.filterCatalogs();
-
-        this.getTrigger('clear').hide();
+        me.filterCatalogs();
     },
 
     refreshAndClear: function () {
+        var me = this;
 
-        var tree = this.up('treepanel');
-
-        tree.filterCatalogs();
+        me.cancelFilter();
     },
-    cutout: function () {
+
+    getTooltipName: function (value, meta, record) {
         var me = this,
-        win = Ext.create('Ext.window.Window', {
-            title: 'Cutout',
-            height: 300,
-            width: 400,
-            layout: 'fit',
-            items: {
-                xtype: 'form',
-                id: 'formcut',
-                items: {
-                    xtype: 'fieldset',
-                    margin: '5 5 5 5',
-                    // title: 'Cutout',
-                    defaultType: 'textfield',
-                    defaults: {
-                        anchor: '100%'
-                    },
+            tpl, tooltip;
 
-                    items: [{
-                        margin: '5 0 5 0',
-                        fieldLabel: 'Cutout Name',
-                        emptyText: 'Cutout Name',
-                        name: 'name'
-                    }, {
-                        fieldLabel: 'xsize',
-                        name: 'xsize',
-                        emptyText:'Ex: 1.0',
-                        triggers: {
-                            clear: {
-                                cls: 'fa fa-question-circle',
-                                tooltip: 'help',
-                                handler : function () {
-                                    Ext.Msg.alert('xsize', 'xsize of cutout in arcmin, can be single number or list');
-                                }
-                            }
-                        }
-                    }, {
-                        fieldLabel: 'ysize',
-                        name: 'ysize',
-                        emptyText:'Ex: 1.0',
-                        triggers: {
-                            clear: {
-                                cls: 'fa fa-question-circle',
-                                tooltip: 'help',
-                                handler : function () {
-                                    Ext.Msg.alert('ysize', 'ysize of cutout in arcmin, can be single number or list');
-                                }
-                            }
-                        }
-                    }, {
-                        xtype: 'combobox',
-                        fieldLabel: 'Job Type',
-                        name: 'jobType',
-                        store: [
-                            ['coadd', 'Coadd'],
-                            ['single', 'Single Epochs']
-                        ],
-                        valueField: 'abbr',
-                        displayField: 'state',
-                        typeAhead: true,
-                        queryMode: 'local',
-                        emptyText: 'Select a Type...',
-                        listeners: {
-                            change: function (ele, newValue, oldValue) {
-                                if (newValue == 'single') {
-                                    Ext.getCmp('band').getEl().show();
-                                    Ext.getCmp('blacklist').getEl().show();
-                                }else {
-                                    Ext.getCmp('band').getEl().hide();
-                                    Ext.getCmp('blacklist').getEl().hide();
-                                }
-                            }
-                        }
-                    },{
-                        xtype: 'checkbox',
-                        fieldLabel: 'No Blacklist',
-                        hidden : true,
-                        id: 'blacklist',
-                        name: 'blacklist'
-                    },{
-                        fieldLabel: 'Band',
-                        name: 'band',
-                        id: 'band',
-                        emptyText:'Ex: g,r,i',
-                        hidden: true,
-                        triggers: {
-                            clear: {
-                                cls: 'fa fa-question-circle',
-                                tooltip: 'help',
-                                handler : function () {
-                                    Ext.Msg.alert('Band', 'List of bands for single epoch exposures "g,r,i,z,Y"');
-                                }
-                            }
-                        }
-                    },{
-                        xtype: 'panel',
-                        layout: 'hbox',
-                        items:[
-                        {
-                            xtype: 'button',
-                            text: 'Submit',
-                            width: 150,
-                            handler: function () {
-                                console.log(me);
-                                values = Ext.getCmp('formcut').getValues();
-                                console.log(values);
-                                balacklist = null;
-                                band = null;
+        tpl = new Ext.XTemplate(
+            '<div>',
+                //'<spam><b>{prd_display_name}</b></spam>',
+                '<tpl if=\'description != ""\'>',
+                    '<p><spam><b>Description:</b></spam>{description}</p>',
+                '</tpl>',
+                '<tpl if=\'epr_original_id != ""\'>',
+                    '<p><spam><b>Proccess: </b></spam>{epr_original_id}</p>',
+                '</tpl>',
+                '<tpl if=\'tbl_size != null\'>',
+                    '<p><spam><b>Size: </b></spam>{tbl_size}</p>',
+                '</tpl>',
+                '<tpl if=\'!tableExist\'>',
+                    '</br><spam><b class=color-orange>Warning</b>: ',
+                    'The table for this product is not currently available or does not exist.</spam>',
+                '</tpl>',
+            '</div>'
+        );
 
-                                if (values.jobType == 'single') {
-                                    balacklist = values.blacklist;
-                                    band = values.band;
-                                }
+        tooltip = tpl.apply(record.data);
 
-                                var myStore = Ext.create('Ext.data.Store', {
-                                    // model: 'User',
-                                    proxy: {
-                                        type: 'ajax',
-                                        url: '/dri/api/CutOutJob/',
-                                        reader: {
-                                            type: 'json',
-                                            rootProperty: 'users'
-                                        }
-                                    }
-                                    // autoLoad: true
-                                });
+        // So exibe popup se tiver descricao ou numero de processo.
+        if ((record.get('description') !== '')
+            || (record.get('epr_original_id') !== '')) {
 
-                                myStore.add ({
-                                    'cjb_product': 48,
-                                    'cjb_display_name': values.name,
-                                    'cjb_status': 'st',
-                                    'cjb_job_id': '---',
-                                    'cjb_xsize': values.xsize,
-                                    'cjb_ysize': values.ysize,
-                                    'cjb_job_type': values.jobType,
-                                    'cjb_band': band
-                                    // 'cjb_Blacklist': blacklist
-                                });
-                                console.log(myStore);
-                                myStore.sync();
-                            }
-                        }]
-                    }]
-                }
+            if (record.get('leaf')) {
+                meta.tdAttr = 'data-qtip=\"' + tooltip + '\"';
             }
-        });
-        win.show();
+
+        }
+
+        return value;
     }
 
 });

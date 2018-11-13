@@ -14,7 +14,7 @@ Ext.define('Explorer.store.Objects', {
     pageSize: 0,
 
     proxy: {
-        url: '/dri/api/target/'
+        url: '/dri/api/target/',
+        timeout: 900000,
     }
-
 });

@@ -25,7 +25,7 @@ Ext.define('Target.view.objects.Grid', {
         columnComments: true
     },
 
-    emptyText: 'No data to dysplay.',
+    emptyText: 'No data to display.',
 
     initComponent: function () {
         var me = this;
@@ -50,7 +50,7 @@ Ext.define('Target.view.objects.Grid', {
         me.callParent(arguments);
     },
 
-    reconfigureGrid: function (storeColumns) {
+    reconfigureGrid: function (storeColumns, suppressEvent) {
         // console.log('Targets Objects - reconfigureGrid(%o)', storeColumns);
 
         var me = this,
@@ -91,7 +91,7 @@ Ext.define('Target.view.objects.Grid', {
 
                     // Se tiver a coluna id habilita as colunas de rating e reject
                     if (record.get('ucd') == 'meta.id;meta.main') {
-                        column.locked = true;
+                        // column.locked = true;
                         column.lockable = true;
                         column.renderer = null;
                         flag = true;
@@ -111,9 +111,9 @@ Ext.define('Target.view.objects.Grid', {
 
                         column.width = 90;
                         column.xtype = 'numbercolumn';
-                        column.format = '0.000';
+                        column.format = '0.00000';
                         column.renderer = null;
-                        column.locked = true;
+                        // column.locked = true;
                         column.lockable = true;
                     }
 
@@ -212,14 +212,13 @@ Ext.define('Target.view.objects.Grid', {
         me.reconfigure(null, columns);
 
         // Marcar como ready
-        me.setReady(true);
-        this.fireEvent('ready', this);
-
+        if (!suppressEvent) {
+            me.setReady(true);
+            this.fireEvent('ready', this);
+        }
     },
 
     getTypeColumn: function (type) {
-        // console.log(type)
-        // console.log(typeof(type))
         switch (type) {
             case 'integer':
             case 'real':
@@ -227,11 +226,8 @@ Ext.define('Target.view.objects.Grid', {
             case 'bigint':
             case 'smallint':
                 return 'number';
-                break;
             case 'text':
                 return 'string';
-                break;
-            // default:
         }
     },
 
@@ -279,11 +275,12 @@ Ext.define('Target.view.objects.Grid', {
         if (typeof(value) === 'number') {
 
             if (value > 10000) {
-                // Se for maior que 10.000 usar notacao exponencial
-                value = value.toExponential(1);
+                // Se for maior que 10000 e tiver um float usar notacao exponencial
+                if (value.toString().indexOf('.') != -1) {
+                    value = value.toExponential(1);
+                }
 
             } else {
-                // Se for float
                 if (value.toString().indexOf('.') != -1) {
                     aValue = value.toString().split('.');
                     decimal = aValue[1];
@@ -299,4 +296,3 @@ Ext.define('Target.view.objects.Grid', {
         return value;
     }
 });
-

@@ -35,9 +35,13 @@
         "eyeballing",
         "catalogserver",
         "target",
-        "home",
         "products",
-        "explorer"
+        "explorer",
+        "userquery",
+        "d3teste",
+        "catalog_builder",
+        "DynamicForm",
+        "catalog_builder2"
     ],
 
     /**

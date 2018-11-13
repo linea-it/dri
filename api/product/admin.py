@@ -5,10 +5,9 @@ from .models import *
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'prd_process_id', 'prd_name',
-                    'prd_display_name', 'prd_owner', 'prd_product_id', 'prd_version', 'prd_date', 'prd_description',
-                    'prd_class', 'prd_filter', 'prd_is_public',)
-    list_display_links = ('id', 'prd_process_id', 'prd_name',
-                          'prd_display_name', 'prd_product_id', 'prd_version', 'prd_description', 'prd_class',)
+                    'prd_display_name', 'prd_owner', 'prd_product_id', 'prd_date',
+                    'prd_class', 'prd_filter', 'prd_is_public', 'prd_is_permanent',)
+    list_display_links = ('id', 'prd_process_id', 'prd_name',)
     search_fields = ('prd_process_id', 'prd_name', 'prd_display_name', 'prd_product_id',)
 
 
@@ -117,7 +116,7 @@ class PermissionAdmin(admin.ModelAdmin):
 
 
 class ProductRelatedAdmin(admin.ModelAdmin):
-    list_display = ('id', 'prl_product', 'prl_related', 'prl_cross_identification',)
+    list_display = ('id', 'prl_product', 'prl_related', 'prl_relation_type', 'prl_cross_identification',)
 
 
 class FiltersetdAdmin(admin.ModelAdmin):

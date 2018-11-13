@@ -1,18 +1,32 @@
+from datetime import datetime
+
 from coadd.models import Release, Tag
 from common.models import Filter
+from django.db.models import Q
 from lib.CatalogDB import CatalogDB
-from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation
+from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation, \
+    ProductRelated
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ProcessRelease
 from rest_framework import status
 from rest_framework.response import Response
-from django.db.models import Q
 
 from .models import Site, Authorization, ExternalProcess, Export
 
 
 class Import():
     db = None
+
+    def __init__(self):
+        # Guarda um dict com a classe de cada produto e a intancia do ProductModel
+        # ex:
+        # dict({
+        # 'galaxy_clusters': ProductModel
+        # 'cluster_memebers': ProductModel
+        # 'vac': ProductModel
+        # })
+
+        self._products_classes = dict({})        
 
     def start_import(self, request):
 
@@ -154,6 +168,7 @@ class Import():
             except Tag.DoesNotExist:
                 raise Exception("this Tag '%s' is not valid." % tag_name)
 
+
     def process_export(self, process, data):
 
         # Associar Process a Export
@@ -181,6 +196,16 @@ class Import():
             else:
                 raise Exception("Product Type '%s' not implemented yet." % product.get('type'))
 
+        
+
+        # Verificar a classe dos produtos se for galaxy cluster ou cluster members deve ser feita a ligacao entre as 2
+        if ('galaxy_clusters' in self._products_classes) and ('cluster_members' in self._products_classes):
+            self.link_galaxy_cluster_with_cluster_members()
+
+        # Verificar a classe dos produtos se for galaxy cluster e vac da classe vac_cluster
+        if ('galaxy_clusters' in self._products_classes) and ('vac_cluster' in self._products_classes):
+            self.link_galaxy_cluster_with_vac_cluster()
+
     # =============================< CATALOG >=============================
     def register_catalog(self, data):
         """
@@ -197,15 +222,16 @@ class Import():
         database = data.get('database', 'catalog')
 
         if not self.db:
-            con = CatalogDB(db=database)
-            self.db = con.database
+            self.db = CatalogDB(db=database)
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
                             (data.get('schema', None), data.get('table')))
 
         # Recuperar a quantidade de linhas da tabela
-        count = self.db.get_count(data.get('table'), schema=data.get('schema', None))
+        count = 0
+        if data.get('class') is not 'coadd_objects':
+            count = self.db.get_count(data.get('table'), schema=data.get('schema', None))
 
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))
@@ -223,22 +249,53 @@ class Import():
         date = None
         if self.process is not None:
             date = self.process.epr_start_date
+        else:
+            date = datetime.now()
+
+
+        # Verificar se o process id do produto e igual ao proccess id do external_proccess
+        # TODO esta etapa deve ser substituida com a implementacao de import inputs ou provenance
+        if self.process is not None and self.process.epr_original_id != str(data.get("process_id")):
+            # Se for diferente cria um novo external proccess para ser associado ao producto.
+            product_process, created = ExternalProcess.objects.update_or_create(
+                epr_site=self.site,
+                epr_owner=self.owner,
+                epr_name=data.get('pipeline', None),
+                epr_original_id=data.get('process_id', None),
+                defaults={
+                    "epr_username": self.owner.username,
+                }
+            )
+
+            if product_process:
+
+                add_release = True
+                # Associar um Release ao Processo
+                if 'releases' in data and len(data.get('releases')) > 0:
+                    self.process_release(product_process, data.get('releases'))
+                    add_release = False
+
+                if 'fields' in data and len(data.get('fields')) > 0:
+                    self.process_tags(product_process, data.get('fields'), add_release)
+
+        else:
+            product_process = self.process
 
         product, created = Catalog.objects.update_or_create(
             prd_owner=self.owner,
-            prd_name=data.get('name'),
+            prd_name=data.get('name').replace(' ', '_').lower(),
             tbl_database=data.get('database', None),
             tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
             defaults={
-                "prd_process_id": self.process,
+                "prd_process_id": product_process,
                 "prd_class": cls,
                 "prd_display_name": data.get('display_name'),
                 "prd_product_id": data.get('product_id', None),
                 "prd_version": data.get('version', None),
                 "prd_description": data.get('description', None),
                 "prd_date": date,
-                "prd_is_public": data.get('is_public', True),
+                "prd_is_public": data.get('is_public', False),
                 "tbl_rows": tbl_rows,
                 "tbl_num_columns": tbl_num_columns,
                 "tbl_size": tbl_size,
@@ -259,6 +316,10 @@ class Import():
 
             # Registar as colunas do catalogo
             self.register_catalog_content(product, data, created)
+
+            # guarda a classe do produto e a instancia de ProductModel
+            self._products_classes[product.prd_class.pcl_name] = product
+
 
             return True
         else:
@@ -297,7 +358,7 @@ class Import():
             for column in columns:
                 content = ProductContent.objects.create(
                     pcn_product_id=catalog,
-                    pcn_column_name=column
+                    pcn_column_name=column.strip()
                 )
 
         self.product_content_association(catalog, data, created)
@@ -310,6 +371,7 @@ class Import():
             for p in data.get("association"):
                 if ('property' in p and p.get('property') is not None) and ('ucd' in p and p.get('ucd') is not None):
                     meta.append(p)
+
         else:
             # Se o produto for da classe coadd_objects fazer a associacao de colunas
             #  Tem um diferenca que o Y1A1 a coluna coadd_object tem outro nome
@@ -322,6 +384,11 @@ class Import():
                     dict({'property': 'a_image', 'ucd': 'phys.size.smajAxis;instr.det;meta.main'}),
                     dict({'property': 'b_image', 'ucd': 'phys.size.sminAxis;instr.det;meta.main'}),
                     dict({'property': 'theta_j2000', 'ucd': 'pos.posAng;instr.det;meta.main'}),
+                    dict({'property': 'mag_auto_g', 'ucd': 'phot.mag;meta.main;em.opt.g'}),
+                    dict({'property': 'mag_auto_r', 'ucd': 'phot.mag;meta.main;em.opt.r'}),
+                    dict({'property': 'mag_auto_i', 'ucd': 'phot.mag;meta.main;em.opt.i'}),
+                    dict({'property': 'mag_auto_z', 'ucd': 'phot.mag;meta.main;em.opt.z'}),
+                    dict({'property': 'mag_auto_y', 'ucd': 'phot.mag;meta.main;em.opt.Y'})
                 ])
 
         # Se for um update do produto
@@ -402,11 +469,63 @@ class Import():
             except Tag.DoesNotExist:
                 raise Exception("this Tag '%s' is not valid." % tag_name)
 
+    def link_galaxy_cluster_with_cluster_members(self):
+        """
+            Este metodo so e executado caso um processo possua 2 produtos
+            1 da classe galaxy_clusters e outro da classe cluster_members
+            esses produtos devem ser linkados atraves do model ProductRelated
+            e necessario que o produto de members tenha uma propriedade com ucd meta.id.cross.
+        :return:
+        """
+        gc = self._products_classes.get('galaxy_clusters')
+        cm = self._products_classes.get('cluster_members')
+
+        # descobrir a propriedade que tem a associacao de cross_identification no produto de cluster members
+        try:
+            cross_identification = ProductContent.objects.get(pcn_product_id=cm.pk, pcn_ucd='meta.id.cross')
+
+            prd_related = ProductRelated.objects.update_or_create(
+                prl_product=gc,
+                prl_related=cm,
+                defaults={
+                    "prl_relation_type": "join",
+                    "prl_cross_identification": cross_identification
+                }
+            )
+
+        except ProductContent.DoesNotExist:
+            raise Exception(
+                "this cluster members product %s does not have a property with ucd meta.id.cross to be associated with "
+                "the galaxy cluster product." % cm.prd_display_name)
+
+
+    def link_galaxy_cluster_with_vac_cluster(self):
+        """
+            Este metodo e especifico para o processo de WAZP.
+            caso o processo tenha galaxy_cluster, cluster_members e vac_cluster
+            o vac na verdade e um imput mais ate este momento nao foi definido um metodo para registrar inputs de processos.
+            quando houver uma forma de importar os imputs este metodo devera ser removido.
+        :return:
+        """
+
+        gc = self._products_classes.get('galaxy_clusters')
+        vc = self._products_classes.get('vac_cluster')
+
+        # Criar uma relacao entre o produto de galaxy cluster e o vac que foi usado como input
+        prd_related = ProductRelated.objects.update_or_create(
+            prl_product=gc,
+            prl_related=vc,
+            defaults={
+                "prl_relation_type": "input",
+                "prl_cross_identification": None
+            }
+        )
+
+
     # =============================< MAP >=============================
     def register_map(self, data):
         if not self.db:
-            con = CatalogDB()
-            self.db = con.database
+            self.db = CatalogDB()
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
@@ -434,7 +553,7 @@ class Import():
 
         product, created = Map.objects.update_or_create(
             prd_owner=self.owner,
-            prd_name=data.get('name'),
+            prd_name=data.get('name').replace(' ', '_').lower(),
             tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
             defaults={
@@ -507,8 +626,7 @@ class Import():
     # =============================< MASK >=============================
     def register_mask(self, data):
         if not self.db:
-            con = CatalogDB()
-            self.db = con.database
+            self.db = CatalogDB()
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
@@ -536,7 +654,7 @@ class Import():
 
         product, created = Mask.objects.update_or_create(
             prd_owner=self.owner,
-            prd_name=data.get('name'),
+            prd_name=data.get('name').replace(' ', '_').lower(),
             tbl_schema=data.get('schema', None),
             tbl_name=data.get('table'),
             defaults={

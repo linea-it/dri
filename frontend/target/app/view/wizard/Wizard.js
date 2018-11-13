@@ -10,7 +10,6 @@ Ext.define('Target.view.wizard.Wizard', {
         'Target.view.wizard.WizardController',
         'Target.view.wizard.WizardModel',
         'Ext.layout.container.Card',
-        'Target.view.settings.Settings',
         'Target.view.association.Panel',
         'Target.view.settings.Columns',
         'Target.view.settings.Permission',
@@ -40,20 +39,10 @@ Ext.define('Target.view.wizard.Wizard', {
 
     items: [
         {
-            id: 'card-0',
-            xtype: 'targets-settings',
-            title: 'Setting',
-            iconCls: 'x-fa fa-cog',
-            bind: {
-                product: '{product}'
-            }
-        },
-        {
             id: 'card-1',
             xtype: 'targets-columns',
             title: 'Columns',
-            iconCls: 'x-fa fa-list',
-            disabled: true
+            iconCls: 'x-fa fa-list'
         },
         {
             id: 'card-2',
@@ -63,17 +52,10 @@ Ext.define('Target.view.wizard.Wizard', {
             disabled: true
         },
         {
-            id: 'card-3',
-            xtype: 'targets-cutout',
-            title: 'Cutouts',
-            iconCls: 'x-fa fa-picture-o'
-        },
-        {
             id: 'card-4',
             xtype: 'targets-system-members',
             title: 'System Members',
-            iconCls: 'x-fa fa-dot-circle-o',
-            disabled: true
+            iconCls: 'x-fa fa-dot-circle-o'
         },
         {
             id: 'card-5',
@@ -93,19 +75,6 @@ Ext.define('Target.view.wizard.Wizard', {
         vm.set('product', product);
     },
 
-    setCurrentSetting: function (currentSetting) {
-        var me = this;
-
-        me.currentSetting = currentSetting;
-
-        me.getViewModel().set('currentSetting', currentSetting);
-
-        me.down('targets-settings').setCurrentSetting(currentSetting);
-
-        me.enableTabsBySettings();
-
-    },
-
     setCurrentCatalog: function (currentCatalog) {
         var me = this;
 
@@ -117,41 +86,23 @@ Ext.define('Target.view.wizard.Wizard', {
 
     },
 
-    enableTabsBySettings: function () {
-        var me = this,
-            vm = me.getViewModel(),
-            currentSetting = vm.get('currentSetting');
-
-
-        // Configuracoes por settings caso o usuario tenha selecionado uma
-        // setting habilitar os paineis
-        if ((currentSetting.get('id') > 0) && (currentSetting.get('editable'))) {
-            me.down('targets-columns').enable();
-
-        } else {
-            me.down('targets-columns').disable();
-
-        }
-
-    },
-
     enableTabsByPermission: function () {
         var me = this,
         vm = me.getViewModel(),
         currentCatalog = vm.get('currentCatalog');
 
         // Configuracoes habilitadas se o usuario for o proprietario do catalogo
-        // if ((currentCatalog.get('id') > 0) && (currentCatalog.get('is_owner'))) {
-        me.down('targets-association').enable();
-        me.down('targets-permission').enable();
-        // me.down('targets-system-members').enable();
+        if ((currentCatalog.get('id') > 0) && (currentCatalog.get('is_owner'))) {
+            me.down('targets-association').enable();
+            me.down('targets-permission').enable();
+            me.down('targets-system-members').enable();
 
-        // } else {
-        //     me.down('targets-association').disable();
-        //     me.down('targets-permission').disable();
-        //     me.down('targets-system-members').disable();
+        } else {
+            me.down('targets-association').disable();
+            me.down('targets-permission').disable();
+            me.down('targets-system-members').disable();
 
-        // }
+        }
 
         if (currentCatalog.get('pcl_is_system')) {
             me.down('targets-system-members').enable();
@@ -161,4 +112,3 @@ Ext.define('Target.view.wizard.Wizard', {
     }
 
 });
-

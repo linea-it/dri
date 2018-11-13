@@ -6,6 +6,7 @@ Ext.define('Target.view.settings.CutoutJobs', {
     initComponent: function () {
         var me = this;
         Ext.apply(this, {
+            markDirty: false,
             columns: [
                 {
                     text: 'Name',
@@ -39,31 +40,7 @@ Ext.define('Target.view.settings.CutoutJobs', {
                 },
                 {
                     text: 'Status',
-                    dataIndex: 'cjb_status',
-                    renderer : function (val) {
-                        var status = '';
-                        switch (val) {
-                            case 'st':
-                                status = 'Start';
-                                break;
-                            case 'bs':
-                                status = 'Submit Job';
-                                break;
-                            case 'rn':
-                                status = 'Running';
-                                break;
-                            case 'ok':
-                                status = 'Done';
-                                break;
-                            case 'er':
-                                status = 'Error';
-                                break;
-                            case 'job_error':
-                                status = 'Job Error';
-                                break;
-                        }
-                        return status;
-                    }
+                    dataIndex: 'status'
                 }
             ]
         });

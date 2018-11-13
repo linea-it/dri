@@ -15,23 +15,14 @@ Ext.define('Target.view.objects.SaveCatalogController', {
         }
     },
 
-    onChangeCatalog: function (currentCatalog) {
+    onChangeCatalog: function (currentCatalog, activeFilter) {
         var me = this,
             vm = me.getViewModel(),
-            filterSets = vm.getStore('filterSets'),
-            contents = Ext.data.StoreManager.lookup('multiselectColumnsStore');
+            filterSets = vm.getStore('filterSets');
 
-        filterSets.addFilter({
-            property: 'product',
-            value: currentCatalog.get('id')
-        });
+        vm.set('activeFilter', activeFilter);
 
-        contents.addFilter({
-            property: 'pcn_product_id',
-            value: currentCatalog.get('id')
-        });
-        contents.load();
-
+        
     },
 
     onSaveCatalog: function () {
@@ -39,28 +30,31 @@ Ext.define('Target.view.objects.SaveCatalogController', {
             vm = me.getViewModel(),
             currentCatalog = vm.get('currentCatalog'),
             form = me.lookup('SaveAsForm').getForm(),
-            values;
+            activeFilter = vm.get('activeFilter'),
+            values, filter;
 
-        console.log(form.getValues());
+        if ((activeFilter) && (activeFilter.id > 0)) {
+            filter = activeFilter.id;
+        }
 
         if (form.isValid()) {
             values = form.getValues();
 
             Ext.Ajax.request({
-                url: '/dri/api/product/saveas/',
+                url: '/dri/api/productsaveas/',
                 scope: this,
                 params: {
                     'product': currentCatalog.get('id'),
                     'name': values.name,
-                    'filters': values.filters,
+                    'filter': filter,
                     'description': values.description,
                     'columns': values.columns
                 },
                 success: function (response) {
                     // Recuperar a resposta e fazer o decode no json.
-                    var obj = Ext.decode(response.responseText);
-
                     me.onCancel();
+                    Ext.MessageBox.alert('', 'The job will run in the background and you will be notified when it is finished.');
+                    Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - save_as');
                 },
                 failure: function (response, opts) {
                     // TODO: Mostrar mensagem de falha

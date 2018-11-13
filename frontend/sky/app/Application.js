@@ -8,6 +8,10 @@ Ext.define('Sky.Application', {
 
     name: 'Sky',
 
+    requires: [
+        'common.statistics.Events'
+    ],
+
     stores: [
         // TODO: add global / shared stores here
     ],
@@ -19,6 +23,8 @@ Ext.define('Sky.Application', {
         // Desabilitar os erros de Aria
         Ext.enableAriaButtons = false;
 
+        Ext.create('common.statistics.Events').init();
+
         // Checar se o usuario esta logado
         Ext.Ajax.request({
             url: '/dri/api/logged/get_logged/?format=json',
@@ -26,14 +32,17 @@ Ext.define('Sky.Application', {
                 var data = JSON.parse(response.responseText);
 
                 // Identificar o usuario no Google Analitics
-                ga('set', 'userId', data.id);
+                if (window.ga) ga('set', 'userId', data.id);
             },
             failure: function (response, opts) {
-                var pathname = window.location.pathname,
+                var protocol = window.location.protocol,
+                    pathname = window.location.pathname,
                     hostname = window.location.host,
                     location;
 
-                location = Ext.String.format('http://{0}/dri/api/api-auth/login/?next={1}', hostname, pathname);
+                location = Ext.String.format(
+                    '{0}//{1}/dri/api/api-auth/login/?next={2}',
+                    protocol, hostname, pathname);
 
                 window.location.assign(location);
 

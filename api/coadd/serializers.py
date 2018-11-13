@@ -96,11 +96,17 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     tag = serializers.PrimaryKeyRelatedField(read_only=True)
     tag_display_name = serializers.SerializerMethodField(read_only=True)
     release = serializers.SerializerMethodField(read_only=True)
+    release_name = serializers.SerializerMethodField(read_only=True)
     release_display_name = serializers.SerializerMethodField(read_only=True)
     tile = serializers.SerializerMethodField()
     tli_tilename = serializers.SerializerMethodField()
     tli_ra = serializers.SerializerMethodField()
     tli_dec = serializers.SerializerMethodField()
+    tli_urall = serializers.SerializerMethodField()
+    tli_udecll = serializers.SerializerMethodField()
+    tli_uraur = serializers.SerializerMethodField()
+    tli_udecur = serializers.SerializerMethodField()
+
 
     class Meta:
         model = Dataset
@@ -110,6 +116,7 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'tag',
             'tag_display_name',
             'release',
+            'release_name',
             'release_display_name',
             'tile',
             'run',
@@ -118,7 +125,11 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'tli_ra',
             'tli_dec',
             # 'image_src_thumbnails',
-            'image_src_ptif'
+            'image_src_ptif',
+            'tli_urall',
+            'tli_udecll',
+            'tli_uraur',
+            'tli_udecur',
         )
 
     def get_tag_display_name(self, obj):
@@ -126,6 +137,9 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_release(self, obj):
         return obj.tag.tag_release.pk
+
+    def get_release_name(self, obj):
+        return obj.tag.tag_release.rls_name
 
     def get_release_display_name(self, obj):
         return obj.tag.tag_release.rls_display_name
@@ -141,6 +155,18 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_tli_dec(self, obj):
         return obj.tile.tli_dec
+
+    def get_tli_udecll(self, obj):
+        return obj.tile.tli_udecll
+
+    def get_tli_urall(self, obj):
+        return obj.tile.tli_urall
+
+    def get_tli_uraur(self, obj):
+        return obj.tile.tli_uraur
+
+    def get_tli_udecur(self, obj):
+        return obj.tile.tli_udecur
 
         # def image_src_ptif(self, obj):
         #     tile = obj.tile

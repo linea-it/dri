@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<header>
+  <style>
+    .unique_visits table {
+      border-style: solid;
+      border-color: #777;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    .unique_visits th, td {
+      text-align: left;
+      padding: 8px;
+    }
+
+    .unique_visits tr:nth-child(even){background-color: #f2f2f2}
+  </style>
+</header>
+<body>
+<table border="0" align="center" width="680" valign="top" cellspacing="0" cellpadding="0" align="center"
+       style="background-color: #f0f0f0">
+    <tbody>
+    <tr>
+        <!-- Margin Right -->
+        <td width="40"></td>
+        <!-- Center -->
+        <td width="600">
+            <table border="0" width="600" cellpadding="0" cellspacing="0" align="center">
+                <tbody>
+                <!-- Margin Top -->
+                <tr>
+                    <td height="30"></td>
+                </tr>
+                <!-- Header -->
+                <tr style="background-color: #fafafa">
+                    <td>
+                        <header style="background-color: #003466; max-height: 60px;">
+                            <a style="color: #e1e1e1; display: flex; justify-content: space-between; align-items: center; max-width: 90%; margin: 0 auto; text-decoration: none"
+                               href="http://dri-dev.linea.gov.br/" title="LIneA Science Server" rel="home">
+
+                                <h1 style="font-family: Bitter, Georgia, serif; font-size: 16px; font-weight: bold">
+                                    LIneA Science Server</h1>
+
+                                <img style="height: 30px"
+                                     src="http://dri-dev.linea.gov.br/wp-content/uploads/2017/07/des-logo-rev-lg_170x170.png">
+                            </a>
+                        </header>
+                    </td>
+                </tr>
+                <!-- Padding -->
+                <tr>
+                    <td height="20" style="background-color: #FFF"></td>
+                </tr>
+                <!-- Content -->
+
+                <!-- TOTAIS -->
+                <tr style="background-color: #FFF">
+                    <td>Total of visits: {{ sum_visits }}</td>
+                </tr>
+                <tr style="background-color: #FFF">
+                    <td>Total of users: {{ sum_users }}</td>
+                </tr>
+                <!-- Visitas Unicas por Dia -->
+                <tr style="background-color: #FFF">
+                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                        <h4>Unique visits on the day {{ today }}</h4></td>
+                </tr>
+                {% if visits %}
+                <tr>
+                    <td style="background-color: #FFF">
+                        <table class="unique_visits" width="600" cellpadding="0" cellspacing="0" align="center" valign="top">
+                            <thead>
+                                <tr>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        Visits</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        Visits in month</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        User</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        Last activity
+                                        </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for hit in visits %}
+                                <tr>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        {{ hit.all_visits }}</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        {{ hit.visits_in_month }}</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        {{ hit.user }}</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        {{ hit.last_activity }}
+                                        </td>
+                                </tr>
+                            {% endfor %}
+                            <!-- Quebra de Linha -->
+                            <tr>
+                                <td height="20"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                {% else %}
+                <tr style="background-color: #FFF">
+                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                        There were no visits to the science server today.</td>
+                </tr>
+                {% endif %}
+
+                <!-- TODAS AS VISITAS -->
+                <tr style="background-color: #FFF">
+                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                      <h4>All Visits</h4></td>
+                </tr>
+                <tr>
+                    <td style="background-color: #FFF">
+                        <table class="unique_visits" width="600" cellpadding="0" cellspacing="0" align="center" valign="top">
+                            <thead>
+                                <tr>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        Visits</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        User</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        Last activity
+                                        </td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for hit in total_visits %}
+                                <tr>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        {{ hit.all_visits }}</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        {{ hit.user }}</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        {{ hit.last_activity }}
+                                        </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr style="background-color: #FFF">
+                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                      <h4>Consolidated per month</h4></td>
+                </tr>
+                <tr>
+                    <td style="background-color: #FFF">
+                        <table class="unique_visits" width="600" cellpadding="0" cellspacing="0" align="center" valign="top">
+                            <thead>
+                                <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                    Month</td>
+                                <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                    Visits</td>
+                            </thead>
+                            <tbody>
+                            {% for month in consolidate %}
+                                <tr>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        {{ month.date }}</td>
+                                    <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                        {{ month.visits }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <!-- Padding -->
+                <tr>
+                    <td height="20" style="background-color: #FFF"></td>
+                </tr>
+                <!-- Footer -->
+                <tr>
+                    <td height="30"
+                        style="background-color: #003466;color:#FFF;font-size:13px;line-height:15px;font-family:arial,Arial,sans-serif;letter-spacing:0px;text-decoration:none"
+                        align="center">
+                        Powered by LIneA | Dark Energy Survey | NCSA
+                    </td>
+                </tr>
+                <!-- Margin botton -->
+                <tr>
+                    <td height="30"></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+        <!-- Margin Left -->
+        <td width="40"></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
+

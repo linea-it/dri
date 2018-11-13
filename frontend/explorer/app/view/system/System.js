@@ -4,13 +4,19 @@ Ext.define('Explorer.view.system.System', {
     xtype: 'system',
 
     requires: [
+        'Ext.layout.container.Border',
         'Explorer.view.system.SystemController',
         'Explorer.view.system.SystemModel',
         'Explorer.view.system.Form',
         'Explorer.view.system.Properties',
         'Explorer.view.system.Visiomatic',
         'Explorer.view.system.Aladin',
-        'Explorer.view.system.MembersGrid'
+        'Explorer.view.system.MembersGrid',
+        'Explorer.view.system.VacGrid',
+        'Explorer.view.system.SpatialDistribution',
+        'Explorer.view.system.ZDistribution',
+        'Explorer.view.system.MagDistribution',
+        'Explorer.view.system.cmd.CmdTab'
     ],
 
     controller: 'system',
@@ -23,11 +29,7 @@ Ext.define('Explorer.view.system.System', {
         var me = this;
 
         Ext.apply(this, {
-            layout: {
-                type: 'hbox',
-                pack: 'start',
-                align: 'stretch'
-            },
+            layout: 'border',
             defaults: {
                 frame: true
             },
@@ -35,8 +37,12 @@ Ext.define('Explorer.view.system.System', {
                 // Painel Esquerdo
                 {
                     xtype: 'panel',
-                    width: 400,
+                    region: 'west',
+                    width: 300,
                     margin: '0 10 0 0',
+                    // split: true,
+                    collapsible: true,
+                    reference: 'detailPanel',
                     layout: {
                         type: 'vbox',
                         pack: 'start',
@@ -48,7 +54,18 @@ Ext.define('Explorer.view.system.System', {
                             xtype: 'system-form',
                             reference: 'properties-form',
                             split: true,
-                            margin: '0 0 10 0'
+                            bbar: [
+                                {
+                                    xtype: 'button',
+                                    text: 'SIMBAD',
+                                    handler: 'onClickSimbad'
+                                },
+                                {
+                                    xtype: 'button',
+                                    text: 'NED',
+                                    handler: 'onClickNed'
+                                }
+                            ]
                         },
                         // Inferior Esquerdo
                         {
@@ -62,7 +79,9 @@ Ext.define('Explorer.view.system.System', {
                 // Painel Direito
                 {
                     xtype: 'panel',
+                    region: 'center',
                     flex: 1,
+                    split: true,
                     layout: {
                         type: 'vbox',
                         pack: 'start',
@@ -76,15 +95,12 @@ Ext.define('Explorer.view.system.System', {
                         // Painel Direito Superior
                         {
                             xtype: 'panel',
-                            // title: 'Superior',
-                            height: 400,
+                            flex:1,
+                            split: true,
                             layout: {
                                 type: 'hbox',
                                 pack: 'start',
                                 align: 'stretch'
-                            },
-                            defaults: {
-                                frame: true
                             },
                             items: [
                                 {
@@ -92,17 +108,18 @@ Ext.define('Explorer.view.system.System', {
                                     reference: 'visiomatic',
                                     margin: '0 10 0 0',
                                     split: true,
-                                    flex: 1,
-                                    showCrosshair: false
-                                    // bind: {
-                                    //     showCrosshair: '{showCrosshair}'
-                                    // }
+                                    flex: 1
                                 },
                                 {
                                     xtype: 'system-aladin',
                                     reference: 'aladin',
                                     split: true,
-                                    flex: 1
+                                    flex: 1,
+                                    bind: {
+                                        storeSurveys: '{surveys}',
+                                        storeTags: '{tags}',
+                                        storeTiles: '{tiles}'
+                                    },
                                 }
                             ]
                         },
@@ -110,16 +127,102 @@ Ext.define('Explorer.view.system.System', {
                         {
                             xtype: 'tabpanel',
                             flex: 1,
+                            split: true,
                             items: [
                                 {
                                     xtype: 'system-members-grid',
                                     title: 'System Members',
                                     reference: 'members-grid',
                                     bind: {
-                                        store: '{members}'
+                                        store: '{members}',
+                                        selection: '{selected_member}'
                                     },
                                     listeners: {
                                         select: 'onSelectSystemMember'
+                                    }
+                                },
+                                {
+                                    xtype: 'system-vac-grid',
+                                    title: 'VAC',
+                                    reference: 'vac-grid',
+                                    bind: {
+                                        store: '{vacObjects}',
+                                        inputVac: '{vacCluster}'
+                                    },
+                                    listeners: {
+                                        select: 'onSelectVacObject'
+                                    }
+                                },
+                                // {
+                                //     xtype: 'system-vac-grid',
+                                //     title: 'VAC',
+                                //     reference: 'vac-grid',
+                                //     bind: {
+                                //         store: '{vacObjects}',
+                                //     },
+                                //     listeners: {
+                                //         select: 'onSelectVacObject'
+                                //     }
+                                // },
+                                {
+                                    xtype: 'panel',
+                                    title: 'Properties Distribution',
+                                    layout: {
+                                        type: 'hbox',
+                                        pack: 'start',
+                                        align: 'stretch'
+                                    },
+                                    bind: {
+                                        disabled: "{!have_members}"
+                                    },
+                                    items: [
+                                        {
+                                            xtype: 'system-z-distribution',
+                                            flex: 1,
+                                            bind: {
+                                                store: "{members}",
+                                            }
+                                        },
+                                        {
+                                            xtype: 'system-mag-distribution',
+                                            flex: 1,
+                                            bind: {
+                                                store: "{members}",
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    xtype: 'panel',
+                                    title: 'Spatial Distribution',
+                                    layout: 'center',
+                                    bind: {
+                                        disabled: "{!have_vac}"
+                                    },
+                                    items: [
+                                        {
+                                            xtype: 'system-spatial-distribution',
+                                            width: 600,
+                                            height: '100%',
+                                            reference: "densityMap"
+                                        }
+                                    ],
+                                    listeners: {
+                                        activate: 'onActiveSpatialTab',
+                                    }
+                                },
+                                {
+                                    xtype: 'cmd-tab',
+                                    title: 'CMD',
+                                    reference: 'CmdTab',
+                                    flex: 1,
+                                    scrollable: true,
+                                    bind: {
+                                        disabled: "{!have_members}"
+                                    },
+                                    listeners: {
+                                        activate: 'onActiveCmdTab',
+                                        clickpoint: 'onCmdClickPoint'
                                     }
                                 }
                             ]

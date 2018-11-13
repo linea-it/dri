@@ -1,5 +1,8 @@
 bootstrap.json
-build/development/
-build/temp/development/
-build/temp/production/
-
+/build/development/
+/build/temp/
+/build/*/*/cache.appcache
+/*/sass/example/
+/LOCAL*
+node_modules
+package-lock.json

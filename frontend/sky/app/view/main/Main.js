@@ -18,7 +18,8 @@ Ext.define('Sky.view.main.Main', {
         'Sky.view.main.MainModel',
         'Sky.view.search.SearchField',
         'common.header.Toolbar',
-        'common.footer.Footer'
+        'common.footer.Footer',
+        'Sky.view.main.Toolbar'
     ],
 
     controller: 'main',
@@ -34,13 +35,12 @@ Ext.define('Sky.view.main.Main', {
 
     items: [
         {
-            xtype: 'dri-header'
-            // items: [
-            // '->',
-            // {
-            //     xtype: 'tile-search-field'
-            // }
-            // ]
+            xtype: 'dri-header-sky',
+            reference: 'driHeaderSky',
+            listeners: {
+                dosearch: 'doSearch',
+                changeCoordinateSystem: 'changeCoordinateSystem'
+            }
         },
         {
             xtype: 'container',

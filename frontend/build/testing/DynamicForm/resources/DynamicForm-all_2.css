@@ -1,0 +1,3356 @@
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:284 */
+.fa-smile-o:before {
+    content: "\f118" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:285 */
+.fa-frown-o:before {
+    content: "\f119" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:286 */
+.fa-meh-o:before {
+    content: "\f11a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:287 */
+.fa-gamepad:before {
+    content: "\f11b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:288 */
+.fa-keyboard-o:before {
+    content: "\f11c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:289 */
+.fa-flag-o:before {
+    content: "\f11d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:290 */
+.fa-flag-checkered:before {
+    content: "\f11e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:291 */
+.fa-terminal:before {
+    content: "\f120" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:292 */
+.fa-code:before {
+    content: "\f121" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:293 */
+.fa-mail-reply-all:before,
+.fa-reply-all:before {
+    content: "\f122" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:295 */
+.fa-star-half-empty:before,
+.fa-star-half-full:before,
+.fa-star-half-o:before {
+    content: "\f123" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:298 */
+.fa-location-arrow:before {
+    content: "\f124" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:299 */
+.fa-crop:before {
+    content: "\f125" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:300 */
+.fa-code-fork:before {
+    content: "\f126" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:301 */
+.fa-unlink:before,
+.fa-chain-broken:before {
+    content: "\f127" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:303 */
+.fa-question:before {
+    content: "\f128" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:304 */
+.fa-info:before {
+    content: "\f129" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:305 */
+.fa-exclamation:before {
+    content: "\f12a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:306 */
+.fa-superscript:before {
+    content: "\f12b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:307 */
+.fa-subscript:before {
+    content: "\f12c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:308 */
+.fa-eraser:before {
+    content: "\f12d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:309 */
+.fa-puzzle-piece:before {
+    content: "\f12e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:310 */
+.fa-microphone:before {
+    content: "\f130" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:311 */
+.fa-microphone-slash:before {
+    content: "\f131" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:312 */
+.fa-shield:before {
+    content: "\f132" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:313 */
+.fa-calendar-o:before {
+    content: "\f133" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:314 */
+.fa-fire-extinguisher:before {
+    content: "\f134" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:315 */
+.fa-rocket:before {
+    content: "\f135" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:316 */
+.fa-maxcdn:before {
+    content: "\f136" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:317 */
+.fa-chevron-circle-left:before {
+    content: "\f137" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:318 */
+.fa-chevron-circle-right:before {
+    content: "\f138" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:319 */
+.fa-chevron-circle-up:before {
+    content: "\f139" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:320 */
+.fa-chevron-circle-down:before {
+    content: "\f13a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:321 */
+.fa-html5:before {
+    content: "\f13b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:322 */
+.fa-css3:before {
+    content: "\f13c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:323 */
+.fa-anchor:before {
+    content: "\f13d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:324 */
+.fa-unlock-alt:before {
+    content: "\f13e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:325 */
+.fa-bullseye:before {
+    content: "\f140" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:326 */
+.fa-ellipsis-h:before {
+    content: "\f141" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:327 */
+.fa-ellipsis-v:before {
+    content: "\f142" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:328 */
+.fa-rss-square:before {
+    content: "\f143" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:329 */
+.fa-play-circle:before {
+    content: "\f144" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:330 */
+.fa-ticket:before {
+    content: "\f145" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:331 */
+.fa-minus-square:before {
+    content: "\f146" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:332 */
+.fa-minus-square-o:before {
+    content: "\f147" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:333 */
+.fa-level-up:before {
+    content: "\f148" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:334 */
+.fa-level-down:before {
+    content: "\f149" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:335 */
+.fa-check-square:before {
+    content: "\f14a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:336 */
+.fa-pencil-square:before {
+    content: "\f14b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:337 */
+.fa-external-link-square:before {
+    content: "\f14c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:338 */
+.fa-share-square:before {
+    content: "\f14d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:339 */
+.fa-compass:before {
+    content: "\f14e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:340 */
+.fa-toggle-down:before,
+.fa-caret-square-o-down:before {
+    content: "\f150" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:342 */
+.fa-toggle-up:before,
+.fa-caret-square-o-up:before {
+    content: "\f151" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:344 */
+.fa-toggle-right:before,
+.fa-caret-square-o-right:before {
+    content: "\f152" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:346 */
+.fa-euro:before,
+.fa-eur:before {
+    content: "\f153" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:348 */
+.fa-gbp:before {
+    content: "\f154" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:349 */
+.fa-dollar:before,
+.fa-usd:before {
+    content: "\f155" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:351 */
+.fa-rupee:before,
+.fa-inr:before {
+    content: "\f156" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:353 */
+.fa-cny:before,
+.fa-rmb:before,
+.fa-yen:before,
+.fa-jpy:before {
+    content: "\f157" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:357 */
+.fa-ruble:before,
+.fa-rouble:before,
+.fa-rub:before {
+    content: "\f158" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:360 */
+.fa-won:before,
+.fa-krw:before {
+    content: "\f159" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:362 */
+.fa-bitcoin:before,
+.fa-btc:before {
+    content: "\f15a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:364 */
+.fa-file:before {
+    content: "\f15b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:365 */
+.fa-file-text:before {
+    content: "\f15c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:366 */
+.fa-sort-alpha-asc:before {
+    content: "\f15d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:367 */
+.fa-sort-alpha-desc:before {
+    content: "\f15e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:368 */
+.fa-sort-amount-asc:before {
+    content: "\f160" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:369 */
+.fa-sort-amount-desc:before {
+    content: "\f161" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:370 */
+.fa-sort-numeric-asc:before {
+    content: "\f162" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:371 */
+.fa-sort-numeric-desc:before {
+    content: "\f163" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:372 */
+.fa-thumbs-up:before {
+    content: "\f164" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:373 */
+.fa-thumbs-down:before {
+    content: "\f165" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:374 */
+.fa-youtube-square:before {
+    content: "\f166" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:375 */
+.fa-youtube:before {
+    content: "\f167" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:376 */
+.fa-xing:before {
+    content: "\f168" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:377 */
+.fa-xing-square:before {
+    content: "\f169" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:378 */
+.fa-youtube-play:before {
+    content: "\f16a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:379 */
+.fa-dropbox:before {
+    content: "\f16b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:380 */
+.fa-stack-overflow:before {
+    content: "\f16c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:381 */
+.fa-instagram:before {
+    content: "\f16d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:382 */
+.fa-flickr:before {
+    content: "\f16e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:383 */
+.fa-adn:before {
+    content: "\f170" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:384 */
+.fa-bitbucket:before {
+    content: "\f171" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:385 */
+.fa-bitbucket-square:before {
+    content: "\f172" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:386 */
+.fa-tumblr:before {
+    content: "\f173" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:387 */
+.fa-tumblr-square:before {
+    content: "\f174" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:388 */
+.fa-long-arrow-down:before {
+    content: "\f175" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:389 */
+.fa-long-arrow-up:before {
+    content: "\f176" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:390 */
+.fa-long-arrow-left:before {
+    content: "\f177" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:391 */
+.fa-long-arrow-right:before {
+    content: "\f178" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:392 */
+.fa-apple:before {
+    content: "\f179" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:393 */
+.fa-windows:before {
+    content: "\f17a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:394 */
+.fa-android:before {
+    content: "\f17b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:395 */
+.fa-linux:before {
+    content: "\f17c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:396 */
+.fa-dribbble:before {
+    content: "\f17d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:397 */
+.fa-skype:before {
+    content: "\f17e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:398 */
+.fa-foursquare:before {
+    content: "\f180" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:399 */
+.fa-trello:before {
+    content: "\f181" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:400 */
+.fa-female:before {
+    content: "\f182" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:401 */
+.fa-male:before {
+    content: "\f183" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:402 */
+.fa-gittip:before,
+.fa-gratipay:before {
+    content: "\f184" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:404 */
+.fa-sun-o:before {
+    content: "\f185" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:405 */
+.fa-moon-o:before {
+    content: "\f186" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:406 */
+.fa-archive:before {
+    content: "\f187" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:407 */
+.fa-bug:before {
+    content: "\f188" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:408 */
+.fa-vk:before {
+    content: "\f189" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:409 */
+.fa-weibo:before {
+    content: "\f18a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:410 */
+.fa-renren:before {
+    content: "\f18b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:411 */
+.fa-pagelines:before {
+    content: "\f18c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:412 */
+.fa-stack-exchange:before {
+    content: "\f18d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:413 */
+.fa-arrow-circle-o-right:before {
+    content: "\f18e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:414 */
+.fa-arrow-circle-o-left:before {
+    content: "\f190" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:415 */
+.fa-toggle-left:before,
+.fa-caret-square-o-left:before {
+    content: "\f191" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:417 */
+.fa-dot-circle-o:before {
+    content: "\f192" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:418 */
+.fa-wheelchair:before {
+    content: "\f193" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:419 */
+.fa-vimeo-square:before {
+    content: "\f194" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:420 */
+.fa-turkish-lira:before,
+.fa-try:before {
+    content: "\f195" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:422 */
+.fa-plus-square-o:before {
+    content: "\f196" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:423 */
+.fa-space-shuttle:before {
+    content: "\f197" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:424 */
+.fa-slack:before {
+    content: "\f198" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:425 */
+.fa-envelope-square:before {
+    content: "\f199" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:426 */
+.fa-wordpress:before {
+    content: "\f19a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:427 */
+.fa-openid:before {
+    content: "\f19b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:428 */
+.fa-institution:before,
+.fa-bank:before,
+.fa-university:before {
+    content: "\f19c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:431 */
+.fa-mortar-board:before,
+.fa-graduation-cap:before {
+    content: "\f19d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:433 */
+.fa-yahoo:before {
+    content: "\f19e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:434 */
+.fa-google:before {
+    content: "\f1a0" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:435 */
+.fa-reddit:before {
+    content: "\f1a1" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:436 */
+.fa-reddit-square:before {
+    content: "\f1a2" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:437 */
+.fa-stumbleupon-circle:before {
+    content: "\f1a3" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:438 */
+.fa-stumbleupon:before {
+    content: "\f1a4" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:439 */
+.fa-delicious:before {
+    content: "\f1a5" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:440 */
+.fa-digg:before {
+    content: "\f1a6" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:441 */
+.fa-pied-piper:before {
+    content: "\f1a7" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:442 */
+.fa-pied-piper-alt:before {
+    content: "\f1a8" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:443 */
+.fa-drupal:before {
+    content: "\f1a9" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:444 */
+.fa-joomla:before {
+    content: "\f1aa" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:445 */
+.fa-language:before {
+    content: "\f1ab" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:446 */
+.fa-fax:before {
+    content: "\f1ac" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:447 */
+.fa-building:before {
+    content: "\f1ad" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:448 */
+.fa-child:before {
+    content: "\f1ae" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:449 */
+.fa-paw:before {
+    content: "\f1b0" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:450 */
+.fa-spoon:before {
+    content: "\f1b1" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:451 */
+.fa-cube:before {
+    content: "\f1b2" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:452 */
+.fa-cubes:before {
+    content: "\f1b3" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:453 */
+.fa-behance:before {
+    content: "\f1b4" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:454 */
+.fa-behance-square:before {
+    content: "\f1b5" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:455 */
+.fa-steam:before {
+    content: "\f1b6" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:456 */
+.fa-steam-square:before {
+    content: "\f1b7" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:457 */
+.fa-recycle:before {
+    content: "\f1b8" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:458 */
+.fa-automobile:before,
+.fa-car:before {
+    content: "\f1b9" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:460 */
+.fa-cab:before,
+.fa-taxi:before {
+    content: "\f1ba" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:462 */
+.fa-tree:before {
+    content: "\f1bb" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:463 */
+.fa-spotify:before {
+    content: "\f1bc" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:464 */
+.fa-deviantart:before {
+    content: "\f1bd" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:465 */
+.fa-soundcloud:before {
+    content: "\f1be" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:466 */
+.fa-database:before {
+    content: "\f1c0" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:467 */
+.fa-file-pdf-o:before {
+    content: "\f1c1" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:468 */
+.fa-file-word-o:before {
+    content: "\f1c2" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:469 */
+.fa-file-excel-o:before {
+    content: "\f1c3" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:470 */
+.fa-file-powerpoint-o:before {
+    content: "\f1c4" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:471 */
+.fa-file-photo-o:before,
+.fa-file-picture-o:before,
+.fa-file-image-o:before {
+    content: "\f1c5" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:474 */
+.fa-file-zip-o:before,
+.fa-file-archive-o:before {
+    content: "\f1c6" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:476 */
+.fa-file-sound-o:before,
+.fa-file-audio-o:before {
+    content: "\f1c7" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:478 */
+.fa-file-movie-o:before,
+.fa-file-video-o:before {
+    content: "\f1c8" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:480 */
+.fa-file-code-o:before {
+    content: "\f1c9" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:481 */
+.fa-vine:before {
+    content: "\f1ca" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:482 */
+.fa-codepen:before {
+    content: "\f1cb" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:483 */
+.fa-jsfiddle:before {
+    content: "\f1cc" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:484 */
+.fa-life-bouy:before,
+.fa-life-buoy:before,
+.fa-life-saver:before,
+.fa-support:before,
+.fa-life-ring:before {
+    content: "\f1cd" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:489 */
+.fa-circle-o-notch:before {
+    content: "\f1ce" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:490 */
+.fa-ra:before,
+.fa-rebel:before {
+    content: "\f1d0" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:492 */
+.fa-ge:before,
+.fa-empire:before {
+    content: "\f1d1" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:494 */
+.fa-git-square:before {
+    content: "\f1d2" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:495 */
+.fa-git:before {
+    content: "\f1d3" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:496 */
+.fa-y-combinator-square:before,
+.fa-yc-square:before,
+.fa-hacker-news:before {
+    content: "\f1d4" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:499 */
+.fa-tencent-weibo:before {
+    content: "\f1d5" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:500 */
+.fa-qq:before {
+    content: "\f1d6" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:501 */
+.fa-wechat:before,
+.fa-weixin:before {
+    content: "\f1d7" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:503 */
+.fa-send:before,
+.fa-paper-plane:before {
+    content: "\f1d8" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:505 */
+.fa-send-o:before,
+.fa-paper-plane-o:before {
+    content: "\f1d9" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:507 */
+.fa-history:before {
+    content: "\f1da" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:508 */
+.fa-circle-thin:before {
+    content: "\f1db" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:509 */
+.fa-header:before {
+    content: "\f1dc" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:510 */
+.fa-paragraph:before {
+    content: "\f1dd" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:511 */
+.fa-sliders:before {
+    content: "\f1de" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:512 */
+.fa-share-alt:before {
+    content: "\f1e0" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:513 */
+.fa-share-alt-square:before {
+    content: "\f1e1" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:514 */
+.fa-bomb:before {
+    content: "\f1e2" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:515 */
+.fa-soccer-ball-o:before,
+.fa-futbol-o:before {
+    content: "\f1e3" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:517 */
+.fa-tty:before {
+    content: "\f1e4" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:518 */
+.fa-binoculars:before {
+    content: "\f1e5" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:519 */
+.fa-plug:before {
+    content: "\f1e6" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:520 */
+.fa-slideshare:before {
+    content: "\f1e7" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:521 */
+.fa-twitch:before {
+    content: "\f1e8" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:522 */
+.fa-yelp:before {
+    content: "\f1e9" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:523 */
+.fa-newspaper-o:before {
+    content: "\f1ea" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:524 */
+.fa-wifi:before {
+    content: "\f1eb" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:525 */
+.fa-calculator:before {
+    content: "\f1ec" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:526 */
+.fa-paypal:before {
+    content: "\f1ed" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:527 */
+.fa-google-wallet:before {
+    content: "\f1ee" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:528 */
+.fa-cc-visa:before {
+    content: "\f1f0" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:529 */
+.fa-cc-mastercard:before {
+    content: "\f1f1" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:530 */
+.fa-cc-discover:before {
+    content: "\f1f2" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:531 */
+.fa-cc-amex:before {
+    content: "\f1f3" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:532 */
+.fa-cc-paypal:before {
+    content: "\f1f4" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:533 */
+.fa-cc-stripe:before {
+    content: "\f1f5" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:534 */
+.fa-bell-slash:before {
+    content: "\f1f6" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:535 */
+.fa-bell-slash-o:before {
+    content: "\f1f7" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:536 */
+.fa-trash:before {
+    content: "\f1f8" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:537 */
+.fa-copyright:before {
+    content: "\f1f9" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:538 */
+.fa-at:before {
+    content: "\f1fa" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:539 */
+.fa-eyedropper:before {
+    content: "\f1fb" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:540 */
+.fa-paint-brush:before {
+    content: "\f1fc" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:541 */
+.fa-birthday-cake:before {
+    content: "\f1fd" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:542 */
+.fa-area-chart:before {
+    content: "\f1fe" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:543 */
+.fa-pie-chart:before {
+    content: "\f200" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:544 */
+.fa-line-chart:before {
+    content: "\f201" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:545 */
+.fa-lastfm:before {
+    content: "\f202" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:546 */
+.fa-lastfm-square:before {
+    content: "\f203" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:547 */
+.fa-toggle-off:before {
+    content: "\f204" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:548 */
+.fa-toggle-on:before {
+    content: "\f205" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:549 */
+.fa-bicycle:before {
+    content: "\f206" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:550 */
+.fa-bus:before {
+    content: "\f207" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:551 */
+.fa-ioxhost:before {
+    content: "\f208" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:552 */
+.fa-angellist:before {
+    content: "\f209" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:553 */
+.fa-cc:before {
+    content: "\f20a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:554 */
+.fa-shekel:before,
+.fa-sheqel:before,
+.fa-ils:before {
+    content: "\f20b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:557 */
+.fa-meanpath:before {
+    content: "\f20c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:558 */
+.fa-buysellads:before {
+    content: "\f20d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:559 */
+.fa-connectdevelop:before {
+    content: "\f20e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:560 */
+.fa-dashcube:before {
+    content: "\f210" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:561 */
+.fa-forumbee:before {
+    content: "\f211" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:562 */
+.fa-leanpub:before {
+    content: "\f212" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:563 */
+.fa-sellsy:before {
+    content: "\f213" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:564 */
+.fa-shirtsinbulk:before {
+    content: "\f214" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:565 */
+.fa-simplybuilt:before {
+    content: "\f215" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:566 */
+.fa-skyatlas:before {
+    content: "\f216" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:567 */
+.fa-cart-plus:before {
+    content: "\f217" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:568 */
+.fa-cart-arrow-down:before {
+    content: "\f218" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:569 */
+.fa-diamond:before {
+    content: "\f219" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:570 */
+.fa-ship:before {
+    content: "\f21a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:571 */
+.fa-user-secret:before {
+    content: "\f21b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:572 */
+.fa-motorcycle:before {
+    content: "\f21c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:573 */
+.fa-street-view:before {
+    content: "\f21d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:574 */
+.fa-heartbeat:before {
+    content: "\f21e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:575 */
+.fa-venus:before {
+    content: "\f221" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:576 */
+.fa-mars:before {
+    content: "\f222" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:577 */
+.fa-mercury:before {
+    content: "\f223" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:578 */
+.fa-intersex:before,
+.fa-transgender:before {
+    content: "\f224" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:580 */
+.fa-transgender-alt:before {
+    content: "\f225" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:581 */
+.fa-venus-double:before {
+    content: "\f226" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:582 */
+.fa-mars-double:before {
+    content: "\f227" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:583 */
+.fa-venus-mars:before {
+    content: "\f228" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:584 */
+.fa-mars-stroke:before {
+    content: "\f229" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:585 */
+.fa-mars-stroke-v:before {
+    content: "\f22a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:586 */
+.fa-mars-stroke-h:before {
+    content: "\f22b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:587 */
+.fa-neuter:before {
+    content: "\f22c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:588 */
+.fa-genderless:before {
+    content: "\f22d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:589 */
+.fa-facebook-official:before {
+    content: "\f230" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:590 */
+.fa-pinterest-p:before {
+    content: "\f231" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:591 */
+.fa-whatsapp:before {
+    content: "\f232" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:592 */
+.fa-server:before {
+    content: "\f233" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:593 */
+.fa-user-plus:before {
+    content: "\f234" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:594 */
+.fa-user-times:before {
+    content: "\f235" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:595 */
+.fa-hotel:before,
+.fa-bed:before {
+    content: "\f236" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:597 */
+.fa-viacoin:before {
+    content: "\f237" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:598 */
+.fa-train:before {
+    content: "\f238" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:599 */
+.fa-subway:before {
+    content: "\f239" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:600 */
+.fa-medium:before {
+    content: "\f23a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:601 */
+.fa-yc:before,
+.fa-y-combinator:before {
+    content: "\f23b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:603 */
+.fa-optin-monster:before {
+    content: "\f23c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:604 */
+.fa-opencart:before {
+    content: "\f23d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:605 */
+.fa-expeditedssl:before {
+    content: "\f23e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:606 */
+.fa-battery-4:before,
+.fa-battery-full:before {
+    content: "\f240" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:608 */
+.fa-battery-3:before,
+.fa-battery-three-quarters:before {
+    content: "\f241" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:610 */
+.fa-battery-2:before,
+.fa-battery-half:before {
+    content: "\f242" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:612 */
+.fa-battery-1:before,
+.fa-battery-quarter:before {
+    content: "\f243" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:614 */
+.fa-battery-0:before,
+.fa-battery-empty:before {
+    content: "\f244" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:616 */
+.fa-mouse-pointer:before {
+    content: "\f245" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:617 */
+.fa-i-cursor:before {
+    content: "\f246" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:618 */
+.fa-object-group:before {
+    content: "\f247" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:619 */
+.fa-object-ungroup:before {
+    content: "\f248" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:620 */
+.fa-sticky-note:before {
+    content: "\f249" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:621 */
+.fa-sticky-note-o:before {
+    content: "\f24a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:622 */
+.fa-cc-jcb:before {
+    content: "\f24b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:623 */
+.fa-cc-diners-club:before {
+    content: "\f24c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:624 */
+.fa-clone:before {
+    content: "\f24d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:625 */
+.fa-balance-scale:before {
+    content: "\f24e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:626 */
+.fa-hourglass-o:before {
+    content: "\f250" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:627 */
+.fa-hourglass-1:before,
+.fa-hourglass-start:before {
+    content: "\f251" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:629 */
+.fa-hourglass-2:before,
+.fa-hourglass-half:before {
+    content: "\f252" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:631 */
+.fa-hourglass-3:before,
+.fa-hourglass-end:before {
+    content: "\f253" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:633 */
+.fa-hourglass:before {
+    content: "\f254" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:634 */
+.fa-hand-grab-o:before,
+.fa-hand-rock-o:before {
+    content: "\f255" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:636 */
+.fa-hand-stop-o:before,
+.fa-hand-paper-o:before {
+    content: "\f256" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:638 */
+.fa-hand-scissors-o:before {
+    content: "\f257" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:639 */
+.fa-hand-lizard-o:before {
+    content: "\f258" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:640 */
+.fa-hand-spock-o:before {
+    content: "\f259" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:641 */
+.fa-hand-pointer-o:before {
+    content: "\f25a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:642 */
+.fa-hand-peace-o:before {
+    content: "\f25b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:643 */
+.fa-trademark:before {
+    content: "\f25c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:644 */
+.fa-registered:before {
+    content: "\f25d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:645 */
+.fa-creative-commons:before {
+    content: "\f25e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:646 */
+.fa-gg:before {
+    content: "\f260" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:647 */
+.fa-gg-circle:before {
+    content: "\f261" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:648 */
+.fa-tripadvisor:before {
+    content: "\f262" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:649 */
+.fa-odnoklassniki:before {
+    content: "\f263" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:650 */
+.fa-odnoklassniki-square:before {
+    content: "\f264" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:651 */
+.fa-get-pocket:before {
+    content: "\f265" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:652 */
+.fa-wikipedia-w:before {
+    content: "\f266" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:653 */
+.fa-safari:before {
+    content: "\f267" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:654 */
+.fa-chrome:before {
+    content: "\f268" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:655 */
+.fa-firefox:before {
+    content: "\f269" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:656 */
+.fa-opera:before {
+    content: "\f26a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:657 */
+.fa-internet-explorer:before {
+    content: "\f26b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:658 */
+.fa-tv:before,
+.fa-television:before {
+    content: "\f26c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:660 */
+.fa-contao:before {
+    content: "\f26d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:661 */
+.fa-500px:before {
+    content: "\f26e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:662 */
+.fa-amazon:before {
+    content: "\f270" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:663 */
+.fa-calendar-plus-o:before {
+    content: "\f271" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:664 */
+.fa-calendar-minus-o:before {
+    content: "\f272" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:665 */
+.fa-calendar-times-o:before {
+    content: "\f273" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:666 */
+.fa-calendar-check-o:before {
+    content: "\f274" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:667 */
+.fa-industry:before {
+    content: "\f275" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:668 */
+.fa-map-pin:before {
+    content: "\f276" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:669 */
+.fa-map-signs:before {
+    content: "\f277" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:670 */
+.fa-map-o:before {
+    content: "\f278" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:671 */
+.fa-map:before {
+    content: "\f279" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:672 */
+.fa-commenting:before {
+    content: "\f27a" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:673 */
+.fa-commenting-o:before {
+    content: "\f27b" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:674 */
+.fa-houzz:before {
+    content: "\f27c" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:675 */
+.fa-vimeo:before {
+    content: "\f27d" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:676 */
+.fa-black-tie:before {
+    content: "\f27e" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/etc/_icons.scss:677 */
+.fa-fonticons:before {
+    content: "\f280" !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-awesome/sass/src/all.scss:20 */
+.x-fa:before {
+    font-family: FontAwesome !important;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:3 */
+@font-face {
+    font-family: 'ExtJS';
+    src: url('../resources/font-ext/fonts/ExtJS.eot?-tqegh9');
+    src: url('../resources/font-ext/fonts/ExtJS.eot?#iefix-tqegh9') format('embedded-opentype'), url('../resources/font-ext/fonts/ExtJS.ttf?-tqegh9') format('truetype'), url('../resources/font-ext/fonts/ExtJS.woff?-tqegh9') format('woff'), url('../resources/font-ext/fonts/ExtJS.svg?-tqegh9#ExtJS') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:14 */
+.ext {
+    font-family: ExtJS;
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:18 */
+.ext-sencha:before {
+    content: "\e61e";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:21 */
+.ext-checkbox-checked:before {
+    content: "\e613";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:24 */
+.ext-checkbox-unchecked:before {
+    content: "\e614";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:27 */
+.ext-chevron-left:before {
+    content: "\e615";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:30 */
+.ext-chevron-right:before {
+    content: "\e616";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:33 */
+.ext-double-chevron-left:before {
+    content: "\e617";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:36 */
+.ext-double-chevron-right:before {
+    content: "\e618";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:39 */
+.ext-sort-down:before {
+    content: "\e619";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:42 */
+.ext-sort-up:before {
+    content: "\e61a";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:45 */
+.ext-spinner-down:before {
+    content: "\e61b";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:48 */
+.ext-spinner-up:before {
+    content: "\e61c";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:51 */
+.ext-square-edit:before {
+    content: "\e61d";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:54 */
+.ext-equals-vertical:before {
+    content: "\e612";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:57 */
+.ext-collapse:before {
+    content: "\e600";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:60 */
+.ext-columns:before {
+    content: "\e601";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:63 */
+.ext-dirty:before {
+    content: "\e602";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:66 */
+.ext-dirty-rtl:before {
+    content: "\e603";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:69 */
+.ext-edit-html:before {
+    content: "\e604";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:72 */
+.ext-equals:before {
+    content: "\e605";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:75 */
+.ext-expand:before {
+    content: "\e606";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:78 */
+.ext-group-by:before {
+    content: "\e607";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:81 */
+.ext-minimize:before {
+    content: "\e608";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:84 */
+.ext-nw-handle:before {
+    content: "\e609";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:87 */
+.ext-ne-handle:before {
+    content: "\e60a";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:90 */
+.ext-sw-handle:before {
+    content: "\e60b";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:93 */
+.ext-se-handle:before {
+    content: "\e60c";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:96 */
+.ext-text-background-color:before {
+    content: "\e60d";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:99 */
+.ext-text-color:before {
+    content: "\e60e";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:102 */
+.ext-text-decrease:before {
+    content: "\e60f";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:105 */
+.ext-text-increase:before {
+    content: "\e610";
+}
+/* /home/glauber/dri/frontend/ext/packages/font-ext/sass/src/all.scss:108 */
+.ext-unpin:before {
+    content: "\e611";
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:3 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-Light.ttf');
+    font-weight: 300;
+    font-style: normal;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:10 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-LightItalic.ttf');
+    font-weight: 300;
+    font-style: italic;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:17 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-Regular.ttf');
+    font-weight: 400;
+    font-style: normal;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:24 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-Italic.ttf');
+    font-weight: 400;
+    font-style: italic;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:31 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-Semibold.ttf');
+    font-weight: 600;
+    font-style: normal;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:38 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-SemiboldItalic.ttf');
+    font-weight: 600;
+    font-style: italic;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:45 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-Bold.ttf');
+    font-weight: 700;
+    font-style: normal;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:52 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-BoldItalic.ttf');
+    font-weight: 700;
+    font-style: italic;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:59 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-ExtraBold.ttf');
+    font-weight: 800;
+    font-style: normal;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/Component.scss:66 */
+@font-face {
+    font-family: 'Open Sans';
+    src: url('fonts/OpenSans-ExtraBoldItalic.ttf');
+    font-weight: 800;
+    font-style: italic;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/form/FieldSet.scss:1 */
+.x-fieldset {
+    border-top: 1px solid #bbb !important;
+    background: #f6f6f6;
+    position: static;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/form/FieldSet.scss:6 */
+.x-fieldset .x-fieldset-header {
+    padding: 10px 5px 10px 5px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/form/FieldSet.scss:9 */
+.x-fieldset .x-fieldset-body {
+    position: relative;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/form/FieldSet.scss:12 */
+.x-fieldset.x-fieldset-collapsed {
+    background: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/menu/Menu.scss:1 */
+.x-menu-item-active .x-menu-item-text {
+    font-weight: 400;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-triton/sass/src/tab/Tab.scss:1 */
+.x-tab-close-btn:before {
+    display: block;
+    width: 16px;
+    line-height: 16px;
+    text-align: center;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:187 */
+.x-tab-navigation-top {
+    -webkit-border-radius: 0;
+    -moz-border-radius: 0;
+    -ms-border-radius: 0;
+    -o-border-radius: 0;
+    border-radius: 0;
+    padding: 24px 24px 24px 24px;
+    border-width: 0;
+    border-style: solid;
+    background-color: transparent;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:237 */
+.x-tab-navigation-top-mc {
+    background-color: transparent;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:264 */
+.x-nbr .x-tab-navigation-top {
+    padding: 0 !important;
+    border-width: 0 !important;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:281 */
+.x-tab-navigation-top-frameInfo {
+    font-family: th-0-0-0-0-0-0-0-0-24-24-24-24;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:347 */
+.x-tab-navigation-top-tl {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:351 */
+.x-tab-navigation-top-tr {
+    background-position: right 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:355 */
+.x-tab-navigation-top-bl {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:359 */
+.x-tab-navigation-top-br {
+    background-position: right 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:363 */
+.x-tab-navigation-top-ml {
+    background-position: 0 top;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:371 */
+.x-tab-navigation-top-mr {
+    background-position: right top;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:379 */
+.x-tab-navigation-top-tc {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:383 */
+.x-tab-navigation-top-bc {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:388 */
+.x-tab-navigation-top-tr,
+.x-tab-navigation-top-br,
+.x-tab-navigation-top-mr {
+    padding-right: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:394 */
+.x-tab-navigation-top-tl,
+.x-tab-navigation-top-bl,
+.x-tab-navigation-top-ml {
+    padding-left: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:400 */
+.x-tab-navigation-top-tc {
+    height: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:403 */
+.x-tab-navigation-top-bc {
+    height: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:464 */
+.x-tab-navigation-top-mc {
+    padding: 24px 24px 24px 24px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:187 */
+.x-tab-navigation-bottom {
+    -moz-border-radius-topleft: 0;
+    -webkit-border-top-left-radius: 0;
+    border-top-left-radius: 0;
+    -moz-border-radius-topright: 0;
+    -webkit-border-top-right-radius: 0;
+    border-top-right-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    -webkit-border-bottom-right-radius: 0;
+    border-bottom-right-radius: 0;
+    -moz-border-radius-bottomleft: 0;
+    -webkit-border-bottom-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 24px 24px 24px 24px;
+    border-width: 0 0 0 0;
+    border-style: solid;
+    background-color: transparent;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:237 */
+.x-tab-navigation-bottom-mc {
+    background-color: transparent;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:264 */
+.x-nbr .x-tab-navigation-bottom {
+    padding: 0 !important;
+    border-width: 0 !important;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:281 */
+.x-tab-navigation-bottom-frameInfo {
+    font-family: th-0-0-0-0-0-0-0-0-24-24-24-24;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:347 */
+.x-tab-navigation-bottom-tl {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:351 */
+.x-tab-navigation-bottom-tr {
+    background-position: right 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:355 */
+.x-tab-navigation-bottom-bl {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:359 */
+.x-tab-navigation-bottom-br {
+    background-position: right 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:363 */
+.x-tab-navigation-bottom-ml {
+    background-position: 0 bottom;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:371 */
+.x-tab-navigation-bottom-mr {
+    background-position: right bottom;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:379 */
+.x-tab-navigation-bottom-tc {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:383 */
+.x-tab-navigation-bottom-bc {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:388 */
+.x-tab-navigation-bottom-tr,
+.x-tab-navigation-bottom-br,
+.x-tab-navigation-bottom-mr {
+    padding-right: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:394 */
+.x-tab-navigation-bottom-tl,
+.x-tab-navigation-bottom-bl,
+.x-tab-navigation-bottom-ml {
+    padding-left: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:400 */
+.x-tab-navigation-bottom-tc {
+    height: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:403 */
+.x-tab-navigation-bottom-bc {
+    height: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:464 */
+.x-tab-navigation-bottom-mc {
+    padding: 24px 24px 24px 24px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:187 */
+.x-tab-navigation-left {
+    -moz-border-radius-topleft: 0;
+    -webkit-border-top-left-radius: 0;
+    border-top-left-radius: 0;
+    -moz-border-radius-topright: 0;
+    -webkit-border-top-right-radius: 0;
+    border-top-right-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    -webkit-border-bottom-right-radius: 0;
+    border-bottom-right-radius: 0;
+    -moz-border-radius-bottomleft: 0;
+    -webkit-border-bottom-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 24px 24px 24px 24px;
+    border-width: 0 0 0 0;
+    border-style: solid;
+    background-color: transparent;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:237 */
+.x-tab-navigation-left-mc {
+    background-color: transparent;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:264 */
+.x-nbr .x-tab-navigation-left {
+    padding: 0 !important;
+    border-width: 0 !important;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:281 */
+.x-tab-navigation-left-frameInfo {
+    font-family: th-0-0-0-0-0-0-0-0-24-24-24-24;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:347 */
+.x-tab-navigation-left-tl {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:351 */
+.x-tab-navigation-left-tr {
+    background-position: right 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:355 */
+.x-tab-navigation-left-bl {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:359 */
+.x-tab-navigation-left-br {
+    background-position: right 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:363 */
+.x-tab-navigation-left-ml {
+    background-position: 0 top;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:371 */
+.x-tab-navigation-left-mr {
+    background-position: right top;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:379 */
+.x-tab-navigation-left-tc {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:383 */
+.x-tab-navigation-left-bc {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:388 */
+.x-tab-navigation-left-tr,
+.x-tab-navigation-left-br,
+.x-tab-navigation-left-mr {
+    padding-right: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:394 */
+.x-tab-navigation-left-tl,
+.x-tab-navigation-left-bl,
+.x-tab-navigation-left-ml {
+    padding-left: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:400 */
+.x-tab-navigation-left-tc {
+    height: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:403 */
+.x-tab-navigation-left-bc {
+    height: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:464 */
+.x-tab-navigation-left-mc {
+    padding: 24px 24px 24px 24px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:187 */
+.x-tab-navigation-right {
+    -moz-border-radius-topleft: 0;
+    -webkit-border-top-left-radius: 0;
+    border-top-left-radius: 0;
+    -moz-border-radius-topright: 0;
+    -webkit-border-top-right-radius: 0;
+    border-top-right-radius: 0;
+    -moz-border-radius-bottomright: 0;
+    -webkit-border-bottom-right-radius: 0;
+    border-bottom-right-radius: 0;
+    -moz-border-radius-bottomleft: 0;
+    -webkit-border-bottom-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding: 24px 24px 24px 24px;
+    border-width: 0 0 0 0;
+    border-style: solid;
+    background-color: transparent;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:237 */
+.x-tab-navigation-right-mc {
+    background-color: transparent;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:264 */
+.x-nbr .x-tab-navigation-right {
+    padding: 0 !important;
+    border-width: 0 !important;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    -ms-border-radius: 0px;
+    -o-border-radius: 0px;
+    border-radius: 0px;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:281 */
+.x-tab-navigation-right-frameInfo {
+    font-family: th-0-0-0-0-0-0-0-0-24-24-24-24;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:347 */
+.x-tab-navigation-right-tl {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:351 */
+.x-tab-navigation-right-tr {
+    background-position: right 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:355 */
+.x-tab-navigation-right-bl {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:359 */
+.x-tab-navigation-right-br {
+    background-position: right 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:363 */
+.x-tab-navigation-right-ml {
+    background-position: 0 top;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:371 */
+.x-tab-navigation-right-mr {
+    background-position: right top;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:379 */
+.x-tab-navigation-right-tc {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:383 */
+.x-tab-navigation-right-bc {
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:388 */
+.x-tab-navigation-right-tr,
+.x-tab-navigation-right-br,
+.x-tab-navigation-right-mr {
+    padding-right: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:394 */
+.x-tab-navigation-right-tl,
+.x-tab-navigation-right-bl,
+.x-tab-navigation-right-ml {
+    padding-left: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:400 */
+.x-tab-navigation-right-tc {
+    height: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:403 */
+.x-tab-navigation-right-bc {
+    height: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/frame.scss:464 */
+.x-tab-navigation-right-mc {
+    padding: 24px 24px 24px 24px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1587 */
+.x-tab-navigation {
+    border-color: transparent;
+    cursor: pointer;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1648 */
+.x-tab-navigation-top {
+    margin: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1657 */
+.x-tab-navigation-top.x-tab-rotate-left {
+    margin: 0 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1679 */
+.x-tab-navigation-top.x-tab-focus {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1708 */
+.x-tab-navigation-top.x-tab-focus.x-tab-over {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1737 */
+.x-tab-navigation-top.x-tab-focus.x-tab-active {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1763 */
+.x-tab-navigation-right {
+    margin: 0 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1772 */
+.x-tab-navigation-right.x-tab-rotate-right {
+    margin: 0 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1794 */
+.x-tab-navigation-right.x-tab-focus {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1823 */
+.x-tab-navigation-right.x-tab-focus.x-tab-over {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1852 */
+.x-tab-navigation-right.x-tab-focus.x-tab-active {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1878 */
+.x-tab-navigation-bottom {
+    margin: 0 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1887 */
+.x-tab-navigation-bottom.x-tab-rotate-left {
+    margin: 0 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1909 */
+.x-tab-navigation-bottom.x-tab-focus {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1938 */
+.x-tab-navigation-bottom.x-tab-focus.x-tab-over {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1967 */
+.x-tab-navigation-bottom.x-tab-focus.x-tab-active {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:1993 */
+.x-tab-navigation-left {
+    margin: 0 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2002 */
+.x-tab-navigation-left.x-tab-rotate-right {
+    margin: 0 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2024 */
+.x-tab-navigation-left.x-tab-focus {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2053 */
+.x-tab-navigation-left.x-tab-focus.x-tab-over {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2082 */
+.x-tab-navigation-left.x-tab-focus.x-tab-active {
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2108 */
+.x-tab-button-navigation {
+    height: 24px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2113 */
+.x-tab-inner-navigation {
+    font: bold 15px/19px 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    color: #acacac;
+    max-width: 100%;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2129 */
+.x-tab-icon-right > .x-tab-inner-navigation,
+.x-tab-icon-left > .x-tab-inner-navigation {
+    max-width: calc(100% - 24px);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2137 */
+.x-tab-icon-el-navigation {
+    min-height: 24px;
+    background-position: center center;
+    font-size: 24px;
+    line-height: 24px;
+    color: #acacac;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2138 */
+.x-tab-icon-left > .x-tab-icon-el-navigation,
+.x-tab-icon-right > .x-tab-icon-el-navigation {
+    width: 24px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2143 */
+.x-tab-icon-top > .x-tab-icon-el-navigation,
+.x-tab-icon-bottom > .x-tab-icon-el-navigation {
+    min-width: 24px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2154 */
+.x-tab-bar-plain .x-tab-icon-el-navigation {
+    color: #606060;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2179 */
+.x-tab-text.x-tab-icon-left > .x-tab-icon-el-navigation {
+    margin-right: 5px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2190 */
+.x-tab-text.x-tab-icon-right > .x-tab-icon-el-navigation {
+    margin-left: 5px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2201 */
+.x-tab-text.x-tab-icon-top > .x-tab-icon-el-navigation {
+    margin-bottom: 5px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2205 */
+.x-tab-text.x-tab-icon-bottom > .x-tab-icon-el-navigation {
+    margin-top: 5px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2210 */
+.x-tab-focus.x-tab-navigation {
+    border-color: transparent;
+    background-color: transparent;
+    outline: 1px solid #5fa2dd;
+    outline-offset: -3px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/css-outline.scss:59 */
+.x-ie8 .x-tab-focus.x-tab-navigation {
+    outline: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/css-outline.scss:39 */
+.x-ie8 .x-tab-focus.x-tab-navigation:after {
+    position: absolute;
+    content: ' ';
+    top: 2px;
+    right: 2px;
+    bottom: 2px;
+    left: 2px;
+    border: 1px solid #5fa2dd;
+    pointer-events: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2308 */
+.x-tab-bar-plain .x-tab-focus.x-tab-navigation .x-tab-inner-navigation {
+    color: #606060;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2340 */
+.x-tab-bar-plain .x-tab-focus.x-tab-navigation .x-tab-icon-el {
+    color: #606060;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2348 */
+.x-tab-over.x-tab-navigation {
+    border-color: #000;
+    background-image: none;
+    background-color: rgba(80, 80, 80, 0.08);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/background-opacity.scss:19 */
+.x-ie8 .x-tab-over.x-tab-navigation {
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#14505050, endColorstr=#14505050);
+    zoom: 1;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2379 */
+.x-ie8 .x-tab-over.x-tab-navigation.x-tab-rotate-left {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2385 */
+.x-ie8 .x-tab-over.x-tab-navigation.x-tab-rotate-right {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2406 */
+.x-tab-over.x-tab-navigation .x-tab-inner-navigation {
+    color: #c4c4c4;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2411 */
+.x-tab-bar-plain .x-tab-over.x-tab-navigation .x-tab-inner-navigation {
+    color: #606060;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2426 */
+.x-tab-over.x-tab-navigation .x-tab-icon-el {
+    color: #c4c4c4;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2435 */
+.x-ie8m .x-tab-over.x-tab-navigation .x-tab-icon-el {
+    color: #c4c4c4;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2442 */
+.x-tab-bar-plain .x-tab-over.x-tab-navigation .x-tab-icon-el {
+    color: #606060;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2462 */
+.x-tab-focus.x-tab-over.x-tab-navigation {
+    border-color: #000;
+    background-image: none;
+    background-color: rgba(80, 80, 80, 0.08);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/background-opacity.scss:19 */
+.x-ie8 .x-tab-focus.x-tab-over.x-tab-navigation {
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#14505050, endColorstr=#14505050);
+    zoom: 1;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2493 */
+.x-ie8 .x-tab-focus.x-tab-over.x-tab-navigation.x-tab-rotate-left {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=3);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2499 */
+.x-ie8 .x-tab-focus.x-tab-over.x-tab-navigation.x-tab-rotate-right {
+    filter: progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2525 */
+.x-tab-bar-plain .x-tab-focus.x-tab-over.x-tab-navigation .x-tab-inner-navigation {
+    color: #606060;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2556 */
+.x-tab-bar-plain .x-tab-focus.x-tab-over.x-tab-navigation .x-tab-icon-el {
+    color: #606060;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2579 */
+.x-tab.x-tab-active.x-tab-navigation {
+    border-color: #fff;
+    background-color: #303030;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2637 */
+.x-tab.x-tab-active.x-tab-navigation .x-tab-inner-navigation {
+    color: #fff;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2642 */
+.x-tab-bar-plain .x-tab.x-tab-active.x-tab-navigation .x-tab-inner-navigation {
+    color: #404040;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2657 */
+.x-tab.x-tab-active.x-tab-navigation .x-tab-icon-el {
+    color: #fff;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2665 */
+.x-ie8 .x-tab.x-tab-active.x-tab-navigation .x-tab-icon-el {
+    color: #fff;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2671 */
+.x-tab-bar-plain .x-tab.x-tab-active.x-tab-navigation .x-tab-icon-el {
+    color: #404040;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2692 */
+.x-tab-focus.x-tab-active.x-tab-navigation {
+    border-color: #fff;
+    background-color: #303030;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2755 */
+.x-tab-bar-plain .x-tab-focus.x-tab-active.x-tab-navigation .x-tab-inner-navigation {
+    color: #404040;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2786 */
+.x-tab-bar-plain .x-tab-focus.x-tab-active.x-tab-navigation .x-tab-icon-el {
+    color: #404040;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2810 */
+.x-tab.x-tab-disabled.x-tab-navigation {
+    border-color: transparent;
+    background-color: transparent;
+    cursor: default;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2872 */
+.x-tab.x-tab-disabled.x-tab-navigation .x-tab-inner-navigation {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    opacity: 0.3;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2877 */
+.x-tab-bar-plain .x-tab.x-tab-disabled.x-tab-navigation .x-tab-inner-navigation {
+    color: #606060;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2896 */
+.x-tab.x-tab-disabled.x-tab-navigation .x-tab-icon-el-navigation {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    opacity: 0.5;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2901 */
+.x-tab.x-tab-disabled.x-tab-navigation .x-tab-icon-el {
+    color: #acacac;
+    opacity: 0.3;
+    filter: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2922 */
+.x-tab-bar-plain .x-tab.x-tab-disabled.x-tab-navigation .x-tab-icon-el {
+    color: #606060;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2942 */
+.x-nbr .x-tab-navigation {
+    background-image: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-over .x-tab-navigation-top-tl,
+.x-tab-over .x-tab-navigation-top-bl,
+.x-tab-over .x-tab-navigation-top-tr,
+.x-tab-over .x-tab-navigation-top-br,
+.x-tab-over .x-tab-navigation-top-tc,
+.x-tab-over .x-tab-navigation-top-bc {
+    background-image: url(images/tab/tab-navigation-top-over-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-over .x-tab-navigation-top-ml,
+.x-tab-over .x-tab-navigation-top-mr {
+    background-image: url(images/tab/tab-navigation-top-over-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-over .x-tab-navigation-top-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-top-over-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus .x-tab-navigation-top-tl,
+.x-tab-focus .x-tab-navigation-top-bl,
+.x-tab-focus .x-tab-navigation-top-tr,
+.x-tab-focus .x-tab-navigation-top-br,
+.x-tab-focus .x-tab-navigation-top-tc,
+.x-tab-focus .x-tab-navigation-top-bc {
+    background-image: url(images/tab/tab-navigation-top-focus-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus .x-tab-navigation-top-ml,
+.x-tab-focus .x-tab-navigation-top-mr {
+    background-image: url(images/tab/tab-navigation-top-focus-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus .x-tab-navigation-top-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-top-focus-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus.x-tab-over .x-tab-navigation-top-tl,
+.x-tab-focus.x-tab-over .x-tab-navigation-top-bl,
+.x-tab-focus.x-tab-over .x-tab-navigation-top-tr,
+.x-tab-focus.x-tab-over .x-tab-navigation-top-br,
+.x-tab-focus.x-tab-over .x-tab-navigation-top-tc,
+.x-tab-focus.x-tab-over .x-tab-navigation-top-bc {
+    background-image: url(images/tab/tab-navigation-top-focus-over-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus.x-tab-over .x-tab-navigation-top-ml,
+.x-tab-focus.x-tab-over .x-tab-navigation-top-mr {
+    background-image: url(images/tab/tab-navigation-top-focus-over-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus.x-tab-over .x-tab-navigation-top-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-top-focus-over-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab.x-tab-active .x-tab-navigation-top-tl,
+.x-tab.x-tab-active .x-tab-navigation-top-bl,
+.x-tab.x-tab-active .x-tab-navigation-top-tr,
+.x-tab.x-tab-active .x-tab-navigation-top-br,
+.x-tab.x-tab-active .x-tab-navigation-top-tc,
+.x-tab.x-tab-active .x-tab-navigation-top-bc {
+    background-image: url(images/tab/tab-navigation-top-active-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab.x-tab-active .x-tab-navigation-top-ml,
+.x-tab.x-tab-active .x-tab-navigation-top-mr {
+    background-image: url(images/tab/tab-navigation-top-active-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab.x-tab-active .x-tab-navigation-top-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-top-active-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus.x-tab-active .x-tab-navigation-top-tl,
+.x-tab-focus.x-tab-active .x-tab-navigation-top-bl,
+.x-tab-focus.x-tab-active .x-tab-navigation-top-tr,
+.x-tab-focus.x-tab-active .x-tab-navigation-top-br,
+.x-tab-focus.x-tab-active .x-tab-navigation-top-tc,
+.x-tab-focus.x-tab-active .x-tab-navigation-top-bc {
+    background-image: url(images/tab/tab-navigation-top-focus-active-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus.x-tab-active .x-tab-navigation-top-ml,
+.x-tab-focus.x-tab-active .x-tab-navigation-top-mr {
+    background-image: url(images/tab/tab-navigation-top-focus-active-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus.x-tab-active .x-tab-navigation-top-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-top-focus-active-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab.x-tab-disabled .x-tab-navigation-top-tl,
+.x-tab.x-tab-disabled .x-tab-navigation-top-bl,
+.x-tab.x-tab-disabled .x-tab-navigation-top-tr,
+.x-tab.x-tab-disabled .x-tab-navigation-top-br,
+.x-tab.x-tab-disabled .x-tab-navigation-top-tc,
+.x-tab.x-tab-disabled .x-tab-navigation-top-bc {
+    background-image: url(images/tab/tab-navigation-top-disabled-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab.x-tab-disabled .x-tab-navigation-top-ml,
+.x-tab.x-tab-disabled .x-tab-navigation-top-mr {
+    background-image: url(images/tab/tab-navigation-top-disabled-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab.x-tab-disabled .x-tab-navigation-top-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-top-disabled-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-over .x-tab-navigation-right-tl,
+.x-tab-over .x-tab-navigation-right-bl,
+.x-tab-over .x-tab-navigation-right-tr,
+.x-tab-over .x-tab-navigation-right-br,
+.x-tab-over .x-tab-navigation-right-tc,
+.x-tab-over .x-tab-navigation-right-bc {
+    background-image: url(images/tab/tab-navigation-right-over-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-over .x-tab-navigation-right-ml,
+.x-tab-over .x-tab-navigation-right-mr {
+    background-image: url(images/tab/tab-navigation-right-over-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-over .x-tab-navigation-right-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-right-over-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus .x-tab-navigation-right-tl,
+.x-tab-focus .x-tab-navigation-right-bl,
+.x-tab-focus .x-tab-navigation-right-tr,
+.x-tab-focus .x-tab-navigation-right-br,
+.x-tab-focus .x-tab-navigation-right-tc,
+.x-tab-focus .x-tab-navigation-right-bc {
+    background-image: url(images/tab/tab-navigation-right-focus-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus .x-tab-navigation-right-ml,
+.x-tab-focus .x-tab-navigation-right-mr {
+    background-image: url(images/tab/tab-navigation-right-focus-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus .x-tab-navigation-right-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-right-focus-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus.x-tab-over .x-tab-navigation-right-tl,
+.x-tab-focus.x-tab-over .x-tab-navigation-right-bl,
+.x-tab-focus.x-tab-over .x-tab-navigation-right-tr,
+.x-tab-focus.x-tab-over .x-tab-navigation-right-br,
+.x-tab-focus.x-tab-over .x-tab-navigation-right-tc,
+.x-tab-focus.x-tab-over .x-tab-navigation-right-bc {
+    background-image: url(images/tab/tab-navigation-right-focus-over-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus.x-tab-over .x-tab-navigation-right-ml,
+.x-tab-focus.x-tab-over .x-tab-navigation-right-mr {
+    background-image: url(images/tab/tab-navigation-right-focus-over-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus.x-tab-over .x-tab-navigation-right-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-right-focus-over-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab.x-tab-active .x-tab-navigation-right-tl,
+.x-tab.x-tab-active .x-tab-navigation-right-bl,
+.x-tab.x-tab-active .x-tab-navigation-right-tr,
+.x-tab.x-tab-active .x-tab-navigation-right-br,
+.x-tab.x-tab-active .x-tab-navigation-right-tc,
+.x-tab.x-tab-active .x-tab-navigation-right-bc {
+    background-image: url(images/tab/tab-navigation-right-active-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab.x-tab-active .x-tab-navigation-right-ml,
+.x-tab.x-tab-active .x-tab-navigation-right-mr {
+    background-image: url(images/tab/tab-navigation-right-active-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab.x-tab-active .x-tab-navigation-right-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-right-active-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus.x-tab-active .x-tab-navigation-right-tl,
+.x-tab-focus.x-tab-active .x-tab-navigation-right-bl,
+.x-tab-focus.x-tab-active .x-tab-navigation-right-tr,
+.x-tab-focus.x-tab-active .x-tab-navigation-right-br,
+.x-tab-focus.x-tab-active .x-tab-navigation-right-tc,
+.x-tab-focus.x-tab-active .x-tab-navigation-right-bc {
+    background-image: url(images/tab/tab-navigation-right-focus-active-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus.x-tab-active .x-tab-navigation-right-ml,
+.x-tab-focus.x-tab-active .x-tab-navigation-right-mr {
+    background-image: url(images/tab/tab-navigation-right-focus-active-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus.x-tab-active .x-tab-navigation-right-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-right-focus-active-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab.x-tab-disabled .x-tab-navigation-right-tl,
+.x-tab.x-tab-disabled .x-tab-navigation-right-bl,
+.x-tab.x-tab-disabled .x-tab-navigation-right-tr,
+.x-tab.x-tab-disabled .x-tab-navigation-right-br,
+.x-tab.x-tab-disabled .x-tab-navigation-right-tc,
+.x-tab.x-tab-disabled .x-tab-navigation-right-bc {
+    background-image: url(images/tab/tab-navigation-right-disabled-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab.x-tab-disabled .x-tab-navigation-right-ml,
+.x-tab.x-tab-disabled .x-tab-navigation-right-mr {
+    background-image: url(images/tab/tab-navigation-right-disabled-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab.x-tab-disabled .x-tab-navigation-right-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-right-disabled-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-over .x-tab-navigation-bottom-tl,
+.x-tab-over .x-tab-navigation-bottom-bl,
+.x-tab-over .x-tab-navigation-bottom-tr,
+.x-tab-over .x-tab-navigation-bottom-br,
+.x-tab-over .x-tab-navigation-bottom-tc,
+.x-tab-over .x-tab-navigation-bottom-bc {
+    background-image: url(images/tab/tab-navigation-bottom-over-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-over .x-tab-navigation-bottom-ml,
+.x-tab-over .x-tab-navigation-bottom-mr {
+    background-image: url(images/tab/tab-navigation-bottom-over-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-over .x-tab-navigation-bottom-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-bottom-over-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus .x-tab-navigation-bottom-tl,
+.x-tab-focus .x-tab-navigation-bottom-bl,
+.x-tab-focus .x-tab-navigation-bottom-tr,
+.x-tab-focus .x-tab-navigation-bottom-br,
+.x-tab-focus .x-tab-navigation-bottom-tc,
+.x-tab-focus .x-tab-navigation-bottom-bc {
+    background-image: url(images/tab/tab-navigation-bottom-focus-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus .x-tab-navigation-bottom-ml,
+.x-tab-focus .x-tab-navigation-bottom-mr {
+    background-image: url(images/tab/tab-navigation-bottom-focus-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus .x-tab-navigation-bottom-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-bottom-focus-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus.x-tab-over .x-tab-navigation-bottom-tl,
+.x-tab-focus.x-tab-over .x-tab-navigation-bottom-bl,
+.x-tab-focus.x-tab-over .x-tab-navigation-bottom-tr,
+.x-tab-focus.x-tab-over .x-tab-navigation-bottom-br,
+.x-tab-focus.x-tab-over .x-tab-navigation-bottom-tc,
+.x-tab-focus.x-tab-over .x-tab-navigation-bottom-bc {
+    background-image: url(images/tab/tab-navigation-bottom-focus-over-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus.x-tab-over .x-tab-navigation-bottom-ml,
+.x-tab-focus.x-tab-over .x-tab-navigation-bottom-mr {
+    background-image: url(images/tab/tab-navigation-bottom-focus-over-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus.x-tab-over .x-tab-navigation-bottom-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-bottom-focus-over-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab.x-tab-active .x-tab-navigation-bottom-tl,
+.x-tab.x-tab-active .x-tab-navigation-bottom-bl,
+.x-tab.x-tab-active .x-tab-navigation-bottom-tr,
+.x-tab.x-tab-active .x-tab-navigation-bottom-br,
+.x-tab.x-tab-active .x-tab-navigation-bottom-tc,
+.x-tab.x-tab-active .x-tab-navigation-bottom-bc {
+    background-image: url(images/tab/tab-navigation-bottom-active-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab.x-tab-active .x-tab-navigation-bottom-ml,
+.x-tab.x-tab-active .x-tab-navigation-bottom-mr {
+    background-image: url(images/tab/tab-navigation-bottom-active-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab.x-tab-active .x-tab-navigation-bottom-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-bottom-active-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus.x-tab-active .x-tab-navigation-bottom-tl,
+.x-tab-focus.x-tab-active .x-tab-navigation-bottom-bl,
+.x-tab-focus.x-tab-active .x-tab-navigation-bottom-tr,
+.x-tab-focus.x-tab-active .x-tab-navigation-bottom-br,
+.x-tab-focus.x-tab-active .x-tab-navigation-bottom-tc,
+.x-tab-focus.x-tab-active .x-tab-navigation-bottom-bc {
+    background-image: url(images/tab/tab-navigation-bottom-focus-active-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus.x-tab-active .x-tab-navigation-bottom-ml,
+.x-tab-focus.x-tab-active .x-tab-navigation-bottom-mr {
+    background-image: url(images/tab/tab-navigation-bottom-focus-active-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus.x-tab-active .x-tab-navigation-bottom-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-bottom-focus-active-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab.x-tab-disabled .x-tab-navigation-bottom-tl,
+.x-tab.x-tab-disabled .x-tab-navigation-bottom-bl,
+.x-tab.x-tab-disabled .x-tab-navigation-bottom-tr,
+.x-tab.x-tab-disabled .x-tab-navigation-bottom-br,
+.x-tab.x-tab-disabled .x-tab-navigation-bottom-tc,
+.x-tab.x-tab-disabled .x-tab-navigation-bottom-bc {
+    background-image: url(images/tab/tab-navigation-bottom-disabled-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab.x-tab-disabled .x-tab-navigation-bottom-ml,
+.x-tab.x-tab-disabled .x-tab-navigation-bottom-mr {
+    background-image: url(images/tab/tab-navigation-bottom-disabled-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab.x-tab-disabled .x-tab-navigation-bottom-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-bottom-disabled-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-over .x-tab-navigation-left-tl,
+.x-tab-over .x-tab-navigation-left-bl,
+.x-tab-over .x-tab-navigation-left-tr,
+.x-tab-over .x-tab-navigation-left-br,
+.x-tab-over .x-tab-navigation-left-tc,
+.x-tab-over .x-tab-navigation-left-bc {
+    background-image: url(images/tab/tab-navigation-left-over-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-over .x-tab-navigation-left-ml,
+.x-tab-over .x-tab-navigation-left-mr {
+    background-image: url(images/tab/tab-navigation-left-over-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-over .x-tab-navigation-left-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-left-over-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus .x-tab-navigation-left-tl,
+.x-tab-focus .x-tab-navigation-left-bl,
+.x-tab-focus .x-tab-navigation-left-tr,
+.x-tab-focus .x-tab-navigation-left-br,
+.x-tab-focus .x-tab-navigation-left-tc,
+.x-tab-focus .x-tab-navigation-left-bc {
+    background-image: url(images/tab/tab-navigation-left-focus-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus .x-tab-navigation-left-ml,
+.x-tab-focus .x-tab-navigation-left-mr {
+    background-image: url(images/tab/tab-navigation-left-focus-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus .x-tab-navigation-left-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-left-focus-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus.x-tab-over .x-tab-navigation-left-tl,
+.x-tab-focus.x-tab-over .x-tab-navigation-left-bl,
+.x-tab-focus.x-tab-over .x-tab-navigation-left-tr,
+.x-tab-focus.x-tab-over .x-tab-navigation-left-br,
+.x-tab-focus.x-tab-over .x-tab-navigation-left-tc,
+.x-tab-focus.x-tab-over .x-tab-navigation-left-bc {
+    background-image: url(images/tab/tab-navigation-left-focus-over-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus.x-tab-over .x-tab-navigation-left-ml,
+.x-tab-focus.x-tab-over .x-tab-navigation-left-mr {
+    background-image: url(images/tab/tab-navigation-left-focus-over-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus.x-tab-over .x-tab-navigation-left-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-left-focus-over-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab.x-tab-active .x-tab-navigation-left-tl,
+.x-tab.x-tab-active .x-tab-navigation-left-bl,
+.x-tab.x-tab-active .x-tab-navigation-left-tr,
+.x-tab.x-tab-active .x-tab-navigation-left-br,
+.x-tab.x-tab-active .x-tab-navigation-left-tc,
+.x-tab.x-tab-active .x-tab-navigation-left-bc {
+    background-image: url(images/tab/tab-navigation-left-active-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab.x-tab-active .x-tab-navigation-left-ml,
+.x-tab.x-tab-active .x-tab-navigation-left-mr {
+    background-image: url(images/tab/tab-navigation-left-active-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab.x-tab-active .x-tab-navigation-left-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-left-active-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab-focus.x-tab-active .x-tab-navigation-left-tl,
+.x-tab-focus.x-tab-active .x-tab-navigation-left-bl,
+.x-tab-focus.x-tab-active .x-tab-navigation-left-tr,
+.x-tab-focus.x-tab-active .x-tab-navigation-left-br,
+.x-tab-focus.x-tab-active .x-tab-navigation-left-tc,
+.x-tab-focus.x-tab-active .x-tab-navigation-left-bc {
+    background-image: url(images/tab/tab-navigation-left-focus-active-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab-focus.x-tab-active .x-tab-navigation-left-ml,
+.x-tab-focus.x-tab-active .x-tab-navigation-left-mr {
+    background-image: url(images/tab/tab-navigation-left-focus-active-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab-focus.x-tab-active .x-tab-navigation-left-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-left-focus-active-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2961 */
+.x-tab.x-tab-disabled .x-tab-navigation-left-tl,
+.x-tab.x-tab-disabled .x-tab-navigation-left-bl,
+.x-tab.x-tab-disabled .x-tab-navigation-left-tr,
+.x-tab.x-tab-disabled .x-tab-navigation-left-br,
+.x-tab.x-tab-disabled .x-tab-navigation-left-tc,
+.x-tab.x-tab-disabled .x-tab-navigation-left-bc {
+    background-image: url(images/tab/tab-navigation-left-disabled-corners.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2970 */
+.x-tab.x-tab-disabled .x-tab-navigation-left-ml,
+.x-tab.x-tab-disabled .x-tab-navigation-left-mr {
+    background-image: url(images/tab/tab-navigation-left-disabled-sides.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2975 */
+.x-tab.x-tab-disabled .x-tab-navigation-left-mc {
+    background-repeat: repeat-x;
+    background-image: url(images/tab/tab-navigation-left-disabled-fbg.gif);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2985 */
+.x-tab-navigation-tl,
+.x-tab-navigation-bl,
+.x-tab-navigation-tr,
+.x-tab-navigation-br {
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#00FFFFFF,endColorstr=#00FFFFFF);
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:2995 */
+.x-tab-navigation .x-tab-close-btn {
+    top: 0;
+    right: 0;
+    width: 16px;
+    height: 16px;
+    font: 12px/1 FontAwesome;
+    color: #fff;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-tab-navigation .x-tab-close-btn:before {
+    content: "\f00d";
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3005 */
+.x-tab-bar-plain .x-tab-navigation .x-tab-close-btn {
+    color: #919191;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3017 */
+.x-tab-navigation .x-tab-close-btn-over {
+    background-position: -16px 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3027 */
+.x-tab-navigation .x-tab-close-btn-pressed {
+    background-position: -32px 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3034 */
+.x-tab-navigation.x-tab-focus .x-tab-close-btn {
+    color: #fff;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3038 */
+.x-tab-bar-plain .x-tab-navigation.x-tab-focus .x-tab-close-btn {
+    color: #919191;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3048 */
+.x-tab-navigation.x-tab-over .x-tab-close-btn {
+    color: #fff;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3052 */
+.x-tab-bar-plain .x-tab-navigation.x-tab-over .x-tab-close-btn {
+    color: #919191;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3062 */
+.x-tab-navigation.x-tab-focus.x-tab-over .x-tab-close-btn {
+    color: #fff;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3066 */
+.x-tab-bar-plain .x-tab-navigation.x-tab-focus.x-tab-over .x-tab-close-btn {
+    color: #919191;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3076 */
+.x-tab-navigation.x-tab-active .x-tab-close-btn {
+    color: #919191;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3106 */
+.x-tab-navigation.x-tab-focus.x-tab-active .x-tab-close-btn {
+    color: #919191;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3119 */
+.x-tab-navigation.x-tab-disabled .x-tab-close-btn {
+    color: #fff;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    opacity: 0.3;
+    background-position: 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3124 */
+.x-tab-bar-plain .x-tab-navigation.x-tab-disabled .x-tab-close-btn {
+    color: #919191;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Tab.scss:3146 */
+.x-tab-closable.x-tab-navigation .x-tab-button {
+    padding-right: 16px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:158 */
+.x-tab-bar-navigation {
+    background-color: #404040;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:197 */
+.x-tab-bar-navigation-top > .x-tab-bar-body-navigation {
+    padding: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:201 */
+.x-tab-bar-navigation-bottom > .x-tab-bar-body-navigation {
+    padding: 0 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:205 */
+.x-tab-bar-navigation-left > .x-tab-bar-body-navigation {
+    padding: 0 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:215 */
+.x-tab-bar-navigation-right > .x-tab-bar-body-navigation {
+    padding: 0 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:228 */
+.x-tab-bar-plain.x-tab-bar-navigation-top > .x-tab-bar-body-navigation {
+    padding: 8px 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:232 */
+.x-tab-bar-plain.x-tab-bar-navigation-bottom > .x-tab-bar-body-navigation {
+    padding: 0 0 8px 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:236 */
+.x-tab-bar-plain.x-tab-bar-navigation-left > .x-tab-bar-body-navigation {
+    padding: 0 0 0 8px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:246 */
+.x-tab-bar-plain.x-tab-bar-navigation-right > .x-tab-bar-body-navigation {
+    padding: 0 8px 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:259 */
+.x-tab-bar-plain.x-tab-bar-navigation-horizontal {
+    border-top-color: transparent;
+    border-bottom-color: transparent;
+    border-left-width: 0;
+    border-right-width: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:266 */
+.x-tab-bar-plain.x-tab-bar-navigation-vertical {
+    border-right-color: transparent;
+    border-left-color: transparent;
+    border-top-width: 0;
+    border-bottom-width: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:380 */
+.x-tab-bar-horizontal > .x-tab-bar-body-navigation {
+    min-height: 72px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:383 */
+.x-ie8m .x-tab-bar-horizontal > .x-tab-bar-body-navigation {
+    min-height: 72px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:390 */
+.x-tab-bar-vertical > .x-tab-bar-body-navigation {
+    min-width: 72px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:393 */
+.x-ie8m .x-tab-bar-vertical > .x-tab-bar-body-navigation {
+    min-width: 72px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:170 */
+.x-tab-bar-navigation-scroller .x-box-scroller-body-horizontal {
+    margin-left: 24px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:176 */
+.x-tab-bar-navigation-vertical-scroller .x-box-scroller-body-vertical {
+    margin-top: 24px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:181 */
+.x-box-scroller-tab-bar-navigation {
+    cursor: pointer;
+    color: #fff;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    opacity: 0.5;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:191 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-hover {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=60)";
+    opacity: 0.6;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:197 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-pressed {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+    opacity: 0.7;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:203 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-disabled {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=25)";
+    opacity: 0.25;
+    cursor: default;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:213 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-left,
+.x-box-scroller-tab-bar-navigation.x-box-scroller-right {
+    width: 24px;
+    height: 24px;
+    top: 50%;
+    margin-top: -12px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:240 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-left {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    font: 16px/24px FontAwesome;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-left:before {
+    content: "\f053";
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:265 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-right {
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    font: 16px/24px FontAwesome;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-right:before {
+    content: "\f054";
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:292 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-top,
+.x-box-scroller-tab-bar-navigation.x-box-scroller-bottom {
+    height: 24px;
+    width: 24px;
+    left: 50%;
+    margin-left: -12px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:319 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-top {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    font: 16px/24px FontAwesome;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-top:before {
+    content: "\f077";
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/layout/container/Box.scss:344 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-bottom {
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    font: 16px/24px FontAwesome;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/etc/mixins/font-icon.scss:126 */
+.x-box-scroller-tab-bar-navigation.x-box-scroller-bottom:before {
+    content: "\f078";
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:474 */
+.x-tab-bar-plain.x-tab-bar-navigation-scroller .x-box-scroller-body-horizontal {
+    margin-left: 24px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:480 */
+.x-tab-bar-plain.x-tab-bar-navigation-vertical-scroller .x-box-scroller-body-vertical {
+    margin-top: 16px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:485 */
+.x-tab-bar-plain .x-box-scroller-tab-bar-navigation {
+    color: #919191;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:533 */
+.x-tab-bar-navigation-top .x-box-scroller-tab-bar-navigation {
+    margin-top: -12px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:537 */
+.x-tab-bar-navigation-right .x-box-scroller-tab-bar-navigation {
+    margin-left: -12px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:541 */
+.x-tab-bar-navigation-bottom .x-box-scroller-tab-bar-navigation {
+    margin-top: -12px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:545 */
+.x-tab-bar-navigation-left .x-box-scroller-tab-bar-navigation {
+    margin-left: -12px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:554 */
+.x-box-scroller-tab-bar-navigation {
+    background-color: #404040;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/tab/Bar.scss:560 */
+.x-box-scroller-tab-bar-navigation .x-ie8 .x-box-scroller-plain {
+    background-color: #fff;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:276 */
+.x-panel-navigation {
+    border-color: #5fa2dd;
+    padding: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:282 */
+.x-panel-header-navigation {
+    font-size: 20px;
+    border: 1px solid #5fa2dd;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:289 */
+.x-panel-header-navigation .x-tool-img {
+    background-color: #5fa2dd;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:306 */
+.x-panel-header-navigation-horizontal {
+    padding: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:310 */
+.x-panel-header-navigation-horizontal .x-panel-header-navigation-tab-bar {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:330 */
+.x-panel-header-navigation-vertical {
+    padding: 0 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:334 */
+.x-panel-header-navigation-vertical .x-panel-header-navigation-tab-bar {
+    margin-right: 0;
+    margin-left: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:380 */
+.x-panel-header-title-navigation {
+    color: #fff;
+    font-size: 20px;
+    font-weight: bold;
+    font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    line-height: 24px;
+    margin: 36px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:393 */
+.x-panel-header-title-navigation > .x-title-text-navigation {
+    text-transform: none;
+    padding: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:440 */
+.x-panel-header-title-navigation > .x-title-icon-wrap-navigation.x-title-icon-top {
+    height: 39px;
+    padding-bottom: 15px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:445 */
+.x-panel-header-title-navigation > .x-title-icon-wrap-navigation.x-title-icon-right {
+    width: 39px;
+    padding-left: 15px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:457 */
+.x-panel-header-title-navigation > .x-title-icon-wrap-navigation.x-title-icon-bottom {
+    height: 39px;
+    padding-top: 15px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:462 */
+.x-panel-header-title-navigation > .x-title-icon-wrap-navigation.x-title-icon-left {
+    width: 39px;
+    padding-right: 15px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:474 */
+.x-panel-header-title-navigation > .x-title-icon-wrap-navigation > .x-title-icon-navigation {
+    width: 24px;
+    height: 24px;
+    font-size: 24px;
+    color: #fff;
+    background-position: center center;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:493 */
+.x-ie8 .x-panel-header-title-navigation > .x-title-icon-wrap-navigation > .x-title-icon-navigation {
+    color: #fff;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:503 */
+.x-panel-body-navigation {
+    background: #fff;
+    border-color: #d0d0d0;
+    color: #404040;
+    font-size: 13px;
+    font-weight: 300;
+    font-family: 'Open Sans', 'Helvetica Neue', helvetica, arial, verdana, sans-serif;
+    border-width: 1px;
+    border-style: solid;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:667 */
+.x-panel-header-navigation {
+    background-image: none;
+    background-color: #5fa2dd;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:671 */
+.x-panel-header-navigation-vertical {
+    background-image: none;
+    background-color: #5fa2dd;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:729 */
+.x-panel .x-panel-header-navigation-collapsed-border-top {
+    border-bottom-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:733 */
+.x-panel .x-panel-header-navigation-collapsed-border-right {
+    border-left-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:737 */
+.x-panel .x-panel-header-navigation-collapsed-border-bottom {
+    border-top-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:741 */
+.x-panel .x-panel-header-navigation-collapsed-border-left {
+    border-right-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:777 */
+.x-panel-header-navigation-horizontal .x-tool-after-title {
+    margin: 0 0 0 6px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:787 */
+.x-panel-header-navigation-horizontal .x-tool-before-title {
+    margin: 0 6px 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:799 */
+.x-panel-header-navigation-vertical .x-tool-after-title {
+    margin: 6px 0 0 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:809 */
+.x-panel-header-navigation-vertical .x-tool-before-title {
+    margin: 0 0 6px 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:821 */
+.x-panel-header-navigation .x-tool-focus {
+    outline: 1px solid #fff;
+    outline-offset: 1px;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/css-outline.scss:59 */
+.x-ie8 .x-panel-header-navigation .x-tool-focus {
+    outline: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/css-outline.scss:39 */
+.x-ie8 .x-panel-header-navigation .x-tool-focus:after {
+    position: absolute;
+    content: ' ';
+    top: -2px;
+    right: -2px;
+    bottom: -2px;
+    left: -2px;
+    border: 1px solid #fff;
+    pointer-events: none;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-neutral/sass/src/panel/Panel.scss:850 */
+.x-panel-navigation-resizable .x-panel-handle {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    opacity: 0;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:2 */
+.x-panel-navigation-outer-border-l {
+    border-left-color: #5fa2dd !important;
+    border-left-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:6 */
+.x-panel-navigation-outer-border-b {
+    border-bottom-color: #5fa2dd !important;
+    border-bottom-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:10 */
+.x-panel-navigation-outer-border-bl {
+    border-bottom-color: #5fa2dd !important;
+    border-bottom-width: 1px !important;
+    border-left-color: #5fa2dd !important;
+    border-left-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:16 */
+.x-panel-navigation-outer-border-r {
+    border-right-color: #5fa2dd !important;
+    border-right-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:20 */
+.x-panel-navigation-outer-border-rl {
+    border-right-color: #5fa2dd !important;
+    border-right-width: 1px !important;
+    border-left-color: #5fa2dd !important;
+    border-left-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:26 */
+.x-panel-navigation-outer-border-rb {
+    border-right-color: #5fa2dd !important;
+    border-right-width: 1px !important;
+    border-bottom-color: #5fa2dd !important;
+    border-bottom-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:32 */
+.x-panel-navigation-outer-border-rbl {
+    border-right-color: #5fa2dd !important;
+    border-right-width: 1px !important;
+    border-bottom-color: #5fa2dd !important;
+    border-bottom-width: 1px !important;
+    border-left-color: #5fa2dd !important;
+    border-left-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:40 */
+.x-panel-navigation-outer-border-t {
+    border-top-color: #5fa2dd !important;
+    border-top-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:44 */
+.x-panel-navigation-outer-border-tl {
+    border-top-color: #5fa2dd !important;
+    border-top-width: 1px !important;
+    border-left-color: #5fa2dd !important;
+    border-left-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:50 */
+.x-panel-navigation-outer-border-tb {
+    border-top-color: #5fa2dd !important;
+    border-top-width: 1px !important;
+    border-bottom-color: #5fa2dd !important;
+    border-bottom-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:56 */
+.x-panel-navigation-outer-border-tbl {
+    border-top-color: #5fa2dd !important;
+    border-top-width: 1px !important;
+    border-bottom-color: #5fa2dd !important;
+    border-bottom-width: 1px !important;
+    border-left-color: #5fa2dd !important;
+    border-left-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:64 */
+.x-panel-navigation-outer-border-tr {
+    border-top-color: #5fa2dd !important;
+    border-top-width: 1px !important;
+    border-right-color: #5fa2dd !important;
+    border-right-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:70 */
+.x-panel-navigation-outer-border-trl {
+    border-top-color: #5fa2dd !important;
+    border-top-width: 1px !important;
+    border-right-color: #5fa2dd !important;
+    border-right-width: 1px !important;
+    border-left-color: #5fa2dd !important;
+    border-left-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:78 */
+.x-panel-navigation-outer-border-trb {
+    border-top-color: #5fa2dd !important;
+    border-top-width: 1px !important;
+    border-right-color: #5fa2dd !important;
+    border-right-width: 1px !important;
+    border-bottom-color: #5fa2dd !important;
+    border-bottom-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/ext/classic/theme-base/sass/etc/mixins/border-management.scss:86 */
+.x-panel-navigation-outer-border-trbl {
+    border-color: #5fa2dd !important;
+    border-width: 1px !important;
+}
+/* /home/glauber/dri/frontend/DynamicForm/sass/src/view/main/Main.scss:60 */
+.x-title-icon-navigation {
+    font-family: FontAwesome;
+    color: #fff;
+    font-size: 24px;
+    line-height: 24px;
+}
+/* /home/glauber/dri/frontend/DynamicForm/sass/src/view/main/Main.scss:67 */
+.x-tab-icon-el-navigation {
+    font-family: FontAwesome;
+    color: #acacac;
+}
+/* /home/glauber/dri/frontend/DynamicForm/sass/src/view/main/Main.scss:71 */
+.x-tab-over .x-tab-icon-el-navigation {
+    color: #c4c4c4;
+}
+/* /home/glauber/dri/frontend/DynamicForm/sass/src/view/main/Main.scss:75 */
+.x-tab-active .x-tab-icon-el-navigation {
+    color: #fff;
+}
+/* /home/glauber/dri/frontend/DynamicForm/sass/src/view/main/Main.scss:80 */
+.x-panel-header-title-navigation > .x-title-text-navigation:after {
+    top: 30px;
+    right: -24px;
+}

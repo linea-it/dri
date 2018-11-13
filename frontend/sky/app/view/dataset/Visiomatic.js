@@ -7,11 +7,6 @@ Ext.define('Sky.view.dataset.Visiomatic', {
         'visiomatic.Visiomatic'
     ],
 
-    config: {
-        // Current Dataset
-        currentDataset: null
-    },
-
     bind: {
         currentDataset: '{currentDataset}'
     },
@@ -20,7 +15,9 @@ Ext.define('Sky.view.dataset.Visiomatic', {
         var me = this;
 
         Ext.apply(this, {
-            enableTools: false
+            enableTools: false,
+            showCrosshair: false,
+            enableMiniMap: true,
         });
 
         me.callParent(arguments);
@@ -30,11 +27,10 @@ Ext.define('Sky.view.dataset.Visiomatic', {
         var me = this,
         title;
 
-        me.currentDataset = dataset;
+        me.callParent(arguments);
 
         // Setar o titulo do Painel
         title = dataset.get('release_display_name') + ' - ' + dataset.get('tag_display_name') + ' - ' + dataset.get('tli_tilename');
         me.setTitle(title);
-
     }
 });

@@ -12,15 +12,13 @@ class Position(models.Model):
     pst_dataset = models.ForeignKey(
         Dataset,
         on_delete=models.CASCADE, verbose_name='Dataset', default=None, null=True, blank=True)
-    pst_filter = models.ForeignKey(
-        Filter, verbose_name='Filter', default=None, null=True, blank=True)
     pst_ra = models.FloatField(
         verbose_name='RA (deg)')
     pst_dec = models.FloatField(
         verbose_name='Dec (deg)')
     pst_date = models.DateTimeField(
         auto_now_add=True, verbose_name='Date')
-    pst_comment = models.CharField(
+    pst_comment = models.TextField(
         max_length=2048, verbose_name='Comment')
 
     def __str__(self):

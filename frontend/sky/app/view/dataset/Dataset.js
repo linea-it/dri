@@ -20,11 +20,16 @@ Ext.define('Sky.view.dataset.Dataset', {
         fov: null,
         radec: null,
 
-        defaultFov: 0.5,
+        // Fov para centralizar a tile
+        defaultFov: 2.43,
+
+        // Fov para centralizar em um objeto
+        defaultMinFov: 0.60,
 
         // Available datasets (store)
         datasets: null,
-        currentDataset: null
+        currentDataset: null,
+        pinned: false
     },
 
     bind: {
@@ -42,9 +47,13 @@ Ext.define('Sky.view.dataset.Dataset', {
                     reference: 'visiomatic',
                     region: 'center',
                     split: true,
-                    bind: {
-                        showCrosshair: '{BtnCrosshair.pressed}'
+                    listeners: {
+                        objectMenuItemClick: 'onObjectMenuItemClickVisiomatic',
+                        imageMenuItemClick : 'onImageMenuItemClickVisiomatic'
                     }
+                    // bind: {
+                    // showCrosshair: '{BtnCrosshair.pressed}'
+                    // }
                 },{
                     xtype: 'sky-compare',
                     reference: 'compare',
@@ -89,12 +98,51 @@ Ext.define('Sky.view.dataset.Dataset', {
                         },
                         {
                             xtype: 'button',
-                            iconCls: 'x-fa fa-crosshairs',
-                            tooltip: 'Show/Hide Crosshair',
+                            iconCls: 'x-fa fa-map-marker',
+                            tooltip: 'Show/Hide Pin',
                             enableToggle: true,
                             pressed: true,
-                            reference: 'BtnCrosshair'
-                        }
+                            toggleHandler: 'showHideMarker'
+                        },
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-arrows',
+                            tooltip: 'Center Tile',
+                            handler: 'onCenterTile',
+                            bind: {
+                                disabled: '{is_empty}'
+                            }
+                        },
+                        {
+                            xtype: 'button',
+                            iconCls: 'x-fa fa-comments',
+                            tooltip: 'Show/Hide Comments',
+                            enableToggle: true,
+                            pressed: true,
+                            toggleHandler: 'showHideComments',
+                            disabled: true,
+                            hidden: true
+                        },
+                        {
+                            xtype: 'button',
+                            reference: 'btnCrop',
+                            iconCls: 'x-fa fa-crop',
+                            handler: 'onCrop',
+                            tooltip: 'Crop',
+                            bind: {
+                                disabled: '{is_empty}'
+                            },
+                        },
+                        {
+                            xtype: 'button',
+                            reference: 'btnSave',
+                            iconCls: 'x-fa fa-download',
+                            handler: 'onSave',
+                            tooltip: 'Download',
+                            bind: {
+                                disabled: '{is_empty}'
+                            }
+                        },
                     ]
                 }
             ]
@@ -170,10 +218,23 @@ Ext.define('Sky.view.dataset.Dataset', {
 
         me.setRadec(radec);
 
-        if (fov) {
-            me.setFov(fov.replace(',', '.'));
-        } else {
+        // Se o parametro fov for == -1 centraliza a tile
+        if (fov == -1) {
             me.setFov(me.getDefaultFov());
+            me.setPinned(false);
+        } else if (fov == 0) {
+            // Pinned
+            me.setFov(0.05);
+
+            me.setPinned(true);
+        } else {
+
+            fov = parseFloat(fov.replace(',', '.'));
+            if (fov > me.getDefaultMinFov()) {
+                fov = me.getDefaultMinFov();
+            }
+            me.setFov(fov);
+            me.setPinned(false);            
         }
 
         coordinate = radec.ra + ', ' + radec.dec;
@@ -190,27 +251,36 @@ Ext.define('Sky.view.dataset.Dataset', {
 
     },
 
+    clearCompareOptions: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            btn = me.down('#CompareDataset');
+
+        // Limpar os menus anteriores
+        btn.getMenu().removeAll();
+
+        vm.set('disablecompare', true);
+
+    },
+
     updateCompareOptions: function () {
         var me = this,
+            vm = me.getViewModel(),
             store = me.getDatasets(),
             btn = me.down('#CompareDataset'),
             currentDataset = me.getCurrentDataset(),
             items = [],
             item;
 
-        // Limpar os menus anteriores
-        btn.getMenu().removeAll();
-
-        // Desabilita o botao
-        btn.disable();
+        me.clearCompareOptions();
 
         if (!currentDataset) {
             return false;
         }
 
-        if (store.count() > 1) {
+        if (store.count() > 0) {
             store.each(function (dataset) {
-                if (dataset.get('id') != currentDataset.get('id')) {
+                //if (dataset.get('id') != currentDataset.get('id')) {
                     item = {
                         xtype: 'menucheckitem',
                         text: dataset.get('release_display_name') + ' - ' + dataset.get('tag_display_name'),
@@ -221,7 +291,7 @@ Ext.define('Sky.view.dataset.Dataset', {
                     };
 
                     items.push(item);
-                }
+                //}
             });
 
             // Adicionar o botao magnetic
@@ -239,7 +309,7 @@ Ext.define('Sky.view.dataset.Dataset', {
             btn.getMenu().add(items);
 
             // Habilita o botao
-            btn.enable();
+            vm.set('disablecompare', false);
 
         }
     },

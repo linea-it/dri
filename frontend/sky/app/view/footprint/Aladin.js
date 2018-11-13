@@ -12,10 +12,10 @@ Ext.define('Sky.view.footprint.Aladin', {
 
         Ext.apply(this, {
             hideFootprint: false,
-            gotoSetPosition: false
+            gotoSetPosition: false,
+            enableShift: true
         });
-
-        me.callParent(arguments);
+        
+        this.callParent(arguments);
     }
-
 });

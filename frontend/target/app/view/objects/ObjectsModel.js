@@ -10,14 +10,16 @@ Ext.define('Target.view.objects.ObjectsModel', {
         'Target.model.Catalog',
         'Target.model.CatalogObject',
         'Target.model.CurrentSetting',
-        'Target.store.Objects',
         'Target.model.FilterSet',
+        'Target.model.CutoutJob',
+        'Target.model.Object',
+        'Target.store.Objects',
         'Target.store.CurrentSettings',
         'Target.store.ProductDisplayContents',
         'Target.store.FilterSets',
         'Target.store.FilterConditions',
-        'Target.store.CutoutJobs'
-
+        'Target.store.CutoutJobs',
+        'Target.store.Cutouts'
     ],
 
     data: {
@@ -25,20 +27,26 @@ Ext.define('Target.view.objects.ObjectsModel', {
         field_id: 0,
         catalog: 0,
         filters: null,
-        mosaic_is_visible: false
+        mosaic_is_visible: false,
+        haveResults: false,
+        // Se houver um filtro salvo ativo
+        haveFilter: false
     },
 
     stores: {
         catalogs: {
             type: 'catalogs',
-            storeId: 'Catalogs'
+            storeId: 'Catalogs',
+            autoLoad: false
         },
         objects: {
             type: 'targets-objects',
-            storeId: 'objects'
+            storeId: 'objects',
+            autoLoad: false
         },
         currentSettings: {
-            type: 'currentsettings'
+            type: 'currentsettings',
+            autoLoad: false
         },
         displayContents: {
             type: 'product-display-contents',
@@ -52,8 +60,8 @@ Ext.define('Target.view.objects.ObjectsModel', {
             type: 'target-filter-conditions',
             autoLoad: false
         },
-        cutoutsJobs: {
-            type: 'cutoutjobs',
+        cutouts: {
+            type: 'cutouts',
             autoLoad: false
         }
     },
@@ -69,6 +77,10 @@ Ext.define('Target.view.objects.ObjectsModel', {
         },
         filterSet: {
             type: 'Target.model.FilterSet',
+            create: true
+        },
+        currentRecord: {
+            type: 'Target.model.Object',
             create: true
         }
     }

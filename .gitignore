@@ -1,12 +1,25 @@
-# Virtual Env
-env
+# Diretorios de instalacao
+/env
+/data
+/db
+/log
+/bkp
+
+# Diretorio da Home Wordpress
+/apps/home
 
 # Diretorio de projeto pycharm
-.idea/
+/.idea/
+
+# Diretorio de projeto vscode
+/.vscode/
 
 # Others
 *.pyc
 __pycache__
-*.log
 *.swp
 *.bak
+*.log
+*.pid
+# Evitar que o visiomatic seja sobrescrito a cada build
+/frontend/build/production/Target/packages/local/visiomatic/src/visiomatic/dist

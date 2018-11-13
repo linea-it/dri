@@ -4,18 +4,31 @@ Ext.define('Explorer.view.coadd.CoaddModel', {
     alias: 'viewmodel.coadd',
 
     requires: [
-        'Explorer.store.CoaddObject',
+        'Explorer.store.Products',
+        'Explorer.store.Association',
+        'Explorer.store.Objects',
+        'common.store.Surveys',
+        'common.store.Tags',
+        'common.store.Footprints',
+        'common.store.Datasets',
         'common.model.Dataset',
-        'common.store.Datasets'
+        'Explorer.model.Product',
+        'Explorer.store.SpectralDistributions'
     ],
 
     data: {
         source: null,
         object_id: null,
-        coaddObject: null
+        object_data: null,
+        property_id: null,
+        position: null
     },
 
     links: {
+        currentProduct: {
+            type: 'Explorer.model.Product',
+            create: true
+        },
         currentDataset: {
             type: 'common.model.Dataset',
             create: true
@@ -23,9 +36,14 @@ Ext.define('Explorer.view.coadd.CoaddModel', {
     },
 
     stores: {
-        coaddObject: {
-            type: 'coaddobject',
-            storeId: 'coaddObject'
+        products: {
+            type: 'products'
+        },
+        associations: {
+            type: 'association'
+        },
+        objects: {
+            type: 'objects'
         },
         properties: {
             type: 'array',
@@ -45,6 +63,26 @@ Ext.define('Explorer.view.coadd.CoaddModel', {
                 property: 'id',
                 direction: 'DESC'
             }]
+        },
+        // Surveys = Imagens que estao disponiveis para um release
+        surveys: {
+            type: 'surveys'
+        },
+
+        // Tags = Tags associados ao Release
+        tags: {
+            type: 'tags',
+            storeId: 'Tags'
+        },
+        // Tile = Uma instancia reduzida de um dataset somente informacoes das coordenadas
+        // de cada tile.
+        tiles: {
+            type: 'footprints',
+            pageSize: 0
+        },
+
+        spectral: {
+            type: 'spectral-distribution'
         }
     }
 });

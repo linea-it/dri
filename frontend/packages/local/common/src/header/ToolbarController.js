@@ -12,15 +12,22 @@ Ext.define('common.ToolbarController', {
     },
 
     logout: function () {
-        var host = window.location.host,
-            location = Ext.String.format('http://{0}/dri/api/api-auth/logout/?next=/dri/apps/', host);
+        var protocol = window.location.protocol,
+            host = window.location.host,
+            location = Ext.String.format(
+                '{0}//{1}/dri/api/api-auth/logout/?next=/dri/apps/',
+                protocol, host);
 
         window.location.assign(location);
     },
 
     projectHome: function () {
-        var host = window.location.host,
-            location = Ext.String.format('http://{0}/', host);
+        // TODO pode ser alterado pelo router #
+        var protocol = window.location.protocol,
+            host = window.location.host,
+            location = Ext.String.format(
+                '{0}//{1}/',
+                protocol, host);
 
         window.location.assign(location);
 
@@ -103,6 +110,21 @@ Ext.define('common.ToolbarController', {
 
         this.wintutorials.show();
 
+    },
+
+    onClickHelp: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            protocol = window.location.protocol,
+            host = window.location.host,
+            help_url = vm.get('help_url'),
+            newLocation;
+
+        newLocation = Ext.String.format(
+                    '{0}//{1}/{2}',
+                    protocol, host, help_url);
+
+        window.open(newLocation);
     },
 
     loadUsername: function () {

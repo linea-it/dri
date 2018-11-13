@@ -21,6 +21,7 @@ Ext.define('Target.view.home.Home', {
     initComponent: function () {
         var me = this;
 
+        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - initHome');
         Ext.apply(this, {
             items: [
                 {
@@ -55,4 +56,3 @@ Ext.define('Target.view.home.Home', {
         return tree;
     }
 });
-

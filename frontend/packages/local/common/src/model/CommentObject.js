@@ -4,11 +4,11 @@ Ext.define('common.model.CommentObject', {
     fields: [
         {name:'id', type:'int', persist: false},
         {name:'catalog_id', type:'int'},
-        {name:'object_id', type:'int'},
-        {name:'owner', type:'string'},
-        {name:'date', type:'date'},
+        {name:'object_id', type:'string'},
         {name:'comments', type:'string'},
-        {name:'is_owner', type:'boolean'}
+        {name:'owner', type:'string', persist: false},
+        {name:'date', type:'date', persist: false},
+        {name:'is_owner', type:'boolean', persist: false}
     ]
 
 });

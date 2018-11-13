@@ -9,18 +9,36 @@ Ext.define('Explorer.view.system.SystemModel', {
         'Explorer.model.Product',
         'Explorer.store.Association',
         'Explorer.store.ProductDisplayContents',
+        'Explorer.store.ProductRelateds',
+        'Explorer.model.ProductRelated',
         'common.model.Dataset',
-        'common.store.Datasets'
+        'common.store.Surveys',
+        'common.store.Tags',
+        'common.store.Footprints',
+        'common.store.Datasets',
     ],
 
     data: {
         source: null,
         object_id: null,
+        display_ra: '',
+        display_dec: '',
+        display_radius: '',
         object: null,
         object_data: null,
         property_id: null,
         overlayMembers: null,
-        showCrosshair: true
+        position: null,
+        have_members: false,
+        selected_member: null,
+        have_vac: false,
+        visibleOverlayVacs: true,
+        overlayVac: null,
+        vacRadius: 2,
+        vacZ: 2,
+        vacOverlayColor: '1B81BC',
+        vacOverlayPointSize: 1.2,
+        vacOverlaypointType: 'square',
     },
 
     links: {
@@ -31,7 +49,21 @@ Ext.define('Explorer.view.system.SystemModel', {
         currentDataset: {
             type: 'common.model.Dataset',
             create: true
-        }
+        },
+        // Vac selecionado na combobox da aba VAC
+        currentVacProduct: {
+            type: 'Explorer.model.Product',
+            create: true
+        },
+        relatedVacCluster: {
+            type: 'Explorer.model.ProductRelated',
+            create: true
+        },
+        // Vac relacionado ao cluster utilizado como input para sua producao
+        vacCluster: {
+            type: 'Explorer.model.Product',
+            create: true
+        },
     },
 
     stores: {
@@ -68,6 +100,37 @@ Ext.define('Explorer.view.system.SystemModel', {
                 property: 'id',
                 direction: 'DESC'
             }]
-        }
+        },
+        // Surveys = Imagens que estao disponiveis para um release
+        surveys: {
+            type: 'surveys'
+        },
+
+        // Tags = Tags associados ao Release
+        tags: {
+            type: 'tags',
+            storeId: 'Tags'
+        },
+        // Tile = Uma instancia reduzida de um dataset somente informacoes das coordenadas
+        // de cada tile.
+        tiles: {
+            type: 'footprints',
+            pageSize: 0
+        },
+
+        vacProducts: {
+            type: 'products'
+        },
+        vacProductDisplayContents: {
+            type: 'product-display-contents'
+        },
+        vacObjects: {
+            type: 'objects',
+            pageSize: 10000
+        },
+        productRelateds: {
+            type: 'product_relateds',
+            autoLoad: false
+        },
     }
 });

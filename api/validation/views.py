@@ -54,3 +54,9 @@ class DefectViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'dfc_dataset', 'dfc_filter', 'dfc_feature', 'dfc_ra', 'dfc_dec',)
 
     ordering_fields = '__all__'
+
+
+class UserEmailViewSet(viewsets.ModelViewSet):
+    queryset = UserEmail.objects.all()
+
+    serializer_class = UserEmailSerializer

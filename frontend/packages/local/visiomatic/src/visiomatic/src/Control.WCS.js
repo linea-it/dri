@@ -3,10 +3,10 @@
 #
 #	This file part of:	VisiOmatic
 #
-#	Copyright: (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
+#	Copyright: (C) 2014-2017 Emmanuel Bertin - IAP/CNRS/UPMC,
 #                                Chiara Marmo - IDES/Paris-Sud
 #
-#	Last modified: 07/09/2016
+#	Last modified: 30/11/2017
 */
 L.Control.WCS = L.Control.extend({
 	options: {
@@ -18,7 +18,8 @@ L.Control.WCS = L.Control.extend({
 			nativeCelsys: false
 		}],
 		centerQueryKey: 'center',
-		fovQueryKey: 'fov'
+		fovQueryKey: 'fov',
+		sesameURL: 'https://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame'
 	},
 
 	onAdd: function (map) {
@@ -80,7 +81,7 @@ L.Control.WCS = L.Control.extend({
 				latlng = map.getCenter();
 			L.IIPUtils.flashElement(this._wcsinput);
 			url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
-			  this._latLngToHMSDMS(latlng));
+			  L.IIPUtils.latLngToHMSDMS(latlng));
 			url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,
 			  wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
 			history.pushState(stateObj, '', url);
@@ -109,7 +110,7 @@ L.Control.WCS = L.Control.extend({
 			}
 			switch (coord.units) {
 			case 'HMS':
-				this._wcsinput.value = this._latLngToHMSDMS(latlng);
+				this._wcsinput.value = L.IIPUtils.latLngToHMSDMS(latlng);
 				break;
 			case 'deg':
 				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
@@ -121,49 +122,11 @@ L.Control.WCS = L.Control.extend({
 		}
 	},
 
-	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
-	_latLngToHMSDMS : function (latlng) {
-		var lng = (latlng.lng + 360.0) / 360.0;
-		lng = (lng - Math.floor(lng)) * 24.0;
-		var h = Math.floor(lng),
-		 mf = (lng - h) * 60.0,
-		 m = Math.floor(mf),
-		 sf = (mf - m) * 60.0;
-		if (sf >= 60.0) {
-			m++;
-			sf = 0.0;
-		}
-		if (m === 60) {
-			h++;
-			m = 0;
-		}
-		var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
-		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
-		 lat = Math.abs(latlng.lat),
-		 sgn = latlng.lat < 0.0 ? '-' : '+',
-		 d = Math.floor(lat);
-		mf = (lat - d) * 60.0;
-		m = Math.floor(mf);
-		sf = (mf - m) * 60.0;
-		if (sf >= 60.0) {
-			m++;
-			sf = 0.0;
-		}
-		if (m === 60) {
-			h++;
-			m = 0;
-		}
-		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
-		 (m < 10 ? '0' : '') + m.toString() + ':' +
-		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
-	},
-
 	panTo: function (str) {
-		var re = /^(-?\d+\.?\d*)\s*,\s*\+?(-?\d+\.?\d*)/g,
-				result = re.exec(str),
-				wcs = this._map.options.crs,
-				coord = this.options.coordinates[this._currentCoord],
-				latlng = wcs.parseCoords(str);
+		var	wcs = this._map.options.crs,
+			coord = this.options.coordinates[this._currentCoord],
+			latlng = wcs.parseCoords(str);
+
 		if (latlng) {
 			if (wcs.pixelFlag) {
 				this._map.panTo(latlng);
@@ -177,7 +140,7 @@ L.Control.WCS = L.Control.extend({
 			}
 		} else {
 			// If not, ask Sesame@CDS!
-			L.IIPUtils.requestURL('http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' + str,
+			L.IIPUtils.requestURL(this.options.sesameURL + '/-oI/A?' + str,
 			 'getting coordinates for ' + str, this._getCoordinates, this, 10);
 		}
 	},
@@ -186,7 +149,7 @@ L.Control.WCS = L.Control.extend({
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				var str = httpRequest.responseText,
-					latlng = _this._map.options.crs.parseCoords(str, true);
+					latlng = _this._map.options.crs.parseCoords(str);
 
 				if (latlng) {
 					_this._map.panTo(latlng);

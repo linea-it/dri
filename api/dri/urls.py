@@ -13,9 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+from activity_statistic import views as statistics_views
+from aladin import views as aladin_views
 from catalog import views as catalog_views
 from coadd import views as coadd_views
+from comment import views as comment_views
 from common import views as common_views
+from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
 from interfaces import views as interfaces_views
@@ -24,9 +28,7 @@ from product_classifier import views as product_classifier_views
 from product_register import views as product_register_views
 from rest_framework import routers
 from validation import views as validation_views
-from dri.settings.defaults import *
 from userquery import views as userquery_views
-from comment import views as comment_views
 
 router = routers.DefaultRouter()
 
@@ -48,6 +50,7 @@ router.register(r'product', product_views.ProductViewSet)
 router.register(r'catalog', product_views.CatalogViewSet)
 router.register(r'map', product_views.MapViewSet)
 router.register(r'cutoutjob', product_views.CutoutJobViewSet)
+router.register(r'cutouts', product_views.CutoutViewSet)
 router.register(r'mask', product_views.MaskViewSet)
 router.register(r'productrelated', product_views.ProductRelatedViewSet)
 router.register(r'productcontent', product_views.ProductContentViewSet)
@@ -65,6 +68,9 @@ router.register(r'workgroup_users', product_views.WorkgroupUserViewSet)
 router.register(r'filterset', product_views.FiltersetViewSet)
 router.register(r'filtercondition', product_views.FilterConditionViewSet)
 router.register(r'bookmarked', product_views.BookmarkedViewSet)
+router.register(r'productexport', product_views.ExportViewSet, base_name='export_product')
+router.register(r'productsaveas', product_views.SaveAsViewSet, base_name='product_save_as')
+router.register(r'import_target_list', product_views.ImportTargetListViewSet, base_name='import_target_list')
 
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
@@ -85,27 +91,51 @@ router.register(r'target', catalog_views.TargetViewSet, base_name='target')
 router.register(r'objectsrating', catalog_views.RatingViewSet)
 router.register(r'objectsreject', catalog_views.RejectViewSet)
 router.register(r'objectscomments', catalog_views.CommentsViewSet)
-router.register(r'coadd_objects', catalog_views.CoaddObjects, base_name='coadd_objects')
-
-# API Catalogos para o Visiomatic
-router.register(r'visiomatic/coadd_objects', catalog_views.VisiomaticCoaddObjects, base_name='visiomatic_coadd_objects')
-
-# UserQuery API
-router.register(r'userquery', userquery_views.UserQueryViewSet)
+router.register(r'catalogobjects', catalog_views.CatalogObjectsViewSet, base_name='catalog_objects')
 
 # Comment API
 router.register(r'comment/position', comment_views.PositionViewSet)
 
+# UserQuery API
+router.register(r'userquery_query', userquery_views.QueryViewSet)
+router.register(r'userquery_sample', userquery_views.SampleViewSet)
+router.register(r'userquery_job', userquery_views.JobViewSet)
+router.register(r'userquery_table', userquery_views.TableViewSet)
+router.register(r'userquery_validate', userquery_views.QueryValidate, base_name='validate_query')
+router.register(r'userquery_preview', userquery_views.QueryPreview, base_name='preview_query')
+router.register(r'userquery_property', userquery_views.TableProperties, base_name='table')
+router.register(r'userquery_target', userquery_views.TargetViewerRegister, base_name='target_viewer_register')
+router.register(r'userquery_download', userquery_views.TableDownload, base_name='table_download')
+
+# Aladin API
+router.register(r'aladin/image', aladin_views.ImageViewSet)
+
+# Statistics API
+router.register(r'statistics', statistics_views.ActivityStatisticViewSet)
+
+providers = common_views.get_providers()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^admin', admin.site.urls),
     url(r'^', include(router.urls)),
     url(r'^contact/', common_views.contact_us),
-
+    url(r'^get_fits_by_tilename', coadd_views.get_fits_by_tilename),
+    url(r'^vizier/', product_views.vizier_cds),
+    url(r'^send_statistic_email/', common_views.send_statistic_email),
     url(r'^teste/', common_views.teste),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+
+
+    # Plugin externos em docker ex: galaxy_cluster
+    url(r'^plugin/galaxy_cluster', common_views.galaxy_cluster),
+
+
+
+    url(r'^get_token', common_views.get_token),
+    url(r'^get_setting/$', common_views.get_setting),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'),
+        {'extra_context': {'providers': providers}}),
 ]
 
-if USE_OAUTH:
+if settings.USE_OAUTH:
     urlpatterns += (url(r'^accounts/', include('allauth.urls')),)

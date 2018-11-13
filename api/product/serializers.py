@@ -1,12 +1,17 @@
+import datetime
 import logging
+import os
+import time
+from urllib.parse import urljoin
 
+import humanize
+from django.contrib.auth.models import User
+from django.db.models import Sum
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ExternalProcess
 from rest_framework import serializers
 
 from .models import *
-
-from django.contrib.auth.models import User
 
 logger = logging.getLogger(__name__)
 
@@ -28,12 +33,17 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
     # epr_original_id = Original Process ID
     epr_original_id = serializers.SerializerMethodField()
 
+    # epr_original_id = Original Process ID
+    prd_filter = serializers.SerializerMethodField()
+
     # Related Products
     prl_related = serializers.SerializerMethodField()
     prl_cross_identification = serializers.SerializerMethodField()
     prl_cross_property = serializers.SerializerMethodField()
 
     tablename = serializers.SerializerMethodField()
+
+    productlog = serializers.SerializerMethodField()
 
     class Meta:
         model = Product
@@ -52,10 +62,12 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             # 'pgr_name',
             'pgr_display_name',
             'epr_original_id',
+            'prd_filter',
             'prl_related',
             'prl_cross_identification',
             'prl_cross_property',
-            'tablename'
+            'tablename',
+            'productlog'
         )
 
     def get_pcl_name(self, obj):
@@ -82,23 +94,29 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
         except:
             return None
 
+    def get_prd_filter(self, obj):
+        try:
+            return obj.prd_filter.filter
+        except:
+            return None
+
     def get_prl_related(self, obj):
         try:
-            related = ProductRelated.objects.get(prl_product=obj.pk)
+            related = ProductRelated.objects.get(prl_product=obj.pk, prl_relation_type="join")
             return related.prl_related.pk
         except:
             return None
 
     def get_prl_cross_identification(self, obj):
         try:
-            related = ProductRelated.objects.get(prl_product=obj.pk)
+            related = ProductRelated.objects.get(prl_product=obj.pk, prl_relation_type="join")
             return related.prl_cross_identification.pk
         except:
             return None
 
     def get_prl_cross_property(self, obj):
         try:
-            related = ProductRelated.objects.get(prl_product=obj.pk)
+            related = ProductRelated.objects.get(prl_product=obj.pk, prl_relation_type="join")
             return related.prl_cross_identification.pcn_column_name.lower()
         except:
             return None
@@ -110,7 +128,15 @@ class ProductSerializer(serializers.HyperlinkedModelSerializer):
             else:
                 return obj.table.tbl_name
         except:
-            return  None
+            return None
+
+    def get_productlog(self, obj):
+        try:
+            site = obj.prd_process_id.epr_site.sti_url
+            return urljoin(site, "VP/getViewProcessCon?process_id=%s" % obj.prd_process_id.epr_original_id)
+
+        except:
+            return None
 
 
 class FileSerializer(serializers.HyperlinkedModelSerializer):
@@ -200,6 +226,7 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
 
             'tbl_schema',
             'tbl_name',
+            'tbl_size',
 
             'release_id',
             'release_display_name',
@@ -295,15 +322,11 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             return False
 
 
-class MapSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
+class MapSerializer(ProductSerializer):
+    class Meta(ProductSerializer.Meta):
         model = Map
 
-        fields = (
-            'id',
-            'mpa_nside',
-            'mpa_ordering',
-        )
+        fields = ProductSerializer.Meta.fields + ('id', 'mpa_nside', 'mpa_ordering')
 
 
 class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
@@ -311,6 +334,10 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
         queryset=Product.objects.all(), many=False)
 
     owner = serializers.SerializerMethodField()
+    execution_time = serializers.SerializerMethodField()
+    count_files = serializers.SerializerMethodField()
+    file_sizes = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
 
     class Meta:
         model = CutOutJob
@@ -327,11 +354,106 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_tag',
             'cjb_band',
             'cjb_Blacklist',
-            'owner'
+            'cjb_label_position',
+            'cjb_label_properties',
+            'cjb_label_colors',
+            'cjb_label_font_size',
+            'cjb_start_time',
+            'cjb_finish_time',
+            'cjb_description',
+            'cjb_image_formats',
+            'owner',
+            'execution_time',
+            'count_files',
+            'file_sizes',
+            'is_owner'
         )
 
     def get_owner(self, obj):
         return obj.owner.username
+
+    def get_execution_time(self, obj):
+        try:
+            tdelta = obj.cjb_finish_time - obj.cjb_start_time
+            seconds = tdelta.total_seconds()
+            execution_time = str(datetime.timedelta(seconds=seconds)).split('.')[0]
+
+            return execution_time
+        except:
+            return None
+
+    def get_count_files(self, obj):
+        try:
+            return obj.cutout_set.count()
+
+        except:
+            return None
+
+    def get_file_sizes(self, obj):
+        try:
+            sum_sizes = obj.cutout_set.aggregate(sum_size=Sum('ctt_file_size'))
+            return humanize.naturalsize(sum_sizes.get("sum_size"))
+
+        except:
+            return None
+
+    def get_is_owner(self, obj):
+        current_user = self.context['request'].user
+        if obj.owner.pk == current_user.pk:
+            return True
+        else:
+            return False
+
+
+class CutoutSerializer(serializers.HyperlinkedModelSerializer):
+    cjb_cutout_job = serializers.PrimaryKeyRelatedField(
+        queryset=CutOutJob.objects.all(), many=False)
+
+    ctt_file_source = serializers.SerializerMethodField()
+    timestamp = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Cutout
+
+        fields = (
+            'id',
+            'cjb_cutout_job',
+            'ctt_object_id',
+            'ctt_object_ra',
+            'ctt_object_dec',
+            'ctt_filter',
+            'ctt_thumbname',
+            # 'ctt_file_path',
+            'ctt_file_name',
+            'ctt_file_type',
+            'ctt_file_size',
+            'ctt_download_start_time',
+            'ctt_download_finish_time',
+            'ctt_file_source',
+            'timestamp'
+        )
+
+    def get_ctt_file_source(self, obj):
+        try:
+            cutout_source = settings.DES_CUTOUT_SERVICE['CUTOUT_SOURCE']
+
+            if obj.ctt_file_path is not None:
+
+                source = os.path.join(cutout_source, obj.ctt_file_path)
+
+                return source
+            else:
+                return None
+
+        except KeyError as e:
+            raise Exception("The CUTOUT_SOURCE parameter has not been configured, "
+                            " add this attribute to the DES_CUTOUT_SERVICE section.")
+
+        except Exception as e:
+            raise (e)
+
+    def get_timestamp(self, obj):
+        return time.time()
 
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):
@@ -483,6 +605,7 @@ class ProductRelatedSerializer(serializers.ModelSerializer):
             'id',
             'prl_product',
             'prl_related',
+            'prl_relation_type',
             'prl_cross_identification',
             'prl_cross_name'
         )
@@ -833,7 +956,6 @@ class FiltersetSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'product',
-            'owner',
             'fst_name'
         )
 
@@ -872,7 +994,7 @@ class FilterConditionSerializer(serializers.ModelSerializer):
             try:
                 return obj.pcs_content.pcn_column_name
             except:
-                return None
+                return obj.fcd_property_name
 
     def get_operator_display_name(self, obj):
         try:
@@ -889,6 +1011,64 @@ class FilterConditionSerializer(serializers.ModelSerializer):
         except:
             return None
 
+
+class FConditionSerializer(serializers.ModelSerializer):
+    """
+    Este serializer e uma versao menor  do FilterConditionSerializer
+    contendo apenas os atributos para criar a clausula where no formato SQLAlchemy
+    https://github.com/zzzeek/sqlalchemy/blob/master/lib/sqlalchemy/sql/operators.py#L16
+    """
+    column = serializers.SerializerMethodField()
+    op = serializers.SerializerMethodField()
+    value = serializers.SerializerMethodField()
+
+    class Meta:
+        model = FilterCondition
+
+        fields = (
+            'column',
+            'op',
+            'value',
+        )
+
+    def get_column(self, obj):
+        property = ""
+        try:
+            property = obj.fcd_property.pcn_column_name
+        except:
+            property = obj.fcd_property_name
+
+        property.lower().strip()
+
+        return property
+
+    def get_op(self, obj):
+
+        op = obj.fcd_operation
+        if op == "=":
+            op = "eq"
+
+        elif op == "!=":
+            op = "ne"
+
+        elif op == "<":
+            op = "lt"
+
+        elif op == "<=":
+            op = "le"
+
+        elif op == ">":
+            op = "gt"
+
+        elif op == ">=":
+            op = "ge"
+
+        return op
+
+    def get_value(self, obj):
+        return obj.fcd_value
+
+
 # ---------------------------------- Bookmark ----------------------------------
 
 class BookmarkedSerializer(serializers.ModelSerializer):
@@ -897,7 +1077,6 @@ class BookmarkedSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BookmarkProduct
-
 
         fields = (
             'id',

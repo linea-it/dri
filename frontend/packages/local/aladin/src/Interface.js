@@ -1,6 +1,11 @@
 Ext.define('aladin.Interfaces', {
 
+    requires: [
+        'aladin.maps.MapSelectionWindow'
+    ],
+
     windowInfo: null,
+    windowMapSelection: null,
 
     enableDisableInfo: function (btn, state) {
         var me = this,
@@ -19,7 +24,7 @@ Ext.define('aladin.Interfaces', {
             w;
 
         w = Ext.create('Ext.Component', {
-            width: 200,
+            width: 280,
             height: 100,
             x: 5,
             y: 10,
@@ -30,12 +35,14 @@ Ext.define('aladin.Interfaces', {
             cls: 'aladin-location-info',
             style: {
                 position: 'absolute',
-                zIndex: 999
+                zIndex: 29
             },
             tpl: [
-                '<spam>{release}</spam> <spam>{tag}</spam>',
+                // '<spam>{release}</spam> <spam>{tag}</spam>',
+                '</br><spam>{image_survey}</spam>',
                 '</br><spam>{tilename}</spam>',
-                '</br><spam>J2000 {location}</spam>'
+                '</br><spam>RA, Dec (deg): {location}</spam>' +
+                '</br><div style="white-space:nowrap;">Mouse RA, Dec (deg): {mlocation}</div>'
             ]
         });
 
@@ -49,8 +56,9 @@ Ext.define('aladin.Interfaces', {
             vm = me.getViewModel(),
             tile = vm.get('tile'),
             tag = vm.get('tag'),
-            release = vm.get('release'),
-            data,
+            release = vm.get('release_name'),
+            data, currentSurvey,
+            image_survey = '',
             tl = '',
             tg = '',
             rl = '';
@@ -63,8 +71,15 @@ Ext.define('aladin.Interfaces', {
             tl = tile.get('tli_tilename');
         }
 
+        currentSurvey = me.getImageSurvey();
+        if ((currentSurvey) && (currentSurvey.id != 'empty_survey')){
+            image_survey = currentSurvey.name;
+        }
+
         data = {
+            image_survey: image_survey,
             location: vm.get('location'),
+            mlocation: vm.get('mlocation'),
             release: rl,
             tag: tg,
             tilename: tl
@@ -98,7 +113,8 @@ Ext.define('aladin.Interfaces', {
         }
 
         return Ext.create('Ext.toolbar.Toolbar', {
-            vertical: vertical
+            vertical: vertical,
+            reference: 'aladinToolbar'
             //enableOverflow: true
         });
 
@@ -115,6 +131,7 @@ Ext.define('aladin.Interfaces', {
             vertical = true;
         }
 
+        //Botão de troca para o VisiOmatic
         if (me.getEnableShift()) {
             tools.push({
                 xtype: 'button',
@@ -125,6 +142,20 @@ Ext.define('aladin.Interfaces', {
                 bind: {
                     disabled:'{!tile}'
                 }
+            });
+        }
+
+        // Botão Layers Control
+        if (me.getEnableLayersControl()) {
+            tools.push({
+                xtype: 'button',
+                scope: me,
+                iconCls: 'x-fa fa-picture-o',
+                tooltip: 'Image Layer',
+                menu: me.createImageLayersMenuItems(),
+                menuAlign: 'tr',
+                arrowVisible: false,
+                itemId: 'BtnImageLayers'
             });
         }
 
@@ -152,10 +183,16 @@ Ext.define('aladin.Interfaces', {
 
         }
 
-        // Color Map Menu
-        if (me.getEnableColorMap()) {
+        // Mapas
+        if (me.getEnableMaps()) {
+            tools.push({
+                xtype: 'button',
+                tooltip: 'Map Viewer',
+                iconCls: 'x-fa fa-th',
+                scope: me,
+                handler: me.onClickBtnMap
+            });
 
-            tools.push(me.createColorMapMenu());
         }
 
         // Goto
@@ -192,27 +229,21 @@ Ext.define('aladin.Interfaces', {
 
         // Export Png
         if (me.getEnableExportPng()) {
-
-            tools.push({
-                xtype: 'button',
-                tooltip: 'Export view as PNG',
-                iconCls: 'x-fa fa-picture-o',
-                scope: me,
-                handler: me.exportAsPng
-            });
+            // Habilitar o botão apenas se o navegador for firefox,
+            // a funcao do aladin de snapshot nao funciona no google chrome.
+            if (Ext.firefoxVersion > 0) {
+              tools.push({
+                  xtype: 'button',
+                  tooltip: 'Snapshot',
+                  iconCls: 'x-fa fa-camera',
+                  scope: me,
+                  handler: me.exportAsPng
+              });
+            }
         }
 
         // Auxiliar Tools
         auxTools = me.getAuxTools();
-
-        // TODO Mover o location para info
-        // auxTools.push({
-        //     xtype: 'tbtext',
-        //     width: 180,
-        //     bind: {
-        //         html: 'Location: ' + '{location}'
-        //     }
-        // });
 
         if (auxTools.length > 0) {
             Ext.each(auxTools, function (tool) {
@@ -220,6 +251,9 @@ Ext.define('aladin.Interfaces', {
 
             });
         }
+
+        //Manager Layers Button
+        //Esse botão é criado pelo aladin e não está disponível aqui, ver Aladin.js
 
         return tools;
 
@@ -270,21 +304,17 @@ Ext.define('aladin.Interfaces', {
             checked: me.getTilesGridVisible()
         });
 
-        // Maps
-        var maps = me.createMapsMenuItems();
-        if (me.getEnableMaps()) {
-            items.push({
-                text: 'Maps',
-                itemId: 'MapsMenu',
-                menu: maps,
-                menuAlign: 'tr'
-                // disabled: true
-            });
+        // -------------------- Separador -----------------------------
+        items.push('-');
+
+        // Color Map Menu
+        if (me.getEnableColorMap()) {
+
+            items.push(me.createColorMapMenu());
         }
 
         // -------------------- Separador -----------------------------
         items.push('-');
-
         // Des Footprint
         if (me.getEnableFootprint()) {
             var isHidden = me.getHideFootprint();
@@ -403,16 +433,15 @@ Ext.define('aladin.Interfaces', {
 
         items = me.createColorMapMenuItems();
 
-        menu = Ext.create('Ext.button.Button', {
-            //text: 'Color Map',
+        menu = {
+            text: 'Color Map',
             tooltip: 'Change Color Map',
-            iconCls: 'x-fa fa-eyedropper',
             reference: 'BtnColorMap',
             itemId: 'BtnColorMap',
             menu: items,
             menuAlign: 'tr',
             arrowVisible: false
-        });
+        };
 
         return menu;
     },
@@ -459,6 +488,64 @@ Ext.define('aladin.Interfaces', {
         items = me.createColorMapMenuItems();
 
         btn.setMenu(items);
-    }
+    },
+
+
+    createImageLayersMenuItems: function () {
+        // console.log('createImageLayersMenuItems()');
+        var me = this,
+            externalSurveys = me.getExternalSurveys(),
+            desSurveys = me.getSurveys(),
+            items = [],
+            survey, currentSurvey;
+
+        if ((desSurveys != null) && (desSurveys.length > 0)) {
+            for (var i in desSurveys) {
+                desSurvey = desSurveys[i];
+
+                if (desSurvey.id != 'empty_survey') {
+
+                    items.push({
+                        xtype: 'menucheckitem',
+                        text: desSurvey["name"],
+                        group: 'imageSurveys',
+                        survey: desSurvey,
+                        scope: me,
+                        checked: true,
+                        checkHandler: me.selectExternalSurvey
+                    });
+                }
+            }
+            items.push('-');
+        }
+
+        for (var i in externalSurveys) {
+            survey = externalSurveys[i];
+
+            items.push({
+                xtype: 'menucheckitem',
+                text: survey["name"],
+                group: 'imageSurveys',
+                survey: survey,
+                scope: me,
+                checkHandler: me.selectExternalSurvey
+            });
+        }
+
+        return items;
+    },
+
+    updateImageLayersMenuItems: function () {
+        var me = this,
+            btn = me.down('#BtnImageLayers'),
+            items;
+
+        if (btn) {
+            items = me.createImageLayersMenuItems();
+
+            btn.setMenu(items);
+        }
+    },
+
 
 });

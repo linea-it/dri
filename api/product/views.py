@@ -1,22 +1,38 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import logging
-from django.core.exceptions import ObjectDoesNotExist
+import operator
 
 import django_filters
-from rest_framework import filters
-from rest_framework import viewsets
-from rest_framework import mixins
-from rest_framework.decorators import list_route
-from rest_framework.response import Response
-from django.db.models import Q
 from common.filters import IsOwnerFilterBackend
-from .models import Product, Catalog, Map, Mask, CutOutJob, ProductContent, ProductContentAssociation, ProductSetting, \
-    CurrentSetting, ProductContentSetting, Permission, WorkgroupUser
-from .serializers import *
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q
+from django.http import HttpResponse
+from product.tasks import export_target_by_filter
+from rest_framework import filters
+from rest_framework import mixins
+from rest_framework import viewsets
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import list_route
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
+from product.importproduct import ImportTargetListCSV
+from django.http import JsonResponse
+
+from lib.CatalogDB import CatalogDB
 from .filters import ProductPermissionFilterBackend
-import operator
+from .serializers import *
+from .tasks import product_save_as
+from .tasks import import_target_list
+
+from .association import Association
+
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from .viziercds import VizierCDS
+
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +43,12 @@ class ProductFilter(django_filters.FilterSet):
     band = django_filters.MethodFilter()
     class_name = django_filters.MethodFilter()
     process = django_filters.MethodFilter()
+    release = django_filters.MethodFilter()
 
     class Meta:
         model = Product
         fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id',
-                  'releases',
-                  'tags', 'class_name']
+                  'releases', 'tags', 'class_name', 'release',]
 
     def filter_group(self, queryset, value):
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
@@ -48,6 +64,9 @@ class ProductFilter(django_filters.FilterSet):
 
     def filter_process(self, queryset, value):
         return queryset.filter(prd_process_id__epr_original_id=str(value))
+
+    def filter_release(self, queryset, value):
+        return queryset.filter(releases__id=int(value))
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -67,19 +86,29 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')
 
 
+
 class CatalogFilter(django_filters.FilterSet):
     group = django_filters.MethodFilter()
+    group__in = django_filters.MethodFilter()
+    release = django_filters.MethodFilter()
 
     class Meta:
         model = Product
-        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'group']
+        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'group', 'group__in', 'release']
 
     def filter_group(self, queryset, value):
         # product -> product_class -> product_group
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
 
+    def filter_group__in(self, queryset, value):
+        # product -> product_class -> product_group
+        return queryset.filter(prd_class__pcl_group__pgr_name__in=value.split(','))
 
-# Create your views here.
+    def filter_release(self, queryset, value):
+        return queryset.filter(releases__id=int(value))
+
+
+
 class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     """
     API endpoint that allows product to be viewed or edited
@@ -99,19 +128,23 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     @list_route()
     def get_class_tree_by_group(self, request):
         """
-            Este metodo retorna uma tree, com todos os produtos de um grupo. estes produtos estÃ£o
+            Este metodo retorna uma tree, com todos os produtos de um grupo. estes produtos esto
             agrupados por suas classes.
-            Ã© necessario o parametro group que Ã© o internal name da tabela Group
+             necessario o parametro group que  o internal name da tabela Group
             ex: catalog/get_class_tree_by_group/group='targets'
         """
         group = request.query_params.get('group', None)
-
-        if not group:
+        groupin = request.query_params.get('group__in', None)
+        if not group and not groupin:
             # TODO retornar execpt que o group e obrigatorio
             return Response({
                 'success': False,
-                'msg': 'NecessÃ¡rio passar o parametro group.'
+                'msg': 'Necessario passar o parametro group.'
             })
+
+        groups = None
+        if groupin is not None:
+            groups = groupin.split(',')
 
         # Usando Filter_Queryset e aplicado os filtros listados no filterbackend
         queryset = self.filter_queryset(self.get_queryset())
@@ -130,9 +163,14 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 ids = bookmarkeds.values_list('product', flat=True)
                 queryset = self.queryset.filter(pk__in=ids)
 
+        # Caso tenha mais de um group passado por parametro o no principal sera o grupo
+        nodeGroup = dict()
 
         # Esse dicionario vai receber os nos principais que sao as classes.
         classes = dict()
+
+        # Instancia do banco de Catalogo
+        catalog_db = CatalogDB()
 
         for row in queryset:
             # Internal name da classe
@@ -145,7 +183,9 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                     class_name: dict({
                         "text": "%s" % row.prd_class.pcl_display_name,
                         "expanded": False,
-                        "children": list()
+                        "children": list(),
+                        "pgr_name": str(row.prd_class.pcl_group.pgr_name),
+                        "leaf": False,
                     })
                 })
 
@@ -157,29 +197,67 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             if row.prd_owner and request.user.pk == row.prd_owner.pk:
                 editable = True
 
+            # Checar se o Catalog Existe no Banco de Dados
+            # TODO essa solucao e temporaria enquanto nao temos um garbage colector para apagar as tabelas
+            # nao registradas.
+            table_exist = False
+            iconcls = 'x-fa fa-exclamation-triangle color-orange'
+            try:
+                if row.tbl_database == 'catalog' or row.tbl_database is None:
+                    if catalog_db.table_exists(schema=row.tbl_schema, table=row.tbl_name):
+                        iconcls = 'no-icon'
+                        table_exist = True
+                else:
+                    iconcls = 'no-icon'
+                    table_exist = True
+
+            except Exception as e:
+                print(e)
+                pass
+
             # Adiciono os atributos que serao usados pela interface
             # esse dict vai ser um no filho de um dos nos de classe.
             catalog.update({
                 "text": row.prd_display_name,
                 "leaf": True,
-                "iconCls": "no-icon",
+                "iconCls": iconcls,
                 "bookmark": None,
-                "editable": editable
+                "editable": editable,
+                "tableExist": table_exist,
+                "description": row.prd_description,
+                "external_catalog": False
             })
 
             try:
                 bookmark = BookmarkProduct.objects.get(product=row.id, owner=request.user.pk)
                 catalog.update({
                     "bookmark": bookmark.pk,
-                    "iconCls": "x-fa fa-star color-icon-starred"
+                    "iconCls": "x-fa fa-star color-icon-starred",
+                    "starred": True
                 })
 
             except ObjectDoesNotExist:
                 pass
 
-            # pega o no da classe e adiciona este no como filho.
+            # pega o no da classe e adiciona este no de catalogo como filho.
             dclass = classes.get(class_name)
             dclass.get('children').append(catalog)
+
+            if groups is not None:
+                # Model Product Group
+                productgroup = row.prd_class.pcl_group
+                group_name = productgroup.pgr_name
+
+                # Verifica se ja existe um no para esse grupo
+                if nodeGroup.get(group_name) is None:
+                    nodeGroup.update({
+                        group_name: dict({
+                            "text": str(productgroup.pgr_display_name),
+                            "expanded": False,
+                            "children": list()
+                        })
+                    })
+
 
         result = dict({
             'success': True,
@@ -187,12 +265,64 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             'children': list()
         })
 
-        for class_name in classes:
-            # result.get("root").get('children').append(classes.get(class_name))
-            result.get('children').append(classes.get(class_name))
+        # Se tiver mais de um grupo, as classes vao ficar como subdiretorio do grupo.
+        external_catalogs_vizier = None
+        if groups is not None:
+
+            external_catalogs_vizier = self.get_external_catalogs()
+
+            for class_name in classes:
+                c = classes.get(class_name)
+                group_name = c.get('pgr_name')
+
+                if group_name in nodeGroup:
+                    nodeGroup.get(group_name).get('children').append(c)
+
+            for group_name in nodeGroup:
+
+                nodeg = nodeGroup.get(group_name)
+
+                # Se ja tiver o grupo External Catalog adiciona os catalogos do vizier como children
+                if group_name == 'external_catalogs' and external_catalogs_vizier is not None:
+                    from pprint import pprint
+                    # pprint(external_catalogs_vizier.get('children')[0].get('children'))
+                    nodeg['children'].append(external_catalogs_vizier.get('children')[0])
+
+
+                result.get('children').append(nodeg)
+
+            # Adiciona Catalogos Externos ex: Vizier
+            if 'external_catalogs' in groups and 'external_catalogs' not in nodeGroup:
+                result.get('children').append(external_catalogs_vizier)
+
+
+        else:
+            # Se tiver apenas um grupo basta retornar as classes
+            for class_name in classes:
+                result.get('children').append(classes.get(class_name))
 
         return Response(result)
 
+
+    def get_external_catalogs(self):
+
+        vizier_catalogs = VizierCDS().get_available_catalogs()
+
+        vizier = dict({
+            "text": "VizieR ",
+            "expanded": False,
+            "children": vizier_catalogs
+
+        })
+
+
+        external_catalogs = dict({
+            "text": "External Catalogs",
+            "expanded": False,
+            "children": list([vizier])
+        })
+
+        return external_catalogs
 
 class ProductContentViewSet(viewsets.ModelViewSet):
     """
@@ -223,14 +353,19 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
         qdisplay_name = request.query_params.get('display_name', None)
 
-        queryset = ProductContent.objects.select_related().filter(pcn_product_id=pcn_product_id)
+        queryset = ProductContent.objects.select_related().filter(
+            pcn_product_id=pcn_product_id).order_by('pcn_column_name')
 
         contents = list()
 
         # Esse array define uma ordem padrao para as propriedades que podem ser associadas, sera usado caso nao tenha
         # uma configuracao para a coluna
-        # ID, RA, Dec, Radius(Arcmin)
-        ucds = list(["meta.id;meta.main", "pos.eq.ra;meta.main", "pos.eq.dec;meta.main", "phys.angSize;src"])
+        # ID, RA, Dec, Radius(Arcmin), a_image, b_image, theta_image, mags
+        ucds = list(["meta.id;meta.main", "pos.eq.ra;meta.main", "pos.eq.dec;meta.main", "phys.angSize;src",
+                     "phot.mag;meta.main;em.opt.g", "phot.mag;meta.main;em.opt.r", "phot.mag;meta.main;em.opt.i",
+                     "phot.mag;meta.main;em.opt.z", "phot.mag;meta.main;em.opt.Y",
+                     "phys.size.smajAxis;instr.det;meta.main", "phys.size.sminAxis;instr.det;meta.main",
+                     "pos.posAng;instr.det;meta.main", ])
 
         default_order = 99999
 
@@ -280,7 +415,6 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
                 content.update({
                     'class_id': association.pca_class_content.pk,
-                    'display_name': association.pca_class_content.pcc_display_name,
                     'ucd': ucd,
                     'unit': association.pca_class_content.pcc_unit,
                     'reference': association.pca_class_content.pcc_reference,
@@ -317,6 +451,17 @@ class ProductContentViewSet(viewsets.ModelViewSet):
         return Response(ordered)
 
 
+class ProductRelatedFilter(django_filters.FilterSet):
+    prd_class = django_filters.MethodFilter()
+
+    class Meta:
+        model = ProductRelated
+        fields = ['prl_product', 'prl_related', 'prl_relation_type', 'prl_cross_identification', 'prd_class']
+
+    def filter_prd_class(self, queryset, value):
+        return queryset.filter(prl_related__prd_class__pcl_name=str(value))
+
+
 class ProductRelatedViewSet(viewsets.ModelViewSet):
     """
 
@@ -325,7 +470,10 @@ class ProductRelatedViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductRelatedSerializer
 
-    filter_fields = ('prl_product', 'prl_related', 'prl_cross_identification')
+    filter_backends = (filters.DjangoFilterBackend, )
+
+    filter_class = ProductRelatedFilter
+
 
 
 class ProductContentAssociationViewSet(viewsets.ModelViewSet):
@@ -353,20 +501,47 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id',)
 
+    @list_route()
+    def get_ucds_by_product(self, request):
+
+        product_id = request.query_params.get('product_id', None)
+        if product_id is None:
+            raise Exception('product_id is required.')
+
+        associations =  Association().get_associations_by_product_id(product_id)
+
+        return Response(associations)
+
+
+class MapFilter(django_filters.FilterSet):
+    release_id = django_filters.MethodFilter(action='filter_release_id')
+    release_name = django_filters.MethodFilter(action='filter_release_name')
+    with_image = django_filters.MethodFilter(action='filter_with_image')
+
+    class Meta:
+        model = Map
+        fields = ['id', 'prd_name', 'prd_display_name', 'prd_class']
+
+    def filter_with_image(self, queryset, value):
+        return queryset.filter(image__isnull=False)
+
+    def filter_release_id(self, queryset, value):
+        return queryset.filter(releases__id=value)
+
+    def filter_release_name(self, queryset, value):
+        return queryset.filter(releases__rls_name=value)
+
 
 class MapViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Map to be viewed or edited
     """
-    queryset = Map.objects.select_related().all()
+    queryset = Map.objects.select_related().all().order_by(
+        'prd_filter__lambda_mean')
 
     serializer_class = MapSerializer
-
-    filter_fields = ('prd_name', 'prd_display_name', 'prd_class')
-
-    search_fields = ('prd_name', 'prd_display_name', 'prd_class')
-
-    ordering_fields = ('id',)
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = MapFilter
 
 
 class MaskViewSet(viewsets.ModelViewSet):
@@ -457,11 +632,24 @@ class CutoutJobViewSet(viewsets.ModelViewSet):
     """
 
     """
-    queryset = CutOutJob.objects.all()
+    queryset = CutOutJob.objects.all().order_by('-cjb_finish_time')
 
     serializer_class = CutoutJobSerializer
 
     filter_fields = ('id', 'cjb_product', 'cjb_display_name', 'cjb_status')
+
+    ordering_fields = ('id', 'cjb_finish_time')
+
+
+class CutoutViewSet(viewsets.ModelViewSet):
+    """
+
+    """
+    queryset = Cutout.objects.all()
+
+    serializer_class = CutoutSerializer
+
+    filter_fields = ('id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_filter',)
 
     ordering_fields = ('id',)
 
@@ -548,6 +736,8 @@ class FiltersetViewSet(viewsets.ModelViewSet):
 
     filter_fields = ('id', 'product', 'owner', 'fst_name')
 
+    filter_backends = (filters.DjangoFilterBackend, IsOwnerFilterBackend)
+
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
 
@@ -561,6 +751,7 @@ class FilterConditionViewSet(viewsets.ModelViewSet):
     serializer_class = FilterConditionSerializer
 
     filter_fields = ('id', 'filterset', 'fcd_property', 'fcd_operation', 'fcd_value')
+
 
 # ---------------------------------- Bookmark ----------------------------------
 
@@ -576,3 +767,129 @@ class BookmarkedViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+
+# ---------------------------------- Export ----------------------------------
+class ExportViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Export a Product in file formats
+    """
+    http_method_names = ['post', ]
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        data = request.data
+
+        product_id = data.get("product", None)
+        sfiletypes = data.get("filetypes")
+        filetypes = sfiletypes.split(",")
+        filter_id = data.get("filter", None)
+        cutoutjob_id = data.get("cutout", None)
+
+        if product_id is None:
+            raise Exception("Product Id is mandatory")
+
+        # Executar a Task Assincrona que fara o Export
+        export_target_by_filter.delay(
+            product_id,
+            filetypes,
+            request.user.pk,
+            filter_id,
+            cutoutjob_id
+        )
+        return HttpResponse(status=200)
+
+
+# ---------------------------------- Save As ----------------------------------
+class SaveAsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows save as a product
+    """
+    http_method_names = ['post', ]
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        data = request.data
+
+        product_id = data.get("product", None)
+        name = data.get("name", None)
+        description = data.get("description")
+        filter_id = data.get("filter", None)
+
+        if product_id is None:
+            raise Exception("Product Id is mandatory")
+
+        # Executar a Task Assincrona que fara o Save As
+        product_save_as.delay(
+            request.user.pk,
+            product_id,
+            name,
+            filter_id,
+            description
+        )
+
+        return HttpResponse(status=200)
+
+
+# ---------------------------------- Import Target List ----------------------------------
+class ImportTargetListViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows upload a Target List Product
+    """
+    http_method_names = ['post', ]
+
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
+
+    permission_classes = (IsAuthenticated,)
+
+    def create(self, request):
+        data = request.data
+
+        try:
+
+            product = ImportTargetListCSV().start_import(request.user.pk, data)
+
+            return JsonResponse(dict({
+                'success': True,
+                'product': product.pk
+            }))
+
+
+        except Exception as e:
+            return JsonResponse(dict({
+                'success': False,
+                'message': str(e)
+            }), status=200)
+
+
+# ------------------------------------- VisieR CDS Objects ----------------------------------
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def vizier_cds(request):
+    if request.method == 'GET':
+        """
+         Faz uma requisicao ao servico Visier CDS e faz um parse do resultado que vem em csv para o 
+         uma lista de dict como se fosse um produto do DRI.        
+
+         """
+
+        query_params = request.query_params
+
+        rows = VizierCDS().get_objects(
+            source=query_params.get("cds_source"),
+            fieldnames=query_params.get("cds_fieldnames"),
+            coordinates=[query_params.get("lat"), query_params.get("lng")],
+            bounds=[query_params.get("dlat"), query_params.get("dlng")]
+        )
+
+        return Response(
+            dict({
+                "count": len(rows),
+                "results": rows
+            }))

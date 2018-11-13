@@ -11,7 +11,6 @@ Ext.define('Sky.view.footprint.FootprintModel', {
         'Sky.store.Datasets',
         'Sky.store.Footprints',
         'Sky.store.Surveys',
-        'Sky.store.Maps',
         'Sky.store.Tags',
         'Sky.model.Release',
         'Sky.model.Tag',

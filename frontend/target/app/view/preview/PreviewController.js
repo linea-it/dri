@@ -7,7 +7,9 @@ Ext.define('Target.view.preview.PreviewController', {
     alias: 'controller.preview',
 
     requires: [
-        'common.comment.CommentsObject'
+        'common.comment.CommentsObject',
+        'common.store.CommentsPosition',
+        'common.model.CommentPosition'
     ],
 
     listen: {
@@ -26,6 +28,16 @@ Ext.define('Target.view.preview.PreviewController', {
         }
     },
 
+    //ao clicar em um item do menu de contexto de objeto do visiomatic
+    onObjectMenuItemClickVisiomatic: function (event, feature) {
+        this.onComment(event.latlng, feature);
+    },
+
+    //ao clicar em um item do menu de contexto de posição do visiomatic
+    onImageMenuItemClickVisiomatic: function (event, dataset) {
+        this.onCommentPosition(event, dataset);
+    },
+
     onChangeRecord: function (record) {
         var me = this,
             view = me.getView(),
@@ -35,8 +47,7 @@ Ext.define('Target.view.preview.PreviewController', {
             dec = record.get('_meta_dec'),
             position;
 
-        vm.set('currentRecord', record);
-
+        // Limpar os membros do cluster
         vm.set('overlayMembers', null);
 
         position = String(ra) + ',' + String(dec);
@@ -46,6 +57,9 @@ Ext.define('Target.view.preview.PreviewController', {
             property: 'position',
             value: position
         }]);
+
+        // Limpar o Visiomatic a cada troca de objetos.
+        //me.changeImage(null);
     },
 
     onLoadDatasets: function (store) {
@@ -61,10 +75,12 @@ Ext.define('Target.view.preview.PreviewController', {
 
         // Apenas uma tile na coordenada do objeto,
         if (store.count() == 1) {
-            // setar essa tile no imagepreview
-            me.changeImage(store.first());
+            dataset = store.first();
 
-            cmb.select(store.first());
+            // setar essa tile no imagepreview
+            me.changeImage(dataset);
+
+            cmb.select(dataset);
 
             // Desabilitar a combobox Image
             cmb.setReadOnly(true);
@@ -105,6 +121,7 @@ Ext.define('Target.view.preview.PreviewController', {
             me.changeImage(null);
         }
 
+        me.activeDataset = dataset;
 
         // Configurar a barra de botoes
         if (vm.get('is_system')) {
@@ -113,33 +130,59 @@ Ext.define('Target.view.preview.PreviewController', {
 
         } else {
             refs.btnRadius.setVisible(false);
-            refs.btnMembers.setVisible(true);
+            refs.btnMembers.setVisible(false);
+
         }
 
     },
 
     onChangeDataset: function (combo) {
         var me = this,
-            dataset = combo.getSelectedRecord();
+            vm = me.getViewModel(),
+            dataset = combo.selection;
+
+        vm.set('currentDataset', dataset);
 
         me.changeImage(dataset);
     },
 
     changeImage: function (dataset) {
+        // console.log("changeImage(%o)", dataset)
         var me = this,
             visiomatic = me.lookupReference('visiomatic'),
-            url;
+            url,
+            options;
+
+        if (!visiomatic.imageLayer) {
+            options = JSON.parse(
+                localStorage.getItem('imageOptions')
+            );
+        }
 
         if (dataset) {
-            url = dataset.get('image_src_ptif');
-            if (url !== '') {
-                visiomatic.setImage(url);
+
+            if (visiomatic.getDataset() != dataset.get('id')) {
+
+                visiomatic.setDataset(dataset.get('id'));
+                visiomatic.setCurrentDataset(dataset);
+
+                url = dataset.get('image_src_ptif');
+                if (url !== '') {
+                    visiomatic.setImage(url, options);
+
+                } else {
+                    visiomatic.removeImageLayer();
+
+                }
 
             } else {
-                visiomatic.removeImageLayer();
+                // Caso a tile seja a mesma pula a etapa de setar a imagem
+                // no visiomatic, isso evita o erro que o visiomatic nao
+                // centraliza no objeto quando o anterior e muito proximo.
+                // https://github.com/linea-it/dri/issues/1024
+                me.showTarget();
 
             }
-
         } else {
             visiomatic.removeImageLayer();
         }
@@ -150,7 +193,6 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
             visiomatic = me.lookupReference('visiomatic');
-
 
         // Checar se o catalogo representa single objects ou sistemas
         if (vm.get('is_system')) {
@@ -166,10 +208,14 @@ Ext.define('Target.view.preview.PreviewController', {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('currentRecord'),
-            visiomatic = me.lookupReference('visiomatic');
+            visiomatic = me.lookupReference('visiomatic'),
+            btnExplorer = me.lookup('BtnExplorer');
 
         // Centraliza a imagem no target
         me.onCenterTarget();
+
+        // Desabilitar o btn Explorer
+        btnExplorer.disable();
     },
 
     targetIsSystem: function () {
@@ -230,23 +276,45 @@ Ext.define('Target.view.preview.PreviewController', {
         visiomatic.showHideRadius(state);
     },
 
-    onComment: function () {
+    onToggleCrosshair: function (btn, state) {
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('currentRecord'),
+            visiomatic = me.lookupReference('visiomatic');
+
+        visiomatic.onToggleCrosshair(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
+            btn
+        );
+    },
+
+    /**
+     * @description
+     * @param latlng Object Posição x,y referente a lat long da imagem
+     * @param feature Object Informações sobre o objeto
+     */
+    onComment: function (latlng, feature) {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
             object = vm.get('currentRecord'),
             catalog = vm.get('currentCatalog'),
-            id;
+            object_id, catalog_id;
 
         if ((!object) || (!object.get('_meta_id'))) {
             return false;
-
         }
 
-        catalog = catalog.get('id');
-        id = object.get('_meta_id');
+        if (feature && feature.properties) {
+            catalog_id = feature.properties._meta_catalog_id;
+            object_id  = feature.id;
+        }else {
+            catalog_id = catalog.get('id');
+            object_id  = object.get('_meta_id');
+        }
 
-        if (id > 0) {
+        if (object_id > 0) {
 
             var comment = Ext.create('Ext.window.Window', {
                 title: 'Comments',
@@ -255,11 +323,13 @@ Ext.define('Target.view.preview.PreviewController', {
                 closeAction: 'destroy',
                 constrainHeader:true,
                 width: 500,
-                height: 500,
+                height: 300,
                 autoShow:true,
+                onEsc: Ext.emptyFn,
                 items: [
                     {
                         xtype: 'comments-object',
+                        reference: '',
                         listeners: {
                             scope: this,
                             changecomments: 'onChangeComments'
@@ -268,16 +338,60 @@ Ext.define('Target.view.preview.PreviewController', {
                 ]
             });
 
-            comment.down('comments-object').getController().loadComments(catalog, id);
+            //passar latlng e feature para ser caregado comentários de um objeto específico ou de uma posição específica
+            comment.down('comments-object').getController().loadComments(catalog_id, object_id, latlng, feature);
         }
 
     },
 
-    onChangeComments: function () {
-        var me = this,
-           view = me.getView();
+    /**
+     * @description
+     * @param latlng Object Posição x,y referente a lat long da imagem
+     */
+    onCommentPosition: function (event, dataset) {
+        var comment = Ext.create('Ext.window.Window', {
+            title: 'Comments',
+            iconCls: 'x-fa fa-comments',
+            layout: 'fit',
+            closeAction: 'destroy',
+            constrainHeader:true,
+            width: 500,
+            height: 300,
+            autoShow:true,
+            onEsc: Ext.emptyFn,
+            items: [
+                {
+                    xtype: 'comments-position',
+                    listeners: {
+                        scope: this,
+                        changecomments: 'onChangeComments'
+                    }
+                }
+            ]
+        });
 
-        view.fireEvent('changeinobject');
+        comment
+            .down('comments-position')
+            .getController()
+            .loadComments(event, dataset);///*dec*/latlng.lat, /*ra*/latlng.lng, dataset);
+    },
+
+    onChangeComments: function (event) {
+        var me = this,
+           view = me.getView(),
+           visiomatic = me.lookupReference('visiomatic'),
+           vm = me.getViewModel(),
+           lmembers = vm.get('overlayMembers');
+
+        if (event && event.comment) {
+            //TODO: atualizar o número de comentários em lmembers.feature.properties.
+            visiomatic.updateComment(lmembers, event.comment, event.total);
+        }
+
+        // TODO Refactor Comments by Position:: Comentario por posicao nao
+        // precisa disparar eventos de que houve mudanca.
+        //view.fireEvent('changeinobject', {ignoreStoreLoad:true});
+
     },
 
     loadSystemMembers: function () {
@@ -288,8 +402,10 @@ Ext.define('Target.view.preview.PreviewController', {
             productRelated = vm.get('productRelated'),
             relateds = vm.getStore('productRelateds'),
             members = vm.getStore('members'),
+            comments = vm.getStore('comments'),
             refs = me.getReferences(),
-            btnMembers = refs.btnMembers;
+            btnMembers = refs.btnMembers,
+            coordinates, loaded = 0;
 
         // Verificar se tem um produto relacioando ao catalogo
         if ((productRelated.get('id') > 0) && (productRelated.get('prl_product') === currentCatalog.get('id'))) {
@@ -303,40 +419,39 @@ Ext.define('Target.view.preview.PreviewController', {
                 // Colocar o botão em load
                 btnMembers.setIconCls('x-fa fa-spinner fa-spin fa-fw');
 
+                //carrega os objetos (members)
+                loaded++;
                 members.addFilter({
                     property: productRelated.get('prl_cross_name'),
                     value: object.get('_meta_id')
                 });
-
-                // Adicionar um filtro pela propriedade cross identification
-                // members.getProxy().setExtraParam(currentCatalog.get('prl_cross_name'), currentRecord.get('id'));
-
                 members.load({
                     callback: function () {
                         // Remover o load do botao
                         btnMembers.setIconCls('x-fa fa-dot-circle-o');
                         // Exibir os objetos membros
                         me.onLoadSystemMembers(this);
-
                     }
                 });
-
             }
-
         } else {
-            // relateds.clearFilter();
             relateds.removeAll(true);
 
-            relateds.addFilter({
-                property: 'prl_product',
-                value: currentCatalog.get('id')
-            });
+            relateds.addFilter([
+                {
+                    property: 'prl_product',
+                    value: currentCatalog.get('id')
+                },
+                {
+                    property: 'prl_relation_type',
+                    value: "join"
+                },
+            ]);
             relateds.load({
                 callback: function () {
                     if (this.count() > 0) {
                         vm.set('productRelated', this.first());
                         me.loadSystemMembers();
-
                     }
                 }
             });
@@ -344,12 +459,21 @@ Ext.define('Target.view.preview.PreviewController', {
     },
 
     onLoadSystemMembers: function (members) {
+        // console.log('onLoadSystemMembers(%o)', members)
         var me = this,
             vm = me.getViewModel(),
             visiomatic = me.lookupReference('visiomatic'),
             lmembers;
 
-        lmembers = visiomatic.overlayCatalog('catalog_teste', members);
+        lmembers = visiomatic.overlayCatalog('System Members', members, {
+            weight: 2, //largura da borda em pixel
+            opacity: 0.8, // transparencia da borda
+            fillOpacity: 0.01, // Transparencia nos marcadores.
+            color: '#2db92d', //Stroke color
+            interactive: true,
+            pointType: 'circle', //'circle', 'ellipse', 'triangle', 'square'
+            pointSize: 0.001 // tamanho utilizado para criar os makers em graus
+        });
 
         vm.set('overlayMembers', lmembers);
     },
@@ -361,6 +485,25 @@ Ext.define('Target.view.preview.PreviewController', {
             lmembers = vm.get('overlayMembers');
 
         visiomatic.showHideLayer(lmembers, state);
+    },
+
+    showHideComments: function (btn, state) {
+        // var me = this,
+        //     visiomatic = me.lookupReference('visiomatic'),
+        //     vm = me.getViewModel(),
+        //     lmembers = vm.get('overlayMembers');
+        //
+        // Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - show_comments');
+        // visiomatic.showHideComments(lmembers, state);
+
+    },
+
+    showHideCrop: function (btn, state) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
+
+        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - crop');
+        visiomatic.initCrop();
 
     },
 
@@ -369,6 +512,7 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = me.getViewModel(),
             catalog = vm.get('currentCatalog'),
             object = vm.get('currentRecord'),
+            protocol = window.location.protocol,
             host = window.location.host,
             source, id, hash;
 
@@ -376,13 +520,29 @@ Ext.define('Target.view.preview.PreviewController', {
             source = catalog.get('prd_name');
             id = object.get('_meta_id');
 
-            hash = Ext.String.format('http://{0}/dri/apps/explorer/#system/{1}/{2}', host, source, id);
+            hash = Ext.String.format(
+                '{0}//{1}/dri/apps/explorer/#system/{2}/{3}',
+                protocol, host, source, id);
 
             window.open(hash, '_blank');
 
         } else {
             console.log('Explorer single object');
         }
+    },
+
+    onSave: function () {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic');
+
+        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - save_fits');
+        visiomatic.showDownloadWindow();
+
+    },
+
+    onEvent: function () {
+        Ext.GlobalEvents.fireEvent('eventregister','teste');
+
     }
 
 });

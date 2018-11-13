@@ -17,6 +17,13 @@ Ext.define('Sky.view.dataset.Compare', {
         originalDataset: '{currentDataset}'
     },
 
+
+    mapOptions: {
+        fullscreenControl: true,
+        zoom: 1,
+        enableLineaOverlay: false
+    },
+
     initComponent: function () {
         var me = this;
 

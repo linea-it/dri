@@ -228,13 +228,8 @@
             "path": "../packages/local/visiomatic/src/visiomatic/dist/jquery-min.js"
         },
         // biblioteca Aladin (Necessita do JQuery)
-        // {
-        //     "path": "https://code.jquery.com/jquery-1.11.1.min.js",
-        //     "remote": true
-        // },
         {
-            "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.js",
-            "remote": true
+            "path": "../packages/local/aladin/src/aladin/aladin-min.js"
         },
         // Biblioteca Visiomatic
         {
@@ -248,7 +243,7 @@
             "path": "../packages/local/visiomatic/src/visiomatic/dist/jqplot-min.js"
         },
         {
-            "path": "../packages/local/visiomatic/src/visiomatic/dist/spectrum-min.js"
+            "path": "../packages/local/visiomatic/src/visiomatic/dist/spectrum.js"
         },
         {
             "path": "../packages/local/visiomatic/src/visiomatic/dist/visiomatic-src.js"
@@ -311,8 +306,7 @@
     "css": [
         // Biblioteca Aladin
         {
-            "path": "http://aladin.u-strasbg.fr/AladinLite/api/v2/latest/aladin.min.css",
-            "remote": true
+            "path": "../packages/local/aladin/src/aladin/aladin-min.css"
         },
         // Biblioteca Visiomatic
         {

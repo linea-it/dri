@@ -7,13 +7,18 @@
 Ext.define('Sky.view.footprint.FootprintController', {
     extend: 'Ext.app.ViewController',
 
+    requires: [
+        'common.link.LinkPrompt'
+    ],
+
     alias: 'controller.footprint',
 
     listen: {
         component: {
             'footprint': {
                 loadpanel: 'onLoadPanel',
-                updatepanel: 'onUpdatePanel'
+                updatepanel: 'onUpdatePanel',
+                beforedeactivate: 'onBeforeDeactivate'
             },
             'footprint-aladin': {
                 ondblclick: 'onDblClickAladin',
@@ -33,13 +38,15 @@ Ext.define('Sky.view.footprint.FootprintController', {
         }
     },
 
+    winGetLink: null,
+
     onLoadPanel: function (release) {
         var me = this;
-
         me.loadReleaseById(release);
     },
 
     onUpdatePanel: function (release) {
+        console.log()
         var me = this,
             aladin = me.lookupReference('aladin');
 
@@ -209,52 +216,122 @@ Ext.define('Sky.view.footprint.FootprintController', {
     },
 
     onDblClickAladin: function (radec) {
-        console.log('onDblClickAladin(%o)', radec);
-
+        this.getView().fireEvent('ondblclick');
+        this.toVisiomatic(radec, false, true);
     },
 
     onShift: function (radec) {
-        this.toVisiomatic(radec);
-
+        this.toVisiomatic(radec, false);
     },
 
-    toVisiomatic: function (radec) {
+    onClickGoToImage: function () {
+        var me = this,
+            aladin = me.lookupReference('aladin');
 
+        this.toVisiomatic(aladin.getRaDec(), true);
+    },
+
+    toVisiomatic: function (radec, centralized, pinned) {
+        // console.log('toVisiomatic(%o, %o)', radec, centralized)
         var me = this,
             vm = me.getViewModel(),
+            vw = me.getView(),
             store = vm.getStore('tiles'),
             aladin = me.lookupReference('aladin'),
-            coordinate,
-            fov = aladin.getFov()[0].toFixed(2).replace('.', ','),
-            hash, dataset, ra, dec;
+            fov = aladin.getFov(),
+            hash, dataset, ra, dec, coordinate, value, sys;
 
-        ra = parseFloat(radec[0]).toFixed(3);
-        dec = parseFloat(radec[1]).toFixed(3);
+        ra = radec[0].toFixed(5);
+        dec = radec[1].toFixed(5);
+        fov = fov.toFixed(2).replace('.', ',');
 
         dataset = store.filterByRaDec(ra, dec);
 
         if (dataset) {
-
+            // Centraliza na coordenada
             if (ra > 0) {
                 coordinate = ra.replace('.', ',') + '+' + dec.replace('.', ',');
             } else {
                 coordinate = ra.replace('.', ',') + dec.replace('.', ',');
             }
 
+            if (centralized) {
+                // Centraliza na tile
+                fov = -1;
+                ra = "" + dataset.get('tli_ra');
+                dec = "" + dataset.get('tli_dec');
+                coordinate = ra.replace('.', ',') + '+' + dec.replace('.', ',');
+            }
+
             coordinate = encodeURIComponent(coordinate);
+
+            if (pinned) {
+                fov = 0;
+            }
 
             hash = 'dataset/' + dataset.get('id') + '/' + coordinate + '/' + fov;
 
-            me.redirectTo(hash);
-
+            me.redirectTo(hash, true);
         }
-
     },
 
     onAladinGoToPosition: function (position, aladin) {
         var me = this;
-
         me.toVisiomatic(position);
+    },
+
+    gotoPosition: function(value, fov){
+        // console.log('gotoPosition')
+        var me = this,
+            aladin = me.lookupReference('aladin');
+
+        aladin.goToPosition(value);
+        if (fov) {
+            aladin.setFov(fov);
+        }
+
+    },
+
+    getLink: function () {
+        // console.log('getLink()');
+        var me = this,
+            aladin = me.lookupReference('aladin'),
+            fov = aladin.getFov(),
+            radec = aladin.getRaDec(),
+            release = me.getView().getRelease(),
+            href = window.location.href,
+            host = href.split('/#')[0],
+            hash, ra, dec;
+
+        ra = radec[0].toFixed(5);
+        dec = radec[1].toFixed(5);
+        fov = fov.toFixed(2).replace('.', ',');
+
+        if (ra > 0) {
+            coordinate = ra.replace('.', ',') + '+' + dec.replace('.', ',');
+        } else {
+            coordinate = ra.replace('.', ',') + dec.replace('.', ',');
+        }
+
+        coordinate = encodeURIComponent(coordinate);
+
+        link = Ext.String.format('{0}/#sky/{1}/{2}/{3}', host, release, coordinate, fov);
+
+        me.winGetLink = Ext.create('common.link.LinkPrompt', {
+            link: link
+        });
+
+        me.winGetLink.show();
+    },
+
+    onBeforeDeactivate: function () {
+        // console.log("onBeforeDeactivate()");
+        var me = this;
+
+        if (me.winGetLink !== null) {
+            me.winGetLink.close();
+            me.winGetLink = null;
+        }
     }
 
 });

@@ -1,9 +1,122 @@
-/** Ocultar o botao de Clipboard que nao funciona na nossa aplicacao */
-.leaflet-control-wcs-clipboard {
-    display: none;
+
+
+.leaflet-bar a {
+    background-color: transparent !important;
+    border-bottom: none !important;
 }
 
 /** Marker utilizado para highlight objetos de catalogo */
 .visiomatic-marker-position {
     color: #C8ED00;
+}
+
+.color-overlay-grid-icon {
+    color: #27313b;
+}
+
+.color-icon-starred {
+    color: #27313b;
+}
+
+.mapmaker-comment{
+    display: block;
+    background-image: url(common/images/mapmaker_comment.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 28px;
+    height: 28px;
+}
+.mapmaker-comment-position{
+    background-image: url(common/images/mapmaker_comment-pos.png);
+}
+
+.visiomatic-mouse-position-label{
+    // background: rgba(0, 0, 0, 0.5) !important;
+    background: trasnparent;
+    width: 255px;
+    padding:0 6px;
+    color: #CCC;
+    font-size: 12px;
+    font-family: Arial;
+}
+
+.leaflet-control-wcs-dialog {
+    background: rgba(0, 0, 0, 0.4);
+    color: #CCC;
+    font-size: unset;
+}
+
+.leaflet-control-wcs-select {
+    height: unset;
+    background: transparent;
+    color: #CCC;
+    padding: 0px;
+    box-shadow: unset;
+}
+
+.leaflet-control-wcs-select:hover, .leaflet-control-wcs-select:focus {
+    background: transparent;
+}
+
+.leaflet-control-wcs-input {
+    background: transparent;
+    height: auto;
+    width: 170px;
+    color: #CCC;
+    box-shadow: unset;
+    font-size: unset;
+	padding: 2px 6px 2px 6px;
+}
+.leaflet-control-wcs-input:hover {
+    background: transparent;
+}
+
+/** Ocultar o botao de Clipboard que nao funciona na nossa aplicacao */
+.leaflet-control-wcs-clipboard {
+    display: none;
+}
+
+.leaflet-control-extramap{
+    background: #dddddd;
+}
+
+.leaflet-control-attribution {
+    background: unset !important;
+    box-shadow: unset;
+}
+
+.leaflet-control-scale-line {
+    font-size: 10px;
+    color: #CCC;
+    background: transparent !important;
+    border: none !important;
+    border-top: 2px solid #777 !important;
+    text-align: center;
+    padding-top: 5px;
+}
+/** Blink Class to use with fontAwesome Icons
+ * https://stackoverflow.com/questions/13955163/imitating-a-blink-tag-with-css3-animations
+ */
+.blink {
+  animation: blink-animation 1s steps(5, start) infinite;
+  -webkit-animation: blink-animation 1s steps(5, start) infinite;
+}
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+@-webkit-keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+
+/** Altera o ponteiro do mouse no Visiomatic **/
+ .leaflet-grab{
+    cursor: default;
+}
+.leaflet-grab:active{
+    cursor: -webkit-grabbing;
+    cursor: move;
 }

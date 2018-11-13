@@ -7,13 +7,25 @@ Ext.define('Explorer.view.system.Visiomatic', {
 
     xtype: 'system-visiomatic',
 
-    enableTools: false,
+    enableTools: true,
+
+    enableLink: false,
+
+    enableShift: false,
+
+    showCrosshair: true,
+
+    mapOptions: {
+        fullscreenControl: true,
+        zoom: 1,
+        enableLineaOverlay: true
+    },
 
     initComponent: function () {
         var me = this;
 
         Ext.apply(this, {
-            tbar: [
+            auxTools:[
                 {
                     xtype: 'combobox',
                     reference: 'cmbCurrentDataset',
@@ -43,19 +55,17 @@ Ext.define('Explorer.view.system.Visiomatic', {
                     bind: {
                         value: '{currentDataset.tli_tilename}'
                     }
+                },
+                {
+                    xtype: 'button',
+                    iconCls: 'x-fa fa-crosshairs',
+                    tooltip: 'Show/Hide Crosshair',
+                    enableToggle: true,
+                    pressed: true,
+                    scope: this,
+                    toggleHandler: 'onShowHideCrosshair'
                 }
-                // {
-                //     xtype: 'button',
-                //     iconCls: 'x-fa fa-crosshairs',
-                //     tooltip: 'Show/Hide Crosshair',
-                //     enableToggle: true,
-                //     pressed: true,
-                //     bind: {
-                //         pressed: '{showCrosshair}'
-                //     }
-                // }
             ]
-
         });
 
         me.callParent(arguments);
@@ -64,6 +74,12 @@ Ext.define('Explorer.view.system.Visiomatic', {
     changeDataset: function (combo) {
         this.fireEvent('changedataset', combo.getSelectedRecord(), this);
 
+    },
+
+    onShowHideCrosshair: function (btn, state) {
+        var me = this;
+
+        me.setShowCrosshair(state);
     }
 
 });
