@@ -1,9 +1,11 @@
 version: '2'
 services:
   dri:
+    user: 'dri'
     build: .
     volumes:
-      - /Users/felipemachado/Documents/linea/dri:/app
+      - ./:/app
+      - ./dri.conf:/etc/apache2/sites-enabled/dri.conf
     command: service apache2 restart
     image: dri
     ports:
