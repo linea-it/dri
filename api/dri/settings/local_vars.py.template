@@ -4,7 +4,7 @@ import os
 # BASE_PROJECT, LOG_DIR, DATABASES
 
 # Substituir #BASEPROJECT# pelo diretorio de intalacao do projeto.
-BASE_PROJECT = "#BASEPROJECT#"
+BASE_PROJECT = "/app"
 # the hostname and port number of the current Server
 BASE_HOST = "http://dri.com"
 
