@@ -9,6 +9,8 @@ RUN mkdir /oracle
 RUN apt-get update
 RUN apt-get install unzip
 RUN apt-get install python-dev -y
+RUN apt-get install build-essential -y
+RUN apt-get -y install libaio-dev
 RUN unzip /app/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip -d /oracle
 RUN unzip /app/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /oracle
 RUN mv /oracle/instantclient_12_2 /oracle/instantclient
@@ -23,5 +25,4 @@ ENV OCI_LIB_DIR=/oracle/instantclient
 ENV OCI_INCLUDE_DIR=/oracle/instantclient/sdk/include
 
 ADD requirements.txt /app/
-RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
