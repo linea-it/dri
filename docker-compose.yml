@@ -7,7 +7,6 @@ services:
     command: ./entrypoint.sh
     environment:
       - NCSA=true
-    image: dri
   nginx:
     build: ./frontend
     ports:
