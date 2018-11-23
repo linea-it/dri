@@ -1,9 +1,12 @@
 version: '2'
 services:
-  app:
+  backend:
     build: ./api
     volumes:
       - ./api:/app
+      - ./archive:/archive
+      - ./log:/log
+
     command: ./entrypoint.sh
     environment:
       - NCSA=true
@@ -16,4 +19,4 @@ services:
       - ./frontend/build:/var/www/frontend
       - ./apps:/var/www/frontend/dri/apps
     depends_on:
-      - app
+      - backend
