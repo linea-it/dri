@@ -77,3 +77,8 @@ List of commands available in Django
 ```
 docker exec -it $(docker ps -q -f name=backend) python manage.py --help
 ```
+
+Nginx Reload
+```
+docker exec -it $(docker ps -q -f name=nginx) nginx -s reload
+```
