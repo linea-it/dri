@@ -119,11 +119,11 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^admin', admin.site.urls),
     url(r'^dri/api/', include(router.urls)),
-    url(r'^contact/', common_views.contact_us),
-    url(r'^get_fits_by_tilename', coadd_views.get_fits_by_tilename),
-    url(r'^vizier/', product_views.vizier_cds),
-    url(r'^send_statistic_email/', common_views.send_statistic_email),
-    url(r'^teste/', common_views.teste),
+    url(r'^dri/api/contact/', common_views.contact_us),
+    url(r'^dri/api/get_fits_by_tilename', coadd_views.get_fits_by_tilename),
+    url(r'^dri/api/vizier/', product_views.vizier_cds),
+    url(r'^dri/api/send_statistic_email/', common_views.send_statistic_email),
+    url(r'^dri/api/teste/', common_views.teste),
 
 
     # Plugin externos em docker ex: galaxy_cluster
@@ -131,9 +131,9 @@ urlpatterns = [
 
 
 
-    url(r'^get_token', common_views.get_token),
-    url(r'^get_setting/$', common_views.get_setting),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework'),
+    url(r'^dri/api/get_token', common_views.get_token),
+    url(r'^dri/api/get_setting/$', common_views.get_setting),
+    url(r'^dri/api/api-auth/', include('rest_framework.urls', namespace='rest_framework'),
         {'extra_context': {'providers': providers}}),
 ]
 

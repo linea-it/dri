@@ -214,7 +214,7 @@ SOCIALACCOUNT_PROVIDERS = {
 # start celery with
 #  celery worker --workdir api --app dri -l info
 # or such configs will not be used
-CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_BROKER_URL = 'amqp://rabbit:5672'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
