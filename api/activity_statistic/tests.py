@@ -11,11 +11,11 @@ class ActivityStatisticsAPITestCase(APITestCase):
         self.client.login(username='dri', password='dri')
 
     def test_list_Statistics_route(self):
-        route = resolve('/statistics/')
+        route = resolve('/dri/api/statistics/')
         self.assertEqual(route.func.__name__, 'ActivityStatisticViewSet')
 
     def test_list_statistics(self):
-        response = self.client.get('/statistics/')
+        response = self.client.get('/dri/api/statistics/')
         self.assertEqual(response.status_code, 200)
 
     def test_create_statistics(self):
@@ -23,11 +23,11 @@ class ActivityStatisticsAPITestCase(APITestCase):
         post_data = {
             'event': event,
         }
-        response = self.client.post('/statistics/', post_data, format='json')
+        response = self.client.post('/dri/api/statistics/', post_data, format='json')
         self.assertEqual(response.status_code, 201)
 
         # return new statistics list
-        response = self.client.get('/statistics/')
+        response = self.client.get('/dri/api/statistics/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['event'], 'API - login')
@@ -37,21 +37,21 @@ class ActivityStatisticsAPITestCase(APITestCase):
         # change statistics event
         newEvent = 'test event2'
         put_data = {'event': newEvent}
-        response = self.client.put('/statistics/1/', put_data, format='json')
+        response = self.client.put('/dri/api/statistics/1/', put_data, format='json')
         self.assertEqual(response.status_code, 200)
 
         # return new statistics list
-        response = self.client.get('/statistics/')
+        response = self.client.get('/dri/api/statistics/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 2)
         self.assertEqual(response.data[0]['event'], newEvent)
 
         # delete statistics
-        response = self.client.delete('/statistics/1/')
+        response = self.client.delete('/dri/api/statistics/1/')
         self.assertEqual(response.status_code, 204)
 
         # return new statistics list - (return 0 userqueries)
-        response = self.client.get('/statistics/')
+        response = self.client.get('/dri/api/statistics/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
 

@@ -11,11 +11,11 @@ class QueryAPITestCase(APITestCase):
         self.client.login(username='dri', password='dri')
 
     def test_list_query_route(self):
-        route = resolve('/userquery_query/')
+        route = resolve('/dri/api/userquery_query/')
         self.assertEqual(route.func.__name__, 'QueryViewSet')
 
     def test_list_query(self):
-        response = self.client.get('/userquery_query/')
+        response = self.client.get('/dri/api/userquery_query/')
         self.assertEqual(response.status_code, 200)
 
     def test_create_query(self):
@@ -23,7 +23,7 @@ class QueryAPITestCase(APITestCase):
         post_data = {
             'rls_name': 'rls_test',
         }
-        response = self.client.post('/releases/', post_data, format='json')
+        response = self.client.post('/dri/api/releases/', post_data, format='json')
         self.assertEqual(response.status_code, 201)
 
         # put new userquery
@@ -35,11 +35,11 @@ class QueryAPITestCase(APITestCase):
             'release': 1,
             'is_public': True,
         }
-        response = self.client.post('/userquery_query/', post_data, format='json')
+        response = self.client.post('/dri/api/userquery_query/', post_data, format='json')
         self.assertEqual(response.status_code, 201)
 
         # return new userquery list
-        response = self.client.get('/userquery_query/')
+        response = self.client.get('/dri/api/userquery_query/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['name'], query_name)
@@ -51,21 +51,21 @@ class QueryAPITestCase(APITestCase):
             'description': 'query1 description',
             'release': 1,
         }
-        response = self.client.put('/userquery_query/1/', put_data, format='json')
+        response = self.client.put('/dri/api/userquery_query/1/', put_data, format='json')
         self.assertEqual(response.status_code, 200)
 
         # return new userquery list
-        response = self.client.get('/userquery_query/')
+        response = self.client.get('/dri/api/userquery_query/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['name'], query_name)
 
         # delete query
-        response = self.client.delete('/userquery_query/1/')
+        response = self.client.delete('/dri/api/userquery_query/1/')
         self.assertEqual(response.status_code, 204)
 
         # return new userquery list - (return 0 userqueries)
-        response = self.client.get('/userquery_query/')
+        response = self.client.get('/dri/api/userquery_query/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0)
 
@@ -76,11 +76,11 @@ class JobAPITestCase(APITestCase):
         self.client.login(username='dri', password='dri')
 
     def test_job_route(self):
-        route = resolve('/userquery_job/')
+        route = resolve('/dri/api/userquery_job/')
         self.assertEqual(route.func.__name__, 'JobViewSet')
 
     def test_job(self):
-        response = self.client.get('/userquery_job/')
+        response = self.client.get('/dri/api/userquery_job/')
         self.assertEqual(response.status_code, 200)
 
     def test_task_status_changes(self):

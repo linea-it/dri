@@ -16,11 +16,11 @@ class CommentsAPITestCase(APITestCase):
         self.client.login(username='dri', password='dri')
 
     def test_list_comments_route(self):
-        route = resolve('/objectscomments/')
+        route = resolve('/dri/api/objectscomments/')
         self.assertEqual(route.func.__name__, 'CommentsViewSet')
 
     def test_list_comments(self):
-        response = self.client.get('/objectscomments/')
+        response = self.client.get('/dri/api/objectscomments/')
         self.assertEqual(response.status_code, 200)
 
     def test_create_comments(self):
@@ -32,11 +32,11 @@ class CommentsAPITestCase(APITestCase):
             'owner': self.user.id,
             'comments': comments,
         }
-        response = self.client.post('/objectscomments/', post_data, format='json')
+        response = self.client.post('/dri/api/objectscomments/', post_data, format='json')
         self.assertEqual(response.status_code, 201)
 
         # return new comments list
-        response = self.client.get('/objectscomments/')
+        response = self.client.get('/dri/api/objectscomments/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['comments'], comments)
@@ -44,20 +44,20 @@ class CommentsAPITestCase(APITestCase):
         # change comments Use Patch method for partial data
         comments = 'comments 1 changed'
         put_data = {'comments': comments}
-        response = self.client.patch('/objectscomments/1/', put_data, format='json')
+        response = self.client.patch('/dri/api/objectscomments/1/', put_data, format='json')
         self.assertEqual(response.status_code, 200)
 
         # return new comments list
-        response = self.client.get('/objectscomments/')
+        response = self.client.get('/dri/api/objectscomments/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['comments'], comments)
 
         # delete comments
-        response = self.client.delete('/objectscomments/1/')
+        response = self.client.delete('/dri/api/objectscomments/1/')
         self.assertEqual(response.status_code, 204)
 
         # return new comments list - (return 0 comments)
-        response = self.client.get('/objectscomments/')
+        response = self.client.get('/dri/api/objectscomments/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0)

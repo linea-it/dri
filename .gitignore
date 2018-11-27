@@ -2,7 +2,7 @@
 /env
 /data
 /db
-/log
+/log/*.log
 /bkp
 
 # Diretorio da Home Wordpress
@@ -24,3 +24,4 @@ __pycache__
 # Evitar que o visiomatic seja sobrescrito a cada build
 /frontend/build/production/Target/packages/local/visiomatic/src/visiomatic/dist
 /api/db
+*.coverage

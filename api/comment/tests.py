@@ -18,7 +18,7 @@ class CommentPositionAPITestCase(APITestCase):
         self.user = User.objects.create_user("dri", "dri@linea.org", "dri")
         self.client.login(username='dri', password='dri')
 
-        self.route = '/comment/position/'
+        self.route = '/dri/api/comment/position/'
 
         self.dataset = mommy.make(
             Dataset,
@@ -148,7 +148,7 @@ class CommentPositionAPITestCase(APITestCase):
             self.assertEqual(response.status_code, 201)
 
         # Filter center comment only, using a rectangle just bigger
-        response = self.client.get('/comment/position/?coordinates=' + urllib.parse.quote('[[-0.01, -0.01], [0.01, 0.01]]'))
+        response = self.client.get('/dri/api/comment/position/?coordinates=' + urllib.parse.quote('[[-0.01, -0.01], [0.01, 0.01]]'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(str(response.data[0]['pst_ra']), str(cc['pst_ra']))
@@ -158,7 +158,7 @@ class CommentPositionAPITestCase(APITestCase):
         # Filter each input
         for t in input_data:
             response = self.client.get(
-                '/comment/position/?coordinates=' + urllib.parse.quote(
+                '/dri/api/comment/position/?coordinates=' + urllib.parse.quote(
                     '[[%s, %s], [%s, %s]]' % (t['pst_ra'], t['pst_dec'], t['pst_ra'], t['pst_dec'])))
             self.assertEqual(response.status_code, 200)
             self.assertEqual(len(response.data), 1)
