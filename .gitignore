@@ -4,6 +4,10 @@
 /db
 /log/*.log
 /bkp
+/archive
+
+# Arquivos do Celery
+api/celerybeat-schedule
 
 # Diretorio da Home Wordpress
 /apps/home
@@ -25,3 +29,4 @@ __pycache__
 /frontend/build/production/Target/packages/local/visiomatic/src/visiomatic/dist
 /api/db
 *.coverage
+

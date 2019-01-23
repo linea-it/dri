@@ -82,3 +82,21 @@ Nginx Reload
 ```
 docker exec -it $(docker ps -q -f name=nginx) nginx -s reload
 ```
+
+
+### Rabbit + Celery
+Descobrir o IP do container rabbit
+```
+docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q -f name=rabbit)
+```
+Acessar a interface do rabbit, utilizar o user e pass declarado no docker-compose, RABBITMQ_DEFAULT_USER e RABBITMQ_DEFAULT_PASS
+```
+http://<ip_rabbit>:15672
+```
+
+Start celery Works and Beat manually. inside backend container run 
+```
+celery worker --workdir /app --app dri -l info
+
+celery worker --workdir /app --app dri -l info
+```
