@@ -12,6 +12,7 @@ mkdir dri/log dri/archive dri/log
 
 ```
 cd dri
+cp env_template .env
 docker-compose build
 ```
 
