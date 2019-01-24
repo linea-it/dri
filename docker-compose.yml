@@ -48,7 +48,7 @@ services:
       - .env
 
   wordpress:
-    image: dri_landing_page
+    image: linea/dri_landing_page
     restart: always
     ports:
       - 8080:80
