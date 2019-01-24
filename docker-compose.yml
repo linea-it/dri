@@ -39,6 +39,25 @@ services:
       - ./log:/log
       - ./archive:/images
 
+
+  # Wordpress
+  mysql:
+    image: mysql:5.7
+    restart: always
+    env_file:
+      - .env
+
+  wordpress:
+    image: dri_landing_page
+    restart: always
+    ports:
+      - 8080:80
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+
+
   nginx:
     build: ./frontend
     ports:
@@ -51,3 +70,4 @@ services:
       - backend
       - iipserver
       - rabbit
+      - wordpress
