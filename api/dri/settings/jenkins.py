@@ -4,7 +4,7 @@ import os
 
 print("Using Settings Travis")
 
-BASE_PROJECT = os.environ.get("TRAVIS_BUILD_DIR")
+BASE_PROJECT = os.environ.get("TRAVIS_BUILD_DIR", "/app/")
 print("BaseProject %s" % BASE_PROJECT)
 
 ALLOWED_HOSTS = '*'

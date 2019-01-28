@@ -23,23 +23,30 @@ pipeline {
                           docker.withRegistry( '', registryCredential ) {
                           dockerImage.push()
                       }
-                        sh "docker rmi $registry:FRONT$GIT_COMMIT --force"
                       }
                   }
               },
               backend: {
                   dir('api') {
+                      sh "cp dri/settings/jenkins.py dri/settings/local_vars.py"
                       script {
                           dockerImage = docker.build registry + ":BACK$GIT_COMMIT"
+                          sh "coverage run --source=. --omit='*migrations' manage.py test --verbosity=2"
                           docker.withRegistry( '', registryCredential ) {
                           dockerImage.push()
                       }
-                        sh "docker rmi $registry:BACK$GIT_COMMIT --force"
+                        
                       }
                   }
               }
           )
         }
       }
+    }
+    post {
+        always {
+            sh "docker rmi $registry:FRONT$GIT_COMMIT --force"
+            sh "docker rmi $registry:BACK$GIT_COMMIT --force"
+        }
     }
 }
