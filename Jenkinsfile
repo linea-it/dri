@@ -8,7 +8,7 @@ pipeline {
     agent any
 
     stages {
-        stage('Build And Test Images') {
+        stage('Build Images') {
             steps {
               parallel(
               frontend: {
@@ -24,12 +24,14 @@ pipeline {
                       sh "cp dri/settings/jenkins.py dri/settings/local_vars.py"
                       script {
                           dockerImageBack = docker.build registry + ":BACK$GIT_COMMIT"
-                          sh "coverage run --source=. --omit='*migrations' manage.py test --verbosity=2"
                       }
                   }
               }
           )
         }
+      }
+      stage('Test Backend') {
+          sh "docker run ${dockerImageBack} coverage run --source=. --omit='*migrations' manage.py test --verbosity=2"
       }
       stage('Push Images') {
             when {
