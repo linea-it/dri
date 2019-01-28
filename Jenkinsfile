@@ -17,6 +17,7 @@ pipeline {
               parallel(
               frontend: {
                   dir('frontend') {
+                      sh "cp nginx-deploy.conf nginx-proxy.conf"
                       script {
                           dockerImage = docker.build registry + ":FRONT$GIT_COMMIT"
                           docker.withRegistry( '', registryCredential ) {
