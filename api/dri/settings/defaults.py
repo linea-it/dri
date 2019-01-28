@@ -223,7 +223,7 @@ SOCIALACCOUNT_PROVIDERS = {
 # CELERY_RESULT_SERIALIZER = 'json'
 
 CELERY = {
-    'BROKER_URL': os.environ['CELERY_BROKER'],
+    'BROKER_URL': os.environ.get('CELERY_BROKER', 'localhost'),
     'CELERY_IMPORTS': ('product.tasks', 'common.tasks', 'common.tasks', 'activity_statistic.tasks', 'userquery.tasks',),
     'CELERY_RESULT_BACKEND': 'django-db',
     'CELERY_TASK_SERIALIZER': 'json',

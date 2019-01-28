@@ -3,11 +3,6 @@ services:
 
   backend:
     build: ./api
-    volumes:
-      - ./api:/app
-      - ./archive:/archive
-      - ./log:/log
-
     command: ./entrypoint.sh
     environment:
       - NCSA=true
@@ -42,29 +37,18 @@ services:
 
   # Wordpress
   mysql:
-    image: mysql:5.7
+    image: linea/dri_landing_page:MYSQLec31d42ec325704a1437d542d99a2b4b16fcc5c7
     env_file:
       - .env
 
   wordpress:
     image: linea/dri_landing_page:86eb97e6ff366ea8642d4b43dd02573f55a554b5
-    ports:
-      - 8080:80
     env_file:
       - .env
     depends_on:
       - mysql
 
-
   nginx:
     build: ./frontend
     ports:
       - 80:8080
-    volumes:
-      - ./frontend/build/production:/var/www/frontend
-      - ./archive:/var/www/data
-    depends_on:
-      - backend
-      - iipserver
-      - rabbit
-      - wordpress
