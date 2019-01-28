@@ -32,7 +32,7 @@ pipeline {
       }
       stage('Test Backend') {
           steps {
-            sh "docker run ${dockerImageBack} coverage run --source=. --omit='*migrations' manage.py test --verbosity=2"
+            sh "docker run $registry:BACK$GIT_COMMIT coverage run --source=. --omit='*migrations' manage.py test --verbosity=2"
           }
       }
       stage('Push Images') {
