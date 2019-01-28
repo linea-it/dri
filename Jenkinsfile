@@ -31,7 +31,9 @@ pipeline {
         }
       }
       stage('Test Backend') {
-          sh "docker run ${dockerImageBack} coverage run --source=. --omit='*migrations' manage.py test --verbosity=2"
+          steps {
+            sh "docker run ${dockerImageBack} coverage run --source=. --omit='*migrations' manage.py test --verbosity=2"
+          }
       }
       stage('Push Images') {
             when {
