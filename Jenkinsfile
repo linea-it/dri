@@ -31,13 +31,13 @@ pipeline {
           )
         }
       }
-      stage('Build And Test Images') {
+      stage('Push Images') {
             when {
                 expression {
                    env.BRANCH_NAME.toString().equals('master')
                 }
             }
-                        steps {
+            steps {
               parallel(
               frontend: {
                   dir('frontend') {
