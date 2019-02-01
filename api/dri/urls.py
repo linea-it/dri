@@ -117,7 +117,6 @@ providers = common_views.get_providers()
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^admin', admin.site.urls),
     url(r'^dri/api/', include(router.urls)),
     url(r'^dri/api/contact/', common_views.contact_us),
     url(r'^dri/api/get_fits_by_tilename', coadd_views.get_fits_by_tilename),

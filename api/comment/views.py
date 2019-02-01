@@ -4,10 +4,10 @@ from rest_framework import viewsets
 from rest_framework import filters
 from .models import Position
 from .serializers import PositionSerializer
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 class PositionFilter(django_filters.FilterSet):
-    coordinates = django_filters.MethodFilter(action='filter_coordinates')
+    coordinates = django_filters.CharFilter(action='filter_coordinates')
 
     class Meta:
         model = Position
@@ -46,5 +46,5 @@ class PositionViewSet(viewsets.ModelViewSet):
     queryset = Position.objects.all()
 
     serializer_class = PositionSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filter_class = PositionFilter

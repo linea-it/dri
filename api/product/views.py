@@ -31,19 +31,19 @@ from .association import Association
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from .viziercds import VizierCDS
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 logger = logging.getLogger(__name__)
 
 
 class ProductFilter(django_filters.FilterSet):
-    group = django_filters.MethodFilter()
-    group_id = django_filters.MethodFilter()
-    band = django_filters.MethodFilter()
-    class_name = django_filters.MethodFilter()
-    process = django_filters.MethodFilter()
-    release = django_filters.MethodFilter()
+    group = django_filters.CharFilter(method='filter_group')
+    group_id = django_filters.CharFilter(method='filter_group_id')
+    band = django_filters.CharFilter(method='filter_band')
+    class_name = django_filters.CharFilter(method='filter_class_name')
+    process = django_filters.CharFilter(method='filter_process')
+    release = django_filters.CharFilter(method='filter_release')
 
     class Meta:
         model = Product
@@ -79,7 +79,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     search_fields = ('prd_name', 'prd_display_name', 'prd_class')
 
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
 
     filter_class = ProductFilter
 
@@ -88,9 +88,9 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 
 class CatalogFilter(django_filters.FilterSet):
-    group = django_filters.MethodFilter()
-    group__in = django_filters.MethodFilter()
-    release = django_filters.MethodFilter()
+    group = django_filters.CharFilter(method='filter_group')
+    group__in = django_filters.CharFilter(method='filter_group__in')
+    release = django_filters.CharFilter(method='filter_release')
 
     class Meta:
         model = Product
@@ -119,7 +119,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
 
     search_fields = ('prd_name', 'prd_display_name', 'prd_class')
 
-    filter_backends = (filters.DjangoFilterBackend, ProductPermissionFilterBackend,)
+    filter_backends = (DjangoFilterBackend, ProductPermissionFilterBackend,)
 
     filter_class = CatalogFilter
 
@@ -452,7 +452,7 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
 
 class ProductRelatedFilter(django_filters.FilterSet):
-    prd_class = django_filters.MethodFilter()
+    prd_class = django_filters.CharFilter(method='filter_prd_class')
 
     class Meta:
         model = ProductRelated
@@ -470,7 +470,7 @@ class ProductRelatedViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductRelatedSerializer
 
-    filter_backends = (filters.DjangoFilterBackend, )
+    filter_backends = (DjangoFilterBackend, )
 
     filter_class = ProductRelatedFilter
 
@@ -514,9 +514,9 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 
 
 class MapFilter(django_filters.FilterSet):
-    release_id = django_filters.MethodFilter(action='filter_release_id')
-    release_name = django_filters.MethodFilter(action='filter_release_name')
-    with_image = django_filters.MethodFilter(action='filter_with_image')
+    release_id = django_filters.CharFilter(action='filter_release_id')
+    release_name = django_filters.CharFilter(action='filter_release_name')
+    with_image = django_filters.CharFilter(action='filter_with_image')
 
     class Meta:
         model = Map
@@ -540,7 +540,7 @@ class MapViewSet(viewsets.ModelViewSet):
         'prd_filter__lambda_mean')
 
     serializer_class = MapSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filter_class = MapFilter
 
 
@@ -569,7 +569,7 @@ class AllProductViewSet(viewsets.ModelViewSet):
 
     search_fields = ('prd_name', 'prd_display_name')
 
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
 
     filter_class = ProductFilter
 
@@ -593,7 +593,7 @@ class ProductSettingViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductSettingSerializer
 
-    filter_backends = (filters.DjangoFilterBackend, ProductSettingBackend)
+    filter_backends = (DjangoFilterBackend, ProductSettingBackend)
 
     filter_fields = ('id', 'cst_product', 'cst_display_name', 'cst_description', 'cst_is_public')
 
@@ -608,7 +608,7 @@ class CurrentSettingViewSet(viewsets.ModelViewSet):
 
     serializer_class = CurrentSettingSerializer
 
-    filter_backends = (filters.DjangoFilterBackend, IsOwnerFilterBackend)
+    filter_backends = (DjangoFilterBackend, IsOwnerFilterBackend)
 
     filter_fields = ('id', 'cst_product', 'cst_setting',)
 
@@ -668,7 +668,7 @@ class PermissionUserViewSet(viewsets.ModelViewSet):
 
 
 class PermissionWorkgroupUserFilter(django_filters.FilterSet):
-    product = django_filters.MethodFilter()
+    product = django_filters.CharFilter(method='filter_product')
 
     class Meta:
         model = WorkgroupUser
@@ -687,7 +687,7 @@ class PermissionWorkgroupUserViewSet(viewsets.ModelViewSet):
 
     serializer_class = PermissionWorkgroupUserSerializer
 
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
 
     filter_class = PermissionWorkgroupUserFilter
 
@@ -736,7 +736,7 @@ class FiltersetViewSet(viewsets.ModelViewSet):
 
     filter_fields = ('id', 'product', 'owner', 'fst_name')
 
-    filter_backends = (filters.DjangoFilterBackend, IsOwnerFilterBackend)
+    filter_backends = (DjangoFilterBackend, IsOwnerFilterBackend)
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

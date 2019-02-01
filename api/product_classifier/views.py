@@ -6,7 +6,7 @@ from django.db.models import Q
 import django_filters
 from .models import ProductClass, ProductGroup, ProductClassContent
 from .serializers import ProductClassSerializer, ProductGroupSerializer, ProductClassContentSerializer
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 class ProductClassViewSet(viewsets.ModelViewSet):
     queryset = ProductClass.objects.all()
@@ -50,8 +50,8 @@ class ProductGroupViewSet(viewsets.ModelViewSet):
 
 
 class ProductClassContentFilter(django_filters.FilterSet):
-    pcc_class = django_filters.MethodFilter()
-    search = django_filters.MethodFilter()
+    pcc_class = django_filters.CharFilter(method='filter_pcc_class')
+    search = django_filters.CharFilter(method='filter_search')
 
     class Meta:
         model = ProductClassContent
@@ -74,6 +74,6 @@ class ProductClassContentViewSet(viewsets.ModelViewSet):
 
     search_fields = ('pcc_name', 'pcc_display_name', 'pcc_ucd')
 
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
 
     filter_class = ProductClassContentFilter

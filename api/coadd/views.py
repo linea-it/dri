@@ -6,6 +6,7 @@ from rest_framework import filters
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django_filters.rest_framework import DjangoFilterBackend
 
 from .models import Release, Tag, Tile, Dataset, Survey
 from .serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, \
@@ -64,10 +65,10 @@ class TileViewSet(viewsets.ModelViewSet):
 
 
 class DatasetFilter(django_filters.FilterSet):
-    tag__in = django_filters.MethodFilter()
+    tag__in = django_filters.CharFilter(method='filter_tag__in')
     tli_tilename = django_filters.CharFilter(name='tile__tli_tilename', label='Tilename')
-    position = django_filters.MethodFilter()
-    release = django_filters.MethodFilter(action='filter_release')
+    position = django_filters.CharFilter(method='filter_position')
+    release = django_filters.CharFilter(action='filter_release')
 
     class Meta:
         model = Dataset
@@ -111,7 +112,7 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
     serializer_class = DatasetSerializer
 
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
 
     filter_class = DatasetFilter
 
@@ -123,7 +124,7 @@ class DatasetFootprintViewSet(viewsets.ModelViewSet):
 
     serializer_class = DatasetFootprintSerializer
 
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
 
     filter_class = DatasetFilter
 

@@ -9,6 +9,7 @@ import django_filters
 from common.filters import *
 from rest_framework import filters
 from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +24,7 @@ class FeatureViewSet(viewsets.ModelViewSet):
 
 
 class FlaggedFilter(django_filters.FilterSet):
-    release = django_filters.MethodFilter()
+    release = django_filters.CharFilter(method='filter_release')
 
     class Meta:
         model = Flagged
@@ -39,7 +40,7 @@ class FlaggedViewSet(viewsets.ModelViewSet):
 
     serializer_class = FlaggedSerializer
 
-    filter_backends = (IsOwnerFilterBackend, filters.DjangoFilterBackend)
+    filter_backends = (IsOwnerFilterBackend, DjangoFilterBackend)
 
     filter_class = FlaggedFilter
 

@@ -27,54 +27,22 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(DATA_DIR, 'dri.db'),
     },
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.oracle',
-    #     'NAME': 'desdb-dr.ncsa.illinois.edu:1521/desdr',
-    #     'USER': 'dripublicadm',
-    #     'PASSWORD': 'E3W2Q1',
-    # },
     'catalog': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(DATA_DIR, 'catalog.db'),
-    },
-    # 'catalog': {
-    #     'ENGINE': 'django.db.backends.oracle',
-    #     'NAME': 'desdb.ncsa.illinois.edu:1521/dessci',
-    #     'USER': 'rcampisa',
-    #     'PASSWORD': 'rca2017',
-    # },
-    'dessci': {
-        'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'desdb.ncsa.illinois.edu:1521/dessci',
-        'USER': 'rcampisa',
-        'PASSWORD': 'rca2017',
-    },
-    # 'desoper': {
-    #     'ENGINE': 'django.db.backends.oracle',
-    #     'NAME': 'desdb.ncsa.illinois.edu:1521/desoper',
-    #     'USER': 'rcampisa',
-    #     'PASSWORD': 'rca2017',
-    # }
-    'desdr': {
-        'ENGINE': 'django.db.backends.oracle',
-        'NAME': 'desdb-dr.ncsa.illinois.edu:1521/desdr',
-        'USER': 'dripublicadm',
-        'PASSWORD': 'E3W2Q1',
     },
 }
 
 # Esta configuracao e usada somente pela classe de authenticacao usando login do NCSA
 # deve ser preenchida com o nome da configuracao de database do NCSA OU None para nao usar a authenticacao no ncsa
-# NCSA_AUTHENTICATION_DB = "dessci"
-NCSA_AUTHENTICATION_DB = "desdr"
+NCSA_AUTHENTICATION_DB = "None"
 
 # Nome da tabela onde ficam os dados do usuario com schema se tiver ex: DES_USER para colaboracao e DES_ADMIN.DES_USER para DR1 publico ou None para desabilitar
-NCSA_AUTHENTICATION_USERS_TABLE = "DES_ADMIN.DES_USERS"
+NCSA_AUTHENTICATION_USERS_TABLE = "None"
 
 # Habilita ou desabilita o link de signup no form de login. None desabilita e String com Url para o form de login para habilitar.
 # Default None, para public usar 'https://des.ncsa.illinois.edu/easyweb/signup/'
-NCSA_SIGNUP_LINK = 'https://des.ncsa.illinois.edu/easyweb/signup/'
-#NCSA_SIGNUP_LINK = None
+NCSA_SIGNUP_LINK = None
 
 # Target Viewer Rating, Reject Schema
 SCHEMA_RATING_REJECT = None
@@ -82,7 +50,7 @@ SCHEMA_RATING_REJECT = None
 # Save As default Schema, Utilizado pela feature Target::Save As caso seja None, o schema utilizado
 # sera o mesmo do produto original mais vai requerer permissao. para o ncsa cada usuario tem um schema
 # utilizar o nome de usuario da conf 'catalog'
-SCHEMA_SAVE_AS = "RCAMPISA"
+SCHEMA_SAVE_AS = None
 
 # Email notification configs
 # Email utilizado para enviar as notificacoes do science server
@@ -91,19 +59,14 @@ EMAIL_NOTIFICATION = 'noreply@desportal.cosmology.illinois.edu'
 EMAIL_NOTIFICATION_COPY_TO = list([])
 EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
 EMAIL_HELPDESK_CONTACT = 'contato-dri@linea.gov.br'
-EMAIL_HOST = 'smtp.linea.gov.br'
-EMAIL_PORT = '587'
-EMAIL_HOST_USER = 'glauber.costa@linea.gov.br'
-EMAIL_HOST_PASSWORD = '123456'
+EMAIL_HOST = ''
+EMAIL_PORT = ''
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = True
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = '465'
-# EMAIL_HOST_USER = 'glauber.vila.verde@gmail.com'
-# EMAIL_HOST_PASSWORD = 'glaubervila87'
-# EMAIL_USE_TLS = True
 
 # Email que recebera as notificacoes e relatorios gerados pelo science server
-EMAIL_ADMIN = 'glauber.costa@linea.gov.br'
+EMAIL_ADMIN = ''
 
 # DES Cutout Service
 
@@ -112,8 +75,8 @@ DES_CUTOUT_SERVICE = {
     # 1 para a versao do Descut Colaboracao 2 para versao Descut Public
     'API_VERSION': 1,
     'HOST': 'https://descut.cosmology.illinois.edu',
-    'USER': 'rcampisa',
-    'PASSWORD': 'rca2017',
+    'USER': '',
+    'PASSWORD': '',
     # Path onde ficaram os arquivos de cutout, esse parametro sera usado em conjunto com DATA_DIR para criar o path
     # absoluto para os arquivos.
     'CUTOUT_DIR': 'targets/cutouts',
@@ -136,44 +99,10 @@ DES_CUTOUT_SERVICE = {
     # Url para a API responsavel por retornar o status dos jobs
     'API_CHECK_JOBS': '/api/jobs/',
     # No DescutPublico e necessario passar um email para onde seram enviadas as notificacoes do descut.
-    'EMAIL': 'glauber.costa@linea.gov.br'
+    'EMAIL': ''
 }
 
-
-# # DESCUT Public
-# DES_CUTOUT_SERVICE = {
-#     #1 para a versao do Descut Colaboracao 2 para versao Descut Public
-#     'API_VERSION': 2,
-#     'HOST': 'https://des.ncsa.illinois.edu',
-#     'USER': 'dripublicadm',
-#     'PASSWORD': 'E3W2Q1',
-#     # Path onde ficaram os arquivos de cutout, esse parametro sera usado em conjunto com DATA_DIR para criar o path
-#     # absoluto para os arquivos.
-#     'CUTOUT_DIR': 'targets/cutouts',
-#     # Url base que sera usada para exibir as imagens geradas esse parametro deve ser mapeado no dri.conf no apache
-#     'CUTOUT_SOURCE': '/data',
-#     # Tempo de delay para a task check_jobs em minutos
-#     'CUTOUT_TASK_CHECK_JOBS_DELAY': 1,
-#     # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos
-#     'AVAILABLE_RELEASES': [],
-#     # Quantidade limit de objetos a ser passada para o descutout
-#     'MAX_OBJECTS': 300,
-#     # Token de authenticacao utilizado apenas para o DescutPublico para colaboracao usar None
-#     'TOKEN': "045102fdbe8b7738f72abe2c84b6f1a2edec5943",
-#     # Esta opcao deve ser False para o DescutPublico e True para Colaboracao
-#     'DELETE_JOB_AFTER_DOWNLOAD': False,
-#     # Url para gerar o token, para o publico usar None.
-#     'API_GET_TOKEN': None,
-#     # Url para a API reponsavel por criar os jobs
-#     'API_CREATE_JOBS': '/easyweb/api/v1/cutout/',
-#     # Url para a API responsavel por retornar o status dos jobs
-#     'API_CHECK_JOBS': '/easyweb/api/v1/jobs/',
-#     # No DescutPublico e necessario passar um email para onde seram enviadas as notificacoes do descut.
-#     'EMAIL': 'glauber.costa@linea.gov.br'
-# }
-
 SEND_DAILY_STATISTICS_EMAIL = False
-
 
 # Tempo limite em horas para que um produto fique disponivel, apos este tempo
 # o produto sera removido pelo garbage colector e sua tabela sera dropada. Use None para desabilitar.

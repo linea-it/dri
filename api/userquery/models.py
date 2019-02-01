@@ -14,7 +14,7 @@ class Query(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name='Owner', default=None)
-    release = models.ForeignKey('coadd.Release', null=True, blank=True)
+    release = models.ForeignKey('coadd.Release', on_delete=models.CASCADE, null=True, blank=True)
     creation_date = models.DateTimeField(
         auto_now_add=True, null=True, blank=True, verbose_name='Creation Date',
         help_text='Creation Date')
@@ -80,9 +80,9 @@ class Table(models.Model):
     schema = models.CharField(
         max_length=128, null=True, verbose_name='Schema')
     product = models.ForeignKey(
-        'product.Product', verbose_name='Product', related_name='product', null=True,
+        'product.Product', verbose_name='Product', on_delete=models.CASCADE, related_name='product', null=True,
         blank=True, default=None)
-    release = models.ForeignKey('coadd.Release', null=True, blank=True)
+    release = models.ForeignKey('coadd.Release', on_delete=models.CASCADE, null=True, blank=True)
 
     tbl_num_objects = models.PositiveIntegerField(
         verbose_name='Num of rows', null=True, blank=True)

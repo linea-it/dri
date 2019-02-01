@@ -1,3 +1,6 @@
+# Arquivos Docker-compose
+docker-compose.yml
+
 # Diretorios de instalacao
 /env
 /data
@@ -5,6 +8,7 @@
 /log/*.log
 /bkp
 /archive
+/static
 
 # Arquivos do Celery
 api/celerybeat-schedule

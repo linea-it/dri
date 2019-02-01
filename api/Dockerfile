@@ -25,4 +25,6 @@ ENV OCI_LIB_DIR=/oracle/instantclient
 ENV OCI_INCLUDE_DIR=/oracle/instantclient/sdk/include
 
 ADD . /app/
-RUN pip install -r requirements.txt
+
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt

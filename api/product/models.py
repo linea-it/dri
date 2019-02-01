@@ -37,7 +37,7 @@ class Product(models.Model):
     prd_description = models.CharField(
         max_length=1024, null=True, blank=True, verbose_name='Description')
     prd_filter = models.ForeignKey(
-        'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
+        'common.Filter', verbose_name='Filter', on_delete=models.CASCADE, null=True, blank=True, default=None)
     prd_date = models.DateTimeField(
         auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Date of registration.')
     prd_is_public = models.BooleanField(
@@ -356,7 +356,7 @@ class Cutout(models.Model):
         max_length=10, verbose_name='Dec', null=True, blank=True,
         help_text='Dec in degrees, the association will be used to identify the column')
     ctt_filter = models.ForeignKey(
-        'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
+        'common.Filter', verbose_name='Filter', on_delete=models.CASCADE, null=True, blank=True, default=None)
     ctt_thumbname = models.CharField(
         max_length=255, verbose_name='Thumbname', null=True, blank=True, default=None)
     ctt_file_path = models.TextField(
