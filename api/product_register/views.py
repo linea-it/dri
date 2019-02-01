@@ -23,6 +23,13 @@ class SiteViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id',)
 
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(sti_user=self.request.user)
+
 
 class ExternalProcessViewSet(viewsets.ModelViewSet):
     """

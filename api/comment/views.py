@@ -13,7 +13,7 @@ class PositionFilter(django_filters.FilterSet):
         model = Position
         fields = ['id', 'owner', 'pst_dataset', 'pst_ra', 'pst_dec', 'pst_date', 'pst_comment']
 
-    def filter_coordinates(self, queryset, value):
+    def filter_coordinates(self, queryset, name, value):
 
         corners = json.loads(value)
 
@@ -48,3 +48,10 @@ class PositionViewSet(viewsets.ModelViewSet):
     serializer_class = PositionSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = PositionFilter
+
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)

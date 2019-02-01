@@ -60,7 +60,7 @@ services:
     ports:
       - 80:8080
     volumes:
-      - ./frontend/build/production:/var/www/frontend
+      - ./frontend/build/production:/var/www/frontend/production
       - ./archive:/var/www/data
       - ./static:/var/www/static
     depends_on:

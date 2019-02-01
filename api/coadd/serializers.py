@@ -177,7 +177,7 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
         #     return base_src + image_src
 
 
-class DatasetFootprintSerializer(serializers.BaseSerializer):
+class DatasetFootprintSerializer(serializers.Serializer):
     def to_representation(self, obj):
         return [
             obj.id,

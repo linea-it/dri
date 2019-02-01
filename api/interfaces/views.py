@@ -27,7 +27,7 @@ class TutorialFilter(django_filters.FilterSet):
         model = Tutorial
         fields = ('id', 'app_name', 'ttr_title', 'ttr_description',)
 
-    def filter_app_name(self, queryset, value):
+    def filter_app_name(self, queryset, name, value):
         return queryset.filter(application__app_name=str(value))
 
 

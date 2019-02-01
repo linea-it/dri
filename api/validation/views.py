@@ -30,7 +30,7 @@ class FlaggedFilter(django_filters.FilterSet):
         model = Flagged
         fields = ['flg_dataset', 'flg_flagged', 'release', ]
 
-    def filter_release(self, queryset, value):
+    def filter_release(self, queryset, name, value):
         # f.dataset.tag.tag_release.rls_name
         return queryset.filter(flg_dataset__tag__tag_release__id=int(value))
 
@@ -44,6 +44,13 @@ class FlaggedViewSet(viewsets.ModelViewSet):
 
     filter_class = FlaggedFilter
 
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)
+
 
 class DefectViewSet(viewsets.ModelViewSet):
     queryset = Defect.objects.all()
@@ -55,6 +62,13 @@ class DefectViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'dfc_dataset', 'dfc_filter', 'dfc_feature', 'dfc_ra', 'dfc_dec',)
 
     ordering_fields = '__all__'
+
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)
 
 
 class UserEmailViewSet(viewsets.ModelViewSet):

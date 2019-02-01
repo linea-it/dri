@@ -66,22 +66,22 @@ class TileViewSet(viewsets.ModelViewSet):
 
 class DatasetFilter(django_filters.FilterSet):
     tag__in = django_filters.CharFilter(method='filter_tag__in')
-    tli_tilename = django_filters.CharFilter(name='tile__tli_tilename', label='Tilename')
+    tli_tilename = django_filters.CharFilter(field_name='tile__tli_tilename', label='Tilename')
     position = django_filters.CharFilter(method='filter_position')
-    release = django_filters.CharFilter(action='filter_release')
+    release = django_filters.CharFilter(method='filter_release')
 
     class Meta:
         model = Dataset
         fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', 'release' ]
         order_by = True
 
-    def filter_release(self, queryset, value):
+    def filter_release(self, queryset, name, value):
         return queryset.filter(tag__tag_release__id=int(value))
 
-    def filter_tag__in(self, queryset, value):
+    def filter_tag__in(self, queryset, name, value):
         return queryset.filter(tag__in=value.split(','))
 
-    def filter_position(self, queryset, value):
+    def filter_position(self, queryset, name, value):
         radec = value.split(',')
 
         if len(radec) != 2:

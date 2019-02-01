@@ -48,24 +48,24 @@ class ProductFilter(django_filters.FilterSet):
     class Meta:
         model = Product
         fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'prd_filter', 'band', 'group', 'group_id',
-                  'releases', 'tags', 'class_name', 'release',]
+                  'releases', 'tags', 'class_name', 'release', ]
 
-    def filter_group(self, queryset, value):
+    def filter_group(self, queryset, name, value):
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
 
-    def filter_group_id(self, queryset, value):
+    def filter_group_id(self, queryset, name, value):
         return queryset.filter(prd_class__pcl_group__pk=str(value))
 
-    def filter_band(self, queryset, value):
+    def filter_band(self, queryset, name, value):
         return queryset.filter(prd_filter__filter=str(value))
 
-    def filter_class_name(self, queryset, value):
+    def filter_class_name(self, queryset, name, value):
         return queryset.filter(prd_class__pcl_name=str(value))
 
-    def filter_process(self, queryset, value):
+    def filter_process(self, queryset, name, value):
         return queryset.filter(prd_process_id__epr_original_id=str(value))
 
-    def filter_release(self, queryset, value):
+    def filter_release(self, queryset, name, value):
         return queryset.filter(releases__id=int(value))
 
 
@@ -86,7 +86,6 @@ class ProductViewSet(viewsets.ModelViewSet):
     ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')
 
 
-
 class CatalogFilter(django_filters.FilterSet):
     group = django_filters.CharFilter(method='filter_group')
     group__in = django_filters.CharFilter(method='filter_group__in')
@@ -96,17 +95,16 @@ class CatalogFilter(django_filters.FilterSet):
         model = Product
         fields = ['id', 'prd_name', 'prd_display_name', 'prd_class', 'group', 'group__in', 'release']
 
-    def filter_group(self, queryset, value):
+    def filter_group(self, queryset, name, value):
         # product -> product_class -> product_group
         return queryset.filter(prd_class__pcl_group__pgr_name=str(value))
 
-    def filter_group__in(self, queryset, value):
+    def filter_group__in(self, queryset, name, value):
         # product -> product_class -> product_group
         return queryset.filter(prd_class__pcl_group__pgr_name__in=value.split(','))
 
-    def filter_release(self, queryset, value):
+    def filter_release(self, queryset, name, value):
         return queryset.filter(releases__id=int(value))
-
 
 
 class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
@@ -258,7 +256,6 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                         })
                     })
 
-
         result = dict({
             'success': True,
             'expanded': True,
@@ -288,13 +285,11 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                     # pprint(external_catalogs_vizier.get('children')[0].get('children'))
                     nodeg['children'].append(external_catalogs_vizier.get('children')[0])
 
-
                 result.get('children').append(nodeg)
 
             # Adiciona Catalogos Externos ex: Vizier
             if 'external_catalogs' in groups and 'external_catalogs' not in nodeGroup:
                 result.get('children').append(external_catalogs_vizier)
-
 
         else:
             # Se tiver apenas um grupo basta retornar as classes
@@ -302,7 +297,6 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 result.get('children').append(classes.get(class_name))
 
         return Response(result)
-
 
     def get_external_catalogs(self):
 
@@ -315,7 +309,6 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
 
         })
 
-
         external_catalogs = dict({
             "text": "External Catalogs",
             "expanded": False,
@@ -323,6 +316,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
         })
 
         return external_catalogs
+
 
 class ProductContentViewSet(viewsets.ModelViewSet):
     """
@@ -458,7 +452,7 @@ class ProductRelatedFilter(django_filters.FilterSet):
         model = ProductRelated
         fields = ['prl_product', 'prl_related', 'prl_relation_type', 'prl_cross_identification', 'prd_class']
 
-    def filter_prd_class(self, queryset, value):
+    def filter_prd_class(self, queryset, name, value):
         return queryset.filter(prl_related__prd_class__pcl_name=str(value))
 
 
@@ -473,7 +467,6 @@ class ProductRelatedViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, )
 
     filter_class = ProductRelatedFilter
-
 
 
 class ProductContentAssociationViewSet(viewsets.ModelViewSet):
@@ -508,7 +501,7 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
         if product_id is None:
             raise Exception('product_id is required.')
 
-        associations =  Association().get_associations_by_product_id(product_id)
+        associations = Association().get_associations_by_product_id(product_id)
 
         return Response(associations)
 
@@ -522,13 +515,13 @@ class MapFilter(django_filters.FilterSet):
         model = Map
         fields = ['id', 'prd_name', 'prd_display_name', 'prd_class']
 
-    def filter_with_image(self, queryset, value):
+    def filter_with_image(self, queryset, name, value):
         return queryset.filter(image__isnull=False)
 
-    def filter_release_id(self, queryset, value):
+    def filter_release_id(self, queryset, name, value):
         return queryset.filter(releases__id=value)
 
-    def filter_release_name(self, queryset, value):
+    def filter_release_name(self, queryset, name, value):
         return queryset.filter(releases__rls_name=value)
 
 
@@ -599,6 +592,13 @@ class ProductSettingViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id', 'cst_display_name',)
 
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)
+
 
 class CurrentSettingViewSet(viewsets.ModelViewSet):
     """
@@ -613,6 +613,13 @@ class CurrentSettingViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'cst_product', 'cst_setting',)
 
     ordering_fields = ('id', 'cst_display_name',)
+
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)
 
 
 class ProductContentSettingViewSet(viewsets.ModelViewSet):
@@ -639,6 +646,13 @@ class CutoutJobViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'cjb_product', 'cjb_display_name', 'cjb_status')
 
     ordering_fields = ('id', 'cjb_finish_time')
+
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)
 
 
 class CutoutViewSet(viewsets.ModelViewSet):
@@ -674,7 +688,7 @@ class PermissionWorkgroupUserFilter(django_filters.FilterSet):
         model = WorkgroupUser
         fields = ['id', 'wgu_workgroup', 'wgu_user', 'product', ]
 
-    def filter_product(self, queryset, value):
+    def filter_product(self, queryset, name, value):
         workgroups = Workgroup.objects.filter(permission__prm_product=int(value))
         return queryset.filter(wgu_workgroup__in=workgroups)
 
@@ -713,6 +727,13 @@ class WorkgroupViewSet(viewsets.ModelViewSet):
 
     serializer_class = WorkgroupSerializer
 
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)
+
 
 class WorkgroupUserViewSet(viewsets.ModelViewSet):
     """
@@ -739,6 +760,10 @@ class FiltersetViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend, IsOwnerFilterBackend)
 
     def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
         serializer.save(owner=self.request.user)
 
 
@@ -766,6 +791,10 @@ class BookmarkedViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'product', 'owner', 'is_starred')
 
     def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
         serializer.save(owner=self.request.user)
 
 
@@ -859,7 +888,6 @@ class ImportTargetListViewSet(viewsets.ModelViewSet):
                 'success': True,
                 'product': product.pk
             }))
-
 
         except Exception as e:
             return JsonResponse(dict({

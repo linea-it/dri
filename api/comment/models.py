@@ -8,7 +8,9 @@ from common.models import Filter
 class Position(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+        verbose_name='Owner',
+        on_delete=models.SET_NULL,
+        null=True, blank=True, )
     pst_dataset = models.ForeignKey(
         Dataset,
         on_delete=models.CASCADE, verbose_name='Dataset', default=None, null=True, blank=True)

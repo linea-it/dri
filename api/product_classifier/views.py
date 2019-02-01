@@ -57,11 +57,11 @@ class ProductClassContentFilter(django_filters.FilterSet):
         model = ProductClassContent
         fields = ['id', 'pcc_class', 'pcc_category', 'pcc_name', 'pcc_display_name', 'pcc_ucd', 'search']
 
-    def filter_pcc_class(self, queryset, value):
+    def filter_pcc_class(self, queryset, name, value):
         return queryset.filter(
             Q(pcc_class=int(value)) | Q(pcc_class__isnull=True))
 
-    def filter_search(self, queryset, value):
+    def filter_search(self, queryset, name, value):
         return queryset.filter(
             Q(pcc_name__icontains=value) | Q(pcc_display_name__icontains=value) | Q(pcc_ucd__icontains=value)
         ).order_by('-pcc_mandatory', 'pcc_display_name')
