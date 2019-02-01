@@ -1,6 +1,8 @@
 FROM python:3.6.4
 ENV PYTHONUNBUFFERED 1
 RUN mkdir /app
+RUN mkdir /app/db
+RUN mkdir /app/log
 WORKDIR /app
 # Install Oracle Client
 ADD /oracle /app/oracle
