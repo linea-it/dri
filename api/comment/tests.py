@@ -1,6 +1,6 @@
 import urllib
 from django.test import TestCase
-from django.core.urlresolvers import reverse, resolve
+from django.urls import reverse, resolve
 from django.contrib.auth.models import AnonymousUser, User
 from rest_framework import status
 from rest_framework.test import APITestCase
