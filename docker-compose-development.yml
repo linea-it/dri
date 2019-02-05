@@ -11,7 +11,7 @@ services:
       - ./api:/app
       - ./static:/app/dri/static
       - ./archive:/archive
-      - ./log:/log
+      - ./log/backend:/log
     depends_on:
       - rabbit
     ports:
@@ -38,18 +38,18 @@ services:
       - JPEG_QUALITY=90
     command: ./start_fcgi.sh
     volumes:
-      - ./log:/log
+      - ./log/iipserver:/log
       - ./archive:/images
 
 
   # Wordpress
   mysql:
-    image: mysql:5.7
+    image: linea/dri_landing_page:MYSQLcef65a533dc17a5d7fcd901b52849cd4fdd7f040
     env_file:
       - .env
 
   wordpress:
-    image: linea/dri_landing_page:86eb97e6ff366ea8642d4b43dd02573f55a554b5
+    image: linea/dri_landing_page:WPcef65a533dc17a5d7fcd901b52849cd4fdd7f040
     env_file:
       - .env
     depends_on:
