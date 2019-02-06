@@ -78,18 +78,18 @@ if USE_OAUTH:
 else:
     INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'current_user.CurrentUserMiddleware',
 ]
+
 
 ROOT_URLCONF = 'dri.urls'
 
@@ -214,11 +214,22 @@ SOCIALACCOUNT_PROVIDERS = {
 # start celery with
 #  celery worker --workdir api --app dri -l info
 # or such configs will not be used
-CELERY_BROKER_URL = 'amqp://localhost'
-CELERY_RESULT_BACKEND = 'django-db'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+# CELERY_BROKER_URL = 'amqp://dri:driapi@rabbit:5672'
+# CELERY_BROKER_URL = 'pyamqp:://dri:dri@rabbit:5672'
+# CELERY_IMPORTS: ('product.tasks', 'common.tasks', 'common.tasks', 'activity_statistic.tasks', 'userquery.tasks',)
+# CELERY_RESULT_BACKEND = 'django-db'
+# CELERY_ACCEPT_CONTENT = ['json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+
+CELERY = {
+    'BROKER_URL': os.environ.get('CELERY_BROKER', 'localhost'),
+    'CELERY_IMPORTS': ('product.tasks', 'common.tasks', 'common.tasks', 'activity_statistic.tasks', 'userquery.tasks',),
+    'CELERY_RESULT_BACKEND': 'django-db',
+    'CELERY_TASK_SERIALIZER': 'json',
+    'CELERY_RESULT_SERIALIZER': 'json',
+    'CELERY_ACCEPT_CONTENT': ['json'],
+}
 
 
 # Enables or disables sending daily email access statistics.

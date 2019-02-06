@@ -1,9 +1,17 @@
+# Arquivos Docker-compose
+docker-compose.yml
+
 # Diretorios de instalacao
 /env
 /data
 /db
-/log
+/log/*.log
 /bkp
+/archive
+/static
+
+# Arquivos do Celery
+api/celerybeat-schedule
 
 # Diretorio da Home Wordpress
 /apps/home
@@ -23,3 +31,6 @@ __pycache__
 *.pid
 # Evitar que o visiomatic seja sobrescrito a cada build
 /frontend/build/production/Target/packages/local/visiomatic/src/visiomatic/dist
+/api/db
+*.coverage
+.env

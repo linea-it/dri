@@ -20,7 +20,7 @@ from rest_framework.authtoken.models import Token
 from django.conf import settings
 import requests
 from urllib.parse import urljoin
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 class FilterViewSet(viewsets.ModelViewSet):
     """
@@ -53,18 +53,6 @@ class LoggedUserViewSet(viewsets.ModelViewSet):
         return self.request.user
 
 
-# class UsersFilter(django_filters.FilterSet):
-#     group = django_filters.MethodFilter()
-#
-#     class Meta:
-#         model = User
-#         fields = ['group',]
-#
-#     def filter_group(self, queryset, value):
-#         if value:
-#             groups = self.request.user.groups.all()
-#             return queryset.filter(groups__in=groups)
-
 class UsersSameGroupFilterBackend(filters.BaseFilterBackend):
     """
         Retornar os Usuarios que estao no mesmo User Group que o usuario logado.
@@ -82,7 +70,7 @@ class UsersInSameGroupViewSet(viewsets.ModelViewSet):
     queryset = User.objects.filter()
     model = User
     serializer_class = UserSerializer
-    filter_backends = (filters.DjangoFilterBackend, UsersSameGroupFilterBackend)
+    filter_backends = (DjangoFilterBackend, UsersSameGroupFilterBackend)
 
 
 @api_view(['POST'])
