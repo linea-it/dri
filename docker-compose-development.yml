@@ -1,0 +1,70 @@
+version: '2'
+services:
+
+  backend:
+    build: ./api
+    command: ./entrypoint.sh
+    environment:
+      - NCSA=true
+      - CELERY_BROKER=amqp://dri:adminadmin@rabbit:5672
+    volumes:
+      - ./api:/app
+      - ./static:/app/dri/static
+      - ./archive:/archive
+      - ./log/backend:/log
+    depends_on:
+      - rabbit
+    ports:
+      - 8000:8000
+
+  rabbit:
+      image: rabbitmq:3-management
+      hostname: rabbit_dri
+      environment:
+          - RABBITMQ_DEFAULT_USER=dri
+          - RABBITMQ_DEFAULT_PASS=adminadmin
+      ports:
+          - "5672:5672"
+          - "15672:15672"
+
+  iipserver:
+    image: linea/iipserver:latest
+    environment:
+      - LOGFILE=/log/iipsrv.log
+      - VERBOSITY=10
+      - FILESYSTEM_PREFIX=/images/
+      - MAX_IMAGE_CACHE_SIZE=10
+      - MAX_CVT=3000
+      - JPEG_QUALITY=90
+    command: ./start_fcgi.sh
+    volumes:
+      - ./log/iipserver:/log
+      - ./archive:/images
+
+
+  # Wordpress
+  mysql:
+    image: linea/dri_landing_page:MYSQLcef65a533dc17a5d7fcd901b52849cd4fdd7f040
+    env_file:
+      - .env
+
+  wordpress:
+    image: linea/dri_landing_page:WPcef65a533dc17a5d7fcd901b52849cd4fdd7f040
+    env_file:
+      - .env
+    depends_on:
+      - mysql
+
+  nginx:
+    build: ./frontend
+    ports:
+      - 80:8080
+    volumes:
+      - ./frontend/build/production:/var/www/frontend/production
+      - ./archive:/var/www/data
+      - ./static:/var/www/static
+    depends_on:
+      - backend
+      - iipserver
+      - rabbit
+      - wordpress

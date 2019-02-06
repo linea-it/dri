@@ -37,7 +37,7 @@ class Product(models.Model):
     prd_description = models.CharField(
         max_length=1024, null=True, blank=True, verbose_name='Description')
     prd_filter = models.ForeignKey(
-        'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
+        'common.Filter', verbose_name='Filter', on_delete=models.CASCADE, null=True, blank=True, default=None)
     prd_date = models.DateTimeField(
         auto_now_add=True, null=True, blank=True, verbose_name='Date', help_text='Date of registration.')
     prd_is_public = models.BooleanField(
@@ -144,7 +144,7 @@ class ProductSetting(models.Model):
         Product, on_delete=models.CASCADE, verbose_name='Product')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+        on_delete=models.CASCADE, null=True, blank=True, verbose_name='Owner')
     cst_display_name = models.CharField(
         max_length=128, verbose_name='Name')
     cst_description = models.CharField(
@@ -165,7 +165,7 @@ class CurrentSetting(models.Model):
         ProductSetting, on_delete=models.CASCADE, verbose_name='Setting')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+        on_delete=models.CASCADE,  null=True, blank=True, verbose_name='Owner')
 
     def __str__(self):
         return str(self.pk)
@@ -265,7 +265,7 @@ class CutOutJob(models.Model):
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+        on_delete=models.CASCADE, null=True, blank=True, verbose_name='Owner')
 
     cjb_display_name = models.CharField(
         max_length=40, verbose_name='Name')
@@ -356,7 +356,7 @@ class Cutout(models.Model):
         max_length=10, verbose_name='Dec', null=True, blank=True,
         help_text='Dec in degrees, the association will be used to identify the column')
     ctt_filter = models.ForeignKey(
-        'common.Filter', verbose_name='Filter', null=True, blank=True, default=None)
+        'common.Filter', verbose_name='Filter', on_delete=models.CASCADE, null=True, blank=True, default=None)
     ctt_thumbname = models.CharField(
         max_length=255, verbose_name='Thumbname', null=True, blank=True, default=None)
     ctt_file_path = models.TextField(
@@ -392,7 +392,7 @@ class Workgroup(models.Model):
         max_length=60, verbose_name='Workgroup', help_text='group\'s name')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+        on_delete=models.CASCADE, null=True, blank=True, verbose_name='Owner')
 
     def __str__(self):
         return str(self.wgp_workgroup)
@@ -426,7 +426,7 @@ class Filterset(models.Model):
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+        on_delete=models.CASCADE, null=True, blank=True, verbose_name='Owner')
 
     fst_name = models.CharField(
         max_length=60, verbose_name='Filterset', help_text='Filterset Display Name')
@@ -466,7 +466,7 @@ class BookmarkProduct(models.Model):
 
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user, verbose_name='Owner')
+        on_delete=models.CASCADE, null=True, blank=True, verbose_name='Owner')
 
     is_starred = models.BooleanField(
         default=False, verbose_name='Is Starred')

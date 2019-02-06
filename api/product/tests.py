@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.core.urlresolvers import reverse, resolve
+from django.urls import reverse, resolve
 from django.contrib.auth.models import AnonymousUser, User
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -31,22 +31,22 @@ class FilterSetAPITestCase(APITestCase):
         })
 
     def test_list_filterset_route(self):
-        route = resolve('/filterset/')
+        route = resolve('/dri/api/filterset/')
         self.assertEqual(route.func.__name__, 'FiltersetViewSet')
 
     def test_list_filterset(self):
-        response = self.client.get('/filterset/')
+        response = self.client.get('/dri/api/filterset/')
         self.assertEqual(response.status_code, 200)
 
     def test_crud_filterset(self):
         # Create
-        response = self.client.post('/filterset/', self.filterset_data, format='json')
+        response = self.client.post('/dri/api/filterset/', self.filterset_data, format='json')
         self.assertEqual(response.status_code, 201)
 
         filterset = response.data
 
         # Read
-        response = self.client.get('/filterset/')
+        response = self.client.get('/dri/api/filterset/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['fst_name'], filterset['fst_name'])
@@ -54,25 +54,25 @@ class FilterSetAPITestCase(APITestCase):
         # Update
         patch_data = dict({'fst_name': "Filterset Updated"})
         response = self.client.patch(
-            '/filterset/%s/' % filterset['id'],
+            '/dri/api/filterset/%s/' % filterset['id'],
             patch_data,
             format='json')
 
         self.assertEqual(response.status_code, 200)
 
         # Confirm Updated
-        response = self.client.get('/filterset/')
+        response = self.client.get('/dri/api/filterset/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['fst_name'], patch_data['fst_name'])
 
         # Delete
         response = self.client.delete(
-            '/filterset/%s/' % filterset['id'])
+            '/dri/api/filterset/%s/' % filterset['id'])
         self.assertEqual(response.status_code, 204)
 
         # Confirm Deleted
-        response = self.client.get('/filterset/')
+        response = self.client.get('/dri/api/filterset/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0)
 
@@ -102,22 +102,22 @@ class FilterConditionAPITestCase(APITestCase):
         )
 
     def test_list_filtercondition_route(self):
-        route = resolve('/filtercondition/')
+        route = resolve('/dri/api/filtercondition/')
         self.assertEqual(route.func.__name__, 'FilterConditionViewSet')
 
     def test_list_filtercondition(self):
-        response = self.client.get('/filtercondition/')
+        response = self.client.get('/dri/api/filtercondition/')
         self.assertEqual(response.status_code, 200)
 
     def test_crud_filtercondition(self):
         # Create
-        response = self.client.post('/filtercondition/', self.condition_data, format='json')
+        response = self.client.post('/dri/api/filtercondition/', self.condition_data, format='json')
         self.assertEqual(response.status_code, 201)
 
         condition = response.data
 
         # Read
-        response = self.client.get('/filtercondition/')
+        response = self.client.get('/dri/api/filtercondition/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['fcd_property_name'], condition['fcd_property_name'])
@@ -125,25 +125,25 @@ class FilterConditionAPITestCase(APITestCase):
         # Update
         patch_data = dict({'fcd_property_name': "column2"})
         response = self.client.patch(
-            '/filtercondition/%s/' % condition['id'],
+            '/dri/api/filtercondition/%s/' % condition['id'],
             patch_data,
             format='json')
 
         self.assertEqual(response.status_code, 200)
 
         # Confirm Updated
-        response = self.client.get('/filtercondition/')
+        response = self.client.get('/dri/api/filtercondition/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['fcd_property_name'], patch_data['fcd_property_name'])
 
         # Delete
         response = self.client.delete(
-            '/filtercondition/%s/' % condition['id'])
+            '/dri/api/filtercondition/%s/' % condition['id'])
         self.assertEqual(response.status_code, 204)
 
         # Confirm Deleted
-        response = self.client.get('/filtercondition/')
+        response = self.client.get('/dri/api/filtercondition/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0)
 
@@ -154,7 +154,7 @@ class CutOutJobAPITestCase(APITestCase):
         self.user = User.objects.create_user("dri", "dri@linea.org", "dri")
         self.client.login(username='dri', password='dri')
 
-        self.route = '/cutoutjob/'
+        self.route = '/dri/api/cutoutjob/'
 
         self.product = mommy.make(
             Product,
@@ -273,22 +273,22 @@ class BookmarkedTestCases(APITestCase):
 
 
     def test_list_bookmark_route(self):
-        route = resolve('/bookmarked/')
+        route = resolve('/dri/api/bookmarked/')
         self.assertEqual(route.func.__name__, 'BookmarkedViewSet')
 
     def test_list_bookarks(self):
-        response = self.client.get('/bookmarked/')
+        response = self.client.get('/dri/api/bookmarked/')
         self.assertEqual(response.status_code, 200)
 
     def test_crud_filterset(self):
         # Create
-        response = self.client.post('/bookmarked/', self.bookmarked_data, format='json')
+        response = self.client.post('/dri/api/bookmarked/', self.bookmarked_data, format='json')
         self.assertEqual(response.status_code, 201)
 
         bookmarked = response.data
 
         # Read
-        response = self.client.get('/bookmarked/')
+        response = self.client.get('/dri/api/bookmarked/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['is_starred'], bookmarked['is_starred'])
@@ -296,24 +296,24 @@ class BookmarkedTestCases(APITestCase):
         # Update
         patch_data = dict({'is_starred': False})
         response = self.client.patch(
-            '/bookmarked/%s/' % bookmarked['id'],
+            '/dri/api/bookmarked/%s/' % bookmarked['id'],
             patch_data,
             format='json')
 
         self.assertEqual(response.status_code, 200)
 
         # Confirm Updated
-        response = self.client.get('/bookmarked/')
+        response = self.client.get('/dri/api/bookmarked/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
         self.assertEqual(response.data[0]['is_starred'], patch_data['is_starred'])
 
         # Delete
         response = self.client.delete(
-            '/bookmarked/%s/' % bookmarked['id'])
+            '/dri/api/bookmarked/%s/' % bookmarked['id'])
         self.assertEqual(response.status_code, 204)
 
         # Confirm Deleted
-        response = self.client.get('/bookmarked/')
+        response = self.client.get('/dri/api/bookmarked/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 0)

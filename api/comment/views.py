@@ -4,16 +4,16 @@ from rest_framework import viewsets
 from rest_framework import filters
 from .models import Position
 from .serializers import PositionSerializer
-
+from django_filters.rest_framework import DjangoFilterBackend
 
 class PositionFilter(django_filters.FilterSet):
-    coordinates = django_filters.MethodFilter(action='filter_coordinates')
+    coordinates = django_filters.CharFilter(method='filter_coordinates')
 
     class Meta:
         model = Position
         fields = ['id', 'owner', 'pst_dataset', 'pst_ra', 'pst_dec', 'pst_date', 'pst_comment']
 
-    def filter_coordinates(self, queryset, value):
+    def filter_coordinates(self, queryset, name, value):
 
         corners = json.loads(value)
 
@@ -46,5 +46,12 @@ class PositionViewSet(viewsets.ModelViewSet):
     queryset = Position.objects.all()
 
     serializer_class = PositionSerializer
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend,)
     filter_class = PositionFilter
+
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)

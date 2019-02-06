@@ -11,7 +11,9 @@ from django.db import models
 class Site(models.Model):
     sti_user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE, default=get_current_user, verbose_name='User Name')
+        on_delete=models.CASCADE, 
+        verbose_name='User Name',
+        null=True, blank=True,)
 
     sti_name = models.CharField(max_length=128, verbose_name='Site')
     sti_url = models.URLField(verbose_name='Url', null=True, blank=True)

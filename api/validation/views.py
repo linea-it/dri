@@ -9,6 +9,7 @@ import django_filters
 from common.filters import *
 from rest_framework import filters
 from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
 
 logger = logging.getLogger(__name__)
 
@@ -23,13 +24,13 @@ class FeatureViewSet(viewsets.ModelViewSet):
 
 
 class FlaggedFilter(django_filters.FilterSet):
-    release = django_filters.MethodFilter()
+    release = django_filters.CharFilter(method='filter_release')
 
     class Meta:
         model = Flagged
         fields = ['flg_dataset', 'flg_flagged', 'release', ]
 
-    def filter_release(self, queryset, value):
+    def filter_release(self, queryset, name, value):
         # f.dataset.tag.tag_release.rls_name
         return queryset.filter(flg_dataset__tag__tag_release__id=int(value))
 
@@ -39,9 +40,16 @@ class FlaggedViewSet(viewsets.ModelViewSet):
 
     serializer_class = FlaggedSerializer
 
-    filter_backends = (IsOwnerFilterBackend, filters.DjangoFilterBackend)
+    filter_backends = (IsOwnerFilterBackend, DjangoFilterBackend)
 
     filter_class = FlaggedFilter
+
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)
 
 
 class DefectViewSet(viewsets.ModelViewSet):
@@ -54,6 +62,13 @@ class DefectViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'dfc_dataset', 'dfc_filter', 'dfc_feature', 'dfc_ra', 'dfc_dec',)
 
     ordering_fields = '__all__'
+
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)
 
 
 class UserEmailViewSet(viewsets.ModelViewSet):

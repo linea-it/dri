@@ -18,7 +18,7 @@ class NcsaBackend(object):
         except User.DoesNotExist:
             return None
 
-    def authenticate(self, username=None, password=None):
+    def authenticate(self, request, username=None, password=None):
         self.logger.info("Try NCSA Authentication")
         if self.check_user(username, password):
             user = self.ensure_user(username)

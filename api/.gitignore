@@ -4,3 +4,5 @@ dri/static
 # Local configs
 dri/settings/local.py
 dri/settings/local_vars.py
+
+docker-compose.yml
