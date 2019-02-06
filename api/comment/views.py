@@ -7,7 +7,7 @@ from .serializers import PositionSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
 class PositionFilter(django_filters.FilterSet):
-    coordinates = django_filters.CharFilter(action='filter_coordinates')
+    coordinates = django_filters.CharFilter(method='filter_coordinates')
 
     class Meta:
         model = Position
