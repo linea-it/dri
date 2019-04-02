@@ -518,7 +518,7 @@ class ProductContentAssociationSerializer(serializers.HyperlinkedModelSerializer
             'pcn_column_name',
         )
 
-        read_only_fields = ('id')
+        read_only_fields = ('id',)
 
     def get_pcc_category(self, obj):
         try:
@@ -586,7 +586,7 @@ class ProductAssociationSerializer(serializers.ModelSerializer):
             'pcn_column_name'
         )
 
-        read_only_fields = ('id')
+        read_only_fields = ('id',)
 
     def get_pcc_ucd(self, obj):
         return obj.pca_class_content.pcc_ucd
