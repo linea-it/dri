@@ -1141,7 +1141,7 @@ Ext.define('visiomatic.Visiomatic', {
         // Link para explorer
         if (feature.properties._meta_is_system) {
             // Se o objeto e um sistema utilizar o explorer system
-            tag_id = '<a href="/dri/apps/explorer/#system/' +
+            tag_id = '<a href="/explorer/#system/' +
                feature.properties._meta_catalog_name + '/' +
                feature.properties._meta_id + '"target="_blank">' +
                feature.properties._meta_id + '</a>';
@@ -1149,7 +1149,7 @@ Ext.define('visiomatic.Visiomatic', {
         } else {
             if (feature.properties._meta_catalog_class == 'coadd_objects') {
                 // se o Objeto e um coadd object utilizar o explorer coadd
-                tag_id = '<a href="/dri/apps/explorer/#coadd/' +
+                tag_id = '<a href="/explorer/#coadd/' +
                    feature.properties._meta_catalog_name + '/' +
                    feature.properties._meta_id + '"target="_blank">' +
                    feature.properties._meta_id + '</a>';
