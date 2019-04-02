@@ -521,7 +521,7 @@ Ext.define('Target.view.preview.PreviewController', {
             id = object.get('_meta_id');
 
             hash = Ext.String.format(
-                '{0}//{1}/dri/apps/explorer/#system/{2}/{3}',
+                '{0}//{1}/explorer/#system/{2}/{3}',
                 protocol, host, source, id);
 
             window.open(hash, '_blank');

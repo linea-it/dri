@@ -15,7 +15,7 @@ Ext.define('common.ToolbarController', {
         var protocol = window.location.protocol,
             host = window.location.host,
             location = Ext.String.format(
-                '{0}//{1}/dri/api/api-auth/logout/?next=/dri/apps/',
+                '{0}//{1}/dri/api/api-auth/logout/?next=/',
                 protocol, host);
 
         window.location.assign(location);
