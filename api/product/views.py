@@ -507,9 +507,9 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 
 
 class MapFilter(django_filters.FilterSet):
-    release_id = django_filters.CharFilter(action='filter_release_id')
-    release_name = django_filters.CharFilter(action='filter_release_name')
-    with_image = django_filters.CharFilter(action='filter_with_image')
+    release_id = django_filters.CharFilter(method='filter_release_id')
+    release_name = django_filters.CharFilter(method='filter_release_name')
+    with_image = django_filters.CharFilter(method='filter_with_image')
 
     class Meta:
         model = Map
