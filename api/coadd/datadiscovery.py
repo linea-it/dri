@@ -224,7 +224,7 @@ class DataDiscovery:
             tiles = self.fetchall_dict(sql)
 
             for tile in tiles:
-                image_src_ptif = "http://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/%s/%s" % (
+                image_src_ptif = "https://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/%s/%s" % (
                     tile.get('ARCHIVE_PATH'), tile.get('FILENAME'))
 
                 tile.update({
