@@ -13,7 +13,8 @@ Ext.define('Sky.view.footprint.Aladin', {
         Ext.apply(this, {
             hideFootprint: false,
             gotoSetPosition: false,
-            enableShift: true
+            enableShift: true,
+            tilesGridVisible: true,
         });
         
         this.callParent(arguments);
