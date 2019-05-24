@@ -337,7 +337,7 @@ class Import():
             acls = list()
             for cls in ProductClass.objects.all():
                 acls.append(cls.pcl_name)
-            raise Exception('It is class is not available. these are available: %s' % (', '.join(acls)))
+            raise Exception('It is class is not available [ %s ]. these are available: %s' % (name, ', '.join(acls)))
 
     def register_catalog_content(self, catalog, data, created):
         """
@@ -539,7 +539,7 @@ class Import():
         cls = self.get_product_class(data.get('class'))
 
         # Recuperar o filtro
-        filter = self.get_filter(data.get('filter', '-'))
+        filter = self.get_filter(data.get('map_filter', '-'))
 
         tbl_info = data.get('ora_table_info', None)
         tbl_rows = None
@@ -633,8 +633,6 @@ class Import():
             raise Exception("This filter '%s' is not valid. Available filters is [ %s ]" % (filter_name, a))
 
     def register_aladin_image(self, product, data):
-        print("Teste: ")
-        print(data)
 
         if 'donwload_url' in data and 'filename' in data:
             relative_map_path = os.path.join(settings.DATA_DIR, "maps")
@@ -648,8 +646,6 @@ class Import():
                 os.mkdir(map_path)
                 sleep(1)
 
-            print("Map path: %s" % map_path)
-
             aladin_path_zip = self.download_aladin_image(data.get('donwload_url'), data.get('filename'), map_path)
 
             with zipfile.ZipFile(aladin_path_zip, "r") as zip_ref:
@@ -662,25 +658,15 @@ class Import():
 
             map_final_url = urljoin(host, result_sorce)
 
-            print(map_final_url)
-
             image, created = AladinImage.objects.update_or_create(
                 product=product, defaults={
                     'img_url': map_final_url,
                 })
 
-            print("AladinID: ", image.id)
-
     def download_aladin_image(self, url, filename, path):
 
-        print("url: %s" % url)
-        print("filename: %s" % filename)
-        print("path: %s" % path)
-
         file_path = os.path.join(path, filename)
-        print("File Path: %s" % file_path)
 
-        print("baixando com requests")
         r = requests.get(url)
         with open(file_path, "wb") as code:
             code.write(r.content)
