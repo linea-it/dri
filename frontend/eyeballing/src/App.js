@@ -5,6 +5,7 @@ import Home from './views/home/home';
 
 function App() {
   return (
+    // <MuiThemeProvider theme={theme}>
     <MuiThemeProvider theme={theme}>
       <Home />
     </MuiThemeProvider>

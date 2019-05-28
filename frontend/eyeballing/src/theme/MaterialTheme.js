@@ -1,21 +1,18 @@
 import { createMuiTheme } from '@material-ui/core/styles';
-import grey from '@material-ui/core/colors/grey';
-
-const primary = grey[900];
-const secondary = grey[50];
-const textPrimary = grey[50];
-const textSecondary = grey[900];
+import pink from '@material-ui/core/colors/pink';
 
 const theme = createMuiTheme({
   palette: {
-    primary: { main: primary },
-    secondary: { main: secondary },
-    textPrimary: { main: textPrimary },
-    textSecondary: textSecondary,
-    background: primary,
+    primary: {
+      light: '#5c6b7d',
+      main: '#34465d',
+      dark: '#243141',
+      contrastText: '#fff',
+    },
+    secondary: pink,
   },
   typography: {
-    fontSize: 16,
+    useNextVariants: true,
   },
 });
 
