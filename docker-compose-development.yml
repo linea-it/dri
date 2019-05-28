@@ -61,8 +61,10 @@ services:
       - 80:8080
     volumes:
       - ./frontend/build/production/:/var/www/frontend/production
+      - ./frontend/:/var/www/frontend/development
       - ./archive:/var/www/data
       - ./static:/var/www/static
+      - ./frontend/nginx-proxy.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - backend
       - iipserver
