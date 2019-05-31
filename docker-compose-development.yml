@@ -36,10 +36,11 @@ services:
       - MAX_IMAGE_CACHE_SIZE=10
       - MAX_CVT=3000
       - JPEG_QUALITY=90
+      - CORS=*
     command: ./start_fcgi.sh
     volumes:
       - ./log/iipserver:/log
-      - ./archive:/images
+      - ./archive/images:/images
 
 
   # Wordpress
