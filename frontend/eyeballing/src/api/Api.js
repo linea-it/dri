@@ -10,8 +10,6 @@ class DriApi {
       ? window._env_.REACT_APP_API
       : process.env.REACT_APP_API;
 
-  // static api = process.env.REACT_APP_API;
-
   static async loggedUser() {
     const res = await axios.get(`${this.api_url}/logged/`);
     const users = await res.data;
@@ -27,7 +25,18 @@ class DriApi {
       params: params,
     });
     const data = await res.data;
-    console.log('Releases: ', data);
+    return data;
+  }
+
+  static async datasetsByRelease(releaseId) {
+    const params = {
+      ordering: 'tli_tilename',
+      release: releaseId,
+    };
+    const res = await axios.get(`${this.api_url}/dataset/`, {
+      params: params,
+    });
+    const data = await res.data;
     return data;
   }
 

@@ -5,12 +5,11 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import { Grid } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
+import { isEmpty } from 'lodash';
 import VisiomaticPanel from './components/visiomatic/Visiomatic';
-
 import DriApi from './api/Api';
-
 import SelectReleases from './components/SelectReleases';
-
+import DatasetList from './components/DatasetList';
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -26,7 +25,7 @@ const styles = theme => ({
     backgroundColor: '#ff00ee',
   },
   tilelist: {
-    height: 200,
+    minHeight: 200,
     textAlign: 'center',
   },
 });
@@ -39,40 +38,66 @@ class Home extends Component {
       username: '',
       releases: [],
       currentRelease: '',
+      datasets: [],
+      currentDataset: {},
     };
   }
 
   async componentWillMount() {
     const user = await DriApi.loggedUser();
     const releases = await DriApi.allReleases();
-    const currentRelease = releases.length > 0 ? releases[0] : '';
+
+    // const currentRelease = releases.length > 0 ? releases[0] : '';
 
     this.setState({
       username: user.username,
       releases: releases,
-      currentRelease: currentRelease,
+      // currentRelease: currentRelease.id,
     });
   }
 
   onChangeRelease = value => {
-    this.setState({
-      currentRelease: value,
-    });
+    this.setState(
+      {
+        currentRelease: value,
+      },
+      () => {
+        this.loadData();
+      }
+    );
   };
 
-  // async loadData () {
-  //   const {currentRelease} = this.state;
+  async loadData() {
+    console.log('loadData()');
+    const { currentRelease } = this.state;
 
-  //   if (currentRelease !== null  )
+    if (currentRelease > 0) {
+      console.log('Get all Datasets');
+      const datasets = await DriApi.datasetsByRelease(currentRelease);
+      console.log('Datasets: ', datasets);
+      this.setState({
+        datasets: datasets,
+      });
+    }
+  }
 
-  // }
-
-
+  onSelectDataset = dataset => {
+    console.log('onSelectDataset: ', dataset);
+    this.setState({
+      currentDataset: dataset,
+    });
+  };
 
   render() {
     const { classes } = this.props;
 
-    const { username, releases, currentRelease } = this.state;
+    const {
+      username,
+      releases,
+      currentRelease,
+      datasets,
+      currentDataset,
+    } = this.state;
 
     return (
       <div>
@@ -90,7 +115,13 @@ class Home extends Component {
           spacing={16}
         >
           <Grid item xs={3}>
-            <Paper className={classes.tilelist}>Tile List</Paper>
+            <Paper className={classes.tilelist}>
+              <DatasetList
+                datasets={datasets}
+                handleSelection={this.onSelectDataset}
+                selected={currentDataset}
+              />
+            </Paper>
           </Grid>
           <Grid item xs={6}>
             <Paper className={classes.paper}>

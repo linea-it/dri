@@ -11,7 +11,7 @@ function SelectReleases(props) {
   }
 
   const listItens = releases.map((el, idx) => (
-    <MenuItem key={idx} value={String(el.id)}>
+    <MenuItem key={idx} value={el.id}>
       {el.rls_display_name}
     </MenuItem>
   ));
@@ -33,7 +33,7 @@ function SelectReleases(props) {
 SelectReleases.propTypes = {
   releases: PropTypes.array.isRequired,
   handleChange: PropTypes.func.isRequired,
-  value: PropTypes.string,
+  value: PropTypes.any,
 };
 
 export default SelectReleases;
