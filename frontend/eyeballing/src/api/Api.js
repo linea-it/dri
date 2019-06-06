@@ -32,6 +32,7 @@ class DriApi {
     const params = {
       ordering: 'tli_tilename',
       release: releaseId,
+      limit: 5,
     };
     const res = await axios.get(`${this.api_url}/dataset/`, {
       params: params,

@@ -76,7 +76,7 @@ class Home extends Component {
       const datasets = await DriApi.datasetsByRelease(currentRelease);
       console.log('Datasets: ', datasets);
       this.setState({
-        datasets: datasets,
+        datasets: datasets.results,
       });
     }
   }
@@ -127,14 +127,16 @@ class Home extends Component {
             <Paper className={classes.paper}>
               <VisiomaticPanel
                 // image={'https://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/OPS/multiepoch/Y5A1/r4115/DES0223-0915/p02/qa/DES0223-0915_r4115p02.ptif'}
-                image={null}
+                image={currentDataset.image_src_ptif}
                 className={classes.visiomatic}
+                center={[currentDataset.tli_ra, currentDataset.tli_dec]}
+                fov={2}
               />
             </Paper>
           </Grid>
-          <Grid item xs={3}>
+          {/* <Grid item xs={3}>
             <Paper className={classes.paper}>xs=3</Paper>
-          </Grid>
+          </Grid> */}
         </Grid>
         <Footer />
       </div>

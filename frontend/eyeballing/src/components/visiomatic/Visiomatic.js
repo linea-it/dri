@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 class VisiomaticPanel extends Component {
   static propTypes = {
     image: PropTypes.string,
+    center: PropTypes.array,
+    fov: PropTypes.number,
   };
 
   constructor(props) {
@@ -36,7 +38,7 @@ class VisiomaticPanel extends Component {
     this.libL.control.scale.wcs({ pixels: false }).addTo(map);
     this.libL.control.reticle().addTo(map);
 
-    var wcsControl = this.libL.control
+    const wcsControl = this.libL.control
       .wcs({
         coordinates: [{ label: 'RA,Dec', units: 'HMS' }],
         position: 'topright',
@@ -62,15 +64,40 @@ class VisiomaticPanel extends Component {
       //   this.props.image
       //   }&WID=2000&CVT=jpeg`;
 
-      var url = this.props.image;
+      let url = this.props.image;
 
-      this.layer = this.libL.tileLayer.iip(url, {}).addTo(this.map);
+      // TODO: Deve ser removido solucao temporaria
+      url = url.replace('http', 'https');
+
+      const ra = parseFloat(parseFloat(this.props.center[0]).toFixed(5));
+      const dec = parseFloat(parseFloat(this.props.center[1]).toFixed(5));
+      const latlng = this.libL.latLng(dec, ra);
+
+      this.layer = this.libL.tileLayer
+        .iip(url, {
+          credentials: true,
+          center: latlng,
+          fov: this.props.fov,
+          mixingMode: 'color',
+          defaultChannel: 2,
+          contrast: 0.7,
+          gamma: 2.8,
+          colorSat: 2.0,
+          channelLabelMatch: '[ugrizY]',
+        })
+        .addTo(this.map);
+
+      // if (this.props.center && this.props.center.lenght > 0) {
+      //   const ra = parseFloat(parseFloat(this.props.center[0]).toFixed(5));
+      //   const dec = parseFloat(parseFloat(this.props.center[1]).toFixed(5));
+
+      //   const latlng = this.libL.latLng(dec, ra);
+      //   this.map.setView(
+      //     latlng,
+      //     this.map.options.crs.fovToZoom(this.map, this.props.fov, latlng)
+      //   );
+      // }
     }
-  };
-
-  onBack = () => {
-    const history = this.props.history;
-    history.push({ pathname: `/` });
   };
 
   render() {
