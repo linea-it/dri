@@ -10,6 +10,18 @@ import InboxIcon from '@material-ui/icons/Inbox';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import IconButton from '@material-ui/core/IconButton';
+import green from '@material-ui/core/colors/green';
+// import {
+//   createMuiTheme,
+//   withStyles,
+//   makeStyles,
+// } from '@material-ui/core/styles';
+// import { ThemeProvider } from '@material-ui/core/styles';
+// const theme = createMuiTheme({
+//   palette: {
+//     primary: green,
+//   },
+// });
 
 function DatasetList(props) {
   const { datasets, selected } = props;
@@ -27,15 +39,19 @@ function DatasetList(props) {
         divider
         selected={el.id === selected.id ? true : false}
       >
-        <ListItemText primary={el.tli_tilename} />
+        <ListItemText primary={el.tli_tilename} secondary="2 comments" />
 
         <ListItemSecondaryAction>
           <IconButton edge="end" aria-label="Delete">
-            <ThumbUpIcon />
+            {el.isp_value ? <ThumbUpIcon color="primary" /> : <ThumbUpIcon />}
           </IconButton>
           <IconButton edge="end" aria-label="Delete">
-            <ThumbDownIcon />
-          </IconButton>          
+            {el.isp_value == false ? (
+              <ThumbDownIcon color="error" />
+            ) : (
+              <ThumbDownIcon />
+            )}
+          </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
     ));

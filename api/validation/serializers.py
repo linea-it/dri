@@ -1,7 +1,7 @@
 import logging
 
 from rest_framework import serializers
-from .models import Feature, Flagged, Defect, UserEmail
+from .models import Feature, Flagged, Inspect, Defect, UserEmail
 from coadd.models import Dataset
 from common.models import Filter
 
@@ -33,6 +33,21 @@ class FlaggedSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
+class InspectSerializer(serializers.HyperlinkedModelSerializer):
+    isp_dataset = serializers.PrimaryKeyRelatedField(queryset=Dataset.objects.all())
+
+    # owner = serializers.PrimaryKeyRelatedField(read_only=True)
+    class Meta:
+        model = Inspect
+
+        fields = (
+            'id',
+            # 'owner',
+            'isp_dataset',
+            'isp_value',
+        )
+
+
 class DefectSerializer(serializers.HyperlinkedModelSerializer):
     dfc_dataset = serializers.PrimaryKeyRelatedField(queryset=Dataset.objects.all())
     dfc_filter = serializers.PrimaryKeyRelatedField(queryset=Filter.objects.all())
@@ -49,6 +64,7 @@ class DefectSerializer(serializers.HyperlinkedModelSerializer):
             'dfc_ra',
             'dfc_dec',
         )
+
 
 class UserEmailSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

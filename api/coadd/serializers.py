@@ -106,7 +106,9 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     tli_udecll = serializers.SerializerMethodField()
     tli_uraur = serializers.SerializerMethodField()
     tli_udecur = serializers.SerializerMethodField()
-
+    inspected = serializers.PrimaryKeyRelatedField(read_only=True)
+    isp_owner = serializers.SerializerMethodField()
+    isp_value = serializers.SerializerMethodField()
 
     class Meta:
         model = Dataset
@@ -130,6 +132,9 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'tli_udecll',
             'tli_uraur',
             'tli_udecur',
+            'inspected',
+            'isp_value',
+            'isp_owner'
         )
 
     def get_tag_display_name(self, obj):
@@ -168,13 +173,110 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     def get_tli_udecur(self, obj):
         return obj.tile.tli_udecur
 
-        # def image_src_ptif(self, obj):
-        #     tile = obj.tile
-        #     base_src = obj.image_src_ptif
-        #
-        #     image_src = "/%s.ptif" % (tile.tli_tilename)
-        #
-        #     return base_src + image_src
+    def get_isp_value(self, obj):
+        try:
+            return obj.inspected.isp_value
+        except:
+            return None
+
+    def get_isp_owner(self, obj):
+        try:
+            return obj.inspected.owner.username
+        except:
+            return None
+
+
+# class DatasetInspectSerializer(serializers.HyperlinkedModelSerializer):
+#     tag = serializers.PrimaryKeyRelatedField(read_only=True)
+#     tag_display_name = serializers.SerializerMethodField(read_only=True)
+#     release = serializers.SerializerMethodField(read_only=True)
+#     release_name = serializers.SerializerMethodField(read_only=True)
+#     release_display_name = serializers.SerializerMethodField(read_only=True)
+#     tile = serializers.SerializerMethodField()
+#     tli_tilename = serializers.SerializerMethodField()
+#     tli_ra = serializers.SerializerMethodField()
+#     tli_dec = serializers.SerializerMethodField()
+#     tli_urall = serializers.SerializerMethodField()
+#     tli_udecll = serializers.SerializerMethodField()
+#     tli_uraur = serializers.SerializerMethodField()
+#     tli_udecur = serializers.SerializerMethodField()
+#     inspected = serializers.PrimaryKeyRelatedField(read_only=True)
+#     isp_owner = serializers.SerializerMethodField()
+#     isp_value = serializers.SerializerMethodField()
+
+#     class Meta:
+#         model = Dataset
+
+#         fields = (
+#             'id',
+#             'tag',
+#             'tag_display_name',
+#             'release',
+#             'release_name',
+#             'release_display_name',
+#             'tile',
+#             'run',
+#             'date',
+#             'tli_tilename',
+#             'tli_ra',
+#             'tli_dec',
+#             'image_src_ptif',
+#             'tli_urall',
+#             'tli_udecll',
+#             'tli_uraur',
+#             'tli_udecur',
+#             'inspected',
+#             'isp_value',
+#             'isp_owner'
+#         )
+
+#     def get_tag_display_name(self, obj):
+#         return obj.tag.tag_display_name
+
+#     def get_release(self, obj):
+#         return obj.tag.tag_release.pk
+
+#     def get_release_name(self, obj):
+#         return obj.tag.tag_release.rls_name
+
+#     def get_release_display_name(self, obj):
+#         return obj.tag.tag_release.rls_display_name
+
+#     def get_tile(self, obj):
+#         return obj.tile.pk
+
+#     def get_tli_tilename(self, obj):
+#         return obj.tile.tli_tilename
+
+#     def get_tli_ra(self, obj):
+#         return obj.tile.tli_ra
+
+#     def get_tli_dec(self, obj):
+#         return obj.tile.tli_dec
+
+#     def get_tli_udecll(self, obj):
+#         return obj.tile.tli_udecll
+
+#     def get_tli_urall(self, obj):
+#         return obj.tile.tli_urall
+
+#     def get_tli_uraur(self, obj):
+#         return obj.tile.tli_uraur
+
+#     def get_tli_udecur(self, obj):
+#         return obj.tile.tli_udecur
+
+#     def get_isp_value(self, obj):
+#         try:
+#             return obj.inspected.isp_value
+#         except:
+#             return None
+
+#     def get_isp_owner(self, obj):
+#         try:
+#             return obj.inspected.owner.username
+#         except:
+#             return None
 
 
 class DatasetFootprintSerializer(serializers.Serializer):
