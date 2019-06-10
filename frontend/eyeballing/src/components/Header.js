@@ -7,7 +7,7 @@ import logo from '../assets/img/icon-des.png';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import HomeIcon from '@material-ui/icons/Home';
-
+import InputBase from '@material-ui/core/InputBase';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
 const styles = theme => ({
@@ -25,17 +25,31 @@ const styles = theme => ({
 
   cmbRelease: {
     position: 'relative',
-    // width: 200,
+    width: 200,
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.common.white, 0.15),
     '&:hover': {
       backgroundColor: fade(theme.palette.common.white, 0.25),
     },
     marginLeft: 0,
-    width: '100%',
+    // width: '100%',
     [theme.breakpoints.up('sm')]: {
-      // marginLeft: theme.spacing(1),
+      marginLeft: theme.spacing * 1,
       width: 'auto',
+    },
+    inputRoot: {
+      color: 'inherit',
+    },
+    inputInput: {
+      // padding: theme.spacing(1, 1, 1, 7),
+      transition: theme.transitions.create('width'),
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        width: 120,
+        '&:focus': {
+          width: 200,
+        },
+      },
     },
   },
 });
@@ -52,7 +66,16 @@ function Header(props) {
           <Typography className={classes.grow} variant="h6" color="inherit">
             {title}
           </Typography>
-
+          <div className={classes.cmbRelease}>
+            <InputBase
+              placeholder="Search…"
+              classes={{
+                root: classes.inputRoot,
+                input: classes.inputInput,
+              }}
+              inputProps={{ 'aria-label': 'Search' }}
+            />
+          </div>
           <Typography variant="h6" color="inherit">
             {username}
           </Typography>
