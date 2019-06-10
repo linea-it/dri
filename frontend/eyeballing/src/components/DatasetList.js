@@ -2,31 +2,42 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
-import Divider from '@material-ui/core/Divider';
-import InboxIcon from '@material-ui/icons/Inbox';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import IconButton from '@material-ui/core/IconButton';
-import green from '@material-ui/core/colors/green';
-// import {
-//   createMuiTheme,
-//   withStyles,
-//   makeStyles,
-// } from '@material-ui/core/styles';
-// import { ThemeProvider } from '@material-ui/core/styles';
-// const theme = createMuiTheme({
-//   palette: {
-//     primary: green,
-//   },
-// });
+import { withStyles } from '@material-ui/core/styles';
+
+const styles = theme => ({
+  okButton: {
+    color: theme.typography.successColor,
+  },
+});
 
 function DatasetList(props) {
-  const { datasets, selected } = props;
+  const { classes, datasets, selected } = props;
 
-  console.log('Dataset List: ', datasets);
+  function changeQualify(dataset, label) {
+    let value = null;
+    if (label === 'ok') {
+      if (dataset.isp_value === true) {
+        // ja estava Ok volta para null
+        value = null;
+      } else {
+        value = true;
+      }
+    } else {
+      if (dataset.isp_value === false) {
+        // ja estava Not Ok volta para null
+        value = null;
+      } else {
+        value = false;
+      }
+    }
+
+    props.handleQualify(dataset, value);
+  }
 
   if (datasets && datasets.length > 0) {
     const listItens = datasets.map((el, idx) => (
@@ -42,15 +53,19 @@ function DatasetList(props) {
         <ListItemText primary={el.tli_tilename} secondary="2 comments" />
 
         <ListItemSecondaryAction>
-          <IconButton edge="end" aria-label="Delete">
-            {el.isp_value ? <ThumbUpIcon color="primary" /> : <ThumbUpIcon />}
+          <IconButton onClick={() => changeQualify(el, 'ok')}>
+            {el.isp_value ? (
+              <ThumbUpIcon className={classes.okButton} />
+            ) : (
+                <ThumbUpIcon />
+              )}
           </IconButton>
-          <IconButton edge="end" aria-label="Delete">
-            {el.isp_value == false ? (
+          <IconButton onClick={() => changeQualify(el, 'notok')}>
+            {el.isp_value === false ? (
               <ThumbDownIcon color="error" />
             ) : (
-              <ThumbDownIcon />
-            )}
+                <ThumbDownIcon />
+              )}
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
@@ -66,6 +81,7 @@ DatasetList.propTypes = {
   datasets: PropTypes.array.isRequired,
   selected: PropTypes.object,
   handleSelection: PropTypes.func.isRequired,
+  handleQualify: PropTypes.func.isRequired,
 };
 
-export default DatasetList;
+export default withStyles(styles)(DatasetList);

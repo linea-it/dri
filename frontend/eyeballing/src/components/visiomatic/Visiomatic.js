@@ -38,7 +38,7 @@ class VisiomaticPanel extends Component {
     this.libL.control.scale.wcs({ pixels: false }).addTo(map);
     this.libL.control.reticle().addTo(map);
 
-    const wcsControl = this.libL.control
+    this.wcsControl = this.libL.control
       .wcs({
         coordinates: [{ label: 'RA,Dec', units: 'HMS' }],
         position: 'topright',

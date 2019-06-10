@@ -5,19 +5,19 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import { Grid } from '@material-ui/core';
 import Paper from '@material-ui/core/Paper';
-import { isEmpty } from 'lodash';
 import VisiomaticPanel from './components/visiomatic/Visiomatic';
 import DriApi from './api/Api';
 import SelectReleases from './components/SelectReleases';
 import DatasetList from './components/DatasetList';
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
   },
   paper: {
-    // padding: theme.spacing(2),
+    padding: theme.spacing * 2,
     textAlign: 'center',
-    // color: theme.palette.text.secondary,
+    color: theme.palette.text.secondary,
   },
   visiomatic: {
     width: 200,
@@ -33,6 +33,8 @@ const styles = theme => ({
 class Home extends Component {
   state = this.initialState;
 
+  driApi = new DriApi();
+
   get initialState() {
     return {
       username: '',
@@ -43,9 +45,9 @@ class Home extends Component {
     };
   }
 
-  async componentWillMount() {
-    const user = await DriApi.loggedUser();
-    const releases = await DriApi.allReleases();
+  componentWillMount = async () => {
+    const user = await this.driApi.loggedUser();
+    const releases = await this.driApi.allReleases();
 
     // const currentRelease = releases.length > 0 ? releases[0] : '';
 
@@ -54,7 +56,7 @@ class Home extends Component {
       releases: releases,
       // currentRelease: currentRelease.id,
     });
-  }
+  };
 
   onChangeRelease = value => {
     this.setState(
@@ -72,9 +74,7 @@ class Home extends Component {
     const { currentRelease } = this.state;
 
     if (currentRelease > 0) {
-      console.log('Get all Datasets');
-      const datasets = await DriApi.datasetsByRelease(currentRelease);
-      console.log('Datasets: ', datasets);
+      const datasets = await this.driApi.datasetsByRelease(currentRelease);
       this.setState({
         datasets: datasets.results,
       });
@@ -86,6 +86,26 @@ class Home extends Component {
     this.setState({
       currentDataset: dataset,
     });
+  };
+
+  qualifyDataset = (dataset, value) => {
+    console.log('qualifyDataset(%o, %o)', dataset, value);
+    if (dataset.inspected !== null) {
+      if (value !== null) {
+        this.driApi.updateInspectValue(dataset.inspected, value).then(res => {
+          this.loadData();
+        });
+      } else {
+        this.driApi.deleteInspect(dataset.inspected).then(res => {
+          this.loadData();
+        });
+      }
+    } else {
+      console.log('Criar um novo');
+      this.driApi.createinspect(dataset.id, value).then(res => {
+        this.loadData();
+      });
+    }
   };
 
   render() {
@@ -119,11 +139,12 @@ class Home extends Component {
               <DatasetList
                 datasets={datasets}
                 handleSelection={this.onSelectDataset}
+                handleQualify={this.qualifyDataset}
                 selected={currentDataset}
               />
             </Paper>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={9}>
             <Paper className={classes.paper}>
               <VisiomaticPanel
                 // image={'https://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/OPS/multiepoch/Y5A1/r4115/DES0223-0915/p02/qa/DES0223-0915_r4115p02.ptif'}

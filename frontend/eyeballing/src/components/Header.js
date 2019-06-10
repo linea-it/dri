@@ -8,10 +8,6 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import HomeIcon from '@material-ui/icons/Home';
 
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 
 const styles = theme => ({
@@ -56,8 +52,6 @@ function Header(props) {
           <Typography className={classes.grow} variant="h6" color="inherit">
             {title}
           </Typography>
-
-
 
           <Typography variant="h6" color="inherit">
             {username}

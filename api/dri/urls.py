@@ -75,6 +75,8 @@ router.register(r'import_target_list', product_views.ImportTargetListViewSet, ba
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
 router.register(r'defect', validation_views.DefectViewSet)
+router.register(r'inspect', validation_views.InspectViewSet)
+
 
 router.register(r'filters', common_views.FilterViewSet)
 

@@ -62,7 +62,6 @@ class InspectFilter(django_filters.FilterSet):
         fields = ['isp_dataset', 'isp_value', 'release', ]
 
     def filter_release(self, queryset, name, value):
-        # f.dataset.tag.tag_release.rls_name
         return queryset.filter(isp_dataset__tag__tag_release__id=int(value))
 
 
@@ -71,7 +70,7 @@ class InspectViewSet(viewsets.ModelViewSet):
 
     serializer_class = InspectSerializer
 
-    filter_backends = (DjangoFilterBackend)
+    filter_backends = (DjangoFilterBackend,)
 
     filter_class = InspectFilter
 
