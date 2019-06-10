@@ -7,8 +7,7 @@ import logo from '../assets/img/icon-des.png';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import HomeIcon from '@material-ui/icons/Home';
-import InputBase from '@material-ui/core/InputBase';
-import { fade } from '@material-ui/core/styles/colorManipulator';
+import SelectReleases from '../components/SelectReleases';
 
 const styles = theme => ({
   appBar: {
@@ -22,64 +21,37 @@ const styles = theme => ({
   grow: {
     flexGrow: 1,
   },
-
-  cmbRelease: {
-    position: 'relative',
-    width: 200,
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.white, 0.15),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    // width: '100%',
-    [theme.breakpoints.up('sm')]: {
-      marginLeft: theme.spacing * 1,
-      width: 'auto',
-    },
-    inputRoot: {
-      color: 'inherit',
-    },
-    inputInput: {
-      // padding: theme.spacing(1, 1, 1, 7),
-      transition: theme.transitions.create('width'),
-      width: '100%',
-      [theme.breakpoints.up('sm')]: {
-        width: 120,
-        '&:focus': {
-          width: 200,
-        },
-      },
-    },
+  username: {
+    marginLeft: theme.spacing(2),
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
   },
 });
 
 function Header(props) {
-  const { classes, title, username } = props;
+  const { classes, title, username, releases, currentRelease } = props;
   return (
     <React.Fragment>
       <AppBar position="static">
         <Toolbar>
-          <IconButton color="inherit" aria-label="Menu">
+          <IconButton color="inherit">
             <img alt="logo DES" src={logo} />
           </IconButton>
           <Typography className={classes.grow} variant="h6" color="inherit">
             {title}
           </Typography>
-          <div className={classes.cmbRelease}>
-            <InputBase
-              placeholder="Search…"
-              classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-              }}
-              inputProps={{ 'aria-label': 'Search' }}
-            />
-          </div>
-          <Typography variant="h6" color="inherit">
+
+          <SelectReleases
+            releases={releases}
+            value={currentRelease}
+            handleChange={props.onChangeRelease}
+          />
+
+          <Typography variant="h6" color="inherit" className={classes.username}>
             {username}
           </Typography>
-          <IconButton color="inherit" aria-label="Home">
+          <IconButton color="inherit" className={classes.menuButton}>
             <HomeIcon />
           </IconButton>
         </Toolbar>
@@ -92,6 +64,9 @@ Header.propTypes = {
   classes: PropTypes.object.isRequired,
   title: PropTypes.string,
   username: PropTypes.string,
+  releases: PropTypes.array,
+  currentRelease: PropTypes.any,
+  onChangeRelease: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(Header);

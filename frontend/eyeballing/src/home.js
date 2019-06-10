@@ -4,25 +4,25 @@ import PropTypes from 'prop-types';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { Grid } from '@material-ui/core';
-import Paper from '@material-ui/core/Paper';
 import VisiomaticPanel from './components/visiomatic/Visiomatic';
 import DriApi from './api/Api';
-import SelectReleases from './components/SelectReleases';
 import DatasetList from './components/DatasetList';
-
+import Card from '@material-ui/core/Card';
 const styles = theme => ({
   root: {
     flexGrow: 1,
   },
-  paper: {
-    padding: theme.spacing * 2,
+  content: {
+    padding: theme.spacing.unit * 2,
+  },
+  card: {
     textAlign: 'center',
     color: theme.palette.text.secondary,
   },
   visiomatic: {
     width: 200,
     height: 200,
-    backgroundColor: '#ff00ee',
+    backgroundColor: theme.palette.grey[200],
   },
   tilelist: {
     minHeight: 200,
@@ -121,44 +121,44 @@ class Home extends Component {
 
     return (
       <div>
-        <Header title="Eyeballing" username={username} />
-        <SelectReleases
+        <Header
+          title="Eyeballing"
+          username={username}
           releases={releases}
-          value={currentRelease}
-          handleChange={this.onChangeRelease}
+          currentRelease={currentRelease}
+          onChangeRelease={this.onChangeRelease}
         />
-        <Grid
-          container
-          direction="row"
-          justify="flex-start"
-          alignItems="stretch"
-          spacing={16}
-        >
-          <Grid item xs={3}>
-            <Paper className={classes.tilelist}>
-              <DatasetList
-                datasets={datasets}
-                handleSelection={this.onSelectDataset}
-                handleQualify={this.qualifyDataset}
-                selected={currentDataset}
-              />
-            </Paper>
+        <div className={classes.content}>
+          <Grid
+            container
+            direction="row"
+            justify="flex-start"
+            alignItems="stretch"
+            spacing={2}
+          >
+            <Grid item xs={3}>
+              <Card className={classes.tilelist}>
+                <DatasetList
+                  datasets={datasets}
+                  handleSelection={this.onSelectDataset}
+                  handleQualify={this.qualifyDataset}
+                  selected={currentDataset}
+                />
+              </Card>
+            </Grid>
+            <Grid item xs={9}>
+              <Card className={classes.card}>
+                <VisiomaticPanel
+                  // image={'https://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/OPS/multiepoch/Y5A1/r4115/DES0223-0915/p02/qa/DES0223-0915_r4115p02.ptif'}
+                  image={currentDataset.image_src_ptif}
+                  className={classes.visiomatic}
+                  center={[currentDataset.tli_ra, currentDataset.tli_dec]}
+                  fov={2}
+                />
+              </Card>
+            </Grid>
           </Grid>
-          <Grid item xs={9}>
-            <Paper className={classes.paper}>
-              <VisiomaticPanel
-                // image={'https://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/OPS/multiepoch/Y5A1/r4115/DES0223-0915/p02/qa/DES0223-0915_r4115p02.ptif'}
-                image={currentDataset.image_src_ptif}
-                className={classes.visiomatic}
-                center={[currentDataset.tli_ra, currentDataset.tli_dec]}
-                fov={2}
-              />
-            </Paper>
-          </Grid>
-          {/* <Grid item xs={3}>
-            <Paper className={classes.paper}>xs=3</Paper>
-          </Grid> */}
-        </Grid>
+        </div>
         <Footer />
       </div>
     );
