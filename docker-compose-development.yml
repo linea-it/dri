@@ -66,6 +66,7 @@ services:
       - ./archive:/var/www/data
       - ./static:/var/www/static
       - ./frontend/nginx-proxy.conf:/etc/nginx/conf.d/default.conf
+      # - ./log/nginx:/log
     depends_on:
       - backend
       - iipserver

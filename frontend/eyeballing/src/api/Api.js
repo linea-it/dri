@@ -6,10 +6,14 @@ axios.defaults.headers.common['Authorization'] = 'Token ' + fake_token;
 
 class DriApi {
   constructor() {
-    this.api_url =
-      process.env.NODE_ENV === 'production'
-        ? window._env_.REACT_APP_API
-        : process.env.REACT_APP_API;
+    this.api_url = '/dri/api';
+    if (process.env.NODE_ENV !== 'production') {
+      this.api_url = process.env.REACT_APP_API;
+    }
+
+    // process.env.NODE_ENV === 'production'
+    //   ? window._env_.REACT_APP_API
+    //   : process.env.REACT_APP_API;
   }
 
   loggedUser = async () => {
