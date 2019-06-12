@@ -13,7 +13,7 @@ const styles = theme => ({
     flexGrow: 1,
   },
   content: {
-    padding: theme.spacing.unit * 2,
+    padding: theme.spacing(2),
   },
   card: {
     textAlign: 'center',
@@ -25,7 +25,7 @@ const styles = theme => ({
     backgroundColor: theme.palette.grey[200],
   },
   tilelist: {
-    minHeight: 200,
+    height: '100%',
     textAlign: 'center',
   },
 });
@@ -76,7 +76,7 @@ class Home extends Component {
     if (currentRelease > 0) {
       const datasets = await this.driApi.datasetsByRelease(currentRelease);
       this.setState({
-        datasets: datasets.results,
+        datasets: datasets,
       });
     }
   }

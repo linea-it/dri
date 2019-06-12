@@ -67,7 +67,7 @@ class VisiomaticPanel extends Component {
       let url = this.props.image;
 
       // TODO: Deve ser removido solucao temporaria
-      url = url.replace('http', 'https');
+      url = url.replace('http://', 'https://');
 
       const ra = parseFloat(parseFloat(this.props.center[0]).toFixed(5));
       const dec = parseFloat(parseFloat(this.props.center[1]).toFixed(5));

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import List from '@material-ui/core/List';
+// import List from '@material-ui/core/List';
+import { FixedSizeList } from 'react-window';
+// import { VariableSizeList as List } from 'react-window';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -10,6 +12,13 @@ import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
+  root: {
+    width: '100%',
+    height: 400,
+    // maxWidth: 360,
+    backgroundColor: theme.palette.background.paper,
+    listStyleType: 'none'
+  },
   okButton: {
     color: theme.typography.successColor,
   },
@@ -71,7 +80,20 @@ function DatasetList(props) {
       </ListItem>
     ));
 
-    return <List>{listItens}</List>;
+    const Row = ({ index, style }) => {
+      return <div style={style}> {listItens[index]}</div>;
+    };
+
+    return (
+      <FixedSizeList
+        className={classes.root}
+        height={400}
+        itemCount={listItens.length}
+        itemSize={60}
+      >
+        {Row}
+      </FixedSizeList>
+    );
   } else {
     return null;
   }

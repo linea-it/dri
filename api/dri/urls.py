@@ -22,11 +22,13 @@ from common import views as common_views
 from django.conf import settings
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.decorators.csrf import csrf_exempt
 from interfaces import views as interfaces_views
 from product import views as product_views
 from product_classifier import views as product_classifier_views
 from product_register import views as product_register_views
 from rest_framework import routers
+from rest_framework.authtoken.views import obtain_auth_token
 from validation import views as validation_views
 from userquery import views as userquery_views
 
@@ -131,7 +133,7 @@ urlpatterns = [
     url(r'^plugin/galaxy_cluster', common_views.galaxy_cluster),
 
 
-
+    url(r'^api/obtain-auth-token/$', csrf_exempt(obtain_auth_token)),
     url(r'^dri/api/get_token', common_views.get_token),
     url(r'^dri/api/get_setting/$', common_views.get_setting),
     url(r'^dri/api/api-auth/', include('rest_framework.urls', namespace='rest_framework'),

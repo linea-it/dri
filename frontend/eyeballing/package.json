@@ -9,7 +9,8 @@
     "dotenv": "^6.2.0",
     "lodash": "^4.17.11",
     "react": "^16.8.3",
-    "react-dom": "^16.8.3"
+    "react-dom": "^16.8.3",
+    "react-window": "^1.8.2"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
