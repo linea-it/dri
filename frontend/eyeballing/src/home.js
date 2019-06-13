@@ -8,6 +8,8 @@ import VisiomaticPanel from './components/visiomatic/Visiomatic';
 import DriApi from './api/Api';
 import DatasetList from './components/DatasetList';
 import Card from '@material-ui/core/Card';
+import { isEmpty } from 'lodash';
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -16,12 +18,11 @@ const styles = theme => ({
     padding: theme.spacing(2),
   },
   card: {
-    textAlign: 'center',
+    height: 'auto',
     color: theme.palette.text.secondary,
+    backgroundColor: theme.palette.grey[500],
   },
   visiomatic: {
-    width: 200,
-    height: 200,
     backgroundColor: theme.palette.grey[200],
   },
   tilelist: {
@@ -42,6 +43,7 @@ class Home extends Component {
       currentRelease: '',
       datasets: [],
       currentDataset: {},
+      loading: false,
     };
   }
 
@@ -62,6 +64,8 @@ class Home extends Component {
     this.setState(
       {
         currentRelease: value,
+        datasets: [],
+        currentDataset: {},
       },
       () => {
         this.loadData();
@@ -70,26 +74,26 @@ class Home extends Component {
   };
 
   async loadData() {
-    console.log('loadData()');
     const { currentRelease } = this.state;
 
     if (currentRelease > 0) {
+      this.setState({ loading: true });
       const datasets = await this.driApi.datasetsByRelease(currentRelease);
       this.setState({
         datasets: datasets,
+        currentDataset: {},
+        loading: false,
       });
     }
   }
 
   onSelectDataset = dataset => {
-    console.log('onSelectDataset: ', dataset);
     this.setState({
       currentDataset: dataset,
     });
   };
 
   qualifyDataset = (dataset, value) => {
-    console.log('qualifyDataset(%o, %o)', dataset, value);
     if (dataset.inspected !== null) {
       if (value !== null) {
         this.driApi.updateInspectValue(dataset.inspected, value).then(res => {
@@ -101,7 +105,6 @@ class Home extends Component {
         });
       }
     } else {
-      console.log('Criar um novo');
       this.driApi.createinspect(dataset.id, value).then(res => {
         this.loadData();
       });
@@ -117,12 +120,15 @@ class Home extends Component {
       currentRelease,
       datasets,
       currentDataset,
+      loading,
     } = this.state;
+
+    console.log(isEmpty(currentDataset));
 
     return (
       <div>
         <Header
-          title="Eyeballing"
+          title="Tile Inspection"
           username={username}
           releases={releases}
           currentRelease={currentRelease}
@@ -138,19 +144,26 @@ class Home extends Component {
           >
             <Grid item xs={3}>
               <Card className={classes.tilelist}>
-                <DatasetList
-                  datasets={datasets}
-                  handleSelection={this.onSelectDataset}
-                  handleQualify={this.qualifyDataset}
-                  selected={currentDataset}
-                />
+                {loading ? (
+                  <div>Loading ...</div>
+                ) : (
+                  <DatasetList
+                    datasets={datasets}
+                    handleSelection={this.onSelectDataset}
+                    handleQualify={this.qualifyDataset}
+                    selected={currentDataset}
+                  />
+                )}
               </Card>
             </Grid>
             <Grid item xs={9}>
               <Card className={classes.card}>
                 <VisiomaticPanel
-                  // image={'https://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/OPS/multiepoch/Y5A1/r4115/DES0223-0915/p02/qa/DES0223-0915_r4115p02.ptif'}
-                  image={currentDataset.image_src_ptif}
+                  image={
+                    !isEmpty(currentDataset)
+                      ? currentDataset.image_src_ptif
+                      : null
+                  }
                   className={classes.visiomatic}
                   center={[currentDataset.tli_ra, currentDataset.tli_dec]}
                   fov={2}

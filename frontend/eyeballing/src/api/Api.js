@@ -1,7 +1,14 @@
 import axios from 'axios';
 
-const fake_token = '2c2cf7fb465c8524ea8c1ea2ab214daa240c8f8c';
-axios.defaults.headers.common['Authorization'] = 'Token ' + fake_token;
+let api = '/dri/api';
+if (process.env.NODE_ENV !== 'production') {
+  api = process.env.REACT_APP_API;
+}
+
+axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = api;
 
 // Interceptar a Resposta.
 // Add a response interceptor
@@ -15,9 +22,6 @@ axios.interceptors.response.use(
     if (error.response) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
-      // console.log(error.response.data);
-      // console.log(error.response.status);
-      // console.log(error.response.headers);
       if (error.response.status === 401) {
         logout();
       }
@@ -40,25 +44,17 @@ axios.interceptors.response.use(
 );
 
 class DriApi {
-  constructor() {
-    this.api_url = '/dri/api';
-    if (process.env.NODE_ENV !== 'production') {
-      this.api_url = process.env.REACT_APP_API;
-    }
-  }
-
   loggedUser = async () => {
-    const res = await axios.get(`${this.api_url}/logged/`);
-    const users = await res.data;
-
-    return users[0];
+    const res = await axios.get(`/logged/get_logged/`);
+    const user = await res.data;
+    return user;
   };
 
   allReleases = async () => {
     const params = {
       ordering: '-id',
     };
-    const res = await axios.get(`${this.api_url}/releases/`, {
+    const res = await axios.get(`/releases/`, {
       params: params,
     });
     const data = await res.data;
@@ -70,8 +66,8 @@ class DriApi {
       ordering: 'tli_tilename',
       release: releaseId,
     };
-    // limit: 5,
-    const res = await axios.get(`${this.api_url}/dataset/`, {
+
+    const res = await axios.get(`/dataset/`, {
       params: params,
     });
 
@@ -80,17 +76,17 @@ class DriApi {
   };
 
   updateInspectValue = (inspectId, value) => {
-    return axios.patch(`${this.api_url}/inspect/${inspectId}/`, {
+    return axios.patch(`/inspect/${inspectId}/`, {
       isp_value: value,
     });
   };
 
   deleteInspect = inspectId => {
-    return axios.delete(`${this.api_url}/inspect/${inspectId}/`);
+    return axios.delete(`/inspect/${inspectId}/`);
   };
 
   createinspect = (datasetId, value) => {
-    return axios.post(`${this.api_url}/inspect/`, {
+    return axios.post(`/inspect/`, {
       isp_dataset: datasetId,
       isp_value: value,
     });
@@ -98,63 +94,6 @@ class DriApi {
 }
 export default DriApi;
 
-// Authenticacao
-
-let api = '/dri/api';
-if (process.env.NODE_ENV !== 'production') {
-  api = process.env.REACT_APP_API;
-}
-
-export function isAuthenticated() {
-  // return !!localStorage.token;
-  if (localStorage.token) {
-    axios.defaults.headers.common['Authorization'] =
-      'Token ' + localStorage.token;
-    return true;
-  } else {
-    return false;
-  }
-}
-
-export function login(username, password, cb) {
-  if (localStorage.token) {
-    if (cb) cb(true);
-    return;
-  }
-  getToken(username, password, res => {
-    if (res.authenticated) {
-      localStorage.token = res.token;
-      axios.defaults.headers.common['Authorization'] = 'Token ' + res.token;
-      if (cb) cb(true);
-    } else {
-      if (cb) cb(false);
-    }
-  });
-}
-
 export function logout() {
-  console.log('logout()');
-  delete localStorage.token;
-  window.location.replace(api + '/api-auth/login/?next=/eyeballing/');
-}
-
-export function getToken(username, password, cb) {
-  axios
-    .post(`${api}/obtain-auth-token/`, {
-      username: username,
-      password: password,
-    })
-    .then(res => {
-      var result = res.data;
-      cb({
-        authenticated: true,
-        token: result.token,
-      });
-    })
-    .catch(error => {
-      const data = error.response.data;
-      if ('non_field_errors' in data) {
-        alert(data.non_field_errors[0]);
-      }
-    });
+  window.location.replace(api + '/api-auth/logout/?next=/');
 }

@@ -87,9 +87,9 @@ function DatasetList(props) {
     return (
       <FixedSizeList
         className={classes.root}
-        height={400}
+        height={650}
         itemCount={listItens.length}
-        itemSize={60}
+        itemSize={72}
       >
         {Row}
       </FixedSizeList>
