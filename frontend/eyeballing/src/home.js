@@ -9,6 +9,7 @@ import DriApi from './api/Api';
 import DatasetList from './components/DatasetList';
 import Card from '@material-ui/core/Card';
 import { isEmpty } from 'lodash';
+import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
   root: {
@@ -28,6 +29,9 @@ const styles = theme => ({
   tilelist: {
     height: '100%',
     textAlign: 'center',
+  },
+  tilesCount: {
+    textAlign: 'left',
   },
 });
 
@@ -155,12 +159,23 @@ class Home extends Component {
                 {loading ? (
                   <div>Loading ...</div>
                 ) : (
-                  <DatasetList
-                    datasets={datasets}
-                    handleSelection={this.onSelectDataset}
-                    handleQualify={this.qualifyDataset}
-                    selected={currentDataset}
-                  />
+                  <div>
+                    <DatasetList
+                      datasets={datasets}
+                      handleSelection={this.onSelectDataset}
+                      handleQualify={this.qualifyDataset}
+                      selected={currentDataset}
+                    />
+                    {datasets.length > 0 ? (
+                      <Typography
+                        variant="subtitle1"
+                        color="inherit"
+                        className={classes.tilesCount}
+                      >
+                        {datasets.length} Tiles
+                      </Typography>
+                    ) : null}
+                  </div>
                 )}
               </Card>
             </Grid>
