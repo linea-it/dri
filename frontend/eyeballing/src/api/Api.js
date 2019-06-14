@@ -23,10 +23,10 @@ axios.interceptors.response.use(
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       if (error.response.status === 401) {
-        logout();
+        toLogin();
       }
       if (error.response.status === 403) {
-        logout();
+        toLogin();
       }
     } else if (error.request) {
       // The request was made but no response was received
@@ -93,6 +93,10 @@ class DriApi {
   };
 }
 export default DriApi;
+
+export function toLogin() {
+  window.location.replace(api + '/api-auth/login/?next=/eyeballing/');
+}
 
 export function logout() {
   window.location.replace(api + '/api-auth/logout/?next=/');

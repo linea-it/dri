@@ -51,13 +51,16 @@ class Home extends Component {
     const user = await this.driApi.loggedUser();
     const releases = await this.driApi.allReleases();
 
-    // const currentRelease = releases.length > 0 ? releases[0] : '';
+    const currentRelease = releases.length > 0 ? releases[0] : '';
 
-    this.setState({
-      username: user.username,
-      releases: releases,
-      // currentRelease: currentRelease.id,
-    });
+    this.setState(
+      {
+        username: user.username,
+        releases: releases,
+        currentRelease: currentRelease.id,
+      },
+      this.onChangeRelease(currentRelease.id)
+    );
   };
 
   onChangeRelease = value => {
@@ -68,22 +71,29 @@ class Home extends Component {
         currentDataset: {},
       },
       () => {
-        this.loadData();
+        this.loadData(true);
       }
     );
   };
 
-  async loadData() {
+  async loadData(clear) {
     const { currentRelease } = this.state;
 
     if (currentRelease > 0) {
-      this.setState({ loading: true });
-      const datasets = await this.driApi.datasetsByRelease(currentRelease);
-      this.setState({
-        datasets: datasets,
-        currentDataset: {},
-        loading: false,
-      });
+      if (clear) {
+        this.setState({ loading: true });
+        const datasets = await this.driApi.datasetsByRelease(currentRelease);
+        this.setState({
+          datasets: datasets,
+          currentDataset: {},
+          loading: false,
+        });
+      } else {
+        const datasets = await this.driApi.datasetsByRelease(currentRelease);
+        this.setState({
+          datasets: datasets,
+        });
+      }
     }
   }
 
@@ -97,16 +107,16 @@ class Home extends Component {
     if (dataset.inspected !== null) {
       if (value !== null) {
         this.driApi.updateInspectValue(dataset.inspected, value).then(res => {
-          this.loadData();
+          this.loadData(false);
         });
       } else {
         this.driApi.deleteInspect(dataset.inspected).then(res => {
-          this.loadData();
+          this.loadData(false);
         });
       }
     } else {
       this.driApi.createinspect(dataset.id, value).then(res => {
-        this.loadData();
+        this.loadData(false);
       });
     }
   };
@@ -122,8 +132,6 @@ class Home extends Component {
       currentDataset,
       loading,
     } = this.state;
-
-    console.log(isEmpty(currentDataset));
 
     return (
       <div>
