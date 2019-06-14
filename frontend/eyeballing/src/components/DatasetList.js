@@ -17,7 +17,7 @@ const styles = theme => ({
     height: 400,
     // maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
-    listStyleType: 'none'
+    listStyleType: 'none',
   },
   okButton: {
     color: theme.typography.successColor,
@@ -59,22 +59,22 @@ function DatasetList(props) {
         divider
         selected={el.id === selected.id ? true : false}
       >
-        <ListItemText primary={el.tli_tilename} secondary="2 comments" />
+        <ListItemText primary={el.tli_tilename} secondary="0 comments" />
 
         <ListItemSecondaryAction>
           <IconButton onClick={() => changeQualify(el, 'ok')}>
             {el.isp_value ? (
               <ThumbUpIcon className={classes.okButton} />
             ) : (
-                <ThumbUpIcon />
-              )}
+              <ThumbUpIcon />
+            )}
           </IconButton>
           <IconButton onClick={() => changeQualify(el, 'notok')}>
             {el.isp_value === false ? (
               <ThumbDownIcon color="error" />
             ) : (
-                <ThumbDownIcon />
-              )}
+              <ThumbDownIcon />
+            )}
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
