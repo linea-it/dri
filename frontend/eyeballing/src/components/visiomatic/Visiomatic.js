@@ -125,13 +125,25 @@ class VisiomaticPanel extends Component {
           // fov: this.props.fov,
           mixingMode: 'color',
           defaultChannel: 2,
-          // contrast: 0.7,
-          // gamma: 2.8,
-          // colorSat: 2.0,
-          contrast: 4,
-          gamma: 2,
-          colorSat: 2,
+          contrast: 0.7,
+          gamma: 2.8,
+          colorSat: 2.0,
+          quality: 100,
           channelLabelMatch: '[ugrizY]',
+          minMaxValues: [
+            // g
+            [-0.390453905, 1000],
+            // r
+            [],
+            // i
+            [],
+            // z
+            [],
+            // Y
+            [-0.990383625, 5000],
+            // det
+            [],
+          ],
         })
         .addTo(this.map);
     } else {
