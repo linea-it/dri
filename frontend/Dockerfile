@@ -1,3 +1,16 @@
+FROM node:10-alpine as builder
+
+WORKDIR /app
+
+COPY ./eyeballing .
+
+# RUN yarn -v && yarn --ignore-optional
+
+RUN yarn -v && yarn 
+
+RUN yarn run build
+
+
 FROM nginx:latest
 
 # Make /var/cache/nginx/ writable by non-root users
@@ -14,5 +27,7 @@ EXPOSE 7070
 RUN sed --regexp-extended --in-place=.bak 's%^pid\s+/var/run/nginx.pid;%pid /var/tmp/nginx.pid;%' /etc/nginx/nginx.conf
 # Add frontend build to image
 ADD ./build /var/www/frontend
+# Add eyeballing React App to image
+COPY --from=builder /app/build /var/www/eyeballing
 
 USER nginx

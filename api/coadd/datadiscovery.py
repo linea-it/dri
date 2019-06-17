@@ -18,14 +18,22 @@ DATADISCOVERY = {
         #         'PTIF_PATHS': 'SELECT m.tilename, f.path AS archive_path, m.filename, t.created_date FROM y3a2_proctag t, y3a2_file_archive_info f, y3a2_miscfile m WHERE t.pfw_attempt_id = m.pfw_attempt_id AND t.tag=\'Y3A2_COADD\' AND f.filename=m.filename AND m.filetype=\'coadd_ptif\''
         #     }
         # }
-        'Y5A1_COADD': {
+        # 'Y5A1_COADD': {
+        #     'DATABASE': 'desoper',
+        #     'QUERIES': {
+        #         'TAG': 'SELECT t.tag, MIN(t.created_date) as created_date FROM proctag t WHERE t.tag=\'Y5A1_COADD\' GROUP BY t.tag',
+        #         'TILES_COUNT': 'SELECT COUNT(*) AS count FROM proctag t WHERE t.tag=\'Y5A1_COADD\'',
+        #         'PTIF_PATHS': 'SELECT m.tilename, f.PATH AS archive_path, m.filename, t.created_date FROM proctag t LEFT JOIN miscfile m ON (t.pfw_attempt_id = m.pfw_attempt_id) LEFT JOIN file_archive_info f ON (f.filename = m.filename) WHERE t.tag=\'Y5A1_COADD\' AND m.filetype=\'coadd_ptif\''
+        #     }
+        # }
+        'Y6A1_COADD': {
             'DATABASE': 'desoper',
             'QUERIES': {
-                'TAG': 'SELECT t.tag, MIN(t.created_date) as created_date FROM proctag t WHERE t.tag=\'Y5A1_COADD\' GROUP BY t.tag',
-                'TILES_COUNT': 'SELECT COUNT(*) AS count FROM proctag t WHERE t.tag=\'Y5A1_COADD\'',
-                'PTIF_PATHS': 'SELECT m.tilename, f.PATH AS archive_path, m.filename, t.created_date FROM proctag t LEFT JOIN miscfile m ON (t.pfw_attempt_id = m.pfw_attempt_id) LEFT JOIN file_archive_info f ON (f.filename = m.filename) WHERE t.tag=\'Y5A1_COADD\' AND m.filetype=\'coadd_ptif\''
+                'TAG': 'SELECT t.tag, MIN(t.created_date) as created_date FROM proctag t WHERE t.tag=\'Y6A1_COADD\' GROUP BY t.tag',
+                'TILES_COUNT': 'SELECT COUNT(*) AS count FROM proctag t WHERE t.tag=\'Y6A1_COADD\'',
+                'PTIF_PATHS': 'SELECT m.tilename, f.PATH AS archive_path, m.filename, t.created_date FROM proctag t LEFT JOIN miscfile m ON (t.pfw_attempt_id = m.pfw_attempt_id) LEFT JOIN file_archive_info f ON (f.filename = m.filename) WHERE t.tag=\'Y6A1_COADD\' AND m.filetype=\'coadd_ptif\''
             }
-        }        
+        }            
     }
 }
 

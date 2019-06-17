@@ -4,7 +4,7 @@ import django_filters
 from lib.sqlalchemy_wrapper import DBBase
 from rest_framework import filters
 from rest_framework import viewsets
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, list_route
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 
@@ -18,6 +18,8 @@ from urllib.parse import urljoin
 from common.models import Filter
 
 # Create your views here.
+
+
 class ReleaseViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows releases to be viewed or edited
@@ -72,7 +74,7 @@ class DatasetFilter(django_filters.FilterSet):
 
     class Meta:
         model = Dataset
-        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', 'release' ]
+        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', 'release']
         order_by = True
 
     def filter_release(self, queryset, name, value):
@@ -118,6 +120,25 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id', 'tag')
 
+    # @list_route()
+    # def validation(self, request):
+
+    #     user = self.request.user
+    #     queryset = self.get_queryset().select_related()
+    #     # queryset = self.get_queryset().select_related().filter(flagged__owner=user)
+    #     queryset = self.filter_queryset(queryset)
+
+    #     serializer = DatasetInspectSerializer(queryset, many=True, context=self.get_serializer_context())
+
+    # # return Response(serializer.data)
+
+    #     result = dict({
+    #         'success': True,
+    #         'data': serializer.data
+    #     })
+
+    #     return Response(result)
+
 
 class DatasetFootprintViewSet(viewsets.ModelViewSet):
     queryset = Dataset.objects.select_related().all()
@@ -162,11 +183,9 @@ def get_fits_by_tilename(request):
 
         files = os.listdir(tile_path)
 
-
         data_source = os.path.join(settings.DATA_SOURCE, relative_path) + "/"
 
         result = list()
-
 
         ordered_filters = dict({})
         filters = Filter.objects.all().order_by('lambda_min')
@@ -207,14 +226,12 @@ def get_fits_by_tilename(request):
                 except:
                     pass
 
-
             result.append(dict({
                 'filename': filename,
                 'file_source': file_source,
                 'filter': flr,
                 'order': ord
             }))
-
 
         # sql = (
         #     "SELECT m.filename, m.filetype, m.band, f.path FROM proctag t, file_archive_info f, miscfile m WHERE t.pfw_attempt_id = m.pfw_attempt_id AND t.tag='" + catalog + "' AND f.filename=m.filename AND m.filetype NOT IN ('coadd_head_scamp', 'mangle_molys', 'mangle_polygons', 'mangle_csv_ccdgon', 'mangle_csv_cobjmoly', 'mangle_csv_molyccd', 'mangle_csv_molyccd', 'mangle_csv_molygon', 'coadd_psfex_model', 'coadd_qa_scamp', 'coadd_xml_scamp', 'coadd_xml_psfex', 'coadd_det_psfex_model') AND m.tilename = '" + tilename + "' ORDER BY m.filetype, m.filename")

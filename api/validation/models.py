@@ -22,12 +22,31 @@ class Flagged(models.Model):
         on_delete=models.CASCADE, null=True, blank=True,)
     flg_dataset = models.ForeignKey(
         'coadd.Dataset',
-        on_delete=models.CASCADE)
+        on_delete=models.CASCADE,
+        related_name='flagged')
     flg_flagged = models.BooleanField(
-        default=False, blank=True, verbose_name='Flagged')
+        default=None, blank=True, verbose_name='Flagged', null=True)
 
     def __str__(self):
         return str(self.flg_flagged)
+
+
+class Inspect(models.Model):
+    owner = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE, null=True, blank=True,)
+    isp_dataset = models.OneToOneField(
+        'coadd.Dataset',
+        on_delete=models.CASCADE,
+        related_name='inspected')
+    isp_value = models.BooleanField(
+        verbose_name='Inspected',
+        default=None, blank=True,
+        null=True,
+        help_text="null for not inspected, True for good and False for bad.")
+
+    def __str__(self):
+        return str(self.isp_value)
 
 
 class Defect(models.Model):
@@ -51,6 +70,7 @@ class Defect(models.Model):
         null=True, blank=True, default=0, verbose_name='RA')
     dfc_dec = models.FloatField(
         null=True, blank=True, default=0, verbose_name='Dec')
+
 
 class UserEmail(models.Model):
     email = models.CharField(

@@ -7,6 +7,10 @@ WORKDIR /app
 # Install Oracle Client
 ADD /oracle /app/oracle
 
+# TODO: Rever esse error
+# Fix W: Failed to fetch http://deb.debian.org/debian/dists/jessie-updates/InRelease  Unable to find expected entry 'main/binary-amd64/Packages' in Release file (Wrong sources.list entry or malformed file)
+RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://archive.debian.org/debian/ jessie main\ndeb http://security.debian.org jessie/updates main\ndeb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
+
 RUN mkdir /oracle
 RUN apt-get update
 RUN apt-get install unzip

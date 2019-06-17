@@ -36,10 +36,11 @@ services:
       - MAX_IMAGE_CACHE_SIZE=10
       - MAX_CVT=3000
       - JPEG_QUALITY=90
+      - CORS=*
     command: ./start_fcgi.sh
     volumes:
       - ./log/iipserver:/log
-      - ./archive:/images
+      - ./archive/images:/images
 
 
   # Wordpress
@@ -61,8 +62,11 @@ services:
       - 80:8080
     volumes:
       - ./frontend/build/production/:/var/www/frontend/production
+      - ./frontend/:/var/www/frontend/development
       - ./archive:/var/www/data
       - ./static:/var/www/static
+      - ./frontend/nginx-proxy.conf:/etc/nginx/conf.d/default.conf
+      # - ./log/nginx:/log
     depends_on:
       - backend
       - iipserver

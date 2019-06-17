@@ -10,6 +10,8 @@ from common.filters import *
 from rest_framework import filters
 from rest_framework import viewsets
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.decorators import list_route
+from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +45,34 @@ class FlaggedViewSet(viewsets.ModelViewSet):
     filter_backends = (IsOwnerFilterBackend, DjangoFilterBackend)
 
     filter_class = FlaggedFilter
+
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)
+
+
+class InspectFilter(django_filters.FilterSet):
+    release = django_filters.CharFilter(method='filter_release')
+
+    class Meta:
+        model = Inspect
+        fields = ['isp_dataset', 'isp_value', 'release', ]
+
+    def filter_release(self, queryset, name, value):
+        return queryset.filter(isp_dataset__tag__tag_release__id=int(value))
+
+
+class InspectViewSet(viewsets.ModelViewSet):
+    queryset = Inspect.objects.all()
+
+    serializer_class = InspectSerializer
+
+    filter_backends = (DjangoFilterBackend,)
+
+    filter_class = InspectFilter
 
     def perform_create(self, serializer):
         # Adiconar usuario logado

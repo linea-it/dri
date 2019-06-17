@@ -106,7 +106,9 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     tli_udecll = serializers.SerializerMethodField()
     tli_uraur = serializers.SerializerMethodField()
     tli_udecur = serializers.SerializerMethodField()
-
+    inspected = serializers.PrimaryKeyRelatedField(read_only=True)
+    isp_owner = serializers.SerializerMethodField()
+    isp_value = serializers.SerializerMethodField()
 
     class Meta:
         model = Dataset
@@ -130,6 +132,9 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'tli_udecll',
             'tli_uraur',
             'tli_udecur',
+            'inspected',
+            'isp_value',
+            'isp_owner'
         )
 
     def get_tag_display_name(self, obj):
@@ -168,13 +173,17 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     def get_tli_udecur(self, obj):
         return obj.tile.tli_udecur
 
-        # def image_src_ptif(self, obj):
-        #     tile = obj.tile
-        #     base_src = obj.image_src_ptif
-        #
-        #     image_src = "/%s.ptif" % (tile.tli_tilename)
-        #
-        #     return base_src + image_src
+    def get_isp_value(self, obj):
+        try:
+            return obj.inspected.isp_value
+        except:
+            return None
+
+    def get_isp_owner(self, obj):
+        try:
+            return obj.inspected.owner.username
+        except:
+            return None
 
 
 class DatasetFootprintSerializer(serializers.Serializer):

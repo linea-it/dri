@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Feature, Flagged, Defect, UserEmail
+from .models import Feature, Flagged, Defect, UserEmail, Inspect
 
 
 class FeatureAdmin(admin.ModelAdmin):
@@ -15,12 +15,19 @@ class FlaggedAdmin(admin.ModelAdmin):
     search_fields = ('id', 'owner', 'flg_flagged',)
 
 
+class InspectAdmin(admin.ModelAdmin):
+    list_display = ('id', 'owner', 'isp_dataset', 'isp_value',)
+    list_display_links = ('id', 'owner', 'isp_dataset', 'isp_value',)
+    search_fields = ('id', 'owner', 'isp_dataset',)
+
+
 class DefectAdmin(admin.ModelAdmin):
     list_display = ('id', 'owner', 'dfc_dataset',
                     'dfc_filter', 'dfc_feature', 'dfc_ra', 'dfc_dec',)
     list_display_links = ('id', 'owner', 'dfc_dataset',
                           'dfc_filter', 'dfc_feature', 'dfc_ra', 'dfc_dec',)
     search_fields = ('id', 'owner',)
+
 
 class UserEmailAdmin(admin.ModelAdmin):
     list_display = ('id', 'email',)
@@ -30,5 +37,6 @@ class UserEmailAdmin(admin.ModelAdmin):
 
 admin.site.register(Feature, FeatureAdmin)
 admin.site.register(Flagged, FlaggedAdmin)
+admin.site.register(Inspect, InspectAdmin)
 admin.site.register(Defect, DefectAdmin)
 admin.site.register(UserEmail, UserEmailAdmin)
