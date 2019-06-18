@@ -8,6 +8,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import Comment from '@material-ui/icons/Comment';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -21,6 +22,9 @@ const styles = theme => ({
   },
   okButton: {
     color: theme.typography.successColor,
+  },
+  teste: {
+    color: '#FF00FF',
   },
 });
 
@@ -48,6 +52,10 @@ function DatasetList(props) {
     props.handleQualify(dataset, value);
   }
 
+  function handleComment(dataset) {
+    props.handleComment(dataset);
+  }
+
   if (datasets && datasets.length > 0) {
     const listItens = datasets.map((el, idx) => (
       <ListItem
@@ -59,7 +67,11 @@ function DatasetList(props) {
         divider
         selected={el.id === selected.id ? true : false}
       >
-        <ListItemText primary={el.tli_tilename} secondary="0 comments" />
+        <ListItemText
+          primary={el.tli_tilename}
+          secondary={`${el.comments} comments`}
+          secondaryTypographyProps={{ className: classes.teste }}
+        />
 
         <ListItemSecondaryAction>
           <IconButton onClick={() => changeQualify(el, 'ok')}>
@@ -75,6 +87,9 @@ function DatasetList(props) {
             ) : (
               <ThumbDownIcon />
             )}
+          </IconButton>
+          <IconButton onClick={() => handleComment(el)}>
+            <Comment />
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
@@ -104,6 +119,7 @@ DatasetList.propTypes = {
   selected: PropTypes.object,
   handleSelection: PropTypes.func.isRequired,
   handleQualify: PropTypes.func.isRequired,
+  handleComment: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(DatasetList);

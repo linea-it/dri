@@ -10,6 +10,7 @@ import DatasetList from './components/DatasetList';
 import Card from '@material-ui/core/Card';
 import { isEmpty } from 'lodash';
 import Typography from '@material-ui/core/Typography';
+import CommentDialog from './components/comment/Dialog';
 
 const styles = theme => ({
   root: {
@@ -48,6 +49,8 @@ class Home extends Component {
       datasets: [],
       currentDataset: {},
       loading: false,
+      showComment: false,
+      comments: [],
     };
   }
 
@@ -125,6 +128,16 @@ class Home extends Component {
     }
   };
 
+  handleComment = async dataset => {
+    const comments = await this.driApi.commentsByDataset(dataset.id);
+
+    this.setState({
+      showComment: true,
+      currentDataset: dataset,
+      comments: comments,
+    });
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -135,6 +148,8 @@ class Home extends Component {
       datasets,
       currentDataset,
       loading,
+      showComment,
+      comments,
     } = this.state;
 
     return (
@@ -164,6 +179,7 @@ class Home extends Component {
                       datasets={datasets}
                       handleSelection={this.onSelectDataset}
                       handleQualify={this.qualifyDataset}
+                      handleComment={this.handleComment}
                       selected={currentDataset}
                     />
                     {datasets.length > 0 ? (
@@ -194,6 +210,12 @@ class Home extends Component {
               </Card>
             </Grid>
           </Grid>
+          <CommentDialog
+            open={showComment}
+            dataset={currentDataset}
+            comments={comments}
+            handleClose={() => this.setState({ showComment: false })}
+          />
         </div>
         <Footer />
       </div>

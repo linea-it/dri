@@ -109,6 +109,7 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     inspected = serializers.PrimaryKeyRelatedField(read_only=True)
     isp_owner = serializers.SerializerMethodField()
     isp_value = serializers.SerializerMethodField()
+    comments = serializers.SerializerMethodField()
 
     class Meta:
         model = Dataset
@@ -134,7 +135,8 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             'tli_udecur',
             'inspected',
             'isp_value',
-            'isp_owner'
+            'isp_owner',
+            'comments'
         )
 
     def get_tag_display_name(self, obj):
@@ -182,6 +184,12 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
     def get_isp_owner(self, obj):
         try:
             return obj.inspected.owner.username
+        except:
+            return None
+
+    def get_comments(self, obj):
+        try:
+            return obj.comments.count()
         except:
             return None
 

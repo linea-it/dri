@@ -48,7 +48,6 @@ class Inspect(models.Model):
     def __str__(self):
         return str(self.isp_value)
 
-
 class Defect(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -78,3 +77,5 @@ class UserEmail(models.Model):
 
     def __str__(self):
         return str(self.email)
+
+

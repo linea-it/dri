@@ -13,11 +13,11 @@ axios.defaults.baseURL = api;
 // Interceptar a Resposta.
 // Add a response interceptor
 axios.interceptors.response.use(
-  function (response) {
+  function(response) {
     // Do something with response data
     return response;
   },
-  function (error) {
+  function(error) {
     // Do something with response error
     if (error.response) {
       // The request was made and the server responded with a status code
@@ -90,6 +90,20 @@ class DriApi {
       isp_dataset: datasetId,
       isp_value: value,
     });
+  };
+
+  commentsByDataset = async datasetId => {
+    console.log('commentsByDataset: ', datasetId);
+
+    const res = await axios.get(`/comment/dataset/`, {
+      params: {
+        dts_dataset: datasetId,
+        ordering: '-dts_date',
+      },
+    });
+
+    const data = await res.data;
+    return data;
   };
 }
 export default DriApi;
