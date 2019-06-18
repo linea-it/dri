@@ -92,7 +92,7 @@ class TagSerializer(serializers.HyperlinkedModelSerializer):
         )
 
 
-class DatasetSerializer(serializers.HyperlinkedModelSerializer):
+class DatasetSerializer(serializers.ModelSerializer):
     tag = serializers.PrimaryKeyRelatedField(read_only=True)
     tag_display_name = serializers.SerializerMethodField(read_only=True)
     release = serializers.SerializerMethodField(read_only=True)
@@ -186,7 +186,6 @@ class DatasetSerializer(serializers.HyperlinkedModelSerializer):
             return obj.inspected.owner.username
         except:
             return None
-
     def get_comments(self, obj):
         try:
             return obj.comments.count()

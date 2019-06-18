@@ -48,8 +48,7 @@ class Home extends Component {
       currentRelease: '',
       datasets: [],
       currentDataset: {},
-      loading: false,
-      showComment: false,
+      loading: false,      showComment: false,
       comments: [],
     };
   }

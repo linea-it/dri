@@ -7,16 +7,16 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
+import Link from '@material-ui/core/Link';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Comment from '@material-ui/icons/Comment';
 import IconButton from '@material-ui/core/IconButton';
+import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   root: {
     width: '100%',
-    height: 400,
-    // maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
     listStyleType: 'none',
   },
@@ -69,10 +69,22 @@ function DatasetList(props) {
       >
         <ListItemText
           primary={el.tli_tilename}
-          secondary={`${el.comments} comments`}
-          secondaryTypographyProps={{
-            className: el.comments > 0 ? classes.datasetWithComment : null,
-          }}
+          // secondary={`${el.comments} comments`}
+          secondary={
+            <Link
+              className={el.comments > 0 ? classes.datasetWithComment : null}
+              onClick={e => {
+                e.stopPropagation();
+                e.preventDefault();
+                handleComment(el);
+              }}
+            >
+              {`${el.comments} comments`}
+            </Link>
+          }
+          // secondaryTypographyProps={{
+          //   className: el.comments > 0 ? classes.datasetWithComment : null,
+          // }}
         />
 
         <ListItemSecondaryAction>
@@ -101,15 +113,25 @@ function DatasetList(props) {
       return <div style={style}> {listItens[index]}</div>;
     };
 
+    const header = 64;
+    const footer = 64;
+    const tilesCount = 28;
+    const containerPadding = 32;
     return (
-      <FixedSizeList
-        className={classes.root}
-        height={650}
-        itemCount={listItens.length}
-        itemSize={72}
-      >
-        {Row}
-      </FixedSizeList>
+      <div>
+        <FixedSizeList
+          className={classes.root}
+          height={
+            window.innerHeight - header - footer - tilesCount - containerPadding
+          }
+          // height={0}
+          itemCount={listItens.length}
+          itemSize={72}
+        >
+          {Row}
+        </FixedSizeList>
+        <Divider />
+      </div>
     );
   } else {
     return null;
