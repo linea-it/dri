@@ -9,12 +9,14 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import IconButton from '@material-ui/core/IconButton';
+import Link from '@material-ui/core/Link';
+import Comments from './Comments';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   root: {
     width: '100%',
-    height: 400,
+    // height: 'calc(100vh - 64 - 64 - 28 - 32) !important',
     // maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
     listStyleType: 'none',
@@ -22,10 +24,16 @@ const styles = theme => ({
   okButton: {
     color: theme.typography.successColor,
   },
+  commentLink: {
+    color: 'blue',
+    textDecoration: 'underline'
+  }
 });
 
 function DatasetList(props) {
   const { classes, datasets, selected } = props;
+
+  const [visible, setVisible] = React.useState(false);
 
   function changeQualify(dataset, label) {
     let value = null;
@@ -59,7 +67,22 @@ function DatasetList(props) {
         divider
         selected={el.id === selected.id ? true : false}
       >
-        <ListItemText primary={el.tli_tilename} secondary="0 comments" />
+          
+        <ListItemText 
+          primary={el.tli_tilename}
+          secondary={
+            <Link
+              className={classes.commentLink}
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                setVisible(true);
+              }}
+              >
+                0 comments
+            </Link>
+          }
+          />
 
         <ListItemSecondaryAction>
           <IconButton onClick={() => changeQualify(el, 'ok')}>
@@ -84,15 +107,24 @@ function DatasetList(props) {
       return <div style={style}> {listItens[index]}</div>;
     };
 
+    const header = 64;
+    const footer = 64;
+    const tilesCount = 28;
+    const containerPadding = 32;
     return (
-      <FixedSizeList
-        className={classes.root}
-        height={650}
-        itemCount={listItens.length}
-        itemSize={72}
-      >
-        {Row}
-      </FixedSizeList>
+      <div>
+        <FixedSizeList
+          className={classes.root}
+          height={window.innerHeight - header - footer - tilesCount - containerPadding}
+          // height={0}
+          itemCount={listItens.length}
+          itemSize={72}
+        >
+          {Row}
+        </FixedSizeList>
+
+        { visible ? <Comments active={visible} setActive={setVisible} /> : null }
+      </div>
     );
   } else {
     return null;

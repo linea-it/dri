@@ -118,7 +118,7 @@ class VisiomaticPanel extends Component {
 
       this.layer = this.libL.tileLayer
         .iip(url, {
-          credentials: true,
+          // credentials: true,
           center: false,
           fov: false,
           // center: latlng,
