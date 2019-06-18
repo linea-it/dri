@@ -12,6 +12,13 @@ from rest_framework import status
 from rest_framework.response import Response
 
 from .models import Site, Authorization, ExternalProcess, Export
+from django.conf import settings
+import os
+import requests
+from time import sleep
+import zipfile
+from urllib.parse import urljoin
+from aladin.models import Image as AladinImage
 
 
 class Import():
@@ -26,7 +33,7 @@ class Import():
         # 'vac': ProductModel
         # })
 
-        self._products_classes = dict({})        
+        self._products_classes = dict({})
 
     def start_import(self, request):
 
@@ -168,7 +175,6 @@ class Import():
             except Tag.DoesNotExist:
                 raise Exception("this Tag '%s' is not valid." % tag_name)
 
-
     def process_export(self, process, data):
 
         # Associar Process a Export
@@ -195,8 +201,6 @@ class Import():
 
             else:
                 raise Exception("Product Type '%s' not implemented yet." % product.get('type'))
-
-        
 
         # Verificar a classe dos produtos se for galaxy cluster ou cluster members deve ser feita a ligacao entre as 2
         if ('galaxy_clusters' in self._products_classes) and ('cluster_members' in self._products_classes):
@@ -251,7 +255,6 @@ class Import():
             date = self.process.epr_start_date
         else:
             date = datetime.now()
-
 
         # Verificar se o process id do produto e igual ao proccess id do external_proccess
         # TODO esta etapa deve ser substituida com a implementacao de import inputs ou provenance
@@ -320,7 +323,6 @@ class Import():
             # guarda a classe do produto e a instancia de ProductModel
             self._products_classes[product.prd_class.pcl_name] = product
 
-
             return True
         else:
             raise Exception(
@@ -335,7 +337,7 @@ class Import():
             acls = list()
             for cls in ProductClass.objects.all():
                 acls.append(cls.pcl_name)
-            raise Exception('It is class is not available. these are available: %s' % (', '.join(acls)))
+            raise Exception('It is class is not available [ %s ]. these are available: %s' % (name, ', '.join(acls)))
 
     def register_catalog_content(self, catalog, data, created):
         """
@@ -498,7 +500,6 @@ class Import():
                 "this cluster members product %s does not have a property with ucd meta.id.cross to be associated with "
                 "the galaxy cluster product." % cm.prd_display_name)
 
-
     def link_galaxy_cluster_with_vac_cluster(self):
         """
             Este metodo e especifico para o processo de WAZP.
@@ -521,11 +522,14 @@ class Import():
             }
         )
 
-
     # =============================< MAP >=============================
+
     def register_map(self, data):
+
+        database = data.get('database', 'catalog')
+
         if not self.db:
-            self.db = CatalogDB()
+            self.db = CatalogDB(db=database)
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
@@ -535,7 +539,7 @@ class Import():
         cls = self.get_product_class(data.get('class'))
 
         # Recuperar o filtro
-        filter = self.get_filter(data.get('filter'))
+        filter = self.get_filter(data.get('map_filter', '-'))
 
         tbl_info = data.get('ora_table_info', None)
         tbl_rows = None
@@ -585,6 +589,11 @@ class Import():
             # Registrar O produto a seus respectivos Tags
             if 'fields' in data:
                 self.product_tag(product, data.get('fields'), add_release)
+
+            # Registrar Imagem Aladin caso exista
+            if 'aladin' in data:
+                self.register_aladin_image(product, data.get('aladin'))
+
         else:
             raise Exception(
                 "A failure has occurred and it was not possible to register the product '%s'." % (data.get('name')))
@@ -623,7 +632,54 @@ class Import():
             a = ', '.join(a)
             raise Exception("This filter '%s' is not valid. Available filters is [ %s ]" % (filter_name, a))
 
+    def register_aladin_image(self, product, data):
+
+        if 'donwload_url' in data and 'filename' in data:
+            relative_map_path = os.path.join(settings.DATA_DIR, "maps")
+            base_path = os.path.join(relative_map_path, product.prd_class.pcl_name)
+            if not os.path.exists(base_path):
+                os.mkdir(base_path)
+                sleep(1)
+
+            map_path = os.path.join(base_path, str(product.id))
+            if not os.path.exists(map_path):
+                os.mkdir(map_path)
+                sleep(1)
+
+            aladin_path_zip = self.download_aladin_image(data.get('donwload_url'), data.get('filename'), map_path)
+
+            with zipfile.ZipFile(aladin_path_zip, "r") as zip_ref:
+                zip_ref.extractall(map_path)
+
+            host = settings.BASE_HOST
+            result_dir = os.path.join(relative_map_path, aladin_path_zip.replace('.zip', ''))
+
+            result_sorce = result_dir.replace(settings.DATA_DIR, settings.DATA_SOURCE)
+
+            map_final_url = urljoin(host, result_sorce)
+
+            image, created = AladinImage.objects.update_or_create(
+                product=product, defaults={
+                    'img_url': map_final_url,
+                })
+
+    def download_aladin_image(self, url, filename, path):
+
+        file_path = os.path.join(path, filename)
+
+        r = requests.get(url)
+        with open(file_path, "wb") as code:
+            code.write(r.content)
+
+        if os.path.exists(file_path):
+            return file_path
+
+        else:
+            # TODO lancar excessao por nao ter baixado o arquivo.
+            return None
+
     # =============================< MASK >=============================
+
     def register_mask(self, data):
         if not self.db:
             self.db = CatalogDB()

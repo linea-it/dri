@@ -7,17 +7,15 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
-import ThumbDownIcon from '@material-ui/icons/ThumbDown';
-import IconButton from '@material-ui/core/IconButton';
 import Link from '@material-ui/core/Link';
-import Comments from './Comments';
+import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import Comment from '@material-ui/icons/Comment';
+import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   root: {
     width: '100%',
-    // height: 'calc(100vh - 64 - 64 - 28 - 32) !important',
-    // maxWidth: 360,
     backgroundColor: theme.palette.background.paper,
     listStyleType: 'none',
   },
@@ -32,8 +30,6 @@ const styles = theme => ({
 
 function DatasetList(props) {
   const { classes, datasets, selected } = props;
-
-  const [visible, setVisible] = React.useState(false);
 
   function changeQualify(dataset, label) {
     let value = null;
@@ -56,6 +52,10 @@ function DatasetList(props) {
     props.handleQualify(dataset, value);
   }
 
+  function handleComment(dataset) {
+    props.handleComment(dataset);
+  }
+
   if (datasets && datasets.length > 0) {
     const listItens = datasets.map((el, idx) => (
       <ListItem
@@ -72,14 +72,14 @@ function DatasetList(props) {
           primary={el.tli_tilename}
           secondary={
             <Link
-              className={classes.commentLink}
+              // className={classes.commentLink}
               onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
-                setVisible(true);
+                handleComment(el);
               }}
               >
-                0 comments
+               {`${el.comments} comments`}
             </Link>
           }
           />
@@ -98,6 +98,9 @@ function DatasetList(props) {
             ) : (
               <ThumbDownIcon />
             )}
+          </IconButton>
+          <IconButton onClick={() => handleComment(el)}>
+            <Comment />
           </IconButton>
         </ListItemSecondaryAction>
       </ListItem>
@@ -122,8 +125,6 @@ function DatasetList(props) {
         >
           {Row}
         </FixedSizeList>
-
-        { visible ? <Comments active={visible} setActive={setVisible} /> : null }
       </div>
     );
   } else {
@@ -136,6 +137,7 @@ DatasetList.propTypes = {
   selected: PropTypes.object,
   handleSelection: PropTypes.func.isRequired,
   handleQualify: PropTypes.func.isRequired,
+  handleComment: PropTypes.func.isRequired,
 };
 
 export default withStyles(styles)(DatasetList);
