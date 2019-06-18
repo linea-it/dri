@@ -11,6 +11,7 @@ import Link from '@material-ui/core/Link';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Comment from '@material-ui/icons/Comment';
 import IconButton from '@material-ui/core/IconButton';
+import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
@@ -125,6 +126,7 @@ function DatasetList(props) {
         >
           {Row}
         </FixedSizeList>
+        <Divider />
       </div>
     );
   } else {
