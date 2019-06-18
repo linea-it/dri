@@ -138,6 +138,14 @@ class Home extends Component {
     });
   };
 
+  onComment = (dataset, comment) => {
+    this.driApi.createDatasetComment(dataset.id, comment).then(() => {
+      this.handleComment(dataset);
+
+      this.loadData(false)
+    });
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -215,6 +223,7 @@ class Home extends Component {
             dataset={currentDataset}
             comments={comments}
             handleClose={() => this.setState({ showComment: false })}
+            handleSubmit={this.onComment}
           />
         </div>
         <Footer />

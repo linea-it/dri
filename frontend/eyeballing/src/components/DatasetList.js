@@ -23,8 +23,8 @@ const styles = theme => ({
   okButton: {
     color: theme.typography.successColor,
   },
-  teste: {
-    color: '#FF00FF',
+  datasetWithComment: {
+    color: theme.palette.secondary.main,
   },
 });
 
@@ -70,7 +70,9 @@ function DatasetList(props) {
         <ListItemText
           primary={el.tli_tilename}
           secondary={`${el.comments} comments`}
-          secondaryTypographyProps={{ className: classes.teste }}
+          secondaryTypographyProps={{
+            className: el.comments > 0 ? classes.datasetWithComment : null,
+          }}
         />
 
         <ListItemSecondaryAction>

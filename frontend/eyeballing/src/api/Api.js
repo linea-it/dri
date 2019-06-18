@@ -105,6 +105,13 @@ class DriApi {
     const data = await res.data;
     return data;
   };
+
+  createDatasetComment = (datasetId, value) => {
+    return axios.post(`/comment/dataset/`, {
+      dts_dataset: datasetId,
+      dts_comment: value,
+    });
+  };
 }
 export default DriApi;
 
