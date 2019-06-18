@@ -99,6 +99,7 @@ router.register(r'catalogobjects', catalog_views.CatalogObjectsViewSet, base_nam
 
 # Comment API
 router.register(r'comment/position', comment_views.PositionViewSet)
+router.register(r'comment/dataset', comment_views.CommentDatasetViewSet)
 
 # UserQuery API
 router.register(r'userquery_query', userquery_views.QueryViewSet)

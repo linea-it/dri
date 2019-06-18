@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Position
+from .models import Dataset as CommentDataset
 from coadd.models import Dataset
 from common.models import Filter
 
@@ -41,3 +42,39 @@ class PositionSerializer(serializers.HyperlinkedModelSerializer):
             return obj.pst_date.strftime('%Y-%m-%d %H:%M')
         except:
             return None
+
+class CommentDatasetSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField()
+    dts_dataset = serializers.PrimaryKeyRelatedField(
+        queryset=Dataset.objects.all(), many=False)
+    dts_date = serializers.SerializerMethodField()
+    is_owner = serializers.SerializerMethodField()
+
+    class Meta:
+        model = CommentDataset
+
+        fields = (
+            'id',
+            'dts_dataset',
+            'dts_date',
+            'dts_comment',
+            'owner',
+            'is_owner',
+        )
+
+    def get_owner(self, obj):
+        return obj.owner.username
+
+    def get_is_owner(self, obj):
+        current_user = self.context['request'].user
+        if obj.owner.pk == current_user.pk:
+            return True
+        else:
+            return False
+
+    def get_dts_date(self, obj):
+        try:
+            return obj.dts_date.strftime('%Y-%m-%d %H:%M')
+        except:
+            return None
+

@@ -2,8 +2,8 @@ import django_filters
 import json
 from rest_framework import viewsets
 from rest_framework import filters
-from .models import Position
-from .serializers import PositionSerializer
+from .models import Position, Dataset
+from .serializers import PositionSerializer, CommentDatasetSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 
 class PositionFilter(django_filters.FilterSet):
@@ -48,6 +48,25 @@ class PositionViewSet(viewsets.ModelViewSet):
     serializer_class = PositionSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = PositionFilter
+
+    def perform_create(self, serializer):
+        # Adiconar usuario logado
+        if not self.request.user.pk:
+            raise Exception(
+                'It is necessary an active login to perform this operation.')
+        serializer.save(owner=self.request.user)
+
+
+class CommentDatasetViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows Comment by Dataset to be viewed or edited
+    """
+    queryset = Dataset.objects.all()
+    serializer_class = CommentDatasetSerializer
+
+    filter_fields = ('id', 'dts_dataset', )
+
+    ordering_fields = ('dts_date',)
 
     def perform_create(self, serializer):
         # Adiconar usuario logado

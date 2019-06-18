@@ -22,9 +22,9 @@ class VisiomaticPanel extends Component {
     // Verificar se a lib Aladin esta disponivel
     if (window.L) {
       this.libL = window.L;
-      console.log('Leaflet Carregado');
+      // console.log('Leaflet Carregado');
     } else {
-      console.log('Leaflet NÃO CARREGADO!');
+      // console.log('Leaflet NÃO CARREGADO!');
     }
   }
 
@@ -33,13 +33,13 @@ class VisiomaticPanel extends Component {
   }
 
   onLayerAdd = e => {
-    console.log('event onLayerAdd(%o)', e);
+    // console.log('event onLayerAdd(%o)', e);
 
     this.setView();
   };
 
   onLayerRemove = e => {
-    console.log('event onLayerRemove(%o)', e);
+    // console.log('event onLayerRemove(%o)', e);
     this.layer = null;
     this.changeImage();
   };
@@ -81,7 +81,7 @@ class VisiomaticPanel extends Component {
   }
 
   setView = () => {
-    console.log('setView()');
+    // console.log('setView()');
     const { center } = this.props;
     let { fov } = this.props;
 
