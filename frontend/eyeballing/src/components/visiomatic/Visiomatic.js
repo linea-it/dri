@@ -2,6 +2,58 @@ import React, { Component } from 'react';
 import './Viewer.css';
 import { uniqueId } from 'lodash';
 import PropTypes from 'prop-types';
+
+const colorRanges = {
+  defaultContrast: {
+    minMaxValues: [
+      // g
+      [-0.390453905, 1000],
+      // r
+      [-1.10961807, 1200],
+      // i
+      [-1.48952579, 1600],
+      // z
+      [-2.25479436, 2400],
+      // Y
+      [-0.990383625, 5000],
+      // det
+      [0.0486380979, 100],
+    ],
+  },
+  highContrast: {
+    minMaxValues: [
+      // g
+      [-0.390453905, 100],
+      // r
+      [-1.10961807, 100],
+      // i
+      [-1.48952579, 100],
+      // z
+      [-2.25479436, 100],
+      // Y
+      [-0.990383625, 200],
+      // det
+      [0.0486380979, 100],
+    ],
+  },
+  mediumContrast: {
+    minMaxValues: [
+      // g
+      [-0.390453905, 1000],
+      // r
+      [-1.10961807, 1000],
+      // i
+      [-1.48952579, 1000],
+      // z
+      [-2.25479436, 1000],
+      // Y
+      [-0.990383625, 5000],
+      // det
+      [0.0486380979, 100],
+    ],
+  },
+};
+
 class VisiomaticPanel extends Component {
   static propTypes = {
     image: PropTypes.string,
@@ -104,6 +156,16 @@ class VisiomaticPanel extends Component {
     }
   };
 
+  getColorRanges = () => {
+    const { contrast } = this.props;
+
+    if (contrast) {
+      return colorRanges[contrast];
+    } else {
+      return colorRanges['defaultContrast'];
+    }
+  };
+
   changeImage = () => {
     if (this.props.image) {
       if (this.layer) {
@@ -116,9 +178,13 @@ class VisiomaticPanel extends Component {
       // TODO: Deve ser removido solucao temporaria
       url = url.replace('http://', 'https://');
 
+      const colorRanges = this.getColorRanges();
+
+      console.log(colorRanges);
+
       this.layer = this.libL.tileLayer
         .iip(url, {
-          credentials: true,
+          credentials: false,
           center: false,
           fov: false,
           // center: latlng,
@@ -130,20 +196,21 @@ class VisiomaticPanel extends Component {
           colorSat: 2.0,
           quality: 100,
           channelLabelMatch: '[ugrizY]',
-          minMaxValues: [
-            // g
-            [-0.390453905, 1000],
-            // r
-            [],
-            // i
-            [],
-            // z
-            [],
-            // Y
-            [-0.990383625, 5000],
-            // det
-            [],
-          ],
+          minMaxValues: colorRanges.minMaxValues,
+          // minMaxValues: [
+          //   // g
+          //   [-0.390453905, 1000],
+          //   // r
+          //   [],
+          //   // i
+          //   [],
+          //   // z
+          //   [],
+          //   // Y
+          //   [-0.990383625, 5000],
+          //   // det
+          //   [],
+          // ],
         })
         .addTo(this.map);
     } else {

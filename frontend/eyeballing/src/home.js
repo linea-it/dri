@@ -8,9 +8,15 @@ import VisiomaticPanel from './components/visiomatic/Visiomatic';
 import DriApi from './api/Api';
 import DatasetList from './components/DatasetList';
 import Card from '@material-ui/core/Card';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import SettingsIcon from '@material-ui/icons/Settings';
+import MenuItem from '@material-ui/core/MenuItem';
+import Menu from '@material-ui/core/Menu';
 import { isEmpty } from 'lodash';
 import Typography from '@material-ui/core/Typography';
 import CommentDialog from './components/comment/Dialog';
+import ChooseContrast from './components/ChooseContrast';
 
 const styles = theme => ({
   root: {
@@ -34,6 +40,9 @@ const styles = theme => ({
   tilesCount: {
     textAlign: 'left',
   },
+  grow: {
+    flexGrow: 1,
+  },
 });
 
 class Home extends Component {
@@ -48,8 +57,11 @@ class Home extends Component {
       currentRelease: '',
       datasets: [],
       currentDataset: {},
-      loading: false,      showComment: false,
+      loading: false,
+      showComment: false,
       comments: [],
+      menuContrastOpen: false,
+      contrast: 'defaultContrast',
     };
   }
 
@@ -141,8 +153,16 @@ class Home extends Component {
     this.driApi.createDatasetComment(dataset.id, comment).then(() => {
       this.handleComment(dataset);
 
-      this.loadData(false)
+      this.loadData(false);
     });
+  };
+
+  handleMenuContrastOpen = () => {
+    this.setState({ menuContrastOpen: true });
+  };
+
+  handleMenuContrastClose = contrast => {
+    this.setState({ menuContrastOpen: false, contrast: contrast });
   };
 
   render() {
@@ -157,6 +177,8 @@ class Home extends Component {
       loading,
       showComment,
       comments,
+      menuContrastOpen,
+      contrast,
     } = this.state;
 
     return (
@@ -178,6 +200,15 @@ class Home extends Component {
           >
             <Grid item xs={3}>
               <Card className={classes.tilelist}>
+                <Toolbar>
+                  <div className={classes.grow}></div>
+                  <IconButton 
+                    color="inherit"
+                    onClick={this.handleMenuContrastOpen}
+                  >
+                    <SettingsIcon />
+                  </IconButton>
+                </Toolbar>
                 {loading ? (
                   <div>Loading ...</div>
                 ) : (
@@ -213,6 +244,7 @@ class Home extends Component {
                   className={classes.visiomatic}
                   center={[currentDataset.tli_ra, currentDataset.tli_dec]}
                   fov={2}
+                  contrast={contrast}
                 />
               </Card>
             </Grid>
@@ -226,6 +258,11 @@ class Home extends Component {
           />
         </div>
         <Footer />
+        <ChooseContrast
+          selectedValue={contrast}
+          open={menuContrastOpen}
+          onClose={this.handleMenuContrastClose}
+        />
       </div>
     );
   }
