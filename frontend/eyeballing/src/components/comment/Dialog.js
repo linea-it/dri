@@ -28,23 +28,21 @@ function CommentDialog(props) {
     inputValue: '',
   });
 
-  const handleChange = name => event => {
+  const handleChange = name => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };
 
-  const list = props.comments.map((comment, idx) => {
-    return (
-      <Card key={idx} className={classes.cardComments}>
-        <CardContent>
-          <Typography variant="subtitle2">{comment.owner}</Typography>
-          <Typography variant="body2" color="textSecondary">
-            {comment.dts_date}
-          </Typography>
-          <Typography variant="body2">{comment.dts_comment}</Typography>
-        </CardContent>
-      </Card>
-    );
-  });
+  const list = props.comments.map((comment, idx) => (
+    <Card key={idx} className={classes.cardComments}>
+      <CardContent>
+        <Typography variant="subtitle2">{comment.owner}</Typography>
+        <Typography variant="body2" color="textSecondary">
+          {comment.dts_date}
+        </Typography>
+        <Typography variant="body2">{comment.dts_comment}</Typography>
+      </CardContent>
+    </Card>
+  ));
 
   function handleSubmit() {
     if (values.inputValue && values.inputValue !== '') {
@@ -59,7 +57,7 @@ function CommentDialog(props) {
   }
 
   function clear() {
-    /*eslint no-useless-computed-key: "off"*/
+    /* eslint no-useless-computed-key: "off" */
     setValues({ ...values, ['inputValue']: '' });
   }
 
@@ -74,7 +72,7 @@ function CommentDialog(props) {
       open={props.open}
       onClose={handleClose}
       fullWidth
-      maxWidth={'sm'}
+      maxWidth="sm"
       className={classes.root}
     >
       <DialogTitle>{props.dataset.tli_tilename}</DialogTitle>

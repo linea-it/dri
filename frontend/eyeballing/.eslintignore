@@ -1,0 +1,5 @@
+src/serviceWorker.js
+/node_modules/*
+build/*
+!build/index.js
+public/visiomatic/*

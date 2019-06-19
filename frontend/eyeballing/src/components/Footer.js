@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
-import logo from '../assets/img/linea-logo-mini.png';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Typography, CardMedia } from '@material-ui/core';
+import logo from '../assets/img/linea-logo-mini.png';
 
 
 const styles = () => ({
