@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, fade } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -8,9 +8,16 @@ import VisiomaticPanel from './components/visiomatic/Visiomatic';
 import DriApi from './api/Api';
 import DatasetList from './components/DatasetList';
 import Card from '@material-ui/core/Card';
+import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import InputBase from '@material-ui/core/InputBase';
+import SearchIcon from '@material-ui/icons/Search';
+import MenuIcon from '@material-ui/icons/Menu';
 import { isEmpty } from 'lodash';
 import Typography from '@material-ui/core/Typography';
 import CommentDialog from './components/comment/Dialog';
+import SearchField from './components/SearchField';
 
 const styles = theme => ({
   root: {
@@ -34,6 +41,41 @@ const styles = theme => ({
   tilesCount: {
     textAlign: 'left',
   },
+  search: {
+    position: 'relative',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: fade(theme.palette.common.black, 0.03),
+    '&:hover': {
+      backgroundColor: fade(theme.palette.common.black, 0.07),
+    },
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: '100%',
+    // [theme.breakpoints.up('sm')]: {
+    //   marginLeft: theme.spacing(3),
+    //   width: 'auto',
+    // },
+  },
+  searchIcon: {
+    width: theme.spacing(5),
+    height: '100%',
+    position: 'absolute',
+    pointerEvents: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  inputRoot: {
+    color: 'inherit',
+  },
+  inputInput: {
+    padding: theme.spacing(1, 1, 1, 5),
+    transition: theme.transitions.create('width'),
+    width: '100%',
+    [theme.breakpoints.up('md')]: {
+      width: 200,
+    },
+  },  
 });
 
 class Home extends Component {
@@ -178,6 +220,17 @@ class Home extends Component {
           >
             <Grid item xs={3}>
               <Card className={classes.tilelist}>
+                <Toolbar>
+                  {/* <SearchField /> */}
+                             
+                  <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="Menu">
+                    <MenuIcon />
+                  </IconButton>
+                  <Typography variant="h6" className={classes.title}>
+                    News
+                  </Typography>
+                  <Button color="inherit">Login</Button>
+                </Toolbar>
                 {loading ? (
                   <div>Loading ...</div>
                 ) : (
