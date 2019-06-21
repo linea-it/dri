@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { withStyles, fade } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -11,13 +11,14 @@ import Card from '@material-ui/core/Card';
 import Toolbar from '@material-ui/core/Toolbar';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import InputBase from '@material-ui/core/InputBase';
-import SearchIcon from '@material-ui/icons/Search';
+
 import MenuIcon from '@material-ui/icons/Menu';
 import { isEmpty } from 'lodash';
 import Typography from '@material-ui/core/Typography';
 import CommentDialog from './components/comment/Dialog';
 import SearchField from './components/SearchField';
+import SettingsIcon from '@material-ui/icons/Settings';
+import ChooseContrast from './components/ChooseContrast';
 
 const styles = theme => ({
   root: {
@@ -41,41 +42,10 @@ const styles = theme => ({
   tilesCount: {
     textAlign: 'left',
   },
-  search: {
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.black, 0.03),
-    '&:hover': {
-      backgroundColor: fade(theme.palette.common.black, 0.07),
-    },
-    marginRight: theme.spacing(2),
-    marginLeft: 0,
-    width: '100%',
-    // [theme.breakpoints.up('sm')]: {
-    //   marginLeft: theme.spacing(3),
-    //   width: 'auto',
-    // },
+
+  grow: {
+    flexGrow: 1,
   },
-  searchIcon: {
-    width: theme.spacing(5),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  inputRoot: {
-    color: 'inherit',
-  },
-  inputInput: {
-    padding: theme.spacing(1, 1, 1, 5),
-    transition: theme.transitions.create('width'),
-    width: '100%',
-    [theme.breakpoints.up('md')]: {
-      width: 200,
-    },
-  },  
 });
 
 class Home extends Component {
@@ -90,8 +60,11 @@ class Home extends Component {
       currentRelease: '',
       datasets: [],
       currentDataset: {},
-      loading: false,      showComment: false,
+      loading: false,
+      showComment: false,
       comments: [],
+      menuContrastOpen: false,
+      contrast: 'defaultContrast',
     };
   }
 
@@ -183,8 +156,16 @@ class Home extends Component {
     this.driApi.createDatasetComment(dataset.id, comment).then(() => {
       this.handleComment(dataset);
 
-      this.loadData(false)
+      this.loadData(false);
     });
+  };
+
+  handleMenuContrastOpen = () => {
+    this.setState({ menuContrastOpen: true });
+  };
+
+  handleMenuContrastClose = contrast => {
+    this.setState({ menuContrastOpen: false, contrast: contrast });
   };
 
   render() {
@@ -199,6 +180,8 @@ class Home extends Component {
       loading,
       showComment,
       comments,
+      menuContrastOpen,
+      contrast,
     } = this.state;
 
     return (
@@ -221,15 +204,11 @@ class Home extends Component {
             <Grid item xs={3}>
               <Card className={classes.tilelist}>
                 <Toolbar>
-                  {/* <SearchField /> */}
-                             
-                  <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="Menu">
-                    <MenuIcon />
+                  <SearchField />                            
+                  <div className={classes.grow}></div>
+                  <IconButton onClick={this.handleMenuContrastOpen}>
+                    <SettingsIcon />
                   </IconButton>
-                  <Typography variant="h6" className={classes.title}>
-                    News
-                  </Typography>
-                  <Button color="inherit">Login</Button>
                 </Toolbar>
                 {loading ? (
                   <div>Loading ...</div>
@@ -266,6 +245,7 @@ class Home extends Component {
                   className={classes.visiomatic}
                   center={[currentDataset.tli_ra, currentDataset.tli_dec]}
                   fov={2}
+                  contrast={contrast}
                 />
               </Card>
             </Grid>
@@ -279,6 +259,11 @@ class Home extends Component {
           />
         </div>
         <Footer />
+        <ChooseContrast
+          selectedValue={contrast}
+          open={menuContrastOpen}
+          onClose={this.handleMenuContrastClose}
+        />
       </div>
     );
   }
