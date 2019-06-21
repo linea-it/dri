@@ -9,15 +9,13 @@ import DriApi from './api/Api';
 import DatasetList from './components/DatasetList';
 import Card from '@material-ui/core/Card';
 import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-
-import MenuIcon from '@material-ui/icons/Menu';
 import { isEmpty } from 'lodash';
 import Typography from '@material-ui/core/Typography';
 import CommentDialog from './components/comment/Dialog';
 import SearchField from './components/SearchField';
 import SettingsIcon from '@material-ui/icons/Settings';
+import FilterList from '@material-ui/icons/FilterList';
 import ChooseContrast from './components/ChooseContrast';
 
 const styles = theme => ({
@@ -206,6 +204,9 @@ class Home extends Component {
                 <Toolbar>
                   <SearchField />                            
                   <div className={classes.grow}></div>
+                  <IconButton >
+                    <FilterList />
+                  </IconButton>                  
                   <IconButton onClick={this.handleMenuContrastOpen}>
                     <SettingsIcon />
                   </IconButton>
