@@ -13,10 +13,12 @@ import IconButton from '@material-ui/core/IconButton';
 import SettingsIcon from '@material-ui/icons/Settings';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import { isEmpty } from 'lodash';
+import { isEmpty, countBy } from 'lodash';
 import Typography from '@material-ui/core/Typography';
 import CommentDialog from './components/comment/Dialog';
 import ChooseContrast from './components/ChooseContrast';
+import CardActions from '@material-ui/core/CardActions';
+import Counter from './components/Counter';
 
 const styles = theme => ({
   root: {
@@ -62,6 +64,11 @@ class Home extends Component {
       comments: [],
       menuContrastOpen: false,
       contrast: 'defaultContrast',
+      counts: {
+        true: 0,
+        false: 0,
+        null: 0,
+      },
     };
   }
 
@@ -101,15 +108,23 @@ class Home extends Component {
       if (clear) {
         this.setState({ loading: true });
         const datasets = await this.driApi.datasetsByRelease(currentRelease);
+        const counts = countBy(datasets, el => {
+          return el.isp_value;
+        });
         this.setState({
           datasets: datasets,
           currentDataset: {},
           loading: false,
+          counts: counts,
         });
       } else {
         const datasets = await this.driApi.datasetsByRelease(currentRelease);
+        const counts = countBy(datasets, el => {
+          return el.isp_value;
+        });
         this.setState({
           datasets: datasets,
+          counts: counts,
         });
       }
     }
@@ -179,6 +194,7 @@ class Home extends Component {
       comments,
       menuContrastOpen,
       contrast,
+      counts,
     } = this.state;
 
     return (
@@ -217,15 +233,9 @@ class Home extends Component {
                       handleComment={this.handleComment}
                       selected={currentDataset}
                     />
-                    {datasets.length > 0 ? (
-                      <Typography
-                        variant="subtitle1"
-                        color="inherit"
-                        className={classes.tilesCount}
-                      >
-                        {datasets.length} Tiles
-                      </Typography>
-                    ) : null}
+                    <CardActions>
+                      <Counter tiles={datasets.length} counts={counts} />
+                    </CardActions>
                   </div>
                 )}
               </Card>
