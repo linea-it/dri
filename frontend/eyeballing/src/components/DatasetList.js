@@ -114,15 +114,21 @@ function DatasetList(props) {
     };
 
     const header = 64;
+    const toolbar = 64;
     const footer = 64;
-    const tilesCount = 28;
+    const tilesCount = 40;
     const containerPadding = 32;
     return (
       <div>
         <FixedSizeList
           className={classes.root}
           height={
-            window.innerHeight - header - footer - tilesCount - containerPadding
+            window.innerHeight -
+            header -
+            toolbar -
+            footer -
+            tilesCount -
+            containerPadding
           }
           // height={0}
           itemCount={listItens.length}
