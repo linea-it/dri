@@ -202,10 +202,7 @@ class Home extends Component {
               <Card className={classes.tilelist}>
                 <Toolbar>
                   <div className={classes.grow}></div>
-                  <IconButton 
-                    color="inherit"
-                    onClick={this.handleMenuContrastOpen}
-                  >
+                  <IconButton onClick={this.handleMenuContrastOpen}>
                     <SettingsIcon />
                   </IconButton>
                 </Toolbar>

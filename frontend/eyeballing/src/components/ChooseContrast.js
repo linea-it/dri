@@ -24,11 +24,6 @@ function ChooseContrast(props) {
         <DialogTitle>Choose Color Ranges</DialogTitle>
         <RadioGroup value={props.selectedValue} onChange={handleChange}>
           <FormControlLabel
-            value={'highContrast'}
-            control={<Radio />}
-            label={'High Contrast'}
-          />
-          <FormControlLabel
             value={'defaultContrast'}
             control={<Radio />}
             label={'Default Contrast'}
@@ -37,6 +32,11 @@ function ChooseContrast(props) {
             value={'mediumContrast'}
             control={<Radio />}
             label={'Medium Contrast'}
+          />
+          <FormControlLabel
+            value={'highContrast'}
+            control={<Radio />}
+            label={'High Contrast'}
           />
         </RadioGroup>
       </DialogContent>

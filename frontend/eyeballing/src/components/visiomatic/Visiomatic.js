@@ -59,6 +59,7 @@ class VisiomaticPanel extends Component {
     image: PropTypes.string,
     center: PropTypes.array,
     fov: PropTypes.number,
+    contrast: PropTypes.string,
   };
 
   constructor(props) {
@@ -84,14 +85,11 @@ class VisiomaticPanel extends Component {
     return {};
   }
 
-  onLayerAdd = e => {
-    // console.log('event onLayerAdd(%o)', e);
-
+  onLayerAdd = () => {
     this.setView();
   };
 
-  onLayerRemove = e => {
-    // console.log('event onLayerRemove(%o)', e);
+  onLayerRemove = () => {
     this.layer = null;
     this.changeImage();
   };
@@ -128,7 +126,7 @@ class VisiomaticPanel extends Component {
     this.changeImage();
   }
 
-  componentDidUpdate(nextProps) {
+  componentDidUpdate() {
     this.changeImage();
   }
 
@@ -180,11 +178,9 @@ class VisiomaticPanel extends Component {
 
       const colorRanges = this.getColorRanges();
 
-      console.log(colorRanges);
-
       this.layer = this.libL.tileLayer
         .iip(url, {
-          credentials: false,
+          credentials: true,
           center: false,
           fov: false,
           // center: latlng,
