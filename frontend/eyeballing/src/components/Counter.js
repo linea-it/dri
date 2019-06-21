@@ -14,6 +14,12 @@ const useStyles = makeStyles(theme => ({
   value: {
     marginRight: theme.spacing(1),
   },
+  badColor: {
+    color: theme.palette.secondary.main,
+  },
+  goodColor: {
+    color: theme.typography.successColor,
+  },
 }));
 
 export default function Counter(props) {
@@ -22,7 +28,7 @@ export default function Counter(props) {
   return (
     <div className={classes.root}>
       <Typography
-        variant="subtitle1"
+        variant="subtitle2"
         gutterBottom
         className={classes.label}
         noWrap
@@ -30,7 +36,7 @@ export default function Counter(props) {
         Tiles:
       </Typography>
       <Typography
-        variant="subtitle1"
+        variant="subtitle2"
         className={classes.value}
         gutterBottom
         noWrap
@@ -39,7 +45,7 @@ export default function Counter(props) {
       </Typography>
 
       <Typography
-        variant="subtitle1"
+        variant="subtitle2"
         gutterBottom
         className={classes.label}
         noWrap
@@ -47,8 +53,8 @@ export default function Counter(props) {
         Good:
       </Typography>
       <Typography
-        variant="subtitle1"
-        className={classes.value}
+        variant="subtitle2"
+        className={`${classes.value}  ${classes.goodColor}`}
         gutterBottom
         noWrap
       >
@@ -56,7 +62,7 @@ export default function Counter(props) {
       </Typography>
 
       <Typography
-        variant="subtitle1"
+        variant="subtitle2"
         gutterBottom
         className={classes.label}
         noWrap
@@ -64,8 +70,8 @@ export default function Counter(props) {
         Bad:
       </Typography>
       <Typography
-        variant="subtitle1"
-        className={classes.value}
+        variant="subtitle2"
+        className={`${classes.value}  ${classes.badColor}`}
         gutterBottom
         noWrap
       >
@@ -73,15 +79,15 @@ export default function Counter(props) {
       </Typography>
 
       <Typography
-        variant="subtitle1"
+        variant="subtitle2"
         gutterBottom
         className={classes.label}
         noWrap
       >
-        Not Inspected:
+        Not:
       </Typography>
       <Typography
-        variant="subtitle1"
+        variant="subtitle2"
         className={classes.value}
         gutterBottom
         noWrap
