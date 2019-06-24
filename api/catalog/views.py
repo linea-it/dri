@@ -10,6 +10,8 @@ from rest_framework.viewsets import ViewSet
 from .models import Rating, Reject, Comments
 from .serializers import RatingSerializer, RejectSerializer, CommentsSerializer
 
+import math
+
 
 class RatingViewSet(viewsets.ModelViewSet):
     """
@@ -207,6 +209,16 @@ class TargetViewSet(ViewSet):
                     "_meta_comments": None
                 })
 
+            # FIXED Issue: https://github.com/linea-it/dri/issues/1153
+            # Ticket: http://ticket.linea.gov.br/ticket/11761
+            for prop in row:
+                if isinstance(row.get(prop, None), float):
+                    # Check if is infity
+                    if math.isinf(row.get(prop)):
+                        if row.get(prop) > 0:
+                            row.update({prop: "+Infinity"})
+                        elif row.get(prop) < 0:
+                            row.update({prop: "-Infinity"})
 
 
         return Response(dict({
