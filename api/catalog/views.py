@@ -212,7 +212,7 @@ class TargetViewSet(ViewSet):
             # FIXED Issue: https://github.com/linea-it/dri/issues/1153
             # Ticket: http://ticket.linea.gov.br/ticket/11761
             for prop in row:
-                if (type(row.get(prop)).__name__ == "float"):
+                if isinstance(row.get(prop, None), float):
                     # Check if is infity
                     if math.isinf(row.get(prop)):
                         if row.get(prop) > 0:
