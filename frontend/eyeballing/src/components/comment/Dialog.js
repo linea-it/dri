@@ -11,6 +11,8 @@ import CardContent from '@material-ui/core/CardContent';
 import Send from '@material-ui/icons/Send';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
+import MenuUpDelete from './MenuUpDelete';
+
 
 const styles = theme => ({
   root: {
@@ -25,8 +27,16 @@ const styles = theme => ({
 function CommentDialog(props) {
   const { classes } = props;
   const [values, setValues] = React.useState({
+    id: null,
     inputValue: '',
+
   });
+
+
+  function handleUpdate(comment) {
+    setValues({ inputValue: comment.dts_comment, id: comment.id });
+
+  }
 
   const handleChange = name => event => {
     setValues({ ...values, [name]: event.target.value });
@@ -39,8 +49,11 @@ function CommentDialog(props) {
           <Typography variant="subtitle2">{comment.owner}</Typography>
           <Typography variant="body2" color="textSecondary">
             {comment.dts_date}
+
           </Typography>
           <Typography variant="body2">{comment.dts_comment}</Typography>
+          <MenuUpDelete handleDelete={props.handleDelete} handleClose={handleClose}
+            handleUpdate={handleUpdate} comment={comment} />
         </CardContent>
       </Card>
     );
@@ -48,10 +61,11 @@ function CommentDialog(props) {
 
   function handleSubmit() {
     if (values.inputValue && values.inputValue !== '') {
-      props.handleSubmit(props.dataset, values.inputValue);
+      props.handleSubmit(props.dataset, values);
       clear();
-    }
+    };
   }
+
 
   function handleClose() {
     props.handleClose();
@@ -60,7 +74,7 @@ function CommentDialog(props) {
 
   function clear() {
     /*eslint no-useless-computed-key: "off"*/
-    setValues({ ...values, ['inputValue']: '' });
+    setValues({ inputValue: '', id: null });
   }
 
   function onKeyPress(e) {
@@ -90,6 +104,7 @@ function CommentDialog(props) {
           variant="outlined"
           onChange={handleChange('inputValue')}
           onKeyPress={onKeyPress}
+
         />
         <IconButton onClick={handleSubmit}>
           <Send />

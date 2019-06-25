@@ -50,10 +50,12 @@ function DatasetList(props) {
     }
 
     props.handleQualify(dataset, value);
+
   }
 
   function handleComment(dataset) {
     props.handleComment(dataset);
+   
   }
 
   if (datasets && datasets.length > 0) {
@@ -82,9 +84,9 @@ function DatasetList(props) {
               {`${el.comments} comments`}
             </Link>
           }
-          // secondaryTypographyProps={{
-          //   className: el.comments > 0 ? classes.datasetWithComment : null,
-          // }}
+        // secondaryTypographyProps={{
+        //   className: el.comments > 0 ? classes.datasetWithComment : null,
+        // }}
         />
 
         <ListItemSecondaryAction>
@@ -92,15 +94,15 @@ function DatasetList(props) {
             {el.isp_value ? (
               <ThumbUpIcon className={classes.okButton} />
             ) : (
-              <ThumbUpIcon />
-            )}
+                <ThumbUpIcon />
+              )}
           </IconButton>
           <IconButton onClick={() => changeQualify(el, 'notok')}>
             {el.isp_value === false ? (
               <ThumbDownIcon color="error" />
             ) : (
-              <ThumbDownIcon />
-            )}
+                <ThumbDownIcon />
+              )}
           </IconButton>
           <IconButton onClick={() => handleComment(el)}>
             <Comment />
