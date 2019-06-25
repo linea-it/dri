@@ -134,6 +134,9 @@ class Home extends Component {
   };
 
   qualifyDataset = (dataset, value) => {
+
+    this.onSelectDataset(dataset);
+
     if (dataset.inspected !== null) {
       if (value !== null) {
         this.driApi.updateInspectValue(dataset.inspected, value).then(res => {
