@@ -12,12 +12,15 @@ import Send from '@material-ui/icons/Send';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
 import MenuUpDelete from './MenuUpDelete';
+import { CardHeader } from '@material-ui/core';
+import Date from 'dateformat';
 
 
 const styles = theme => ({
   root: {
-    minHeight: '30vh',
-    maxHeight: '60vh',
+  },
+  dialogContent: {
+    height: '40vh',
   },
   cardComments: {
     marginBottom: theme.spacing(1),
@@ -43,17 +46,25 @@ function CommentDialog(props) {
   };
 
   const list = props.comments.map((comment, idx) => {
+
+    let date = Date(comment.dts_date);
+    console.log(date);
     return (
       <Card key={idx} className={classes.cardComments}>
+        <MenuUpDelete handleDelete={props.handleDelete} handleClose={handleClose}
+          handleUpdate={handleUpdate} comment={comment} />
+        <CardHeader
+          title={comment.owner}
+          titleTypographyProps={{
+            variant: "body2"
+          }}
+          subheader={date}
+          subheaderTypographyProps={{
+            variant: "body2"
+          }}
+        />
         <CardContent>
-          <Typography variant="subtitle2">{comment.owner}</Typography>
-          <Typography variant="body2" color="textSecondary">
-            {comment.dts_date}
-
-          </Typography>
           <Typography variant="body2">{comment.dts_comment}</Typography>
-          <MenuUpDelete handleDelete={props.handleDelete} handleClose={handleClose}
-            handleUpdate={handleUpdate} comment={comment} />
         </CardContent>
       </Card>
     );
@@ -73,7 +84,6 @@ function CommentDialog(props) {
   }
 
   function clear() {
-    /*eslint no-useless-computed-key: "off"*/
     setValues({ inputValue: '', id: null });
   }
 
@@ -92,7 +102,7 @@ function CommentDialog(props) {
       className={classes.root}
     >
       <DialogTitle>{props.dataset.tli_tilename}</DialogTitle>
-      <DialogContent>{list}</DialogContent>
+      <DialogContent className={classes.dialogContent}>{list}</DialogContent>
       <DialogActions>
         <TextField
           autoFocus
