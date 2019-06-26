@@ -18,6 +18,7 @@ import CardActions from '@material-ui/core/CardActions';
 import Counter from './components/Counter';
 
 
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -67,6 +68,7 @@ class Home extends Component {
         false: 0,
         null: 0,
       },
+
     };
   }
 
@@ -155,7 +157,6 @@ class Home extends Component {
 
   loadComments = async dataset => {
     const comments = await this.driApi.commentsByDataset(dataset.id);
-    // console.log("loadComments: ", comments)
     return comments;
   }
 
@@ -203,11 +204,13 @@ class Home extends Component {
   }
 
 
-  handleDelete = (commentId) => {
+  handleAlert = (res) => {
 
+  }
+
+  handleDelete = (commentId) => {
     this.driApi.deleteComment(commentId).then(() => {
       this.setState({
-        // showComment: false,
         comments: []
       }, () => {
         this.handleComment(this.state.currentDataset)
@@ -219,7 +222,7 @@ class Home extends Component {
 
   }
   render() {
-    // console.log("Render")
+
     const { classes } = this.props;
 
     const {
@@ -234,9 +237,9 @@ class Home extends Component {
       menuContrastOpen,
       contrast,
       counts,
+
     } = this.state;
 
-    // console.log("comments: ", comments)
 
     return (
       <div>
@@ -306,6 +309,8 @@ class Home extends Component {
             handleDelete={this.handleDelete}
             handleUpdate={this.handleUpdate}
             handleLoadComments={this.loadComments}
+            handleALert={this.handleAlert}
+
           />
         </div>
         <Footer />

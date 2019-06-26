@@ -48,10 +48,10 @@ function CommentDialog(props) {
   const list = props.comments.map((comment, idx) => {
 
     let date = Date(comment.dts_date);
-    console.log(date);
+
     return (
       <Card key={idx} className={classes.cardComments}>
-        <MenuUpDelete handleDelete={props.handleDelete} handleClose={handleClose}
+        <MenuUpDelete handleAlert={props.handleAlert}  handleDelete={props.handleDelete} handleClose={handleClose}
           handleUpdate={handleUpdate} comment={comment} />
         <CardHeader
           title={comment.owner}

@@ -94,8 +94,6 @@ class DriApi {
   };
 
   commentsByDataset = async datasetId => {
-    // console.log('commentsByDataset: ', datasetId);
-
     const res = await axios.get(`/comment/dataset/`, {
       params: {
         dts_dataset: datasetId,
@@ -108,7 +106,6 @@ class DriApi {
   };
 
   updateComment = (commentId, comment) => {
-    //return axios.patch(`/comment/dataset/${commentId, comment}/`);
     return axios.patch(`/comment/dataset/${commentId}/`, {
       dts_comment: comment
     });
