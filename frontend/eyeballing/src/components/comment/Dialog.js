@@ -11,11 +11,16 @@ import CardContent from '@material-ui/core/CardContent';
 import Send from '@material-ui/icons/Send';
 import IconButton from '@material-ui/core/IconButton';
 import { withStyles } from '@material-ui/core/styles';
+import MenuUpDelete from './MenuUpDelete';
+import { CardHeader } from '@material-ui/core';
+import Date from 'dateformat';
+
 
 const styles = theme => ({
   root: {
-    minHeight: '30vh',
-    maxHeight: '60vh',
+  },
+  dialogContent: {
+    height: '40vh',
   },
   cardComments: {
     marginBottom: theme.spacing(1),
@@ -25,21 +30,40 @@ const styles = theme => ({
 function CommentDialog(props) {
   const { classes } = props;
   const [values, setValues] = React.useState({
+    id: null,
     inputValue: '',
+
   });
+
+
+  function handleUpdate(comment) {
+    setValues({ inputValue: comment.dts_comment, id: comment.id });
+
+  }
 
   const handleChange = name => event => {
     setValues({ ...values, [name]: event.target.value });
   };
 
   const list = props.comments.map((comment, idx) => {
+
+    let date = Date(comment.dts_date);
+
     return (
       <Card key={idx} className={classes.cardComments}>
+        <MenuUpDelete handleAlert={props.handleAlert} handleDelete={props.handleDelete} handleClose={handleClose}
+          handleUpdate={handleUpdate} comment={comment} />
+        <CardHeader
+          title={comment.owner}
+          titleTypographyProps={{
+            variant: "body2"
+          }}
+          subheader={date}
+          subheaderTypographyProps={{
+            variant: "body2"
+          }}
+        />
         <CardContent>
-          <Typography variant="subtitle2">{comment.owner}</Typography>
-          <Typography variant="body2" color="textSecondary">
-            {comment.dts_date}
-          </Typography>
           <Typography variant="body2">{comment.dts_comment}</Typography>
         </CardContent>
       </Card>
@@ -48,10 +72,11 @@ function CommentDialog(props) {
 
   function handleSubmit() {
     if (values.inputValue && values.inputValue !== '') {
-      props.handleSubmit(props.dataset, values.inputValue);
+      props.handleSubmit(props.dataset, values);
       clear();
-    }
+    };
   }
+
 
   function handleClose() {
     props.handleClose();
@@ -59,8 +84,7 @@ function CommentDialog(props) {
   }
 
   function clear() {
-    /*eslint no-useless-computed-key: "off"*/
-    setValues({ ...values, ['inputValue']: '' });
+    setValues({ inputValue: '', id: null });
   }
 
   function onKeyPress(e) {
@@ -78,7 +102,7 @@ function CommentDialog(props) {
       className={classes.root}
     >
       <DialogTitle>{props.dataset.tli_tilename}</DialogTitle>
-      <DialogContent>{list}</DialogContent>
+      <DialogContent className={classes.dialogContent}>{list}</DialogContent>
       <DialogActions>
         <TextField
           autoFocus
@@ -90,6 +114,7 @@ function CommentDialog(props) {
           variant="outlined"
           onChange={handleChange('inputValue')}
           onKeyPress={onKeyPress}
+
         />
         <IconButton onClick={handleSubmit}>
           <Send />

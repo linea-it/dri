@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+
 let api = '/dri/api';
 if (process.env.NODE_ENV !== 'production') {
   api = process.env.REACT_APP_API;
@@ -13,11 +14,11 @@ axios.defaults.baseURL = api;
 // Interceptar a Resposta.
 // Add a response interceptor
 axios.interceptors.response.use(
-  function(response) {
+  function (response) {
     // Do something with response data
     return response;
   },
-  function(error) {
+  function (error) {
     // Do something with response error
     if (error.response) {
       // The request was made and the server responded with a status code
@@ -93,8 +94,6 @@ class DriApi {
   };
 
   commentsByDataset = async datasetId => {
-    console.log('commentsByDataset: ', datasetId);
-
     const res = await axios.get(`/comment/dataset/`, {
       params: {
         dts_dataset: datasetId,
@@ -106,12 +105,24 @@ class DriApi {
     return data;
   };
 
+  updateComment = (commentId, comment) => {
+    return axios.patch(`/comment/dataset/${commentId}/`, {
+      dts_comment: comment
+    });
+  };
+
   createDatasetComment = (datasetId, value) => {
     return axios.post(`/comment/dataset/`, {
       dts_dataset: datasetId,
       dts_comment: value,
     });
   };
+
+
+  deleteComment = commentId => {
+    return axios.delete(`/comment/dataset/${commentId}/`);
+  };
+
 }
 export default DriApi;
 
