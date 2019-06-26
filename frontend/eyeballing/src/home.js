@@ -18,11 +18,9 @@ import SearchField from './components/SearchField';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { isEmpty, countBy } from 'lodash';
 import CommentDialog from './components/comment/Dialog';
-import ChooseContrast from './components/ChooseContrast';
 import CardActions from '@material-ui/core/CardActions';
 import Counter from './components/Counter';
-
-
+import ChooseContrast from './components/ChooseContrast';
 
 const styles = theme => ({
   root: {
