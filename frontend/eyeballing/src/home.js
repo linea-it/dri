@@ -195,18 +195,7 @@ class Home extends Component {
     this.setState({ menuContrastOpen: false, contrast: contrast });
   };
 
-  reloadComments = async (dataset) => {
 
-  }
-
-  handleUpdate = () => {
-
-  }
-
-
-  handleAlert = (res) => {
-
-  }
 
   handleDelete = (commentId) => {
     this.driApi.deleteComment(commentId).then(() => {

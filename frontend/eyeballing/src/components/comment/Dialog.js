@@ -51,7 +51,7 @@ function CommentDialog(props) {
 
     return (
       <Card key={idx} className={classes.cardComments}>
-        <MenuUpDelete handleAlert={props.handleAlert}  handleDelete={props.handleDelete} handleClose={handleClose}
+        <MenuUpDelete handleAlert={props.handleAlert} handleDelete={props.handleDelete} handleClose={handleClose}
           handleUpdate={handleUpdate} comment={comment} />
         <CardHeader
           title={comment.owner}

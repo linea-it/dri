@@ -55,7 +55,7 @@ function DatasetList(props) {
 
   function handleComment(dataset) {
     props.handleComment(dataset);
-   
+
   }
 
   if (datasets && datasets.length > 0) {
@@ -71,7 +71,6 @@ function DatasetList(props) {
       >
         <ListItemText
           primary={el.tli_tilename}
-          // secondary={`${el.comments} comments`}
           secondary={
             <Link
               className={el.comments > 0 ? classes.datasetWithComment : null}
@@ -84,9 +83,7 @@ function DatasetList(props) {
               {`${el.comments} comments`}
             </Link>
           }
-        // secondaryTypographyProps={{
-        //   className: el.comments > 0 ? classes.datasetWithComment : null,
-        // }}
+
         />
 
         <ListItemSecondaryAction>
@@ -132,7 +129,7 @@ function DatasetList(props) {
             tilesCount -
             containerPadding
           }
-          // height={0}
+
           itemCount={listItens.length}
           itemSize={72}
         >
