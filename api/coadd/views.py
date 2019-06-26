@@ -110,7 +110,7 @@ class DatasetFilter(django_filters.FilterSet):
 
 
 class DatasetViewSet(viewsets.ModelViewSet):
-    queryset = Dataset.objects.select_related().all()
+    queryset = Dataset.objects.select_related().all().prefetch_related('comments').prefetch_related('inspected')
 
     serializer_class = DatasetSerializer
 
@@ -120,24 +120,6 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id', 'tag')
 
-    # @list_route()
-    # def validation(self, request):
-
-    #     user = self.request.user
-    #     queryset = self.get_queryset().select_related()
-    #     # queryset = self.get_queryset().select_related().filter(flagged__owner=user)
-    #     queryset = self.filter_queryset(queryset)
-
-    #     serializer = DatasetInspectSerializer(queryset, many=True, context=self.get_serializer_context())
-
-    # # return Response(serializer.data)
-
-    #     result = dict({
-    #         'success': True,
-    #         'data': serializer.data
-    #     })
-
-    #     return Response(result)
 
 
 class DatasetFootprintViewSet(viewsets.ModelViewSet):
