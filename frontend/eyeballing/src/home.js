@@ -21,6 +21,7 @@ import CommentDialog from './components/comment/Dialog';
 import CardActions from '@material-ui/core/CardActions';
 import Counter from './components/Counter';
 import ChooseContrast from './components/ChooseContrast';
+import ChooseQualifyDialog from './components/ChooseQualifyDialog';
 
 const styles = theme => ({
   root: {
@@ -71,6 +72,9 @@ class Home extends Component {
         false: 0,
         null: 0,
       },
+      showQualifyDialog: false,
+      selectedValue: "good",
+      res: 'good',
 
     };
   }
@@ -86,6 +90,7 @@ class Home extends Component {
         username: user.username,
         releases: releases,
         currentRelease: currentRelease.id,
+        res: 'good',
       },
       this.onChangeRelease(currentRelease.id)
     );
@@ -194,6 +199,7 @@ class Home extends Component {
   };
 
   handleMenuContrastOpen = () => {
+
     this.setState({ menuContrastOpen: true });
   };
 
@@ -202,6 +208,19 @@ class Home extends Component {
   };
 
 
+  //QUALIFY
+  handleChooseQualify = () => {
+    this.setState({ showQualifyDialog: true });
+    console.log(this.state.selectedValue);
+
+  };
+
+  handleOptionQualify = (res) => {
+    console.log(res);
+    this.setState({ showQualifyDialog: false });
+
+  };
+  //QUALIFY
 
   handleDelete = (commentId) => {
     this.driApi.deleteComment(commentId).then(() => {
@@ -232,6 +251,9 @@ class Home extends Component {
       menuContrastOpen,
       contrast,
       counts,
+      showQualifyDialog,
+      selectedValue,
+      valuequalify,
 
     } = this.state;
 
@@ -258,9 +280,9 @@ class Home extends Component {
                 <Toolbar>
                   <SearchField />
                   <div className={classes.grow}></div>
-                  <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="Menu">
+                  <IconButton onClick={this.handleChooseQualify} edge="start" className={classes.menuButton} color="inherit" aria-label="Menu">
                     <FilterListIcon />
-                  </IconButton>                  
+                  </IconButton>
                   <IconButton onClick={this.handleMenuContrastOpen}>
                     <SettingsIcon />
                   </IconButton>
@@ -275,6 +297,8 @@ class Home extends Component {
                         handleQualify={this.qualifyDataset}
                         handleComment={this.handleComment}
                         selected={currentDataset}
+                        valuequalify={valuequalify}
+
                       />
                       <CardActions>
                         <Counter tiles={datasets.length} counts={counts} />
@@ -311,6 +335,8 @@ class Home extends Component {
             handleALert={this.handleAlert}
 
           />
+          <ChooseQualifyDialog open={showQualifyDialog} value={selectedValue} handleoption={this.handleOptionQualify} />
+
         </div>
         <Footer />
         <ChooseContrast
