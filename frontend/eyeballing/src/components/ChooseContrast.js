@@ -11,7 +11,7 @@ function ChooseContrast(props) {
   const { selectedValue, ...other } = props;
 
   function handleClose() {
-    props.onClose(selectedValue);
+    props.onClose("TESTE");
   }
 
   function handleChange(event, newValue) {

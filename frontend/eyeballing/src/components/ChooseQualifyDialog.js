@@ -8,44 +8,38 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import DialogContent from '@material-ui/core/DialogContent';
 
 function ChooseQualifyDialog(props) {
-    const { selectedValue, ...other } = props;
+    const { selectedValue } = props;
 
     function handleClose() {
-        props.onClose(selectedValue);
+        props.handleClose(selectedValue);
     }
 
-    //  function handleChange(event, newValue) {
-    //      props.handleoption(newValue);
-    //  }
-
-    function handleChange(event) {
-        props.handleoption(event.target.value);
-
+    function handleChange(event, newValue) {
+        props.handleClose(newValue);
     }
-
 
     return (
-        <Dialog onClose={handleClose} {...other}>
+        <Dialog onClose={handleClose} open={props.open}>
             <DialogContent dividers>
                 <DialogTitle>Choose the filter</DialogTitle>
                 <RadioGroup value={props.selectedValue} onChange={handleChange}>
                     <FormControlLabel
-                        value={'good'}
+                        value={'true'}
                         control={<Radio />}
                         label={'Good'}
                     />
                     <FormControlLabel
-                        value={'bad'}
+                        value={'false'}
                         control={<Radio />}
                         label={'Bad'}
                     />
                     <FormControlLabel
-                        value={'not'}
+                        value={'null'}
                         control={<Radio />}
                         label={'Not'}
                     />
                     <FormControlLabel
-                        value={'default'}
+                        value={''}
                         control={<Radio />}
                         label={'Default'}
                     />
@@ -57,9 +51,9 @@ function ChooseQualifyDialog(props) {
 
 
 ChooseQualifyDialog.propTypes = {
-    onClose: PropTypes.func,
-    open: PropTypes.bool,
-    selectedValue: PropTypes.string,
+    handleClose: PropTypes.func.isRequired,
+    open: PropTypes.bool.isRequired,
+    selectedValue: PropTypes.string.isRequired,
 };
 
 export default ChooseQualifyDialog;

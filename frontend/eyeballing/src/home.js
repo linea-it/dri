@@ -72,10 +72,8 @@ class Home extends Component {
         false: 0,
         null: 0,
       },
-      showQualifyDialog: false,
-      selectedValue: "good",
-      res: 'good',
-
+      showFilterDialog: false,
+      filterInspect: 'true',
     };
   }
 
@@ -110,12 +108,17 @@ class Home extends Component {
   };
 
   async loadData(clear) {
-    const { currentRelease } = this.state;
+    const { currentRelease, filterInspect } = this.state;
+
+    let filters = [{
+      property: 'inspected',
+      value: filterInspect
+    }]
 
     if (currentRelease > 0) {
       if (clear) {
         this.setState({ loading: true });
-        const datasets = await this.driApi.datasetsByRelease(currentRelease);
+        const datasets = await this.driApi.datasetsByRelease(currentRelease, filters);
         const counts = countBy(datasets, el => {
           return el.isp_value;
         });
@@ -126,7 +129,7 @@ class Home extends Component {
           counts: counts,
         });
       } else {
-        const datasets = await this.driApi.datasetsByRelease(currentRelease);
+        const datasets = await this.driApi.datasetsByRelease(currentRelease, filters);
         const counts = countBy(datasets, el => {
           return el.isp_value;
         });
@@ -210,17 +213,27 @@ class Home extends Component {
 
   //QUALIFY
   handleChooseQualify = () => {
-    this.setState({ showQualifyDialog: true });
-    console.log(this.state.selectedValue);
+    this.setState({ showFilterDialog: true });
 
+   // console.log(this.state.filterInspect);
   };
 
-  handleOptionQualify = (res) => {
-    console.log(res);
-    this.setState({ showQualifyDialog: false });
+  // handleOptionQualify = (res, teste) => {
+  //   console.log("handleOptionQualify", res, teste);
+  //   // this.setState({ showFilterDialog: false });
 
-  };
+  // };
   //QUALIFY
+
+  handleChangeFilter = (value) => {
+    console.log("handleChangeFilter(%o)", value)
+    this.setState({
+      showFilterDialog: false,
+      filterInspect: value
+    }, ()=>{
+      this.loadData()
+    })
+  }
 
   handleDelete = (commentId) => {
     this.driApi.deleteComment(commentId).then(() => {
@@ -251,8 +264,8 @@ class Home extends Component {
       menuContrastOpen,
       contrast,
       counts,
-      showQualifyDialog,
-      selectedValue,
+      showFilterDialog,
+      filterInspect,
       valuequalify,
 
     } = this.state;
@@ -335,14 +348,18 @@ class Home extends Component {
             handleALert={this.handleAlert}
 
           />
-          <ChooseQualifyDialog open={showQualifyDialog} value={selectedValue} handleoption={this.handleOptionQualify} />
+          <ChooseQualifyDialog 
+            open={showFilterDialog} 
+            selectedValue={filterInspect} 
+            handleClose={this.handleChangeFilter} 
+            />
 
         </div>
         <Footer />
         <ChooseContrast
           selectedValue={contrast}
           open={menuContrastOpen}
-          onClose={this.handleMenuContrastClose}
+          handleClose={this.handleMenuContrastClose}
         />
       </div>
     );

@@ -62,11 +62,15 @@ class DriApi {
     return data;
   };
 
-  datasetsByRelease = async releaseId => {
+  datasetsByRelease = async (releaseId, filters) => {
     const params = {
       ordering: 'tli_tilename',
       release: releaseId,
     };
+
+    filters.forEach(element => {
+      params[element.property] = element.value;
+    });
 
     const res = await axios.get(`/dataset/`, {
       params: params,
