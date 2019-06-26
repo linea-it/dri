@@ -22,6 +22,8 @@ import ChooseContrast from './components/ChooseContrast';
 import CardActions from '@material-ui/core/CardActions';
 import Counter from './components/Counter';
 
+
+
 const styles = theme => ({
   root: {
     flexGrow: 1,
@@ -71,6 +73,7 @@ class Home extends Component {
         false: 0,
         null: 0,
       },
+
     };
   }
 
@@ -159,9 +162,14 @@ class Home extends Component {
     }
   };
 
-  handleComment = async dataset => {
-    const comments = await this.driApi.commentsByDataset(dataset.id);
 
+  loadComments = async dataset => {
+    const comments = await this.driApi.commentsByDataset(dataset.id);
+    return comments;
+  }
+
+  handleComment = async dataset => {
+    const comments = await this.loadComments(dataset);
     this.setState({
       showComment: true,
       currentDataset: dataset,
@@ -169,12 +177,22 @@ class Home extends Component {
     });
   };
 
-  onComment = (dataset, comment) => {
-    this.driApi.createDatasetComment(dataset.id, comment).then(() => {
-      this.handleComment(dataset);
 
-      this.loadData(false);
-    });
+  onComment = (dataset, comment) => {
+
+    if (comment.id !== null) {
+      //update
+      this.driApi.updateComment(comment.id, comment.inputValue).then(res => {
+        this.handleComment(dataset);
+        this.loadData(false);
+      });
+    } else {
+      this.driApi.createDatasetComment(dataset.id, comment.inputValue).then(() => {
+        this.handleComment(dataset);
+        this.loadData(false);
+      });
+    }
+
   };
 
   handleMenuContrastOpen = () => {
@@ -185,7 +203,23 @@ class Home extends Component {
     this.setState({ menuContrastOpen: false, contrast: contrast });
   };
 
+
+
+  handleDelete = (commentId) => {
+    this.driApi.deleteComment(commentId).then(() => {
+      this.setState({
+        comments: []
+      }, () => {
+        this.handleComment(this.state.currentDataset)
+      })
+
+    })
+
+    this.loadData(false);
+
+  }
   render() {
+
     const { classes } = this.props;
 
     const {
@@ -200,7 +234,9 @@ class Home extends Component {
       menuContrastOpen,
       contrast,
       counts,
+
     } = this.state;
+
 
     return (
       <div>
@@ -234,19 +270,19 @@ class Home extends Component {
                 {loading ? (
                   <div>Loading ...</div>
                 ) : (
-                  <div>
-                    <DatasetList
-                      datasets={datasets}
-                      handleSelection={this.onSelectDataset}
-                      handleQualify={this.qualifyDataset}
-                      handleComment={this.handleComment}
-                      selected={currentDataset}
-                    />
-                    <CardActions>
-                      <Counter tiles={datasets.length} counts={counts} />
-                    </CardActions>
-                  </div>
-                )}
+                    <div>
+                      <DatasetList
+                        datasets={datasets}
+                        handleSelection={this.onSelectDataset}
+                        handleQualify={this.qualifyDataset}
+                        handleComment={this.handleComment}
+                        selected={currentDataset}
+                      />
+                      <CardActions>
+                        <Counter tiles={datasets.length} counts={counts} />
+                      </CardActions>
+                    </div>
+                  )}
               </Card>
             </Grid>
             <Grid item xs={9}>
@@ -271,6 +307,11 @@ class Home extends Component {
             comments={comments}
             handleClose={() => this.setState({ showComment: false })}
             handleSubmit={this.onComment}
+            handleDelete={this.handleDelete}
+            handleUpdate={this.handleUpdate}
+            handleLoadComments={this.loadComments}
+            handleALert={this.handleAlert}
+
           />
         </div>
         <Footer />
