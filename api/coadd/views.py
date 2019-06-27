@@ -7,6 +7,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import api_view, list_route
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import OrderingFilter
 
 from .models import Release, Tag, Tile, Dataset, Survey
 from .serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, \
@@ -133,11 +134,15 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
     serializer_class = DatasetSerializer
 
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
 
     filter_class = DatasetFilter
 
-    ordering_fields = ('id', 'tag')
+    search_fields = ('tile__tli_tilename',)
+
+    ordering_fields = ('tile__tli_tilename', 'date')
+
+    ordering = ('tile__tli_tilename',)
 
 
 
