@@ -71,6 +71,7 @@ class DatasetFilter(django_filters.FilterSet):
     tli_tilename = django_filters.CharFilter(field_name='tile__tli_tilename', label='Tilename')
     position = django_filters.CharFilter(method='filter_position')
     release = django_filters.CharFilter(method='filter_release')
+    inspected = django_filters.CharFilter(method='filter_inspected')
 
     class Meta:
         model = Dataset
@@ -108,9 +109,27 @@ class DatasetFilter(django_filters.FilterSet):
 
         return q
 
+    def filter_inspected(self, queryset, name, value):
+        """
+            Filtra os datasets se eles foram inspecionados ou nao. relacionando com o model validation.Inspect
+            os valores possiveis sao:
+            True - Inspecionado e avaliado como Bom
+            False - Inspecionado e avaliado como Ruin
+            None -  Nao Inspecionado.
+
+            o value da requisicao sempre sera string. esse valor
+        """
+        valid = {
+            'true': True, 'True': True, 't': True, '1': True,
+            'false': False, 'False': False, 'f': False, '0': False,
+            'null': None, 'None': None, 'none': None,
+        }
+        if value in valid:
+            return queryset.filter(inspected__isp_value=valid[value])
+
 
 class DatasetViewSet(viewsets.ModelViewSet):
-    queryset = Dataset.objects.select_related().all()
+    queryset = Dataset.objects.select_related().all().prefetch_related('comments').prefetch_related('inspected')
 
     serializer_class = DatasetSerializer
 
@@ -120,24 +139,6 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id', 'tag')
 
-    # @list_route()
-    # def validation(self, request):
-
-    #     user = self.request.user
-    #     queryset = self.get_queryset().select_related()
-    #     # queryset = self.get_queryset().select_related().filter(flagged__owner=user)
-    #     queryset = self.filter_queryset(queryset)
-
-    #     serializer = DatasetInspectSerializer(queryset, many=True, context=self.get_serializer_context())
-
-    # # return Response(serializer.data)
-
-    #     result = dict({
-    #         'success': True,
-    #         'data': serializer.data
-    #     })
-
-    #     return Response(result)
 
 
 class DatasetFootprintViewSet(viewsets.ModelViewSet):

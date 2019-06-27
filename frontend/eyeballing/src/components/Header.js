@@ -3,15 +3,16 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
-import logo from '../assets/img/icon-des.png';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import HomeIcon from '@material-ui/icons/Home';
-import SelectReleases from '../components/SelectReleases';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
+import SelectReleases from './SelectReleases';
+import logo from '../assets/img/icon-des.png';
 import { logout } from '../api/Api';
+
 const styles = theme => ({
   appBar: {
     top: 'auto',
@@ -33,7 +34,9 @@ const styles = theme => ({
 });
 
 function Header(props) {
-  const { classes, title, username, releases, currentRelease } = props;
+  const {
+    classes, title, username, releases, currentRelease,
+  } = props;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
 
@@ -51,9 +54,9 @@ function Header(props) {
   }
 
   function handleHome() {
-    var protocol = window.location.protocol,
-      host = window.location.host,
-      location = protocol + '//' + host + '/';
+    const { protocol } = window.location;
+    const { host } = window.location;
+    const location = `${protocol}//${host}/`;
 
     window.location.assign(location);
   }
