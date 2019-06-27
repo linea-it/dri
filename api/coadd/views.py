@@ -73,10 +73,11 @@ class DatasetFilter(django_filters.FilterSet):
     position = django_filters.CharFilter(method='filter_position')
     release = django_filters.CharFilter(method='filter_release')
     inspected = django_filters.CharFilter(method='filter_inspected')
+    
 
     class Meta:
         model = Dataset
-        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', 'release']
+        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', 'release',]
         order_by = True
 
     def filter_release(self, queryset, name, value):
@@ -143,7 +144,6 @@ class DatasetViewSet(viewsets.ModelViewSet):
     ordering_fields = ('tile__tli_tilename', 'date')
 
     ordering = ('tile__tli_tilename',)
-
 
 
 class DatasetFootprintViewSet(viewsets.ModelViewSet):
