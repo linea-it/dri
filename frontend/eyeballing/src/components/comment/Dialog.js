@@ -98,7 +98,7 @@ function CommentDialog(props) {
       open={props.open}
       onClose={handleClose}
       fullWidth
-      maxWidth={'sm'}
+      maxWidth="sm"
       className={classes.root}
     >
       <DialogTitle>{props.dataset.tli_tilename}</DialogTitle>
