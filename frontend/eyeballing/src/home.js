@@ -9,12 +9,9 @@ import DriApi from './api/Api';
 import DatasetList from './components/DatasetList';
 import Card from '@material-ui/core/Card';
 import Toolbar from '@material-ui/core/Toolbar';
-import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-
 import FilterListIcon from '@material-ui/icons/FilterList';
-import Typography from '@material-ui/core/Typography';
-import SearchField from './components/SearchField';
+// import SearchField from './components/SearchField';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { isEmpty, countBy } from 'lodash';
 import CommentDialog from './components/comment/Dialog';
