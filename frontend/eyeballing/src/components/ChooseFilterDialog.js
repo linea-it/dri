@@ -7,7 +7,7 @@ import Radio from '@material-ui/core/Radio';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import DialogContent from '@material-ui/core/DialogContent';
 
-function ChooseQualifyDialog(props) {
+function ChooseFilterDialog(props) {
     const { selectedValue } = props;
 
     function handleClose() {
@@ -21,27 +21,27 @@ function ChooseQualifyDialog(props) {
     return (
         <Dialog onClose={handleClose} open={props.open}>
             <DialogContent dividers>
-                <DialogTitle>Choose the filter</DialogTitle>
+                <DialogTitle>Filter the list of Tiles</DialogTitle>
                 <RadioGroup value={props.selectedValue} onChange={handleChange}>
+                    <FormControlLabel
+                        value={''}
+                        control={<Radio />}
+                        label={'all'}
+                    />                
                     <FormControlLabel
                         value={'true'}
                         control={<Radio />}
-                        label={'Good'}
+                        label={'list only good'}
                     />
                     <FormControlLabel
                         value={'false'}
                         control={<Radio />}
-                        label={'Bad'}
+                        label={'list only bad'}
                     />
                     <FormControlLabel
                         value={'null'}
                         control={<Radio />}
-                        label={'Not'}
-                    />
-                    <FormControlLabel
-                        value={''}
-                        control={<Radio />}
-                        label={'Default'}
+                        label={'list only those not inspected'}
                     />
                 </RadioGroup>
             </DialogContent>
@@ -50,10 +50,10 @@ function ChooseQualifyDialog(props) {
 }
 
 
-ChooseQualifyDialog.propTypes = {
+ChooseFilterDialog.propTypes = {
     handleClose: PropTypes.func.isRequired,
     open: PropTypes.bool.isRequired,
     selectedValue: PropTypes.string.isRequired,
 };
 
-export default ChooseQualifyDialog;
+export default ChooseFilterDialog;

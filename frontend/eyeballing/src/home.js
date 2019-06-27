@@ -21,7 +21,7 @@ import CommentDialog from './components/comment/Dialog';
 import CardActions from '@material-ui/core/CardActions';
 import Counter from './components/Counter';
 import ChooseContrast from './components/ChooseContrast';
-import ChooseQualifyDialog from './components/ChooseQualifyDialog';
+import ChooseFilterDialog from './components/ChooseFilterDialog';
 
 const styles = theme => ({
   root: {
@@ -41,6 +41,7 @@ const styles = theme => ({
   tilelist: {
     height: '100%',
     textAlign: 'center',
+    minWidth: 300
   },
   tilesCount: {
     textAlign: 'left',
@@ -73,7 +74,7 @@ class Home extends Component {
         null: 0,
       },
       showFilterDialog: false,
-      filterInspect: 'true',
+      filterInspect: '',
     };
   }
 
@@ -108,20 +109,14 @@ class Home extends Component {
   };
 
   async loadData(clear) {
-    const { currentRelease, filterInspect } = this.state;
-
-    let filters = [{
-      property: 'inspected',
-      value: filterInspect
-    }]
+    const { currentRelease } = this.state;
 
     if (currentRelease > 0) {
       if (clear) {
         this.setState({ loading: true });
-        const datasets = await this.driApi.datasetsByRelease(currentRelease, filters);
-        const counts = countBy(datasets, el => {
-          return el.isp_value;
-        });
+
+        const {datasets, counts} = await this.getDatasets()
+
         this.setState({
           datasets: datasets,
           currentDataset: {},
@@ -129,10 +124,8 @@ class Home extends Component {
           counts: counts,
         });
       } else {
-        const datasets = await this.driApi.datasetsByRelease(currentRelease, filters);
-        const counts = countBy(datasets, el => {
-          return el.isp_value;
-        });
+        const {datasets, counts} = await this.getDatasets()
+
         this.setState({
           datasets: datasets,
           counts: counts,
@@ -140,6 +133,31 @@ class Home extends Component {
       }
     }
   }
+
+  async getDatasets(){
+    const { currentRelease, filterInspect } = this.state;
+
+    let filters = [{
+      property: 'inspected',
+      value: filterInspect
+    }]
+
+    // Datasets Filtrados por release e ou inspected_value
+    const datasets = await this.driApi.datasetsByRelease(currentRelease, filters);
+
+    // Todos os datasets do release
+    const allDatasets = await this.driApi.datasetsByRelease(currentRelease);
+
+    // Totais de Tiles boas, ruim e não inspecionadas
+    const counts = countBy(allDatasets, el => {
+      return el.isp_value;
+    });
+    // Total de Tiles no Release.
+    counts.tiles = allDatasets.length;
+
+    return { datasets, counts}
+  }
+
 
   onSelectDataset = dataset => {
     this.setState({
@@ -210,23 +228,12 @@ class Home extends Component {
     this.setState({ menuContrastOpen: false, contrast: contrast });
   };
 
+  handleMenuFilterOpen = () => {
 
-  //QUALIFY
-  handleChooseQualify = () => {
     this.setState({ showFilterDialog: true });
-
-   // console.log(this.state.filterInspect);
   };
 
-  // handleOptionQualify = (res, teste) => {
-  //   console.log("handleOptionQualify", res, teste);
-  //   // this.setState({ showFilterDialog: false });
-
-  // };
-  //QUALIFY
-
-  handleChangeFilter = (value) => {
-    console.log("handleChangeFilter(%o)", value)
+  handleMenuFilterClose = (value) => {
     this.setState({
       showFilterDialog: false,
       filterInspect: value
@@ -288,12 +295,12 @@ class Home extends Component {
             alignItems="stretch"
             spacing={2}
           >
-            <Grid item xs={3}>
+            <Grid item xs={6} sm={4} md={3} lg={3} >
               <Card className={classes.tilelist}>
                 <Toolbar>
-                  <SearchField />
+                  {/* <SearchField /> */}
                   <div className={classes.grow}></div>
-                  <IconButton onClick={this.handleChooseQualify} edge="start" className={classes.menuButton} color="inherit" aria-label="Menu">
+                  <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} >
                     <FilterListIcon />
                   </IconButton>
                   <IconButton onClick={this.handleMenuContrastOpen}>
@@ -314,13 +321,13 @@ class Home extends Component {
 
                       />
                       <CardActions>
-                        <Counter tiles={datasets.length} counts={counts} />
+                        <Counter counts={counts} />
                       </CardActions>
                     </div>
                   )}
               </Card>
             </Grid>
-            <Grid item xs={9}>
+            <Grid item xs={6} sm={8} md={9} lg={9}>
               <Card className={classes.card}>
                 <VisiomaticPanel
                   image={
@@ -348,12 +355,6 @@ class Home extends Component {
             handleALert={this.handleAlert}
 
           />
-          <ChooseQualifyDialog 
-            open={showFilterDialog} 
-            selectedValue={filterInspect} 
-            handleClose={this.handleChangeFilter} 
-            />
-
         </div>
         <Footer />
         <ChooseContrast
@@ -361,6 +362,12 @@ class Home extends Component {
           open={menuContrastOpen}
           handleClose={this.handleMenuContrastClose}
         />
+        <ChooseFilterDialog 
+          open={showFilterDialog} 
+          selectedValue={filterInspect} 
+          handleClose={this.handleMenuFilterClose} 
+          />
+
       </div>
     );
   }

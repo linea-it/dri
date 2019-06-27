@@ -8,18 +8,18 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import DialogContent from '@material-ui/core/DialogContent';
 
 function ChooseContrast(props) {
-  const { selectedValue, ...other } = props;
+  const { selectedValue } = props;
 
   function handleClose() {
-    props.onClose("TESTE");
+    props.handleClose(selectedValue);
   }
 
   function handleChange(event, newValue) {
-    props.onClose(newValue);
+    props.handleClose(newValue);
   }
 
   return (
-    <Dialog onClose={handleClose} {...other}>
+    <Dialog onClose={handleClose} open={props.open}>
       <DialogContent dividers>
         <DialogTitle>Choose Color Ranges</DialogTitle>
         <RadioGroup value={props.selectedValue} onChange={handleChange}>
@@ -45,7 +45,7 @@ function ChooseContrast(props) {
 }
 
 ChooseContrast.propTypes = {
-  onClose: PropTypes.func,
+  handleClose: PropTypes.func,
   open: PropTypes.bool,
   selectedValue: PropTypes.string,
 };
