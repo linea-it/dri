@@ -11,7 +11,7 @@ import Card from '@material-ui/core/Card';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import FilterListIcon from '@material-ui/icons/FilterList';
-// import SearchField from './components/SearchField';
+import SearchField from './components/SearchField';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { isEmpty, countBy } from 'lodash';
 import CommentDialog from './components/comment/Dialog';
@@ -19,6 +19,7 @@ import CardActions from '@material-ui/core/CardActions';
 import Counter from './components/Counter';
 import ChooseContrast from './components/ChooseContrast';
 import ChooseFilterDialog from './components/ChooseFilterDialog';
+
 
 const styles = theme => ({
   root: {
@@ -72,6 +73,7 @@ class Home extends Component {
       },
       showFilterDialog: false,
       filterInspect: '',
+      inputSearchValue: '',
     };
   }
 
@@ -112,7 +114,7 @@ class Home extends Component {
       if (clear) {
         this.setState({ loading: true });
 
-        const {datasets, counts} = await this.getDatasets()
+        const { datasets, counts } = await this.getDatasets()
 
         this.setState({
           datasets: datasets,
@@ -121,7 +123,7 @@ class Home extends Component {
           counts: counts,
         });
       } else {
-        const {datasets, counts} = await this.getDatasets()
+        const { datasets, counts } = await this.getDatasets()
 
         this.setState({
           datasets: datasets,
@@ -131,13 +133,17 @@ class Home extends Component {
     }
   }
 
-  async getDatasets(){
-    const { currentRelease, filterInspect } = this.state;
+  async getDatasets() {
+    const { currentRelease, filterInspect, inputSearchValue } = this.state;
 
     let filters = [{
       property: 'inspected',
       value: filterInspect
+    }, {
+      property: 'search',
+      value: inputSearchValue
     }]
+
 
     // Datasets Filtrados por release e ou inspected_value
     const datasets = await this.driApi.datasetsByRelease(currentRelease, filters);
@@ -152,7 +158,7 @@ class Home extends Component {
     // Total de Tiles no Release.
     counts.tiles = allDatasets.length;
 
-    return { datasets, counts}
+    return { datasets, counts }
   }
 
 
@@ -234,10 +240,16 @@ class Home extends Component {
     this.setState({
       showFilterDialog: false,
       filterInspect: value
-    }, ()=>{
+    }, () => {
       this.loadData()
     })
   }
+
+  handleInputSearch = (value) => {
+    this.setState({ inputSearchValue: value }, () => {
+      this.loadData();
+    });
+  };
 
   handleDelete = (commentId) => {
     this.driApi.deleteComment(commentId).then(() => {
@@ -271,6 +283,7 @@ class Home extends Component {
       showFilterDialog,
       filterInspect,
       valuequalify,
+      inputSearchValue
 
     } = this.state;
 
@@ -295,7 +308,7 @@ class Home extends Component {
             <Grid item xs={6} sm={4} md={3} lg={3} >
               <Card className={classes.tilelist}>
                 <Toolbar>
-                  {/* <SearchField /> */}
+                  <SearchField inputSearchValue={inputSearchValue} handleInputSearch={this.handleInputSearch} />
                   <div className={classes.grow}></div>
                   <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} >
                     <FilterListIcon />
@@ -315,7 +328,6 @@ class Home extends Component {
                         handleComment={this.handleComment}
                         selected={currentDataset}
                         valuequalify={valuequalify}
-
                       />
                       <CardActions>
                         <Counter counts={counts} />
@@ -353,17 +365,18 @@ class Home extends Component {
 
           />
         </div>
+        {/* <SnackBar /> */}
         <Footer />
         <ChooseContrast
           selectedValue={contrast}
           open={menuContrastOpen}
           handleClose={this.handleMenuContrastClose}
         />
-        <ChooseFilterDialog 
-          open={showFilterDialog} 
-          selectedValue={filterInspect} 
-          handleClose={this.handleMenuFilterClose} 
-          />
+        <ChooseFilterDialog
+          open={showFilterDialog}
+          selectedValue={filterInspect}
+          handleClose={this.handleMenuFilterClose}
+        />
 
       </div>
     );

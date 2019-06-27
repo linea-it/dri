@@ -17,7 +17,7 @@ const styles = theme => ({
   },
   inputRoot: {
     color: 'inherit',
-  },  
+  },
   searchIcon: {
     width: theme.spacing(5),
     height: '100%',
@@ -35,33 +35,41 @@ const styles = theme => ({
     [theme.breakpoints.up('md')]: {
       width: 200,
     },
-  },    
+  },
 });
 
 function SearchField(props) {
-  const { classes, datasets, selected } = props;
+  const { classes } = props;
+
+
+  function handleInputSearch(event) {
+    const value = event.target.value.toUpperCase();
+    props.handleInputSearch(value);
+  }
 
 
   return (
-        <div className={classes.search}>
-            <div className={classes.searchIcon}>
-                <SearchIcon />
-            </div>
-            <InputBase
-                disabled
-                placeholder="Search…"
-                classes={{
-                root: classes.inputRoot,
-                input: classes.inputInput,
-                }}
-                inputProps={{ 'aria-label': 'Search' }}
-            />
-        </div>       
+    <div className={classes.search}>
+      <div className={classes.searchIcon}>
+        <SearchIcon />
+      </div>
+      <InputBase onChange={handleInputSearch}
+        value={props.inputSearchValue}
+        placeholder="Search…"
+        classes={{
+          root: classes.inputRoot,
+          input: classes.inputInput,
+        }}
+        inputProps={{ 'aria-label': 'Search' }}
+      />
+    </div>
   );
 }
 
 SearchField.propTypes = {
-
+  inputSearchValue: PropTypes.string.isRequired,
+  handleInputSearch: PropTypes.func.isRequired,
+  value: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(SearchField);
