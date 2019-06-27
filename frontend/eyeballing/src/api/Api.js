@@ -64,7 +64,7 @@ class DriApi {
 
   datasetsByRelease = async (release, filters) => {
     const params = {
-      ordering: 'tli_tilename',
+      ordering: 'tile__tli_tilename',
       release: release,
     };
 
