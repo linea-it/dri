@@ -31,20 +31,27 @@ const styles = theme => ({
 function DatasetList(props) {
   const { classes, datasets, selected } = props;
 
+
+
+
   function changeQualify(dataset, label) {
     let value = null;
     if (label === 'ok') {
       if (dataset.isp_value === true) {
         // ja estava Ok volta para null
         value = null;
+
       } else {
         value = true;
+
       }
     } else if (dataset.isp_value === false) {
       // ja estava Not Ok volta para null
       value = null;
+
     } else {
       value = false;
+
     }
 
     props.handleQualify(dataset, value);
