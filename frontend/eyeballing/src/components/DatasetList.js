@@ -40,13 +40,11 @@ function DatasetList(props) {
       } else {
         value = true;
       }
+    } else if (dataset.isp_value === false) {
+      // ja estava Not Ok volta para null
+      value = null;
     } else {
-      if (dataset.isp_value === false) {
-        // ja estava Not Ok volta para null
-        value = null;
-      } else {
-        value = false;
-      }
+      value = false;
     }
 
     props.handleQualify(dataset, value);
@@ -67,14 +65,14 @@ function DatasetList(props) {
           props.handleSelection(el);
         }}
         divider
-        selected={el.id === selected.id ? true : false}
+        selected={el.id === selected.id}
       >
         <ListItemText
           primary={el.tli_tilename}
           secondary={
             <Link
               className={el.comments > 0 ? classes.datasetWithComment : null}
-              onClick={e => {
+              onClick={(e) => {
                 e.stopPropagation();
                 e.preventDefault();
                 handleComment(el);
@@ -108,9 +106,12 @@ function DatasetList(props) {
       </ListItem>
     ));
 
-    const Row = ({ index, style }) => {
-      return <div style={style}> {listItens[index]}</div>;
-    };
+    const Row = ({ index, style }) => (
+      <div style={style}>
+        {' '}
+        {listItens[index]}
+      </div>
+    );
 
     const header = 64;
     const toolbar = 64;
@@ -138,9 +139,8 @@ function DatasetList(props) {
         <Divider />
       </div>
     );
-  } else {
-    return null;
   }
+  return null;
 }
 
 DatasetList.propTypes = {

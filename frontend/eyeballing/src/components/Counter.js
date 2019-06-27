@@ -41,7 +41,7 @@ export default function Counter(props) {
         gutterBottom
         noWrap
       >
-        {props.tiles}
+        {props.counts.tiles ? props.counts.tiles : 0}
       </Typography>
 
       <Typography
@@ -98,6 +98,5 @@ export default function Counter(props) {
   );
 }
 Counter.propTypes = {
-  tiles: PropTypes.number.isRequired,
   counts: PropTypes.object.isRequired,
 };

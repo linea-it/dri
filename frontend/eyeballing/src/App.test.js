@@ -1,7 +1,7 @@
 import React from 'react';
-import App from './App';
 import { configure, mount } from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
+import App from './App';
 
 configure({ adapter: new Adapter() });
 
@@ -18,7 +18,7 @@ describe('App', () => {
       wrapper
         .find('Button')
         .at(0)
-        .text()
+        .text(),
     ).toBe('Test Primary');
   });
 

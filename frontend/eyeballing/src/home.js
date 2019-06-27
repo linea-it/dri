@@ -9,15 +9,19 @@ import DriApi from './api/Api';
 import DatasetList from './components/DatasetList';
 import Card from '@material-ui/core/Card';
 import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+
+import FilterListIcon from '@material-ui/icons/FilterList';
+import Typography from '@material-ui/core/Typography';
+import SearchField from './components/SearchField';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { isEmpty, countBy } from 'lodash';
 import CommentDialog from './components/comment/Dialog';
-import ChooseContrast from './components/ChooseContrast';
 import CardActions from '@material-ui/core/CardActions';
 import Counter from './components/Counter';
-
-
+import ChooseContrast from './components/ChooseContrast';
+import ChooseFilterDialog from './components/ChooseFilterDialog';
 
 const styles = theme => ({
   root: {
@@ -37,6 +41,7 @@ const styles = theme => ({
   tilelist: {
     height: '100%',
     textAlign: 'center',
+    minWidth: 300
   },
   tilesCount: {
     textAlign: 'left',
@@ -68,7 +73,8 @@ class Home extends Component {
         false: 0,
         null: 0,
       },
-
+      showFilterDialog: false,
+      filterInspect: '',
     };
   }
 
@@ -83,6 +89,7 @@ class Home extends Component {
         username: user.username,
         releases: releases,
         currentRelease: currentRelease.id,
+        res: 'good',
       },
       this.onChangeRelease(currentRelease.id)
     );
@@ -107,10 +114,9 @@ class Home extends Component {
     if (currentRelease > 0) {
       if (clear) {
         this.setState({ loading: true });
-        const datasets = await this.driApi.datasetsByRelease(currentRelease);
-        const counts = countBy(datasets, el => {
-          return el.isp_value;
-        });
+
+        const {datasets, counts} = await this.getDatasets()
+
         this.setState({
           datasets: datasets,
           currentDataset: {},
@@ -118,10 +124,8 @@ class Home extends Component {
           counts: counts,
         });
       } else {
-        const datasets = await this.driApi.datasetsByRelease(currentRelease);
-        const counts = countBy(datasets, el => {
-          return el.isp_value;
-        });
+        const {datasets, counts} = await this.getDatasets()
+
         this.setState({
           datasets: datasets,
           counts: counts,
@@ -129,6 +133,31 @@ class Home extends Component {
       }
     }
   }
+
+  async getDatasets(){
+    const { currentRelease, filterInspect } = this.state;
+
+    let filters = [{
+      property: 'inspected',
+      value: filterInspect
+    }]
+
+    // Datasets Filtrados por release e ou inspected_value
+    const datasets = await this.driApi.datasetsByRelease(currentRelease, filters);
+
+    // Todos os datasets do release
+    const allDatasets = await this.driApi.datasetsByRelease(currentRelease);
+
+    // Totais de Tiles boas, ruim e não inspecionadas
+    const counts = countBy(allDatasets, el => {
+      return el.isp_value;
+    });
+    // Total de Tiles no Release.
+    counts.tiles = allDatasets.length;
+
+    return { datasets, counts}
+  }
+
 
   onSelectDataset = dataset => {
     this.setState({
@@ -191,6 +220,7 @@ class Home extends Component {
   };
 
   handleMenuContrastOpen = () => {
+
     this.setState({ menuContrastOpen: true });
   };
 
@@ -198,7 +228,19 @@ class Home extends Component {
     this.setState({ menuContrastOpen: false, contrast: contrast });
   };
 
+  handleMenuFilterOpen = () => {
 
+    this.setState({ showFilterDialog: true });
+  };
+
+  handleMenuFilterClose = (value) => {
+    this.setState({
+      showFilterDialog: false,
+      filterInspect: value
+    }, ()=>{
+      this.loadData()
+    })
+  }
 
   handleDelete = (commentId) => {
     this.driApi.deleteComment(commentId).then(() => {
@@ -229,6 +271,9 @@ class Home extends Component {
       menuContrastOpen,
       contrast,
       counts,
+      showFilterDialog,
+      filterInspect,
+      valuequalify,
 
     } = this.state;
 
@@ -250,10 +295,14 @@ class Home extends Component {
             alignItems="stretch"
             spacing={2}
           >
-            <Grid item xs={3}>
+            <Grid item xs={6} sm={4} md={3} lg={3} >
               <Card className={classes.tilelist}>
                 <Toolbar>
+                  {/* <SearchField /> */}
                   <div className={classes.grow}></div>
+                  <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} >
+                    <FilterListIcon />
+                  </IconButton>
                   <IconButton onClick={this.handleMenuContrastOpen}>
                     <SettingsIcon />
                   </IconButton>
@@ -268,15 +317,17 @@ class Home extends Component {
                         handleQualify={this.qualifyDataset}
                         handleComment={this.handleComment}
                         selected={currentDataset}
+                        valuequalify={valuequalify}
+
                       />
                       <CardActions>
-                        <Counter tiles={datasets.length} counts={counts} />
+                        <Counter counts={counts} />
                       </CardActions>
                     </div>
                   )}
               </Card>
             </Grid>
-            <Grid item xs={9}>
+            <Grid item xs={6} sm={8} md={9} lg={9}>
               <Card className={classes.card}>
                 <VisiomaticPanel
                   image={
@@ -309,8 +360,14 @@ class Home extends Component {
         <ChooseContrast
           selectedValue={contrast}
           open={menuContrastOpen}
-          onClose={this.handleMenuContrastClose}
+          handleClose={this.handleMenuContrastClose}
         />
+        <ChooseFilterDialog 
+          open={showFilterDialog} 
+          selectedValue={filterInspect} 
+          handleClose={this.handleMenuFilterClose} 
+          />
+
       </div>
     );
   }
