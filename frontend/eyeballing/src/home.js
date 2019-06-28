@@ -20,6 +20,8 @@ import Counter from './components/Counter';
 import ChooseContrast from './components/ChooseContrast';
 import ChooseFilterDialog from './components/ChooseFilterDialog';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import SnackBar from './components/SnackBar';
+
 
 const styles = theme => ({
   root: {
@@ -78,6 +80,8 @@ class Home extends Component {
       showFilterDialog: false,
       filterInspect: '',
       inputSearchValue: '',
+      openSnackBar: false,
+
     };
   }
 
@@ -194,16 +198,22 @@ class Home extends Component {
     if (dataset.inspected !== null) {
       if (value !== null) {
         this.driApi.updateInspectValue(dataset.inspected, value).then(res => {
+
           this.loadData(false);
+          this.handleClickSnackBar();
         });
       } else {
         this.driApi.deleteInspect(dataset.inspected).then(res => {
+
           this.loadData(false);
+          this.handleClickSnackBar();
         });
       }
     } else {
       this.driApi.createinspect(dataset.id, value).then(res => {
+
         this.loadData(false);
+        this.handleClickSnackBar()
       });
     }
   };
@@ -264,6 +274,7 @@ class Home extends Component {
     })
   }
 
+
   handleInputSearch = (value) => {
     const { allDatasets } = this.state;
     // this.setState({ inputSearchValue: value }, () => {
@@ -299,6 +310,11 @@ class Home extends Component {
     this.loadData(false);
 
   }
+
+  handleClickSnackBar = () => {
+    this.setState({ openSnackBar: !this.state.openSnackBar });
+  };
+
   render() {
 
     const { classes } = this.props;
@@ -318,7 +334,9 @@ class Home extends Component {
       showFilterDialog,
       filterInspect,
       valuequalify,
-      inputSearchValue
+      inputSearchValue,
+      openSnackBar,
+
 
     } = this.state;
 
@@ -365,6 +383,7 @@ class Home extends Component {
                         handleComment={this.handleComment}
                         selected={currentDataset}
                         valuequalify={valuequalify}
+                        handleOpenSnackBar={this.handleOpenSnackBar}
                       />
                       
                     </div>
@@ -402,7 +421,8 @@ class Home extends Component {
 
           />
         </div>
-        {/* <SnackBar /> */}
+        <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={this.handleClickSnackBar} />
+
         <Footer />
         <ChooseContrast
           selectedValue={contrast}
