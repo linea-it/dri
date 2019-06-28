@@ -13,13 +13,13 @@ import IconButton from '@material-ui/core/IconButton';
 import FilterListIcon from '@material-ui/icons/FilterList';
 import SearchField from './components/SearchField';
 import SettingsIcon from '@material-ui/icons/Settings';
-import { isEmpty, countBy } from 'lodash';
+import { isEmpty, countBy, filter } from 'lodash';
 import CommentDialog from './components/comment/Dialog';
 import CardActions from '@material-ui/core/CardActions';
 import Counter from './components/Counter';
 import ChooseContrast from './components/ChooseContrast';
 import ChooseFilterDialog from './components/ChooseFilterDialog';
-
+import LinearProgress from '@material-ui/core/LinearProgress';
 
 const styles = theme => ({
   root: {
@@ -47,6 +47,9 @@ const styles = theme => ({
   grow: {
     flexGrow: 1,
   },
+  loadingPlaceholder: {
+    height: 4
+  },
 });
 
 class Home extends Component {
@@ -59,6 +62,7 @@ class Home extends Component {
       username: '',
       releases: [],
       currentRelease: '',
+      allDatasets: [],
       datasets: [],
       currentDataset: {},
       loading: false,
@@ -111,23 +115,27 @@ class Home extends Component {
     const { currentRelease } = this.state;
 
     if (currentRelease > 0) {
-      if (clear) {
-        this.setState({ loading: true });
 
-        const { datasets, counts } = await this.getDatasets()
+      this.setState({ loading: true });
+
+      if (clear) {
+        const { datasets, counts, allDatasets } = await this.getDatasets()
 
         this.setState({
+          allDatasets: allDatasets,
           datasets: datasets,
           currentDataset: {},
           loading: false,
           counts: counts,
         });
       } else {
-        const { datasets, counts } = await this.getDatasets()
+        const { datasets, counts, allDatasets } = await this.getDatasets()
 
         this.setState({
+          allDatasets: allDatasets,
           datasets: datasets,
           counts: counts,
+          loading: false,
         });
       }
     }
@@ -135,6 +143,7 @@ class Home extends Component {
 
   async getDatasets() {
     const { currentRelease, filterInspect, inputSearchValue } = this.state;
+    let { allDatasets, datasets } = this.state;
 
     let filters = [{
       property: 'inspected',
@@ -144,12 +153,16 @@ class Home extends Component {
       value: inputSearchValue
     }]
 
+    if (inputSearchValue !== '') {
+      // Se tiver parametro de busca faz a busca localmente ao inves de fazer as requisicoes.
+      datasets = this.localSearchByTilename(allDatasets, inputSearchValue)
 
-    // Datasets Filtrados por release e ou inspected_value
-    const datasets = await this.driApi.datasetsByRelease(currentRelease, filters);
-
-    // Todos os datasets do release
-    const allDatasets = await this.driApi.datasetsByRelease(currentRelease);
+    } else {
+      // Datasets Filtrados por release e ou inspected_value
+      datasets = await this.driApi.datasetsByRelease(currentRelease, filters);
+      // Todos os datasets do release
+      allDatasets = await this.driApi.datasetsByRelease(currentRelease);
+    }
 
     // Totais de Tiles boas, ruim e não inspecionadas
     const counts = countBy(allDatasets, el => {
@@ -158,7 +171,13 @@ class Home extends Component {
     // Total de Tiles no Release.
     counts.tiles = allDatasets.length;
 
-    return { datasets, counts }
+    return { datasets, counts, allDatasets }
+  }
+
+  localSearchByTilename = (allDatasets, tilename) =>{
+
+    const results = filter(allDatasets, function(o) { return o.tli_tilename.includes(tilename); })
+    return results
   }
 
 
@@ -246,10 +265,26 @@ class Home extends Component {
   }
 
   handleInputSearch = (value) => {
-    this.setState({ inputSearchValue: value }, () => {
-      this.loadData();
+    const { allDatasets } = this.state;
+    // this.setState({ inputSearchValue: value }, () => {
+    //   this.loadData();
+    // });
+    this.setState({
+       inputSearchValue: value ,
+       loading: true
+      }, () => {
+        this.onSearch()
     });
   };
+
+  onSearch = async () => {
+    
+    const { datasets, counts, } = await this.getDatasets()
+   
+    this.setState({datasets, counts, loading:false})
+
+  }
+
 
   handleDelete = (commentId) => {
     this.driApi.deleteComment(commentId).then(() => {
@@ -317,10 +352,12 @@ class Home extends Component {
                     <SettingsIcon />
                   </IconButton>
                 </Toolbar>
-                {loading ? (
-                  <div>Loading ...</div>
-                ) : (
                     <div>
+                    {loading ? (
+                      <LinearProgress color="secondary"/>
+                    ) : (                      
+                      <div className={classes.loadingPlaceholder} />
+                    )}    
                       <DatasetList
                         datasets={datasets}
                         handleSelection={this.onSelectDataset}
@@ -329,11 +366,11 @@ class Home extends Component {
                         selected={currentDataset}
                         valuequalify={valuequalify}
                       />
-                      <CardActions>
-                        <Counter counts={counts} />
-                      </CardActions>
+                      
                     </div>
-                  )}
+                  <CardActions>
+                      <Counter counts={counts} />
+                  </CardActions>
               </Card>
             </Grid>
             <Grid item xs={6} sm={8} md={9} lg={9}>

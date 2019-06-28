@@ -47,7 +47,6 @@ function SearchField(props) {
     props.handleInputSearch(value);
   }
 
-
   return (
     <div className={classes.search}>
       <div className={classes.searchIcon}>
