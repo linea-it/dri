@@ -81,6 +81,7 @@ class Home extends Component {
       filterInspect: '',
       inputSearchValue: '',
       openSnackBar: false,
+      forceLoad: false,
 
     };
   }
@@ -123,49 +124,65 @@ class Home extends Component {
       this.setState({ loading: true });
 
       if (clear) {
-        const { datasets, counts, allDatasets } = await this.getDatasets()
+        // const { datasets, counts, allDatasets } = await this.getDatasets()
 
+        // this.setState({
+        //   allDatasets: allDatasets,
+        //   datasets: datasets,
+        //   currentDataset: {},
+        //   loading: false,
+        //   counts: counts,
+        // });
         this.setState({
-          allDatasets: allDatasets,
-          datasets: datasets,
+          allDatasets: [],
+          datasets: [],
           currentDataset: {},
-          loading: false,
-          counts: counts,
+          counts: {},
+        }, ()=>{
+          this.getDatasets()
         });
-      } else {
-        const { datasets, counts, allDatasets } = await this.getDatasets()
 
-        this.setState({
-          allDatasets: allDatasets,
-          datasets: datasets,
-          counts: counts,
-          loading: false,
-        });
+      } else {
+        // const { datasets, counts, allDatasets } = await this.getDatasets()
+
+        this.getDatasets();
+
+        // this.setState({
+        //   allDatasets: allDatasets,
+        //   datasets: datasets,
+        //   counts: counts,
+        //   loading: false,
+        // });
       }
     }
   }
 
   async getDatasets() {
-    const { currentRelease, filterInspect, inputSearchValue } = this.state;
-    let { allDatasets, datasets } = this.state;
+    const { currentRelease } = this.state;
+    let { allDatasets, datasets, filterInspect, inputSearchValue, forceLoad } = this.state;
 
-    let filters = [{
-      property: 'inspected',
-      value: filterInspect
-    }, {
-      property: 'search',
-      value: inputSearchValue
-    }]
-
-    if (inputSearchValue !== '') {
+    if (inputSearchValue !== '' && forceLoad === false) {
       // Se tiver parametro de busca faz a busca localmente ao inves de fazer as requisicoes.
       datasets = this.localSearchByTilename(allDatasets, inputSearchValue)
-
+      filterInspect = '';
     } else {
+
+      let filters = [{
+        property: 'inspected',
+        value: filterInspect
+      },
+      //  {
+      //   property: 'search',
+      //   value: inputSearchValue
+      // }
+      ]
+
       // Datasets Filtrados por release e ou inspected_value
       datasets = await this.driApi.datasetsByRelease(currentRelease, filters);
       // Todos os datasets do release
       allDatasets = await this.driApi.datasetsByRelease(currentRelease);
+      inputSearchValue = ''
+      forceLoad = false;
     }
 
     // Totais de Tiles boas, ruim e não inspecionadas
@@ -175,7 +192,17 @@ class Home extends Component {
     // Total de Tiles no Release.
     counts.tiles = allDatasets.length;
 
-    return { datasets, counts, allDatasets }
+    this.setState({
+      allDatasets: allDatasets,
+      datasets: datasets,
+      counts: counts,
+      loading: false,
+      inputSearchValue: inputSearchValue,
+      filterInspect: filterInspect,
+      forceLoad: forceLoad
+    });
+
+    // return { datasets, counts, allDatasets }
   }
 
   localSearchByTilename = (allDatasets, tilename) =>{
@@ -199,21 +226,33 @@ class Home extends Component {
       if (value !== null) {
         this.driApi.updateInspectValue(dataset.inspected, value).then(res => {
 
-          this.loadData(false);
-          this.handleClickSnackBar();
+          this.setState({
+            forceLoad: true,
+          }, ()=>{
+            this.loadData(false);
+            this.handleClickSnackBar();
+          })
+
         });
       } else {
         this.driApi.deleteInspect(dataset.inspected).then(res => {
 
-          this.loadData(false);
-          this.handleClickSnackBar();
+          this.setState({
+            forceLoad: true,
+          }, ()=>{
+            this.loadData(false);
+            this.handleClickSnackBar();
+          })
         });
       }
     } else {
       this.driApi.createinspect(dataset.id, value).then(res => {
-
-        this.loadData(false);
-        this.handleClickSnackBar()
+        this.setState({
+          forceLoad: true,
+        }, ()=>{
+          this.loadData(false);
+          this.handleClickSnackBar()
+        })
       });
     }
   };
@@ -284,17 +323,17 @@ class Home extends Component {
        inputSearchValue: value ,
        loading: true
       }, () => {
-        this.onSearch()
+        this.loadData()
     });
   };
 
-  onSearch = async () => {
-    
-    const { datasets, counts, } = await this.getDatasets()
+  // onSearch = async () => {
+  //   this.loadData()
+  //   // const { datasets, counts, } = await this.getDatasets()
    
-    this.setState({datasets, counts, loading:false})
+  //   // this.setState({datasets, counts, loading:false})
 
-  }
+  // }
 
 
   handleDelete = (commentId) => {
@@ -363,7 +402,7 @@ class Home extends Component {
                 <Toolbar>
                   <SearchField inputSearchValue={inputSearchValue} handleInputSearch={this.handleInputSearch} />
                   <div className={classes.grow}></div>
-                  <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} >
+                  <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} disabled={inputSearchValue !== '' ? true : false}>
                     <FilterListIcon />
                   </IconButton>
                   <IconButton onClick={this.handleMenuContrastOpen}>
