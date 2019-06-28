@@ -36,6 +36,7 @@ function DatasetList(props) {
 
   function changeQualify(dataset, label) {
     let value = null;
+
     if (label === 'ok') {
       if (dataset.isp_value === true) {
         // ja estava Ok volta para null

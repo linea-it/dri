@@ -69,7 +69,6 @@ function SearchField(props) {
 SearchField.propTypes = {
   inputSearchValue: PropTypes.string.isRequired,
   handleInputSearch: PropTypes.func.isRequired,
-  value: PropTypes.string.isRequired
 };
 
 export default withStyles(styles)(SearchField);
