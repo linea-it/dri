@@ -52,6 +52,9 @@ const styles = theme => ({
   loadingPlaceholder: {
     height: 4
   },
+  toolbar: {
+    padding: `0 ${theme.spacing(1)}px`
+  }
 });
 
 class Home extends Component {
@@ -399,7 +402,7 @@ class Home extends Component {
           >
             <Grid item xs={6} sm={4} md={3} lg={3} >
               <Card className={classes.tilelist}>
-                <Toolbar>
+                <Toolbar className={classes.toolbar}>
                   <SearchField inputSearchValue={inputSearchValue} handleInputSearch={this.handleInputSearch} />
                   <div className={classes.grow}></div>
                   <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} disabled={inputSearchValue !== '' ? true : false}>
