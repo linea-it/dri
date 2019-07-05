@@ -11,12 +11,15 @@ const styles = theme => ({
     '&:hover': {
       backgroundColor: fade(theme.palette.common.black, 0.07),
     },
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(1),
     marginLeft: 0,
     width: '100%',
+    padding: `0 ${theme.spacing(1)}px`,
   },
   inputRoot: {
     color: 'inherit',
+    float: 'left',
+    width: '100%',
   },
   searchIcon: {
     width: theme.spacing(5),
@@ -26,6 +29,7 @@ const styles = theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+    right: 0,
   },
 
   inputInput: {
