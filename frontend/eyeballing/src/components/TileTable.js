@@ -248,7 +248,7 @@ function TileTable(props) {
               defaultExpandedGroups={tilenames}
             />
             <IntegratedGrouping />
-            <VirtualTable />
+            <VirtualTable height="100%" />
             <TableColumnResizing defaultColumnWidths={defaultColumnWidths} />
             <TableHeaderRow showSortingControls showGroupingControls={false} />
             <TableGroupRow columnExtensions={tableGroupColumnExtension} />
