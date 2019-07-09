@@ -99,6 +99,27 @@ class DriApi {
     });
   };
 
+  comments = async (currentRelease, sorting, search) => {
+    let ordering = sorting;
+    let filters = [];
+
+    if(sorting && sorting.direction === 'desc') {
+      ordering = `-${sorting}`; 
+    }
+
+    const res = await axios.get(`/comment/dataset/`, {
+      params: {
+        release: currentRelease,
+        ordering: ordering,
+        filter: filters,
+        search: search,
+      },
+    });
+
+    const data = await res.data;
+
+    return data;
+  };
   commentsByDataset = async datasetId => {
     const res = await axios.get(`/comment/dataset/`, {
       params: {
