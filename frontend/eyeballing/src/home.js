@@ -21,7 +21,11 @@ import ChooseContrast from './components/ChooseContrast';
 import ChooseFilterDialog from './components/ChooseFilterDialog';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import SnackBar from './components/SnackBar';
-
+import TableChart from '@material-ui/icons/TableChart';
+import TileTable from './components/TileTable';
+import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
+import ArrowBack from '@material-ui/icons/ArrowBack';
+import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
   root: {
@@ -33,7 +37,7 @@ const styles = theme => ({
   card: {
     height: 'auto',
     color: theme.palette.text.secondary,
-    backgroundColor: theme.palette.grey[500],
+    backgroundColor: '#fff',
   },
   visiomatic: {
     backgroundColor: theme.palette.grey[200],
@@ -54,7 +58,21 @@ const styles = theme => ({
   },
   toolbar: {
     padding: `0 ${theme.spacing(1)}px`
-  }
+  },
+  menuButton: {
+    [theme.breakpoints.down('lg')]: {
+      padding: 6,
+    },
+  },
+  menuButtonIcon: {
+    [theme.breakpoints.down('lg')]: {
+      width: '.6em',
+      height: '.6em',
+    },
+  },
+  backLinkIcon: {
+    borderRadius: 0,
+  },
 });
 
 class Home extends Component {
@@ -85,7 +103,6 @@ class Home extends Component {
       inputSearchValue: '',
       openSnackBar: false,
       forceLoad: false,
-
     };
   }
 
@@ -215,7 +232,7 @@ class Home extends Component {
   }
 
 
-  onSelectDataset = dataset => {
+  onSelectDataset = (dataset) => {
     this.setState({
       currentDataset: dataset,
     });
@@ -318,7 +335,7 @@ class Home extends Component {
 
 
   handleInputSearch = (value) => {
-    const { allDatasets } = this.state;
+    // const { allDatasets } = this.state;
     // this.setState({ inputSearchValue: value }, () => {
     //   this.loadData();
     // });
@@ -384,7 +401,7 @@ class Home extends Component {
 
 
     return (
-      <div>
+      <Router>
         <Header
           title="Tile Inspection"
           username={username}
@@ -392,79 +409,111 @@ class Home extends Component {
           currentRelease={currentRelease}
           onChangeRelease={this.onChangeRelease}
         />
-        <div className={classes.content}>
-          <Grid
-            container
-            direction="row"
-            justify="flex-start"
-            alignItems="stretch"
-            spacing={2}
-          >
-            <Grid item xs={6} sm={4} md={3} lg={3} >
-              <Card className={classes.tilelist}>
-                <Toolbar className={classes.toolbar}>
-                  <SearchField inputSearchValue={inputSearchValue} handleInputSearch={this.handleInputSearch} />
-                  <div className={classes.grow}></div>
-                  <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} disabled={inputSearchValue !== '' ? true : false}>
-                    <FilterListIcon />
-                  </IconButton>
-                  <IconButton onClick={this.handleMenuContrastOpen}>
-                    <SettingsIcon />
-                  </IconButton>
-                </Toolbar>
-                    <div>
-                    {loading ? (
-                      <LinearProgress color="secondary"/>
-                    ) : (                      
-                      <div className={classes.loadingPlaceholder} />
-                    )}    
-                      <DatasetList
-                        datasets={datasets}
-                        handleSelection={this.onSelectDataset}
-                        handleQualify={this.qualifyDataset}
-                        handleComment={this.handleComment}
-                        selected={currentDataset}
-                        valuequalify={valuequalify}
-                        handleOpenSnackBar={this.handleOpenSnackBar}
-                      />
-                      
-                    </div>
-                  <CardActions>
-                      <Counter counts={counts} />
-                  </CardActions>
-              </Card>
-            </Grid>
-            <Grid item xs={6} sm={8} md={9} lg={9}>
-              <Card className={classes.card}>
-                <VisiomaticPanel
-                  image={
-                    !isEmpty(currentDataset)
-                      ? currentDataset.image_src_ptif
-                      : null
-                  }
-                  className={classes.visiomatic}
-                  center={[currentDataset.tli_ra, currentDataset.tli_dec]}
-                  fov={2}
-                  contrast={contrast}
-                />
-              </Card>
-            </Grid>
-          </Grid>
-          <CommentDialog
-            open={showComment}
-            dataset={currentDataset}
-            comments={comments}
-            handleClose={() => this.setState({ showComment: false })}
-            handleSubmit={this.onComment}
-            handleDelete={this.handleDelete}
-            handleUpdate={this.handleUpdate}
-            handleLoadComments={this.loadComments}
-            handleALert={this.handleAlert}
+        <Route exact path="/" render={() => <Redirect to="/eyeballing"/>}/>
+        <Route exact path="/eyeballing/" render={() =>
+          <React.Fragment>
+            <div className={classes.content}>
+              <Grid
+                container
+                direction="row"
+                justify="flex-start"
+                alignItems="stretch"
+                spacing={2}
+              >
+                <Grid item xs={6} sm={4} md={3} lg={3} >
+                  <Card className={classes.tilelist}>
+                    <Toolbar className={classes.toolbar}>
+                      <SearchField inputSearchValue={inputSearchValue} handleInputSearch={this.handleInputSearch} />
+                      <div className={classes.grow}></div>
+                      <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} disabled={inputSearchValue !== '' ? true : false}>
+                        <FilterListIcon className={classes.menuButtonIcon} />
+                      </IconButton>
+                      <IconButton onClick={this.handleMenuContrastOpen} className={classes.menuButton}>
+                        <SettingsIcon className={classes.menuButtonIcon} />
+                      </IconButton>
+                      <Link to="/eyeballing/comments/">
+                        <IconButton onClick={this.handleMenuTileTableOpen} className={classes.menuButton}>
+                          <TableChart className={classes.menuButtonIcon} />
+                        </IconButton>
+                      </Link>
+                          
+                    </Toolbar>
+                        <div>
+                        {loading ? (
+                          <LinearProgress color="secondary"/>
+                        ) : (                      
+                          <div className={classes.loadingPlaceholder} />
+                        )}
+                          <DatasetList
+                            datasets={datasets}
+                            handleSelection={this.onSelectDataset}
+                            handleQualify={this.qualifyDataset}
+                            handleComment={this.handleComment}
+                            selected={currentDataset}
+                            valuequalify={valuequalify}
+                            handleOpenSnackBar={this.handleOpenSnackBar}
+                          />
+                          
+                        </div>
+                      <CardActions>
+                        <Counter counts={counts} />
+                      </CardActions>
+                  </Card>
+                </Grid>
+                <Grid item xs={6} sm={8} md={9} lg={9}>
+                  <Card className={classes.card}>
+                    <VisiomaticPanel
+                      image={
+                        !isEmpty(currentDataset)
+                          ? currentDataset.image_src_ptif
+                          : null
+                      }
+                      className={classes.visiomatic}
+                      center={[currentDataset.tli_ra, currentDataset.tli_dec]}
+                      fov={2}
+                      contrast={contrast}
+                    />
+                  </Card>
+                </Grid>
+              </Grid>
+              <CommentDialog
+                open={showComment}
+                dataset={currentDataset}
+                comments={comments}
+                handleClose={() => this.setState({ showComment: false })}
+                handleSubmit={this.onComment}
+                handleDelete={this.handleDelete}
+                handleUpdate={this.handleUpdate}
+                handleLoadComments={this.loadComments}
+                handleALert={this.handleAlert}
 
+              />
+            </div>
+            <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={this.handleClickSnackBar} />
+          </React.Fragment>
+        } />
+        <Route path="/eyeballing/comments/" render={() =>
+          <TileTable
+            currentRelease={currentRelease}
+            className={classes.card}
+            backLink={(
+              <Link to="/eyeballing/" style={{color: 'inherit', textDecoration: 'none'}}>
+                <IconButton
+                  aria-label="Home"
+                  aria-controls="home-appbar"
+                  aria-haspopup="true"
+                  color="inherit"
+                  className={classes.backLinkIcon}
+                >
+                <ArrowBack />
+                <Typography variant="button" display="block">
+                  Back
+                </Typography>
+                </IconButton>
+              </Link>
+            )}
           />
-        </div>
-        <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={this.handleClickSnackBar} />
-
+        } />
         <Footer />
         <ChooseContrast
           selectedValue={contrast}
@@ -477,7 +526,7 @@ class Home extends Component {
           handleClose={this.handleMenuFilterClose}
         />
 
-      </div>
+      </Router>
     );
   }
 }

@@ -49,6 +49,8 @@ class CommentDatasetSerializer(serializers.ModelSerializer):
         queryset=Dataset.objects.all(), many=False)
     dts_date = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
+    tilename = serializers.SerializerMethodField()
+    isp_value = serializers.SerializerMethodField()
 
     class Meta:
         model = CommentDataset
@@ -60,6 +62,8 @@ class CommentDatasetSerializer(serializers.ModelSerializer):
             'dts_comment',
             'owner',
             'is_owner',
+            'tilename',
+            'isp_value'
         )
 
     def get_owner(self, obj):
@@ -77,4 +81,17 @@ class CommentDatasetSerializer(serializers.ModelSerializer):
             return obj.dts_date.strftime('%Y-%m-%d %H:%M')
         except:
             return None
+
+    def get_tilename(self, obj):
+        try:
+            return obj.dts_dataset.tile.tli_tilename
+        except:
+            return None
+            
+    def get_isp_value(self, obj):
+        try:
+            return obj.dts_dataset.inspected.isp_value
+        except:
+            return None
+            
 

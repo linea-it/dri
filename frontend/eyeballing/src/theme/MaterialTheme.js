@@ -16,6 +16,13 @@ const theme = createMuiTheme({
     useNextVariants: true,
     successColor: green[500],
   },
+  overrides: {
+    Pagination: {
+      activeButton: {
+        color: pink[500],
+      },
+    },
+  },
 });
 
 export default theme;
