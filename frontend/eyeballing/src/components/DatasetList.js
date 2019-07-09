@@ -31,9 +31,6 @@ const styles = theme => ({
 function DatasetList(props) {
   const { classes, datasets, selected } = props;
 
-
-
-
   function changeQualify(dataset, label) {
     let value = null;
 
@@ -69,7 +66,7 @@ function DatasetList(props) {
       <ListItem
         button
         key={idx}
-        onClick={() => {
+        onClick={(e) => {
           props.handleSelection(el);
         }}
         divider

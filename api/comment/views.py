@@ -5,6 +5,7 @@ from rest_framework import filters
 from .models import Position, Dataset
 from .serializers import PositionSerializer, CommentDatasetSerializer
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters.rest_framework import OrderingFilter
 
 class PositionFilter(django_filters.FilterSet):
     coordinates = django_filters.CharFilter(method='filter_coordinates')
@@ -57,6 +58,19 @@ class PositionViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
 
+class CommentDatasetFilter(django_filters.FilterSet):
+    release = django_filters.CharFilter(method='filter_release')
+    
+
+    class Meta:
+        model = Dataset
+        fields = ['id', 'dts_dataset', 'dts_comment', 'release',]
+        order_by = True
+
+    def filter_release(self, queryset, name, value):
+        return queryset.filter(dts_dataset__tag__tag_release__id=int(value))
+
+
 class CommentDatasetViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Comment by Dataset to be viewed or edited
@@ -64,9 +78,13 @@ class CommentDatasetViewSet(viewsets.ModelViewSet):
     queryset = Dataset.objects.all()
     serializer_class = CommentDatasetSerializer
 
-    filter_fields = ('id', 'dts_dataset', )
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
+
+    filter_class = CommentDatasetFilter
 
     ordering_fields = ('dts_date',)
+
+    search_fields = ('dts_comment', 'dts_dataset__tile__tli_tilename',)
 
     def perform_create(self, serializer):
         # Adiconar usuario logado
