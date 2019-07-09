@@ -239,7 +239,6 @@ function TileTable(props) {
             />
             <IntegratedSorting />
             <VirtualTableState
-              loading={loading}
               getRows={loadData}
               pageSize={20}
               skip={0}
