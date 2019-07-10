@@ -101,7 +101,7 @@ function TileTable(props) {
   
   const columns = [
     { name: 'tilename', title: 'Tile', getCellValue: row => row.tilename },
-    { name: 'isp_value', title: 'Inspection', getCellValue: row => row.isp_value },
+    { name: 'isp_value', title: 'Status', getCellValue: row => row.isp_value },
     { name: 'owner', title: 'Owner', getCellValue: row => row.owner },
     { name: 'dts_date', title: 'Date', getCellValue: row => row.dts_date },
     { name: 'dts_comment', title: 'Comments', getCellValue: row => row.dts_comment },
