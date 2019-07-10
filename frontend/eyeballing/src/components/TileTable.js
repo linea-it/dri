@@ -113,7 +113,7 @@ function TileTable(props) {
 
   useEffect(() => {
     loadData();
-  }, [loading, props.currentRelease]);
+  }, [sorting, search, props.currentRelease]);
 
   function clearData() {
     setLoading(true);
