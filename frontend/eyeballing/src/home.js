@@ -26,6 +26,7 @@ import TileTable from './components/TileTable';
 import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const styles = theme => ({
   root: {
@@ -425,18 +426,23 @@ class Home extends Component {
                     <Toolbar className={classes.toolbar}>
                       <SearchField inputSearchValue={inputSearchValue} handleInputSearch={this.handleInputSearch} />
                       <div className={classes.grow}></div>
-                      <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} disabled={inputSearchValue !== '' ? true : false}>
-                        <FilterListIcon className={classes.menuButtonIcon} />
-                      </IconButton>
-                      <IconButton onClick={this.handleMenuContrastOpen} className={classes.menuButton}>
-                        <SettingsIcon className={classes.menuButtonIcon} />
-                      </IconButton>
-                      <Link to="/eyeballing/comments/">
-                        <IconButton onClick={this.handleMenuTileTableOpen} className={classes.menuButton}>
-                          <TableChart className={classes.menuButtonIcon} />
+                      <Tooltip title="Filter">
+                        <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} disabled={inputSearchValue !== '' ? true : false}>
+                          <FilterListIcon className={classes.menuButtonIcon} />
                         </IconButton>
-                      </Link>
-                          
+                      </Tooltip>
+                      <Tooltip title="Contrast">
+                        <IconButton onClick={this.handleMenuContrastOpen} className={classes.menuButton}>
+                          <SettingsIcon className={classes.menuButtonIcon} />
+                        </IconButton>
+                      </Tooltip>
+                      <Tooltip title="Reporting">
+                        <Link to="/eyeballing/comments/">
+                          <IconButton onClick={this.handleMenuTileTableOpen} className={classes.menuButton}>
+                            <TableChart className={classes.menuButtonIcon} />
+                          </IconButton>
+                        </Link>
+                      </Tooltip>
                     </Toolbar>
                         <div>
                         {loading ? (
