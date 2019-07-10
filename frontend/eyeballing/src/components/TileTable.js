@@ -5,8 +5,6 @@ import {
   SearchState,
   IntegratedSorting,
   VirtualTableState,
-  GroupingState,
-  IntegratedGrouping,
 } from '@devexpress/dx-react-grid';
 import {
   Grid as TableGrid,
@@ -15,7 +13,6 @@ import {
   Toolbar as TableToolbar,
   SearchPanel,
   TableColumnResizing,
-  TableGroupRow,
 } from '@devexpress/dx-react-grid-material-ui';
 import Toolbar from '@material-ui/core/Toolbar';
 import Grid from '@material-ui/core/Grid';
@@ -91,7 +88,6 @@ function TileTable(props) {
   const api = new DriApi();
   const [data, setData] = useState([]);
   const [rows, setRows] = useState([]);
-  const [tilenames, setTilenames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const [sorting, setSorting] = useState([{ columnName: 'dts_date', direction: 'desc' }]);
@@ -115,10 +111,6 @@ function TileTable(props) {
     { columnName: 'dts_comment', width: 'auto' }
   ];
 
-  const tableGroupColumnExtension = [
-    { columnName: 'tilename', showWhenGrouped: true },
-  ];
-
   useEffect(() => {
     loadData();
   }, [loading, props.currentRelease]);
@@ -127,7 +119,6 @@ function TileTable(props) {
     setLoading(true);
     setData([]);
     setRows([]);
-    setTilenames([])
   };
 
   async function loadData() {
@@ -135,9 +126,6 @@ function TileTable(props) {
     if (comments && comments.length > 0) {
       
       setLoading(false);
-      const tile_names = comments.map(tile => tile.tilename);
-      const uniqueTilenames = tile_names.filter((tile_name, index) => tile_names.indexOf(tile_name) === index)
-      setTilenames(uniqueTilenames);
       setData(comments.map(comment => ({
         tilename: comment.tilename,
         isp_value: comment.isp_value,
@@ -243,15 +231,9 @@ function TileTable(props) {
               pageSize={20}
               skip={0}
             />
-            <GroupingState
-              grouping={[{ columnName: 'tilename' }]}
-              defaultExpandedGroups={tilenames}
-            />
-            <IntegratedGrouping />
             <VirtualTable height="100%" />
             <TableColumnResizing defaultColumnWidths={defaultColumnWidths} />
-            <TableHeaderRow showSortingControls showGroupingControls={false} />
-            <TableGroupRow columnExtensions={tableGroupColumnExtension} />
+            <TableHeaderRow showSortingControls />
             <TableToolbar />
             <SearchPanel />
             {loading ? <CircularIndeterminate /> : null}
