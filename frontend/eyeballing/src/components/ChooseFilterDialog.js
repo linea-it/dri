@@ -62,7 +62,7 @@ function ChooseFilterDialog(props) {
                     <FormControlLabel
                         value={'null'}
                         control={<Radio />}
-                        label={'List not inspected tiles'}
+                        label={'List of tiles not inspected'}
                     />
                 </RadioGroup>
             </DialogContent>
