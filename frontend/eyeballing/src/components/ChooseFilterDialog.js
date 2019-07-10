@@ -47,22 +47,22 @@ function ChooseFilterDialog(props) {
                     <FormControlLabel
                         value={''}
                         control={<Radio />}
-                        label={'all'}
+                        label={'All'}
                     />                
                     <FormControlLabel
                         value={'true'}
                         control={<Radio />}
-                        label={'list only good'}
+                        label={'List good tiles'}
                     />
                     <FormControlLabel
                         value={'false'}
                         control={<Radio />}
-                        label={'list only bad'}
+                        label={'List bad tiles'}
                     />
                     <FormControlLabel
                         value={'null'}
                         control={<Radio />}
-                        label={'list only those not inspected'}
+                        label={'List not inspected tiles'}
                     />
                 </RadioGroup>
             </DialogContent>
