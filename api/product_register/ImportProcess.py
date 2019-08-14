@@ -1,30 +1,38 @@
+import logging
+import os
+import shutil
+import urllib.request as request
+import zipfile
+from contextlib import closing
 from datetime import datetime
+from time import sleep
+from urllib.parse import urljoin, urlsplit
 
-from coadd.models import Release, Tag
-from common.models import Filter
+import requests
+from django.conf import settings
 from django.db.models import Q
-from lib.CatalogDB import CatalogDB
-from product.models import Catalog, Map, Mask, ProductContent, ProductRelease, ProductTag, ProductContentAssociation, \
-    ProductRelated
-from product_classifier.models import ProductClass, ProductClassContent
-from product_register.models import ProcessRelease
 from rest_framework import status
 from rest_framework.response import Response
 
-from .models import Site, Authorization, ExternalProcess, Export
-from django.conf import settings
-import os
-import requests
-from time import sleep
-import zipfile
-from urllib.parse import urljoin
 from aladin.models import Image as AladinImage
+from coadd.models import Release, Tag
+from common.models import Filter
+from lib.CatalogDB import CatalogDB
+from product.models import (Catalog, Map, Mask, ProductContent,
+                            ProductContentAssociation, ProductRelated,
+                            ProductRelease, ProductTag)
+from product_classifier.models import ProductClass, ProductClassContent
+from product_register.models import ProcessRelease
+
+from .models import Authorization, Export, ExternalProcess, Site
 
 
 class Import():
     db = None
 
     def __init__(self):
+        self.logger = logging.getLogger("import_process")
+
         # Guarda um dict com a classe de cada produto e a intancia do ProductModel
         # ex:
         # dict({
@@ -633,7 +641,8 @@ class Import():
             raise Exception("This filter '%s' is not valid. Available filters is [ %s ]" % (filter_name, a))
 
     def register_aladin_image(self, product, data):
-
+        self.logger.debug("Register Aladin image.")
+        self.logger.debug(data)
         if 'donwload_url' in data and 'filename' in data:
             relative_map_path = os.path.join(settings.DATA_DIR, "maps")
             base_path = os.path.join(relative_map_path, product.prd_class.pcl_name)
@@ -667,16 +676,30 @@ class Import():
 
         file_path = os.path.join(path, filename)
 
-        r = requests.get(url)
-        with open(file_path, "wb") as code:
-            code.write(r.content)
+        # Verificar o protocolo se e http ou ftp
+        protocol = urlsplit(url).scheme
 
-        if os.path.exists(file_path):
-            return file_path
+        if protocol == 'ftp':
+            self.logger.debug("Download file using ftp")
+            with closing(request.urlopen(url)) as r:
+                with open(file_path, 'wb') as f:
+                    shutil.copyfileobj(r, f)
 
         else:
-            # TODO lancar excessao por nao ter baixado o arquivo.
-            return None
+            self.logger.debug("Download file using requests")
+            r = requests.get(url)
+            with open(file_path, "wb") as code:
+                code.write(r.content)
+
+        if os.path.exists(file_path):
+            self.logger.info("Successfully downloaded Aladin image. Filepath: [%s]" % file_path)
+            return file_path
+
+
+        else:
+            msg = "Downloading Aladin file failed. URL: [%s] Filename: [%s] Filepath: [%s]" % (url, filename, file_path)
+            self.logger.error(msg)
+            raise Exception(msg)
 
     # =============================< MASK >=============================
 
