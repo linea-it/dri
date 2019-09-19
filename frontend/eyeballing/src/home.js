@@ -1,32 +1,34 @@
 import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import Header from './components/Header';
-import Footer from './components/Footer';
 import { Grid } from '@material-ui/core';
-import VisiomaticPanel from './components/visiomatic/Visiomatic';
-import DriApi from './api/Api';
-import DatasetList from './components/DatasetList';
 import Card from '@material-ui/core/Card';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import FilterListIcon from '@material-ui/icons/FilterList';
-import SearchField from './components/SearchField';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { isEmpty, countBy, filter } from 'lodash';
-import CommentDialog from './components/comment/Dialog';
 import CardActions from '@material-ui/core/CardActions';
-import Counter from './components/Counter';
-import ChooseContrast from './components/ChooseContrast';
-import ChooseFilterDialog from './components/ChooseFilterDialog';
 import LinearProgress from '@material-ui/core/LinearProgress';
-import SnackBar from './components/SnackBar';
 import TableChart from '@material-ui/icons/TableChart';
-import TileTable from './components/TileTable';
-import { BrowserRouter as Router, Route, Link, Redirect } from "react-router-dom";
+import {
+  BrowserRouter as Router, Route, Link, Redirect,
+} from 'react-router-dom';
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
+import TileTable from './components/TileTable';
+import SnackBar from './components/SnackBar';
+import ChooseFilterDialog from './components/ChooseFilterDialog';
+import ChooseContrast from './components/ChooseContrast';
+import Counter from './components/Counter';
+import CommentDialog from './components/comment/Dialog';
+import SearchField from './components/SearchField';
+import DatasetList from './components/DatasetList';
+import DriApi from './api/Api';
+import VisiomaticPanel from './components/visiomatic/Visiomatic';
+import Footer from './components/Footer';
+import Header from './components/Header';
 
 const styles = theme => ({
   root: {
@@ -46,7 +48,7 @@ const styles = theme => ({
   tilelist: {
     height: '100%',
     textAlign: 'center',
-    minWidth: 300
+    minWidth: 300,
   },
   tilesCount: {
     textAlign: 'left',
@@ -55,10 +57,10 @@ const styles = theme => ({
     flexGrow: 1,
   },
   loadingPlaceholder: {
-    height: 4
+    height: 4,
   },
   toolbar: {
-    padding: `0 ${theme.spacing(1)}px`
+    padding: `0 ${theme.spacing(1)}px`,
   },
   menuButton: {
     [theme.breakpoints.down('lg')]: {
@@ -116,15 +118,15 @@ class Home extends Component {
     this.setState(
       {
         username: user.username,
-        releases: releases,
+        releases,
         currentRelease: currentRelease.id,
         res: 'good',
       },
-      this.onChangeRelease(currentRelease.id)
+      this.onChangeRelease(currentRelease.id),
     );
   };
 
-  onChangeRelease = value => {
+  onChangeRelease = (value) => {
     this.setState(
       {
         currentRelease: value,
@@ -133,7 +135,7 @@ class Home extends Component {
       },
       () => {
         this.loadData(true);
-      }
+      },
     );
   };
 
@@ -141,7 +143,6 @@ class Home extends Component {
     const { currentRelease } = this.state;
 
     if (currentRelease > 0) {
-
       this.setState({ loading: true });
 
       if (clear) {
@@ -159,10 +160,9 @@ class Home extends Component {
           datasets: [],
           currentDataset: {},
           counts: {},
-        }, ()=>{
-          this.getDatasets()
+        }, () => {
+          this.getDatasets();
         });
-
       } else {
         // const { datasets, counts, allDatasets } = await this.getDatasets()
 
@@ -180,56 +180,54 @@ class Home extends Component {
 
   async getDatasets() {
     const { currentRelease } = this.state;
-    let { allDatasets, datasets, filterInspect, inputSearchValue, forceLoad } = this.state;
+    let {
+      allDatasets, datasets, filterInspect, inputSearchValue, forceLoad,
+    } = this.state;
 
     if (inputSearchValue !== '' && forceLoad === false) {
       // Se tiver parametro de busca faz a busca localmente ao inves de fazer as requisicoes.
-      datasets = this.localSearchByTilename(allDatasets, inputSearchValue)
+      datasets = this.localSearchByTilename(allDatasets, inputSearchValue);
       filterInspect = '';
     } else {
-
-      let filters = [{
+      const filters = [{
         property: 'inspected',
-        value: filterInspect
+        value: filterInspect,
       },
       //  {
       //   property: 'search',
       //   value: inputSearchValue
       // }
-      ]
+      ];
 
       // Datasets Filtrados por release e ou inspected_value
       datasets = await this.driApi.datasetsByRelease(currentRelease, filters);
       // Todos os datasets do release
       allDatasets = await this.driApi.datasetsByRelease(currentRelease);
-      inputSearchValue = ''
+      inputSearchValue = '';
       forceLoad = false;
     }
 
     // Totais de Tiles boas, ruim e não inspecionadas
-    const counts = countBy(allDatasets, el => {
-      return el.isp_value;
-    });
+    const counts = countBy(allDatasets, el => el.isp_value);
     // Total de Tiles no Release.
     counts.tiles = allDatasets.length;
 
     this.setState({
-      allDatasets: allDatasets,
-      datasets: datasets,
-      counts: counts,
+      allDatasets,
+      datasets,
+      counts,
       loading: false,
-      inputSearchValue: inputSearchValue,
-      filterInspect: filterInspect,
-      forceLoad: forceLoad
+      inputSearchValue,
+      filterInspect,
+      forceLoad,
     });
 
     // return { datasets, counts, allDatasets }
   }
 
-  localSearchByTilename = (allDatasets, tilename) =>{
-
-    const results = filter(allDatasets, function(o) { return o.tli_tilename.includes(tilename); })
-    return results
+  localSearchByTilename = (allDatasets, tilename) => {
+    const results = filter(allDatasets, o => o.tli_tilename.includes(tilename));
+    return results;
   }
 
 
@@ -240,98 +238,89 @@ class Home extends Component {
   };
 
   qualifyDataset = (dataset, value) => {
-
     this.onSelectDataset(dataset);
 
     if (dataset.inspected !== null) {
       if (value !== null) {
-        this.driApi.updateInspectValue(dataset.inspected, value).then(res => {
-
+        this.driApi.updateInspectValue(dataset.inspected, value).then((res) => {
           this.setState({
             forceLoad: true,
-          }, ()=>{
+          }, () => {
             this.loadData(false);
             this.handleClickSnackBar();
-          })
-
+          });
         });
       } else {
-        this.driApi.deleteInspect(dataset.inspected).then(res => {
-
+        this.driApi.deleteInspect(dataset.inspected).then((res) => {
           this.setState({
             forceLoad: true,
-          }, ()=>{
+          }, () => {
             this.loadData(false);
             this.handleClickSnackBar();
-          })
+          });
         });
       }
     } else {
-      this.driApi.createinspect(dataset.id, value).then(res => {
+      this.driApi.createinspect(dataset.id, value).then((res) => {
         this.setState({
           forceLoad: true,
-        }, ()=>{
+        }, () => {
           this.loadData(false);
-          this.handleClickSnackBar()
-        })
+          this.handleClickSnackBar();
+        });
       });
     }
   };
 
 
-  loadComments = async dataset => {
+  loadComments = async (dataset) => {
     const comments = await this.driApi.commentsByDataset(dataset.id);
     return comments;
   }
 
-  handleComment = async dataset => {
+  handleComment = async (dataset) => {
     const comments = await this.loadComments(dataset);
     this.setState({
       showComment: true,
       currentDataset: dataset,
-      comments: comments,
+      comments,
     });
   };
 
 
   onComment = (dataset, comment) => {
-
     if (comment.id !== null) {
-      //update
-      this.driApi.updateComment(comment.id, comment.inputValue).then(res => {
+      // update
+      this.driApi.updateComment(comment.id, comment.inputValue).then((res) => {
         this.handleComment(dataset);
         this.loadData(false);
       });
     } else {
       this.driApi.createDatasetComment(dataset.id, comment.inputValue).then(() => {
-        this.handleComment(dataset);
         this.loadData(false);
       });
     }
-
   };
 
   handleMenuContrastOpen = () => {
-
     this.setState({ menuContrastOpen: true });
   };
 
-  handleMenuContrastClose = contrast => {
-    this.setState({ menuContrastOpen: false, contrast: contrast });
+  handleMenuContrastClose = (contrast) => {
+    this.setState({ menuContrastOpen: false, contrast });
   };
 
   handleMenuFilterOpen = () => {
-
     this.setState({ showFilterDialog: true });
   };
 
   handleMenuFilterClose = (value) => {
     this.setState({
       showFilterDialog: false,
-      filterInspect: value
+      filterInspect: value,
     }, () => {
-      this.loadData()
-    })
+      this.loadData();
+    });
   }
 
 
@@ -341,17 +330,17 @@ class Home extends Component {
     //   this.loadData();
     // });
     this.setState({
-       inputSearchValue: value ,
-       loading: true
-      }, () => {
-        this.loadData()
+      inputSearchValue: value,
+      loading: true,
+    }, () => {
+      this.loadData();
     });
   };
 
   // onSearch = async () => {
   //   this.loadData()
   //   // const { datasets, counts, } = await this.getDatasets()
-   
+
   //   // this.setState({datasets, counts, loading:false})
 
   // }
@@ -360,23 +349,25 @@ class Home extends Component {
   handleDelete = (commentId) => {
     this.driApi.deleteComment(commentId).then(() => {
       this.setState({
-        comments: []
+        comments: [],
       }, () => {
-        this.handleComment(this.state.currentDataset)
-      })
-
-    })
+        this.handleComment(this.state.currentDataset);
+      });
+    });
 
     this.loadData(false);
-
   }
 
   handleClickSnackBar = () => {
     this.setState({ openSnackBar: !this.state.openSnackBar });
   };
 
-  render() {
+  handleSubmitOnComment = (dataset, comment) => {
+    this.onComment(dataset, comment);
+    this.handleComment(dataset);
+  }
 
+  render() {
     const { classes } = this.props;
 
     const {
@@ -410,116 +401,123 @@ class Home extends Component {
           currentRelease={currentRelease}
           onChangeRelease={this.onChangeRelease}
         />
-        <Route exact path="/" render={() => <Redirect to="/eyeballing"/>}/>
-        <Route exact path="/eyeballing/" render={() =>
-          <React.Fragment>
-            <div className={classes.content}>
-              <Grid
-                container
-                direction="row"
-                justify="flex-start"
-                alignItems="stretch"
-                spacing={2}
-              >
-                <Grid item xs={6} sm={4} md={3} lg={3} >
-                  <Card className={classes.tilelist}>
-                    <Toolbar className={classes.toolbar}>
-                      <SearchField inputSearchValue={inputSearchValue} handleInputSearch={this.handleInputSearch} />
-                      <div className={classes.grow}></div>
-                      <Tooltip title="Filter">
-                        <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} disabled={inputSearchValue !== '' ? true : false}>
-                          <FilterListIcon className={classes.menuButtonIcon} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Contrast">
-                        <IconButton onClick={this.handleMenuContrastOpen} className={classes.menuButton}>
-                          <SettingsIcon className={classes.menuButtonIcon} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Reporting">
-                        <Link to="/eyeballing/comments/">
-                          <IconButton onClick={this.handleMenuTileTableOpen} className={classes.menuButton}>
-                            <TableChart className={classes.menuButtonIcon} />
+        <Route exact path="/" render={() => <Redirect to="/eyeballing" />} />
+        <Route
+          exact
+          path="/eyeballing/"
+          render={() => (
+            <React.Fragment>
+              <div className={classes.content}>
+                <Grid
+                  container
+                  direction="row"
+                  justify="flex-start"
+                  alignItems="stretch"
+                  spacing={2}
+                >
+                  <Grid item xs={6} sm={4} md={3} lg={3}>
+                    <Card className={classes.tilelist}>
+                      <Toolbar className={classes.toolbar}>
+                        <SearchField inputSearchValue={inputSearchValue} handleInputSearch={this.handleInputSearch} />
+                        <div className={classes.grow} />
+                        <Tooltip title="Filter">
+                          <IconButton onClick={this.handleMenuFilterOpen} className={classes.menuButton} disabled={inputSearchValue !== ''}>
+                            <FilterListIcon className={classes.menuButtonIcon} />
                           </IconButton>
-                        </Link>
-                      </Tooltip>
-                    </Toolbar>
-                        <div>
+                        </Tooltip>
+                        <Tooltip title="Contrast">
+                          <IconButton onClick={this.handleMenuContrastOpen} className={classes.menuButton}>
+                            <SettingsIcon className={classes.menuButtonIcon} />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Reporting">
+                          <Link to="/eyeballing/comments/">
+                            <IconButton onClick={this.handleMenuTileTableOpen} className={classes.menuButton}>
+                              <TableChart className={classes.menuButtonIcon} />
+                            </IconButton>
+                          </Link>
+                        </Tooltip>
+                      </Toolbar>
+                      <div>
                         {loading ? (
-                          <LinearProgress color="secondary"/>
-                        ) : (                      
+                          <LinearProgress color="secondary" />
+                        ) : (
                           <div className={classes.loadingPlaceholder} />
                         )}
-                          <DatasetList
-                            datasets={datasets}
-                            handleSelection={this.onSelectDataset}
-                            handleQualify={this.qualifyDataset}
-                            handleComment={this.handleComment}
-                            selected={currentDataset}
-                            valuequalify={valuequalify}
-                            handleOpenSnackBar={this.handleOpenSnackBar}
-                          />
-                          
-                        </div>
+                        <DatasetList
+                          datasets={datasets}
+                          handleSelection={this.onSelectDataset}
+                          handleQualify={this.qualifyDataset}
+                          handleComment={this.handleComment}
+                          onComment={this.onComment}
+                          selected={currentDataset}
+                          valuequalify={valuequalify}
+                          handleOpenSnackBar={this.handleOpenSnackBar}
+                        />
+
+                      </div>
                       <CardActions>
                         <Counter counts={counts} />
                       </CardActions>
-                  </Card>
-                </Grid>
-                <Grid item xs={6} sm={8} md={9} lg={9}>
-                  <Card className={classes.card}>
-                    <VisiomaticPanel
-                      image={
+                    </Card>
+                  </Grid>
+                  <Grid item xs={6} sm={8} md={9} lg={9}>
+                    <Card className={classes.card}>
+                      <VisiomaticPanel
+                        image={
                         !isEmpty(currentDataset)
                           ? currentDataset.image_src_ptif
                           : null
                       }
-                      className={classes.visiomatic}
-                      center={[currentDataset.tli_ra, currentDataset.tli_dec]}
-                      fov={2}
-                      contrast={contrast}
-                    />
-                  </Card>
+                        className={classes.visiomatic}
+                        center={[currentDataset.tli_ra, currentDataset.tli_dec]}
+                        fov={2}
+                        contrast={contrast}
+                      />
+                    </Card>
+                  </Grid>
                 </Grid>
-              </Grid>
-              <CommentDialog
-                open={showComment}
-                dataset={currentDataset}
-                comments={comments}
-                handleClose={() => this.setState({ showComment: false })}
-                handleSubmit={this.onComment}
-                handleDelete={this.handleDelete}
-                handleUpdate={this.handleUpdate}
-                handleLoadComments={this.loadComments}
-                handleALert={this.handleAlert}
-
-              />
-            </div>
-            <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={this.handleClickSnackBar} />
-          </React.Fragment>
-        } />
-        <Route path="/eyeballing/comments/" render={() =>
-          <TileTable
-            currentRelease={currentRelease}
-            className={classes.card}
-            backLink={(
-              <Link to="/eyeballing/" style={{color: 'inherit', textDecoration: 'none'}}>
-                <IconButton
-                  aria-label="Home"
-                  aria-controls="home-appbar"
-                  aria-haspopup="true"
-                  color="inherit"
-                  className={classes.backLinkIcon}
-                >
-                <ArrowBack />
-                <Typography variant="button" display="block">
+                <CommentDialog
+                  open={showComment}
+                  dataset={currentDataset}
+                  comments={comments}
+                  handleClose={() => this.setState({ showComment: false })}
+                  handleSubmit={this.handleSubmitOnComment}
+                  handleDelete={this.handleDelete}
+                  handleUpdate={this.handleUpdate}
+                  handleLoadComments={this.loadComments}
+                  handleALert={this.handleAlert}
+                />
+              </div>
+              <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={this.handleClickSnackBar} />
+            </React.Fragment>
+          )}
+        />
+        <Route
+          path="/eyeballing/comments/"
+          render={() => (
+            <TileTable
+              currentRelease={currentRelease}
+              className={classes.card}
+              backLink={(
+                <Link to="/eyeballing/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                  <IconButton
+                    aria-label="Home"
+                    aria-controls="home-appbar"
+                    aria-haspopup="true"
+                    color="inherit"
+                    className={classes.backLinkIcon}
+                  >
+                    <ArrowBack />
+                    <Typography variant="button" display="block">
                   Back
-                </Typography>
-                </IconButton>
-              </Link>
+                    </Typography>
+                  </IconButton>
+                </Link>
             )}
-          />
-        } />
+            />
+          )}
+        />
         <Footer />
         <ChooseContrast
           selectedValue={contrast}

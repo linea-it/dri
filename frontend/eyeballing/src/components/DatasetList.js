@@ -38,27 +38,37 @@ function DatasetList(props) {
       if (dataset.isp_value === true) {
         // ja estava Ok volta para null
         value = null;
-
+        props.onComment(dataset, {
+          id: null,
+          inputValue: 'Tile dismarked.',
+        });
       } else {
         value = true;
-
+        props.onComment(dataset, {
+          id: null,
+          inputValue: 'Marked tile as good.',
+        });
       }
     } else if (dataset.isp_value === false) {
       // ja estava Not Ok volta para null
       value = null;
-
+      props.onComment(dataset, {
+        id: null,
+        inputValue: 'Tile dismarked.',
+      });
     } else {
       value = false;
-
+      props.onComment(dataset, {
+        id: null,
+        inputValue: 'Tile marked as bad.',
+      });
     }
 
     props.handleQualify(dataset, value);
-
   }
 
   function handleComment(dataset) {
     props.handleComment(dataset);
-
   }
 
   if (datasets && datasets.length > 0) {
@@ -74,7 +84,7 @@ function DatasetList(props) {
       >
         <ListItemText
           primary={el.tli_tilename}
-          secondary={
+          secondary={(
             <Link
               className={el.comments > 0 ? classes.datasetWithComment : null}
               onClick={(e) => {
@@ -85,7 +95,7 @@ function DatasetList(props) {
             >
               {`${el.comments} comments`}
             </Link>
-          }
+          )}
 
         />
 
@@ -94,15 +104,15 @@ function DatasetList(props) {
             {el.isp_value ? (
               <ThumbUpIcon className={classes.okButton} />
             ) : (
-                <ThumbUpIcon />
-              )}
+              <ThumbUpIcon />
+            )}
           </IconButton>
           <IconButton onClick={() => changeQualify(el, 'notok')}>
             {el.isp_value === false ? (
               <ThumbDownIcon color="error" />
             ) : (
-                <ThumbDownIcon />
-              )}
+              <ThumbDownIcon />
+            )}
           </IconButton>
           <IconButton onClick={() => handleComment(el)}>
             <Comment />
@@ -128,12 +138,12 @@ function DatasetList(props) {
         <FixedSizeList
           className={classes.root}
           height={
-            window.innerHeight -
-            header -
-            toolbar -
-            footer -
-            tilesCount -
-            containerPadding
+            window.innerHeight
+            - header
+            - toolbar
+            - footer
+            - tilesCount
+            - containerPadding
           }
 
           itemCount={listItens.length}

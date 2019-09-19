@@ -1,4 +1,4 @@
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   SortingState,
@@ -20,11 +20,11 @@ import Card from '@material-ui/core/Card';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import GetApp from '@material-ui/icons/GetApp';
-import ChooserDownloadDialog from './ChooserDownloadDialog';
-import DriApi from '../api/Api';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
+import DriApi from '../api/Api';
+import ChooserDownloadDialog from './ChooserDownloadDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -72,13 +72,13 @@ function CircularIndeterminate() {
 function convertToCSV(objArray) {
   let str = '';
 
-  for (var i = 0; i < objArray.length; i++) {
+  for (let i = 0; i < objArray.length; i++) {
     let line = '';
-    for (var index in objArray[i]) {
-      if (line !== '') line += ','
+    for (const index in objArray[i]) {
+      if (line !== '') line += ',';
       line += objArray[i][index];
     }
-    str += line + '\r\n';
+    str += `${line}\r\n`;
   }
 
   return str;
@@ -94,7 +94,7 @@ function TileTable(props) {
   const [search, setSearch] = useState('');
   const { backLink, currentRelease } = props;
   const classes = useStyles();
-  
+
   const columns = [
     { name: 'tilename', title: 'Tile', getCellValue: row => row.tilename },
     { name: 'isp_value', title: 'Status', getCellValue: row => row.isp_value },
@@ -108,7 +108,7 @@ function TileTable(props) {
     { columnName: 'isp_value', width: 100 },
     { columnName: 'owner', width: 150 },
     { columnName: 'dts_date', width: 150 },
-    { columnName: 'dts_comment', width: 'auto' }
+    { columnName: 'dts_comment', width: 'auto' },
   ];
 
   useEffect(() => {
@@ -119,12 +119,11 @@ function TileTable(props) {
     setLoading(true);
     setData([]);
     setRows([]);
-  };
+  }
 
   async function loadData() {
     const comments = await api.comments(currentRelease, sorting, search);
     if (comments && comments.length > 0) {
-      
       setLoading(false);
       setData(comments.map(comment => ({
         tilename: comment.tilename,
@@ -133,38 +132,38 @@ function TileTable(props) {
         dts_date: comment.dts_date,
         dts_comment: comment.dts_comment,
       })));
-      setRows(comments.map(row => {
+      setRows(comments.map((row) => {
         row.isp_value = renderInspectionValue(row);
         return row;
       }));
     } else {
       clearData();
     }
-  };
+  }
 
   function downloadData(format) {
-    if(data && data.length > 0) {
+    if (data && data.length > 0) {
       let dataStr = '';
-      if(format === 'json') {
+      if (format === 'json') {
         dataStr = `data:text/json;charset=utf-8, ${encodeURIComponent(JSON.stringify(data))}`;
-      } else if(format === 'csv') {
+      } else if (format === 'csv') {
         dataStr = `data:text/csv;charset=utf-8, ${convertToCSV(data)}`;
       }
-      
+
       const downloadTag = document.getElementById('downloadDialogLink');
       downloadTag.setAttribute('href', dataStr);
       downloadTag.setAttribute('download', `report.${format}`);
       downloadTag.click();
     }
-  };
+  }
 
 
   function handleDownloadDialog(checked) {
-    if(typeof checked === 'string') {
+    if (typeof checked === 'string') {
       downloadData(checked);
     }
     setShowDownloadDialog(!showDownloadDialog);
-  };
+  }
 
   function changeSorting(sorting) {
     setLoading(true);
@@ -187,10 +186,9 @@ function TileTable(props) {
           <ThumbDownIcon color="error" />
         )
       );
-    } else {
-      return '-';
     }
-  };
+    return '-';
+  }
 
   return (
     <React.Fragment>
@@ -216,7 +214,7 @@ function TileTable(props) {
               <GetApp />
             </IconButton>
           </Toolbar>
-          
+
           <TableGrid rows={rows} columns={columns} getRowId={getRowId} className={classes.root}>
             <SearchState
               onValueChange={handleSearch}

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles, fade } from '@material-ui/core/styles';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
+
 const styles = theme => ({
   search: {
     position: 'relative',
@@ -56,7 +57,8 @@ function SearchField(props) {
       <div className={classes.searchIcon}>
         <SearchIcon />
       </div>
-      <InputBase onChange={handleInputSearch}
+      <InputBase
+        onChange={handleInputSearch}
         value={props.inputSearchValue}
         placeholder="Search…"
         classes={{

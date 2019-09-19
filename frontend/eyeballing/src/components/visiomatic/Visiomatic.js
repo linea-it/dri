@@ -94,6 +94,28 @@ class VisiomaticPanel extends Component {
     this.changeImage();
   };
 
+  onContextMenuClick = (event) => {
+    // const map = this.getMap();
+    // const target = event.target;
+
+    const xy = {
+      x: event.originalEvent.clientX,
+      y: event.originalEvent.clientY,
+    };
+
+    let contextMenu;
+
+    if (this.cancelBuble) return;
+    this.cancelBuble = true;
+    setTimeout(() => { this.cancelBuble = false; }, 100);
+    this.libL.map(this.id, { fullscreenControl: true, zoom: 1 });
+    if (this.getEnableContextMenu()) {
+      contextMenu = this.makeContextMenu(event);
+      contextMenu.showAt(xy);
+    }
+  }
+
+
   componentDidMount() {
     const map = this.libL.map(this.id, { fullscreenControl: true, zoom: 1 });
 
@@ -120,6 +142,7 @@ class VisiomaticPanel extends Component {
 
     map.on('layeradd', this.onLayerAdd, this);
     map.on('layerremove', this.onLayerRemove, this);
+    map.on('contextmenu', this.onContextMenuClick, this);
 
     this.map = map;
 
@@ -146,7 +169,7 @@ class VisiomaticPanel extends Component {
 
       this.map.setView(
         latlng,
-        this.map.options.crs.fovToZoom(this.map, fov, latlng)
+        this.map.options.crs.fovToZoom(this.map, fov, latlng),
       );
 
       // Este comando corrige a demora no load. forcando o redraw.
@@ -159,9 +182,8 @@ class VisiomaticPanel extends Component {
 
     if (contrast) {
       return colorRanges[contrast];
-    } else {
-      return colorRanges['defaultContrast'];
     }
+    return colorRanges.defaultContrast;
   };
 
   changeImage = () => {
@@ -209,11 +231,8 @@ class VisiomaticPanel extends Component {
           // ],
         })
         .addTo(this.map);
-    } else {
-      if (this.layer) {
-        this.map.removeLayer(this.layer);
-        return;
-      }
+    } else if (this.layer) {
+      this.map.removeLayer(this.layer);
     }
   };
 
