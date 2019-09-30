@@ -14,11 +14,11 @@ axios.defaults.baseURL = api;
 // Interceptar a Resposta.
 // Add a response interceptor
 axios.interceptors.response.use(
-  function (response) {
+  response => (
     // Do something with response data
-    return response;
-  },
-  function (error) {
+    response
+  ),
+  (error) => {
     // Do something with response error
     if (error.response) {
       // The request was made and the server responded with a status code
@@ -41,12 +41,12 @@ axios.interceptors.response.use(
     console.log(error.config);
 
     return Promise.reject(error);
-  }
+  },
 );
 
 class DriApi {
   loggedUser = async () => {
-    const res = await axios.get(`/logged/get_logged/`);
+    const res = await axios.get('/logged/get_logged/');
     const user = await res.data;
     return user;
   };
@@ -55,73 +55,73 @@ class DriApi {
     const params = {
       ordering: '-id',
     };
-    const res = await axios.get(`/releases/`, {
-      params: params,
+    const res = await axios.get('/releases/', {
+      params,
     });
     const data = await res.data;
     return data;
   };
 
-  datasetsByRelease = async (release, filters) => {
+  datasetsByRelease = async ({
+    release, search, filters, limit, offset,
+  }) => {
     const params = {
       ordering: 'tile__tli_tilename',
-      release: release,
+      search,
+      release,
+      limit,
+      offset,
     };
 
     if (filters && filters.length) {
-      filters.forEach(element => {
+      filters.forEach((element) => {
         params[element.property] = element.value;
       });
     }
 
-    const res = await axios.get(`/dataset/`, {
-      params: params,
+    const res = await axios.get('/dataset/', {
+      params,
     });
 
     const data = await res.data;
     return data;
   };
 
-  updateInspectValue = (inspectId, value) => {
-    return axios.patch(`/inspect/${inspectId}/`, {
-      isp_value: value,
-    });
-  };
+  updateInspectValue = (inspectId, value) => axios.patch(`/inspect/${inspectId}/`, {
+    isp_value: value,
+  });
 
-  deleteInspect = inspectId => {
-    return axios.delete(`/inspect/${inspectId}/`);
-  };
+  deleteInspect = inspectId => axios.delete(`/inspect/${inspectId}/`);
 
-  createinspect = (datasetId, value) => {
-    return axios.post(`/inspect/`, {
-      isp_dataset: datasetId,
-      isp_value: value,
-    });
-  };
+  createinspect = (datasetId, value) => axios.post('/inspect/', {
+    isp_dataset: datasetId,
+    isp_value: value,
+  });
 
-  comments = async (currentRelease, sorting, search) => {
-    let ordering = sorting;
-    let filters = [];
 
-    if(sorting && sorting.direction === 'desc') {
-      ordering = `-${sorting}`; 
+  comments = ({
+    release, offset, limit, sorting, search, filters = [],
+  }) => {
+    let ordering = sorting[0].columnName;
+
+    if (sorting && sorting[0].direction === 'desc') {
+      ordering = `-${sorting[0].columnName}`;
     }
+    const params = {
+      release, offset, limit, ordering, search,
+    };
 
-    const res = await axios.get(`/comment/dataset/`, {
-      params: {
-        release: currentRelease,
-        ordering: ordering,
-        filter: filters,
-        search: search,
-      },
+    filters.forEach((element) => {
+      params[element.property] = element.value;
     });
 
-    const data = await res.data;
-
-    return data;
+    return axios.get('/comment/dataset/', {
+      params,
+    }).then(res => res.data);
   };
-  commentsByDataset = async datasetId => {
-    const res = await axios.get(`/comment/dataset/`, {
+
+  commentsByDataset = async (datasetId) => {
+    const res = await axios.get('/comment/dataset/', {
       params: {
         dts_dataset: datasetId,
         ordering: '-dts_date',
@@ -132,31 +132,24 @@ class DriApi {
     return data;
   };
 
-  updateComment = (commentId, comment) => {
-    return axios.patch(`/comment/dataset/${commentId}/`, {
-      dts_comment: comment
-    });
-  };
+  updateComment = (commentId, comment) => axios.patch(`/comment/dataset/${commentId}/`, {
+    dts_comment: comment,
+  });
 
-  createDatasetComment = (datasetId, value) => {
-    return axios.post(`/comment/dataset/`, {
-      dts_dataset: datasetId,
-      dts_comment: value,
-    });
-  };
+  createDatasetComment = (datasetId, value) => axios.post('/comment/dataset/', {
+    dts_dataset: datasetId,
+    dts_comment: value,
+  });
 
 
-  deleteComment = commentId => {
-    return axios.delete(`/comment/dataset/${commentId}/`);
-  };
-
+  deleteComment = commentId => axios.delete(`/comment/dataset/${commentId}/`);
 }
 export default DriApi;
 
 export function toLogin() {
-  window.location.replace(api + '/api-auth/login/?next=/eyeballing/');
+  window.location.replace(`${api}/api-auth/login/?next=/eyeballing/`);
 }
 
 export function logout() {
-  window.location.replace(api + '/api-auth/logout/?next=/');
+  window.location.replace(`${api}/api-auth/logout/?next=/`);
 }

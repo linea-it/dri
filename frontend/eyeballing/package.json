@@ -12,9 +12,11 @@
     "dateformat": "^3.0.3",
     "dotenv": "^6.2.0",
     "lodash": "^4.17.11",
+    "prop-types": "^15.7.2",
     "react": "^16.8.3",
     "react-dom": "^16.8.3",
     "react-router-dom": "^5.0.1",
+    "react-virtuoso": "^0.12.1",
     "react-window": "^1.8.2",
     "typeface-roboto": "^0.0.54"
   },

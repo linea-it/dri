@@ -22,6 +22,11 @@ const theme = createMuiTheme({
         color: pink[500],
       },
     },
+    MuiListItem: {
+      container: {
+        listStyleType: 'none',
+      }
+    }
   },
 });
 
