@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import PropTypes from 'prop-types';
+
 const useStyles = makeStyles(theme => ({
   root: {
     // padding: theme.spacing(3, 2),
