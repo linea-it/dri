@@ -219,6 +219,28 @@ function Home() {
 
   const handleClickSnackBar = () => setOpenSnackBar(!openSnackBar);
 
+  const handleComment = (dataset) => {
+    api.commentsByDataset(dataset.id).then((res) => {
+      setCurrentDataset(dataset);
+      setComments(res);
+      setShowComment(true);
+    });
+  };
+
+  const onComment = (dataset, comment) => {
+    if (comment.id !== null) {
+      // update
+      api.updateComment(comment.id, comment.inputValue).then(() => {
+        handleComment(dataset);
+        loadData();
+      });
+    } else {
+      api.createDatasetComment(dataset.id, comment.inputValue).then(() => {
+        handleComment(dataset);
+        loadData();
+      });
+    }
+  };
 
   const qualifyDataset = (dataset, value) => {
     let valueRef = null;
@@ -227,14 +249,30 @@ function Home() {
       if (dataset.isp_value === true) {
         // ja estava Ok volta para null
         valueRef = null;
+        onComment(dataset, {
+          id: null,
+          inputValue: 'Tile dismarked.',
+        });
       } else {
         valueRef = true;
+        onComment(dataset, {
+          id: null,
+          inputValue: 'Marked tile as good.',
+        });
       }
     } else if (dataset.isp_value === false) {
       // ja estava Not Ok volta para null
       valueRef = null;
+      onComment(dataset, {
+        id: null,
+        inputValue: 'Tile dismarked.',
+      });
     } else {
       valueRef = false;
+      onComment(dataset, {
+        id: null,
+        inputValue: 'Tile marked as bad.',
+      });
     }
 
     onSelectDataset(dataset);
@@ -258,31 +296,6 @@ function Home() {
       });
     }
     loadData();
-  };
-
-
-  const handleComment = (dataset) => {
-    api.commentsByDataset(dataset.id).then((res) => {
-      setCurrentDataset(dataset);
-      setComments(res);
-      setShowComment(true);
-    });
-  };
-
-
-  const onComment = (dataset, comment) => {
-    if (comment.id !== null) {
-      // update
-      api.updateComment(comment.id, comment.inputValue).then(() => {
-        handleComment(dataset);
-        loadData();
-      });
-    } else {
-      api.createDatasetComment(dataset.id, comment.inputValue).then(() => {
-        handleComment(dataset);
-        loadData();
-      });
-    }
   };
 
   const handleMenuContrastOpen = () => setMenuContrastOpen(true);
