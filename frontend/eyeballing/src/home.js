@@ -2,7 +2,6 @@ import React, {
   useState, useEffect, useRef, useCallback,
 } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import PropTypes from 'prop-types';
 import { Grid, Link as MaterialLink } from '@material-ui/core';
 import Card from '@material-ui/core/Card';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -34,7 +33,6 @@ import ChooseContrast from './components/ChooseContrast';
 import Counter from './components/Counter';
 import CommentDialog from './components/comment/Dialog';
 import SearchField from './components/SearchField';
-// import DatasetList from './components/DatasetList';
 import VisiomaticPanel from './components/visiomatic/Visiomatic';
 import Footer from './components/Footer';
 import Header from './components/Header';
@@ -195,19 +193,19 @@ function Home() {
         setCounts(goodTiles);
         setLoading(false);
       });
-      loadMoreDatasets();
+      loadMoreDatasets(0);
     }
   }, [currentRelease, filterInspect, loading]);
 
   useEffect(() => {
-    if (loading === true && currentRelease !== '') loadMoreDatasets();
+    if (loading === true && currentRelease !== '') loadMoreDatasets(0);
   }, [totalCount]);
 
 
   const loadData = () => {
     if (currentRelease !== '') {
       setDatasets([]);
-      setCurrentDataset([]);
+      // setCurrentDataset([]);
       setCounts({});
       setTotalCount(0);
       setLoading(true);
@@ -231,13 +229,15 @@ function Home() {
     if (comment.id !== null) {
       // update
       api.updateComment(comment.id, comment.inputValue).then(() => {
-        handleComment(dataset);
         loadData();
+        handleComment(dataset);
       });
     } else {
       api.createDatasetComment(dataset.id, comment.inputValue).then(() => {
-        handleComment(dataset);
         loadData();
+        if (showComment === true) {
+          handleComment(dataset);
+        }
       });
     }
   };
@@ -322,6 +322,7 @@ function Home() {
   };
 
   const handleDelete = commentId => api.deleteComment(commentId).then(() => {
+    handleComment(currentDataset);
     loadData();
   });
 
@@ -443,8 +444,10 @@ function Home() {
                         - containerPadding
                         ),
                       }}
+                      overscan={20}
                       initialItemCount={20}
-                      totalCount={totalCount}
+                      totalCount={totalCount
+                      }
                       item={Row}
                       endReached={e => loadMoreDatasets(e)}
                       // footer={() => (
@@ -533,9 +536,5 @@ function Home() {
     </Router>
   );
 }
-
-Home.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
 export default Home;
