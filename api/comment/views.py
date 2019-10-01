@@ -7,6 +7,7 @@ from .serializers import PositionSerializer, CommentDatasetSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from django_filters.rest_framework import OrderingFilter
 
+
 class PositionFilter(django_filters.FilterSet):
     coordinates = django_filters.CharFilter(method='filter_coordinates')
 
@@ -60,11 +61,10 @@ class PositionViewSet(viewsets.ModelViewSet):
 
 class CommentDatasetFilter(django_filters.FilterSet):
     release = django_filters.CharFilter(method='filter_release')
-    
 
     class Meta:
         model = Dataset
-        fields = ['id', 'dts_dataset', 'dts_comment', 'release',]
+        fields = ['id', 'dts_dataset', 'dts_comment', 'release', 'dts_type']
         order_by = True
 
     def filter_release(self, queryset, name, value):

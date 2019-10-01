@@ -43,6 +43,7 @@ class PositionSerializer(serializers.HyperlinkedModelSerializer):
         except:
             return None
 
+
 class CommentDatasetSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField()
     dts_dataset = serializers.PrimaryKeyRelatedField(
@@ -60,6 +61,9 @@ class CommentDatasetSerializer(serializers.ModelSerializer):
             'dts_dataset',
             'dts_date',
             'dts_comment',
+            'dts_type',
+            'dts_ra',
+            'dts_dec',
             'owner',
             'is_owner',
             'tilename',
@@ -87,11 +91,9 @@ class CommentDatasetSerializer(serializers.ModelSerializer):
             return obj.dts_dataset.tile.tli_tilename
         except:
             return None
-            
+
     def get_isp_value(self, obj):
         try:
             return obj.dts_dataset.inspected.isp_value
         except:
             return None
-            
-
