@@ -18,6 +18,7 @@ import {
 import Toolbar from '@material-ui/core/Toolbar';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
+import FilterListIcon from '@material-ui/icons/FilterList';
 import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import GetApp from '@material-ui/icons/GetApp';
@@ -26,6 +27,7 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import DriApi from '../api/Api';
 import ChooserDownloadDialog from './ChooserDownloadDialog';
+import ChooseFilterCommentDialog from './ChooseFilterCommentDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,6 +60,9 @@ const useStyles = makeStyles(theme => ({
   okButton: {
     color: theme.typography.successColor,
   },
+  filterIconButton: {
+    borderRadius: 0,
+  },
 }));
 
 function CircularIndeterminate() {
@@ -85,7 +90,7 @@ function convertToCSV(objArray) {
   return str;
 }
 
-function TileTable(props) {
+function TileTable({ backLink, currentRelease }) {
   const api = new DriApi();
   const [data, setData] = useState([]);
   const [rows, setRows] = useState([]);
@@ -95,7 +100,9 @@ function TileTable(props) {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [search, setSearch] = useState('');
-  const { backLink, currentRelease } = props;
+  const [filterComment, setFilterComment] = useState('0');
+  const [showFilterDialog, setShowFilterDialog] = useState(false);
+
   const classes = useStyles();
 
   const columns = [
@@ -116,7 +123,7 @@ function TileTable(props) {
 
   useEffect(() => {
     loadData();
-  }, [sorting, currentPage, search, currentRelease]);
+  }, [sorting, currentPage, search, currentRelease, filterComment]);
 
   function clearData() {
     setLoading(true);
@@ -129,6 +136,7 @@ function TileTable(props) {
       release: currentRelease,
       sorting,
       search,
+      dts_type: filterComment,
       offset: currentPage === 0 ? 0 : currentPage * 9,
       limit: 10,
     });
@@ -178,7 +186,6 @@ function TileTable(props) {
 
   function changeSorting(value) {
     clearData();
-    console.log(value);
     setSorting(value);
   }
 
@@ -205,6 +212,12 @@ function TileTable(props) {
     return '-';
   }
 
+  const handleFilterDialogOpen = () => setShowFilterDialog(true);
+
+  const handleFilterDialogClose = (value) => {
+    setFilterComment(value);
+    setShowFilterDialog(false);
+  };
   return (
     <React.Fragment>
       <Grid
@@ -219,6 +232,19 @@ function TileTable(props) {
               Reporting
             </Typography>
             {backLink}
+            <IconButton
+              aria-label="Home"
+              aria-controls="home-appbar"
+              aria-haspopup="true"
+              color="inherit"
+              className={classes.filterIconButton}
+              onClick={handleFilterDialogOpen}
+            >
+              <FilterListIcon />
+              <Typography variant="button" display="block">
+                Filter
+              </Typography>
+            </IconButton>
             <IconButton
               aria-label="Download report"
               aria-controls="download-appbar"
@@ -254,6 +280,11 @@ function TileTable(props) {
           </TableGrid>
         </Card>
       </Grid>
+      <ChooseFilterCommentDialog
+        open={showFilterDialog}
+        selectedValue={filterComment}
+        handleClose={handleFilterDialogClose}
+      />
       <ChooserDownloadDialog
         open={showDownloadDialog}
         handleClose={handleDownloadDialog}
