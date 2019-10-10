@@ -430,7 +430,6 @@ function Home() {
                       </Tooltip>
                       <Tooltip title="Reporting">
                         <Link to="/eyeballing/comments/">
-                          {/* <IconButton onClick={(handleMenuTileTableOpen)} className={classes.menuButton}> */}
                           <IconButton onClick={() => {}} className={classes.menuButton}>
                             <TableChart className={classes.menuButtonIcon} />
                           </IconButton>
