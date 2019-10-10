@@ -51,17 +51,17 @@ function ChooseFilterCommentDialog({ selectedValue, handleClose, open }) {
           <FormControlLabel
             value="0"
             control={<Radio />}
-            label="Commented by user"
+            label="User comments"
           />
           <FormControlLabel
             value="1"
             control={<Radio />}
-            label="Commented by inspection"
+            label="Inspection"
           />
           <FormControlLabel
             value="2"
             control={<Radio />}
-            label="Commented by image inspection"
+            label="Image features"
           />
         </RadioGroup>
       </DialogContent>
