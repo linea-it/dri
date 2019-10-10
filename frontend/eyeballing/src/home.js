@@ -201,7 +201,6 @@ function Home() {
     if (loading === true && currentRelease !== '') loadMoreDatasets(0);
   }, [totalCount]);
 
-
   const loadData = () => {
     if (currentRelease !== '') {
       setDatasets([]);
@@ -233,7 +232,8 @@ function Home() {
         handleComment(dataset);
       });
     } else {
-      api.createDatasetComment(dataset.id, comment.inputValue).then(() => {
+      const dts_type = comment.dts_type || '0';
+      api.createDatasetComment(dataset.id, comment.inputValue, dts_type).then(() => {
         loadData();
         if (showComment === true) {
           handleComment(dataset);
@@ -252,12 +252,14 @@ function Home() {
         onComment(dataset, {
           id: null,
           inputValue: 'Tile dismarked.',
+          dts_type: '1',
         });
       } else {
         valueRef = true;
         onComment(dataset, {
           id: null,
           inputValue: 'Marked tile as good.',
+          dts_type: '1',
         });
       }
     } else if (dataset.isp_value === false) {
@@ -266,12 +268,14 @@ function Home() {
       onComment(dataset, {
         id: null,
         inputValue: 'Tile dismarked.',
+        dts_type: '1',
       });
     } else {
       valueRef = false;
       onComment(dataset, {
         id: null,
         inputValue: 'Tile marked as bad.',
+        dts_type: '1',
       });
     }
 
@@ -426,7 +430,6 @@ function Home() {
                       </Tooltip>
                       <Tooltip title="Reporting">
                         <Link to="/eyeballing/comments/">
-                          {/* <IconButton onClick={(handleMenuTileTableOpen)} className={classes.menuButton}> */}
                           <IconButton onClick={() => {}} className={classes.menuButton}>
                             <TableChart className={classes.menuButtonIcon} />
                           </IconButton>
