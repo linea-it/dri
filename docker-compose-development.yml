@@ -14,8 +14,8 @@ services:
       - ./log/backend:/log
     depends_on:
       - rabbit
-    ports:
-      - 8000:8000
+    #ports:
+    #  - 8000:8000
 
   rabbit:
       image: rabbitmq:3-management
@@ -44,17 +44,17 @@ services:
 
 
   # Wordpress
-  mysql:
-    image: linea/dri_landing_page:MYSQLcef65a533dc17a5d7fcd901b52849cd4fdd7f040
-    env_file:
-      - .env
+#  mysql:
+#    image: linea/dri_landing_page:MYSQLcef65a533dc17a5d7fcd901b52849cd4fdd7f040
+#    env_file:
+#      - .env
 
-  wordpress:
-    image: linea/dri_landing_page:WPcef65a533dc17a5d7fcd901b52849cd4fdd7f040
-    env_file:
-      - .env
-    depends_on:
-      - mysql
+#  wordpress:
+#    image: linea/dri_landing_page:WPcef65a533dc17a5d7fcd901b52849cd4fdd7f040
+#    env_file:
+#      - .env
+#    depends_on:
+#      - mysql
 
   nginx:
     build: ./frontend
@@ -71,4 +71,4 @@ services:
       - backend
       - iipserver
       - rabbit
-      - wordpress
+#      - wordpress

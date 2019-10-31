@@ -75,7 +75,7 @@ Ext.define('common.data.proxy.Django', {
                 value = filter.getValue(),
                 p, v;
 
-            switch (filter.getOperator()){
+            switch (filter.getOperator()) {
 
                 case '<':
                     p = Ext.String.format('{0}__lt', property);
@@ -128,50 +128,58 @@ Ext.define('common.data.proxy.Django', {
     },
 
     buildUrl: function (request) {
-            var me        = this,
-                operation = request.getOperation(),
-                records   = operation.getRecords(),
-                record    = records ? records[0] : null,
-                format    = me.getFormat(),
-                url       = me.getUrl(request),
-                id, params;
+        var me = this,
+            operation = request.getOperation(),
+            records = operation.getRecords(),
+            record = records ? records[0] : null,
+            format = me.getFormat(),
+            url = me.getUrl(request),
+            id, params;
 
-            if (record && !record.phantom) {
-                id = record.getId();
-            } else {
-                id = operation.getId();
-            }
+        if (record && !record.phantom) {
+            id = record.getId();
+        } else {
+            id = operation.getId();
+        }
 
-            if ((me.getAppendId() && me.isValidId(id)) || (operation.action === 'update')) {
+        if ((me.getAppendId() && me.isValidId(id)) || (operation.action === 'update')) {
 
-                if (!url.match(me.slashRe)) {
-                    url += '/';
-                }
-                url += encodeURIComponent(id);
-
-                params = request.getParams();
-                if (params) {
-                    delete params[me.getIdParam()];
-                }
-
-                // Adiciona '/' apos o id para ficar compativel com Django REST.
+            if (!url.match(me.slashRe)) {
                 url += '/';
             }
+            url += encodeURIComponent(id);
 
-            if (format) {
-                if (!url.match(me.periodRe)) {
-                    url += '.';
-                }
-
-                url += format;
+            params = request.getParams();
+            if (params) {
+                delete params[me.getIdParam()];
             }
 
-            request.setUrl(url);
-
-            // Substitui pelo metodo da superclass por que estava adicionando o id ao final da url novamente.
-            //return me.callParent([request]);
-            return Ext.data.RestProxy.superclass.buildUrl.apply(this, arguments);
-
+            // Adiciona '/' apos o id para ficar compativel com Django REST.
+            url += '/';
         }
+
+        if (format) {
+            if (!url.match(me.periodRe)) {
+                url += '.';
+            }
+
+            url += format;
+        }
+
+        // Adiciona um prefixo na url, utilizado principalmente no desenvolvimento, 
+        // já que api roda no localhost e o sencha app watch roda em outra porta. 
+        // A base url fica definida no app.json de cada aplicação, para cada tipo de build (production, testing, development).
+        // console.log("Enviroment Package: ", Ext.manifest)
+        if (Ext.manifest.apiBaseUrl) {
+            url = Ext.manifest.apiBaseUrl + url
+        }
+
+        request.setUrl(url);
+
+        // Substitui pelo metodo da superclass por que estava adicionando o id ao final da url novamente.
+        //return me.callParent([request]);
+        return Ext.data.RestProxy.superclass.buildUrl.apply(this, arguments);
+
+    }
 
 });

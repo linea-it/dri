@@ -3,17 +3,14 @@
      * The application's namespace.
      */
     "name": "Products",
-
     /**
      * The version of the application.
      */
     "version": "1.0.0.0",
-
     /**
      * The relative path to the application's markup file (html, jsp, asp, etc.).
      */
     "indexHtmlPath": "index.html",
-
     /**
      * Comma-separated string with the paths of directories or files to search. Any classes
      * declared in these locations will be available in your class "requires" or in calls
@@ -23,7 +20,6 @@
     "classpath": [
         "app"
     ],
-
     /**
      * Comma-separated string with the paths of directories or files to search. Any classes
      * declared in these locations will be automatically required and included in the build.
@@ -34,27 +30,19 @@
     "overrides": [
         "overrides"
     ],
-
     /**
      * The Sencha Framework for this application: "ext" or "touch".
      */
     "framework": "ext",
-
-
     /**
      * The toolkit to use. Select either "classic" or "modern".
      */
     "toolkit": "classic",
-
-
-
     /**
      * The name of the theme for this application.
      */
-
     // "theme": "theme-triton",
     "theme": "theme-crisp",
-
     /**
      * The list of required packages (with optional versions; default is "latest").
      *
@@ -68,7 +56,6 @@
         "font-awesome",
         "common"
     ],
-
     /**
      * Fashion build configuration properties.
      */
@@ -80,7 +67,6 @@
             "enable": false
         }
     },
-
     /**
      * Sass configuration properties.
      */
@@ -94,7 +80,6 @@
          * "Products.view.Foo" to "sass/src/Products/view/Foo.scss".
          */
         "namespace": "Products",
-
         /**
          * File used to save sass variables edited via Sencha Inspector. This file
          * will automatically be applied to the end of the scss build.
@@ -102,9 +87,7 @@
          *      "save": "sass/save.scss"
          *
          */
-
         // "save": "sass/save.scss",
-
         /**
          * Comma-separated list of files or folders containing extra Sass. These
          * files are automatically included in the Sass compilation. By default this
@@ -127,7 +110,6 @@
         "etc": [
             "sass/etc/all.scss"
         ],
-
         /**
          * Comma-separated list of folders containing Sass variable definitions
          * files. These file can also define Sass mixins for use by components.
@@ -152,7 +134,6 @@
             "sass/var/all.scss",
             "sass/var"
         ],
-
         /**
          * Comma-separated list of folders containing Sass rule files.
          *
@@ -173,7 +154,6 @@
             "sass/src"
         ]
     },
-
     /**
      * List of all JavaScript assets in the right execution order.
      *
@@ -224,9 +204,6 @@
             "bundle": true
         }
     ],
-
-
-
     /**
      * List of all CSS assets in the right inclusion order.
      *
@@ -259,31 +236,30 @@
             // defined in .sencha/app/defaults.properties
             "path": "${build.out.css.path}",
             "bundle": true,
-            "exclude": ["fashion"]
+            "exclude": [
+                "fashion"
+            ]
         }
     ],
-
     /**
      * This option is used to configure the dynamic loader. At present these options
      * are supported.
      *
      */
-     "loader": {
-         // This property controls how the loader manages caching for requests:
-         //
-         //   - true: allows requests to receive cached responses
-         //   - false: disable cached responses by adding a random "cache buster"
-         //   - other: a string (such as the build.timestamp shown here) to allow
-         //     requests to be cached for this build.
-         //
-         "cache": false,
-
-         // When "cache" is not true, this value is the request parameter used
-         // to control caching.
-         //
-         "cacheParam": "_dc"
-     },
-
+    "loader": {
+        // This property controls how the loader manages caching for requests:
+        //
+        //   - true: allows requests to receive cached responses
+        //   - false: disable cached responses by adding a random "cache buster"
+        //   - other: a string (such as the build.timestamp shown here) to allow
+        //     requests to be cached for this build.
+        //
+        "cache": false,
+        // When "cache" is not true, this value is the request parameter used
+        // to control caching.
+        //
+        "cacheParam": "_dc"
+    },
     /**
      * Settings specific to production builds.
      */
@@ -302,15 +278,23 @@
         },
         "compressor": {
             "type": "yui"
-        }
+        },
+        /**
+        * Url que aponta para API. sera concatenada no inicio de cada requisicao. 
+        * Importante: deixar vazio caso nao seja necessario, e não colocar / no final.
+        */
+        "apiBaseUrl": ""
     },
-
     /**
      * Settings specific to testing builds.
      */
     "testing": {
+        /**
+        * Url que aponta para API. sera concatenada no inicio de cada requisicao. 
+        * Importante: deixar vazio caso nao seja necessario, e não colocar / no final.
+        */
+        "apiBaseUrl": ""
     },
-
     /**
      * Settings specific to development builds.
      */
@@ -321,9 +305,13 @@
             // without changing this file.
             //
             // "fashion"
-        ]
+        ],
+        /**
+        * Url que aponta para API. sera concatenada no inicio de cada requisicao. 
+        * Importante: deixar vazio caso nao seja necessario, e não colocar / no final.
+        */
+        "apiBaseUrl": "http://localhost"
     },
-
     /**
      * Controls the output structure of development-mode (bootstrap) artifacts. May
      * be specified by a string:
@@ -353,11 +341,9 @@
      */
     "bootstrap": {
         "base": "${app.dir}",
-
         "microloader": "bootstrap.js",
         "css": "bootstrap.css"
     },
-
     /**
      * Controls the output directory for build resources.  May be set with
      * either a string:
@@ -398,15 +384,12 @@
      *      }
      *
      */
-
     "output": {
         "base": "${workspace.build.dir}/${build.environment}/${app.name}",
         "appCache": {
             "enable": false
         }
     },
-
-
     /**
     * Controls for localStorage caching
     *   "cache": {
@@ -422,13 +405,10 @@
     *       "deltas": "deltas"
     *   }
     */
-
     "cache": {
         "enable": false,
         "deltas": true
     },
-
-
     /**
      * Used to automatically generate cache.manifest (HTML 5 application cache manifest)
      * file when you build.
@@ -451,7 +431,6 @@
          */
         "fallback": []
     },
-
     /**
      * Extra resources to be copied into the resource folder as specified in the "resources"
      * property of the "output" object. Folders specified in this list will be deeply copied.
@@ -462,7 +441,6 @@
             "output": "shared"
         }
     ],
-
     /**
      * File / directory name patttern to ignore when copying to the builds. Must be a
      * valid regular expression.
@@ -470,17 +448,12 @@
     "ignore": [
         "(^|/)CVS(/?$|/.*?$)"
     ],
-
     /**
      * Directory path to store all previous production builds. Note that the content
      * generated inside this directory must be kept intact for proper generation of
      * deltas between updates.
      */
-
     "archivePath": "archive",
-
-
-
     /**
      * The space config object is used by the "sencha app publish" command to publish
      * a version of this application to Sencha Web Application Manager:
@@ -502,7 +475,6 @@
      *          "secret": ""
      *      }
      */
-
     /**
      * Build Profiles. This object's properties are each a "build profile". You can
      * add as many as you need to produce optimized builds for devices, themes, locales
@@ -511,8 +483,6 @@
      * names.
      *
      */
-
-
     /**
      * Uniquely generated id for this application, used as prefix for localStorage keys.
      * Normally you should never change this value.

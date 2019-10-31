@@ -16,9 +16,9 @@ Ext.define('Sky.Application', {
         // TODO: add global / shared stores here
     ],
 
-    defaultToken : 'home',
+    defaultToken: 'home',
 
-    init:function (argument) {
+    init: function (argument) {
         var me = this;
         // Desabilitar os erros de Aria
         Ext.enableAriaButtons = false;
@@ -27,7 +27,7 @@ Ext.define('Sky.Application', {
 
         // Checar se o usuario esta logado
         Ext.Ajax.request({
-            url: '/dri/api/logged/get_logged/?format=json',
+            url: Ext.manifest.apiBaseUrl + '/dri/api/logged/get_logged/?format=json',
             success: function (response) {
                 var data = JSON.parse(response.responseText);
 
@@ -37,7 +37,7 @@ Ext.define('Sky.Application', {
             failure: function (response, opts) {
                 var protocol = window.location.protocol,
                     pathname = window.location.pathname,
-                    hostname = window.location.host,
+                    hostname = window.location.hostname,
                     location;
 
                 location = Ext.String.format(
@@ -45,7 +45,6 @@ Ext.define('Sky.Application', {
                     protocol, hostname, pathname);
 
                 window.location.assign(location);
-
             }
         });
     },

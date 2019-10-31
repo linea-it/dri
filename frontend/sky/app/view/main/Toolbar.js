@@ -7,7 +7,7 @@ Ext.define('Sky.view.main.Toolbar', {
 
     xtype: 'dri-header-sky',
 
-    viewItems: function() {
+    viewItems: function () {
         var me = this,
             items = me.callParent();
 
@@ -19,42 +19,40 @@ Ext.define('Sky.view.main.Toolbar', {
                 type: 'hbox',
                 align: 'left'
             },
-            items:[
+            items: [
                 {
                     xtype: 'button',
                     text: 'RA, Dec (Deg)',
                     width: 120,
-                    queryMode:'local',
-                    store:['',''],
+                    queryMode: 'local',
+                    store: ['', ''],
                     menu: {
                         xtype: 'menu',
                         items: [
                             {
-                                name:'latlng', text: 'RA, Dec (Deg)'
+                                name: 'latlng', text: 'RA, Dec (Deg)'
                             },
                             // {
                             //     name:'HMS', text: 'RA, Dec (HMS)'
                             // }
                             {
-                                name:'tile', text: 'Tile ID'
+                                name: 'tile', text: 'Tile ID'
                             },
                             {
-                                name:'tli_tilename', text: 'Tile Name'
+                                name: 'tli_tilename', text: 'Tile Name'
                             },
                         ],
-                        listeners : {
-                            click: function(button,item) {
-                                let textfield, button
-
-                                if (item){
+                        listeners: {
+                            click: function (button, item) {
+                                if (item) {
                                     button = this.up('button')
-                                    textfield = me.getReferences().txtCoordinateSearch
+                                    let textfield = me.getReferences().txtCoordinateSearch
 
                                     // define o texto do botão e o emptytext da caixa de texto
                                     button.setText(item.text)
                                     textfield.setEmptyText(item.text)
-                                    
-                                    me.fireEvent('changeCoordinateSystem', {name:item.name, textfield:textfield});
+
+                                    me.fireEvent('changeCoordinateSystem', { name: item.name, textfield: textfield });
                                 }
                             }
                         }
@@ -69,8 +67,8 @@ Ext.define('Sky.view.main.Toolbar', {
                             cls: 'x-form-search-trigger',
                             scope: me,
                             tooltip: 'Go To position. 356.0085, 0.5168 or 23 44 2.040 +00 31 0.48',
-                            handler: function(e){
-                                me.fireEventGotoPosition( e.getValue() );
+                            handler: function (e) {
+                                me.fireEventGotoPosition(e.getValue());
                             },
                         }
                     },
@@ -78,7 +76,7 @@ Ext.define('Sky.view.main.Toolbar', {
                         scope: me,
                         specialkey: function (f, e) {
                             if (e.keyCode == 13) {
-                                me.fireEventGotoPosition( f.getValue() );
+                                me.fireEventGotoPosition(f.getValue());
                             }
                         }
                     }
@@ -89,7 +87,7 @@ Ext.define('Sky.view.main.Toolbar', {
         return items;
     },
 
-    fireEventGotoPosition: function(value){
+    fireEventGotoPosition: function (value) {
         this.lookup('txtCoordinateSearch').reset();
         this.fireEvent('dosearch', value);
     },

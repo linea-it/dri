@@ -8,7 +8,7 @@ Ext.define('Products.Application', {
 
     name: 'Products',
 
-    defaultToken : 'home',
+    defaultToken: 'home',
 
     stores: [
         // TODO: add global / shared stores here
@@ -18,13 +18,13 @@ Ext.define('Products.Application', {
         // TODO - Launch the application
     },
 
-    init:function () {
+    init: function () {
         // Desabilitar os erros de Aria
         Ext.enableAriaButtons = false;
 
         // Checar se o usuario esta logado
         Ext.Ajax.request({
-            url: '/dri/api/logged/get_logged/?format=json',
+            url: Ext.manifest.apiBaseUrl + '/dri/api/logged/get_logged/?format=json',
             success: function (response) {
                 var data = JSON.parse(response.responseText);
 
@@ -33,7 +33,7 @@ Ext.define('Products.Application', {
             },
             failure: function (response, opts) {
                 var pathname = window.location.pathname,
-                    hostname = window.location.host,
+                    hostname = window.location.hostname,
                     location;
 
                 location = Ext.String.format('http://{0}/dri/api/api-auth/login/?next={1}', hostname, pathname);
