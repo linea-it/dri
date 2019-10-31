@@ -12,13 +12,13 @@ Ext.define('Explorer.Application', {
         // TODO: add global / shared stores here
     ],
 
-    init:function () {
+    init: function () {
         // Desabilitar os erros de Aria
         Ext.enableAriaButtons = false;
 
         // Checar se o usuario esta logado
         Ext.Ajax.request({
-            url: '/dri/api/logged/get_logged/?format=json',
+            url: Ext.manifest.apiBaseUrl + '/dri/api/logged/get_logged/?format=json',
             success: function (response) {
                 var data = JSON.parse(response.responseText);
                 window.sessionStorage.setItem('dri_username', data.username);
@@ -29,7 +29,7 @@ Ext.define('Explorer.Application', {
             failure: function (response, opts) {
                 var protocol = window.location.protocol,
                     pathname = window.location.pathname,
-                    hostname = window.location.host,
+                    hostname = window.location.hostname,
                     location;
 
                 location = Ext.String.format(

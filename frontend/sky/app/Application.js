@@ -25,9 +25,6 @@ Ext.define('Sky.Application', {
 
         Ext.create('common.statistics.Events').init();
 
-        // console.log("Enviroment: ", Ext.manifest)
-        // console.log("Enviroment: ", Ext.manifest.baseUrl)
-
         // Checar se o usuario esta logado
         Ext.Ajax.request({
             url: Ext.manifest.apiBaseUrl + '/dri/api/logged/get_logged/?format=json',
@@ -47,8 +44,7 @@ Ext.define('Sky.Application', {
                     '{0}//{1}/dri/api/api-auth/login/?next={2}',
                     protocol, hostname, pathname);
 
-                // window.location.assign(location);
-
+                window.location.assign(location);
             }
         });
     },
