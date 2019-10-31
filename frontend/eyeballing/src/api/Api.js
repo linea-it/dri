@@ -100,7 +100,7 @@ class DriApi {
 
 
   comments = ({
-    release, offset, limit, sorting, search, filters = [],
+    release, offset, limit, dts_type, sorting, search, filters = [],
   }) => {
     let ordering = sorting[0].columnName;
 
@@ -108,7 +108,7 @@ class DriApi {
       ordering = `-${sorting[0].columnName}`;
     }
     const params = {
-      release, offset, limit, ordering, search,
+      release, offset, limit, ordering, search, dts_type,
     };
 
     filters.forEach((element) => {
@@ -136,9 +136,10 @@ class DriApi {
     dts_comment: comment,
   });
 
-  createDatasetComment = (datasetId, value) => axios.post('/comment/dataset/', {
+  createDatasetComment = (datasetId, value, dts_type) => axios.post('/comment/dataset/', {
     dts_dataset: datasetId,
     dts_comment: value,
+    dts_type,
   });
 
 
