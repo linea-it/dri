@@ -345,7 +345,9 @@ class Import():
             acls = list()
             for cls in ProductClass.objects.all():
                 acls.append(cls.pcl_name)
-            raise Exception('It is class is not available [ %s ]. these are available: %s' % (name, ', '.join(acls)))
+            msg = 'It is class is not available [ %s ]. these are available: %s' % (name, ', '.join(acls))
+            self.logger.error(msg)
+            raise Exception(msg)
 
     def register_catalog_content(self, catalog, data, created):
         """
@@ -534,29 +536,48 @@ class Import():
 
     def register_map(self, data):
 
-        database = data.get('database', 'catalog')
+        if data.get('table'):
+            self.logger.debug("Register Map Table.")
 
-        if not self.db:
-            self.db = CatalogDB(db=database)
+            database = data.get('database', 'catalog')
 
-        if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
-            raise Exception("Table or view  %s.%s does not exist" %
-                            (data.get('schema', None), data.get('table')))
+            if not self.db:
+                self.db = CatalogDB(db=database)
+
+            if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
+                raise Exception("Table or view  %s.%s does not exist" %
+                                (data.get('schema', None), data.get('table')))
+
+            tbl_info = data.get('ora_table_info', None)
+            tbl_rows = None
+            tbl_num_columns = None
+            tbl_size = None
+            if tbl_info:
+                tbl_rows = tbl_info.get('n_imported_rows', None)
+                tbl_num_columns = tbl_info.get('n_imported_columns', None)
+                tbl_size = tbl_info.get('table_size_in_bytes', None)
+
+            tbl_schema = data.get('schema', None)
+            tbl_name = data.get('table', None)
+
+        elif 'aladin' in data:
+            # Registro de Imagens de Mapa com Aladin.
+            self.logger.debug("Register Map Aladin image Without Table.")
+
+            tbl_info = None
+            tbl_rows = None
+            tbl_num_columns = None
+            tbl_size = None
+            tbl_schema = None
+            # tablename e obrigatorio, o correto seria estar usando um tipo de Produto do tipo File, mais
+            # nessa versao isso ainda nao e possivel, para atender a demanda vai ser criado um tablename ficticio.
+            tbl_name = data.get('name').replace(' ', '_').lower()
 
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))
 
         # Recuperar o filtro
-        filter = self.get_filter(data.get('map_filter', '-'))
-
-        tbl_info = data.get('ora_table_info', None)
-        tbl_rows = None
-        tbl_num_columns = None
-        tbl_size = None
-        if tbl_info:
-            tbl_rows = tbl_info.get('n_imported_rows', None)
-            tbl_num_columns = tbl_info.get('n_imported_columns', None)
-            tbl_size = tbl_info.get('table_size_in_bytes', None)
+        map_filter = self.get_filter(data.get('map_filter', '-'))
 
         # Data do produto caso o produto tenha processo a data do produto = data de start do processo
         date = None
@@ -566,8 +587,9 @@ class Import():
         product, created = Map.objects.update_or_create(
             prd_owner=self.owner,
             prd_name=data.get('name').replace(' ', '_').lower(),
-            tbl_schema=data.get('schema', None),
-            tbl_name=data.get('table'),
+            tbl_schema=tbl_schema,
+            tbl_name=tbl_name,
+            prd_filter=map_filter,
             defaults={
                 "prd_process_id": self.process,
                 "prd_class": cls,
@@ -576,7 +598,6 @@ class Import():
                 "prd_product_id": data.get('product_id', None),
                 "prd_version": data.get('version', None),
                 "prd_description": data.get('description', None),
-                "prd_filter": filter,
                 "prd_date": date,
                 "prd_is_public": data.get('is_public', True),
                 "mpa_nside": self.check_nside(data.get('nside')),
@@ -603,8 +624,9 @@ class Import():
                 self.register_aladin_image(product, data.get('aladin'))
 
         else:
-            raise Exception(
-                "A failure has occurred and it was not possible to register the product '%s'." % (data.get('name')))
+            msg = "A failure has occurred and it was not possible to register the product '%s'." % (data.get('name'))
+            self.logger.error(msg)
+            raise Exception(msg)
 
     def check_ordering(self, ordering):
 
@@ -643,34 +665,42 @@ class Import():
     def register_aladin_image(self, product, data):
         self.logger.debug("Register Aladin image.")
         self.logger.debug(data)
-        if 'donwload_url' in data and 'filename' in data:
-            relative_map_path = os.path.join(settings.DATA_DIR, "maps")
-            base_path = os.path.join(relative_map_path, product.prd_class.pcl_name)
-            if not os.path.exists(base_path):
-                os.mkdir(base_path)
-                sleep(1)
+        if 'download_url' in data and 'filename' in data:
+            try:
+                relative_map_path = os.path.join(settings.DATA_DIR, "maps")
+                base_path = os.path.join(relative_map_path, product.prd_class.pcl_name)
+                if not os.path.exists(base_path):
+                    os.mkdir(base_path)
+                    sleep(1)
 
-            map_path = os.path.join(base_path, str(product.id))
-            if not os.path.exists(map_path):
-                os.mkdir(map_path)
-                sleep(1)
+                map_path = os.path.join(base_path, str(product.id))
+                if not os.path.exists(map_path):
+                    os.mkdir(map_path)
+                    sleep(1)
 
-            aladin_path_zip = self.download_aladin_image(data.get('donwload_url'), data.get('filename'), map_path)
+                aladin_path_zip = self.download_aladin_image(data.get('download_url'), data.get('filename'), map_path)
 
-            with zipfile.ZipFile(aladin_path_zip, "r") as zip_ref:
-                zip_ref.extractall(map_path)
+                with zipfile.ZipFile(aladin_path_zip, "r") as zip_ref:
+                    zip_ref.extractall(map_path)
 
-            host = settings.BASE_HOST
-            result_dir = os.path.join(relative_map_path, aladin_path_zip.replace('.zip', ''))
+                self.logger.debug("Filepath: %s" % map_path)
 
-            result_sorce = result_dir.replace(settings.DATA_DIR, settings.DATA_SOURCE)
+                host = settings.BASE_HOST
+                result_dir = os.path.join(relative_map_path, aladin_path_zip.replace('.zip', ''))
 
-            map_final_url = urljoin(host, result_sorce)
+                result_sorce = result_dir.replace(settings.DATA_DIR, settings.DATA_SOURCE)
 
-            image, created = AladinImage.objects.update_or_create(
-                product=product, defaults={
-                    'img_url': map_final_url,
-                })
+                map_final_url = urljoin(host, result_sorce)
+
+                image, created = AladinImage.objects.update_or_create(
+                    product=product, defaults={
+                        'img_url': map_final_url,
+                    })
+            except Exception as e:
+                self.logger.error(e)
+                raise Exception(e)
+        else:
+            raise Exception("Missing download_url or filename.")
 
     def download_aladin_image(self, url, filename, path):
 
@@ -694,7 +724,6 @@ class Import():
         if os.path.exists(file_path):
             self.logger.info("Successfully downloaded Aladin image. Filepath: [%s]" % file_path)
             return file_path
-
 
         else:
             msg = "Downloading Aladin file failed. URL: [%s] Filename: [%s] Filepath: [%s]" % (url, filename, file_path)
