@@ -39,8 +39,8 @@ function ContextMenu({
   event,
   handleClose,
   currentDataset,
-  reloadData,
   latLngToHMSDMS,
+  getDatasetCommentsByType,
 }) {
   const classes = useStyles();
   const api = new DriApi();
@@ -73,14 +73,14 @@ function ContextMenu({
       api.createDatasetComment(currentDataset, `${otherReason} at ${latLngToHMSDMS(event.latlng)}`, 2, event.latlng.lng, event.latlng.lat)
         .then(() => {
           handleClose();
-          reloadData();
+          getDatasetCommentsByType();
         })
         .catch(err => console.error(err));
     } else {
       api.createDatasetComment(currentDataset, `${currentFeatureName} at ${latLngToHMSDMS(event.latlng)}`, 2, event.latlng.lng, event.latlng.lat)
         .then(() => {
           handleClose();
-          reloadData();
+          getDatasetCommentsByType();
         })
         .catch(err => console.error(err));
     }
@@ -133,7 +133,6 @@ function ContextMenu({
 ContextMenu.defaultProps = {
   event: null,
   currentDataset: null,
-  reloadData: null,
 };
 
 ContextMenu.propTypes = {
@@ -141,8 +140,8 @@ ContextMenu.propTypes = {
   event: PropTypes.objectOf(PropTypes.object),
   handleClose: PropTypes.func.isRequired,
   currentDataset: PropTypes.number,
-  reloadData: PropTypes.func,
   latLngToHMSDMS: PropTypes.func.isRequired,
+  getDatasetCommentsByType: PropTypes.func.isRequired,
 };
 
 export default ContextMenu;

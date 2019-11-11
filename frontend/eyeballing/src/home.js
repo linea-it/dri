@@ -225,8 +225,13 @@ function Home() {
     });
   };
 
+  const getDatasetCommentsByType = () => {
+    setCommentsWithFeature([]);
+    return api.getDatasetCommentsByType(currentDataset.id, 2).then(res => setCommentsWithFeature(res));
+  };
+
   useEffect(() => {
-    api.getDatasetCommentsByType(currentDataset.id, 2).then(res => setCommentsWithFeature(res));
+    getDatasetCommentsByType();
   }, [currentDataset]);
 
   const onComment = (dataset, comment) => {
@@ -489,6 +494,7 @@ function Home() {
                       contrast={contrast}
                       currentDataset={currentDataset.id || null}
                       points={commentsWithFeature}
+                      getDatasetCommentsByType={getDatasetCommentsByType}
                     />
                   </Card>
                 </Grid>

@@ -394,6 +394,7 @@ class VisiomaticPanel extends Component {
           handleClose={this.onContextMenuClose}
           currentDataset={this.props.currentDataset}
           latLngToHMSDMS={this.latLngToHMSDMS}
+          getDatasetCommentsByType={this.props.getDatasetCommentsByType}
         />
       </>
     );
