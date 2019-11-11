@@ -136,14 +136,22 @@ class DriApi {
     dts_comment: comment,
   });
 
-  createDatasetComment = (datasetId, value, dts_type) => axios.post('/comment/dataset/', {
+  createDatasetComment = (datasetId, value, dts_type, dts_ra, dts_dec) => axios.post('/comment/dataset/', {
     dts_dataset: datasetId,
     dts_comment: value,
     dts_type,
+    dts_ra,
+    dts_dec,
   });
 
 
   deleteComment = commentId => axios.delete(`/comment/dataset/${commentId}/`);
+
+  getFeatures = () => axios.get('/feature/').then(res => res.data);
+
+  getDatasetCommentsByType = (dts_dataset, type) => axios.get('/comment/dataset/', {
+    params: { dts_dataset, dts_type: type },
+  }).then(res => res.data);
 }
 export default DriApi;
 

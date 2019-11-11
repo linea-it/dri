@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './Viewer.css';
 import { uniqueId } from 'lodash';
 import PropTypes from 'prop-types';
+import ContextMenu from './ContextMenu';
+import circle from './circle-outline.svg';
 
 const colorRanges = {
   defaultContrast: {
@@ -60,6 +62,8 @@ class VisiomaticPanel extends Component {
     center: PropTypes.array,
     fov: PropTypes.number,
     contrast: PropTypes.string,
+    currentDataset: PropTypes.number,
+    points: PropTypes.array,
   };
 
   constructor(props) {
@@ -82,7 +86,11 @@ class VisiomaticPanel extends Component {
   }
 
   get initialState() {
-    return {};
+    return {
+      contextMenuOpen: false,
+      contextMenuEvt: null,
+      points: [],
+    };
   }
 
   onLayerAdd = () => {
@@ -92,6 +100,97 @@ class VisiomaticPanel extends Component {
   onLayerRemove = () => {
     this.layer = null;
     this.changeImage();
+  };
+
+  onContextMenuOpen = (e) => {
+    this.setState({
+      contextMenuOpen: true,
+      contextMenuEvt: e,
+    });
+  }
+
+  onContextMenuClose = () => {
+    this.setState({
+      contextMenuOpen: false,
+      contextMenuEvt: null,
+    });
+  }
+
+  redraw = () => {
+    const me = this;
+    const map = me.map;
+    const container = map.getContainer();
+    const width = container.width;
+
+    if (width > 0) {
+      container.css = `width: ${width} + 2`;
+      map.invalidateSize();
+      container.css = 'width: initial';
+    }
+  };
+
+
+  overlayCatalog = () => {
+    const l = this.libL;
+
+    const map = this.map;
+    const wcs = map.options.crs;
+
+    const { points } = this.props;
+
+    this.removeImageLayer();
+
+    const features = points.map(comment => ({
+      id: comment.id,
+      type: 'Feature',
+      owner: comment.owner,
+      comment: comment.dts_comment,
+      date: comment.dts_date,
+      geometry: {
+        type: 'Point',
+        coordinates: [comment.dts_ra, comment.dts_dec],
+      },
+    }));
+
+    const collection = {
+      type: 'FeatureCollection',
+      features,
+    };
+
+    const greenIcon = l.icon({
+      iconUrl: circle,
+      iconSize: [16, 16],
+    });
+
+    const popup = feature => (
+      `<div>
+        <h3 style="margin: 0">${feature.comment}</h3>
+        <span style="font-size: 11px">reported by: <i><u>${feature.owner}</u></i></span><br />
+        <span style="font-size: 11px">date: <i>${feature.date}</i></span>
+      </div>`
+    );
+
+    // this.removeImageLayer();
+
+
+    const lCatalog = l.geoJson(collection, {
+      coordsToLatLng: (coords) => {
+        if (wcs.forceNativeCelsys) {
+          const latLng = wcs.eqToCelsys(l.latLng(coords[1], coords[0]));
+          return new l.LatLng(latLng.lat, latLng.lng, coords[2]);
+        }
+        return new l.LatLng(coords[1], coords[0], coords[2]);
+      },
+      pointToLayer: (feature, latlng) => {
+        l.marker(latlng, { icon: greenIcon })
+          .bindPopup(popup(feature, latlng))
+          .addTo(map);
+      },
+    });
+
+    // this.redraw();
+    map.addLayer(lCatalog);
+    return lCatalog;
   };
 
   componentDidMount() {
@@ -120,18 +219,36 @@ class VisiomaticPanel extends Component {
 
     map.on('layeradd', this.onLayerAdd, this);
     map.on('layerremove', this.onLayerRemove, this);
-
+    map.on('contextmenu', this.onContextMenuOpen, this);
+    map.on('overlaycatalog', this.overlayCatalog, this);
     this.map = map;
-
     this.changeImage();
   }
 
-  componentDidUpdate() {
+
+  removeImageLayer = () => {
+    const me = this;
+    const map = me.map;
+    // imageLayer = me.getImageLayer();
+
+    if (map !== null) {
+      // map.removeLayer(imageLayer);
+      // remover todas as layer
+      map.eachLayer((layer) => {
+        map.removeLayer(layer);
+      });
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (prevProps.points !== this.props.points) {
+      this.overlayCatalog();
+    }
     this.changeImage();
   }
+
 
   setView = () => {
-    // console.log('setView()');
     const { center } = this.props;
     let { fov } = this.props;
 
@@ -146,10 +263,11 @@ class VisiomaticPanel extends Component {
 
       this.map.setView(
         latlng,
-        this.map.options.crs.fovToZoom(this.map, fov, latlng)
+        this.map.options.crs.fovToZoom(this.map, fov, latlng),
       );
 
       // Este comando corrige a demora no load. forcando o redraw.
+
       this.map.invalidateSize();
     }
   };
@@ -159,10 +277,10 @@ class VisiomaticPanel extends Component {
 
     if (contrast) {
       return colorRanges[contrast];
-    } else {
-      return colorRanges['defaultContrast'];
     }
+    return colorRanges.defaultContrast;
   };
+
 
   changeImage = () => {
     if (this.props.image) {
@@ -180,7 +298,7 @@ class VisiomaticPanel extends Component {
 
       this.layer = this.libL.tileLayer
         .iip(url, {
-          credentials: true,
+          credentials: process.env.VISIOMATIC_CREDENTIAL,
           center: false,
           fov: false,
           // center: latlng,
@@ -209,26 +327,76 @@ class VisiomaticPanel extends Component {
           // ],
         })
         .addTo(this.map);
-    } else {
-      if (this.layer) {
-        this.map.removeLayer(this.layer);
-        return;
-      }
+    } else if (this.layer) {
+      this.map.removeLayer(this.layer);
     }
   };
+
+  // Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
+  latLngToHMSDMS = (latlng) => {
+    let lng = (latlng.lng + 360.0) / 360.0;
+    lng = (lng - Math.floor(lng)) * 24.0;
+    let h = Math.floor(lng);
+
+    let mf = (lng - h) * 60.0;
+
+    let m = Math.floor(mf);
+
+    let sf = (mf - m) * 60.0;
+    if (sf >= 60.0) {
+      m++;
+      sf = 0.0;
+    }
+    if (m === 60) {
+      h++;
+      m = 0;
+    }
+    const str = `${(h < 10 ? '0' : '') + h.toString()}:${m < 10 ? '0' : ''}${m.toString()
+    }:${sf < 10.0 ? '0' : ''}${sf.toFixed(3)}`;
+
+    const lat = Math.abs(latlng.lat);
+
+    const sgn = latlng.lat < 0.0 ? '-' : '+';
+
+    const d = Math.floor(lat);
+    mf = (lat - d) * 60.0;
+    m = Math.floor(mf);
+    sf = (mf - m) * 60.0;
+    if (sf >= 60.0) {
+      m++;
+      sf = 0.0;
+    }
+    if (m === 60) {
+      h++;
+      m = 0;
+    }
+    return `${str} ${sgn}${d < 10 ? '0' : ''}${d.toString()}:${
+      m < 10 ? '0' : ''}${m.toString()}:${
+      sf < 10.0 ? '0' : ''}${sf.toFixed(2)}`;
+  }
 
   render() {
     // Ajuste no Tamanho do container
     return (
-      <div
-        id={this.id}
-        className="visiomatic-container"
-        style={{
-          width: '100%',
-          height: 'calc(100vh - 150px)',
+      <>
+        <div
+          id={this.id}
+          className="visiomatic-container"
+          style={{
+            width: '100%',
+            height: 'calc(100vh - 150px)',
           // height: '100%',
-        }}
-      />
+          }}
+        />
+        <ContextMenu
+          open={this.state.contextMenuOpen}
+          event={this.state.contextMenuEvt}
+          handleClose={this.onContextMenuClose}
+          currentDataset={this.props.currentDataset}
+          latLngToHMSDMS={this.latLngToHMSDMS}
+          getDatasetCommentsByType={this.props.getDatasetCommentsByType}
+        />
+      </>
     );
   }
 }
