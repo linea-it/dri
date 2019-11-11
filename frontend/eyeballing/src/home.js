@@ -132,6 +132,7 @@ function Home() {
   const [inputSearchValue, setInputSearchValue] = useState('');
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
+  const [commentsWithFeature, setCommentsWithFeature] = useState([]);
   const datasetLoading = useRef(false);
 
 
@@ -163,7 +164,6 @@ function Home() {
       return;
     }
 
-
     datasetLoading.current = true;
     api.datasetsByRelease({
       release: currentRelease, filters, search: inputSearchValue, offset: e || 0, limit: 20,
@@ -193,6 +193,7 @@ function Home() {
         setCounts(goodTiles);
         setLoading(false);
       });
+      datasetLoading.current = false;
       loadMoreDatasets(0);
     }
   }, [currentRelease, filterInspect, loading]);
@@ -204,7 +205,7 @@ function Home() {
   const loadData = () => {
     if (currentRelease !== '') {
       setDatasets([]);
-      // setCurrentDataset([]);
+      setCurrentDataset([]);
       setCounts({});
       setTotalCount(0);
       setLoading(true);
@@ -223,6 +224,10 @@ function Home() {
       setShowComment(true);
     });
   };
+
+  useEffect(() => {
+    api.getDatasetCommentsByType(currentDataset.id, 2).then(res => setCommentsWithFeature(res));
+  }, [currentDataset]);
 
   const onComment = (dataset, comment) => {
     if (comment.id !== null) {
@@ -482,6 +487,8 @@ function Home() {
                       center={[currentDataset.tli_ra, currentDataset.tli_dec]}
                       fov={2}
                       contrast={contrast}
+                      currentDataset={currentDataset.id || null}
+                      points={commentsWithFeature}
                     />
                   </Card>
                 </Grid>
