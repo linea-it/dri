@@ -64,6 +64,7 @@ class VisiomaticPanel extends Component {
     contrast: PropTypes.string,
     currentDataset: PropTypes.number,
     points: PropTypes.array,
+    reloadData: PropTypes.func,
   };
 
   constructor(props) {
@@ -253,8 +254,8 @@ class VisiomaticPanel extends Component {
     let { fov } = this.props;
 
     if (center && center.length > 0) {
-      const ra = parseFloat(parseFloat(center[0]).toFixed(5));
-      const dec = parseFloat(parseFloat(center[1]).toFixed(5));
+      const ra = parseFloat(parseFloat(center[0]).toFixed(5)) || 0;
+      const dec = parseFloat(parseFloat(center[1]).toFixed(5)) || 0;
       const latlng = this.libL.latLng(dec, ra);
 
       if (!fov) {
@@ -395,6 +396,7 @@ class VisiomaticPanel extends Component {
           currentDataset={this.props.currentDataset}
           latLngToHMSDMS={this.latLngToHMSDMS}
           getDatasetCommentsByType={this.props.getDatasetCommentsByType}
+          reloadData={this.props.reloadData}
         />
       </>
     );

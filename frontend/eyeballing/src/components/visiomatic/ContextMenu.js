@@ -41,6 +41,7 @@ function ContextMenu({
   currentDataset,
   latLngToHMSDMS,
   getDatasetCommentsByType,
+  reloadData,
 }) {
   const classes = useStyles();
   const api = new DriApi();
@@ -51,17 +52,6 @@ function ContextMenu({
   useEffect(() => {
     api.getFeatures().then(rows => setFeatures(rows));
   }, []);
-
-
-  useEffect(() => {
-    if (event) {
-      //         target = event.target,
-      //         xy     = {x:event.originalEvent.clientX, y:event.originalEvent.clientY};
-      console.log(event);
-      // console.log(event.layerPoint.x);
-      // console.log(coordinatesToLatLng(String(event.layerPoint.x), () => null));
-    }
-  }, [event]);
 
   const handleChange = (e, newValue) => setSelectedFeature(newValue);
 
@@ -84,6 +74,7 @@ function ContextMenu({
         })
         .catch(err => console.error(err));
     }
+    reloadData();
   };
 
   return (
@@ -142,6 +133,7 @@ ContextMenu.propTypes = {
   currentDataset: PropTypes.number,
   latLngToHMSDMS: PropTypes.func.isRequired,
   getDatasetCommentsByType: PropTypes.func.isRequired,
+  reloadData: PropTypes.func.isRequired,
 };
 
 export default ContextMenu;
