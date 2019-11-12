@@ -205,7 +205,7 @@ function Home() {
   const loadData = () => {
     if (currentRelease !== '') {
       setDatasets([]);
-      setCurrentDataset([]);
+      // setCurrentDataset({});
       setCounts({});
       setTotalCount(0);
       setLoading(true);
@@ -237,13 +237,13 @@ function Home() {
   const onComment = (dataset, comment) => {
     if (comment.id !== null) {
       // update
-      api.updateComment(comment.id, comment.inputValue).then(() => {
+      api.updateComment(comment.id, comment.inputValue, null, null).then(() => {
         loadData();
         handleComment(dataset);
       });
     } else {
       const dts_type = comment.dts_type || '0';
-      api.createDatasetComment(dataset.id, comment.inputValue, dts_type).then(() => {
+      api.createDatasetComment(dataset.id, comment.inputValue, dts_type, null, null).then(() => {
         loadData();
         if (showComment === true) {
           handleComment(dataset);
@@ -495,6 +495,7 @@ function Home() {
                       currentDataset={currentDataset.id || null}
                       points={commentsWithFeature}
                       getDatasetCommentsByType={getDatasetCommentsByType}
+                      reloadData={loadData}
                     />
                   </Card>
                 </Grid>

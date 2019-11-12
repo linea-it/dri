@@ -10,10 +10,11 @@ import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Send from '@material-ui/icons/Send';
 import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
-import MenuUpDelete from './MenuUpDelete';
 import { CardHeader } from '@material-ui/core';
 import Date from 'dateformat';
+import MenuUpDelete from './MenuUpDelete';
 
 
 const styles = theme => ({
@@ -24,6 +25,15 @@ const styles = theme => ({
   },
   cardComments: {
     marginBottom: theme.spacing(1),
+  },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+  closeIcon: {
+    fontSize: '1rem',
   },
 });
 
@@ -38,29 +48,32 @@ function CommentDialog(props) {
 
   function handleUpdate(comment) {
     setValues({ inputValue: comment.dts_comment, id: comment.id });
-
   }
 
-  const handleChange = name => event => {
+  const handleChange = name => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };
 
   const list = props.comments.map((comment, idx) => {
-
-    let date = Date(comment.dts_date);
+    const date = Date(comment.dts_date);
 
     return (
       <Card key={idx} className={classes.cardComments}>
-        <MenuUpDelete handleAlert={props.handleAlert} handleDelete={props.handleDelete} handleClose={handleClose}
-          handleUpdate={handleUpdate} comment={comment} />
+        <MenuUpDelete
+          handleAlert={props.handleAlert}
+          handleDelete={props.handleDelete}
+          handleClose={handleClose}
+          handleUpdate={handleUpdate}
+          comment={comment}
+        />
         <CardHeader
           title={comment.owner}
           titleTypographyProps={{
-            variant: "body2"
+            variant: 'body2',
           }}
           subheader={date}
           subheaderTypographyProps={{
-            variant: "body2"
+            variant: 'body2',
           }}
         />
         <CardContent>
@@ -74,7 +87,7 @@ function CommentDialog(props) {
     if (values.inputValue && values.inputValue !== '') {
       props.handleSubmit(props.dataset, values);
       clear();
-    };
+    }
   }
 
 
@@ -102,6 +115,9 @@ function CommentDialog(props) {
       className={classes.root}
     >
       <DialogTitle>{props.dataset.tli_tilename}</DialogTitle>
+      <IconButton aria-label="Close" className={classes.closeButton} onClick={handleClose}>
+        <CloseIcon className={classes.closeIcon} />
+      </IconButton>
       <DialogContent className={classes.dialogContent}>{list}</DialogContent>
       <DialogActions>
         <TextField
