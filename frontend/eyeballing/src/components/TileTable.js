@@ -100,7 +100,7 @@ function TileTable({ backLink, currentRelease }) {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [search, setSearch] = useState('');
-  const [filterComment, setFilterComment] = useState('0');
+  const [filterComment, setFilterComment] = useState('');
   const [showFilterDialog, setShowFilterDialog] = useState(false);
 
   const classes = useStyles();
@@ -215,7 +215,7 @@ function TileTable({ backLink, currentRelease }) {
   const handleFilterDialogOpen = () => setShowFilterDialog(true);
 
   const handleFilterDialogClose = (value) => {
-    setFilterComment(value);
+    if (typeof value === 'string') setFilterComment(value);
     setShowFilterDialog(false);
   };
   return (
