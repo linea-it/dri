@@ -93,6 +93,7 @@ function convertToCSV(objArray) {
 function TileTable({ backLink, currentRelease }) {
   const api = new DriApi();
   const [data, setData] = useState([]);
+  const [downloadData, setDownloadData] = useState([]);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
@@ -121,9 +122,19 @@ function TileTable({ backLink, currentRelease }) {
     { columnName: 'dts_comment', width: 'auto' },
   ];
 
-  useEffect(() => {
-    loadData();
-  }, [sorting, currentPage, search, currentRelease, filterComment]);
+  function renderInspectionValue(rowData) {
+    if (rowData.isp_value !== null) {
+      return (
+        rowData.isp_value === true ? (
+          <ThumbUpIcon className={classes.okButton} />
+        ) : (
+          <ThumbDownIcon color="error" />
+        )
+      );
+    }
+    return '-';
+  }
+
 
   function clearData() {
     setLoading(true);
@@ -160,13 +171,41 @@ function TileTable({ backLink, currentRelease }) {
     }
   }
 
-  function downloadData(format) {
-    if (data && data.length > 0) {
+  async function loadDownloadData() {
+    const comments = await api.comments({
+      release: currentRelease,
+      sorting,
+      dts_type: filterComment,
+    });
+
+    if (comments && comments.length > 0) {
+      setDownloadData(comments.map(comment => ({
+        tilename: comment.tilename,
+        isp_value: comment.isp_value,
+        owner: comment.owner,
+        dts_date: comment.dts_date,
+        dts_comment: comment.dts_comment,
+      })));
+    } else {
+      setDownloadData([]);
+    }
+  }
+
+  useEffect(() => {
+    loadData();
+  }, [sorting, currentPage, search, currentRelease, filterComment]);
+
+  useEffect(() => {
+    loadDownloadData();
+  }, [sorting, currentRelease, filterComment]);
+
+  function downloadTableData(format) {
+    if (downloadData && downloadData.length > 0) {
       let dataStr = '';
       if (format === 'json') {
-        dataStr = `data:text/json;charset=utf-8, ${encodeURIComponent(JSON.stringify(data))}`;
+        dataStr = `data:text/json;charset=utf-8, ${encodeURIComponent(JSON.stringify(downloadData))}`;
       } else if (format === 'csv') {
-        dataStr = `data:text/csv;charset=utf-8, ${convertToCSV(data)}`;
+        dataStr = `data:text/csv;charset=utf-8, ${convertToCSV(downloadData)}`;
       }
 
       const downloadTag = document.getElementById('downloadDialogLink');
@@ -179,7 +218,7 @@ function TileTable({ backLink, currentRelease }) {
 
   function handleDownloadDialog(checked) {
     if (typeof checked === 'string') {
-      downloadData(checked);
+      downloadTableData(checked);
     }
     setShowDownloadDialog(!showDownloadDialog);
   }
@@ -197,19 +236,6 @@ function TileTable({ backLink, currentRelease }) {
   function changeCurrentPage(value) {
     clearData();
     setCurrentPage(value);
-  }
-
-  function renderInspectionValue(rowData) {
-    if (rowData.isp_value !== null) {
-      return (
-        rowData.isp_value === true ? (
-          <ThumbUpIcon className={classes.okButton} />
-        ) : (
-          <ThumbDownIcon color="error" />
-        )
-      );
-    }
-    return '-';
   }
 
   const handleFilterDialogOpen = () => setShowFilterDialog(true);
@@ -251,6 +277,7 @@ function TileTable({ backLink, currentRelease }) {
               aria-haspopup="true"
               color="inherit"
               onClick={handleDownloadDialog}
+              disabled={downloadData.length === 0}
             >
               <GetApp />
             </IconButton>
