@@ -92,7 +92,6 @@ function convertToCSV(objArray) {
 
 function TileTable({ backLink, currentRelease }) {
   const api = new DriApi();
-  const [data, setData] = useState([]);
   const [downloadData, setDownloadData] = useState([]);
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -138,7 +137,6 @@ function TileTable({ backLink, currentRelease }) {
 
   function clearData() {
     setLoading(true);
-    setData([]);
     setRows([]);
   }
 
@@ -153,13 +151,6 @@ function TileTable({ backLink, currentRelease }) {
     });
 
     if (comments.results && comments.results.length > 0) {
-      setData(comments.results.map(comment => ({
-        tilename: comment.tilename,
-        isp_value: comment.isp_value,
-        owner: comment.owner,
-        dts_date: comment.dts_date,
-        dts_comment: comment.dts_comment,
-      })));
       setRows(comments.results.map(row => ({
         ...row,
         isp_value: renderInspectionValue(row),
@@ -225,6 +216,7 @@ function TileTable({ backLink, currentRelease }) {
 
   function changeSorting(value) {
     clearData();
+    setDownloadData([]);
     setSorting(value);
   }
 
