@@ -94,9 +94,9 @@ class VisiomaticPanel extends Component {
     };
   }
 
-  onLayerAdd = () => {
-    this.setView();
-  };
+  // onLayerAdd = () => {
+  //   this.setView();
+  // };
 
   onLayerRemove = () => {
     this.layer = null;
@@ -218,12 +218,12 @@ class VisiomaticPanel extends Component {
     // Image Preference
     this.libL.control.iip.image().addTo(sidebar);
 
-    map.on('layeradd', this.onLayerAdd, this);
+    // map.on('layeradd', this.onLayerAdd, this);
     map.on('layerremove', this.onLayerRemove, this);
     map.on('contextmenu', this.onContextMenuOpen, this);
     map.on('overlaycatalog', this.overlayCatalog, this);
     this.map = map;
-    this.changeImage();
+    // this.changeImage();
   }
 
 
@@ -244,6 +244,9 @@ class VisiomaticPanel extends Component {
   componentDidUpdate(prevProps) {
     if (prevProps.points !== this.props.points) {
       this.overlayCatalog();
+      if(prevProps.points.length > 0 && this.props.points.length > 0) {
+        this.setView();
+      }
     }
     this.changeImage();
   }
