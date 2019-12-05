@@ -166,6 +166,7 @@ function TileTable({ backLink, currentRelease }) {
     const comments = await api.comments({
       release: currentRelease,
       sorting,
+      search,
       dts_type: filterComment,
     });
 
@@ -188,7 +189,7 @@ function TileTable({ backLink, currentRelease }) {
 
   useEffect(() => {
     loadDownloadData();
-  }, [sorting, currentRelease, filterComment]);
+  }, [sorting, search, currentRelease, filterComment]);
 
   function downloadTableData(format) {
     if (downloadData && downloadData.length > 0) {
