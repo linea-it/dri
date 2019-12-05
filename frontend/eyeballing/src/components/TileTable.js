@@ -106,17 +106,17 @@ function TileTable({ backLink, currentRelease }) {
   const classes = useStyles();
 
   const columns = [
-    { name: 'tilename', title: 'Tile', getCellValue: row => row.tilename },
-    { name: 'isp_value', title: 'Status', getCellValue: row => row.isp_value },
-    { name: 'owner', title: 'Owner', getCellValue: row => row.owner },
+    { name: 'dts_dataset__tile__tli_tilename', title: 'Tile', getCellValue: row => row.tilename },
+    { name: 'dts_dataset__inspected__isp_value', title: 'Status', getCellValue: row => row.isp_value },
+    { name: 'owner__username', title: 'Owner', getCellValue: row => row.owner },
     { name: 'dts_date', title: 'Date', getCellValue: row => row.dts_date },
     { name: 'dts_comment', title: 'Comments', getCellValue: row => row.dts_comment },
   ];
 
   const defaultColumnWidths = [
-    { columnName: 'tilename', width: 150 },
-    { columnName: 'isp_value', width: 100 },
-    { columnName: 'owner', width: 150 },
+    { columnName: 'dts_dataset__tile__tli_tilename', width: 150 },
+    { columnName: 'dts_dataset__inspected__isp_value', width: 100 },
+    { columnName: 'owner__username', width: 150 },
     { columnName: 'dts_date', width: 150 },
     { columnName: 'dts_comment', width: 'auto' },
   ];
@@ -137,6 +137,7 @@ function TileTable({ backLink, currentRelease }) {
 
   function clearData() {
     setLoading(true);
+    setCurrentPage(0);
     setRows([]);
   }
 
@@ -172,9 +173,9 @@ function TileTable({ backLink, currentRelease }) {
 
     if (comments && comments.length > 0) {
       setDownloadData(comments.map(comment => ({
-        tilename: comment.tilename,
-        isp_value: comment.isp_value,
-        owner: comment.owner,
+        dts_dataset__tile__tli_tilename: comment.tilename,
+        dts_dataset__inspected__isp_value: comment.isp_value,
+        owner__username: comment.owner,
         dts_date: comment.dts_date,
         dts_comment: comment.dts_comment,
       })));
