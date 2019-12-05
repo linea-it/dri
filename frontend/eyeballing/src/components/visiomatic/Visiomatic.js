@@ -302,7 +302,7 @@ class VisiomaticPanel extends Component {
 
       this.layer = this.libL.tileLayer
         .iip(url, {
-          credentials: process.env.VISIOMATIC_CREDENTIAL,
+          credentials: process.env.REACT_APP_VISIOMATIC_CREDENTIAL === 'true',
           center: false,
           fov: false,
           // center: latlng,
