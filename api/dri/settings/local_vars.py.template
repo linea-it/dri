@@ -74,7 +74,7 @@ EMAIL_ADMIN = ''
 DES_CUTOUT_SERVICE = {
     # 1 para a versao do Descut Colaboracao 2 para versao Descut Public
     'API_VERSION': 1,
-    'HOST': 'https://descut.cosmology.illinois.edu',
+    'HOST': 'https://deslabs.ncsa.illinois.edu/easyweb/api/v1/',
     'USER': '',
     'PASSWORD': '',
     # Path onde ficaram os arquivos de cutout, esse parametro sera usado em conjunto com DATA_DIR para criar o path
@@ -93,11 +93,11 @@ DES_CUTOUT_SERVICE = {
     # Esta opcao deve ser False para o DescutPublico e True para Colaboracao
     'DELETE_JOB_AFTER_DOWNLOAD': True,
     # Url para gerar o token, para o publico usar None.
-    'API_GET_TOKEN': '/api/token/',
+    'API_GET_TOKEN': 'token/',
     # Url para a API reponsavel por criar os jobs
-    'API_CREATE_JOBS': '/api/jobs/',
+    'API_CREATE_JOBS': 'cutout/',
     # Url para a API responsavel por retornar o status dos jobs
-    'API_CHECK_JOBS': '/api/jobs/',
+    'API_CHECK_JOBS': 'jobs/',
     # No DescutPublico e necessario passar um email para onde seram enviadas as notificacoes do descut.
     'EMAIL': ''
 }

@@ -6,6 +6,8 @@ from pprint import pformat
 
 import humanize
 import requests
+# import urllib3
+# urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 from common.download import Download
 from common.notify import Notify
 from django.conf import settings
@@ -101,7 +103,10 @@ class DesCutoutService:
                 verify=self.verify_ssl)
 
             try:
-                self.logger.debug(req.text)
+
+                self.logger.debug('URL: {}'.format(req.url))
+                self.logger.debug('CODE: {}'.format(req.status_code))
+                self.logger.debug('MSG: {}'.format(req.text))
 
                 return req.json()["token"]
             except Exception as e:
@@ -159,17 +164,20 @@ class DesCutoutService:
 
         data["token"] = token
 
-        self.logger.debug("Host Jobs: %s" % self.host_create_jobs)
-
-        req = requests.post(
-            self.host_create_jobs,
-            data=data,
-            verify=self.verify_ssl
-        )
-
-        self.logger.debug(req)
+        self.logger.debug("Create Host Jobs: %s" % self.host_create_jobs)
 
         try:
+            req = requests.post(
+                self.host_create_jobs,
+                data=data,
+                verify=self.verify_ssl
+            )
+
+            self.logger.debug('URL: {}'.format(req.url))
+            self.logger.debug('CODE: {}'.format(req.status_code))
+            self.logger.debug('MSG: {}'.format(req.text))
+
+
             if req.json()["status"] == "ok":
                 self.logger.debug(req.text)
 
@@ -193,44 +201,79 @@ class DesCutoutService:
         Get Job Results : Mainly returns a list of links to files
 
         return
-            links (string): quando o job termina com sucesso
+            files (array): quando o job termina com sucesso, retorna um array com as urls para os arquivos a serem baixadas.
             None: quando o job ainda nao terminou
             False: quando o job retorna com status failure
+
+
+            Mudanca nova versao da api. 13/12/2019
+            o Formato do retorno mudou agora, retorna um array com links para download do resultados. 
+            Novo Retorno da api: 
+            {
+                "status": "ok", 
+                "msg": "Job summary", 
+                "job_status": "SUCCESS", 
+                "files": ["http://desdr-server.ncsa.illinois.edu/easyweb/workdir/rcampisa/c8182515_1741_4a26_bc91_3866a76b6ab4/c8182515_1741_4a26_bc91_3866a76b6ab4.tar.gz", "http://desdr-server.ncsa.illinois.edu/easyweb/workdir/rcampisa/c8182515_1741_4a26_bc91_3866a76b6ab4/list_all.json", "http://desdr-server.ncsa.illinois.edu/easyweb/workdir/rcampisa/c8182515_1741_4a26_bc91_3866a76b6ab4/log.log", "http://desdr-server.ncsa.illinois.edu/easyweb/workdir/rcampisa/c8182515_1741_4a26_bc91_3866a76b6ab4/BulkThumbs_20191213-162043_SUMMARY.json", "http://desdr-server.ncsa.illinois.edu/easyweb/workdir/rcampisa/c8182515_1741_4a26_bc91_3866a76b6ab4/list.json", "http://desdr-server.ncsa.illinois.edu/easyweb/workdir/rcampisa/c8182515_1741_4a26_bc91_3866a76b6ab4/DESJ-000000.0000+000000.0000_irg_stiff.png", "http://desdr-server.ncsa.illinois.edu/easyweb/workdir/rcampisa/c8182515_1741_4a26_bc91_3866a76b6ab4/DESJ-000000.0000+000000.0000_i.fits", "http://desdr-server.ncsa.illinois.edu/easyweb/workdir/rcampisa/c8182515_1741_4a26_bc91_3866a76b6ab4/DESJ-000000.0000+000000.0000_irg_lupton.png", "http://desdr-server.ncsa.illinois.edu/easyweb/workdir/rcampisa/c8182515_1741_4a26_bc91_3866a76b6ab4/DESJ-000000.0000+000000.0000_g.fits", "http://desdr-server.ncsa.illinois.edu/easyweb/workdir/rcampisa/c8182515_1741_4a26_bc91_3866a76b6ab4/DESJ-000000.0000+000000.0000_r.fits"], 
+                "job_runtime": 21, 
+                "job_type": "coadd"
+            }
         """
 
         self.logger.info("Get Results for job %s" % jobid)
 
         # TODO Diferenca entre Colaboracao e DR1 Public talvez transformar em metodos diferentes.
         if self.api_version == 1:
+            try:
+                req = requests.post(
+                    self.host_check_jobs,
+                    data=dict({
+                        'token': token,
+                        'jobid': jobid
+                    }),
+                    verify=self.verify_ssl
+                )
 
-            req = requests.get(
-                self.host_check_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
+                self.logger.debug('URL: {}'.format(req.url))
+                self.logger.debug('CODE: {}'.format(req.status_code))
+                self.logger.debug('MSG: {}'.format(req.text))
 
-            self.logger.debug(req.text)
+                data = req.json()
 
-            data = req.json()
+                if data["status"] == "ok":
+                    if data["job_status"] == "SUCCESS":
+                        
+                        if "files" in data and data["files"] is not None:
+                            self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
 
-            if data["status"] != "error" and data["job_status"] == "SUCCESS":
+                            return data["files"]
+                        else:
+                            # Nao retornou a lista de resultado
+                            self.logger.warning("Descut returned success, but not the list of download links.")
+                            return None
 
-                if "links" in data and data["links"] is not None:
-                    self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
+                    elif data["job_status"] == "PENDING":
+                        # O job ainda nao terminou no servidor
+                        self.logger.info("This job %s is still running" % jobid)
+                        return None
 
-                    return data["links"]
+                    else:
+                        # Job com status Failure
+                        return False
+
                 else:
-                    # Nao retornou a lista de resultado
-                    self.logger.warning("Descut returned success, but not the list of download links.")
-                    return None
+                    # Job com status diferente de ok. 
+                    self.logger.warnig(req.text)
+                    msg = ("Check Job Error: " % req.json()["message"])
+                    raise Exception(msg)
 
-            elif data["status"] != "error" and data["job_status"] == "PENDING":
-                # O job ainda nao terminou no servidor
-                self.logger.info("This job %s is still running" % jobid)
-                return None
-
-            else:
-                return False
+            except Exception as e:
+                # Caso a requisicao falhe.
+                self.logger.error(req.text)
+                msg = ("Check Job error %s - %s" % (req.status_code, req.text))
+                raise Exception(msg)
 
         else:
-
+            # Versao 2 da api, usada pela instancia do DRI publico
             data = {
                 "token": token,
                 "jobid": jobid
@@ -361,11 +404,27 @@ class DesCutoutService:
             comment = "Science Server Cutout Job Id: %s Product ID: %s" % (job.pk, product_id)
 
             data = dict({
-                "job_type": job.cjb_job_type,
+                # "job_type": job.cjb_job_type,
                 "ra": objects.get("ra"),
                 "dec": objects.get("dec"),
-                "comment": comment,
+                "jobname": comment
             })
+
+            # Parametros para versao de colaboracao
+            if self.api_version == 1:
+
+                image_formats = job.cjb_image_formats
+                make_fits = False
+                if image_formats is not None and 'fits' in image_formats:
+                    make_fits = True
+
+                data.update({
+                    'make_stiff_rgb'   : 'true',
+                    'make_lupton_rgb'  : 'true',
+                    'make_fits'        : make_fits,
+                    'rgb_values'       : 'i,r,g',
+                    'bands'            : 'g,r,i,z,y',
+                })
 
             # Params Obrigatorios para DR1 public version
             if self.api_version == 2:
@@ -374,7 +433,7 @@ class DesCutoutService:
                     "password": self.password,
                     "list_only": "false",
                     "email": self.email,
-                    "jobname": comment
+                    # "jobname": comment
                 })
 
             if job.cjb_xsize:
@@ -515,9 +574,19 @@ class DesCutoutService:
                 #  Path onde ficaram os arquivos de cutout
                 cutoutdir = self.get_cutout_dir(job)
 
-                # Guardar o Arquivo de resultado com os links a serem baixados
+                # TODO 13/12/2019 Mudancas na API do DESCUT
+                # Agora o retorno e uma lista com a url para download das imagens
+                # Esta etapa para baixo pode ser revista. 
+                # Antes recebiamos um csv com a informacao da coordenada ligada a imagem que foi gerada. 
+                # Agora ele so retorna o nome da imagem e um json_all que tem todos os dados mais nao tem as coordenada
+                # Fiquei travado nesta parte por que faltou uma forma de fazer o match. 
+
+                # O match nao pode ser feito pela coordenada que esta no nome da imagem, ja tivemos problema com isto antes. 
+
+                # Guardar os links dos arquivos a serem baixados, em um arquivo no diretório de cutout.
                 result_file = self.save_result_links_file(job, list_files)
 
+                # Armazenar no model CutoutJobs o path para o arquivo.
                 job.cjb_results_file = result_file.split(self.data_dir)[1].strip("/")
 
                 # Baixar o Arquivo Matched que sera usado para associar os arquivos baixados com os objetos.
@@ -711,40 +780,6 @@ class DesCutoutService:
 
         return key
 
-    def test_api_help(self):
-        print("-------------- test_api_help --------------")
-        token = self.generate_token()
-
-        ra = [10.0, 20.0, 30.0]
-        dec = [40.0, 50.0, 60.0]
-        xs = [1.0, 2.0, 3.0, 4.0]
-        ys = [2.0]
-
-        # create body of request
-        body = {
-            "token": token,  # required
-            "ra": str(ra),  # required
-            "dec": str(dec),  # required
-            "job_type": "coadd",  # required "coadd" or "single"
-            "xsize": str(xs),  # optional (default : 1.0)
-            "ysize": str(ys),  # optional (default : 1.0)
-            "band": "g,r,i",  # optional for "single" epochs jobs (default: all bands)
-            "no_blacklist": "false",
-            # optional for "single" epochs jobs (default: "false"). return or not blacklisted exposures
-            "list_only": "false",  # optional (default : "false") "true": will not generate pngs (faster)
-            "email": "false"  # optional will send email when job is finished
-        }
-
-        req = requests.post("http://descut.cosmology.illinois.edu/api/jobs/", data=body, verify=self.verify_ssl)
-
-        # create body for files if needed
-        # body_files = {"csvfile": open("mydata.csv", "rb")}  # To load csv file as part of request
-        # To include files
-        # req = requests.post("http://descut.cosmology.illinois.edu/api/jobs/", data=body, files=body_files)
-
-        print(req)
-        print(req.text)
-        print(req.json()["job"])
 
     def create_cutout_model(self,
                             cutoutjob, filename, thumbname, type, filter=None, object_id=None, object_ra=None,
