@@ -9,7 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from '@material-ui/core/styles';
-import ReactPlayer from 'react-player';
+import YouTubePlayer from 'react-player/lib/players/YouTube';
 
 const useStyles = makeStyles(theme => ({
   closeButton: {
@@ -40,7 +40,7 @@ function TutorialDialog({
   const classes = useStyles();
 
   return (
-    <Dialog onClose={setClose} open={open} fullWidth>
+    <Dialog onClose={setClose} open={open} fullWidth maxWidth="md" style={{ zIndex: 9999 }}>
       <DialogContent dividers>
         <DialogTitle>Tutorial</DialogTitle>
         <IconButton aria-label="Close" className={classes.closeButton} onClick={setClose}>
@@ -52,13 +52,6 @@ function TutorialDialog({
             <Fragment key={row.id}>
               <Grid item xs={12}>
                 <div className={classes.blockWrapper}>
-                  {/* <ul>
-                    <li>{row.id}</li>
-                    <li>{row.application}</li>
-                    <li>{row.application_display_name}</li>
-                    <li>{row.ttr_title}</li>
-                    <li>{row.ttr_description}</li>
-                  </ul> */}
                   <Typography variant="h6" component="h2">
                     {row.ttr_title}
                   </Typography>
@@ -66,9 +59,10 @@ function TutorialDialog({
                     {row.ttr_description}
                   </Typography>
                   <div className={classes.playerWrapper}>
-                    <ReactPlayer
+                    <YouTubePlayer
                       url={row.ttr_src}
                       width="auto"
+                      controls
                     />
                   </div>
                 </div>
