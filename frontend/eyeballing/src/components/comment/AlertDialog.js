@@ -10,7 +10,7 @@ import PropTypes from "prop-types";
 export default function AlertDialog(props) {
   return (
     <div>
-      <Dialog open={props.open} onClose={props.handleCancel} fullWidth maxWidth="sm">
+      <Dialog open={props.open} onClose={props.handleCancel} fullWidth maxWidth="sm" style={{ zIndex: 9999 }}>
         {props.title ? <DialogTitle>{props.title}</DialogTitle> : null}
         <DialogContent>
           <DialogContentText>{props.content}</DialogContentText>
