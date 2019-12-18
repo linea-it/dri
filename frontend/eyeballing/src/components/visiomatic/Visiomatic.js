@@ -415,8 +415,6 @@ class VisiomaticPanel extends Component {
           latLngToHMSDMS={this.latLngToHMSDMS}
           getDatasetCommentsByType={this.props.getDatasetCommentsByType}
           reloadData={this.props.reloadData}
-          reloadImage={this.overlayCatalog}
-          redraw={this.redraw}
         />
       </>
     );

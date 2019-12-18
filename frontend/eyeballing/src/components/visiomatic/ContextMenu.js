@@ -45,8 +45,6 @@ function ContextMenu({
   latLngToHMSDMS,
   getDatasetCommentsByType,
   reloadData,
-  reloadImage,
-  redraw
 }) {
   const classes = useStyles();
   const api = new DriApi();
