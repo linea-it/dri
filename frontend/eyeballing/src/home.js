@@ -134,6 +134,7 @@ function Home() {
   const [totalCount, setTotalCount] = useState(0);
   const [commentsWithFeature, setCommentsWithFeature] = useState([]);
   const datasetLoading = useRef(false);
+  const [tutorial, setTutorial] = useState([]);
 
 
   const api = new DriApi();
@@ -152,6 +153,7 @@ function Home() {
       setReleases(res);
       setCurrentRelease(res.length > 0 ? res[0].id : '');
     });
+    api.getTutorial().then(res => setTutorial(res));
   }, []);
 
   const loadMoreDatasets = useCallback((e) => {
@@ -406,6 +408,7 @@ function Home() {
         title="Tile Inspection"
         username={username}
         releases={releases}
+        tutorial={tutorial}
         currentRelease={currentRelease}
         onChangeRelease={onChangeRelease}
       />

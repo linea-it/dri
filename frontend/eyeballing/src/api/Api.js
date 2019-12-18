@@ -152,6 +152,8 @@ class DriApi {
   getDatasetCommentsByType = (dts_dataset, type) => axios.get('/comment/dataset/', {
     params: { dts_dataset, dts_type: type },
   }).then(res => res.data);
+
+  getTutorial = () => axios.get('/tutorial/').then(res => res.data);
 }
 export default DriApi;
 
