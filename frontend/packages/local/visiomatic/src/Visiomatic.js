@@ -87,7 +87,7 @@ Ext.define('visiomatic.Visiomatic', {
         image: null,
         imageLayer: null,
         imageOptions: {
-            credentials: true,
+            credentials: false,
             center: false,
             fov: false,
             mixingMode: 'color',
@@ -167,7 +167,7 @@ Ext.define('visiomatic.Visiomatic', {
         lcrosshair: null,
 
         showCrosshair: false,
-        mlocate:'',
+        mlocate: '',
     },
 
     _winCatalogOverlay: null,
@@ -182,10 +182,10 @@ Ext.define('visiomatic.Visiomatic', {
     initComponent: function () {
         var me = this;
         var tollbar, cmpVisiomatic;
-            // host = window.location.host,
+        // host = window.location.host,
 
         if (window.L) {
-            me.libL  = window.L;
+            me.libL = window.L;
 
         } else {
             console.log('window.L ainda nao esta carregada, incluir no app.json a biblioteca Leaflet');
@@ -395,14 +395,14 @@ Ext.define('visiomatic.Visiomatic', {
             libL = me.libL,
             map = me.getMap();
 
-        libL.control.scale.wcs({pixels: false}).addTo(map);
+        libL.control.scale.wcs({ pixels: false }).addTo(map);
     },
 
     setCurrentDataset: function (currentDataset) {
         var me = this;
 
         me.currentDataset = currentDataset;
-        
+
         // Carregar os commentarios toda vez que o dataset for alterado.
         me.loadComments();
 
@@ -482,8 +482,8 @@ Ext.define('visiomatic.Visiomatic', {
             navlayer;
 
         if (image) {
-            navlayer= libL.tileLayer.iip(image, {
-                credentials:imageOptions.credentials,
+            navlayer = libL.tileLayer.iip(image, {
+                credentials: imageOptions.credentials,
                 mixingMode: 'color',
                 defaultChannel: 2,
                 contrast: 0.7,
@@ -541,14 +541,14 @@ Ext.define('visiomatic.Visiomatic', {
             map = me.getMap(),
             target = event.target,
             xy = {
-                x:event.originalEvent.clientX,
-                y:event.originalEvent.clientY
+                x: event.originalEvent.clientX,
+                y: event.originalEvent.clientY
             },
             contextMenu;
-        
+
         if (this.cancelBuble) return
         this.cancelBuble = true
-        setTimeout(()=>{this.cancelBuble = false},100)
+        setTimeout(() => { this.cancelBuble = false }, 100)
 
         if (me.getEnableContextMenu()) {
             contextMenu = me.makeContextMenu(event);
@@ -566,8 +566,8 @@ Ext.define('visiomatic.Visiomatic', {
 
             // remover todas as layer
             map.eachLayer(function (layer) {
-                    map.removeLayer(layer);
-                }
+                map.removeLayer(layer);
+            }
             );
         }
 
@@ -608,38 +608,38 @@ Ext.define('visiomatic.Visiomatic', {
             map = me.getMap(),
             wcs = map.options.crs,
             sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
-		    center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(),
-		    lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
-		    b = map.getPixelBounds(),
-		    z = map.getZoom(),
+            center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(),
+            lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
+            b = map.getPixelBounds(),
+            z = map.getZoom(),
             c, lng, lat, dlng, dlat, box;
 
         // Compute the search cone
         c = sysflag ?
-              [wcs.celsysToEq(map.unproject(b.min, z)),
-              wcs.celsysToEq(map.unproject(libL.point(b.min.x, b.max.y), z)),
-              wcs.celsysToEq(map.unproject(b.max, z)),
-              wcs.celsysToEq(map.unproject(libLpoint(b.max.x, b.min.y), z))] :
-                        [map.unproject(b.min, z),
-                         map.unproject(libL.point(b.min.x, b.max.y), z),
-                         map.unproject(b.max, z),
-                         map.unproject(libL.point(b.max.x, b.min.y), z)];
+            [wcs.celsysToEq(map.unproject(b.min, z)),
+            wcs.celsysToEq(map.unproject(libL.point(b.min.x, b.max.y), z)),
+            wcs.celsysToEq(map.unproject(b.max, z)),
+            wcs.celsysToEq(map.unproject(libLpoint(b.max.x, b.min.y), z))] :
+            [map.unproject(b.min, z),
+            map.unproject(libL.point(b.min.x, b.max.y), z),
+            map.unproject(b.max, z),
+            map.unproject(libL.point(b.max.x, b.min.y), z)];
 
         lng = parseFloat(center.lng.toFixed(6));
         lat = parseFloat(center.lat.toFixed(6));
 
         // CDS box search
         dlng = (Math.max(wcs._deltaLng(c[0], center),
-                               wcs._deltaLng(c[1], center),
-                               wcs._deltaLng(c[2], center),
-                               wcs._deltaLng(c[3], center)) -
-                    Math.min(wcs._deltaLng(c[0], center),
-                               wcs._deltaLng(c[1], center),
-                               wcs._deltaLng(c[2], center),
-                               wcs._deltaLng(c[3], center))) * lngfac;
+            wcs._deltaLng(c[1], center),
+            wcs._deltaLng(c[2], center),
+            wcs._deltaLng(c[3], center)) -
+            Math.min(wcs._deltaLng(c[0], center),
+                wcs._deltaLng(c[1], center),
+                wcs._deltaLng(c[2], center),
+                wcs._deltaLng(c[3], center))) * lngfac;
 
         dlat = Math.max(c[0].lat, c[1].lat, c[2].lat, c[3].lat) -
-              Math.min(c[0].lat, c[1].lat, c[2].lat, c[3].lat);
+            Math.min(c[0].lat, c[1].lat, c[2].lat, c[3].lat);
 
         if (dlat < 0.0001) {
             dlat = 0.0001;
@@ -679,7 +679,7 @@ Ext.define('visiomatic.Visiomatic', {
         }
 
         rlon = bounding.dlng / 2;
-        rlat = bounding.dlat /2;
+        rlat = bounding.dlat / 2;
 
 
         llra = parseFloat(bounding.lng - rlon);
@@ -721,10 +721,10 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     onMouseMove: function (event) {
-        var ra  = event.latlng.lng,
+        var ra = event.latlng.lng,
             dec = event.latlng.lat,
             pos = String(ra.toFixed(5) + ', ' + dec.toFixed(5)),
-            me  = this,
+            me = this,
             map = me.getMap();
 
         this.cmpMousePosition.children[0].innerHTML = 'Mouse RA, Dec: ' + (pos);
@@ -986,21 +986,21 @@ Ext.define('visiomatic.Visiomatic', {
                             posAngle = theta_image;
                         }
                     }
-                    catch (err) {}
+                    catch (err) { }
 
                     pathOptions.majAxis = majAxis,
-                    pathOptions.minAxis = minAxis,
-                    pathOptions.posAngle = posAngle
+                        pathOptions.minAxis = minAxis,
+                        pathOptions.posAngle = posAngle
 
                     pointMaker = l.ellipse(latlng, pathOptions)
 
                 } else if (pathOptions.pointType === 'square') {
                     // Desenha um Quadrado
                     var bounds = [
-                        [latlng.lat-pathOptions.pointSize,
-                            latlng.lng-pathOptions.pointSize],
-                        [latlng.lat+pathOptions.pointSize,
-                            latlng.lng+pathOptions.pointSize],
+                        [latlng.lat - pathOptions.pointSize,
+                        latlng.lng - pathOptions.pointSize],
+                        [latlng.lat + pathOptions.pointSize,
+                        latlng.lng + pathOptions.pointSize],
                     ]
 
                     pointMaker = l.rectangle(bounds, pathOptions)
@@ -1010,10 +1010,10 @@ Ext.define('visiomatic.Visiomatic', {
 
                     // lat = dec, lng = ra
                     baseline = [
-                        l.latLng(latlng.lat-pathOptions.pointSize,
-                            latlng.lng-pathOptions.pointSize),
-                        l.latLng(latlng.lat-pathOptions.pointSize,
-                            latlng.lng+pathOptions.pointSize)
+                        l.latLng(latlng.lat - pathOptions.pointSize,
+                            latlng.lng - pathOptions.pointSize),
+                        l.latLng(latlng.lat - pathOptions.pointSize,
+                            latlng.lng + pathOptions.pointSize)
                     ]
                     rightline = [
                         l.latLng(latlng.lat - pathOptions.pointSize,
@@ -1036,27 +1036,27 @@ Ext.define('visiomatic.Visiomatic', {
 
                 } else if (pathOptions.pointType === 'icon') {
                     let latlngId = `${latlng.lat}:${latlng.lng}`
-                    let iconAnchor = [8,44]
+                    let iconAnchor = [8, 44]
                     let divIcon
-                    
+
                     // evita que seja plotado vários comentários em uma mesmo posição
                     if (commentExists[latlngId]) return
 
                     divIcon = l.divIcon({
                         className: 'visiomatic-marker-position',
                         iconAnchor: iconAnchor,
-                        html:'<i class="' + pathOptions.pointIcon + '"></i>'
+                        html: '<i class="' + pathOptions.pointIcon + '"></i>'
                     })
-                    
+
                     commentExists[latlngId] = true
-                    pointMaker = l.marker(latlng, {icon: divIcon})
+                    pointMaker = l.marker(latlng, { icon: divIcon })
                 } else {
                     // Por default marca com um circulo
                     pathOptions.pointType = 'circle'
                     pathOptions.majAxis = pathOptions.pointSize;
                     pathOptions.minAxis = pathOptions.pointSize;
                     pathOptions.posAngle = 90;
-                    
+
                     // Usei ellipse por ja estar em degrees a funcao circulo
                     // estava em pixels
                     // usei o mesmo valor de raio para os lados da ellipse para
@@ -1069,14 +1069,14 @@ Ext.define('visiomatic.Visiomatic', {
                 return pointMaker
             }
         })
-        .bindPopup(me.createOverlayPopup)
+            .bindPopup(me.createOverlayPopup)
 
-        .on('dblclick', function () {
-            alert('TODO: OPEN IN EXPLORER!');
-        })
+            .on('dblclick', function () {
+                alert('TODO: OPEN IN EXPLORER!');
+            })
 
-        // chama a função de exibição do menu de contexto quando click em cima de um comentário, círculo, etc.
-        .on('contextmenu', me.onContextMenuClick, me);
+            // chama a função de exibição do menu de contexto quando click em cima de um comentário, círculo, etc.
+            .on('contextmenu', me.onContextMenuClick, me);
 
         map.addLayer(lCatalog);
 
@@ -1092,9 +1092,9 @@ Ext.define('visiomatic.Visiomatic', {
             width = container.width();
 
         if (width > 0) {
-            container.css({width:width + 2});
+            container.css({ width: width + 2 });
             map.invalidateSize();
-            container.css({width:'initial'});
+            container.css({ width: 'initial' });
         }
 
     },
@@ -1102,7 +1102,7 @@ Ext.define('visiomatic.Visiomatic', {
     createOverlayPopup: function (layer) {
         var feature = layer.feature,
             properties = feature.properties,
-            mags = ['_meta_mag_auto_g','_meta_mag_auto_r','_meta_mag_auto_i',
+            mags = ['_meta_mag_auto_g', '_meta_mag_auto_r', '_meta_mag_auto_i',
                 '_meta_mag_auto_z', '_meta_mag_auto_y'],
             tag_mags = [],
             tag_properties = [],
@@ -1142,17 +1142,17 @@ Ext.define('visiomatic.Visiomatic', {
         if (feature.properties._meta_is_system) {
             // Se o objeto e um sistema utilizar o explorer system
             tag_id = '<a href="/explorer/#system/' +
-               feature.properties._meta_catalog_name + '/' +
-               feature.properties._meta_id + '"target="_blank">' +
-               feature.properties._meta_id + '</a>';
+                feature.properties._meta_catalog_name + '/' +
+                feature.properties._meta_id + '"target="_blank">' +
+                feature.properties._meta_id + '</a>';
 
         } else {
             if (feature.properties._meta_catalog_class == 'coadd_objects') {
                 // se o Objeto e um coadd object utilizar o explorer coadd
                 tag_id = '<a href="/explorer/#coadd/' +
-                   feature.properties._meta_catalog_name + '/' +
-                   feature.properties._meta_id + '"target="_blank">' +
-                   feature.properties._meta_id + '</a>';
+                    feature.properties._meta_catalog_name + '/' +
+                    feature.properties._meta_id + '"target="_blank">' +
+                    feature.properties._meta_id + '</a>';
 
             } else if (feature.properties._meta_object_url) {
                 // Se o objeto tiver o atributo _meta_object_url exemplo
@@ -1194,14 +1194,14 @@ Ext.define('visiomatic.Visiomatic', {
         dec = parseFloat(feature.properties._meta_dec)
 
         popup = '<spam style="font-weight: bold;">' + feature.title + '</spam></br>' +
-           '<TABLE style="margin:auto;">' +
-           '<TBODY style="vertical-align:top;text-align:left;">' +
-                '<TR><TD><spam>ID</spam>: </TD><TD>' + tag_id + '</TD></TR>' +
-                '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
-                    ra.toFixed(5) + ', ' + dec.toFixed(5) +
-                '</td></tr>' +
-                tag_mags.join('') +
-                tag_properties.join('') +
+            '<TABLE style="margin:auto;">' +
+            '<TBODY style="vertical-align:top;text-align:left;">' +
+            '<TR><TD><spam>ID</spam>: </TD><TD>' + tag_id + '</TD></TR>' +
+            '<TR><TD><spam>RA, Dec (deg)</spam>: </TD><TD>' +
+            ra.toFixed(5) + ', ' + dec.toFixed(5) +
+            '</td></tr>' +
+            tag_mags.join('') +
+            tag_properties.join('') +
             '</TBODY></TABLE>';
 
         return popup;
@@ -1248,10 +1248,10 @@ Ext.define('visiomatic.Visiomatic', {
     onToggleCrosshair: function (ra, dec, btn) {
         var me = this;
         if (btn.pressed) {
-          me.drawCrosshair(ra, dec);
+            me.drawCrosshair(ra, dec);
 
         } else {
-          me.removeCrosshair(ra, dec);
+            me.removeCrosshair(ra, dec);
 
         }
     },
@@ -1290,23 +1290,23 @@ Ext.define('visiomatic.Visiomatic', {
 
         // centerPadding e a distancia que as linhas vao ter a partir do centro.
         centerPadding = ((labelOptions.centerPadding) ?
-                labelOptions.centerPadding : 0.001);
+            labelOptions.centerPadding : 0.001);
 
         size = ((labelOptions.size) ?
-                labelOptions.size : 0.005);
+            labelOptions.size : 0.005);
 
-        lineTop       = [l.latLng((dec + centerPadding), ra), l.latLng((dec + size), ra)];
-        lineBottom    = [l.latLng((dec - centerPadding), ra), l.latLng((dec - size), ra)];
-        lineLeft      = [l.latLng(dec, (ra + centerPadding)), l.latLng(dec, (ra + size))];
-        lineRight     = [l.latLng(dec, (ra - centerPadding)), l.latLng(dec, (ra - size))];
+        lineTop = [l.latLng((dec + centerPadding), ra), l.latLng((dec + size), ra)];
+        lineBottom = [l.latLng((dec - centerPadding), ra), l.latLng((dec - size), ra)];
+        lineLeft = [l.latLng(dec, (ra + centerPadding)), l.latLng(dec, (ra + size))];
+        lineRight = [l.latLng(dec, (ra - centerPadding)), l.latLng(dec, (ra - size))];
 
-        lineTop     = l.polyline(lineTop, labelOptions);
-        lineBottom  = l.polyline(lineBottom, labelOptions);
-        lineLeft    = l.polyline(lineLeft, labelOptions);
-        lineRight   = l.polyline(lineRight, labelOptions);
+        lineTop = l.polyline(lineTop, labelOptions);
+        lineBottom = l.polyline(lineBottom, labelOptions);
+        lineLeft = l.polyline(lineLeft, labelOptions);
+        lineRight = l.polyline(lineRight, labelOptions);
 
         layer = new l.LayerGroup(
-                [lineTop, lineBottom, lineLeft, lineRight]);
+            [lineTop, lineBottom, lineLeft, lineRight]);
 
         me.lcrosshair = layer;
 
@@ -1318,7 +1318,7 @@ Ext.define('visiomatic.Visiomatic', {
         return me.lcrosshair;
     },
 
-    removeCrosshair: function() {
+    removeCrosshair: function () {
         var me = this,
             map = me.getMap();
 
@@ -1363,18 +1363,18 @@ Ext.define('visiomatic.Visiomatic', {
 
         size = 0.01 / map._zoom;
 
-        lineTop       = [l.latLng((dec + centerPadding), ra), l.latLng((dec + size), ra)];
-        lineBottom    = [l.latLng((dec - centerPadding), ra), l.latLng((dec - size), ra)];
-        lineLeft      = [l.latLng(dec, (ra + centerPadding)), l.latLng(dec, (ra + size))];
-        lineRight     = [l.latLng(dec, (ra - centerPadding)), l.latLng(dec, (ra - size))];
+        lineTop = [l.latLng((dec + centerPadding), ra), l.latLng((dec + size), ra)];
+        lineBottom = [l.latLng((dec - centerPadding), ra), l.latLng((dec - size), ra)];
+        lineLeft = [l.latLng(dec, (ra + centerPadding)), l.latLng(dec, (ra + size))];
+        lineRight = [l.latLng(dec, (ra - centerPadding)), l.latLng(dec, (ra - size))];
 
-        lineTop     = l.polyline(lineTop, options);
-        lineBottom  = l.polyline(lineBottom, options);
-        lineLeft    = l.polyline(lineLeft, options);
-        lineRight   = l.polyline(lineRight, options);
+        lineTop = l.polyline(lineTop, options);
+        lineBottom = l.polyline(lineBottom, options);
+        lineLeft = l.polyline(lineLeft, options);
+        lineRight = l.polyline(lineRight, options);
 
         layerSmall = new l.LayerGroup(
-                [lineTop, lineBottom, lineLeft, lineRight]);
+            [lineTop, lineBottom, lineLeft, lineRight]);
 
         me.lsmallcrosshair = layerSmall;
 
@@ -1386,7 +1386,7 @@ Ext.define('visiomatic.Visiomatic', {
         return me.lsmallcrosshair;
     },
 
-    showCatalogOverlayWindow: function() {
+    showCatalogOverlayWindow: function () {
         var me = this,
             currentDataset = me.getCurrentDataset(),
             win = me._winCatalogOverlay;
@@ -1428,16 +1428,16 @@ Ext.define('visiomatic.Visiomatic', {
 
         if (currentDataset.get('tli_tilename')) {
 
-          tilename = currentDataset.get('tli_tilename');
-          tag = currentDataset.get('release_name');
+            tilename = currentDataset.get('tli_tilename');
+            tag = currentDataset.get('release_name');
 
-          var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
-          winDownload.loadFits(tilename, tag);
-          winDownload.show();
+            var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
+            winDownload.loadFits(tilename, tag);
+            winDownload.show();
 
         } else {
 
-          alert ('File not found.')
+            alert('File not found.')
 
         }
 
@@ -1476,7 +1476,7 @@ Ext.define('visiomatic.Visiomatic', {
     //     me.contextMenuImage.showAt(xy);
     // },
 
-    initCrop: function() {
+    initCrop: function () {
         var me = this,
             map = me.getMap();
         map.on('mousedown', me.startCrop, me);
@@ -1484,7 +1484,7 @@ Ext.define('visiomatic.Visiomatic', {
         map.dragging.removeHooks();
     },
 
-    startCrop: function(){
+    startCrop: function () {
         var me = this,
             map = me.getMap();
 
@@ -1495,7 +1495,7 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('mouseup', me.endCrop, me);
     },
 
-    endCrop: function(event){
+    endCrop: function (event) {
         var me = this,
             map = me.getMap();
 
@@ -1503,21 +1503,21 @@ Ext.define('visiomatic.Visiomatic', {
         map.off('mouseup', me.endCrop, me);
         me.downloadCrop(me.cropInit, me.cropEnd);
         if (me.cropRectangle) {
-          map.removeLayer(me.cropRectangle);
+            map.removeLayer(me.cropRectangle);
         }
         me.cropInit = null;
         me.isCropping = false;
         map.dragging.addHooks();
     },
 
-    downloadCrop: function(init, end){
+    downloadCrop: function (init, end) {
         var me = this,
             libL = me.libL,
             map = me.getMap(),
             hiddenlink = document.createElement('a'),
             layer = me.getImageLayer();
 
-        var	latlng = map.getCenter(),
+        var latlng = map.getCenter(),
             bounds = map.getPixelBounds(),
             z = map.getZoom(),
             zfac;
@@ -1529,7 +1529,7 @@ Ext.define('visiomatic.Visiomatic', {
             zfac = 1;
         }
 
-        var	sizex = layer.iipImageSize[z].x * zfac,
+        var sizex = layer.iipImageSize[z].x * zfac,
             sizey = layer.iipImageSize[z].y * zfac,
             dx = Math.abs(init.container[0] - end.container[0]),
             dy = Math.abs(init.container[1] - end.container[1]);
@@ -1539,23 +1539,23 @@ Ext.define('visiomatic.Visiomatic', {
             y: bounds.min.y + Math.min(init.container[1], end.container[1])
         }
 
-        hiddenlink.href = layer.getTileUrl({x: 1, y: 1}
-          ).replace(/JTL\=\d+\,\d+/g,
-          'RGN=' + origin.x / sizex + ',' +
-          origin.y / sizey + ',' +
-          dx / sizex + ',' + dy / sizey +
-          '&WID=' + (this._snapType === 0 ?
-            Math.floor(dx / zfac) :
-            Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
+        hiddenlink.href = layer.getTileUrl({ x: 1, y: 1 }
+        ).replace(/JTL\=\d+\,\d+/g,
+            'RGN=' + origin.x / sizex + ',' +
+            origin.y / sizey + ',' +
+            dx / sizex + ',' + dy / sizey +
+            '&WID=' + (this._snapType === 0 ?
+                Math.floor(dx / zfac) :
+                Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
         hiddenlink.download = layer._title + '_' + libL.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
-          '.jpg';
+            '.jpg';
 
         var winDownload = Ext.create('visiomatic.crop.CropWindow', {
-          image: hiddenlink,
-          height: dy+100,
-          width: dx+100,
-          minWidth: 300,
-          minHeight: 200
+            image: hiddenlink,
+            height: dy + 100,
+            width: dx + 100,
+            minWidth: 300,
+            minHeight: 200
         });
         // hiddenlink.click();
     },
@@ -1640,22 +1640,22 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
-    statics : {
+    statics: {
         /**
          * Retorna de forma assíncrona as coordeandas latlng a partir de value
          * @param value String valor no formato "H:M:S"" ou "lat, lng"
          * @param fn Function função de retorno com o valor convertido em latlng
          */
-        coordinatesToLatLng: function(value, fn){
+        coordinatesToLatLng: function (value, fn) {
             var a, n = visiomatic.Visiomatic.strToSystem(value);
 
             value = value.trim().replace(/( )+/g, ' ');
             a = value.split(',');
 
-            if (n && n.system=='latlng'){
+            if (n && n.system == 'latlng') {
                 return fn(n.value);
 
-            }else if (n && n.system=='HMS'){
+            } else if (n && n.system == 'HMS') {
                 //converte para latlng
                 return visiomatic.Visiomatic.hmsToLatLng(value, fn);
             }
@@ -1667,10 +1667,10 @@ Ext.define('visiomatic.Visiomatic', {
          * Converte de forma assícrona HMG para latlng
          * by https://github.com/astromatic/visiomatic/blob/master/src/Control.WCS.js#L143
          */
-        hmsToLatLng: function(value, fn){
-            var url = 'http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?'+value;
+        hmsToLatLng: function (value, fn) {
+            var url = 'http://cdsweb.u-strasbg.fr/cgi-bin/nph-sesame/-oI/A?' + value;
 
-            $.get(url, function(response){
+            $.get(url, function (response) {
                 var latlng = visiomatic.Visiomatic.parseCoords(response, true);
                 if (fn) fn(latlng);
             });
@@ -1681,9 +1681,9 @@ Ext.define('visiomatic.Visiomatic', {
             var lng = (latlng.lng + 360.0) / 360.0;
             lng = (lng - Math.floor(lng)) * 24.0;
             var h = Math.floor(lng),
-            mf = (lng - h) * 60.0,
-            m = Math.floor(mf),
-            sf = (mf - m) * 60.0;
+                mf = (lng - h) * 60.0,
+                m = Math.floor(mf),
+                sf = (mf - m) * 60.0;
             if (sf >= 60.0) {
                 m++;
                 sf = 0.0;
@@ -1693,10 +1693,10 @@ Ext.define('visiomatic.Visiomatic', {
                 m = 0;
             }
             var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
-            ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
-            lat = Math.abs(latlng.lat),
-            sgn = latlng.lat < 0.0 ? '-' : '+',
-            d = Math.floor(lat);
+                ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
+                lat = Math.abs(latlng.lat),
+                sgn = latlng.lat < 0.0 ? '-' : '+',
+                d = Math.floor(lat);
             mf = (lat - d) * 60.0;
             m = Math.floor(mf);
             sf = (mf - m) * 60.0;
@@ -1709,32 +1709,32 @@ Ext.define('visiomatic.Visiomatic', {
                 m = 0;
             }
             return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
-            (m < 10 ? '0' : '') + m.toString() + ':' +
-            (sf < 10.0 ? '0' : '') + sf.toFixed(2);
+                (m < 10 ? '0' : '') + m.toString() + ':' +
+                (sf < 10.0 ? '0' : '') + sf.toFixed(2);
         },
 
         /**
          * Retorna o sistema de métrica do valor
          */
-        strToSystem: function(value){
+        strToSystem: function (value) {
             var a;
 
-            if (value){
+            if (value) {
                 //remove excesso de espaços, à direita, à esquerda e no meio
                 value = value.trim().replace(/( )+/g, ' ');
 
                 //lnt, lng
                 a = value.split(',');
-                if (a.length==2 && value.split(':').length==1){
+                if (a.length == 2 && value.split(':').length == 1) {
                     return {
-                        value: {lng:Number(a[0]), lat:Number(a[1])},
+                        value: { lng: Number(a[0]), lat: Number(a[1]) },
                         system: 'latlng'
                     }
                 }
 
                 //h:m:s h:m:s
                 a = value.split(' ');
-                if (a.length==2 && value.split(':').length==5){
+                if (a.length == 2 && value.split(':').length == 5) {
                     return {
                         value: value,
                         system: 'HMS'
