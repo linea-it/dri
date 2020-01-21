@@ -330,7 +330,7 @@ Ext.define('Explorer.view.system.SystemController', {
             visiomatic = me.lookupReference('visiomatic'),
             aladin = me.lookupReference('aladin'),
             members = vm.getStore('members')
-            fov = 0.07;
+        fov = 0.07;
 
         visiomatic.setView(
             object.get('_meta_ra'),
@@ -488,7 +488,15 @@ Ext.define('Explorer.view.system.SystemController', {
             aladin = me.lookupReference('aladin'),
             lmembers;
 
-        lmembers = visiomatic.overlayCatalog(currentProduct.get('prd_display_name'), members);
+        lmembers = visiomatic.overlayCatalog(currentProduct.get('prd_display_name'), members, {
+            weight: 2, //largura da borda em pixel
+            opacity: 0.8, // transparencia da borda
+            fillOpacity: 0.01, // Transparencia nos marcadores.
+            color: '#2db92d', //Stroke color
+            interactive: true,
+            pointType: 'circle', //'circle', 'ellipse', 'triangle', 'square'
+            pointSize: 0.001 // tamanho utilizado para criar os makers em graus
+        });
 
         visiomatic.showHideLayer(lmembers, true);
 
@@ -522,7 +530,7 @@ Ext.define('Explorer.view.system.SystemController', {
             object.get('_meta_dec'),
             fov,
             true // Nao mover a crosshair
-            );
+        );
 
         if (lMarkPosition) {
             visiomatic.showHideLayer(lMarkPosition, false);
@@ -542,8 +550,8 @@ Ext.define('Explorer.view.system.SystemController', {
         vm.set('selected_member', object);
 
         // if (sincGrid) {
-            // index = grid.getStore().find('_meta_id', member.get('_meta_id'));
-            // grid.getView().getRow(index).scrollIntoView();
+        // index = grid.getStore().find('_meta_id', member.get('_meta_id'));
+        // grid.getView().getRow(index).scrollIntoView();
         //}
     },
 
@@ -583,8 +591,8 @@ Ext.define('Explorer.view.system.SystemController', {
                         run: function () {
                             console.log(vm.get('object'))
                             if (vm.get('object')) {
-                              this.stop();
-                              me.onSelectVacProduct(null, vacCluster);
+                                this.stop();
+                                me.onSelectVacProduct(null, vacCluster);
                             }
                         },
                         interval: 3000
@@ -824,7 +832,7 @@ Ext.define('Explorer.view.system.SystemController', {
 
         tags.each(function (tag) {
             ids.push(tag.get('id'));
-        },this);
+        }, this);
 
         tiles.filter([
             {
@@ -924,7 +932,7 @@ Ext.define('Explorer.view.system.SystemController', {
             clusterSource = currentProduct.get("id"),
             clusterId = vm.get("object_id"),
             currentVacProduct = vm.get("vacCluster")
-            vacSource = currentVacProduct.get("id"),
+        vacSource = currentVacProduct.get("id"),
             object = vm.get("object"),
             lon = object.get("_meta_ra"),
             lat = object.get("_meta_dec"),
