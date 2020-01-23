@@ -69,6 +69,7 @@ class TargetViewSet(ViewSet):
     """
 
     """
+
     def list(self, request):
         """
         Return a list of targets in catalog.
@@ -87,7 +88,6 @@ class TargetViewSet(ViewSet):
 
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(catalog.pk)
-
 
         # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
         schema_rating_reject = settings.SCHEMA_RATING_REJECT
@@ -123,7 +123,6 @@ class TargetViewSet(ViewSet):
                 "_meta_reject": None,
             })
 
-
             essential_props = dict({
                 # Id
                 'meta.id;meta.main': '_meta_id',
@@ -144,7 +143,6 @@ class TargetViewSet(ViewSet):
                 'src.redshift.phot': '_meta_photo_z',
 
             })
-
 
             for ucd in associations:
                 try:
@@ -173,7 +171,6 @@ class TargetViewSet(ViewSet):
                 })
             except:
                 pass
-
 
             row.update({
                 "_meta_rating_id": row.get('meta_rating_id', None)
@@ -219,7 +216,6 @@ class TargetViewSet(ViewSet):
                             row.update({prop: "+Infinity"})
                         elif row.get(prop) < 0:
                             row.update({prop: "-Infinity"})
-
 
         return Response(dict({
             'count': count,
@@ -349,7 +345,7 @@ class CatalogObjectsViewSet(ViewSet):
                             if release_set:
                                 release = release_set.release.rls_name
                                 # Se tiver release e ele for o Y3 subtrair 90 graus
-                                if release == 'y3a1_coadd' or release == 'dr1':
+                                if release == 'y3a1_coadd' or release == 'dr1' or release == 'y6a1_coadd':
                                     t_image = 90 - t_image
 
                                 else:
