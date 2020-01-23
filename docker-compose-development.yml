@@ -27,20 +27,20 @@ services:
           - "5672:5672"
           - "15672:15672"
 
-  iipserver:
-    image: linea/iipserver:latest
-    environment:
-      - LOGFILE=/log/iipsrv.log
-      - VERBOSITY=10
-      - FILESYSTEM_PREFIX=/images/
-      - MAX_IMAGE_CACHE_SIZE=10
-      - MAX_CVT=3000
-      - JPEG_QUALITY=90
-      - CORS=*
-    command: ./start_fcgi.sh
-    volumes:
-      - ./log/iipserver:/log
-      - ./archive/images:/images
+  # iipserver:
+  #   image: linea/iipserver:latest
+  #   environment:
+  #     - LOGFILE=/log/iipsrv.log
+  #     - VERBOSITY=10
+  #     - FILESYSTEM_PREFIX=/images/
+  #     - MAX_IMAGE_CACHE_SIZE=10
+  #     - MAX_CVT=3000
+  #     - JPEG_QUALITY=90
+  #     - CORS=*
+  #   command: ./start_fcgi.sh
+  #   volumes:
+  #     - ./log/iipserver:/log
+  #     - ./archive/images:/images
 
 
   # Wordpress
@@ -93,12 +93,12 @@ services:
     depends_on:
       - sky
 
-  eyeballing:
-    build: ./frontend/eyeballing
-    volumes: 
-      - ./frontend/eyeballing/:/app
-    working_dir: /app
-    command: yarn start
+  # eyeballing:
+  #   build: ./frontend/eyeballing
+  #   volumes: 
+  #     - ./frontend/eyeballing/:/app
+  #   working_dir: /app
+  #   command: yarn start
 
   nginx:
     build: ./frontend
@@ -108,9 +108,9 @@ services:
       - ./archive:/var/www/data
       - ./static:/var/www/static
       - ./frontend/nginx-proxy-develop.conf:/etc/nginx/conf.d/default.conf
-      - ./log/nginx:/var/log
+      # - ./log/nginx:/var/log
     depends_on:
       - backend
-      - iipserver
+      # - iipserver
       - rabbit
 #      - wordpress
