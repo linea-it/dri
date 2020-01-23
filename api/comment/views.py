@@ -82,9 +82,9 @@ class CommentDatasetViewSet(viewsets.ModelViewSet):
 
     filter_class = CommentDatasetFilter
 
-    ordering_fields = ('dts_date',)
+    ordering_fields = ('dts_date', 'dts_dataset__tile__tli_tilename', 'dts_dataset__inspected__isp_value', 'owner__username', 'dts_comment' )
 
-    search_fields = ('dts_comment', 'dts_dataset__tile__tli_tilename',)
+    search_fields = ('dts_comment', 'dts_dataset__tile__tli_tilename', 'owner__username',)
 
     def perform_create(self, serializer):
         # Adiconar usuario logado
