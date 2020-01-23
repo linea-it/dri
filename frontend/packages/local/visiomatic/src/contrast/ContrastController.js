@@ -10,29 +10,29 @@ Ext.define('visiomatic.contrast.ContrastController', {
       'visiomatic.filter.FiltersWindow'
   ],
 
-  listen: {
-      component: {
-          'visiomatic-contrast-overlay': {
-              changedataset: 'onChangeDataset'
-          },
-      },
-  },
+//   listen: {
+//       component: {
+//           'visiomatic-contrast-overlay': {
+//               changedataset: 'onChangeDataset'
+//           },
+//       },
+//   },
 
   baseFilters: [],
 
   winFilter: null,
 
-  onChangeDataset: function (dataset) {
-      var me = this,
-          vm = me.getViewModel(),
-          overlays = vm.getStore('overlays');
+//   onChangeDataset: function (dataset) {
+//       var me = this,
+//           vm = me.getViewModel(),
+//           overlays = vm.getStore('overlays');
 
-      // Limpar a lista de overlays
-      overlays.removeAll();
+//       // Limpar a lista de overlays
+//       overlays.removeAll();
 
-      // Carregar os catalogos disponiveis
-      me.loadCatalogs();
-  },
+//       // Carregar os catalogos disponiveis
+//       me.loadCatalogs();
+//   },
 
   loadCatalogs: function () {
       var me = this,
@@ -147,7 +147,7 @@ Ext.define('visiomatic.contrast.ContrastController', {
   onClickContrast: function () {
       var me = this,
           vm = me.getViewModel(),
-          contrast = vm.get('contrast');
+          contrast = vm.get('contrast').contrast;
 
           console.log('contrast', contrast)
 

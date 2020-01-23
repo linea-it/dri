@@ -11,7 +11,9 @@ Ext.define('visiomatic.contrast.ContrastViewModel', {
     alias: 'viewmodel.contrastoverlay',
 
     data: {
-        contrast: 'normal'
+        contrast: {
+            contrast: 'normal'
+        }
     },
 
     links: {

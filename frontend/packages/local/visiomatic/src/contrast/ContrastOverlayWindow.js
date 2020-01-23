@@ -49,6 +49,7 @@ Ext.define('visiomatic.contrast.ContrastOverlayWindow', {
                                 xtype: 'radiogroup',
                                 layout: 'vbox',
                                 name: 'contrast',
+                                bind: '{contrast}',
                                 items: [
                                     {
                                         inputValue: 'normal',
