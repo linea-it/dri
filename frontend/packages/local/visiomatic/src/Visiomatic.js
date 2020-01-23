@@ -5,6 +5,7 @@ Ext.define('visiomatic.Visiomatic', {
         'visiomatic.VisiomaticModel',
         'visiomatic.VisiomaticController',
         'visiomatic.catalog.CatalogOverlayWindow',
+        'visiomatic.contrast.ContrastOverlayWindow',
         'visiomatic.download.DescutDownloadWindow',
         'common.store.CommentsPosition'
     ],
@@ -37,7 +38,8 @@ Ext.define('visiomatic.Visiomatic', {
         mapOptions: {
             fullscreenControl: true,
             zoom: 1,
-            enableLineaOverlay: true
+            enableLineaOverlay: true,
+            enableLineaContrast: true,
         },
 
         prefix: null,
@@ -171,6 +173,7 @@ Ext.define('visiomatic.Visiomatic', {
     },
 
     _winCatalogOverlay: null,
+    _winContrastOverlay: null,
 
 
     bind: {
@@ -248,6 +251,7 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('move', me.onMove, me);
         map.on('mousemove', me.onMouseMove, me);
         map.on('overlaycatalog', me.showCatalogOverlayWindow, me);
+        map.on('overlaycontrast', me.showContrastOverlayWindow, me);
         map.on('mouseup', me.savePreferences, me);
         map.on('keypress', me.savePreferences, me);
         map.on('contextmenu', me.onContextMenuClick, me);
@@ -313,6 +317,11 @@ Ext.define('visiomatic.Visiomatic', {
         // Fechar a Janela de Overlay Catalogs caso ela esteja aberta
         if (me._winCatalogOverlay) {
             me._winCatalogOverlay.close();
+        }
+
+        // Fechar a Janela de Overlay Contrast caso ela esteja aberta
+        if (me._winContrastOverlay) {
+            me._winContrastOverlay.close();
         }
     },
 
@@ -426,6 +435,13 @@ Ext.define('visiomatic.Visiomatic', {
             me._winCatalogOverlay.close();
 
             me._winCatalogOverlay = null;
+        }
+
+        // Se tiver com a janela de Overlay Catalog aberta deve fechar
+        if (me._winContrastOverlay !== null) {
+            me._winContrastOverlay.close();
+
+            me._winContrastOverlay = null;
         }
 
         // Forcar a remocao da imageLayer
@@ -1412,6 +1428,41 @@ Ext.define('visiomatic.Visiomatic', {
             }
 
             me._winCatalogOverlay.setDataset(currentDataset);
+
+        } else {
+            // Nao tem Dataset Selecionado a funcao de Overlay necessita de um dataset.
+            console.log('Dataset nao foi definido, a funcao overlay precisa de um dataset.')
+
+            return false;
+        }
+    },
+
+    showContrastOverlayWindow: function () {
+        var me = this,
+            currentDataset = me.getCurrentDataset(),
+            win = me._winContrastOverlay;
+
+        if ((currentDataset !== null) && (currentDataset.get('id') > 0)) {
+
+            if (win != null) {
+                win.show();
+
+            } else {
+                win = Ext.create('visiomatic.contrast.ContrastOverlayWindow', {
+                    visiomatic: me,
+                });
+
+                // Adiciona a Window como parte do componente Visiomatic,
+                // Desta forma se o componete nao estiver mais visivel na tela a window tb nao estara.
+                me.add(win)
+
+                win.show();
+
+                me._winContrastOverlay = win;
+
+            }
+
+            me._winContrastOverlay.setDataset(currentDataset);
 
         } else {
             // Nao tem Dataset Selecionado a funcao de Overlay necessita de um dataset.
