@@ -153,7 +153,7 @@ class DriApi {
     params: { dts_dataset, dts_type: type },
   }).then(res => res.data);
 
-  getTutorial = () => axios.get('/tutorial/').then(res => res.data);
+  getTutorial = () => axios.get('/tutorial/', { params: { app_name: 'tile_inspection' } }).then(res => res.data);
 }
 export default DriApi;
 

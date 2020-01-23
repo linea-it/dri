@@ -56,6 +56,14 @@ function Header(props) {
     logout();
   }
 
+  function handleHomeEyeballing() {
+    const { protocol } = window.location;
+    const { host } = window.location;
+    const location = `${protocol}//${host}/eyeballing`;
+
+    window.location.assign(location);
+  }
+
   function handleHome() {
     const { protocol } = window.location;
     const { host } = window.location;
@@ -76,7 +84,7 @@ function Header(props) {
     <React.Fragment>
       <AppBar position="static">
         <Toolbar>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={handleHomeEyeballing}>
             <img alt="logo DES" src={logo} />
           </IconButton>
           <Typography className={classes.grow} variant="h6" color="inherit">
@@ -98,10 +106,19 @@ function Header(props) {
           </Typography>
           <IconButton
             color="inherit"
-            className={classes.menuButton}
+            // className={classes.menuButton}
             onClick={handleHome}
           >
             <HomeIcon />
+          </IconButton>
+
+          <IconButton
+            // className={classes.menuButton}
+            onClick={handleHelp}
+            color="inherit"
+            title="Help"
+          >
+            <HelpIcon />
           </IconButton>
 
           <IconButton
@@ -112,14 +129,6 @@ function Header(props) {
             <MenuIcon />
           </IconButton>
 
-          <IconButton
-            className={classes.menuButton}
-            onClick={handleHelp}
-            color="inherit"
-            title="Help"
-          >
-            <HelpIcon />
-          </IconButton>
           <Menu
             id="simple-menu"
             anchorEl={anchorEl}
