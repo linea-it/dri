@@ -466,11 +466,11 @@ function Home() {
                       }
                       item={Row}
                       endReached={e => loadMoreDatasets(e)}
-                      // footer={() => (
-                      //   <div style={{ padding: '2rem', textAlign: 'center' }}>
-                      //     Loading...
-                      //   </div>
-                      // )}
+                      footer={() => (
+                        <div style={{ padding: '1rem', textAlign: 'center' }}>
+                          Loading...
+                        </div>
+                      )}
                     />
                     <Divider />
                     {loading ? (

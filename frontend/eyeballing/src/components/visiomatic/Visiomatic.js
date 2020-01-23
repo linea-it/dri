@@ -89,6 +89,7 @@ class VisiomaticPanel extends Component {
   get initialState() {
     return {
       contextMenuOpen: false,
+      contextMenuUpdateOpen: false,
       contextMenuEvt: null,
       points: [],
     };
@@ -110,9 +111,21 @@ class VisiomaticPanel extends Component {
     });
   }
 
+  onContextMenuUpdateOpen = (feature, latlng) => {
+    const event = {
+      ...feature,
+      latlng: latlng,
+    }
+    this.setState({
+      contextMenuUpdateOpen: true,
+      contextMenuEvt: event,
+    });
+  }
+
   onContextMenuClose = () => {
     this.setState({
       contextMenuOpen: false,
+      contextMenuUpdateOpen: false,
       contextMenuEvt: null,
     });
   }
@@ -185,7 +198,8 @@ class VisiomaticPanel extends Component {
       pointToLayer: (feature, latlng) => {
         l.marker(latlng, { icon: greenIcon })
           .bindPopup(popup(feature, latlng))
-          .addTo(map);
+          .addTo(map)
+          .on('contextmenu', () => this.onContextMenuUpdateOpen(feature, latlng));
       },
     });
 
@@ -248,6 +262,9 @@ class VisiomaticPanel extends Component {
 
     if (prevProps.points !== this.props.points) {
       this.overlayCatalog();
+      if (prevProps.points.length > 0 && this.props.points.length > 0) {
+        this.setView();
+      }
     }
   }
 
@@ -394,6 +411,7 @@ class VisiomaticPanel extends Component {
         />
         <ContextMenu
           open={this.state.contextMenuOpen}
+          updateOpen={this.state.contextMenuUpdateOpen}
           event={this.state.contextMenuEvt}
           handleClose={this.onContextMenuClose}
           currentDataset={this.props.currentDataset}
