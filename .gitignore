@@ -6,7 +6,9 @@ docker-compose.yml
 /data
 /db
 /log/*.log
-/log/backend
+/log/backend/*
+/log/nginx/*
+/log/iipserver/*
 /bkp
 /archive
 /static
