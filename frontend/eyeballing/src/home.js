@@ -330,15 +330,18 @@ function Home() {
 
 
   const handleInputSearch = (value) => {
-    setInputSearchValue(value);
     setTotalCount(0);
-    loadData();
+    setInputSearchValue(value);
   };
 
   const handleDelete = commentId => api.deleteComment(commentId).then(() => {
     handleComment(currentDataset);
     loadData();
   });
+
+  useEffect(() => {
+    loadData();
+  }, [inputSearchValue]);
 
 
   const Row = (i) => {
@@ -463,11 +466,11 @@ function Home() {
                       }
                       item={Row}
                       endReached={e => loadMoreDatasets(e)}
-                      // footer={() => (
-                      //   <div style={{ padding: '2rem', textAlign: 'center' }}>
-                      //     Loading...
-                      //   </div>
-                      // )}
+                      footer={() => (
+                        <div style={{ padding: '1rem', textAlign: 'center' }}>
+                          Loading...
+                        </div>
+                      )}
                     />
                     <Divider />
                     {loading ? (
