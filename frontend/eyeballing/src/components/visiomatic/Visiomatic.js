@@ -114,8 +114,9 @@ class VisiomaticPanel extends Component {
   onContextMenuUpdateOpen = (feature, latlng) => {
     const event = {
       ...feature,
-      latlng: latlng,
-    }
+      latlng,
+    };
+
     this.setState({
       contextMenuUpdateOpen: true,
       contextMenuEvt: event,
@@ -164,6 +165,7 @@ class VisiomaticPanel extends Component {
         type: 'Point',
         coordinates: [comment.dts_ra, comment.dts_dec],
       },
+      is_owner: comment.is_owner,
     }));
 
     const collection = {
