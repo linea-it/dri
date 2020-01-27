@@ -9,9 +9,11 @@ import HomeIcon from '@material-ui/icons/Home';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
+import HelpIcon from '@material-ui/icons/Help';
 import SelectReleases from './SelectReleases';
 import logo from '../assets/img/icon-des.png';
 import { logout } from '../api/Api';
+import TutorialDialog from './TutorialDialog';
 
 const styles = theme => ({
   appBar: {
@@ -35,10 +37,11 @@ const styles = theme => ({
 
 function Header(props) {
   const {
-    classes, title, username, releases, currentRelease,
+    classes, title, username, releases, currentRelease, tutorial,
   } = props;
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [tutorialOpen, setTutorialOpen] = React.useState(false);
 
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -53,6 +56,14 @@ function Header(props) {
     logout();
   }
 
+  function handleHomeEyeballing() {
+    const { protocol } = window.location;
+    const { host } = window.location;
+    const location = `${protocol}//${host}/eyeballing`;
+
+    window.location.assign(location);
+  }
+
   function handleHome() {
     const { protocol } = window.location;
     const { host } = window.location;
@@ -65,11 +76,15 @@ function Header(props) {
     setAnchorEl(null);
   }
 
+  function handleHelp() {
+    setTutorialOpen(true);
+  }
+
   return (
     <React.Fragment>
       <AppBar position="static">
         <Toolbar>
-          <IconButton color="inherit">
+          <IconButton color="inherit" onClick={handleHomeEyeballing}>
             <img alt="logo DES" src={logo} />
           </IconButton>
           <Typography className={classes.grow} variant="h6" color="inherit">
@@ -91,10 +106,19 @@ function Header(props) {
           </Typography>
           <IconButton
             color="inherit"
-            className={classes.menuButton}
+            // className={classes.menuButton}
             onClick={handleHome}
           >
             <HomeIcon />
+          </IconButton>
+
+          <IconButton
+            // className={classes.menuButton}
+            onClick={handleHelp}
+            color="inherit"
+            title="Help"
+          >
+            <HelpIcon />
           </IconButton>
 
           <IconButton
@@ -104,6 +128,7 @@ function Header(props) {
           >
             <MenuIcon />
           </IconButton>
+
           <Menu
             id="simple-menu"
             anchorEl={anchorEl}
@@ -116,6 +141,11 @@ function Header(props) {
           </Menu>
         </Toolbar>
       </AppBar>
+      <TutorialDialog
+        open={tutorialOpen}
+        setClose={() => setTutorialOpen(false)}
+        data={tutorial}
+      />
     </React.Fragment>
   );
 }
