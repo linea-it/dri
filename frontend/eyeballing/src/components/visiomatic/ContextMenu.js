@@ -167,7 +167,8 @@ function ContextMenu({
                 color="primary"
                 fullWidth
                 className={classes.button}
-                onClick={handleSave}
+                onClick={event !== null && !event.is_owner ? handleSave : null}
+                disabled={event !== null && event.is_owner}
               >
                 {updateOpen ? 'Update' : 'Save'}
               </Button>
@@ -180,7 +181,8 @@ function ContextMenu({
                   color="secondary"
                   fullWidth
                   className={classes.button}
-                  onClick={() => setAlertDeleteOpen(true)}
+                  onClick={event !== null && !event.is_owner ? () => setAlertDeleteOpen(true) : null}
+                  disabled={event !== null && event.is_owner}
                 >
                   Delete
                 </Button>

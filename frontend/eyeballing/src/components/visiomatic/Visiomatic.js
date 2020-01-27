@@ -186,6 +186,9 @@ class VisiomaticPanel extends Component {
       </div>`
     );
 
+    // this.removeImageLayer();
+
+
     const lCatalog = l.geoJson(collection, {
       coordsToLatLng: (coords) => {
         if (wcs.forceNativeCelsys) {
@@ -195,16 +198,10 @@ class VisiomaticPanel extends Component {
         return new l.LatLng(coords[1], coords[0], coords[2]);
       },
       pointToLayer: (feature, latlng) => {
-        if (feature.is_owner) {
-          l.marker(latlng, { icon: greenIcon })
-            .bindPopup(popup(feature, latlng))
-            .addTo(map)
-            .on('contextmenu', () => this.onContextMenuUpdateOpen(feature, latlng));
-        } else {
-          l.marker(latlng, { icon: greenIcon })
-            .bindPopup(popup(feature, latlng))
-            .addTo(map);
-        }
+        l.marker(latlng, { icon: greenIcon })
+          .bindPopup(popup(feature, latlng))
+          .addTo(map)
+          .on('contextmenu', () => this.onContextMenuUpdateOpen(feature, latlng));
       },
     });
 
