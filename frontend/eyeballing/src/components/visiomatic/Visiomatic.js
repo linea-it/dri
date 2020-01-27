@@ -114,8 +114,9 @@ class VisiomaticPanel extends Component {
   onContextMenuUpdateOpen = (feature, latlng) => {
     const event = {
       ...feature,
-      latlng: latlng,
-    }
+      latlng,
+    };
+
     this.setState({
       contextMenuUpdateOpen: true,
       contextMenuEvt: event,
@@ -164,6 +165,7 @@ class VisiomaticPanel extends Component {
         type: 'Point',
         coordinates: [comment.dts_ra, comment.dts_dec],
       },
+      is_owner: comment.is_owner,
     }));
 
     const collection = {
@@ -184,9 +186,6 @@ class VisiomaticPanel extends Component {
       </div>`
     );
 
-    // this.removeImageLayer();
-
-
     const lCatalog = l.geoJson(collection, {
       coordsToLatLng: (coords) => {
         if (wcs.forceNativeCelsys) {
@@ -196,10 +195,16 @@ class VisiomaticPanel extends Component {
         return new l.LatLng(coords[1], coords[0], coords[2]);
       },
       pointToLayer: (feature, latlng) => {
-        l.marker(latlng, { icon: greenIcon })
-          .bindPopup(popup(feature, latlng))
-          .addTo(map)
-          .on('contextmenu', () => this.onContextMenuUpdateOpen(feature, latlng));
+        if (feature.is_owner) {
+          l.marker(latlng, { icon: greenIcon })
+            .bindPopup(popup(feature, latlng))
+            .addTo(map)
+            .on('contextmenu', () => this.onContextMenuUpdateOpen(feature, latlng));
+        } else {
+          l.marker(latlng, { icon: greenIcon })
+            .bindPopup(popup(feature, latlng))
+            .addTo(map);
+        }
       },
     });
 
