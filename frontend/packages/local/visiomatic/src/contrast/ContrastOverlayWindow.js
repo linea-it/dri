@@ -13,9 +13,6 @@ Ext.define('visiomatic.contrast.ContrastOverlayWindow', {
   config: {
       // Instancia atual do visiomatic onde serao feitos os overlays
       visiomatic: null,
-
-      // Instancia de um common.model.Dataset com todas as informacoes sobre a tile, release, tag
-      dataset: null
   },
 
   initComponent: function () {
@@ -92,41 +89,4 @@ Ext.define('visiomatic.contrast.ContrastOverlayWindow', {
       this.getViewModel().set('visiomatic', visiomatic);
 
   },
-
-
-  /**
-   * Setar o Dataset que esta visivel no visiomatic,
-   * esse dataset sera usado para fazer a query dos objetos.
-   * se o dataset for diferente do anterior dispara o evento changedataset.
-   * se for igual nao faz nada
-   */
-  setDataset: function (dataset) {
-      var me = this,
-          oldDataset = me.getDataset(),
-          is_dirty = false;
-
-      // Se ja existir um dataset setado checar se e diferente do atual
-      if ((oldDataset !== null) && (oldDataset.get('id') > 0)) {
-          if (oldDataset.get('id') === dataset.get('id')) {
-              is_dirty = false;
-
-          } else {
-              is_dirty = true;
-          }
-
-      } else {
-          is_dirty = true;
-
-      }
-
-      // se for um dataset novo disparar o evento.
-      if (is_dirty) {
-          me.dataset = dataset;
-          me.getViewModel().set('dataset', dataset);
-
-          me.fireEvent('changedataset', dataset, me);
-      }
-
-  }
-
 });

@@ -4,9 +4,9 @@
 Ext.define('visiomatic.contrast.ContrastViewModel', {
     extend: 'Ext.app.ViewModel',
 
-    requires: [
-        'common.model.Dataset'
-    ],
+    // requires: [
+    //     'common.model.Dataset'
+    // ],
 
     alias: 'viewmodel.contrastoverlay',
 
@@ -16,10 +16,10 @@ Ext.define('visiomatic.contrast.ContrastViewModel', {
         }
     },
 
-    links: {
-        dataset: {
-            type: 'common.model.Dataset',
-            create: true
-        }
-    }
+    // links: {
+    //     dataset: {
+    //         type: 'common.model.Dataset',
+    //         create: true
+    //     }
+    // }
 });

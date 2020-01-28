@@ -1,3 +1,54 @@
+const colorRanges = {
+  normal: {
+    minMaxValues: [
+      // g
+      [-0.390453905, 1000],
+      // r
+      [-1.10961807, 1200],
+      // i
+      [-1.48952579, 1600],
+      // z
+      [-2.25479436, 2400],
+      // Y
+      [-0.990383625, 5000],
+      // det
+      [0.0486380979, 100],
+    ],
+  },
+  high: {
+    minMaxValues: [
+      // g
+      [-0.390453905, 50],
+      // r
+      [-1.10961807, 50],
+      // i
+      [-1.48952579, 50],
+      // z
+      [-2.25479436, 50],
+      // Y
+      [-0.990383625, 100],
+      // det
+      [0.0486380979, 100],
+    ],
+  },
+  medium: {
+    minMaxValues: [
+      // g
+      [-0.390453905, 500],
+      // r
+      [-1.10961807, 500],
+      // i
+      [-1.48952579, 500],
+      // z
+      [-2.25479436, 500],
+      // Y
+      [-0.990383625, 1000],
+      // det
+      [0.0486380979, 100],
+    ],
+  },
+};
+
 Ext.define('visiomatic.Visiomatic', {
     extend: 'Ext.panel.Panel',
 
@@ -541,6 +592,7 @@ Ext.define('visiomatic.Visiomatic', {
         if (e.layer.type === 'tilelayer') {
             me.setReady(true);
 
+            console.log('hello')
             me.fireEvent('changeimage', me);
         }
 
@@ -1099,6 +1151,27 @@ Ext.define('visiomatic.Visiomatic', {
         me.redraw();
 
         return lCatalog;
+    },
+
+    overlayContrast: function (contrast) {
+        var me = this,
+            l = me.libL,
+            map = me.getMap(),
+            wcs = map.options.crs,
+            catalogOptions = me.getCatalogOptions(),
+            commentExists = {},
+            image = me.getImage(),
+            pathOptions, collection, feature, lCatalog;
+
+        console.log('contrast', contrast)
+        console.log('map', map)
+        console.log('colorRanges[contrast]', colorRanges[contrast])
+
+        var layer = l.tileLayer
+        .iip(image, {
+          minMaxValues: colorRanges[contrast].minMaxValues,
+        })
+        .addTo(map);
     },
 
     redraw() {
