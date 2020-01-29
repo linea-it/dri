@@ -221,7 +221,11 @@ function Home() {
 
   const handleComment = (dataset) => {
     api.commentsByDataset(dataset.id).then((res) => {
-      setCurrentDataset(dataset);
+      // In case of the comment button being fired,
+      // verify if it isn't the button of the current dataset.
+      if (dataset.id !== currentDataset.id) {
+        setCurrentDataset(dataset);
+      }
       setComments(res);
       setShowComment(true);
     });
