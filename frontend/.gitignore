@@ -1,4 +1,5 @@
 bootstrap.json
+/build
 /build/development/
 /build/temp/
 /build/*/*/cache.appcache

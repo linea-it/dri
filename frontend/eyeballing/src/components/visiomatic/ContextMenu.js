@@ -11,8 +11,8 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
-import DriApi from '../../api/Api';
 import Grid from '@material-ui/core/Grid';
+import DriApi from '../../api/Api';
 import AlertDialog from '../comment/AlertDialog';
 
 const useStyles = makeStyles(theme => ({
@@ -63,26 +63,28 @@ function ContextMenu({
 
   useEffect(() => {
     if (updateOpen === true && open === false) {
-      let feature = features.filter(row => row.ftr_name == event.comment.split(' at')[0])[0];
-      if(!feature) {
-        feature = features.filter(row => row.ftr_name == 'Other')[0];
+      let feature = features.filter(row => row.ftr_name === event.comment.split(' at')[0])[0];
+      if (!feature) {
+        feature = features.filter(row => row.ftr_name === 'Other')[0];
         setOtherReason(event.comment);
       }
       setSelectedFeature(String(feature.id));
+    } else {
+      setSelectedFeature('');
     }
-  }, [features, updateOpen, event]);
+  }, [features, updateOpen, open, event]);
 
 
   const handleContextMenuClose = () => {
     setSelectedFeature('');
     setOtherReason('');
     handleClose();
-  }
+  };
 
   const handleSave = () => {
     const currentFeatureName = features.filter(feature => feature.id === Number(selectedFeature))[0].ftr_name;
 
-    if(updateOpen === false) {
+    if (updateOpen === false) {
       if (currentFeatureName === 'Other') {
         api.createDatasetComment(currentDataset, `${otherReason} at ${latLngToHMSDMS(event.latlng)}`, 2, event.latlng.lng, event.latlng.lat)
           .then(() => {
@@ -98,23 +100,20 @@ function ContextMenu({
           })
           .catch(err => console.error(err));
       }
+    } else if (currentFeatureName === 'Other') {
+      api.updateComment(event.id, otherReason)
+        .then(() => {
+          handleContextMenuClose();
+          getDatasetCommentsByType();
+        })
+        .catch(err => console.error(err));
     } else {
-        if (currentFeatureName === 'Other') {
-          api.updateComment(event.id, otherReason)
-            .then(() => {
-              handleContextMenuClose();
-              getDatasetCommentsByType();
-            })
-            .catch(err => console.error(err));
-        } else {
-          api.updateComment(event.id, `${currentFeatureName} at ${latLngToHMSDMS(event.latlng)}`)
-            .then(() => {
-              handleContextMenuClose();
-              getDatasetCommentsByType();
-            })
-            .catch(err => console.error(err));
-        }
-
+      api.updateComment(event.id, `${currentFeatureName} at ${latLngToHMSDMS(event.latlng)}`)
+        .then(() => {
+          handleContextMenuClose();
+          getDatasetCommentsByType();
+        })
+        .catch(err => console.error(err));
     }
     reloadData();
   };
@@ -122,12 +121,12 @@ function ContextMenu({
   const handleDelete = () => {
     api.deleteComment(event.id)
       .then(() => {
-        setAlertDeleteOpen(false)
+        setAlertDeleteOpen(false);
         handleContextMenuClose();
         getDatasetCommentsByType();
       })
       .catch(err => console.error(err));
-      reloadData();
+    reloadData();
   };
 
   return (
@@ -168,7 +167,8 @@ function ContextMenu({
                 color="primary"
                 fullWidth
                 className={classes.button}
-                onClick={handleSave}
+                onClick={updateOpen && event && event.is_owner !== true ? null : handleSave}
+                disabled={updateOpen && event && event.is_owner !== true}
               >
                 {updateOpen ? 'Update' : 'Save'}
               </Button>
@@ -181,12 +181,13 @@ function ContextMenu({
                   color="secondary"
                   fullWidth
                   className={classes.button}
-                  onClick={() => setAlertDeleteOpen(true)}
+                  onClick={event && event.is_owner ? () => setAlertDeleteOpen(true) : null}
+                  disabled={event && event.is_owner !== true}
                 >
                   Delete
                 </Button>
               </Grid>
-              ) : null}
+            ) : null}
           </Grid>
         </DialogContent>
       </Dialog>

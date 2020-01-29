@@ -6,27 +6,29 @@ COPY ./.sencha /code/.sencha
 COPY ./workspace.json /code/workspace.json
 COPY ./packages /code/packages
 
+
 # Build Sky
 COPY ./sky /code/sky
 WORKDIR /code/sky
 RUN /opt/Sencha/sencha app build production
+RUN cp -r /code/packages/local/visiomatic/src/visiomatic/dist /code/build/production/Sky/packages/local/visiomatic/src/visiomatic/
 
 # Build Target
 COPY ./target /code/target
 WORKDIR /code/target
 RUN /opt/Sencha/sencha app build production
+RUN cp -r /code/packages/local/visiomatic/src/visiomatic/dist /code/build/production/Target/packages/local/visiomatic/src/visiomatic/
 
 # Build Explorer
 COPY ./explorer /code/explorer
 WORKDIR /code/explorer
 RUN /opt/Sencha/sencha app build production
+RUN cp -r /code/packages/local/visiomatic/src/visiomatic/dist /code/build/production/Explorer/packages/local/visiomatic/src/visiomatic/
 
 # Build Userquery
 COPY ./userquery /code/userquery
 WORKDIR /code/userquery
 RUN /opt/Sencha/sencha app build production
-
-
 
 # Build ReactJS Apps
 FROM node:10-alpine as react_apps
