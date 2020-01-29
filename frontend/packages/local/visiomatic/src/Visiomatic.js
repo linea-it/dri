@@ -1,54 +1,3 @@
-const colorRanges = {
-  normal: {
-    minMaxValues: [
-      // g
-      [-0.390453905, 1000],
-      // r
-      [-1.10961807, 1200],
-      // i
-      [-1.48952579, 1600],
-      // z
-      [-2.25479436, 2400],
-      // Y
-      [-0.990383625, 5000],
-      // det
-      [0.0486380979, 100],
-    ],
-  },
-  high: {
-    minMaxValues: [
-      // g
-      [-0.390453905, 50],
-      // r
-      [-1.10961807, 50],
-      // i
-      [-1.48952579, 50],
-      // z
-      [-2.25479436, 50],
-      // Y
-      [-0.990383625, 100],
-      // det
-      [0.0486380979, 100],
-    ],
-  },
-  medium: {
-    minMaxValues: [
-      // g
-      [-0.390453905, 500],
-      // r
-      [-1.10961807, 500],
-      // i
-      [-1.48952579, 500],
-      // z
-      [-2.25479436, 500],
-      // Y
-      [-0.990383625, 1000],
-      // det
-      [0.0486380979, 100],
-    ],
-  },
-};
-
 Ext.define('visiomatic.Visiomatic', {
     extend: 'Ext.panel.Panel',
 
@@ -56,7 +5,7 @@ Ext.define('visiomatic.Visiomatic', {
         'visiomatic.VisiomaticModel',
         'visiomatic.VisiomaticController',
         'visiomatic.catalog.CatalogOverlayWindow',
-        'visiomatic.contrast.ContrastOverlayWindow',
+        'visiomatic.contrast.ContrastWindow',
         'visiomatic.download.DescutDownloadWindow',
         'common.store.CommentsPosition'
     ],
@@ -148,7 +97,8 @@ Ext.define('visiomatic.Visiomatic', {
             contrast: 0.7,
             gamma: 2.8,
             colorSat: 2.0,
-            channelLabelMatch: '[ugrizY]'
+            channelLabelMatch: '[ugrizY]',
+            quality: 100,
         },
 
         // Draw Radius Path Options http://leafletjs.com/reference-1.0.3.html#path
@@ -221,10 +171,66 @@ Ext.define('visiomatic.Visiomatic', {
 
         showCrosshair: false,
         mlocate: '',
+
+        // Contrast
+        currentContrast: 'normal',
+        colorRanges: {
+            normal: {
+                displayName: 'Default Contrast',
+                minMaxValues: [
+                    // g
+                    [-0.390453905, 1000],
+                    // r
+                    [-1.10961807, 1200],
+                    // i
+                    [-1.48952579, 1600],
+                    // z
+                    [-2.25479436, 2400],
+                    // Y
+                    [-0.990383625, 5000],
+                    // det
+                    [0.0486380979, 100],
+                ],
+            },
+            medium: {
+                displayName: 'Medium Contrast',
+                minMaxValues: [
+                    // g
+                    [-0.390453905, 500],
+                    // r
+                    [-1.10961807, 500],
+                    // i
+                    [-1.48952579, 500],
+                    // z
+                    [-2.25479436, 500],
+                    // Y
+                    [-0.990383625, 1000],
+                    // det
+                    [0.0486380979, 100],
+                ],
+            },
+            high: {
+                displayName: 'High Contrast',
+                minMaxValues: [
+                    // g
+                    [-0.390453905, 50],
+                    // r
+                    [-1.10961807, 50],
+                    // i
+                    [-1.48952579, 50],
+                    // z
+                    [-2.25479436, 50],
+                    // Y
+                    [-0.990383625, 100],
+                    // det
+                    [0.0486380979, 100],
+                ],
+            },
+        }
     },
 
     _winCatalogOverlay: null,
-    _winContrastOverlay: null,
+    _winContrast: null,
 
 
     bind: {
@@ -302,7 +308,7 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('move', me.onMove, me);
         map.on('mousemove', me.onMouseMove, me);
         map.on('overlaycatalog', me.showCatalogOverlayWindow, me);
-        map.on('overlaycontrast', me.showContrastOverlayWindow, me);
+        map.on('changecontrast', me.showContrastWindow, me);
         map.on('mouseup', me.savePreferences, me);
         map.on('keypress', me.savePreferences, me);
         map.on('contextmenu', me.onContextMenuClick, me);
@@ -336,7 +342,7 @@ Ext.define('visiomatic.Visiomatic', {
             imageLayer = me.getImageLayer();
 
         var imageOptions = {
-            credentials: true,
+            credentials: imageLayer.credentials,
             channelLabelMatch: '[ugrizY]',
             mixingMode: imageLayer.iipMode,
             contrast: imageLayer.iipContrast,
@@ -371,8 +377,8 @@ Ext.define('visiomatic.Visiomatic', {
         }
 
         // Fechar a Janela de Overlay Contrast caso ela esteja aberta
-        if (me._winContrastOverlay) {
-            me._winContrastOverlay.close();
+        if (me._winContrast) {
+            me._winContrast.close();
         }
     },
 
@@ -488,11 +494,11 @@ Ext.define('visiomatic.Visiomatic', {
             me._winCatalogOverlay = null;
         }
 
-        // Se tiver com a janela de Overlay Catalog aberta deve fechar
-        if (me._winContrastOverlay !== null) {
-            me._winContrastOverlay.close();
+        // Se tiver com a janela de Contrast aberta deve fechar
+        if (me._winContrast !== null) {
+            me._winContrast.close();
 
-            me._winContrastOverlay = null;
+            me._winContrast = null;
         }
 
         // Forcar a remocao da imageLayer
@@ -501,6 +507,7 @@ Ext.define('visiomatic.Visiomatic', {
         options = options || {};
 
         if (imageLayer) {
+
             imageOptions = {
                 credentials: imageOptions.credentials,
                 channelLabelMatch: '[ugrizY]',
@@ -512,6 +519,12 @@ Ext.define('visiomatic.Visiomatic', {
                 quality: imageLayer.iipQuality
 
             };
+        }
+
+        // Add default Contrast to image layer
+        colorRanges = me.getColorRanges(me.getCurrentContrast())
+        if (Ext.isObject(colorRanges)) {
+            options.minMaxValues = colorRanges.minMaxValues
         }
 
         args = Ext.Object.merge(imageOptions, options);
@@ -535,6 +548,15 @@ Ext.define('visiomatic.Visiomatic', {
         if (me.getEnableMiniMap()) {
             if (miniMap) miniMap.remove();
             me.createMiniMap();
+        }
+    },
+
+    getColorRanges: function (key) {
+        var me = this;
+        if (key) {
+            return me.colorRanges[key];
+        } else {
+            return me.colorRanges;
         }
     },
 
@@ -592,7 +614,6 @@ Ext.define('visiomatic.Visiomatic', {
         if (e.layer.type === 'tilelayer') {
             me.setReady(true);
 
-            console.log('hello')
             me.fireEvent('changeimage', me);
         }
 
@@ -1153,26 +1174,7 @@ Ext.define('visiomatic.Visiomatic', {
         return lCatalog;
     },
 
-    overlayContrast: function (contrast) {
-        var me = this,
-            l = me.libL,
-            map = me.getMap(),
-            wcs = map.options.crs,
-            catalogOptions = me.getCatalogOptions(),
-            commentExists = {},
-            image = me.getImage(),
-            pathOptions, collection, feature, lCatalog;
 
-        console.log('contrast', contrast)
-        console.log('map', map)
-        console.log('colorRanges[contrast]', colorRanges[contrast])
-
-        var layer = l.tileLayer
-        .iip(image, {
-          minMaxValues: colorRanges[contrast].minMaxValues,
-        })
-        .addTo(map);
-    },
 
     redraw() {
         var me = this,
@@ -1510,39 +1512,58 @@ Ext.define('visiomatic.Visiomatic', {
         }
     },
 
-    showContrastOverlayWindow: function () {
+    showContrastWindow: function () {
         var me = this,
-            currentDataset = me.getCurrentDataset(),
-            win = me._winContrastOverlay;
+            currentContrast = me.getCurrentContrast(),
+            colorRanges = me.getColorRanges(),
+            win;
 
-        if ((currentDataset !== null) && (currentDataset.get('id') > 0)) {
+        if (me._winContrast !== null) {
+            me._winContrast.close()
+            me._winContrast = null;
+        }
 
-            if (win != null) {
-                win.show();
+        // TODO: verificar se o valor de currentContrast esta disponivel na lista de Contrasts disponiveis. 
+        if (currentContrast !== null) {
 
-            } else {
-                win = Ext.create('visiomatic.contrast.ContrastOverlayWindow', {
-                    visiomatic: me,
-                });
+            win = Ext.create('visiomatic.contrast.ContrastWindow', {
+                visiomatic: me,
+                colorRanges: colorRanges
+            });
 
-                // Adiciona a Window como parte do componente Visiomatic,
-                // Desta forma se o componete nao estiver mais visivel na tela a window tb nao estara.
-                me.add(win)
+            // Adiciona a Window como parte do componente Visiomatic,
+            // Desta forma se o componete nao estiver mais visivel na tela a window tb nao estara.
+            me.add(win)
 
-                win.show();
+            win.show();
 
-                me._winContrastOverlay = win;
+            win.setCurrentContrast(currentContrast);
 
-            }
-
-            me._winContrastOverlay.setDataset(currentDataset);
-
+            me._winContrast = win;
         } else {
-            // Nao tem Dataset Selecionado a funcao de Overlay necessita de um dataset.
-            console.log('Dataset nao foi definido, a funcao overlay precisa de um dataset.')
+            console.log('Nao tem Contrast selecionado ou nao esta na lista de disponiveis');
 
             return false;
         }
+    },
+    changeContrast: function (contrast, contrastValues) {
+        var me = this,
+            imageLayer = me.getImageLayer(),
+            minValues = [],
+            maxValues = [];
+
+        Ext.Array.each(contrastValues.minMaxValues, function (value) {
+            minValues.push(value[0])
+            maxValues.push(value[1])
+        })
+
+        imageLayer.iipMinValue = minValues;
+        imageLayer.iipMaxValue = maxValues;
+
+        imageLayer.updateMix();
+        imageLayer.redraw();
+
+        me.setCurrentContrast(contrast)
     },
 
     showDownloadWindow: function () {

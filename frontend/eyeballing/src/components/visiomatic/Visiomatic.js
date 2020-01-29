@@ -373,7 +373,7 @@ class VisiomaticPanel extends Component {
       m = 0;
     }
     const str = `${(h < 10 ? '0' : '') + h.toString()}:${m < 10 ? '0' : ''}${m.toString()
-    }:${sf < 10.0 ? '0' : ''}${sf.toFixed(3)}`;
+      }:${sf < 10.0 ? '0' : ''}${sf.toFixed(3)}`;
 
     const lat = Math.abs(latlng.lat);
 
@@ -406,7 +406,7 @@ class VisiomaticPanel extends Component {
           style={{
             width: '100%',
             height: 'calc(100vh - 150px)',
-          // height: '100%',
+            // height: '100%',
           }}
         />
         <ContextMenu
