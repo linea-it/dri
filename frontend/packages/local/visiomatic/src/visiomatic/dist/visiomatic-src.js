@@ -51,7 +51,7 @@ L.Projection.WCS = L.Class.extend({
 
 	// Point -> LatLng [deg]
 	unproject: function (point) {
-		var  phiTheta = this._redToPhiR(this._pixToRed(point));
+		var phiTheta = this._redToPhiR(this._pixToRed(point));
 		phiTheta.lat = this._rToTheta(phiTheta.lat);
 		var latlng = this._phiThetaToRADec(phiTheta);
 		if (latlng.lng < -180.0) {
@@ -62,9 +62,9 @@ L.Projection.WCS = L.Class.extend({
 
 	// Set up native pole
 	_natpole: function () {
-		var	deg = Math.PI / 180.0,
-		    projparam = this.projparam,
-				natpole = L.latLng(90.0, 180.0);
+		var deg = Math.PI / 180.0,
+			projparam = this.projparam,
+			natpole = L.latLng(90.0, 180.0);
 		// Special case of fiducial point lying at the native pole
 		if (projparam.natrval.lat === 90.0) {
 			if (projparam.natpole.lng === 999.0) {
@@ -80,19 +80,19 @@ L.Projection.WCS = L.Class.extend({
 
 	// Set up celestial pole
 	_cpole: function () {
-		var	deg = Math.PI / 180.0,
-		    projparam = this.projparam,
-		    dphip = projparam.natpole.lng - projparam.natrval.lng,
-		    cdphip = Math.cos(dphip * deg),
-		    sdphip = Math.sin(dphip * deg),
-		    ct0 = Math.cos(projparam.natrval.lat * deg),
-		    st0 = Math.sin(projparam.natrval.lat * deg),
-		    cd0 = Math.cos(projparam.crval.lat * deg),
-		    sd0 = Math.sin(projparam.crval.lat * deg),
-		    deltap = Math.atan2(st0, ct0 * cdphip) / deg,
-		    ddeltap = Math.acos(sd0 / Math.sqrt(1.0 - ct0 * ct0 * sdphip * sdphip)) / deg,
-		    deltap1 = deltap + ddeltap,
-		    deltap2 = deltap - ddeltap;
+		var deg = Math.PI / 180.0,
+			projparam = this.projparam,
+			dphip = projparam.natpole.lng - projparam.natrval.lng,
+			cdphip = Math.cos(dphip * deg),
+			sdphip = Math.sin(dphip * deg),
+			ct0 = Math.cos(projparam.natrval.lat * deg),
+			st0 = Math.sin(projparam.natrval.lat * deg),
+			cd0 = Math.cos(projparam.crval.lat * deg),
+			sd0 = Math.sin(projparam.crval.lat * deg),
+			deltap = Math.atan2(st0, ct0 * cdphip) / deg,
+			ddeltap = Math.acos(sd0 / Math.sqrt(1.0 - ct0 * ct0 * sdphip * sdphip)) / deg,
+			deltap1 = deltap + ddeltap,
+			deltap2 = deltap - ddeltap;
 		if (deltap1 < -180.0) {
 			deltap1 += 360.0;
 		} else if (deltap1 > 180.0) {
@@ -109,62 +109,62 @@ L.Projection.WCS = L.Class.extend({
 			deltap = deltap1;
 		} else {
 			deltap = (Math.abs(deltap1 - projparam.natpole.lat) <
-			   Math.abs(deltap2 - projparam.natpole.lat)) ? deltap1 : deltap2;
+				Math.abs(deltap2 - projparam.natpole.lat)) ? deltap1 : deltap2;
 		}
 		var alphap = Math.abs(projparam.crval.lat) === 90.0 ? projparam.crval.lng
-		      : (deltap === 90.0 ? projparam.crval.lng + projparam.natpole.lng -
-		          projparam.natrval.lng - 180.0
-		        : (deltap === -90.0 ? projparam.crval.lng - projparam.natpole.lng +
-		           projparam.natrval.lng
-		          : projparam.crval.lng - Math.atan2(sdphip * ct0 / cd0,
-		             (st0 - Math.sin(deltap * deg) * sd0) /
-                   (Math.cos(deltap * deg) * cd0)) / deg));
+			: (deltap === 90.0 ? projparam.crval.lng + projparam.natpole.lng -
+				projparam.natrval.lng - 180.0
+				: (deltap === -90.0 ? projparam.crval.lng - projparam.natpole.lng +
+					projparam.natrval.lng
+					: projparam.crval.lng - Math.atan2(sdphip * ct0 / cd0,
+						(st0 - Math.sin(deltap * deg) * sd0) /
+						(Math.cos(deltap * deg) * cd0)) / deg));
 		return L.latLng(deltap, alphap);
 	},
 
 	// (phi,theta) [rad] -> RA, Dec [deg] for zenithal projections.
 	_phiThetaToRADec: function (phiTheta) {
-		var	projparam = this.projparam,
-		    deg = Math.PI / 180.0,
-			  rad = 180.0 / Math.PI,
-			  t = phiTheta.lat * deg,
-			  ct = Math.cos(t),
-			  st = Math.sin(t),
-			  dp = projparam.cpole.lat * deg,
-			  cdp = Math.cos(dp),
-			  sdp = Math.sin(dp),
-			  dphi = (phiTheta.lng - projparam.natpole.lng) * deg,
-			  cdphi = Math.cos(dphi),
-			  asinarg = st * sdp + ct * cdp * cdphi;
+		var projparam = this.projparam,
+			deg = Math.PI / 180.0,
+			rad = 180.0 / Math.PI,
+			t = phiTheta.lat * deg,
+			ct = Math.cos(t),
+			st = Math.sin(t),
+			dp = projparam.cpole.lat * deg,
+			cdp = Math.cos(dp),
+			sdp = Math.sin(dp),
+			dphi = (phiTheta.lng - projparam.natpole.lng) * deg,
+			cdphi = Math.cos(dphi),
+			asinarg = st * sdp + ct * cdp * cdphi;
 		if (asinarg > 1.0) {
 			asinarg = 1.0;
 		} else if (asinarg < -1.0) {
 			asinarg = -1.0;
 		}
 		return L.latLng(Math.asin(asinarg) * rad,
-		 projparam.cpole.lng + Math.atan2(- ct * Math.sin(dphi),
-		  st * cdp  - ct * sdp * cdphi) * rad);
+			projparam.cpole.lng + Math.atan2(- ct * Math.sin(dphi),
+				st * cdp - ct * sdp * cdphi) * rad);
 	},
 
 	// (RA, Dec) [deg] -> (phi,theta) [rad] for zenithal projections.
 	_raDecToPhiTheta: function (raDec) {
-		var	projparam = this.projparam,
-		    deg = Math.PI / 180.0,
-			  rad = 180.0 / Math.PI,
-			  da = (raDec.lng - projparam.cpole.lng) * deg,
-			  cda = Math.cos(da),
-			  sda = Math.sin(da),
-			  d = raDec.lat * deg,
-			  cd = Math.cos(d),
-			  sd = Math.sin(d),
-			  dp = projparam.cpole.lat * deg,
-			  cdp = Math.cos(dp),
-			  sdp = Math.sin(dp),
-			  asinarg = sd * sdp + cd * cdp * cda,
-				phitheta = L.latLng(Math.asin(asinarg > 1.0 ? 1.0
-		       : (asinarg < -1.0 ? -1.0 : asinarg)) * rad,
-		         projparam.natpole.lng + Math.atan2(- cd * sda,
-		         sd * cdp  - cd * sdp * cda) * rad);
+		var projparam = this.projparam,
+			deg = Math.PI / 180.0,
+			rad = 180.0 / Math.PI,
+			da = (raDec.lng - projparam.cpole.lng) * deg,
+			cda = Math.cos(da),
+			sda = Math.sin(da),
+			d = raDec.lat * deg,
+			cd = Math.cos(d),
+			sd = Math.sin(d),
+			dp = projparam.cpole.lat * deg,
+			cdp = Math.cos(dp),
+			sdp = Math.sin(dp),
+			asinarg = sd * sdp + cd * cdp * cda,
+			phitheta = L.latLng(Math.asin(asinarg > 1.0 ? 1.0
+				: (asinarg < -1.0 ? -1.0 : asinarg)) * rad,
+				projparam.natpole.lng + Math.atan2(- cd * sda,
+					sd * cdp - cd * sdp * cda) * rad);
 		if (phitheta.lng > 180.0) {
 			phitheta.lng -= 360.0;
 		} else if (phitheta.lng < -180.0) {
@@ -175,9 +175,9 @@ L.Projection.WCS = L.Class.extend({
 
 	// Convert from pixel to reduced coordinates.
 	_pixToRed: function (pix) {
-		var	projparam = this.projparam,
-		    cd = projparam.cd,
-		    red = pix.subtract(projparam.crpix);
+		var projparam = this.projparam,
+			cd = projparam.cd,
+			red = pix.subtract(projparam.crpix);
 		return L.point(red.x * cd[0][0] + red.y * cd[0][1],
 			red.x * cd[1][0] + red.y * cd[1][1]);
 	},
@@ -185,16 +185,16 @@ L.Projection.WCS = L.Class.extend({
 	// Convert from reduced to pixel coordinates.
 	_redToPix: function (red) {
 		var projparam = this.projparam,
-		    cdinv = projparam.cdinv;
+			cdinv = projparam.cdinv;
 		return L.point(red.x * cdinv[0][0] + red.y * cdinv[0][1],
-		 red.x * cdinv[1][0] + red.y * cdinv[1][1]).add(projparam.crpix);
+			red.x * cdinv[1][0] + red.y * cdinv[1][1]).add(projparam.crpix);
 	},
 
 	// Compute the CD matrix invert.
 	_invertCD: function (cd) {
 		var detinv = 1.0 / (cd[0][0] * cd[1][1] - cd[0][1] * cd[1][0]);
 		return [[cd[1][1] * detinv, -cd[0][1] * detinv],
-		 [-cd[1][0] * detinv, cd[0][0] * detinv]];
+		[-cd[1][0] * detinv, cd[0][0] * detinv]];
 	}
 });
 
@@ -230,12 +230,12 @@ L.Projection.WCS.zenithal = L.Projection.WCS.extend({
 	// (x, y) ["deg"] -> \phi, r [deg] for zenithal projections.
 	_redToPhiR: function (red) {
 		return L.latLng(Math.sqrt(red.x * red.x + red.y * red.y),
-		 Math.atan2(red.x, - red.y) * 180.0 / Math.PI);
+			Math.atan2(red.x, - red.y) * 180.0 / Math.PI);
 	},
 
 	// \phi, r [deg] -> (x, y) ["deg"] for zenithal projections.
 	_phiRToRed: function (phiR) {
-		var	deg = Math.PI / 180.0,
+		var deg = Math.PI / 180.0,
 			p = phiR.lng * deg;
 		return new L.Point(phiR.lat * Math.sin(p), - phiR.lat * Math.cos(p));
 	}
@@ -274,7 +274,7 @@ L.Projection.WCS.ZEA = L.Projection.WCS.zenithal.extend({
 L.Projection.WCS.cylindrical = L.Projection.WCS.extend({
 
 	_paramInit: function (projparam) {
-		var	deg = Math.PI / 180.0;
+		var deg = Math.PI / 180.0;
 		this.projparam = projparam;
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.lambda = projparam.pv[1][1];
@@ -312,16 +312,16 @@ L.Projection.WCS.CEA = L.Projection.WCS.cylindrical.extend({
 	// (x, y) ["deg"] -> \phi, r [deg] for CEA projections.
 	_redToPhiR: function (red) {
 		var deg = Math.PI / 180.0,
-				slat = red.y * this.projparam.lambda * deg;
+			slat = red.y * this.projparam.lambda * deg;
 		return L.latLng(slat > -1.0 ?
-		  (slat < 1.0 ? Math.asin(slat) / deg : 90.0) : -90.0, red.x);
+			(slat < 1.0 ? Math.asin(slat) / deg : 90.0) : -90.0, red.x);
 	},
 
 	// \phi, r [deg] -> (x, y) ["deg"] for CEA projections.
 	_phiRToRed: function (phiR) {
 		var deg = Math.PI / 180.0;
 		return L.point(phiR.lng,
-		               Math.sin(phiR.lat * deg) / (this.projparam.lambda * deg));
+			Math.sin(phiR.lat * deg) / (this.projparam.lambda * deg));
 	}
 });
 
@@ -330,16 +330,16 @@ L.Projection.WCS.conical = L.Projection.WCS.extend({
 	// (x, y) ["deg"] -> \phi, r [deg] for conical projections.
 	_redToPhiR: function (red) {
 		var deg = Math.PI / 180.0,
-		    projparam = this.projparam,
-		    dy = projparam.y0 - red.y,
-				rTheta = projparam.sthetaA * Math.sqrt(red.x * red.x + dy * dy);
+			projparam = this.projparam,
+			dy = projparam.y0 - red.y,
+			rTheta = projparam.sthetaA * Math.sqrt(red.x * red.x + dy * dy);
 		return L.latLng(rTheta, Math.atan2(red.x / rTheta, dy / rTheta) / projparam.c / deg);
 	},
 
 	// \phi, r [deg] -> (x, y) ["deg"] for conical projections.
 	_phiRToRed: function (phiR) {
-		var	deg = Math.PI / 180.0,
-		     p = this.projparam.c * phiR.lng * deg;
+		var deg = Math.PI / 180.0,
+			p = this.projparam.c * phiR.lng * deg;
 		return L.point(phiR.lat * Math.sin(p), - phiR.lat * Math.cos(p) + this.projparam.y0);
 	}
 });
@@ -347,21 +347,21 @@ L.Projection.WCS.conical = L.Projection.WCS.extend({
 L.Projection.WCS.COE = L.Projection.WCS.conical.extend({
 
 	_paramInit: function (projparam) {
-		var	deg = Math.PI / 180.0;
+		var deg = Math.PI / 180.0;
 		this.projparam = projparam;
 		projparam.cdinv = this._invertCD(projparam.cd);
 		projparam.thetaA = projparam.pv[1][1];
 		projparam.eta = projparam.pv[1][2];
 		projparam.sthetaA = projparam.thetaA >= 0.0 ? 1.0 : -1.0;
 		var theta1 = projparam.thetaA - projparam.eta,
-	      theta2 = projparam.thetaA + projparam.eta,
-		    s1 = Math.sin(theta1 * deg),
-		    s2 = Math.sin(theta2 * deg);
+			theta2 = projparam.thetaA + projparam.eta,
+			s1 = Math.sin(theta1 * deg),
+			s2 = Math.sin(theta2 * deg);
 		projparam.gamma = s1 + s2;
 		projparam.s1s2p1 = s1 * s2 + 1.0;
 		projparam.c = projparam.gamma / 2.0;
 		projparam.y0 = 2.0 / projparam.gamma * Math.sqrt(projparam.s1s2p1 -
-		   projparam.gamma * Math.sin(projparam.thetaA * deg)) / deg;
+			projparam.gamma * Math.sin(projparam.thetaA * deg)) / deg;
 		projparam.natrval = L.latLng(projparam.thetaA, 0.0);
 		projparam.natpole = this._natpole();
 		projparam.cpole = this._cpole();
@@ -369,8 +369,8 @@ L.Projection.WCS.COE = L.Projection.WCS.conical.extend({
 
 	_rToTheta: function (r) {
 		var deg = Math.PI / 180.0,
-		    gamma = this.projparam.gamma,
-		    sinarg = this.projparam.s1s2p1 / gamma - gamma * r * r * deg * deg / 4.0;
+			gamma = this.projparam.gamma,
+			sinarg = this.projparam.s1s2p1 / gamma - gamma * r * r * deg * deg / 4.0;
 		if (sinarg < -1.0) {
 			sinarg = -1.0;
 		} else if (sinarg > 1.0) {
@@ -380,8 +380,8 @@ L.Projection.WCS.COE = L.Projection.WCS.conical.extend({
 	},
 
 	_thetaToR: function (theta) {
-		var	deg = Math.PI / 180.0,
-		    gamma = this.projparam.gamma;
+		var deg = Math.PI / 180.0,
+			gamma = this.projparam.gamma;
 		return 2.0 / gamma * Math.sqrt(this.projparam.s1s2p1 - gamma * Math.sin(theta * deg)) / deg;
 	}
 
@@ -408,31 +408,31 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		nzoom: 9,
 		tileSize: [256, 256],
 		nativeCelsys: false			// If true, world coordinates are returned
-			                      // in the native celestial system
+		// in the native celestial system
 	},
 
 	defaultparam: {
-		ctype: {x: 'PIXEL', y: 'PIXEL'},
+		ctype: { x: 'PIXEL', y: 'PIXEL' },
 		naxis: [256, 256],
 		crpix: [129, 129],
 		crval: [0.0, 0.0],										// (\delta_0, \alpha_0)
-//	cpole: (equal to crval by default)		// (\delta_p, \alpha_p)
+		//	cpole: (equal to crval by default)		// (\delta_p, \alpha_p)
 		cd: [[1.0, 0.0], [0.0, 1.0]],
 		natrval: [90.0, 0.0],										// (\theta_0. \phi_0)
 		natpole: [90.0, 999.0],								// (\theta_p, \phi_p)
 		pv: [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-		     [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
-		      0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
+			0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+		[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+			0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]]
 	},
 
 	initialize: function (hdr, options) {
 		options = L.setOptions(this, options);
-		var	defaultparam = this.defaultparam;
+		var defaultparam = this.defaultparam;
 
 		this.tileSize = L.point(options.tileSize);
 		this.nzoom = options.nzoom;
-		this.ctype = {x: defaultparam.ctype.x, y: defaultparam.ctype.y};
+		this.ctype = { x: defaultparam.ctype.x, y: defaultparam.ctype.y };
 		this.naxis = L.point(defaultparam.naxis, true);
 		this.projparam = new this._paramInit(defaultparam);
 		if (hdr) {
@@ -442,60 +442,60 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 
 		// Identify the WCS projection type
 		switch (this.ctype.x.substr(5, 3)) {
-		case 'ZEA':
-			this.projection = new L.Projection.WCS.ZEA();
-			this.pixelFlag = false;
-			this.infinite = true;
-			break;
-		case 'TAN':
-			this.projection = new L.Projection.WCS.TAN();
-			this.pixelFlag = false;
-			this.infinite = true;
-			break;
-		case 'CAR':
-			this.projection = new L.Projection.WCS.CAR();
-			this.pixelFlag = false;
-			this.infinite = true;
-			break;
-		case 'CEA':
-			this.projection = new L.Projection.WCS.CEA();
-			this.pixelFlag = false;
-			this.infinite = true;
-			break;
-		case 'COE':
-			this.projection = new L.Projection.WCS.COE();
-			this.pixelFlag = false;
-			this.infinite = true;
-			break;
-		default:
-			this.projection = new L.Projection.WCS.PIX();
-			this.pixelFlag = true;
-			this.infinite = false;
-			// Center on image if WCS is in pixels
-			if (!this.options.crval) {
-				this.projparam.crval = L.latLng((this.naxis.y + 1.0) / 2.0,
-				                                (this.naxis.x + 1.0) / 2.0);
-			}
-			this.wrapLng = [0.5, this.naxis.x - 0.5];
-			this.wrapLat = [this.naxis.y - 0.5, 0.5];
-			break;
+			case 'ZEA':
+				this.projection = new L.Projection.WCS.ZEA();
+				this.pixelFlag = false;
+				this.infinite = true;
+				break;
+			case 'TAN':
+				this.projection = new L.Projection.WCS.TAN();
+				this.pixelFlag = false;
+				this.infinite = true;
+				break;
+			case 'CAR':
+				this.projection = new L.Projection.WCS.CAR();
+				this.pixelFlag = false;
+				this.infinite = true;
+				break;
+			case 'CEA':
+				this.projection = new L.Projection.WCS.CEA();
+				this.pixelFlag = false;
+				this.infinite = true;
+				break;
+			case 'COE':
+				this.projection = new L.Projection.WCS.COE();
+				this.pixelFlag = false;
+				this.infinite = true;
+				break;
+			default:
+				this.projection = new L.Projection.WCS.PIX();
+				this.pixelFlag = true;
+				this.infinite = false;
+				// Center on image if WCS is in pixels
+				if (!this.options.crval) {
+					this.projparam.crval = L.latLng((this.naxis.y + 1.0) / 2.0,
+						(this.naxis.x + 1.0) / 2.0);
+				}
+				this.wrapLng = [0.5, this.naxis.x - 0.5];
+				this.wrapLat = [this.naxis.y - 0.5, 0.5];
+				break;
 		}
 
 		if (!this.pixelFlag) {
 			// Identify the native celestial coordinate system
 			switch (this.ctype.x.substr(0, 1)) {
-			case 'G':
-				this.celsyscode = 'galactic';
-				break;
-			case 'E':
-				this.celsyscode = 'ecliptic';
-				break;
-			case 'S':
-				this.celsyscode = 'supergalactic';
-				break;
-			default:
-				this.celsyscode = 'equatorial';
-				break;
+				case 'G':
+					this.celsyscode = 'galactic';
+					break;
+				case 'E':
+					this.celsyscode = 'ecliptic';
+					break;
+				case 'S':
+					this.celsyscode = 'supergalactic';
+					break;
+				default:
+					this.celsyscode = 'equatorial';
+					break;
 			}
 
 			if (this.celsyscode !== 'equatorial') {
@@ -514,31 +514,31 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 
 	// convert celestial (angular) coordinates to equatorial
 	celsysToEq: function (latlng) {
-		var	cmat = this.projparam.celsysmat,
-		    deg = Math.PI / 180.0,
-				invdeg = 180.0 / Math.PI,
-			  a2 = latlng.lng * deg - cmat[1],
-			  d2 = latlng.lat * deg,
-				sd2 = Math.sin(d2),
-				cd2cp = Math.cos(d2) * cmat[2],
-				sd = sd2 * cmat[3] - cd2cp * Math.cos(a2);
+		var cmat = this.projparam.celsysmat,
+			deg = Math.PI / 180.0,
+			invdeg = 180.0 / Math.PI,
+			a2 = latlng.lng * deg - cmat[1],
+			d2 = latlng.lat * deg,
+			sd2 = Math.sin(d2),
+			cd2cp = Math.cos(d2) * cmat[2],
+			sd = sd2 * cmat[3] - cd2cp * Math.cos(a2);
 		return L.latLng(Math.asin(sd) * invdeg,
-		                ((Math.atan2(cd2cp * Math.sin(a2), sd2 - sd * cmat[3]) +
-		                 cmat[0]) * invdeg + 360.0) % 360.0);
+			((Math.atan2(cd2cp * Math.sin(a2), sd2 - sd * cmat[3]) +
+				cmat[0]) * invdeg + 360.0) % 360.0);
 	},
 
 	// convert equatorial (angular) coordinates to celestial
 	eqToCelsys: function (latlng) {
-		var	cmat = this.projparam.celsysmat,
-		    deg = Math.PI / 180.0,
-				invdeg = 180.0 / Math.PI,
-			  a = latlng.lng * deg - cmat[0],
-			  sd = Math.sin(latlng.lat * deg),
-				cdcp = Math.cos(latlng.lat * deg) * cmat[2],
-				sd2 = sd * cmat[3] + cdcp * Math.cos(a);
+		var cmat = this.projparam.celsysmat,
+			deg = Math.PI / 180.0,
+			invdeg = 180.0 / Math.PI,
+			a = latlng.lng * deg - cmat[0],
+			sd = Math.sin(latlng.lat * deg),
+			cdcp = Math.cos(latlng.lat * deg) * cmat[2],
+			sd2 = sd * cmat[3] + cdcp * Math.cos(a);
 		return L.latLng(Math.asin(sd2) * invdeg,
-		                ((Math.atan2(cdcp * Math.sin(a), sd2 * cmat[3] - sd) +
-		                 cmat[1]) * invdeg + 360.0) % 360.0);
+			((Math.atan2(cdcp * Math.sin(a), sd2 * cmat[3] - sd) +
+				cmat[1]) * invdeg + 360.0) % 360.0);
 	},
 
 
@@ -553,10 +553,10 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	// return the raw pixel scale in degrees
 	rawPixelScale: function (latlng) {
 		var p0 = this.projection.project(latlng),
-		    latlngdx = this.projection.unproject(p0.add([10.0, 0.0])),
-		    latlngdy = this.projection.unproject(p0.add([0.0, 10.0])),
-				dlngdx = latlngdx.lng - latlng.lng,
-				dlngdy = latlngdy.lng - latlng.lng;
+			latlngdx = this.projection.unproject(p0.add([10.0, 0.0])),
+			latlngdy = this.projection.unproject(p0.add([0.0, 10.0])),
+			dlngdx = latlngdx.lng - latlng.lng,
+			dlngdy = latlngdy.lng - latlng.lng;
 
 		if (dlngdx > 180.0) { dlngdx -= 360.0; }
 		else if (dlngdx < -180.0) { dlngdx += 360.0; }
@@ -564,8 +564,8 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		else if (dlngdy < -180.0) { dlngdy += 360.0; }
 
 		return 0.1 * Math.sqrt(Math.abs((dlngdx * (latlngdy.lat - latlng.lat) -
-		  dlngdy * (latlngdx.lat - latlng.lat))) *
-		  Math.cos(latlng.lat * Math.PI / 180.0));
+			dlngdy * (latlngdx.lat - latlng.lat))) *
+			Math.cos(latlng.lat * Math.PI / 180.0));
 	},
 
 	// return the current pixel scale in degrees
@@ -587,17 +587,17 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	zoomToFov: function (map, zoom, latlng) {
 		var size = map.getSize(),
 			scale = this.rawPixelScale(latlng) *
-			  Math.sqrt(size.x * size.x + size.y * size.y),
+				Math.sqrt(size.x * size.x + size.y * size.y),
 			zscale = this.scale(zoom);
-		return  zscale > 0.0 ? scale / zscale : scale;
+		return zscale > 0.0 ? scale / zscale : scale;
 	},
 
 	distance: function (latlng1, latlng2) {
 		var rad = Math.PI / 180.0,
-		    lat1 = latlng1.lat * rad,
-		    lat2 = latlng2.lat * rad,
-		    a = Math.sin(lat1) * Math.sin(lat2) +
-		        Math.cos(lat1) * Math.cos(lat2) * Math.cos((latlng2.lng - latlng1.lng) * rad);
+			lat1 = latlng1.lat * rad,
+			lat2 = latlng2.lat * rad,
+			a = Math.sin(lat1) * Math.sin(lat2) +
+				Math.cos(lat1) * Math.cos(lat2) * Math.cos((latlng2.lng - latlng1.lng) * rad);
 
 		return 180.0 / Math.PI * Math.acos(Math.min(a, 1));
 	},
@@ -641,7 +641,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 		}
 		if (newparam.cd) {
 			param.cd = [[newparam.cd[0][0], newparam.cd[0][1]],
-		           [newparam.cd[1][0], newparam.cd[1][1]]];
+			[newparam.cd[1][0], newparam.cd[1][1]]];
 		}
 		if (newparam.natrval) {
 			param.natrval = L.latLng(newparam.natrval);
@@ -658,26 +658,26 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 
 	// Generate a celestial coordinate system transformation matrix
 	_celsysmatInit: function (celcode) {
-		var	deg = Math.PI / 180.0,
-				corig, cpole,
-				cmat = [];
+		var deg = Math.PI / 180.0,
+			corig, cpole,
+			cmat = [];
 		switch (celcode) {
-		case 'galactic':
-			corig = L.latLng(-28.93617242, 266.40499625);
-			cpole = L.latLng(27.12825120, 192.85948123);
-			break;
-		case 'ecliptic':
-			corig = L.latLng(0.0, 0.0);
-			cpole = L.latLng(66.99111111, 273.85261111);
-			break;
-		case 'supergalactic':
-			corig = L.latLng(59.52315, 42.29235);
-			cpole = L.latLng(15.70480, 283.7514);
-			break;
-		default:
-			corig = L.latLng(0.0, 0.0);
-			cpole = L.latLng(0.0, 0.0);
-			break;
+			case 'galactic':
+				corig = L.latLng(-28.93617242, 266.40499625);
+				cpole = L.latLng(27.12825120, 192.85948123);
+				break;
+			case 'ecliptic':
+				corig = L.latLng(0.0, 0.0);
+				cpole = L.latLng(66.99111111, 273.85261111);
+				break;
+			case 'supergalactic':
+				corig = L.latLng(59.52315, 42.29235);
+				cpole = L.latLng(15.70480, 283.7514);
+				break;
+			default:
+				corig = L.latLng(0.0, 0.0);
+				cpole = L.latLng(0.0, 0.0);
+				break;
 		}
 		cmat[0] = cpole.lng * deg;
 		cmat[1] = Math.asin(Math.cos(corig.lat * deg) * Math.sin((cpole.lng - corig.lng) * deg));
@@ -690,8 +690,8 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	// Read WCS information from a FITS header
 	_readWCS: function (hdr) {
 		var key = L.IIPUtils.readFITSKey,
-		    projparam = this.projparam,
-		    v;
+			projparam = this.projparam,
+			v;
 		if ((v = key('CTYPE1', hdr))) { this.ctype.x = v; }
 		if ((v = key('CTYPE2', hdr))) { this.ctype.y = v; }
 		if ((v = key('NAXIS1', hdr))) { projparam.naxis.x = this.naxis.x = parseInt(v, 10); }
@@ -716,7 +716,7 @@ L.CRS.WCS = L.extend({}, L.CRS, {
 	},
 
 	_deltaLng: function (latLng, latLng0) {
-		var	dlng = latLng.lng - latLng0.lng;
+		var dlng = latLng.lng - latLng0.lng;
 
 		return dlng > 180.0 ? dlng - 360.0 : (dlng < -180.0 ? dlng + 360.0 : dlng);
 	}
@@ -740,13 +740,13 @@ L.CRS.wcs = function (options) {
 #	Last modified: 01/12/2017
 */
 L.IIPUtils = {
-// Definitions for RegExp
+	// Definitions for RegExp
 	REG_PDEC: '(\\d+\\.\\d*)',
 	REG_FLOAT: '([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?)',
 
-// Ajax call to server
+	// Ajax call to server
 	requestURL: function (url, purpose, action, context, timeout) {
-		var	httpRequest;
+		var httpRequest;
 
 		if (window.XMLHttpRequest) { // Mozilla, Safari, ...
 			httpRequest = new XMLHttpRequest();
@@ -758,7 +758,7 @@ L.IIPUtils = {
 				try {
 					httpRequest = new ActiveXObject('Microsoft.XMLHTTP');
 				}
-				catch (e) {}
+				catch (e) { }
 			}
 		}
 		if (!httpRequest) {
@@ -809,7 +809,7 @@ L.IIPUtils = {
 			separator = url.indexOf('?') !== -1 ? '&' : '?';
 
 		return url.match(re) ? url.replace(re, '$1' + keyword + '=' + value + '$2') :
-		  url + separator + keyword + '=' + value;
+			url + separator + keyword + '=' + value;
 	},
 
 	// Return the domain of a given URL (from http://stackoverflow.com/a/28054735)
@@ -860,7 +860,7 @@ L.IIPUtils = {
 		var key = keyword.trim().toUpperCase().substr(0, 8),
 			nspace = 8 - key.length,
 			keyreg = new RegExp(key + (nspace > 0 ? '\\ {' + nspace.toString() + '}' : '') +
-			 '=\\ *(?:\'((?:\\ *[^\'\\ ]+)*)\\ *\'|([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))'),
+				'=\\ *(?:\'((?:\\ *[^\'\\ ]+)*)\\ *\'|([-+]?[0-9]*\\.?[0-9]+(?:[eE][-+]?[0-9]+)?))'),
 			match = keyreg.exec(str);
 		if (!match) {
 			return null;
@@ -871,15 +871,15 @@ L.IIPUtils = {
 		}
 	},
 
-// Return the distance between two world coords latLng1 and latLng2 in degrees
+	// Return the distance between two world coords latLng1 and latLng2 in degrees
 	distance: function (latlng1, latlng2) {
 		var d2r = Math.PI / 180.0,
-		 lat1 = latlng1.lat * d2r,
-		 lat2 = latlng2.lat * d2r,
-		 dLat = lat2 - lat1,
-		 dLon = (latlng2.lng - latlng1.lng) * d2r,
-		 sin1 = Math.sin(dLat / 2),
-		 sin2 = Math.sin(dLon / 2);
+			lat1 = latlng1.lat * d2r,
+			lat2 = latlng2.lat * d2r,
+			dLat = lat2 - lat1,
+			dLon = (latlng2.lng - latlng1.lng) * d2r,
+			sin1 = Math.sin(dLat / 2),
+			sin2 = Math.sin(dLon / 2);
 
 		var a = sin1 * sin1 + sin2 * sin2 * Math.cos(lat1) * Math.cos(lat2);
 
@@ -887,13 +887,13 @@ L.IIPUtils = {
 	},
 
 	// Convert degrees to HMSDMS (DMS code from the Leaflet-Coordinates plug-in)
-	latLngToHMSDMS : function (latlng) {
+	latLngToHMSDMS: function (latlng) {
 		var lng = (latlng.lng + 360.0) / 360.0;
 		lng = (lng - Math.floor(lng)) * 24.0;
 		var h = Math.floor(lng),
-		 mf = (lng - h) * 60.0,
-		 m = Math.floor(mf),
-		 sf = (mf - m) * 60.0;
+			mf = (lng - h) * 60.0,
+			m = Math.floor(mf),
+			sf = (mf - m) * 60.0;
 		if (sf >= 60.0) {
 			m++;
 			sf = 0.0;
@@ -903,10 +903,10 @@ L.IIPUtils = {
 			m = 0;
 		}
 		var str = (h < 10 ? '0' : '') + h.toString() + ':' + (m < 10 ? '0' : '') + m.toString() +
-		 ':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
-		 lat = Math.abs(latlng.lat),
-		 sgn = latlng.lat < 0.0 ? '-' : '+',
-		 d = Math.floor(lat);
+			':' + (sf < 10.0 ? '0' : '') + sf.toFixed(3),
+			lat = Math.abs(latlng.lat),
+			sgn = latlng.lat < 0.0 ? '-' : '+',
+			d = Math.floor(lat);
 		mf = (lat - d) * 60.0;
 		m = Math.floor(mf);
 		sf = (mf - m) * 60.0;
@@ -919,22 +919,22 @@ L.IIPUtils = {
 			m = 0;
 		}
 		return str + ' ' + sgn + (d < 10 ? '0' : '') + d.toString() + ':' +
-		 (m < 10 ? '0' : '') + m.toString() + ':' +
-		 (sf < 10.0 ? '0' : '') + sf.toFixed(2);
+			(m < 10 ? '0' : '') + m.toString() + ':' +
+			(sf < 10.0 ? '0' : '') + sf.toFixed(2);
 	},
 
 	// Convert HMSDMS to degrees
 	hmsDMSToLatLng: function (str) {
 		var result;
-/* jshint ignore:start */ // Long regexp line (difficult to circumvent)
+		/* jshint ignore:start */ // Long regexp line (difficult to circumvent)
 		result = /^\s*(\d+)[h:](\d+)[m':](\d+\.?\d*)[s"]?\s*,?\s*([-+]?\d+)[d°:](\d+)[m':](\d+\.?\d*)[s"]?/g.exec(str);
-/* jshint ignore:end */
+		/* jshint ignore:end */
 		if (result && result.length >= 7) {
-			var	dd = Number(result[4]);
+			var dd = Number(result[4]);
 
 			return L.latLng((dd < 0.0 ? -1.0 : 1.0) *
-			    (Math.abs(dd) + Number(result[5]) / 60.0 + Number(result[6]) / 3600.0),
-			    Number(result[1]) * 15.0 + Number(result[2]) / 4.0 + Number(result[3]) / 240.0);
+				(Math.abs(dd) + Number(result[5]) / 60.0 + Number(result[6]) / 3600.0),
+				Number(result[1]) * 15.0 + Number(result[2]) / 4.0 + Number(result[3]) / 240.0);
 		} else {
 			return undefined;
 		}
@@ -943,18 +943,18 @@ L.IIPUtils = {
 
 	// returns the value of a specified cookie (from http://www.w3schools.com/js/js_cookies.asp)
 	getCookie: function (cname) {
-	    var name = cname + '=';
-	    var ca = document.cookie.split(';');
-	    for (var i = 0; i < ca.length; i++) {
-	        var c = ca[i];
-	        while (c.charAt(0) === ' ') {
-	            c = c.substring(1);
-	        }
-	        if (c.indexOf(name) === 0) {
-	            return c.substring(name.length, c.length);
-	        }
-	    }
-	    return '';
+		var name = cname + '=';
+		var ca = document.cookie.split(';');
+		for (var i = 0; i < ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) === ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) === 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return '';
 	}
 
 };
@@ -1055,11 +1055,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			options.subdomains = options.subdomains.split('');
 		}
 
-		this.iipTileSize = {x: 256, y: 256};
+		this.iipTileSize = { x: 256, y: 256 };
 		this.iipImageSize = [];
 		this.iipImageSize[0] = this.iipTileSize;
 		this.iipGridSize = [];
-		this.iipGridSize[0] = {x: 1, y: 1};
+		this.iipGridSize[0] = { x: 1, y: 1 };
 		this.iipBPP = 8;
 		this.iipMode = options.mixingMode;		// Image rendering mode: 'mono' or 'color'
 		this.iipChannel = 0;
@@ -1083,7 +1083,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		this.iipQuality = options.quality;
 
 		this._title = options.title.length > 0 ? options.title :
-		                this._url.match(/^.*\/(.*)\..*$/)[1];
+			this._url.match(/^.*\/(.*)\..*$/)[1];
 		this.getIIPMetaData(this._url);
 
 		// for https://github.com/Leaflet/Leaflet/issues/137
@@ -1106,13 +1106,13 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				var response = httpRequest.responseText,
-				 matches = layer._readIIPKey(response, 'IIP', L.IIPUtils.REG_PDEC);
+					matches = layer._readIIPKey(response, 'IIP', L.IIPUtils.REG_PDEC);
 				if (!matches) {
 					alert('Error: Unexpected response from IIP server ' +
-					 layer._url.replace(/\?.*$/g, ''));
+						layer._url.replace(/\?.*$/g, ''));
 				}
 				var options = layer.options,
-				    iipdefault = layer.iipdefault;
+					iipdefault = layer.iipdefault;
 
 				matches = layer._readIIPKey(response, 'Max-size', '(\\d+)\\s+(\\d+)');
 				var maxsize = {
@@ -1164,10 +1164,10 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 				// Pre-computed min and max pixel values, as well as number of channels
 				matches = layer._readIIPKey(response, 'Min-Max-sample-values',
-				 '\\s*(.*)');
+					'\\s*(.*)');
 				var str = matches[1].split(/\s+/),
-				    nchannel = layer.iipNChannel = (str.length / 2),
-				    mmc = 0;
+					nchannel = layer.iipNChannel = (str.length / 2),
+					mmc = 0;
 				for (var c = 0; c < nchannel; c++) {
 					iipdefault.minValue[c] = parseFloat(str[mmc++]);
 					iipdefault.maxValue[c] = parseFloat(str[mmc++]);
@@ -1197,13 +1197,13 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 				// Channel labels
 				var inlabels = options.channelLabels,
-				    ninlabel = inlabels.length,
-				    labels = layer.iipChannelLabels,
-				    inunits = options.channelUnits,
-				    ninunits = inunits.length,
-				    units = layer.iipChannelUnits,
-						key = L.IIPUtils.readFITSKey,
-						numstr, value;
+					ninlabel = inlabels.length,
+					labels = layer.iipChannelLabels,
+					inunits = options.channelUnits,
+					ninunits = inunits.length,
+					units = layer.iipChannelUnits,
+					key = L.IIPUtils.readFITSKey,
+					numstr, value;
 
 				for (c = 0; c < nchannel; c++) {
 					if (c < ninlabel) {
@@ -1211,8 +1211,8 @@ L.TileLayer.IIP = L.TileLayer.extend({
 					} else {
 						numstr = (c + 1).toString();
 						value = key('CHAN' +
-						  (c < 9 ? '000' : (c < 99 ? '00' : (c < 999 ? '0' : ''))) + numstr,
-						  response);
+							(c < 9 ? '000' : (c < 99 ? '00' : (c < 999 ? '0' : ''))) + numstr,
+							response);
 						labels[c] = value ? value : 'Channel #' + numstr;
 					}
 				}
@@ -1228,12 +1228,12 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 				// Initialize mixing matrix depending on arguments and the number of channels
 				var cc = 0,
-				    mix = layer.iipMix,
-						omix = options.channelColors,
-						rgb = layer.iipRGB,
-						re = new RegExp(options.channelLabelMatch),
-						nchanon = 0,
-						channelflags = layer.iipChannelFlags;
+					mix = layer.iipMix,
+					omix = options.channelColors,
+					rgb = layer.iipRGB,
+					re = new RegExp(options.channelLabelMatch),
+					nchanon = 0,
+					channelflags = layer.iipChannelFlags;
 
 				nchanon = 0;
 				for (c = 0; c < nchannel; c++) {
@@ -1248,7 +1248,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 				for (c = 0; c < nchannel; c++) {
 					mix[c] = [];
-					var	col = 3;
+					var col = 3;
 					if (omix.length && omix[c] && omix[c].length === 3) {
 						// Copy RGB triplet
 						rgb[c] = L.rgb(omix[c][0], omix[c][1], omix[c][2]);
@@ -1286,11 +1286,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			rgb = this.iipRGB[chan];
 		}
 
-		var	cr = this._gammaCorr(rgb.r),
-			  cg = this._gammaCorr(rgb.g),
-				cb = this._gammaCorr(rgb.b),
-			  lum = (cr + cg + cb) / 3.0,
-			  alpha = this.iipColorSat / 3.0;
+		var cr = this._gammaCorr(rgb.r),
+			cg = this._gammaCorr(rgb.g),
+			cb = this._gammaCorr(rgb.b),
+			lum = (cr + cg + cb) / 3.0,
+			alpha = this.iipColorSat / 3.0;
 
 		this.iipMix[chan][0] = lum + alpha * (2.0 * cr - cg - cb);
 		this.iipMix[chan][1] = lum + alpha * (2.0 * cg - cr - cb);
@@ -1340,11 +1340,11 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 	_addToMap: function (map) {
 		var zoom,
-		    newcrs = this.wcs,
-				curcrs = map.options.crs,
-				prevcrs = map._prevcrs,
-				maploadedflag = map._loaded,
-				center;
+			newcrs = this.wcs,
+			curcrs = map.options.crs,
+			prevcrs = map._prevcrs,
+			maploadedflag = map._loaded,
+			center;
 
 		if (maploadedflag) {
 			curcrs._prevLatLng = map.getCenter();
@@ -1356,34 +1356,34 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 		// Go to previous layers' coordinates if applicable
 		if (prevcrs && newcrs !== curcrs && maploadedflag &&
-		    newcrs.pixelFlag === curcrs.pixelFlag) {
+			newcrs.pixelFlag === curcrs.pixelFlag) {
 			center = curcrs._prevLatLng;
 			zoom = curcrs._prevZoom;
 			var prevpixscale = prevcrs.pixelScale(zoom, center),
-			    newpixscale = newcrs.pixelScale(zoom, center);
+				newpixscale = newcrs.pixelScale(zoom, center);
 			if (prevpixscale > 1e-20 && newpixscale > 1e-20) {
 				zoom += Math.round(Math.LOG2E *
-				  Math.log(newpixscale / prevpixscale));
+					Math.log(newpixscale / prevpixscale));
 			}
-		// Else go back to previous recorded position for the new layer
+			// Else go back to previous recorded position for the new layer
 		} else if (newcrs._prevLatLng) {
 			center = newcrs._prevLatLng;
 			zoom = newcrs._prevZoom;
 		} else if (this.options.center) {
 			// Default center coordinates and zoom
 			var latlng = (typeof this.options.center === 'string') ?
-			  newcrs.parseCoords(decodeURI(this.options.center)) :
-			  this.options.center;
+				newcrs.parseCoords(decodeURI(this.options.center)) :
+				this.options.center;
 			if (latlng) {
 				if (this.options.fov) {
 					zoom = newcrs.fovToZoom(map, this.options.fov, latlng);
 				}
-				map.setView(latlng, zoom, {reset: true, animate: false});
+				map.setView(latlng, zoom, { reset: true, animate: false });
 			} else {
 				// If not, ask Sesame@CDS!
 				L.IIPUtils.requestURL(
 					this.options.sesameURL + '/-oI/A?' +
-					  this.options.center,
+					this.options.center,
 					'getting coordinates for ' + this.options.center,
 					function (_this, httpRequest) {
 						if (httpRequest.readyState === 4) {
@@ -1394,13 +1394,13 @@ L.TileLayer.IIP = L.TileLayer.extend({
 									if (_this.options.fov) {
 										zoom = newcrs.fovToZoom(map, _this.options.fov, latlng);
 									}
-									map.setView(latlng, zoom, {reset: true, animate: false});
+									map.setView(latlng, zoom, { reset: true, animate: false });
 								} else {
-									map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+									map.setView(newcrs.projparam.crval, zoom, { reset: true, animate: false });
 									alert(str + ': Unknown location');
 								}
 							} else {
-								map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+								map.setView(newcrs.projparam.crval, zoom, { reset: true, animate: false });
 								alert('There was a problem with the request to the Sesame service at CDS');
 							}
 						}
@@ -1408,16 +1408,16 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				);
 			}
 		} else {
-			map.setView(newcrs.projparam.crval, zoom, {reset: true, animate: false});
+			map.setView(newcrs.projparam.crval, zoom, { reset: true, animate: false });
 		}
 	},
 
 	_getTileSizeFac: function () {
-		var	map = this._map,
+		var map = this._map,
 			zoom = this._tileZoom,
 			zoomN = this.options.maxNativeZoom;
 		return (zoomN && zoom > zoomN) ?
-				Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN)) : 1;
+			Math.round(map.getZoomScale(zoom) / map.getZoomScale(zoomN)) : 1;
 	},
 
 	_isValidTile: function (coords) {
@@ -1427,12 +1427,12 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			// don't load tile if it's out of bounds and not wrapped
 			var bounds = this._globalTileRange;
 			if ((!crs.wrapLng && (coords.x < bounds.min.x || coords.x > bounds.max.x)) ||
-			    (!crs.wrapLat && (coords.y < bounds.min.y || coords.y > bounds.max.y))) { return false; }
+				(!crs.wrapLat && (coords.y < bounds.min.y || coords.y > bounds.max.y))) { return false; }
 		}
 
 		// don't load tile if it's out of the tile grid
 		var z = this._getZoomForUrl(),
-		    wcoords = coords.clone();
+			wcoords = coords.clone();
 		this._wrapCoords(wcoords);
 		if (wcoords.x < 0 || wcoords.x >= this.iipGridSize[z].x ||
 			wcoords.y < 0 || wcoords.y >= this.iipGridSize[z].y) {
@@ -1447,7 +1447,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	createTile: function (coords, done) {
-		var	tile = L.TileLayer.prototype.createTile.call(this, coords, done);
+		var tile = L.TileLayer.prototype.createTile.call(this, coords, done);
 
 		tile.coords = coords;
 
@@ -1455,7 +1455,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 	},
 
 	getTileUrl: function (coords) {
-		var	str = this._url,
+		var str = this._url,
 			z = this._getZoomForUrl();
 
 		if (this.iipCMap !== this.iipdefault.cMap) {
@@ -1472,15 +1472,15 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		}
 		for (var c = 0; c < this.iipNChannel; c++) {
 			if (this.iipMinValue[c] !== this.iipdefault.minValue[c] ||
-			   this.iipMaxValue[c] !== this.iipdefault.maxValue[c]) {
+				this.iipMaxValue[c] !== this.iipdefault.maxValue[c]) {
 				str += '&MINMAX=' + (c + 1).toString() + ':' +
-				   this.iipMinValue[c].toString() + ',' + this.iipMaxValue[c].toString();
+					this.iipMinValue[c].toString() + ',' + this.iipMaxValue[c].toString();
 			}
 		}
 
 		var nchannel = this.iipNChannel,
-		    mix = this.iipMix,
-		    m, n;
+			mix = this.iipMix,
+			m, n;
 
 		str += '&CTW=';
 
@@ -1495,7 +1495,7 @@ L.TileLayer.IIP = L.TileLayer.extend({
 				}
 			}
 		} else {
-			var	cc = this.iipChannel;
+			var cc = this.iipChannel;
 
 			if (cc >= nchannel) { cc = 0; }
 			if (cc < nchannel) { nchannel = cc + 1; }
@@ -1512,12 +1512,12 @@ L.TileLayer.IIP = L.TileLayer.extend({
 			str += '&QLT=' + this.iipQuality.toString();
 		}
 		return str + '&JTL=' + z.toString() + ',' +
-		 (coords.x + this.iipGridSize[z].x * coords.y).toString();
+			(coords.x + this.iipGridSize[z].x * coords.y).toString();
 	},
 
 	_initTile: function (tile) {
 		L.DomUtil.addClass(tile, 'leaflet-tile');
-		var	tileSizeFac = this._getTileSizeFac();
+		var tileSizeFac = this._getTileSizeFac();
 
 		// Force pixels to be visible at high zoom factos whenever possible
 		if (tileSizeFac > 1) {
@@ -1533,14 +1533,14 @@ L.TileLayer.IIP = L.TileLayer.extend({
 		}
 
 		// Compute tile size (IIP tile size can be less at image borders)
-		var	coords = tile.coords,
+		var coords = tile.coords,
 			z = this._getZoomForUrl();
 
 		if (z > this.iipMaxZoom) { z = this.iipMaxZoom; }
 		var sizeX = coords.x + 1 === this.iipGridSize[z].x ?
-			    this.iipImageSize[z].x % this.iipTileSize.x : this.iipTileSize.x,
-			  sizeY = coords.y + 1 === this.iipGridSize[z].y ?
-			    this.iipImageSize[z].y % this.iipTileSize.y : this.iipTileSize.y;
+			this.iipImageSize[z].x % this.iipTileSize.x : this.iipTileSize.x,
+			sizeY = coords.y + 1 === this.iipGridSize[z].y ?
+				this.iipImageSize[z].y % this.iipTileSize.y : this.iipTileSize.y;
 
 		if (sizeX === 0) {
 			sizeX = this.iipTileSize.x;
@@ -1551,14 +1551,14 @@ L.TileLayer.IIP = L.TileLayer.extend({
 
 		sizeX *= tileSizeFac;
 		sizeY *= tileSizeFac;
-/*
-		// Add an extra 1/2 pixel as an ugly fix to the tile gap pb in some browsers
-		if (L.Browser.chrome || L.Browser.safari) {
-			sizeX += 0.5;
-			sizeY += 0.5;
-		}
-*/
-		tile.style.width = sizeX  + 'px';
+		/*
+				// Add an extra 1/2 pixel as an ugly fix to the tile gap pb in some browsers
+				if (L.Browser.chrome || L.Browser.safari) {
+					sizeX += 0.5;
+					sizeY += 0.5;
+				}
+		*/
+		tile.style.width = sizeX + 'px';
 		tile.style.height = sizeY + 'px';
 
 		tile.onselectstart = L.Util.falseFn;
@@ -1607,8 +1607,8 @@ L.RGB.prototype = {
 
 	toStr: function () {
 		var r = Math.round(this.r * 255.0),
-		    g = Math.round(this.g * 255.0),
-		    b = Math.round(this.b * 255.0);
+			g = Math.round(this.g * 255.0),
+			b = Math.round(this.b * 255.0);
 
 		if (r < 0.0) { r = 0.0; } else if (r > 255.0) { r = 255.0; }
 		if (g < 0.0) { g = 0.0; } else if (g > 255.0) { g = 255.0; }
@@ -1673,17 +1673,17 @@ L.EllipseMarker = L.Path.extend({
 		this._posAngle = this.options.posAngle;
 		this._latlng = L.latLng(latlng);
 
-		var	deg = Math.PI / 180.0,
-			  cpa = Math.cos(this._posAngle * deg),
-			  spa = Math.sin(this._posAngle * deg),
-			  cpa2 = cpa * cpa,
-			  spa2 = spa * spa,
-			  a2 = this._majAxis * this._majAxis,
-			  b2 = this._minAxis * this._minAxis,
-			  mx2 = a2 * cpa2 + b2 * spa2,
-			  my2 = a2 * spa2 + b2 * cpa2,
-			  mxy = (a2 - b2) * cpa * spa,
-			  c = mx2 * my2 - mxy * mxy;
+		var deg = Math.PI / 180.0,
+			cpa = Math.cos(this._posAngle * deg),
+			spa = Math.sin(this._posAngle * deg),
+			cpa2 = cpa * cpa,
+			spa2 = spa * spa,
+			a2 = this._majAxis * this._majAxis,
+			b2 = this._minAxis * this._minAxis,
+			mx2 = a2 * cpa2 + b2 * spa2,
+			my2 = a2 * spa2 + b2 * cpa2,
+			mxy = (a2 - b2) * cpa * spa,
+			c = mx2 * my2 - mxy * mxy;
 
 		this._limX = Math.sqrt(mx2);
 		this._limY = Math.sqrt(my2);
@@ -1702,7 +1702,7 @@ L.EllipseMarker = L.Path.extend({
 	setLatLng: function (latlng) {
 		this._latlng = L.latLng(latlng);
 		this.redraw();
-		return this.fire('move', {latlng: this._latlng});
+		return this.fire('move', { latlng: this._latlng });
 	},
 
 	getLatLng: function () {
@@ -1717,7 +1717,7 @@ L.EllipseMarker = L.Path.extend({
 	},
 
 	getParams: function () {
-		var	ellipseParams;
+		var ellipseParams;
 
 		ellipseParams.majAxis = this._majAxis;
 		ellipseParams.minAxis = this._minAxis;
@@ -1734,7 +1734,7 @@ L.EllipseMarker = L.Path.extend({
 
 	_updateBounds: function () {
 		var w = this._clickTolerance(),
-		    p = [this._limX + w, this._limY + w];
+			p = [this._limX + w, this._limY + w];
 		this._pxBounds = new L.Bounds(this._point.subtract(p), this._point.add(p));
 	},
 
@@ -1753,13 +1753,13 @@ L.EllipseMarker = L.Path.extend({
 	},
 
 	_containsPoint: function (p) {
-		var	dp = p.subtract(this._point),
-			  ct = this._clickTolerance(),
-			  dx = Math.abs(dp.x) - ct,
-			  dy = Math.abs(dp.y) - ct;
+		var dp = p.subtract(this._point),
+			ct = this._clickTolerance(),
+			dx = Math.abs(dp.x) - ct,
+			dy = Math.abs(dp.y) - ct;
 
 		return this._cXX * (dx > 0.0 ? dx * dx : 0.0) +
-		  this._cYY * (dy > 0.0 ? dy * dy : 0.0) + this._cXY * (dp.x * dp.y) <= 1.0;
+			this._cYY * (dy > 0.0 ? dy * dy : 0.0) + this._cXY * (dp.x * dp.y) <= 1.0;
 	}
 });
 
@@ -1773,9 +1773,9 @@ L.Canvas.include({
 		if (layer._empty()) { return; }
 
 		var p = layer._point,
-		    ctx = this._ctx,
-		    r = layer._minAxis,
-		    s = layer._majAxis / layer._minAxis;
+			ctx = this._ctx,
+			r = layer._minAxis,
+			s = layer._majAxis / layer._minAxis;
 
 		ctx.save();
 		ctx.translate(p.x, p.y);
@@ -1793,18 +1793,18 @@ L.Canvas.include({
 L.SVG.include({
 	_updateEllipse: function (layer) {
 		var deg = Math.PI / 180.0,
-		    p = layer._point,
-		    r = layer._minAxis,
-		    r2 = layer._majAxis,
-		    dx = r * Math.cos(layer._posAngle * deg),
-				dy = r * Math.sin(layer._posAngle * deg),
-		    arc = 'a' + r + ',' + r2 + ' ' + layer._posAngle + ' 1,0 ';
+			p = layer._point,
+			r = layer._minAxis,
+			r2 = layer._majAxis,
+			dx = r * Math.cos(layer._posAngle * deg),
+			dy = r * Math.sin(layer._posAngle * deg),
+			arc = 'a' + r + ',' + r2 + ' ' + layer._posAngle + ' 1,0 ';
 
 		// drawing a circle with two half-arcs
 		var d = layer._empty() ? 'M0 0' :
-				'M' + (p.x - dx) + ',' + (p.y - dy) +
-				arc + (dx * 2) + ',' + (dy * 2) + ' ' +
-				arc + (-dx * 2) + ',' + (-dy * 2) + ' ';
+			'M' + (p.x - dx) + ',' + (p.y - dy) +
+			arc + (dx * 2) + ',' + (dy * 2) + ' ' +
+			arc + (-dx * 2) + ',' + (-dy * 2) + ' ';
 
 		this._setPath(layer, d);
 	}
@@ -1832,13 +1832,13 @@ L.Ellipse = L.EllipseMarker.extend({
 	initialize: function (latlng, options) {
 		L.setOptions(this, options);
 
-		var	deg = Math.PI / 180.0,
-			  cpa = Math.cos(this.options.posAngle * deg),
-			  spa = Math.sin(this.options.posAngle * deg),
-			  cpa2 = cpa * cpa,
-			  spa2 = spa * spa,
-			  a2 = this.options.majAxis * this.options.majAxis,
-			  b2 = this.options.minAxis * this.options.minAxis;
+		var deg = Math.PI / 180.0,
+			cpa = Math.cos(this.options.posAngle * deg),
+			spa = Math.sin(this.options.posAngle * deg),
+			cpa2 = cpa * cpa,
+			spa2 = spa * spa,
+			a2 = this.options.majAxis * this.options.majAxis,
+			b2 = this.options.minAxis * this.options.minAxis;
 		this._latlng = L.latLng(latlng);
 		// Compute quadratic forms to be used for coordinate transforms
 		this._mLat2 = a2 * cpa2 + b2 * spa2;
@@ -1855,33 +1855,33 @@ L.Ellipse = L.EllipseMarker.extend({
 	},
 
 	_project: function () {
-		var	map = this._map,
-			  crs = map.options.crs;
+		var map = this._map,
+			crs = map.options.crs;
 
 		this._point = map.latLngToLayerPoint(this._latlng);
 		if (!this._majAxis1) {
 			var lng = this._latlng.lng,
-			    lat = this._latlng.lat,
-					deg = Math.PI / 180.0,
-					clat = Math.cos(lat * deg),
-					dl = lat < 90.0 ? 0.001 : -0.001,
-					point = crs.project(this._latlng),
-			    dpointdlat = crs.project(L.latLng(lat + dl, lng)).subtract(point),
-			    dpointdlng = crs.project(L.latLng(lat, lng + dl * 1.0 /
-					  (clat > dl ? clat : dl))).subtract(point),
-					c11 = dpointdlat.x / dl,
-					c12 = dpointdlng.x / dl,
-					c21 = dpointdlat.y / dl,
-					c22 = dpointdlng.y / dl,
-				  mx2 = c11 * c11 * this._mLat2 + c12 * c12 * this._mLng2 +
-			  2.0 * c11 * c12 * this._mLatLng,
-				  my2 = c21 * c21 * this._mLat2 + c22 * c22 * this._mLng2 +
-			  2.0 * c21 * c22 * this._mLatLng,
-				  mxy = c11 * c21 * this._mLat2 + c12 * c22 * this._mLng2 +
-			  (c11 * c22 + c12 * c21) * this._mLatLng,
-				  a1 = 0.5 * (mx2 + my2),
-				  a2 = Math.sqrt(0.25 * (mx2 - my2) * (mx2 - my2) + mxy * mxy),
-				  a3 = mx2 * my2 - mxy * mxy;
+				lat = this._latlng.lat,
+				deg = Math.PI / 180.0,
+				clat = Math.cos(lat * deg),
+				dl = lat < 90.0 ? 0.001 : -0.001,
+				point = crs.project(this._latlng),
+				dpointdlat = crs.project(L.latLng(lat + dl, lng)).subtract(point),
+				dpointdlng = crs.project(L.latLng(lat, lng + dl * 1.0 /
+					(clat > dl ? clat : dl))).subtract(point),
+				c11 = dpointdlat.x / dl,
+				c12 = dpointdlng.x / dl,
+				c21 = dpointdlat.y / dl,
+				c22 = dpointdlng.y / dl,
+				mx2 = c11 * c11 * this._mLat2 + c12 * c12 * this._mLng2 +
+					2.0 * c11 * c12 * this._mLatLng,
+				my2 = c21 * c21 * this._mLat2 + c22 * c22 * this._mLng2 +
+					2.0 * c21 * c22 * this._mLatLng,
+				mxy = c11 * c21 * this._mLat2 + c12 * c22 * this._mLng2 +
+					(c11 * c22 + c12 * c21) * this._mLatLng,
+				a1 = 0.5 * (mx2 + my2),
+				a2 = Math.sqrt(0.25 * (mx2 - my2) * (mx2 - my2) + mxy * mxy),
+				a3 = mx2 * my2 - mxy * mxy;
 			this._majAxis = this._majAxis1 = Math.sqrt(a1 + a2);
 			this._minAxis = this._minAxis1 = a1 > a2 ? Math.sqrt(a1 - a2) : 0.0;
 			this._posAngle = 0.5 * Math.atan2(2.0 * mxy, mx2 - my2) / deg;
@@ -1900,7 +1900,7 @@ L.Ellipse = L.EllipseMarker.extend({
 		}
 
 		var scale = crs.scale(map._zoom),
-			  invscale2 = 1.0 / (scale * scale);
+			invscale2 = 1.0 / (scale * scale);
 		// Ellipse parameters have already
 		this._majAxis = this._majAxis1 * scale;
 		this._minAxis = this._minAxis1 * scale;
@@ -1937,8 +1937,8 @@ L.Catalog = {
 	_csvToGeoJSON: function (str) {
 		// Check to see if the delimiter is defined. If not, then default to comma.
 		var badreg = new RegExp('#|--|objName|string|^$'),
-		 lines = str.split('\n'),
-		 geo = {type: 'FeatureCollection', features: []};
+			lines = str.split('\n'),
+			geo = { type: 'FeatureCollection', features: [] };
 
 		for (var i in lines) {
 			var line = lines[i];
@@ -1954,15 +1954,15 @@ L.Catalog = {
 						coordinates: [0.0, 0.0]
 					}
 				},
-				geometry = feature.geometry,
-				properties = feature.properties;
+					geometry = feature.geometry,
+					properties = feature.properties;
 
 				var cell = line.split(/[,;\t]/);
 				feature.id = cell[0];
 				geometry.coordinates[0] = parseFloat(cell[1]);
 				geometry.coordinates[1] = parseFloat(cell[2]);
 				var items = cell.slice(3),
-				    item;
+					item;
 				for (var j in items) {
 					properties.items.push(this.readProperty(items[j]));
 				}
@@ -1973,7 +1973,7 @@ L.Catalog = {
 	},
 
 	readProperty: function (item) {
-		var	fitem = parseFloat(item);
+		var fitem = parseFloat(item);
 		return isNaN(fitem) ? '--' : fitem;
 	},
 
@@ -1984,7 +1984,7 @@ L.Catalog = {
 	popup: function (feature) {
 		var str = '<div>';
 		if (this.objurl) {
-			str += 'ID: <a href=\"' +  L.Util.template(this.objurl, L.extend({
+			str += 'ID: <a href=\"' + L.Util.template(this.objurl, L.extend({
 				ra: feature.geometry.coordinates[0].toFixed(6),
 				dec: feature.geometry.coordinates[1].toFixed(6)
 			})) + '\" target=\"_blank\">' + feature.id + '</a></div>';
@@ -1992,11 +1992,11 @@ L.Catalog = {
 			str += 'ID: ' + feature.id + '</div>';
 		}
 		str += '<TABLE style="margin:auto;">' +
-		       '<TBODY style="vertical-align:top;text-align:left;">';
+			'<TBODY style="vertical-align:top;text-align:left;">';
 		for (var i in this.properties) {
 			if (this.propertyMask === undefined || this.propertyMask[i] === true) {
 				str += '<TR><TD>' + this.properties[i] + ':</TD>' +
-				       '<TD>' + feature.properties.items[i].toString() + ' ';
+					'<TD>' + feature.properties.items[i].toString() + ' ';
 				if (this.units[i]) {
 					str += this.units[i];
 				}
@@ -2033,9 +2033,9 @@ L.Catalog['2MASS'] = L.extend({}, L.Catalog, {
 	maglim: 17.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/246&' +
-	 '-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&' +
-	 '-out.max={nmax}&-sort=Jmag',
+		'-out=2MASS,RAJ2000,DEJ2000,Jmag,Hmag,Kmag&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&' +
+		'-out.max={nmax}&-sort=Jmag',
 	properties: ['J', 'H', 'K'],
 	units: ['', '', ''],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
@@ -2050,8 +2050,8 @@ L.Catalog.SDSS = L.extend({}, L.Catalog, {
 	maglim: 25.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=V/147&' +
-	 '-out=SDSS12,RA_ICRS,DE_ICRS,umag,gmag,rmag,imag,zmag&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag',
+		'-out=SDSS12,RA_ICRS,DE_ICRS,umag,gmag,rmag,imag,zmag&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag',
 	properties: ['u', 'g', 'r', 'i', 'z'],
 	units: ['', '', '', '', ''],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.01'
@@ -2066,11 +2066,11 @@ L.Catalog.PPMXL = L.extend({}, L.Catalog, {
 	maglim: 20.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/317&' +
-	 '-out=PPMXL,RAJ2000,DEJ2000,Jmag,Hmag,Kmag,b1mag,b2mag,r1mag,r2mag,imag,pmRA,pmDE&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Jmag',
+		'-out=PPMXL,RAJ2000,DEJ2000,Jmag,Hmag,Kmag,b1mag,b2mag,r1mag,r2mag,imag,pmRA,pmDE&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Jmag',
 	properties: ['J', 'H', 'K', 'b<sub>1</sub>', 'b<sub>2</sub>', 'r<sub>1</sub>',
-	             'r<sub>2</sub>', 'i',
-	             '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
+		'r<sub>2</sub>', 'i',
+		'&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', '', '', '', '', '', '', '', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/317&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
@@ -2084,8 +2084,8 @@ L.Catalog.Abell = L.extend({}, L.Catalog, {
 	maglim: 30.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VII/110A&' +
-	 '-out=ACO,_RAJ2000,_DEJ2000,m10,Rich,Dclass&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=m10',
+		'-out=ACO,_RAJ2000,_DEJ2000,m10,Rich,Dclass&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=m10',
 	properties: ['m<sub>10</sub>', 'Richness', 'D<sub>class</sub>'],
 	units: ['', '', ''],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VII/110A&-c={ra},{dec},eq=J2000&-c.rs=0.2'
@@ -2100,8 +2100,8 @@ L.Catalog.NVSS = L.extend({}, L.Catalog, {
 	maglim: 30.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/65/NVSS&' +
-	 '-out=NVSS,_RAJ2000,_DEJ2000,S1.4,MajAxis,MinAxis,PA&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-S1.4',
+		'-out=NVSS,_RAJ2000,_DEJ2000,S1.4,MajAxis,MinAxis,PA&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-S1.4',
 	properties: ['S<sub>1.4GHz</sub>', 'Major axis', 'Minor axis', 'Position angle'],
 	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VIII/65/NVSS&-c={ra},{dec},eq=J2000&-c.rs=0.2',
@@ -2123,8 +2123,8 @@ L.Catalog.FIRST = L.extend({}, L.Catalog, {
 	maglim: 30.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/92/first14&' +
-	 '-out=FIRST,_RAJ2000,_DEJ2000,Fpeak,fMaj,fMin,fPA&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fpeak',
+		'-out=FIRST,_RAJ2000,_DEJ2000,Fpeak,fMaj,fMin,fPA&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fpeak',
 	properties: ['F<sub>peak</sub>(1.4GHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
 	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VIII/92/first14&-c={ra},{dec},eq=J2000&-c.rs=0.2',
@@ -2146,10 +2146,10 @@ L.Catalog.AllWISE = L.extend({}, L.Catalog, {
 	maglim: 18.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/328/allwise&' +
-	 '-out=AllWISE,_RAJ2000,_DEJ2000,W1mag,W2mag,W3mag,W4mag&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=W1mag',
+		'-out=AllWISE,_RAJ2000,_DEJ2000,W1mag,W2mag,W3mag,W4mag&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=W1mag',
 	properties: ['W1<sub>mag</sub> (3.4µm)', 'W2<sub>mag</sub> (4.6µm)',
-	  'W3<sub>mag</sub> (12µm)', 'W4<sub>mag</sub> (22µm)'],
+		'W3<sub>mag</sub> (12µm)', 'W4<sub>mag</sub> (22µm)'],
 	units: ['', '', '', ''],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/328/allwise&-c={ra},{dec},eq=J2000&-c.rs=0.2'
 });
@@ -2163,8 +2163,8 @@ L.Catalog.GALEX_AIS = L.extend({}, L.Catalog, {
 	maglim: 21.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/312/ais&' +
-	 '-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=FUV',
+		'-out=objid,_RAJ2000,_DEJ2000,FUV,NUV&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=FUV',
 	properties: ['FUV<sub>AB</sub>', 'NUV<sub>AB</sub>'],
 	units: ['', ''],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/312/ais&-c={ra},{dec},eq=J2000&-c.rs=0.2'
@@ -2179,8 +2179,8 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	maglim: 20.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/337&' +
-	 '-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=<Gmag>',
+		'-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=<Gmag>',
 	properties: ['G', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
@@ -2195,8 +2195,8 @@ L.Catalog.URAT_1 = L.extend({}, L.Catalog, {
 	maglim: 17.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/329&' +
-	 '-out=URAT1,RAJ2000,DEJ2000,f.mag,pmRA,pmDE&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=f.mag',
+		'-out=URAT1,RAJ2000,DEJ2000,f.mag,pmRA,pmDE&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=f.mag',
 	properties: ['f<sub>mag</sub>', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/329&-c={ra},{dec},eq=J2000&-c.rs=0.01'
@@ -2212,20 +2212,20 @@ L.Catalog.PanStarrs = L.extend({}, L.Catalog, {
 	magindex: 1,
 	regionType: 'cone',
 	url: L.Catalog.mastURL + '/panstarrs/search.php?' +
-	 'action=Search&target=&radius={drm}&ra={lng}&dec={lat}&equinox={sys}&nDetections=%3E+1&' +
-	 'selectedColumnsCsv=objname%2Cramean%2Cdecmean%2C' +
-	 'gmeankronmag%2Crmeankronmag%2Cimeankronmag%2Czmeankronmag%2Cymeankronmag%2CqualityFlag&' +
-	 'selectedColumnsList%5B%5D=rmeankronmag&availableColumns=objname&ordercolumn1=gmeankronmag&' +
-	 'coordformat=dec&outputformat=TSV&max_records={nmax}',
+		'action=Search&target=&radius={drm}&ra={lng}&dec={lat}&equinox={sys}&nDetections=%3E+1&' +
+		'selectedColumnsCsv=objname%2Cramean%2Cdecmean%2C' +
+		'gmeankronmag%2Crmeankronmag%2Cimeankronmag%2Czmeankronmag%2Cymeankronmag%2CqualityFlag&' +
+		'selectedColumnsList%5B%5D=rmeankronmag&availableColumns=objname&ordercolumn1=gmeankronmag&' +
+		'coordformat=dec&outputformat=TSV&max_records={nmax}',
 	properties: ['g', 'r', 'i', 'z', 'y', 'quality'],
 	units: ['', '', '', '', '', ''],
 	propertyMask: [true, true, true, true, true, false],
 	readProperty: function (item) {
-		var	fitem = parseFloat(item);
+		var fitem = parseFloat(item);
 		return fitem < 0.0 ? '--' : fitem;
 	},
 	objurl: L.Catalog.mastURL + '/panstarrs/search.php?' +
-	 'action=Search&target=&radius=0.001&ra={ra}&dec={dec}&equinox=J2000&nDetections=%3E+1',
+		'action=Search&target=&radius=0.001&ra={ra}&dec={dec}&equinox=J2000&nDetections=%3E+1',
 	filter: function (feature) {
 		return parseFloat(feature.properties.items[5]) >= 40;
 	}
@@ -2236,13 +2236,13 @@ L.Catalog.GLEAM = L.extend({}, L.Catalog, {
 	name: 'GLEAM',
 	className: 'logo-catalog-vizier',
 	attribution: 'GaLactic and Extragalactic All-sky Murchison Wide Field Array (GLEAM)' +
-	    ' low-frequency extragalactic catalogue (Hurley-Walker et al. 2017)',
+		' low-frequency extragalactic catalogue (Hurley-Walker et al. 2017)',
 	color: 'blue',
 	maglim: 30.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=VIII/100/gleamegc&' +
-	 '-out=GLEAM,RAJ2000,DEJ2000,Fintwide,awide,bwide,pawide&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fintwide',
+		'-out=GLEAM,RAJ2000,DEJ2000,Fintwide,awide,bwide,pawide&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fintwide',
 	properties: ['F<sub>int</sub>(170-231MHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
 	units: ['Jy', '&#8243;', '&#8243;', '&#176;'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=-source=VIII/100/gleamegc&-c={ra},{dec},eq=J2000&-c.rs=0.2',
@@ -2264,8 +2264,8 @@ L.Catalog.TGSS = L.extend({}, L.Catalog, {
 	maglim: 30.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=J/A%2bA/598/A78/table3&' +
-	 '-out=TGSSADR,RAJ2000,DEJ2000,Stotal,Maj,Min,PA&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Stotal',
+		'-out=TGSSADR,RAJ2000,DEJ2000,Stotal,Maj,Min,PA&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Stotal',
 	properties: ['F<sub>peak</sub>(150MHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
 	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
 	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=-source=J/A%2bA/598/A78/table3&-c={ra},{dec},eq=J2000&-c.rs=0.2',
@@ -2301,10 +2301,10 @@ L.FlipSwitch = L.Evented.extend({
 	initialize: function (parent, options) {
 		options = L.setOptions(this, options);
 		var _this = this,
-			  className = options.className,
-			  button = L.DomUtil.create('div', className, parent),
-				input = this._input = L.DomUtil.create('input', className, button),
-				label = L.DomUtil.create('label', className, button);
+			className = options.className,
+			button = L.DomUtil.create('div', className, parent),
+			input = this._input = L.DomUtil.create('input', className, button),
+			label = L.DomUtil.create('label', className, button);
 
 		input.type = 'checkbox';
 		input.name = options.className;
@@ -2318,8 +2318,8 @@ L.FlipSwitch = L.Evented.extend({
 		L.DomUtil.create('span', className + '-button', label);
 
 		L.DomEvent
-				.disableClickPropagation(button)
-				.disableScrollPropagation(button);
+			.disableClickPropagation(button)
+			.disableScrollPropagation(button);
 		L.DomEvent.on(input, 'change', function () {
 			this.fire('change');
 		}, this);
@@ -2380,17 +2380,17 @@ L.SpinBox = L.Evented.extend({
 		var _this = this,
 			drag = this._drag = {
 				startEvent: 'touchstart mousedown',
-				stopEvent : 'touchend mouseup mouseout touchcancel',
-				move      : false,
-				start     : false,
-				end       : false,
-				pos       : false,
-				target    : false,
-				delta     : false,
-				tmp       : false,
-				cnt       : 0,
-				step      : options.step,
-				prec      : this._prec(options.step)
+				stopEvent: 'touchend mouseup mouseout touchcancel',
+				move: false,
+				start: false,
+				end: false,
+				pos: false,
+				target: false,
+				delta: false,
+				tmp: false,
+				cnt: 0,
+				step: options.step,
+				prec: this._prec(options.step)
 			},
 			wrap = this._wrap = L.DomUtil.create('div', options.className, parent),
 			input = this._input = L.DomUtil.create('input', options.className + '-input', wrap),
@@ -2400,8 +2400,8 @@ L.SpinBox = L.Evented.extend({
 		input.type = 'number';
 		input.step = 0.1;	// Tells input that decimal numbers are valid
 		L.DomEvent
-				.disableClickPropagation(wrap)
-				.disableScrollPropagation(wrap);
+			.disableClickPropagation(wrap)
+			.disableScrollPropagation(wrap);
 
 		if (input.disabled === true) {
 			options.disabled = true;
@@ -2546,10 +2546,10 @@ L.SpinBox = L.Evented.extend({
 	},
 
 	_sboxRun: function () {
-		var	_this = this,
-				timer = 150,
-				options = this.options,
-				drag = this._drag;
+		var _this = this,
+			timer = 150,
+			options = this.options,
+			drag = this._drag;
 
 		if (drag.cnt === 20) {
 			timer = 50;
@@ -2581,9 +2581,9 @@ L.SpinBox = L.Evented.extend({
 
 	_offset: function (obj, direction) {
 		var tmp,
-				options = this.options,
-				input = this._input,
-				drag = this._drag;
+			options = this.options,
+			input = this._input,
+			drag = this._drag;
 
 		if (!this.disabled) {
 			if (direction < 1) {
@@ -2653,15 +2653,15 @@ if (typeof require !== 'undefined') {
 $.extend($.fn, {
 	fileTree: function (options, file) {
 		// Default options
-		if (options.root === undefined) {options.root = '/'; }
-		if (options.script === undefined) {options.script			= 'dist/filetree.php'; }
-		if (options.folderEvent === undefined) {options.folderEvent = 'click'; }
-		if (options.expandSpeed === undefined) {options.expandSpeed = 500; }
-		if (options.collapseSpeed === undefined) {options.collapseSpeed = 500; }
-		if (options.expandEasing === undefined) {options.expandEasing = null; }
-		if (options.collapseEasing === undefined) {options.collapseEasing = null; }
-		if (options.multiFolder === undefined) {options.multiFolder = true; }
-		if (options.loadMessage === undefined) {options.loadMessage	= 'Loading...'; }
+		if (options.root === undefined) { options.root = '/'; }
+		if (options.script === undefined) { options.script = 'dist/filetree.php'; }
+		if (options.folderEvent === undefined) { options.folderEvent = 'click'; }
+		if (options.expandSpeed === undefined) { options.expandSpeed = 500; }
+		if (options.collapseSpeed === undefined) { options.collapseSpeed = 500; }
+		if (options.expandEasing === undefined) { options.expandEasing = null; }
+		if (options.collapseEasing === undefined) { options.collapseEasing = null; }
+		if (options.multiFolder === undefined) { options.multiFolder = true; }
+		if (options.loadMessage === undefined) { options.loadMessage = 'Loading...'; }
 
 		$(this).each(function () {
 
@@ -2694,8 +2694,8 @@ $.extend($.fn, {
 									easing: options.collapseEasing
 								});
 								$(this).parent().parent().find('LI.directory')
-								  .removeClass('expanded')
-								  .addClass('collapsed');
+									.removeClass('expanded')
+									.addClass('collapsed');
 							}
 							$(this).parent().find('UL').remove(); // cleanup
 							showTree($(this).parent(), encodeURI($(this).attr('rel').match(/.*\//)));
@@ -2715,7 +2715,7 @@ $.extend($.fn, {
 				});
 				// Prevent A from triggering the # on non-click events
 				if (options.folderEvent.toLowerCase !== 'click') {
-					$(element).find('LI A').on('click', function () {return false; });
+					$(element).find('LI A').on('click', function () { return false; });
 				}
 			}
 			// Loading message
@@ -2768,14 +2768,14 @@ L.Control.Attribution.include({
 // Set Attribution prefix to a series of clickable logos
 L.Map.addInitHook(function () {
 	if (this.options.visiomaticLogo !== false &&
-	 this.options.attributionControl) {
+		this.options.attributionControl) {
 		this.attributionControl.setPrefix(
 			'<a id="logo-visiomatic" class="leaflet-control-attribution-logo"' +
-			 'href="http://visiomatic.org">&nbsp;</a>' +
-			 '<a id="logo-iipimage" class="leaflet-control-attribution-logo"' +
-			 'href="http://iipimage.sourceforge.net">&nbsp;</a>' +
-			 '<a id="logo-leaflet" class="leaflet-control-attribution-logo"' +
-			 'href="http://leafletjs.com">&nbsp;</a>'
+			'href="http://visiomatic.org">&nbsp;</a>' +
+			'<a id="logo-iipimage" class="leaflet-control-attribution-logo"' +
+			'href="http://iipimage.sourceforge.net">&nbsp;</a>' +
+			'<a id="logo-leaflet" class="leaflet-control-attribution-logo"' +
+			'href="http://leafletjs.com">&nbsp;</a>'
 		);
 	}
 });
@@ -2831,7 +2831,7 @@ L.Control.ExtraMap = L.Control.extend({
 		collapsedWidth: 24,
 		collapsedHeight: 24,
 		aimingRectOptions: {
-			color:  '#FFFFFF',
+			color: '#FFFFFF',
 			weight: 1,
 			clickable: false
 		},
@@ -2842,7 +2842,7 @@ L.Control.ExtraMap = L.Control.extend({
 			opacity: 0,
 			fillOpacity: 0
 		},
-		strings: {hideText: 'Hide map', showText: 'Show map'}
+		strings: { hideText: 'Hide map', showText: 'Show map' }
 	},
 
 	// Layer is the map layer to be shown in the minimap
@@ -2897,9 +2897,9 @@ L.Control.ExtraMap = L.Control.extend({
 			this._mainMap.whenReady(L.Util.bind(function () {
 				this._extraMap.whenReady(L.Util.bind(function () {
 					this._aimingRect = L.rectangle(this._mainMap.getBounds(),
-					  this.options.aimingRectOptions).addTo(this._extraMap);
+						this.options.aimingRectOptions).addTo(this._extraMap);
 					this._shadowRect = L.rectangle(this._mainMap.getBounds(),
-					  this.options.shadowRectOptions).addTo(this._extraMap);
+						this.options.shadowRectOptions).addTo(this._extraMap);
 					this._mainMap.on('moveend', this._onMainMapMoved, this);
 					this._mainMap.on('move', this._onMainMapMoving, this);
 					this._extraMap.on('movestart', this._onExtraMapMoveStarted, this);
@@ -2936,9 +2936,9 @@ L.Control.ExtraMap = L.Control.extend({
 	_addToggleButton: function () {
 		this._toggleDisplayButton = this.options.toggleDisplay ? this._createButton(
 			'', this.options.strings.hideText, (
-				'leaflet-control-extramap-toggle-display ' +
-			  'leaflet-control-extramap-toggle-display-' + this.options.position
-			),
+			'leaflet-control-extramap-toggle-display ' +
+			'leaflet-control-extramap-toggle-display-' + this.options.position
+		),
 			this._container, this._toggleDisplayButtonClicked, this
 		) : undefined;
 
@@ -3002,7 +3002,7 @@ L.Control.ExtraMap = L.Control.extend({
 			this._container.style.width = this.options.width + 'px';
 			this._container.style.height = this.options.height + 'px';
 			this._toggleDisplayButton.className = this._toggleDisplayButton.className
-				.replace('minimized-'  + this.options.position, '');
+				.replace('minimized-' + this.options.position, '');
 		} else {
 			this._container.style.display = 'block';
 		}
@@ -3028,7 +3028,7 @@ L.Control.ExtraMap = L.Control.extend({
 		var lastAimingRect = this._aimingRect.getBounds();
 		var sw = this._extraMap.latLngToContainerPoint(lastAimingRect.getSouthWest());
 		var ne = this._extraMap.latLngToContainerPoint(lastAimingRect.getNorthEast());
-		this._lastAimingRectPosition = {sw: sw, ne: ne};
+		this._lastAimingRectPosition = { sw: sw, ne: ne };
 	},
 
 	_onExtraMapMoving: function (e) {
@@ -3037,7 +3037,7 @@ L.Control.ExtraMap = L.Control.extend({
 				this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.sw),
 				this._extraMap.containerPointToLatLng(this._lastAimingRectPosition.ne)
 			));
-			this._shadowRect.setStyle({opacity: 1, fillOpacity: 0.3});
+			this._shadowRect.setStyle({ opacity: 1, fillOpacity: 0.3 });
 		}
 	},
 
@@ -3045,7 +3045,7 @@ L.Control.ExtraMap = L.Control.extend({
 		if (!this._mainMapMoving) {
 			this._extraMapMoving = true;
 			this._mainMap.setView(this._extraMap.getCenter(), this._decideZoom(false));
-			this._shadowRect.setStyle({opacity: 0, fillOpacity: 0});
+			this._shadowRect.setStyle({ opacity: 0, fillOpacity: 0 });
 		} else {
 			this._mainMapMoving = false;
 		}
@@ -3066,7 +3066,7 @@ L.Control.ExtraMap = L.Control.extend({
 				var toRet;
 
 				if (currentDiff > this.options.zoomLevelOffset &&
-				  this._mainMap.getZoom() < this._extraMap.getMinZoom() - this.options.zoomLevelOffset) {
+					this._mainMap.getZoom() < this._extraMap.getMinZoom() - this.options.zoomLevelOffset) {
 					// This means the extraMap is zoomed out to the minimum zoom level and
 					// can't zoom any more.
 					if (this._extraMap.getZoom() > this._lastExtraMapZoom) {
@@ -3267,23 +3267,23 @@ if (typeof require !== 'undefined') {
 		return new L.Control.FullScreen(options);
 	};
 
-/*
-Native FullScreen JavaScript API
--------------
-Assumes Mozilla naming conventions instead of W3C for now
-
-source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
-
-*/
+	/*
+	Native FullScreen JavaScript API
+	-------------
+	Assumes Mozilla naming conventions instead of W3C for now
+	
+	source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
+	
+	*/
 
 	var fullScreenApi = {
-			supportsFullScreen: false,
-			isFullScreen: function () { return false; },
-			requestFullScreen: function () {},
-			cancelFullScreen: function () {},
-			fullScreenEventName: '',
-			prefix: ''
-		},
+		supportsFullScreen: false,
+		isFullScreen: function () { return false; },
+		requestFullScreen: function () { },
+		cancelFullScreen: function () { },
+		fullScreenEventName: '',
+		prefix: ''
+	},
 		browserPrefixes = 'webkit moz o ms khtml'.split(' ');
 
 	// check for native support
@@ -3305,12 +3305,12 @@ source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugi
 		fullScreenApi.fullScreenEventName = fullScreenApi.prefix + 'fullscreenchange';
 		fullScreenApi.isFullScreen = function () {
 			switch (this.prefix) {
-			case '':
-				return document.fullScreen;
-			case 'webkit':
-				return document.webkitIsFullScreen;
-			default:
-				return document[this.prefix + 'FullScreen'];
+				case '':
+					return document.fullScreen;
+				case 'webkit':
+					return document.webkitIsFullScreen;
+				default:
+					return document[this.prefix + 'FullScreen'];
 			}
 		};
 		fullScreenApi.requestFullScreen = function (el) {
@@ -3361,7 +3361,7 @@ L.Control.IIP = L.Control.extend({
 		position: 'topleft'
 	},
 
-	initialize: function (baseLayers,  options) {
+	initialize: function (baseLayers, options) {
 		L.setOptions(this, options);
 		this._className = 'leaflet-control-iip';
 		this._id = 'leaflet-iipimage';
@@ -3372,11 +3372,11 @@ L.Control.IIP = L.Control.extend({
 	addTo: function (dest) {
 		if (dest._sidebar) {
 			this._sidebar = dest;
-		// dest is a sidebar class instance
+			// dest is a sidebar class instance
 			this._map = dest._map;
 			this._dialog = L.DomUtil.create('div', this._className + '-dialog');
 			dest.addTab(this._id, this._className, this.options.title, this._dialog,
-			   this._sideClass);
+				this._sideClass);
 			this._map.on('layeradd', this._checkIIP, this);
 			return dest;
 		} else {
@@ -3386,14 +3386,14 @@ L.Control.IIP = L.Control.extend({
 
 	onAdd: function (map) {
 		var className = this._className,
-		 id = this._id,
-		 container = this._container = L.DomUtil.create('div', className + ' leaflet-bar');
+			id = this._id,
+			container = this._container = L.DomUtil.create('div', className + ' leaflet-bar');
 		//Makes this work on IE10 Touch devices by stopping it from firing a mouseout event when the touch is released
 		container.setAttribute('aria-haspopup', true);
 
 		L.DomEvent
-				.disableClickPropagation(container)
-				.disableScrollPropagation(container);
+			.disableClickPropagation(container)
+			.disableScrollPropagation(container);
 
 		this._dialog = L.DomUtil.create('div', className + '-dialog', container);
 		if (this.options.collapsed) {
@@ -3410,8 +3410,8 @@ L.Control.IIP = L.Control.extend({
 
 			if (L.Browser.touch) {
 				L.DomEvent
-				    .on(toggle, 'click', L.DomEvent.stop)
-				    .on(toggle, 'click', this._expand, this);
+					.on(toggle, 'click', L.DomEvent.stop)
+					.on(toggle, 'click', this._expand, this);
 			}
 			else {
 				L.DomEvent.on(toggle, 'focus', this._expand, this);
@@ -3423,10 +3423,10 @@ L.Control.IIP = L.Control.extend({
 			this._expand();
 		}
 
-//		this._checkIIP();
+		//		this._checkIIP();
 		this._map.on('layeradd', this._checkIIP, this);
 
-		return	this._container;
+		return this._container;
 	},
 
 	_checkIIP: function (e) {
@@ -3446,15 +3446,15 @@ L.Control.IIP = L.Control.extend({
 	},
 
 	_initDialog: function () {
-/*
-		var className = this._className,
-			container = this._container,
-			dialog = this._dialog,
-			toggle = this._toggle,
-			layer = this._layer;
-		dialog.innerHTML = '';
-*/
-    // Setup the rest of the dialog window here
+		/*
+				var className = this._className,
+					container = this._container,
+					dialog = this._dialog,
+					toggle = this._toggle,
+					layer = this._layer;
+				dialog.innerHTML = '';
+		*/
+		// Setup the rest of the dialog window here
 	},
 
 	_resetDialog: function () {
@@ -3472,7 +3472,7 @@ L.Control.IIP = L.Control.extend({
 
 	_addDialogLine: function (label, dialogBox) {
 		var line = L.DomUtil.create('div', this._className + '-line', dialogBox),
-		 text = L.DomUtil.create('div', this._className + '-label', line);
+			text = L.DomUtil.create('div', this._className + '-label', line);
 		text.innerHTML = label;
 		return line;
 	},
@@ -3489,20 +3489,20 @@ L.Control.IIP = L.Control.extend({
 		this._container.className = this._container.className.replace(' ' + this._className + '-expanded', '');
 	},
 
-  /**
-* Get currently active base layer on the map
-* @return {Object} l where l.name - layer name on the control,
-* l.layer is L.TileLayer, l.overlay is overlay layer.
-*/
+	/**
+  * Get currently active base layer on the map
+  * @return {Object} l where l.name - layer name on the control,
+  * l.layer is L.TileLayer, l.overlay is overlay layer.
+  */
 	getActiveBaseLayer: function () {
 		return this._activeBaseLayer;
 	},
 
-  /**
-* Get currently active overlay layers on the map
-* @return {{layerId: l}} where layerId is <code>L.stamp(l.layer)</code>
-* and l @see #getActiveBaseLayer jsdoc.
-*/
+	/**
+  * Get currently active overlay layers on the map
+  * @return {{layerId: l}} where layerId is <code>L.stamp(l.layer)</code>
+  * and l @see #getActiveBaseLayer jsdoc.
+  */
 
 	_findActiveBaseLayer: function () {
 		var layers = this._layers;
@@ -3546,7 +3546,7 @@ L.Control.IIP = L.Control.extend({
 			L.DomEvent.on(button, 'click touch', fn, value);
 		}
 
-		var label =  L.DomUtil.create('label', className, parent);
+		var label = L.DomUtil.create('label', className, parent);
 
 		label.htmlFor = button.id = className + '-' + value;
 		if (title) {
@@ -3557,7 +3557,7 @@ L.Control.IIP = L.Control.extend({
 
 	_createSelectMenu: function (className, parent, items, disabled, selected, fn, title) {
 		// Wrapper around the select element for better positioning and sizing
-		var	div =  L.DomUtil.create('div', className, parent),
+		var div = L.DomUtil.create('div', className, parent),
 			select = L.DomUtil.create('select', className, div),
 			choose = document.createElement('option'),
 			opt = select.opt = [],
@@ -3609,7 +3609,7 @@ L.Control.IIP = L.Control.extend({
 
 
 	_createColorPicker: function (className, parent, subClassName, defaultColor,
-	    fn, storageKey, title) {
+		fn, storageKey, title) {
 		var _this = this,
 			colpick = L.DomUtil.create('input', className, parent);
 
@@ -3644,7 +3644,7 @@ L.Control.IIP = L.Control.extend({
 	},
 
 
-	_addSwitchInput:	function (layer, box, label, attr, title, id, checked) {
+	_addSwitchInput: function (layer, box, label, attr, title, id, checked) {
 		var line = this._addDialogLine(label, box),
 			elem = this._addDialogElement(line),
 			flip = elem.flip = L.flipswitch(elem, {
@@ -3660,14 +3660,14 @@ L.Control.IIP = L.Control.extend({
 		return elem;
 	},
 
-	_addNumericalInput:	function (layer, box, label, attr, title, id, initValue,
-	  step, min, max, func) {
+	_addNumericalInput: function (layer, box, label, attr, title, id, initValue,
+		step, min, max, func) {
 		var line = this._addDialogLine(label, box),
 			elem = this._addDialogElement(line),
 			spinbox = elem.spinbox = L.spinbox(elem, {
 				step: step,
-				dmin:  min,
-				dmax:  max,
+				dmin: min,
+				dmax: max,
 				initValue: initValue,
 				title: title
 			});
@@ -3680,7 +3680,7 @@ L.Control.IIP = L.Control.extend({
 		return elem;
 	},
 
-	_updateInput:	function (elem, value) {
+	_updateInput: function (elem, value) {
 		if (elem.spinbox) {
 			elem.spinbox.value(value);
 		} else if (elem.flip) {
@@ -3690,17 +3690,17 @@ L.Control.IIP = L.Control.extend({
 
 	_spinboxStep: function (min, max) {
 		var step = parseFloat((Math.abs(max === min ? max : max - min) *
-			         0.01).toPrecision(1));
+			0.01).toPrecision(1));
 
 		return step === 0.0 ? 1.0 : step;
 	},
 
-	_onInputChange:	function (layer, pname, value, func) {
+	_onInputChange: function (layer, pname, value, func) {
 
 		var pnamearr = pname.split(/\[|\]/);
 		if (pnamearr[1]) {
 			layer[pnamearr[0]][parseInt(pnamearr[1], 10)] = value;
-		}	else {
+		} else {
 			layer[pnamearr[0]] = value;
 		}
 		if (func) {
@@ -3718,7 +3718,7 @@ L.Control.IIP = L.Control.extend({
 			L.DomUtil.empty(this._layerList);
 		} else {
 			this._layerList = L.DomUtil.create('div', 'leaflet-control-iip' + '-layerlist',
-			  this._dialog);
+				this._dialog);
 		}
 
 		for (var i in this._layers) {
@@ -3730,14 +3730,14 @@ L.Control.IIP = L.Control.extend({
 
 	_addLayerItem: function (obj) {
 		var _this = this,
-		 layerItem = L.DomUtil.create('div', 'leaflet-control-iip-layer'),
-		 inputdiv = L.DomUtil.create('div', 'leaflet-control-iip-layerswitch', layerItem);
+			layerItem = L.DomUtil.create('div', 'leaflet-control-iip-layer'),
+			inputdiv = L.DomUtil.create('div', 'leaflet-control-iip-layerswitch', layerItem);
 
 		if (obj.layer.notReady) {
 			L.DomUtil.create('div', 'leaflet-control-iip-activity', inputdiv);
 		} else {
 			var input,
-			    checked = this._map.hasLayer(obj.layer);
+				checked = this._map.hasLayer(obj.layer);
 			input = document.createElement('input');
 			input.type = 'checkbox';
 			input.className = 'leaflet-control-iip-selector';
@@ -3745,8 +3745,8 @@ L.Control.IIP = L.Control.extend({
 			input.layerId = L.stamp(obj.layer);
 			L.DomEvent.on(input, 'click', function () {
 				var i, input, obj,
-			      inputs = this._layerList.getElementsByTagName('input'),
-				    inputsLen = inputs.length;
+					inputs = this._layerList.getElementsByTagName('input'),
+					inputsLen = inputs.length;
 
 				this._handlingClick = true;
 
@@ -3805,7 +3805,7 @@ L.Control.IIP = L.Control.extend({
 
 	removeLayer: function (layer) {
 		layer.off('add remove', this._onLayerChange, this);
-		layer.fire('trash', {index: this._layers[L.stamp(layer)].index});
+		layer.fire('trash', { index: this._layers[L.stamp(layer)].index });
 		layer.off('trash');
 
 		delete this._layers[L.stamp(layer)];
@@ -3818,7 +3818,7 @@ L.Control.IIP = L.Control.extend({
 		}
 
 		var obj = this._layers[L.stamp(e.target)],
-		    type = e.type === 'add' ? 'overlayadd' : 'overlayremove';
+			type = e.type === 'add' ? 'overlayadd' : 'overlayremove';
 
 		this._map.fire(type, obj);
 	}
@@ -3877,7 +3877,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 	},
 
 	_initDialog: function () {
-		var	className = this._className,
+		var className = this._className,
 			catalogs = this._catalogs,
 			box = this._addDialogBox(),
 			// CDS catalog overlay
@@ -3887,7 +3887,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 				className + '-color',
 				elem,
 				'catalog',
-			  this.options.color,
+				this.options.color,
 				false,
 				'iipCatalog',
 				'Click to set catalog color'
@@ -3918,7 +3918,7 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		elem = this._addDialogElement(line);
 
 		this._createButton(className + '-button', elem, 'catalog', function () {
-			var	index = catselect.selectedIndex - 1;	// Ignore dummy 'Choose catalog' entry
+			var index = catselect.selectedIndex - 1;	// Ignore dummy 'Choose catalog' entry
 			if (index >= 0) {
 				var catalog = catalogs[index];
 				catalog.color = colpick.value;
@@ -3931,18 +3931,18 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 	},
 
 	_resetDialog: function () {
-	// Do nothing: no need to reset with layer changes
+		// Do nothing: no need to reset with layer changes
 	},
 
 	_getCatalog: function (catalog, timeout) {
 		var _this = this,
-		    map = this._map,
-				wcs = map.options.crs,
-				sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
-		    center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(),
-		    b = map.getPixelBounds(),
-		    z = map.getZoom(),
-		    templayer = new L.LayerGroup(null);
+			map = this._map,
+			wcs = map.options.crs,
+			sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
+			center = sysflag ? wcs.celsysToEq(map.getCenter()) : map.getCenter(),
+			b = map.getPixelBounds(),
+			z = map.getZoom(),
+			templayer = new L.LayerGroup(null);
 
 		// Add a temporary "dummy" layer to activate a spinner sign
 		templayer.notReady = true;
@@ -3956,30 +3956,30 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 
 		// Compute the search cone
 		var lngfac = Math.abs(Math.cos(center.lat * Math.PI / 180.0)),
-			  c = sysflag ?
-				   [wcs.celsysToEq(map.unproject(b.min, z)),
-			      wcs.celsysToEq(map.unproject(L.point(b.min.x, b.max.y), z)),
-			      wcs.celsysToEq(map.unproject(b.max, z)),
-			      wcs.celsysToEq(map.unproject(L.point(b.max.x, b.min.y), z))] :
-			                    [map.unproject(b.min, z),
-			                     map.unproject(L.point(b.min.x, b.max.y), z),
-			                     map.unproject(b.max, z),
-			                     map.unproject(L.point(b.max.x, b.min.y), z)],
-			  sys;
+			c = sysflag ?
+				[wcs.celsysToEq(map.unproject(b.min, z)),
+				wcs.celsysToEq(map.unproject(L.point(b.min.x, b.max.y), z)),
+				wcs.celsysToEq(map.unproject(b.max, z)),
+				wcs.celsysToEq(map.unproject(L.point(b.max.x, b.min.y), z))] :
+				[map.unproject(b.min, z),
+				map.unproject(L.point(b.min.x, b.max.y), z),
+				map.unproject(b.max, z),
+				map.unproject(L.point(b.max.x, b.min.y), z)],
+			sys;
 		if (wcs.forceNativeCelsys && this.options.nativeCelsys) {
 			switch (wcs.celsyscode) {
-			case 'ecliptic':
-				sys = 'E2000.0';
-				break;
-			case 'galactic':
-				sys = 'G';
-				break;
-			case 'supergalactic':
-				sys = 'S';
-				break;
-			default:
-				sys = 'J2000.0';
-				break;
+				case 'ecliptic':
+					sys = 'E2000.0';
+					break;
+				case 'galactic':
+					sys = 'G';
+					break;
+				case 'supergalactic':
+					sys = 'S';
+					break;
+				default:
+					sys = 'J2000.0';
+					break;
 			}
 		} else {
 			sys = 'J2000.0';
@@ -3987,16 +3987,16 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 
 		if (catalog.regionType === 'box') {
 			// CDS box search
-			var	dlng = (Math.max(wcs._deltaLng(c[0], center),
-				                   wcs._deltaLng(c[1], center),
-				                   wcs._deltaLng(c[2], center),
-				                   wcs._deltaLng(c[3], center)) -
-			            Math.min(wcs._deltaLng(c[0], center),
-				                   wcs._deltaLng(c[1], center),
-				                   wcs._deltaLng(c[2], center),
-				                   wcs._deltaLng(c[3], center))) * lngfac,
-		       dlat = Math.max(c[0].lat, c[1].lat, c[2].lat, c[3].lat) -
-		              Math.min(c[0].lat, c[1].lat, c[2].lat, c[3].lat);
+			var dlng = (Math.max(wcs._deltaLng(c[0], center),
+				wcs._deltaLng(c[1], center),
+				wcs._deltaLng(c[2], center),
+				wcs._deltaLng(c[3], center)) -
+				Math.min(wcs._deltaLng(c[0], center),
+					wcs._deltaLng(c[1], center),
+					wcs._deltaLng(c[2], center),
+					wcs._deltaLng(c[3], center))) * lngfac,
+				dlat = Math.max(c[0].lat, c[1].lat, c[2].lat, c[3].lat) -
+					Math.min(c[0].lat, c[1].lat, c[2].lat, c[3].lat);
 			if (dlat < 0.0001) {
 				dlat = 0.0001;
 			}
@@ -4023,10 +4023,10 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 			);
 		} else {
 			// Regular cone search
-			var	dr = Math.max(wcs.distance(c[0], center),
-				                wcs.distance(c[0], center),
-				                wcs.distance(c[0], center),
-				                wcs.distance(c[0], center));
+			var dr = Math.max(wcs.distance(c[0], center),
+				wcs.distance(c[0], center),
+				wcs.distance(c[0], center),
+				wcs.distance(c[0], center));
 			L.IIPUtils.requestURL(
 				L.Util.template(catalog.url, L.extend({
 					sys: sys,
@@ -4045,33 +4045,33 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				var wcs = _this._map.options.crs,
-				 response = httpRequest.responseText,
-				 geo = catalog.toGeoJSON(response),
-				 geocatalog = L.geoJson(geo, {
-					onEachFeature: function (feature, layer) {
-						if (feature.properties && feature.properties.items) {
-							layer.bindPopup(catalog.popup(feature));
+					response = httpRequest.responseText,
+					geo = catalog.toGeoJSON(response),
+					geocatalog = L.geoJson(geo, {
+						onEachFeature: function (feature, layer) {
+							if (feature.properties && feature.properties.items) {
+								layer.bindPopup(catalog.popup(feature));
+							}
+						},
+						coordsToLatLng: function (coords) {
+							if (wcs.forceNativeCelsys) {
+								var latLng = wcs.eqToCelsys(L.latLng(coords[1], coords[0]));
+								return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
+							} else {
+								return new L.LatLng(coords[1], coords[0], coords[2]);
+							}
+						},
+						filter: function (feature) {
+							return catalog.filter(feature);
+						},
+						pointToLayer: function (feature, latlng) {
+							return catalog.draw(feature, latlng);
+						},
+						style: function (feature) {
+							return { color: catalog.color, weight: 2 };
 						}
-					},
-					coordsToLatLng: function (coords) {
-						if (wcs.forceNativeCelsys) {
-							var latLng = wcs.eqToCelsys(L.latLng(coords[1], coords[0]));
-							return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
-						} else {
-							return new L.LatLng(coords[1], coords[0], coords[2]);
-						}
-					},
-					filter: function (feature) {
-						return catalog.filter(feature);
-					},
-					pointToLayer: function (feature, latlng) {
-						return catalog.draw(feature, latlng);
-					},
-					style: function (feature) {
-						return {color: catalog.color, weight: 2};
-					}
-				}),
-				 excessflag;
+					}),
+					excessflag;
 				geocatalog.nameColor = catalog.color;
 				geocatalog.addTo(_this._map);
 				this.removeLayer(templayer);
@@ -4080,16 +4080,16 @@ L.Control.IIP.Catalog = L.Control.IIP.extend({
 					excessflag = true;
 				}
 				this.addLayer(geocatalog, catalog.name +
-				  ' (' + geo.features.length.toString() +
-				  (excessflag ? '+ entries)' : ' entries)'));
+					' (' + geo.features.length.toString() +
+					(excessflag ? '+ entries)' : ' entries)'));
 				if (excessflag) {
 					alert('Selected area is too large: ' + catalog.name +
-					  ' sample has been truncated to the brightest ' + catalog.nmax + ' sources.');
+						' sample has been truncated to the brightest ' + catalog.nmax + ' sources.');
 				}
 			} else {
 				if (httpRequest.status !== 0) {
 					alert('Error ' + httpRequest.status + ' while querying ' +
-					  catalog.service + '.');
+						catalog.service + '.');
 				}
 				this.removeLayer(templayer);
 			}
@@ -4124,7 +4124,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		title: 'Channel mixing',
 		collapsed: true,
 		cMap: 'grey',
-		mixingMode : null,	//	'color' or 'mono' (or null for layer settings)
+		mixingMode: null,	//	'color' or 'mono' (or null for layer settings)
 		position: 'topleft',
 	},
 
@@ -4188,9 +4188,9 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		this.saveSettings(layer, this._settings, 'color');
 
 		this._mode = this.options.mixingMode ?
-		  this.options.mixingMode : layer.iipMode;
+			this.options.mixingMode : layer.iipMode;
 
-		var	box = this._addDialogBox(),
+		var box = this._addDialogBox(),
 			modeline = this._addDialogLine('Mode:', box),
 			modelem = this._addDialogElement(modeline),
 			modeinput = L.DomUtil.create('div', className + '-radios', modelem),
@@ -4198,39 +4198,39 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 
 		// Create Mode selection control section
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'mono',
-		  (this._mode === 'mono'), function () {
-			// Save previous settings
-			_this.saveSettings(layer, _this._settings, _this._mode);
+			(this._mode === 'mono'), function () {
+				// Save previous settings
+				_this.saveSettings(layer, _this._settings, _this._mode);
 
-			// Remove previous dialogs
-			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
-				box.removeChild(elem);
-			}
-			for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
-				dialog.removeChild(elem);
-			}
-			_this._channelList = undefined;
-			_this.loadSettings(layer, _this._settings, 'mono');
-			_this._initMonoDialog(layer, box);
-			_this._mode = 'mono';
-		}, 'Select mono-channel palettized mode');
+				// Remove previous dialogs
+				for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
+					box.removeChild(elem);
+				}
+				for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
+					dialog.removeChild(elem);
+				}
+				_this._channelList = undefined;
+				_this.loadSettings(layer, _this._settings, 'mono');
+				_this._initMonoDialog(layer, box);
+				_this._mode = 'mono';
+			}, 'Select mono-channel palettized mode');
 
 		modebutton = this._createRadioButton(className + '-radio', modeinput, 'color',
-		  (this._mode !== 'mono'), function () {
-			// Save previous settings
-			_this.saveSettings(layer, _this._settings, _this._mode);
-			// Remove previous dialogs
-			for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
-				box.removeChild(elem);
-			}
-			for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
-				dialog.removeChild(elem);
-			}
-			_this.loadSettings(layer, _this._settings, 'color');
-			_this._channelList = undefined;
-			_this._initColorDialog(layer, box);
-			_this._mode = 'color';
-		}, 'Select color mixing mode');
+			(this._mode !== 'mono'), function () {
+				// Save previous settings
+				_this.saveSettings(layer, _this._settings, _this._mode);
+				// Remove previous dialogs
+				for (elem = box.lastChild; elem !== modeline; elem = box.lastChild) {
+					box.removeChild(elem);
+				}
+				for (elem = dialog.lastChild; elem !== box; elem = dialog.lastChild) {
+					dialog.removeChild(elem);
+				}
+				_this.loadSettings(layer, _this._settings, 'color');
+				_this._channelList = undefined;
+				_this._initColorDialog(layer, box);
+				_this._mode = 'color';
+			}, 'Select color mixing mode');
 
 		if (_this._mode === 'mono') {
 			_this._initMonoDialog(layer, box);
@@ -4266,7 +4266,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 		line = this._addDialogLine('LUT:', box);
 		elem = this._addDialogElement(line);
 
-		var	cmapinput = L.DomUtil.create('div', className + '-cmaps', elem),
+		var cmapinput = L.DomUtil.create('div', className + '-cmaps', elem),
 			cbutton = [],
 			cmaps = ['grey', 'jet', 'cold', 'hot'],
 			_changeMap = function () {
@@ -4275,8 +4275,8 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			i;
 		for (i in cmaps) {
 			cbutton[i] = this._createRadioButton('leaflet-cmap', cmapinput, cmaps[i],
-			  (cmaps[i] === this.options.cMap), _changeMap,
-			  '"' + cmaps[i].charAt(0).toUpperCase() + cmaps[i].substr(1) +  '" color-map');
+				(cmaps[i] === this.options.cMap), _changeMap,
+				'"' + cmaps[i].charAt(0).toUpperCase() + cmaps[i].substr(1) + '" color-map');
 		}
 
 		this._addMinMax(layer, layer.iipChannel, box);
@@ -4294,10 +4294,10 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 				className + '-color',
 				elem,
 				'channel',
-			  layer.iipRGB[layer.iipChannel].toStr(),
+				layer.iipRGB[layer.iipChannel].toStr(),
 				function () {
 					var chan = layer.iipChannel,
-				    hex = $(colpick).val();
+						hex = $(colpick).val();
 					_this._updateMix(layer, chan, L.rgb(hex));
 					_this.collapsedOff = true;
 				},
@@ -4315,7 +4315,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			undefined,
 			layer.iipChannel,
 			function () {
-				layer.iipChannel =  this._chanSelect.selectedIndex - 1;
+				layer.iipChannel = this._chanSelect.selectedIndex - 1;
 				this._updateChannel(layer, layer.iipChannel, colpick);
 			},
 			'Select image channel'
@@ -4337,7 +4337,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 
 		// Create automated color settings button
 		this._createButton(className + '-button', elem, 'colormix-auto', function () {
-			var	nchan = layer.iipNChannel,
+			var nchan = layer.iipNChannel,
 				cc = 0,
 				nchanon = 0,
 				rgb = layer.iipRGB,
@@ -4371,24 +4371,24 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 
 	// Add Spinboxes for setting the min and max clipping limits of pixel values
 	_addMinMax: function (layer, chan, box) {
-		var	step = this._spinboxStep(layer.iipMinValue[chan], layer.iipMaxValue[chan]);
+		var step = this._spinboxStep(layer.iipMinValue[chan], layer.iipMaxValue[chan]);
 
 		// Min
 		this._minElem = this._addNumericalInput(layer, box, 'Min:',
-		  'iipMinValue[' + chan + ']',
-		  'Lower clipping limit in ' + layer.iipChannelUnits[chan] + '.',
-		  'leaflet-channel-minvalue', layer.iipMinValue[chan], step);
+			'iipMinValue[' + chan + ']',
+			'Lower clipping limit in ' + layer.iipChannelUnits[chan] + '.',
+			'leaflet-channel-minvalue', layer.iipMinValue[chan], step);
 
 		// Max
 		this._maxElem = this._addNumericalInput(layer, box, 'Max:',
 			'iipMaxValue[' + chan + ']',
-		  'Upper clipping limit in ' + layer.iipChannelUnits[chan] + '.',
-		  'leaflet-channel-maxvalue', layer.iipMaxValue[chan], step);
+			'Upper clipping limit in ' + layer.iipChannelUnits[chan] + '.',
+			'leaflet-channel-maxvalue', layer.iipMaxValue[chan], step);
 	},
 
 	_updateChannel: function (layer, chan, colorElem) {
 		var _this = this,
-			  step = this._spinboxStep(layer.iipMinValue[chan], layer.iipMaxValue[chan]);
+			step = this._spinboxStep(layer.iipMinValue[chan], layer.iipMaxValue[chan]);
 		_this._chanSelect.selectedIndex = chan + 1;
 		if (colorElem) {
 			$(colorElem).spectrum('set', layer.iipRGB[chan].toStr());
@@ -4406,7 +4406,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			.off('change')
 			.on('change', function () {
 				_this._onInputChange(layer, 'iipMinValue[' + chan + ']',
-				_this._minElem.spinbox.value());
+					_this._minElem.spinbox.value());
 			}, this);
 
 		this._maxElem.spinbox
@@ -4415,7 +4415,7 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 			.off('change')
 			.on('change', function () {
 				_this._onInputChange(layer, 'iipMaxValue[' + chan + ']',
-				_this._maxElem.spinbox.value());
+					_this._maxElem.spinbox.value());
 			}, this);
 	},
 
@@ -4427,21 +4427,21 @@ L.Control.IIP.Channel = L.Control.IIP.extend({
 
 	_updateChannelList: function (layer) {
 		var chanLabels = layer.iipChannelLabels,
-		    chanList = this._channelList,
-				chanElems = this._channelElems,
-				trashElems = this._trashElems,
-		    chanElem, trashElem, rgb, color, label, c, chan;
+			chanList = this._channelList,
+			chanElems = this._channelElems,
+			trashElems = this._trashElems,
+			chanElem, trashElem, rgb, color, label, c, chan;
 		if (chanList) {
-/*
-			for (c in chanElems) {
-				L.DomEvent.off(chanElems[c], 'click touch');
-				L.DomEvent.off(trashElems[c], 'click touch');
-			}
-*/
+			/*
+						for (c in chanElems) {
+							L.DomEvent.off(chanElems[c], 'click touch');
+							L.DomEvent.off(trashElems[c], 'click touch');
+						}
+			*/
 			L.DomUtil.empty(this._channelList);
 		} else {
 			chanList = this._channelList = L.DomUtil.create('div', this._className + '-chanlist',
-			  this._dialog);
+				this._dialog);
 		}
 
 		chanElems = this._channelElems = [];
@@ -4534,9 +4534,9 @@ L.Control.IIP.Doc = L.Control.IIP.extend({
 			className = this._className,
 			layer = this._layer,
 			frameBox = L.DomUtil.create('div',
-		    this._className + '-framebox', this._dialog),
+				this._className + '-framebox', this._dialog),
 			iframe = this._iframe = L.DomUtil.create('iframe',
-			  this._className + '-doc', frameBox);
+				this._className + '-doc', frameBox);
 		iframe.src = this._url;
 		iframe.frameborder = 0;
 
@@ -4546,20 +4546,20 @@ L.Control.IIP.Doc = L.Control.IIP.extend({
 
 		L.DomEvent.on(iframe, 'load hashchange', this._onloadNav, this);
 
-		var	box = this._addDialogBox('leaflet-iipdoc-dialog'),
+		var box = this._addDialogBox('leaflet-iipdoc-dialog'),
 			line = this._addDialogLine('Navigate:', box),
 			elem = this._addDialogElement(line);
 
 		this._homeButton = this._createButton(className + '-button', elem,
-		  'home', this._homeNav, 'Navigate home');
+			'home', this._homeNav, 'Navigate home');
 		this._backButton = this._createButton(className + '-button', elem,
-		  'back', this._backNav, 'Navigate backward');
+			'back', this._backNav, 'Navigate backward');
 		this._forwardButton = this._createButton(className + '-button', elem,
-		  'forward', this._forwardNav, 'Navigate forward');
+			'forward', this._forwardNav, 'Navigate forward');
 
 		if (this.options.pdflink) {
 			var pdfButton = this._createButton(className + '-button', elem,
-			  'pdf', undefined, 'Download PDF version');
+				'pdf', undefined, 'Download PDF version');
 			pdfButton.href = this.options.pdflink;
 		}
 	},
@@ -4607,7 +4607,7 @@ L.Control.IIP.Doc = L.Control.IIP.extend({
 		if (true) {
 			// Force all external iframe links to open in new tab/window
 			// from
-			var	as = this._iframe.contentDocument.getElementsByTagName('a');
+			var as = this._iframe.contentDocument.getElementsByTagName('a');
 			for (var i = 0; i < as.length; i++) {
 				if (L.IIPUtils.isExternal(as[i].href)) {
 					as[i].setAttribute('target', '_blank');
@@ -4714,36 +4714,36 @@ L.Control.IIP.Image = L.Control.IIP.extend({
 
 		// Invert
 		this._input.invertCMap = this._addSwitchInput(layer, this._dialog,
-		  'Invert:', 'iipInvertCMap',
-		  'Invert color map(s)', 'leaflet-invertCMap', layer.iipInvertCMap);
+			'Invert:', 'iipInvertCMap',
+			'Invert color map(s)', 'leaflet-invertCMap', layer.iipInvertCMap);
 
 		// Contrast
 		this._input.contrast = this._addNumericalInput(layer,
-		  this._dialog, 'Contrast:', 'iipContrast',
-		  'Adjust Contrast. 1.0: normal.', 'leaflet-contrastValue',
-		  layer.iipContrast, 0.05, 0.0, 10.0);
+			this._dialog, 'Contrast:', 'iipContrast',
+			'Adjust Contrast. 1.0: normal.', 'leaflet-contrastValue',
+			layer.iipContrast, 0.05, 0.0, 10.0);
 
 		// Colour saturation
 		this._input.colorSat = this._addNumericalInput(layer,
-		  this._dialog, 'Color Sat.:', 'iipColorSat',
-		  'Adjust Color Saturation. 0: B&W, 1.0: normal.', 'leaflet-colorsatvalue',
-		  layer.iipColorSat, 0.05, 0.0, 5.0, this._updateMix);
+			this._dialog, 'Color Sat.:', 'iipColorSat',
+			'Adjust Color Saturation. 0: B&W, 1.0: normal.', 'leaflet-colorsatvalue',
+			layer.iipColorSat, 0.05, 0.0, 5.0, this._updateMix);
 
 		// Gamma
 		this._input.gamma = this._addNumericalInput(layer,
-		  this._dialog,  'Gamma:', 'iipGamma',
-		  'Adjust Gamma correction. The standard value is 2.2.',
-		  'leaflet-gammavalue', layer.iipGamma, 0.05, 0.5, 5.0);
+			this._dialog, 'Gamma:', 'iipGamma',
+			'Adjust Gamma correction. The standard value is 2.2.',
+			'leaflet-gammavalue', layer.iipGamma, 0.05, 0.5, 5.0);
 
 		// JPEG quality
 		this._input.quality = this._addNumericalInput(layer,
-		  this._dialog,  'JPEG quality:', 'iipQuality',
-		  'Adjust JPEG compression quality. 1: lowest, 100: highest',
-		  'leaflet-qualvalue', layer.iipQuality, 1, 1, 100);
+			this._dialog, 'JPEG quality:', 'iipQuality',
+			'Adjust JPEG compression quality. 1: lowest, 100: highest',
+			'leaflet-qualvalue', layer.iipQuality, 1, 1, 100);
 
 		// Reset settings button
 		var line = this._addDialogLine('Reset:', this._dialog),
-		    elem = this._addDialogElement(line);
+			elem = this._addDialogElement(line);
 
 		this._createButton(className + '-button', elem, 'image-reset', function () {
 			_this.loadSettings(layer, _this._initsettings);
@@ -4815,15 +4815,15 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 		if (options.profile) {
 			line = this._addDialogLine('Profile:', box);
 			elem = this._addDialogElement(line);
-			var	linecolpick = this._createColorPicker(
+			var linecolpick = this._createColorPicker(
 				className + '-color',
 				elem,
 				'profile',
-			  options.profileColor,
+				options.profileColor,
 				false,
 				'iipProfile',
 				'Click to set line color'
-				);
+			);
 
 			// Create start profile line button
 			this._createButton(className + '-button', elem, 'start', function () {
@@ -4831,12 +4831,12 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 					this._updateLine();
 				} else {
 					var map = _this._map,
-					 point = map.getCenter(),
-					 line = this._currProfileLine = L.polyline([point, point], {
-						color: linecolpick.value,
-						weight: 7,
-						opacity: 0.5
-					});
+						point = map.getCenter(),
+						line = this._currProfileLine = L.polyline([point, point], {
+							color: linecolpick.value,
+							weight: 7,
+							opacity: 0.5
+						});
 					line.nameColor = linecolpick.value;
 					line.addTo(map);
 					map.on('drag', this._updateLine, this);
@@ -4845,7 +4845,7 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 
 			// Create end profile line button
 			this._createButton(className + '-button', elem, 'end',
-			  this._profileEnd, 'End line and plot');
+				this._profileEnd, 'End line and plot');
 		}
 
 		if (options.spectrum) {
@@ -4855,14 +4855,14 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 
 			// Create Spectrum color picker
 			var speccolpick = this._createColorPicker(
-					className + '-color',
-					elem,
-					'spectrum',
-				  options.spectrumColor,
-					false,
-					'iipSpectra',
-					'Click to set marker color'
-				);
+				className + '-color',
+				elem,
+				'spectrum',
+				options.spectrumColor,
+				false,
+				'iipSpectra',
+				'Click to set marker color'
+			);
 
 			// Create Spectrum button
 			this._createButton(className + '-button', elem, 'spectrum', function () {
@@ -4877,27 +4877,27 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 						title: 'Spectrum'
 					}).addTo(map),
 					popdiv = L.DomUtil.create('div', this._className + '-popup'),
-			    activity = L.DomUtil.create('div', this._className + '-activity', popdiv);
+					activity = L.DomUtil.create('div', this._className + '-activity', popdiv);
 
 				popdiv.id = 'leaflet-spectrum-plot';
 				marker.bindPopup(popdiv,
-				  {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
+					{ minWidth: 16, maxWidth: 1024, closeOnClick: false }).openPopup();
 				L.IIPUtils.requestURL(this._layer._url.replace(/\&.*$/g, '') +
-				  '&PFL=' + zoom.toString() + ':' +
-				  (point.x - 0.5).toFixed(0) + ',' + (point.y - 0.5).toFixed(0) + '-' +
-				  (point.x - 0.5).toFixed(0) + ',' + (point.y - 0.5).toFixed(0),
-				  'getting IIP layer spectrum', this._plotSpectrum, this);
+					'&PFL=' + zoom.toString() + ':' +
+					(point.x - 0.5).toFixed(0) + ',' + (point.y - 0.5).toFixed(0) + '-' +
+					(point.x - 0.5).toFixed(0) + ',' + (point.y - 0.5).toFixed(0),
+					'getting IIP layer spectrum', this._plotSpectrum, this);
 			}, 'Plot a spectrum at the current map position');
 		}
 	},
 
 	_updateLine: function (e) {
 		var map = this._map,
-		 latLng = map.getCenter(),
-		 maxzoom = map.options.crs.options.nzoom - 1,
-		 path = this._currProfileLine.getLatLngs(),
-		 point1 = map.project(path[0], maxzoom),
-		 point2 = map.project(map.getCenter(), maxzoom);
+			latLng = map.getCenter(),
+			maxzoom = map.options.crs.options.nzoom - 1,
+			path = this._currProfileLine.getLatLngs(),
+			point1 = map.project(path[0], maxzoom),
+			point2 = map.project(map.getCenter(), maxzoom);
 		if (Math.abs(point1.x - point2.x) > Math.abs(point1.y - point2.y)) {
 			point2.y = point1.y;
 		} else {
@@ -4910,23 +4910,23 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 
 	_profileEnd: function () {
 		var map = this._map,
-		    point = map.getCenter(),
-		    line = this._profileLine = this._currProfileLine;
+			point = map.getCenter(),
+			line = this._profileLine = this._currProfileLine;
 
 		map.off('drag', this._updateLine, this);
 		this._currProfileLine = undefined;
 
 		var popdiv = L.DomUtil.create('div', this._className + '-popup'),
-		    activity = L.DomUtil.create('div', this._className + '-activity', popdiv);
+			activity = L.DomUtil.create('div', this._className + '-activity', popdiv);
 
 		popdiv.id = 'leaflet-profile-plot';
 		line.bindPopup(popdiv,
-			 {minWidth: 16, maxWidth: 1024, closeOnClick: false}).openPopup();
+			{ minWidth: 16, maxWidth: 1024, closeOnClick: false }).openPopup();
 		var zoom = map.options.crs.options.nzoom - 1,
-			  path = line.getLatLngs(),
-			  point1 = map.project(path[0], zoom),
-			  point2 = map.project(path[1], zoom),
-				x, y;
+			path = line.getLatLngs(),
+			point1 = map.project(path[0], zoom),
+			point2 = map.project(path[1], zoom),
+			x, y;
 
 		if (point2.x < point1.x) {
 			x = point2.x;
@@ -4941,16 +4941,16 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 
 		L.IIPUtils.requestURL(this._layer._url.replace(/\&.*$/g, '') +
 			'&PFL=' + zoom.toString() + ':' + (point1.x - 0.5).toFixed(0) + ',' +
-			 (point1.y - 0.5).toFixed(0) + '-' + (point2.x - 0.5).toFixed(0) + ',' +
-			 (point2.y - 0.5).toFixed(0),
+			(point1.y - 0.5).toFixed(0) + '-' + (point2.x - 0.5).toFixed(0) + ',' +
+			(point2.y - 0.5).toFixed(0),
 			'getting IIP layer profile',
 			this._plotProfile, this);
 	},
 
 	_getMeasurementString: function () {
 		var currentLatLng = this._currentLatLng,
-		 previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
-		 distance, distanceStr, unit;
+			previousLatLng = this._markers[this._markers.length - 1].getLatLng(),
+			distance, distanceStr, unit;
 
 		// calculate the distance from the last fixed point to the mouse position
 		distance = this._measurementRunningTotal + L.IIPUtils.distance(currentLatLng, previousLatLng);
@@ -4975,13 +4975,13 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				var json = JSON.parse(httpRequest.responseText),
-				    rawprof = json.profile,
-						layer = self._layer,
-						line = self._profileLine,
-						popdiv = document.getElementById('leaflet-profile-plot'),
-						prof = [],
-						series = [],
-						title, ylabel;
+					rawprof = json.profile,
+					layer = self._layer,
+					line = self._profileLine,
+					popdiv = document.getElementById('leaflet-profile-plot'),
+					prof = [],
+					series = [],
+					title, ylabel;
 
 				self.addLayer(line, 'Image profile');
 
@@ -5061,7 +5061,7 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 
 	// Extract the image profile in a given channel
 	_extractProfile: function (layer, rawprof, chan) {
-		var	prof = [],
+		var prof = [],
 			nchan = layer.iipNChannel,
 			npix = rawprof.length / nchan;
 
@@ -5076,13 +5076,13 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				var json = JSON.parse(httpRequest.responseText),
-				    rawprof = json.profile,
-						layer = self._layer,
-						marker = self._spectrumMarker,
-						popdiv = document.getElementById('leaflet-spectrum-plot'),
-						spec = [],
-						series = [],
-						title, ylabel;
+					rawprof = json.profile,
+					layer = self._layer,
+					marker = self._spectrumMarker,
+					popdiv = document.getElementById('leaflet-spectrum-plot'),
+					spec = [],
+					series = [],
+					title, ylabel;
 				self.addLayer(marker, 'Image spectrum');
 
 				for (var chan = 0; chan < layer.iipNChannel; chan++) {
@@ -5143,7 +5143,7 @@ L.Control.IIP.Profile = L.Control.IIP.extend({
 
 	// Extract the average of a series of pixels in a given channel
 	_extractAverage: function (layer, rawprof, chan) {
-		var	nchan = layer.iipNChannel,
+		var nchan = layer.iipNChannel,
 			npix = rawprof.length / nchan,
 			val = 0.0;
 
@@ -5194,11 +5194,11 @@ L.Control.IIP.Region = L.Control.IIP.extend({
 		this._layers = {};
 		this._handlingClick = false;
 		this._sideClass = 'region';
-		this._regions =	regions && regions[0] ? regions : [];
+		this._regions = regions && regions[0] ? regions : [];
 	},
 
 	_initDialog: function () {
-		var	className = this._className,
+		var className = this._className,
 			regions = this._regions,
 			box = this._addDialogBox(),
 			line = this._addDialogLine('Regions:', box),
@@ -5207,28 +5207,28 @@ L.Control.IIP.Region = L.Control.IIP.extend({
 				className + '-color',
 				elem,
 				'region',
-			  this.options.color,
+				this.options.color,
 				false,
 				'iipRegion',
 				'Click to set region color'
 			);
 
-		var	select = this._regionSelect = this._createSelectMenu(
-				this._className + '-select',
-				elem,
-				regions.map(function (o) { return o.name; }),
-				regions.map(function (o) { return (o.load ? true : false); }),
-				-1,
-				undefined,
-				'Select region'
-			);
+		var select = this._regionSelect = this._createSelectMenu(
+			this._className + '-select',
+			elem,
+			regions.map(function (o) { return o.name; }),
+			regions.map(function (o) { return (o.load ? true : false); }),
+			-1,
+			undefined,
+			'Select region'
+		);
 
 		elem = this._addDialogElement(line);
 		this._createButton(className + '-button',
 			elem,
 			'region',
 			function () {
-				var	index = select.selectedIndex - 1;	// Ignore 'Choose region' entry
+				var index = select.selectedIndex - 1;	// Ignore 'Choose region' entry
 				if (index >= 0) {
 					var region = this._regions[index];
 					region.color = colpick.value;
@@ -5255,15 +5255,15 @@ L.Control.IIP.Region = L.Control.IIP.extend({
 	},
 
 	_resetDialog: function () {
-	// Do nothing: no need to reset with layer changes
+		// Do nothing: no need to reset with layer changes
 	},
 
 	_getRegion: function (region, timeout) {
 		var _this = this,
-		    map = this._map,
-				wcs = map.options.crs,
-				sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
-		    templayer = new L.LayerGroup(null);
+			map = this._map,
+			wcs = map.options.crs,
+			sysflag = wcs.forceNativeCelsys && !this.options.nativeCelsys,
+			templayer = new L.LayerGroup(null);
 
 		// Add a temporary "dummy" layer to activate a spinner sign
 		templayer.notReady = true;
@@ -5279,31 +5279,31 @@ L.Control.IIP.Region = L.Control.IIP.extend({
 		if (httpRequest.readyState === 4) {
 			if (httpRequest.status === 200) {
 				var wcs = _this._map.options.crs,
-				 response = httpRequest.responseText,
-				 geoRegion = L.geoJson(JSON.parse(response), {
-					onEachFeature: function (feature, layer) {
-						if (feature.properties && feature.properties.description) {
-							layer.bindPopup(feature.properties.description);
-						} else if (region.description) {
-							layer.bindPopup(region.description);
+					response = httpRequest.responseText,
+					geoRegion = L.geoJson(JSON.parse(response), {
+						onEachFeature: function (feature, layer) {
+							if (feature.properties && feature.properties.description) {
+								layer.bindPopup(feature.properties.description);
+							} else if (region.description) {
+								layer.bindPopup(region.description);
+							}
+						},
+						coordsToLatLng: function (coords) {
+							if (wcs.forceNativeCelsys) {
+								var latLng = wcs.eqToCelsys(L.latLng(coords[1], coords[0]));
+								return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
+							} else {
+								return new L.LatLng(coords[1], coords[0], coords[2]);
+							}
+						},
+						style: function (feature) {
+							return { color: region.color, weight: 2 };
+						},
+						pointToLayer: function (feature, latlng) {
+							return region.drawPoint ?
+								region.drawPoint(feature, latlng) : L.marker(latlng);
 						}
-					},
-					coordsToLatLng: function (coords) {
-						if (wcs.forceNativeCelsys) {
-							var latLng = wcs.eqToCelsys(L.latLng(coords[1], coords[0]));
-							return new L.LatLng(latLng.lat, latLng.lng, coords[2]);
-						} else {
-							return new L.LatLng(coords[1], coords[0], coords[2]);
-						}
-					},
-					style: function (feature) {
-						return {color: region.color, weight: 2};
-					},
-					pointToLayer: function (feature, latlng) {
-						return region.drawPoint ?
-						  region.drawPoint(feature, latlng) : L.marker(latlng);
-					}
-				});
+					});
 				geoRegion.nameColor = region.color;
 				geoRegion.addTo(_this._map);
 				_this.removeLayer(templayer);
@@ -5316,7 +5316,7 @@ L.Control.IIP.Region = L.Control.IIP.extend({
 			} else {
 				if (httpRequest.status !== 0) {
 					alert('Error ' + httpRequest.status + ' while downloading ' +
-					  region.url + '.');
+						region.url + '.');
 				}
 				_this.removeLayer(templayer);
 				_this._regionSelect.opt[region.index].disabled = false;
@@ -5369,12 +5369,12 @@ L.Control.IIP.Snapshot = L.Control.IIP.extend({
 			map = this._map;
 
 		// Image snapshot
-		var	line = this._addDialogLine('Snap:', this._dialog),
+		var line = this._addDialogLine('Snap:', this._dialog),
 			elem = this._addDialogElement(line),
 			items = ['Screen pixels', 'Native pixels'];
 
 		this._snapType = 0;
-		this._snapSelect =  this._createSelectMenu(
+		this._snapSelect = this._createSelectMenu(
 			this._className + '-select',
 			elem,
 			items,
@@ -5386,39 +5386,39 @@ L.Control.IIP.Snapshot = L.Control.IIP.extend({
 			'Select snapshot resolution'
 		);
 
-		var	hiddenlink = document.createElement('a'),
+		var hiddenlink = document.createElement('a'),
 			button = this._createButton(className + '-button', elem, 'snapshot',
-			  function (event) {
-				var	latlng = map.getCenter(),
-					bounds = map.getPixelBounds(),
-					z = map.getZoom(),
-					zfac;
+				function (event) {
+					var latlng = map.getCenter(),
+						bounds = map.getPixelBounds(),
+						z = map.getZoom(),
+						zfac;
 
-				if (z > layer.iipMaxZoom) {
-					zfac = Math.pow(2, z - layer.iipMaxZoom);
-					z = layer.iipMaxZoom;
-				} else {
-					zfac = 1;
-				}
+					if (z > layer.iipMaxZoom) {
+						zfac = Math.pow(2, z - layer.iipMaxZoom);
+						z = layer.iipMaxZoom;
+					} else {
+						zfac = 1;
+					}
 
-				var	sizex = layer.iipImageSize[z].x * zfac,
-					sizey = layer.iipImageSize[z].y * zfac,
-					dx = (bounds.max.x - bounds.min.x),
-					dy = (bounds.max.y - bounds.min.y);
+					var sizex = layer.iipImageSize[z].x * zfac,
+						sizey = layer.iipImageSize[z].y * zfac,
+						dx = (bounds.max.x - bounds.min.x),
+						dy = (bounds.max.y - bounds.min.y);
 
-				hiddenlink.href = layer.getTileUrl({x: 1, y: 1}
-				  ).replace(/JTL\=\d+\,\d+/g,
-				  'RGN=' + bounds.min.x / sizex + ',' +
-				  bounds.min.y / sizey + ',' +
-				  dx / sizex + ',' + dy / sizey +
-				  '&WID=' + (this._snapType === 0 ?
-				    Math.floor(dx / zfac) :
-				    Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
-				hiddenlink.download = layer._title + '_' +
-				  L.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
-				  '.jpg';
-				hiddenlink.click();
-			}, 'Take a snapshot of the displayed image');
+					hiddenlink.href = layer.getTileUrl({ x: 1, y: 1 }
+					).replace(/JTL\=\d+\,\d+/g,
+						'RGN=' + bounds.min.x / sizex + ',' +
+						bounds.min.y / sizey + ',' +
+						dx / sizex + ',' + dy / sizey +
+						'&WID=' + (this._snapType === 0 ?
+							Math.floor(dx / zfac) :
+							Math.floor(dx / zfac / layer.wcs.scale(z))) + '&CVT=jpeg');
+					hiddenlink.download = layer._title + '_' +
+						L.IIPUtils.latLngToHMSDMS(latlng).replace(/[\s\:\.]/g, '') +
+						'.jpg';
+					hiddenlink.click();
+				}, 'Take a snapshot of the displayed image');
 
 		document.body.appendChild(hiddenlink);
 
@@ -5426,7 +5426,7 @@ L.Control.IIP.Snapshot = L.Control.IIP.extend({
 		elem = this._addDialogElement(line);
 		button = this._createButton(className + '-button', elem, 'print',
 			function (event) {
-				var	control = document.querySelector('#map > .leaflet-control-container');
+				var control = document.querySelector('#map > .leaflet-control-container');
 				control.style.display = 'none';
 				window.print();
 				control.style.display = 'unset';
@@ -5474,16 +5474,16 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 		this._initLayout();
 		this._update();
 
-//		map
-//		    .on('layeradd', this._onLayerChange, this)
-//		    .on('layerremove', this._onLayerChange, this);
+		//		map
+		//		    .on('layeradd', this._onLayerChange, this)
+		//		    .on('layerremove', this._onLayerChange, this);
 
 		return this._container;
 	},
 
 	_initLayout: function () {
 		var className = 'leaflet-control-layers',
-		    container = this._container = L.DomUtil.create('div', className);
+			container = this._container = L.DomUtil.create('div', className);
 
 		// makes this work on IE touch devices by stopping it from firing a mouseout event when the touch is released
 		container.setAttribute('aria-haspopup', true);
@@ -5502,7 +5502,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 			if (!L.Browser.android) {
 				L.DomEvent.on(container, {
 					mouseover: this._expand,
-				    mouseout: this._collapse
+					mouseout: this._collapse
 				}, this);
 			}
 
@@ -5512,8 +5512,8 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 
 			if (L.Browser.touch) {
 				L.DomEvent
-				    .on(link, 'click', L.DomEvent.stop)
-				    .on(link, 'click', this._expand, this);
+					.on(link, 'click', L.DomEvent.stop)
+					.on(link, 'click', this._expand, this);
 			} else {
 				L.DomEvent.on(link, 'focus', this._expand, this);
 			}
@@ -5546,8 +5546,8 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 
 	_addItem: function (obj) {
 		var _this = this,
-		 item = L.DomUtil.create('div', 'leaflet-control-layers-item'),
-		 inputdiv = L.DomUtil.create('div', 'leaflet-control-layers-select', item);
+			item = L.DomUtil.create('div', 'leaflet-control-layers-item'),
+			inputdiv = L.DomUtil.create('div', 'leaflet-control-layers-select', item);
 
 		if (obj.layer.notReady) {
 			L.DomUtil.create('div', 'leaflet-control-activity', inputdiv);
@@ -5589,8 +5589,8 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 
 	_onInputClick: function () {
 		var i, input, obj,
-		    inputs = this._form.getElementsByTagName('input'),
-		    inputsLen = inputs.length;
+			inputs = this._form.getElementsByTagName('input'),
+			inputsLen = inputs.length;
 
 		this._handlingClick = true;
 
@@ -5612,20 +5612,20 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 
 	_addDialogLine: function (label, dialog) {
 		var elem = L.DomUtil.create('div', this._className + '-element', dialog),
-		 text = L.DomUtil.create('span', this._className + '-label', elem);
+			text = L.DomUtil.create('span', this._className + '-label', elem);
 		text.innerHTML = label;
 		return elem;
 	},
 
 	_openFileMenu: function () {
 		var _this = this,
-		    fileMenu = L.DomUtil.create('div', 'leaflet-control-filemenu',
-		                 this._map._controlContainer);
+			fileMenu = L.DomUtil.create('div', 'leaflet-control-filemenu',
+				this._map._controlContainer);
 		fileMenu.title = 'Open file';
 		this._addButton.disabled = true;
 		L.DomEvent
-				.disableClickPropagation(fileMenu)
-				.disableScrollPropagation(fileMenu);
+			.disableClickPropagation(fileMenu)
+			.disableScrollPropagation(fileMenu);
 
 		$('.leaflet-control-filemenu').dialog({
 			appendTo: 'body',
@@ -5644,7 +5644,7 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 			height: 200
 		});
 		var fileTree = L.DomUtil.create('div', 'leaflet-control-filetree',
-		                 fileMenu);
+			fileMenu);
 		fileTree.id = 'leaflet-filetree';
 
 		$(document).ready(function () {
@@ -5652,39 +5652,39 @@ L.Control.Layers.IIP = L.Control.Layers.extend({
 				root: _this.options.fileRoot,
 				script: _this.options.fileTreeScript
 			},
-			function (fitsname) {
-				var layercontrol = _this._map._layerControl,
-				    redname = fitsname.replace(/(^.*\/|\..*$)/g, ''),
-				    templayer;
-				if (layercontrol) {
-					templayer = new L.LayerGroup(null);
+				function (fitsname) {
+					var layercontrol = _this._map._layerControl,
+						redname = fitsname.replace(/(^.*\/|\..*$)/g, ''),
+						templayer;
+					if (layercontrol) {
+						templayer = new L.LayerGroup(null);
 
-					templayer.notReady = true;
-					layercontrol.addBaseLayer(templayer, 'converting ' + redname + '...');
-					if (layercontrol.options.collapsed) {
-						layercontrol._expand();
+						templayer.notReady = true;
+						layercontrol.addBaseLayer(templayer, 'converting ' + redname + '...');
+						if (layercontrol.options.collapsed) {
+							layercontrol._expand();
+						}
 					}
-				}
-				$.post(_this.options.fileProcessScript, {
-					fitsname: fitsname
-				}, function (ptifname) {
-					ptifname = ptifname.trim();
-					var layer = L.tileLayer.iip(_this.options.fileURL + ptifname, {title: redname});
-					if (layer.iipMetaReady) {
-						_this._updateBaseLayer(templayer, layer);
-					} else {
-						layer.once('metaload', function () {
+					$.post(_this.options.fileProcessScript, {
+						fitsname: fitsname
+					}, function (ptifname) {
+						ptifname = ptifname.trim();
+						var layer = L.tileLayer.iip(_this.options.fileURL + ptifname, { title: redname });
+						if (layer.iipMetaReady) {
 							_this._updateBaseLayer(templayer, layer);
-						});
-					}
+						} else {
+							layer.once('metaload', function () {
+								_this._updateBaseLayer(templayer, layer);
+							});
+						}
+					});
 				});
-			});
 		});
 	},
 
 	_updateBaseLayer: function (templayer, layer) {
 		var map = this._map,
-		    layercontrol = map._layerControl;
+			layercontrol = map._layerControl;
 		layercontrol.removeLayer(templayer);
 		map.eachLayer(map.removeLayer);
 		layer.addTo(map);
@@ -5741,7 +5741,7 @@ L.Control.Reticle = L.Control.extend({
 });
 
 L.control.reticle = function (options) {
-    return new L.Control.Reticle(options);
+	return new L.Control.Reticle(options);
 };
 
 
@@ -5799,8 +5799,8 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 
 	_update: function () {
 		var options = this.options,
-		    map = this._map,
-		    crs = map.options.crs;
+			map = this._map,
+			crs = map.options.crs;
 
 		if (options.pixels && crs.options && crs.options.nzoom) {
 			var pixelScale = Math.pow(2.0, crs.options.nzoom - 1 - map.getZoom());
@@ -5809,15 +5809,15 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 
 		if (options.custom && crs.options && crs.options.nzoom) {
 			var customScale = Math.pow(2.0,
-			      crs.options.nzoom - 1 - map.getZoom()) * options.customScale;
+				crs.options.nzoom - 1 - map.getZoom()) * options.customScale;
 			this._updateCustom(customScale * options.maxWidth, options.customUnits);
 		}
 
 		if (this.angular) {
 			var center = map.getCenter(),
-			    cosLat = Math.cos(center.lat * Math.PI / 180),
-			    dist = Math.sqrt(this._jacobian(center)) * cosLat,
-			    maxDegrees = dist * options.maxWidth;
+				cosLat = Math.cos(center.lat * Math.PI / 180),
+				dist = Math.sqrt(this._jacobian(center)) * cosLat,
+				maxDegrees = dist * options.maxWidth;
 
 			if (options.metric) {
 				this._updateMetric(maxDegrees * Math.PI / 180.0 * options.planetRadius);
@@ -5831,16 +5831,16 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 		}
 	},
 
-// Return the Jacobian determinant of the astrometric transformation at latLng
+	// Return the Jacobian determinant of the astrometric transformation at latLng
 	_jacobian: function (latlng) {
 		var map = this._map,
-		    p0 = map.project(latlng),
-		    latlngdx = map.unproject(p0.add([10.0, 0.0])),
-		    latlngdy = map.unproject(p0.add([0.0, 10.0]));
+			p0 = map.project(latlng),
+			latlngdx = map.unproject(p0.add([10.0, 0.0])),
+			latlngdy = map.unproject(p0.add([0.0, 10.0]));
 		return 0.01 * Math.abs((latlngdx.lng - latlng.lng) *
-		                        (latlngdy.lat - latlng.lat) -
-		                       (latlngdy.lng - latlng.lng) *
-		                        (latlngdx.lat - latlng.lat));
+			(latlngdy.lat - latlng.lat) -
+			(latlngdy.lng - latlng.lng) *
+			(latlngdx.lat - latlng.lat));
 	},
 
 	_updateCustom: function (maxCust, units) {
@@ -5848,15 +5848,15 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 
 		if (maxCust > 1.0e9) {
 			var maxGCust = maxCust * 1.0e-9,
-			gCust = this._getRoundNum(maxGCust);
+				gCust = this._getRoundNum(maxGCust);
 			this._updateScale(scale, gCust + ' G' + units, gCust / maxGCust);
 		} else if (maxCust > 1.0e6) {
 			var maxMCust = maxCust * 1.0e-6,
-			mCust = this._getRoundNum(maxMCust);
+				mCust = this._getRoundNum(maxMCust);
 			this._updateScale(scale, mCust + ' M' + units, mCust / maxMCust);
 		} else if (maxCust > 1.0e3) {
 			var maxKCust = maxCust * 1.0e-3,
-			kCust = this._getRoundNum(maxKCust);
+				kCust = this._getRoundNum(maxKCust);
 			this._updateScale(scale, kCust + ' k' + units, kCust / maxKCust);
 		} else {
 			var cust = this._getRoundNum(maxCust);
@@ -5869,11 +5869,11 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 
 		if (maxPix > 1.0e6) {
 			var maxMPix = maxPix * 1.0e-6,
-			mPix = this._getRoundNum(maxMPix);
+				mPix = this._getRoundNum(maxMPix);
 			this._updateScale(scale, mPix + ' Mpx', mPix / maxMPix);
 		} else if (maxPix > 1.0e3) {
 			var maxKPix = maxPix * 1.0e-3,
-			kPix = this._getRoundNum(maxKPix);
+				kPix = this._getRoundNum(maxKPix);
 			this._updateScale(scale, kPix + ' kpx', kPix / maxKPix);
 		} else {
 			var pix = this._getRoundNum(maxPix);
@@ -5883,18 +5883,18 @@ L.Control.Scale.WCS = L.Control.Scale.extend({
 
 	_updateDegrees: function (maxDegrees) {
 		var maxSeconds = maxDegrees * 3600.0,
-		    scale = this._dScale;
+			scale = this._dScale;
 
 		if (maxSeconds < 1.0) {
 			var maxMas = maxSeconds * 1000.0,
-			mas = this._getRoundNum(maxMas);
+				mas = this._getRoundNum(maxMas);
 			this._updateScale(scale, mas + ' mas', mas / maxMas);
 		} else if (maxSeconds < 60.0) {
 			var seconds = this._getRoundNum(maxSeconds);
 			this._updateScale(scale, seconds + ' &#34;', seconds / maxSeconds);
 		} else if (maxSeconds < 3600.0) {
 			var maxMinutes = maxDegrees * 60.0,
-			    minutes = this._getRoundNum(maxMinutes);
+				minutes = this._getRoundNum(maxMinutes);
 			this._updateScale(scale, minutes + ' &#39;', minutes / maxMinutes);
 		} else {
 			var degrees = this._getRoundNum(maxDegrees);
@@ -5997,15 +5997,15 @@ L.Control.Sidebar = L.Control.extend({
 	 */
 	addTo: function (map) {
 		var className = 'leaflet-control-zoom-sidebar',
-				parent = map._controlContainer,
-		    buttonContainer;
+			parent = map._controlContainer,
+			buttonContainer;
 
 		// Create sidebar
 		L.DomUtil.addClass(map._container, 'sidebar-map');
 		parent.insertBefore(this._sidebar, parent.firstChild);
 		L.DomEvent
-				.disableClickPropagation(this._sidebar)
-				.disableScrollPropagation(this._sidebar);
+			.disableClickPropagation(this._sidebar)
+			.disableScrollPropagation(this._sidebar);
 
 		this._map = map;
 
@@ -6017,7 +6017,7 @@ L.Control.Sidebar = L.Control.extend({
 		}
 
 		this._toggleButton = this._createButton(this.options.title,
-		  className + (this.options.collapsed ? ' collapsed' : ''), buttonContainer);
+			className + (this.options.collapsed ? ' collapsed' : ''), buttonContainer);
 
 		return this;
 	},
@@ -6031,9 +6031,9 @@ L.Control.Sidebar = L.Control.extend({
 
 	// Add sidebar tab
 	addTab: function (id, tabClass, title, content, sideClass) {
-		var	tablist = this._tablist ? this._tablist : this.addTabList(),
-		    item = L.DomUtil.create('li', '', tablist),
-		    button = L.DomUtil.create('a', tabClass, item);
+		var tablist = this._tablist ? this._tablist : this.addTabList(),
+			item = L.DomUtil.create('li', '', tablist),
+			button = L.DomUtil.create('a', tabClass, item);
 		item.setAttribute('role', 'tab');
 		item._sidebar = this;
 		button.href = '#' + id;
@@ -6045,8 +6045,8 @@ L.Control.Sidebar = L.Control.extend({
 		this._tabitems.push(item);
 
 		// Sidebar pane
-		var	pane = L.DomUtil.create('div', 'sidebar-pane', this._container),
-		    header = L.DomUtil.create('h1', 'sidebar-header', pane);
+		var pane = L.DomUtil.create('div', 'sidebar-pane', this._container),
+			header = L.DomUtil.create('h1', 'sidebar-header', pane);
 
 		header.innerHTML = title;
 
@@ -6118,7 +6118,7 @@ L.Control.Sidebar = L.Control.extend({
 			}
 		}
 
-		this.fire('content', {id: id});
+		this.fire('content', { id: id });
 
 		// open sidebar (if necessary)
 		if (L.DomUtil.hasClass(this._sidebar, 'closed')) {
@@ -6250,13 +6250,13 @@ L.Control.WCS = L.Control.extend({
 	onAdd: function (map) {
 		// Create coordinate input/display box
 		var _this = this,
-			  className = 'leaflet-control-wcs',
-			  dialog = this._wcsdialog =  L.DomUtil.create('div', className + '-dialog'),
-			  coordSelect = L.DomUtil.create('select', className + '-select', dialog),
-			  choose = document.createElement('option'),
-			  coords = this.options.coordinates,
-			  opt = [],
-			  coordIndex;
+			className = 'leaflet-control-wcs',
+			dialog = this._wcsdialog = L.DomUtil.create('div', className + '-dialog'),
+			coordSelect = L.DomUtil.create('select', className + '-select', dialog),
+			choose = document.createElement('option'),
+			coords = this.options.coordinates,
+			opt = [],
+			coordIndex;
 
 		L.DomEvent.disableClickPropagation(coordSelect);
 		this._currentCoord = 0;
@@ -6278,7 +6278,7 @@ L.Control.WCS = L.Control.extend({
 			_this._onDrag();
 		});
 
-		var	input = this._wcsinput = L.DomUtil.create('input', className + '-input', dialog);
+		var input = this._wcsinput = L.DomUtil.create('input', className + '-input', dialog);
 
 		L.DomEvent.disableClickPropagation(input);
 		input.type = 'text';
@@ -6297,7 +6297,7 @@ L.Control.WCS = L.Control.extend({
 			this.panTo(this._wcsinput.value);
 		}, this);
 
-		var	clipboardbutton = L.DomUtil.create('div', className + '-clipboard', dialog);
+		var clipboardbutton = L.DomUtil.create('div', className + '-clipboard', dialog);
 		clipboardbutton.title = 'Copy to clipboard';
 		L.DomEvent.on(clipboardbutton, 'click', function () {
 			var stateObj = {},
@@ -6306,9 +6306,9 @@ L.Control.WCS = L.Control.extend({
 				latlng = map.getCenter();
 			L.IIPUtils.flashElement(this._wcsinput);
 			url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
-			  L.IIPUtils.latLngToHMSDMS(latlng));
+				L.IIPUtils.latLngToHMSDMS(latlng));
 			url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,
-			  wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
+				wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
 			history.pushState(stateObj, '', url);
 			L.IIPUtils.copyToClipboard(url);
 		}, this);
@@ -6322,8 +6322,8 @@ L.Control.WCS = L.Control.extend({
 
 	_onDrag: function (e) {
 		var latlng = this._map.getCenter(),
-		    wcs = this._map.options.crs,
-				coord = this.options.coordinates[this._currentCoord];
+			wcs = this._map.options.crs,
+			coord = this.options.coordinates[this._currentCoord];
 
 		if (wcs.pixelFlag) {
 			this._wcsinput.value = latlng.lng.toFixed(0) + ' , ' + latlng.lat.toFixed(0);
@@ -6334,21 +6334,21 @@ L.Control.WCS = L.Control.extend({
 				latlng = wcs.eqToCelsys(latlng);
 			}
 			switch (coord.units) {
-			case 'HMS':
-				this._wcsinput.value = L.IIPUtils.latLngToHMSDMS(latlng);
-				break;
-			case 'deg':
-				this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
-				break;
-			default:
-				this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' + latlng.lat.toFixed(1);
-				break;
+				case 'HMS':
+					this._wcsinput.value = L.IIPUtils.latLngToHMSDMS(latlng);
+					break;
+				case 'deg':
+					this._wcsinput.value = latlng.lng.toFixed(5) + ' , ' + latlng.lat.toFixed(5);
+					break;
+				default:
+					this._wcsinput.value = latlng.lng.toFixed(1) + ' , ' + latlng.lat.toFixed(1);
+					break;
 			}
 		}
 	},
 
 	panTo: function (str) {
-		var	wcs = this._map.options.crs,
+		var wcs = this._map.options.crs,
 			coord = this.options.coordinates[this._currentCoord],
 			latlng = wcs.parseCoords(str);
 
@@ -6366,7 +6366,7 @@ L.Control.WCS = L.Control.extend({
 		} else {
 			// If not, ask Sesame@CDS!
 			L.IIPUtils.requestURL(this.options.sesameURL + '/-oI/A?' + str,
-			 'getting coordinates for ' + str, this._getCoordinates, this, 10);
+				'getting coordinates for ' + str, this._getCoordinates, this, 10);
 		}
 	},
 
@@ -6390,18 +6390,18 @@ L.Control.WCS = L.Control.extend({
 });
 
 L.Map.mergeOptions({
-    positionControl: false
+	positionControl: false
 });
 
 L.Map.addInitHook(function () {
-    if (this.options.positionControl) {
-        this.positionControl = new L.Control.MousePosition();
-        this.addControl(this.positionControl);
-    }
+	if (this.options.positionControl) {
+		this.positionControl = new L.Control.MousePosition();
+		this.addControl(this.positionControl);
+	}
 });
 
 L.control.wcs = function (options) {
-    return new L.Control.WCS(options);
+	return new L.Control.WCS(options);
 };
 
 /**
@@ -6409,56 +6409,117 @@ L.control.wcs = function (options) {
  * LIneA - DRI integration
  */
 L.Control.LineaOverlay = L.Control.extend({
-    options: {
-        position: 'topleft',
-        title: 'Catalog Overlay',
-        forceSeparateButton: false
-    },
+	options: {
+		position: 'topleft',
+		title: 'Catalog Overlay',
+		forceSeparateButton: false
+	},
 
-    onAdd: function (map) {
-        var className = 'leaflet-control-linea-overlay-catalog', container;
+	onAdd: function (map) {
+		var className = 'leaflet-control-linea-overlay-catalog', container;
 
-        if (map.zoomControl && !this.options.forceSeparateButton) {
-            container = map.zoomControl._container;
-        } else {
-            container = L.DomUtil.create('div', 'leaflet-bar');
-        }
+		if (map.zoomControl && !this.options.forceSeparateButton) {
+			container = map.zoomControl._container;
+		} else {
+			container = L.DomUtil.create('div', 'leaflet-bar');
+		}
 
-        this._createButton(this.options.title, className, container, this.onClickLineaOverlayCatalog, map);
+		this._createButton(this.options.title, className, container, this.onClickLineaOverlayCatalog, map);
 
-        return container;
-    },
+		return container;
+	},
 
-    _createButton: function (title, className, container, fn, context) {
-        var link = L.DomUtil.create('a', className, container);
-        link.href = '#';
-        link.title = title;
+	_createButton: function (title, className, container, fn, context) {
+		var link = L.DomUtil.create('a', className, container);
+		link.href = '#';
+		link.title = title;
 
-        L.DomEvent
-            .addListener(link, 'click', L.DomEvent.stopPropagation)
-            .addListener(link, 'click', L.DomEvent.preventDefault)
-            .addListener(link, 'click', fn, context);
+		L.DomEvent
+			.addListener(link, 'click', L.DomEvent.stopPropagation)
+			.addListener(link, 'click', L.DomEvent.preventDefault)
+			.addListener(link, 'click', fn, context);
 
 
-        return link;
-    },
+		return link;
+	},
 
-    onClickLineaOverlayCatalog: function () {
+	onClickLineaOverlayCatalog: function () {
 
-        this.fire('overlaycatalog');
+		this.fire('overlaycatalog');
 
-    },
+	},
 
 });
 
 L.Map.addInitHook(function () {
-    if (this.options.enableLineaOverlay) {
+	if (this.options.enableLineaOverlay) {
 
-        this.lineaoverlayControl = L.control.lineaoverlay();
-        this.addControl(this.lineaoverlayControl);
-    }
+		this.lineaoverlayControl = L.control.lineaoverlay();
+		this.addControl(this.lineaoverlayControl);
+	}
 });
 
 L.control.lineaoverlay = function (options) {
-    return new L.Control.LineaOverlay(options);
+	return new L.Control.LineaOverlay(options);
+};
+
+
+/**
+ * This control is just a button that triggers the overlaycatalog event that will be used with the
+ * LIneA - DRI integration
+ */
+L.Control.LineaContrast = L.Control.extend({
+	options: {
+		position: 'topleft',
+		title: 'Contrast',
+		forceSeparateButton: false
+	},
+
+	onAdd: function (map) {
+		var className = 'leaflet-control-linea-contrast', container;
+
+		if (map.zoomControl && !this.options.forceSeparateButton) {
+			container = map.zoomControl._container;
+		} else {
+			container = L.DomUtil.create('div', 'leaflet-bar');
+		}
+
+		this._createButton(this.options.title, className, container, this.onClickLineaContrast, map);
+
+		return container;
+	},
+
+	_createButton: function (title, className, container, fn, context) {
+		var link = L.DomUtil.create('a', className, container);
+		link.href = '#';
+		link.title = title;
+
+		L.DomEvent
+			.addListener(link, 'click', L.DomEvent.stopPropagation)
+			.addListener(link, 'click', L.DomEvent.preventDefault)
+			.addListener(link, 'click', fn, context);
+
+
+		return link;
+	},
+
+	onClickLineaContrast: function () {
+
+		this.fire('changecontrast');
+
+	},
+
+});
+
+L.Map.addInitHook(function () {
+	if (this.options.enableLineaContrast) {
+
+		this.lineacontrastControl = L.control.lineacontrast();
+		this.addControl(this.lineacontrastControl);
+	}
+
+});
+
+L.control.lineacontrast = function (options) {
+	return new L.Control.LineaContrast(options);
 };
