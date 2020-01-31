@@ -4,7 +4,6 @@
 Clone the repository to your directory.
 ```
 git clone https://github.com/linea-it/dri.git dri
-mkdir dri/log dri/archive dri/log
 
 ```
 
@@ -13,6 +12,7 @@ mkdir dri/log dri/archive dri/log
 ```
 cd dri
 cp env_template .env
+cp docker-compose-development.yml docker-compose.yml
 docker-compose build
 ```
 
