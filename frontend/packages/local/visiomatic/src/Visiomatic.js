@@ -59,7 +59,8 @@ Ext.define('visiomatic.Visiomatic', {
             'Abell',
             'NVSS',
             'FIRST',
-            'GAIA_DR1'
+            'GAIA_DR1',
+            'GAIA_DR2'
         ],
 
         enableMiniMap: false,
@@ -1194,14 +1195,16 @@ Ext.define('visiomatic.Visiomatic', {
         var feature = layer.feature,
             properties = feature.properties,
             mags = ['_meta_mag_auto_g', '_meta_mag_auto_r', '_meta_mag_auto_i',
-                '_meta_mag_auto_z', '_meta_mag_auto_y'],
+                '_meta_mag_auto_z', '_meta_mag_auto_y',],
             tag_mags = [],
             tag_properties = [],
             tag_id = feature.properties._meta_id,
-            excludeProperties = ['RAJ2000', 'DEJ2000'],
+            excludeProperties = ['RAJ2000', 'DEJ2000', 'RA_ICRS', 'DE_ICRS', 'Source'],
             allProps = [],
             popup;
 
+
+        console.log('hello')
 
         Ext.each(mags, function (mag) {
             try {
@@ -1210,6 +1213,7 @@ Ext.define('visiomatic.Visiomatic', {
                     mag_name = 'Y';
 
                 }
+                console.log(mag);
                 mag_value = properties[mag];
                 if (mag_value) {
                     mag_value = parseFloat(mag_value);
@@ -1264,12 +1268,16 @@ Ext.define('visiomatic.Visiomatic', {
                     }
                 }
 
+
                 if (allProps.length <= 15) {
                     for (key in allProps.sort()) {
                         property = allProps[key];
+                        console.log('property', allProps[key])
+
+                        var _property = allProps[key] == '<Gmag>' ? 'Gmag' : allProps[key];
 
                         tag_properties.push(
-                            '<TR><TD><spam>' + property + '</spam>: </TD>' +
+                            '<TR><TD><spam>' + _property + '</spam>: </TD>' +
                             '<TD>' + feature.properties[property] + '</td></tr>');
                     }
                 }
@@ -1523,7 +1531,7 @@ Ext.define('visiomatic.Visiomatic', {
             me._winContrast = null;
         }
 
-        // TODO: verificar se o valor de currentContrast esta disponivel na lista de Contrasts disponiveis. 
+        // TODO: verificar se o valor de currentContrast esta disponivel na lista de Contrasts disponiveis.
         if (currentContrast !== null) {
 
             win = Ext.create('visiomatic.contrast.ContrastWindow', {
