@@ -1207,9 +1207,6 @@ Ext.define('visiomatic.Visiomatic', {
             allProps = [],
             popup;
 
-
-        console.log('hello')
-
         Ext.each(mags, function (mag) {
             try {
                 mag_name = mag.slice(-1);
@@ -1217,7 +1214,6 @@ Ext.define('visiomatic.Visiomatic', {
                     mag_name = 'Y';
 
                 }
-                console.log(mag);
                 mag_value = properties[mag];
                 if (mag_value) {
                     mag_value = parseFloat(mag_value);
@@ -1276,7 +1272,6 @@ Ext.define('visiomatic.Visiomatic', {
                 if (allProps.length <= 15) {
                     for (key in allProps.sort()) {
                         property = allProps[key];
-                        console.log('property', allProps[key])
 
                         var _property = allProps[key] == '<Gmag>' ? 'Gmag' : allProps[key];
 
