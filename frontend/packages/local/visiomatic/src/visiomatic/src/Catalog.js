@@ -119,6 +119,23 @@ L.Catalog['2MASS'] = L.extend({}, L.Catalog, {
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
+L.Catalog['2MASS6X'] = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: '2MASS 6X',
+	className: 'logo-catalog-vizier',
+	attribution: '2MASS 6X Point Source Working Database / Catalog (Cutri+ 2006)',
+	color: 'red',
+	maglim: 24.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/281/2mass6x&' +
+	 '-out=2MASS,RAJ2000,DEJ2000,Jmag,e_Jmag,Hmag,e_Hmag,Kmag,e_Kmag,Bmag,Rmag&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&' +
+	 '-out.max={nmax}&-sort=Jmag',
+	properties: ['', '', '', '', '', '', '', ''],
+	units: ['', '', '', '', '', '', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/281/2mass6x&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
 L.Catalog.SDSS9 = L.extend({}, L.Catalog, {
 	service: 'Vizier@CDS',
 	name: 'SDSS Release 9',
@@ -145,7 +162,7 @@ L.Catalog.SDSS12 = L.extend({}, L.Catalog, {
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=V/147&' +
 	 '-out=SDSS12,RA_ICRS,DE_ICRS,umag,e_umag,gmag,e_gmag,rmag,e_rmag,imag,e_imag,zmag,e_zmag,zsp,e_zsp&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag',
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=gmag',
 	properties: ['u', 'g', 'r', 'i', 'z'],
 	units: ['', '', '', '', ''],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/147&-c={ra},{dec},eq=J2000&-c.rs=0.01'
@@ -355,7 +372,7 @@ L.Catalog.GLEAM = L.extend({}, L.Catalog, {
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fintwide',
 	properties: ['F<sub>int</sub>(170-231MHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
 	units: ['Jy', '&#8243;', '&#8243;', '&#176;'],
-	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=-source=VIII/100/gleamegc&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VIII/100/gleamegc&-c={ra},{dec},eq=J2000&-c.rs=0.2',
 	draw: function (feature, latlng) {
 		return L.ellipse(latlng, {
 			majAxis: feature.properties.items[1] / 3600.0,
@@ -378,7 +395,7 @@ L.Catalog.TGSS = L.extend({}, L.Catalog, {
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Stotal',
 	properties: ['F<sub>peak</sub>(150MHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
 	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
-	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=-source=J/A%2bA/598/A78/table3&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=J/A%2bA/598/A78/table3&-c={ra},{dec},eq=J2000&-c.rs=0.2',
 	draw: function (feature, latlng) {
 		return L.ellipse(latlng, {
 			majAxis: feature.properties.items[1] / 7200.0,
@@ -388,19 +405,34 @@ L.Catalog.TGSS = L.extend({}, L.Catalog, {
 	}
 });
 
-
 L.Catalog.PS1 = L.extend({}, L.Catalog, {
 	service: 'Vizier@CDS',
 	name: 'PS1',
 	className: 'logo-catalog-vizier',
-	attribution: 'The Pan-STARRS release 1 (PS1) Survey - DR1 (Chambers+, 2016) ',
+	attribution: 'The Pan-STARRS release 1 (PS1) Survey - DR1 (Chambers+, 2016)',
 	color: 'blue',
 	maglim: 30.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/349&' +
 		'-out=objID,RAJ2000,DEJ2000,gmag,e_gmag,rmag,e_rmag,imag,e_imag,zmag,e_zmag,ymag_e_ymag,gKmag,e_gKmag,rKmag,e_rKmag,iKmag,e_iKmag,zKmag,e_zKmag,yKmag,e_yKmag&-out.meta=&' +
-		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Stotal',
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-gmag',
 	properties: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
-	units: ['', '&#8243;', '&#8243;', '&#176;'],
-	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=-source=II/349&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	units: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=II/349&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+});
+
+L.Catalog.HSC2 = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'HSC2',
+	className: 'logo-catalog-vizier',
+	attribution: 'Hubble Source Catalog (V1 and V2) (Whitmore+, 2016)',
+	color: 'blue',
+	maglim: 30.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/342/hsc2&' +
+		'-out=Source,RAJ2000,DEJ2000,Filter,magAper2,magAuto&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-magAuto',
+	properties: ['', '', '',],
+	units: ['', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=II/342/hsc2&-c={ra},{dec},eq=J2000&-c.rs=0.2',
 });

@@ -53,14 +53,18 @@ Ext.define('visiomatic.Visiomatic', {
         availableCatalogs: [
             'GALEX_AIS',
             '2MASS',
+            '2MASS6X',
             'AllWISE',
             'SDSS',
+            'SDSS12',
             'PPMXL',
             'Abell',
             'NVSS',
             'FIRST',
             'GAIA_DR1',
-            'GAIA_DR2'
+            'GAIA_DR2',
+            'PS1',
+            'HSC2'
         ],
 
         enableMiniMap: false,
