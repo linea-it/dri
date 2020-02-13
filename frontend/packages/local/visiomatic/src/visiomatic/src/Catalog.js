@@ -119,20 +119,53 @@ L.Catalog['2MASS'] = L.extend({}, L.Catalog, {
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/246&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
-L.Catalog.SDSS = L.extend({}, L.Catalog, {
+L.Catalog['2MASS6X'] = L.extend({}, L.Catalog, {
 	service: 'Vizier@CDS',
-	name: 'SDSS release 12',
+	name: '2MASS 6X',
 	className: 'logo-catalog-vizier',
-	attribution: 'SDSS Photometric Catalog, Release 9 (Alam et al. 2015)',
+	attribution: '2MASS 6X Point Source Working Database / Catalog (Cutri+ 2006)',
+	color: 'red',
+	maglim: 24.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/281/2mass6x&' +
+	 '-out=2MASS,RAJ2000,DEJ2000,Jmag,e_Jmag,Hmag,e_Hmag,Kmag,e_Kmag,Bmag,Rmag&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&' +
+	 '-out.max={nmax}&-sort=Jmag',
+	properties: ['', '', '', '', '', '', '', ''],
+	units: ['', '', '', '', '', '', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=II/281/2mass6x&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.SDSS9 = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'SDSS Release 9',
+	className: 'logo-catalog-vizier',
+	attribution: 'SDSS Photometric Catalog, Release 9 (Adelman-McCarthy+, 2012)',
 	color: 'yellow',
 	maglim: 25.0,
 	regionType: 'box',
-	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=V/147&' +
-	 '-out=SDSS12,RA_ICRS,DE_ICRS,umag,gmag,rmag,imag,zmag&-out.meta=&' +
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=V/139&' +
+	 '-out=SDSS9,RA_ICRS,DE_ICRS,umag,gmag,rmag,imag,zmag&-out.meta=&' +
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=rmag',
 	properties: ['u', 'g', 'r', 'i', 'z'],
 	units: ['', '', '', '', ''],
-	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/147/sdss12&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/139&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.SDSS12 = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'SDSS Release 12',
+	className: 'logo-catalog-vizier',
+	attribution: 'SDSS Photometric Catalogue, Release 12 (Alam+, 2015)',
+	color: 'pink',
+	maglim: 25.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=V/147&' +
+	 '-out=SDSS12,RA_ICRS,DE_ICRS,umag,e_umag,gmag,e_gmag,rmag,e_rmag,imag,e_imag,zmag,e_zmag,zsp,e_zsp&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=gmag',
+	properties: ['u', 'g', 'r', 'i', 'z'],
+	units: ['', '', '', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=V/147&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 L.Catalog.PPMXL = L.extend({}, L.Catalog, {
@@ -257,11 +290,27 @@ L.Catalog.GAIA_DR1 = L.extend({}, L.Catalog, {
 	maglim: 20.0,
 	regionType: 'box',
 	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/337&' +
-	 '-out=Source,RA_ICRS,DE_ICRS,<Gmag>,pmRA,pmDE&-out.meta=&' +
-	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=<Gmag>',
+	 '-out=Source,RA_ICRS,DE_ICRS,Plx,e_Plx,pmRA,e_pmRA,pmDE,e_pmDE,<Gmag>,BPmag,e_BPmag,RPmag,e_RPmag,RV,e_RV&-out.meta=&' +
+	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Gmag',
 	properties: ['G', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
 	units: ['', 'mas/yr', 'mas/yr'],
 	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/337&-c={ra},{dec},eq=J2000&-c.rs=0.01'
+});
+
+L.Catalog.GAIA_DR2 = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'Gaia DR2',
+	className: 'logo-catalog-vizier',
+	attribution: 'Second Gaia Data Release (2018)',
+	color: 'purple',
+	maglim: 20.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=I/345&' +
+		'-out=Source,RA_ICRS,DE_ICRS,Plx,e_Plx,pmRA,e_pmRA,pmDE,e_pmDE,Gmag,e_Gmag,BPmag,e_BPmag,RPmag,e_RPmag,RV,e_RV&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=Gmag',
+	properties: ['G', '&#956;<sub>&#593;</sub> cos &#948;', '&#956;<sub>&#948;</sub>'],
+	units: ['', 'mas/yr', 'mas/yr'],
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=I/345&-c={ra},{dec},eq=J2000&-c.rs=0.01'
 });
 
 L.Catalog.URAT_1 = L.extend({}, L.Catalog, {
@@ -323,7 +372,7 @@ L.Catalog.GLEAM = L.extend({}, L.Catalog, {
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Fintwide',
 	properties: ['F<sub>int</sub>(170-231MHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
 	units: ['Jy', '&#8243;', '&#8243;', '&#176;'],
-	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=-source=VIII/100/gleamegc&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	objurl: L.Catalog.vizierURL + '/VizieR-5?-source=VIII/100/gleamegc&-c={ra},{dec},eq=J2000&-c.rs=0.2',
 	draw: function (feature, latlng) {
 		return L.ellipse(latlng, {
 			majAxis: feature.properties.items[1] / 3600.0,
@@ -346,7 +395,7 @@ L.Catalog.TGSS = L.extend({}, L.Catalog, {
 	 '-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-Stotal',
 	properties: ['F<sub>peak</sub>(150MHz)', 'Major axis FWHM', 'Minor axis FWHM', 'Position angle'],
 	units: ['mJy', '&#8243;', '&#8243;', '&#176;'],
-	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=-source=J/A%2bA/598/A78/table3&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=J/A%2bA/598/A78/table3&-c={ra},{dec},eq=J2000&-c.rs=0.2',
 	draw: function (feature, latlng) {
 		return L.ellipse(latlng, {
 			majAxis: feature.properties.items[1] / 7200.0,
@@ -354,4 +403,36 @@ L.Catalog.TGSS = L.extend({}, L.Catalog, {
 			posAngle: feature.properties.items[3] === '--' ? 0.0 : feature.properties.items[3]
 		});
 	}
+});
+
+L.Catalog.PS1 = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'PS1',
+	className: 'logo-catalog-vizier',
+	attribution: 'The Pan-STARRS release 1 (PS1) Survey - DR1 (Chambers+, 2016)',
+	color: 'blue',
+	maglim: 30.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/349&' +
+		'-out=objID,RAJ2000,DEJ2000,gmag,e_gmag,rmag,e_rmag,imag,e_imag,zmag,e_zmag,ymag_e_ymag,gKmag,e_gKmag,rKmag,e_rKmag,iKmag,e_iKmag,zKmag,e_zKmag,yKmag,e_yKmag&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-gmag',
+	properties: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+	units: ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=II/349&-c={ra},{dec},eq=J2000&-c.rs=0.2',
+});
+
+L.Catalog.HSC2 = L.extend({}, L.Catalog, {
+	service: 'Vizier@CDS',
+	name: 'HSC2',
+	className: 'logo-catalog-vizier',
+	attribution: 'Hubble Source Catalog (V1 and V2) (Whitmore+, 2016)',
+	color: 'blue',
+	maglim: 30.0,
+	regionType: 'box',
+	url: L.Catalog.vizierURL + '/asu-tsv?&-mime=csv&-source=II/342/hsc2&' +
+		'-out=Source,RAJ2000,DEJ2000,Filter,magAper2,magAuto&-out.meta=&' +
+		'-c.eq={sys}&-c={lng},{lat}&-c.bd={dlng},{dlat}&-out.max={nmax}&-sort=-magAuto',
+	properties: ['', '', '',],
+	units: ['', '', ''],
+	objurl: L.Catalog.vizierURL + '/VizieR-3?-source=II/342/hsc2&-c={ra},{dec},eq=J2000&-c.rs=0.2',
 });
