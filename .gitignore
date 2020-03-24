@@ -2,6 +2,7 @@
 docker-compose.yml
 
 # Diretorios de instalacao
+/api/env
 /env
 /data
 /db

@@ -138,6 +138,8 @@ class DBBase:
         with self.engine.connect():
             self.metadata = MetaData(self.engine)
 
+            print("Abriu Conexao")
+
     def prepare_connection(self, db_name):
         connection_data = {}
 
@@ -161,8 +163,15 @@ class DBBase:
             connection_data['PASSWORD'] = db_settings_django['PASSWORD']
 
         elif connection_data['ENGINE'] == 'postgresql_psycopg2':
+            connection_data['USER'] = db_settings_django['USER']
+            connection_data['PASSWORD'] = db_settings_django['PASSWORD']
+            connection_data['HOST'] = db_settings_django['HOST']
+            connection_data['PORT'] = db_settings_django['PORT']
+            connection_data['DATABASE'] = db_settings_django['NAME']
+
+
             print("Tentou conectar com Postgres")
-            
+            print(connection_data)
 
         else:
             raise Exception('Unknown database')
@@ -178,6 +187,9 @@ class DBBase:
 
         if db_settings['ENGINE'] == 'oracle':
             return DBOracle(db_settings)
+
+        if db_settings['ENGINE'] == 'postgresql_psycopg2':
+            return DBPostgresql(db_settings)
 
     def get_string_connection(self):
         return self.database.get_string_connection()
