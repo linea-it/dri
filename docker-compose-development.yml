@@ -93,18 +93,20 @@ services:
     depends_on:
       - sky
 
-  # eyeballing:
-  #   build: ./frontend/eyeballing
-  #   volumes:
-  #     - ./frontend/eyeballing/:/app
-  #   working_dir: /app
-  #   command: yarn start
+  eyeballing:
+    image: node:10-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend/eyeballing:/app
+    stdin_open: true
+    command: yarn start 
 
   landingpage:
     image: node:10-alpine
     working_dir: /app
     volumes:
       - ./frontend/landing_page:/app
+    stdin_open: true
     command: yarn start
     
   nginx:
