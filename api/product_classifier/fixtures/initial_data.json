@@ -629,7 +629,7 @@
   "pk": 68,
   "fields": {
     "pcl_name": "mangle_maps_mag_limit",
-    "pcl_group": 15,
+    "pcl_group": 13,
     "pcl_display_name": "Mag Limit",
     "pcl_is_system": false
   }
@@ -659,7 +659,7 @@
   "pk": 71,
   "fields": {
     "pcl_name": "mangle_maps_area_fraction",
-    "pcl_group": 15,
+    "pcl_group": 13,
     "pcl_display_name": "Area Fraction",
     "pcl_is_system": false
   }
@@ -1292,6 +1292,246 @@
     "pcl_group": 1,
     "pcl_display_name": "Matched Clusters",
     "pcl_is_system": true
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 156,
+  "fields": {
+    "pcl_name": "bad_regions_map",
+    "pcl_group": 16,
+    "pcl_display_name": "Bad Regions Map",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 157,
+  "fields": {
+    "pcl_name": "systematic_maps_skyvar_uncertainty",
+    "pcl_group": 13,
+    "pcl_display_name": "Skyvar Uncertainty",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 158,
+  "fields": {
+    "pcl_name": "systematic_maps_fwhm_fluxrad_wmean",
+    "pcl_group": 13,
+    "pcl_display_name": "Fwhm Fluxrad Wmean",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 159,
+  "fields": {
+    "pcl_name": "systematic_maps_fwhm_fluxrad_max",
+    "pcl_group": 13,
+    "pcl_display_name": "Fwhm Fluxrad Max",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 160,
+  "fields": {
+    "pcl_name": "systematic_maps_fwhm_fluxrad_min",
+    "pcl_group": 13,
+    "pcl_display_name": "Fwhm Fluxrad Min",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 161,
+  "fields": {
+    "pcl_name": "systematic_maps_fwhm_wmean",
+    "pcl_group": 13,
+    "pcl_display_name": "Fwhm Wmean",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 162,
+  "fields": {
+    "pcl_name": "systematic_maps_fracdet",
+    "pcl_group": 13,
+    "pcl_display_name": "Fracdet",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 163,
+  "fields": {
+    "pcl_name": "systematic_maps_airmass_max",
+    "pcl_group": 13,
+    "pcl_display_name": "Airmass Max",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 164,
+  "fields": {
+    "pcl_name": "systematic_maps_airmass_min",
+    "pcl_group": 13,
+    "pcl_display_name": "Airmass Min",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 165,
+  "fields": {
+    "pcl_name": "systematic_maps_airmass_wmean",
+    "pcl_group": 13,
+    "pcl_display_name": "Airmass Wmean",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 166,
+  "fields": {
+    "pcl_name": "systematic_maps_exptime_sum",
+    "pcl_group": 13,
+    "pcl_display_name": "ExpTime Sum",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 167,
+  "fields": {
+    "pcl_name": "systematic_maps_fgcm_gry_min",
+    "pcl_group": 13,
+    "pcl_display_name": "FGCM GRY Min",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 168,
+  "fields": {
+    "pcl_name": "systematic_maps_fgcm_gry_wmean",
+    "pcl_group": 13,
+    "pcl_display_name": "Fgcm Gry Wmean",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 169,
+  "fields": {
+    "pcl_name": "systematic_maps_fwhm_max",
+    "pcl_group": 13,
+    "pcl_display_name": "Fwhm Max",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 170,
+  "fields": {
+    "pcl_name": "systematic_maps_fwhm_min",
+    "pcl_group": 13,
+    "pcl_display_name": "Fwhm Min",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 171,
+  "fields": {
+    "pcl_name": "systematic_maps_sigma_mag_zero_qsum",
+    "pcl_group": 13,
+    "pcl_display_name": "Sigma MagZero Qsum",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 172,
+  "fields": {
+    "pcl_name": "systematic_maps_skybrite_wmean",
+    "pcl_group": 13,
+    "pcl_display_name": "Skybrite Wmean",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 173,
+  "fields": {
+    "pcl_name": "systematic_maps_skysigma_max",
+    "pcl_group": 13,
+    "pcl_display_name": "Skysigma Max",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 174,
+  "fields": {
+    "pcl_name": "systematic_maps_skysigma_min",
+    "pcl_group": 13,
+    "pcl_display_name": "SkySigma Min",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 175,
+  "fields": {
+    "pcl_name": "systematic_maps_skysigma_wmean",
+    "pcl_group": 13,
+    "pcl_display_name": "SkySigma Wmean",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 176,
+  "fields": {
+    "pcl_name": "systematic_maps_t_eff_exptime_sum",
+    "pcl_group": 13,
+    "pcl_display_name": "Teff ExpTime Sum",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 177,
+  "fields": {
+    "pcl_name": "systematic_maps_t_eff_max",
+    "pcl_group": 13,
+    "pcl_display_name": "Teff Max",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 178,
+  "fields": {
+    "pcl_name": "systematic_maps_t_eff_min",
+    "pcl_group": 13,
+    "pcl_display_name": "Teff Min",
+    "pcl_is_system": false
+  }
+},
+{
+  "model": "product_classifier.productclass",
+  "pk": 179,
+  "fields": {
+    "pcl_name": "systematic_maps_t_eff_wmean",
+    "pcl_group": 13,
+    "pcl_display_name": "Teff Wmean",
+    "pcl_is_system": false
   }
 },
 {

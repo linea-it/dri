@@ -102,6 +102,12 @@ Dump a schema from database postgres
 docker exec -it $(docker ps -q -f name=dri_database) pg_dump  -h localhost -U postgres -n 'gaia' postgres > /data/gaia_dump.sql
 ```
 
+Dump data using Django 
+```
+docker exec -it $(docker ps -q -f name=dri_backend) python manage.py dumpdata product_classifier --indent 2 > product_classifier.json
+```
+Neste exemplo product_classifier é o Django App com todos os models. product_classifier.json é o arquivo com o dump. 
+
 ### Rabbit + Celery
 Descobrir o IP do container rabbit
 ```

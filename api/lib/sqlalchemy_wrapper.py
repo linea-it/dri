@@ -138,8 +138,6 @@ class DBBase:
         with self.engine.connect():
             self.metadata = MetaData(self.engine)
 
-            print("Abriu Conexao")
-
     def prepare_connection(self, db_name):
         connection_data = {}
 
@@ -168,10 +166,6 @@ class DBBase:
             connection_data['HOST'] = db_settings_django['HOST']
             connection_data['PORT'] = db_settings_django['PORT']
             connection_data['DATABASE'] = db_settings_django['NAME']
-
-
-            print("Tentou conectar com Postgres")
-            print(connection_data)
 
         else:
             raise Exception('Unknown database')
