@@ -37,3 +37,7 @@ __pycache__
 /api/db
 *.coverage
 .env
+
+# Arquivos do Postgresql 
+/pg_data
+/pg_backup

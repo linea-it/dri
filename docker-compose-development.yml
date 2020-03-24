@@ -100,13 +100,13 @@ services:
   #   working_dir: /app
   #   command: yarn start
 
-  dashboard:
-    build: ./frontend/dashboard
-    volumes:
-      - ./frontend/dashboard/:/app
+  landingpage:
+    image: node:10-alpine
     working_dir: /app
+    volumes:
+      - ./frontend/landing_page:/app
     command: yarn start
-
+    
   nginx:
     build: ./frontend
     ports:
