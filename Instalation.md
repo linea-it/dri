@@ -62,6 +62,19 @@ docker-compose up
 docker exec -it $(docker ps -q -f name=backend) python manage.py createsuperuser
 ```
 
+### Load Initial Data
+For admin database
+```
+docker exec -it $(docker ps -q -f name=dri_backend) python manage.py loaddata initial_data.json
+```
+For catalog database
+```
+docker exec -it $(docker ps -q -f name=dri_database) psql -h localhost -U postgres -d postgres  -f /data/gaia_dump.sql 
+```
+In this example, the catalog database is the same as the administrative database. this example catalog will create a gaia schema with a gaia_dr2 table. a subset with few objects.
+
+
+
 ### Useful Commands
 
 Returns the ID of a container by filtering by name
@@ -84,6 +97,10 @@ Nginx Reload
 docker exec -it $(docker ps -q -f name=nginx) nginx -s reload
 ```
 
+Dump a schema from database postgres
+```
+docker exec -it $(docker ps -q -f name=dri_database) pg_dump  -h localhost -U postgres -n 'gaia' postgres > /data/gaia_dump.sql
+```
 
 ### Rabbit + Celery
 Descobrir o IP do container rabbit
