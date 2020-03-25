@@ -1,9 +1,18 @@
-MYSQL_DATABASE=dri
-MYSQL_USER=wordpress
-MYSQL_PASSWORD=pwd
-MYSQL_RANDOM_ROOT_PASSWORD='1'
+DB_NAME=postgres
+DB_USER=postgres
+DB_PASS=postgres
+DB_HOST=database
+DB_PORT=5432
+DB_SCHEMA=dri_admin
 
-WORDPRESS_DB_HOST=mysql
-WORDPRESS_DB_USER=wordpress
-WORDPRESS_DB_PASSWORD=pwd
-WORDPRESS_DB_NAME=dri
+# Database Settings for Catalog Database
+CATALOG_DB_NAME=postgres
+CATALOG_DB_USER=postgres
+CATALOG_DB_PASS=postgres
+CATALOG_DB_HOST=database
+CATALOG_DB_PORT=5432
+CATALOG_DB_SCHEMA=dri_catalog
+
+# Variables used in the postgres container
+POSTGRES_PASSWORD=postgres
+POSTGRES_DB=postgres
