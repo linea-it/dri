@@ -22,9 +22,6 @@ from product.export import Export
 
 from lib.sqlalchemy_wrapper import DBBase
 
-logger = logging.getLogger(__name__)
-
-
 class QueryViewSet(viewsets.ModelViewSet):
     queryset = Query.objects.filter()
     serializer_class = QuerySerializer

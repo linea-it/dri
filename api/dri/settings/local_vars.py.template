@@ -222,6 +222,14 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'garbage_colector.log'),
             'formatter': 'standard',
         },
+        'userquery': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join(LOG_DIR, 'userquery.log'),
+            'formatter': 'standard',
+        },        
     },
     'loggers': {
         'django': {
@@ -272,6 +280,11 @@ LOGGING = {
         },
         'garbage_colector': {
             'handlers': ['garbage_colector'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'userquery': {
+            'handlers': ['userquery'],
             'level': 'DEBUG',
             'propagate': True,
         },

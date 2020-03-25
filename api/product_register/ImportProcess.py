@@ -239,11 +239,7 @@ class Import():
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
             raise Exception("Table or view  %s.%s does not exist" %
                             (data.get('schema', None), data.get('table')))
-
-        # Recuperar a quantidade de linhas da tabela
-        count = 0
-        if data.get('class') is not 'coadd_objects':
-            count = self.db.get_count(data.get('table'), schema=data.get('schema', None))
+       
 
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))
@@ -256,6 +252,15 @@ class Import():
             tbl_rows = tbl_info.get('n_imported_rows', None)
             tbl_num_columns = tbl_info.get('n_imported_columns', None)
             tbl_size = tbl_info.get('table_size_in_bytes', None)
+        else:
+            # Recuperar a quantidade de linhas da tabela
+            tbl_rows = self.db.get_estimated_rows_count(data.get('table'), schema=data.get('schema', None))
+
+            # Recuperar a quantidade de colunas da tabela
+            tbl_num_columns = self.db.get_table_columns_count(data.get('table'), schema=data.get('schema', None))
+
+            # Tamanho da tabela em bytes
+            tbl_size = self.db.get_table_size_bytes(data.get('table'), schema=data.get('schema', None))
 
         # Data do produto caso o produto tenha processo a data do produto = data de start do processo
         date = None
@@ -310,7 +315,7 @@ class Import():
                 "tbl_rows": tbl_rows,
                 "tbl_num_columns": tbl_num_columns,
                 "tbl_size": tbl_size,
-                "ctl_num_objects": count,
+                "ctl_num_objects": tbl_rows,
             }
         )
 

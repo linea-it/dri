@@ -33,7 +33,7 @@ class CreateTableAs:
         self.job = Job.objects.get(pk=job_id)
 
         # Get an instance of a logger
-        self.logger = logging.getLogger('userquery create_table_as')
+        self.logger = logging.getLogger('userquery')
 
         # state variables
         self.is_table_successfully_created = False

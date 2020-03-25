@@ -249,6 +249,51 @@ class DBBase:
                 result = con.execute(stm)
                 return result.fetchone()[0]
 
+    def get_table_size_bytes(self, table, schema=None):
+        """
+            Retorna o tamanho de uma tabela em bytes. 
+        """
+        try:
+            sql = self.database.get_raw_sql_size_table_bytes(table, schema=schema)
+            with self.engine.connect() as con:
+                queryset = con.execute(sql)
+            return queryset.fetchone()[0]
+        except:
+            try:
+                # Se nao tiver uma funcao expecifica para contar as colunas
+                # recupera todas as colunas e retorna a quantidade
+                columns = self.get_table_columns(table, schema=None)
+                return len(columns)
+            except:
+                return 0
+
+    def get_table_columns_count(self, table, schema=None):
+        """
+            Retorna a quantidade de colunas de uma tabela. 
+        """
+        try:
+            sql = self.database.get_raw_sql_number_columns(table, schema=schema)
+            with self.engine.connect() as con:
+                queryset = con.execute(sql)
+            return queryset.fetchone()[0]
+        except:
+            return 0
+    
+    def get_estimated_rows_count(self, table, schema=None):
+        """
+            Retorna a quantidade de rows estimada para a tabela. 
+            Consultando as tabelas adm do SGBD. 
+            é mas rapida que um count em tabelas grandes, mas pode ser pouco precisa.
+        """
+        try:
+            sql = self.database.get_raw_sql_table_rows(table, schema=schema)
+            with self.engine.connect() as con:
+                queryset = con.execute(sql)
+            return queryset.fetchone()[0]
+        except:
+            return 0
+
+
     def table_exists(self, table, schema=None):
         table = self.database.get_table_name(table)
         if schema:
