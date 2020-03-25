@@ -43,9 +43,14 @@ dri/settings/
  in this file the variable debug should always be False and it is necessary to add the host allowed in ALLOWED_HOSTS
  parameter and allowed hosts CORS in variable CORS_ORIGIN_WHITELIST.
 
-Database settings must be made only in local_vars.py,
+## Setting Database 
 
-to use sqlite it is not necessary to make any changes.
+This step is needed only to use oracle or postgresql database. The default sqlite is pre-configured in the repository files
+
+###  Postgresql
+Considering a new installation in a development environment with the postgresql + q3c database.
+
+Database settings must be made only in local_vars.py,
 
 Whereas the database used is postgresql + q3c and a development environment. the configuration of local_vars.py in the databases attribute is as follows. 
 ```
@@ -97,12 +102,7 @@ POSTGRES_PASSWORD=postgres
 POSTGRES_DB=postgres
 ```
 
-## Setting Database Params
 
-This step is needed only to use oracle or postgresql database. The default sqlite is pre-configured in the repository files
-
-###  Postgresql
-Considering a new installation in a development environment with the postgresql + q3c database.
 
 Starting the database container alone, the first time will create the pg_data and pg_backups directory and create the user based on the POSTGRES_DB and POSTGRES_PASSWORD environment variables both with default value 'postgres' the user created is also 'postgres'
 
