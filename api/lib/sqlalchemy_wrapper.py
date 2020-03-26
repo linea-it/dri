@@ -18,104 +18,6 @@ from lib.db_oracle import DBOracle
 from lib.db_sqlite import DBSqlite
 from lib.db_postgresql import DBPostgresql
 
-# class DBOracle:
-#     def __init__(self, db):
-#         self.db = db
-
-#     def get_string_connection(self):
-#         url = (
-#                   "oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
-#                   "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
-#                   "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
-#                   "SERVICE_NAME=%(database)s)))"
-#               ) % {
-#                   'username': self.db['USER'], 'password': self.db['PASSWORD'],
-#                   'host': self.db['HOST'], 'port': self.db['PORT'],
-#                   'database': self.db['DATABASE']
-#               }
-#         return url
-
-#     def get_engine(self):
-#         return "oracle"
-
-#     def get_dialect(self):
-#         return oracle
-
-#     def get_raw_sql_limit(self, offset, limit):
-#         return "OFFSET %s ROWS FETCH NEXT %s ROWS ONLY" % (offset, limit)
-
-#     def get_raw_sql_column_properties(self, table, schema=None):
-#         sql = "SELECT column_name, data_type FROM all_tab_columns WHERE table_name='%s'" % table
-#         if schema:
-#             sql += " AND owner='%s'" % schema
-#         return sql
-
-#     def get_raw_sql_table_rows(self, table, schema=None):
-#         sql = "SELECT NUM_ROWS FROM dba_tables WHERE TABLE_NAME='%s'" % table
-#         if schema:
-#             sql += " AND owner='%s'" % schema
-#         return sql
-
-#     def get_raw_sql_size_table_bytes(self, table, schema=None):
-#         sql = "SELECT BYTES FROM dba_segments WHERE segment_type='TABLE' and segment_name='%s'" % table
-#         if schema:
-#             sql += " AND owner='%s'" % schema
-#         return sql
-
-#     def get_raw_sql_number_columns(self, table, schema=None):
-#         sql = "SELECT COUNT(*) FROM all_tab_columns WHERE TABLE_NAME = '%s'" % table
-#         if schema:
-#             sql += " AND owner = '%s'" % schema
-#         return sql
-
-#     def get_create_auto_increment_column(self, table, column_name, schema=None):
-#         table_name = table
-#         if schema is not None and schema is not "":
-#             table_name = "%s.%s" % (schema, table)
-
-#         sql = list()
-#         sql.append("alter table %(table)s add %(column_name)s number" % {"table": table_name, "column_name": column_name})
-#         sql.append("create sequence seq_id" % {"table": table_name, "column_name": column_name})
-#         sql.append("update %(table)s set %(column_name)s = seq_id.nextval" % {"table": table_name, "column_name": column_name})
-#         sql.append("drop sequence seq_id" % {"table": table_name, "column_name": column_name})
-
-#         return sql
-
-#     def get_table_name(self, table):
-#         return table.upper()
-
-#     def get_schema_name(self, schema):
-#         return schema.upper()
-
-
-# class DBSqlite:
-#     def __init__(self, db):
-#         self.db = db
-
-#     def get_string_connection(self):
-#         url = "sqlite:///%s" % self.db['PATH_FILE']
-#         return url
-
-#     def get_engine(self):
-#         return "sqlite3"
-
-#     def get_dialect(self):
-#         return sqlite
-
-#     def get_raw_sql_limit(self, line_number):
-#         return "LIMIT(%s)" % line_number
-
-#     def get_table_properties(self, table, schema=None):
-#         raise("Implement this method")
-
-#     def get_table_name(self, table):
-#         return table
-
-#     def get_schema_name(self, schema):
-#         return schema
-
-
-# classe generica - nao ligada a este problema
 class DBBase:
     # Django database engines 
     available_engines = list(['sqlite3', 'oracle', 'postgresql_psycopg2'])
@@ -167,6 +69,21 @@ class DBBase:
             connection_data['PORT'] = db_settings_django['PORT']
             connection_data['DATABASE'] = db_settings_django['NAME']
 
+            # Para o caso do banco de dados estar configurado para um SCHEMA especifico. 
+            try:
+                # Considerando que o valor de Options é  este
+                # 'OPTIONS': {'options': '-c search_path=dri_catalog,public'}
+                # procura pela chave search_path e separa os schemas na ','
+                #  o schema usado sera o primeiro
+                opt = db_settings_django['OPTIONS']['options']
+                if opt.find('search_path='):
+                    a = opt.split('search_path=')[1]
+                    schema = a.split(',')[0]
+                    self.schema = schema
+            except:
+                self.schema = None
+
+
         else:
             raise Exception('Unknown database')
 
@@ -190,6 +107,13 @@ class DBBase:
 
     def get_engine(self):
         return self.database.get_engine()
+
+    def get_connection_data(self):
+        return self.connection_data
+
+    def get_connection_schema(self):
+        return self.schema
+
 
     def get_table_columns(self, table, schema=None):
         # Desabilitar os warnings na criacao da tabela

@@ -11,8 +11,10 @@ class DBOracle:
                   "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
                   "SERVICE_NAME=%(database)s)))"
               ) % {
-                  'username': self.db['USER'], 'password': self.db['PASSWORD'],
-                  'host': self.db['HOST'], 'port': self.db['PORT'],
+                  'username': self.db['USER'], 
+                  'password': self.db['PASSWORD'],
+                  'host': self.db['HOST'], 
+                  'port': self.db['PORT'],
                   'database': self.db['DATABASE']
               }
         return url

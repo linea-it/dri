@@ -1,6 +1,19 @@
 version: '2'
 services:
 
+  database:
+    image: linea/postgresql_q3c:latest
+    env_file:
+      - .env
+    expose:
+      # Deixa a porta do banco de dados acessivel para ferramentas externas como o dbeaver por exemplo.
+      - 5432
+    volumes:
+      - ./pg_data:/var/lib/postgresql/data
+      - ./pg_backups:/pg_backups
+      # databse_subset é util para colocar arquivos a serem importados dentro do banco de dados.
+      - ./database_subset:/data
+
   backend:
     build: ./api
     command: ./entrypoint.sh
@@ -14,6 +27,7 @@ services:
       - ./log/backend:/log
     depends_on:
       - rabbit
+      - database
     #ports:
     #  - 8000:8000
 

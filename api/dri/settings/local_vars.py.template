@@ -190,12 +190,12 @@ LOGGING = {
             'filename': os.path.join(LOG_DIR, 'product_export.log'),
             'formatter': 'standard',
         },
-        'product_import': {
+        'import_target_csv': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
             'maxBytes': 1024 * 1024 * 5,  # 5 MB
             'backupCount': 5,
-            'filename': os.path.join(LOG_DIR, 'product_import.log'),
+            'filename': os.path.join(LOG_DIR, 'import_target_csv.log'),
             'formatter': 'standard',
         },
         'product_saveas': {
@@ -229,7 +229,7 @@ LOGGING = {
             'backupCount': 5,
             'filename': os.path.join(LOG_DIR, 'userquery.log'),
             'formatter': 'standard',
-        },        
+        },
     },
     'loggers': {
         'django': {
@@ -263,8 +263,8 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': True,
         },
-        'product_import': {
-            'handlers': ['product_import'],
+        'import_target_csv': {
+            'handlers': ['import_target_csv'],
             'level': 'DEBUG',
             'propagate': True,
         },

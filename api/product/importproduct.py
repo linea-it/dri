@@ -12,7 +12,7 @@ from .models import Product
 class ImportTargetListCSV:
     def __init__(self):
         # Get an instance of a logger
-        self.logger = logging.getLogger('product_import')
+        self.logger = logging.getLogger('import_target_csv')
 
         self.csv_separator = ','
 
@@ -72,6 +72,9 @@ class ImportTargetListCSV:
 
         self.logger.debug(data)
 
+        # Instancia do banco de dados
+        self.db = CatalogDB()
+
         # Recuperar o Usuario pelo ID
         user = self.set_user(user_id)
         self.logger.debug('User: %s' % user.username)
@@ -113,8 +116,16 @@ class ImportTargetListCSV:
         # primeira linha de dados
         self._columns_type = self.get_columns_type(self._table_data[0])
 
+        # Recuperar o nome do schema se o banco for postgresq.
+        # TODO: Não tenho certeza do impact desta parte no oracle, por isso 
+        # estou condicionando a regra ao postgresql.
+        if self.db.get_engine() == 'postgresql_psycopg2':
+            self.schema = self.db.get_connection_schema()
+            self.logger.debug('Postgresql Schema: %s' % self.schema)
+
+
         # tendo os dados e o nome das colunas pode ser criado a tabela com SqlAlchemy
-        self.table = self.create_table(self.internal_name, self._columns_type)
+        self.table = self.create_table(self.internal_name, self._columns_type, schema=self.schema)
 
         # Inserir os dados na nova tabela
         self.populate_table(self.table, self._table_data)
@@ -318,19 +329,17 @@ class ImportTargetListCSV:
         return associations
 
     # %%%%%%%%%%%%%%%%%%%%%%%%%% Create Table %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    def create_table(self, name, columns_type):
+    def create_table(self, name, columns_type, schema=None):
         self.logger.info('Create table with SqlAlchemy')
 
         self.logger.debug('Table name: %s' % name)
-
-        self.db = CatalogDB()
 
         cols = list()
         for col in columns_type:
             cols.append(columns_type.get(col))
 
         try:
-            table = self.db.create_table(name, columns=cols)
+            table = self.db.create_table(name, columns=cols, schema=schema)
 
             self.logger.debug('Table %s Created' % name)
 
@@ -339,7 +348,7 @@ class ImportTargetListCSV:
         except Exception as e:
             raise e
 
-    def populate_table(self, table, data):
+    def populate_table(self, table, data ):
         self.logger.info('Populate Table')
 
         try:
