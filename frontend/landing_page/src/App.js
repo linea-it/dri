@@ -1,16 +1,14 @@
 import React from 'react';
+import { MuiThemeProvider } from '@material-ui/core/styles';
+import Router from './Routes';
+import theme from './themes/MaterialTheme';
 
 function App() {
   return (
-    <div className="App">
-      <h1>DRI Home</h1>
-      <h1><a href={`${window.location.protocol}//${window.location.host}/sky/`}>Sky Viwer</a></h1>
-      <h1><a href={`${window.location.protocol}//${window.location.host}/target/`}>Target Viwer</a></h1>
-      <h1><a href={`${window.location.protocol}//${window.location.host}/userquery/`}>User Query</a></h1>
-      <h1><a href={`${window.location.protocol}//${window.location.host}/eyeballing/`}>Tile Inspection</a></h1>
-    </div>
+    <MuiThemeProvider theme={theme}>
+      <Router />
+    </MuiThemeProvider>
   );
 }
-
 
 export default App;
