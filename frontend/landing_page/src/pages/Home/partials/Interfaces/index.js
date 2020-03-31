@@ -53,13 +53,13 @@ function Interfaces() {
       <Container>
         <Grid
           container
-          spacing={3}
+          className={classes.grid}
           direction="row"
           justify="center"
           alignItems="center"
         >
           {interfaces.map((item) => (
-            <Grid key={item.id} item xs={12} sm={6} md={6}>
+            <Grid key={item.id} item xs={12} sm={6} md={6} className={classes.card}>
               <Card>
                 <CardActionArea href={interfacesHost + item.pathname}>
                   <CardMedia

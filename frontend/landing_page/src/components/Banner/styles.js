@@ -60,9 +60,9 @@ const styles = makeStyles((theme) => ({
     textTransform: 'uppercase',
     fontWeight: 100,
     marginTop: -30,
-    fontSize: 28,
+    fontSize: 18,
     [theme.breakpoints.up('sm')]: {
-      fontSize: 35,
+      fontSize: 25,
       marginTop: -38,
     },
     paddingTop: 8,
@@ -72,6 +72,7 @@ const styles = makeStyles((theme) => ({
   },
   positionTitle: {
     paddingTop: '8%',
+    textAlign: '-webkit-center',
 
   },
   driLogo: {
@@ -82,7 +83,7 @@ const styles = makeStyles((theme) => ({
   },
   titleWrapper: {
     [theme.breakpoints.up('sm')]: {
-      margin: `${theme.spacing(12)}px 0 ${theme.spacing(16)}px`,
+      margin: `${theme.spacing(12)}px 0 ${theme.spacing(8)}px`,
     },
   },
   descriptionWrapper: {
@@ -94,6 +95,14 @@ const styles = makeStyles((theme) => ({
     cursor: 'pointer',
     color: theme.palette.getContrastText(deepOrange[500]),
     backgroundColor: deepOrange[500],
+  },
+  separatorToolBar: {
+    flexGrow: 1,
+  },
+  floarRight: {
+    width: '100%',
+    textAlign: 'right',
+    paddingRight: 40,
   },
 }));
 

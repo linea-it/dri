@@ -65,12 +65,8 @@ const styles = makeStyles((theme) => ({
       marginTop: '-72px',
     }),
   }),
-  separatorToolBar: {
-    flexGrow: 1,
-  },
   icons: {
     textAlign: 'right',
-    paddingTop: 15,
   },
 }));
 

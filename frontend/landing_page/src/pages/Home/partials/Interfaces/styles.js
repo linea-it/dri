@@ -7,12 +7,13 @@ const styles = makeStyles((theme) => ({
     zIndex: 2,
     marginTop: theme.spacing(6),
     marginBottom: theme.spacing(12),
+    // margin: '48px auto 96px auto',
   },
   titleItem: {
     fontFamily: 'Oxanium',
     fontSize: '2em',
     paddingTop: '0.5em',
-    paddingLeft: '1em',
+    paddingLeft: '0.5em',
     color: 'white',
     textShadow: '0.1em 0.1em 0.1em black',
   },
@@ -21,6 +22,14 @@ const styles = makeStyles((theme) => ({
   },
   icon: {
     maxWidth: 50,
+  },
+  card: {
+    padding: '3%',
+    margin: 'auto',
+  },
+  grid: {
+    margin: 'auto',
+    maxWidth: '75%',
   },
 }));
 

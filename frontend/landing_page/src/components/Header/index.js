@@ -1,12 +1,13 @@
 import React from 'react';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import List from '@material-ui/core/List';
-import IconButton from '@material-ui/core/IconButton';
-import ListItem from '@material-ui/core/ListItem';
-import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+
+import {
+  Grid, Container, List, ListItem, useScrollTrigger, Button, Avatar,
+} from '@material-ui/core';
+// import Grid from '@material-ui/core/Grid';
+// import List from '@material-ui/core/List';
+// import ListItem from '@material-ui/core/ListItem';
+// import useScrollTrigger from '@material-ui/core/useScrollTrigger';
 import { useLocation } from 'react-router-dom';
-import { YouTube, Twitter, GitHub } from '@material-ui/icons';
 import logo from '../../assets/img/linea.png';
 import styles from './styles';
 
@@ -55,24 +56,6 @@ function Footer() {
     pathname: location.pathname,
   });
 
-  const handlerClick = (socialMedia) => {
-    let uri = '';
-    switch (socialMedia) {
-      case 'YouTube':
-        uri = 'https://www.youtube.com/user/lineamcti';
-        break;
-      case 'Twitter':
-        uri = 'https://twitter.com/LIneA_mcti';
-        break;
-      case 'GitHub':
-        uri = 'https://github.com/linea-it/dri';
-        break;
-      default:
-        uri = 'https://www.youtube.com/user/lineamcti';
-    }
-    window.open(uri, '_blank');
-  };
-
   return (
     <>
       <div className={classes.toolbarWrapper}>
@@ -105,30 +88,14 @@ function Footer() {
             </Grid>
             <Grid item xs={12} sm={2} md={4} className={classes.icons}>
               <div className={classes.separatorToolBar} />
-              <IconButton
-                onClick={() => { handlerClick('Youtube'); }}
-                color="inherit"
-                aria-label="YouTube"
-                component="span"
-              >
-                <YouTube />
-              </IconButton>
-              <IconButton
-                onClick={() => { handlerClick('Twitter'); }}
-                color="inherit"
-                aria-label="Twitter"
-                component="span"
-              >
-                <Twitter />
-              </IconButton>
-              <IconButton
-                onClick={() => { handlerClick('GitHub'); }}
-                color="inherit"
-                aria-label="GitHub"
-                component="span"
-              >
-                <GitHub />
-              </IconButton>
+              <Button className={classes.button}>
+                <div className={classes.userWrapper}>
+                  <Avatar className={classes.avatar}>MT</Avatar>
+                </div>
+                <div>
+                  <span className={classes.username}>Matheus</span>
+                </div>
+              </Button>
             </Grid>
           </Grid>
         </Container>
