@@ -13,9 +13,16 @@ const styles = makeStyles((theme) => ({
   treeItem: {
     padding: 6,
   },
-  treeView: {
+  item: {
+    cursor: 'pointer',
     maxHeight: 460,
     overflow: 'overlay',
+    borderRight: 'solid 1px #cccccc',
+    borderBottom: 'solid 1px #cccccc',
+    backgroundColor: '#f5f5f5',
+    '&:hover': {
+      background: '#efefef',
+    },
   },
 }));
 

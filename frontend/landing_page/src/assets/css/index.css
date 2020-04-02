@@ -9,6 +9,15 @@ body {
   background: #F4F4F4;
 }
 
+.Mui-expanded {
+  margin: 0!important;
+}
+.MuiExpansionPanelSummary-root.Mui-expanded {
+  border-color: #c5c5c5;
+  border-style: solid;
+  border-width: 1px 0px 1px 0px;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
