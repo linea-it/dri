@@ -144,8 +144,7 @@ class TableViewSet(viewsets.ModelViewSet):
                                table_display_name=display_name,
                                release_id=release_id, 
                                release_name=release_name, 
-                               associate_target_viewer=associate_target_viewer,
-                               schema=settings.DATABASES['catalog']['USER'])
+                               associate_target_viewer=associate_target_viewer)
 
             return HttpResponse(status=200)
         

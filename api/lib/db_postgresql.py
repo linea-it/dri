@@ -55,18 +55,17 @@ class DBPostgresql:
     def get_create_auto_increment_column(self, table, column_name, schema=None):
         raise Exception("Method not implemented 'get_create_auto_increment_column'")
 
-    # def get_create_auto_increment_column(self, table, column_name, schema=None):
-    #     table_name = table
-    #     if schema is not None and schema is not "":
-    #         table_name = "%s.%s" % (schema, table)
+    def get_create_auto_increment_column(self, table, column_name, schema=None):
+        table_name = table
+        if schema is not None and schema is not "":
+            table_name = "%s.%s" % (schema, table)
 
-    #     sql = list()
-    #     sql.append("alter table %(table)s add %(column_name)s number" % {"table": table_name, "column_name": column_name})
-    #     sql.append("create sequence seq_id" % {"table": table_name, "column_name": column_name})
-    #     sql.append("update %(table)s set %(column_name)s = seq_id.nextval" % {"table": table_name, "column_name": column_name})
-    #     sql.append("drop sequence seq_id" % {"table": table_name, "column_name": column_name})
+        sql = list()
+        sql.append("CREATE INDEX %(table)s_%(column)s_idx ON %(table)s USING btree (%(column)s);" % {
+            "table": table_name,
+            "column": column_name})
 
-    #     return sql
+        return sql
 
     def get_table_name(self, table):
         return table

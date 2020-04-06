@@ -57,7 +57,7 @@ class TargetViewer:
         table.product = product
         table.save()
 
-        logger.info("New Product -id %s- was Registered" % product.pk)
+        logger.info("New Product was Registered. Product ID: [%s]" % product.pk)
 
     @staticmethod
     def unregister(product_id):
@@ -69,4 +69,4 @@ class TargetViewer:
         product = ProductTable.objects.get(product_ptr_id=product_id)
         product.delete()
         
-        logger.info("Product -id %s- was Registered" % product_id)
+        logger.info("Product was Unregistered. Product ID: [%s]" % product_id)

@@ -377,8 +377,23 @@ class DBBase:
         Use this method to Drop a table in the database.
         """
         with self.engine.connect() as con:
-            drop_stm = self.DropTable(table, schema)
-            return con.execute(drop_stm)
+            try:
+                drop_stm = self.DropTable(table, schema)
+
+                trans = con.begin()
+                con.execute(drop_stm)
+                trans.commit()
+            
+                if not self.table_exists(table, schema):
+                    return True
+                else:
+                    trans.rollback()
+                    raise Exception ("Failed to drop the table. Tablename: [%s] Schema: [%s]" % (table, schema))
+            except Exception as e:
+                trans.rollback()
+                raise e
+
+            
 
     # ------------------------ Filtro Por Posicao ----------------------------------
     def filter_by_coordinate_square(self, property_ra, property_dec, lowerleft, upperright):
