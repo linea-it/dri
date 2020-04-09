@@ -255,6 +255,9 @@ class Import():
         else:
             # Recuperar a quantidade de linhas da tabela
             tbl_rows = self.db.get_estimated_rows_count(data.get('table'), schema=data.get('schema', None))
+            # A o count estimado for 0, faz o count convencional.
+            if tbl_rows == 0:
+                tbl_rows = self.db.get_count(data.get('table'), schema=data.get('schema', None))
 
             # Recuperar a quantidade de colunas da tabela
             tbl_num_columns = self.db.get_table_columns_count(data.get('table'), schema=data.get('schema', None))
