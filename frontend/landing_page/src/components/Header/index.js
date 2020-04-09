@@ -68,10 +68,10 @@ function Footer() {
             spacing={0}
             className={classes.container}
           >
-            <Grid item xs={12} sm={2} md={1}>
+            <Grid item xs={12} sm={12} md={1}>
               <img src={logo} alt="LIneA" className={classes.logo} />
             </Grid>
-            <Grid item xs={12} sm={8} md={7}>
+            <Grid item xs={12} sm={12} md={7}>
               <List className={classes.menuList}>
                 {menus.map((menu, index) => (
                   <ListItem key={index.toString()}>
@@ -86,7 +86,7 @@ function Footer() {
                 ))}
               </List>
             </Grid>
-            <Grid item xs={12} sm={2} md={4} className={classes.icons}>
+            <Grid item xs={12} sm={12} md={4} className={classes.icons}>
               <div className={classes.separatorToolBar} />
               <Button className={classes.button}>
                 <div className={classes.userWrapper}>

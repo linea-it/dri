@@ -71,7 +71,7 @@ function Tutorials() {
           alignItems="flex-start"
           className={classes.root}
         >
-          <Grid item xs={4} sm={4}>
+          <Grid item xs={12} sm={4}>
             {treeTutorial && treeTutorial.map((tutorial, index) => (
               <ExpansionPanel
                 square
@@ -98,7 +98,7 @@ function Tutorials() {
               </ExpansionPanel>
             ))}
           </Grid>
-          <Grid item xs={8} sm={8}>
+          <Grid item xs={12} sm={8}>
             <YouTube
               videoId={idPlayer}
               opts={opts}
