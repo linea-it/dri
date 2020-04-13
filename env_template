@@ -7,14 +7,3 @@ WORDPRESS_DB_HOST=mysql
 WORDPRESS_DB_USER=wordpress
 WORDPRESS_DB_PASSWORD=pwd
 WORDPRESS_DB_NAME=dri
-
-###### LDAP Authentication ######
-
-# Responsible for turn on and off the LDAP authentication:
-AUTH_LDAP_ENABLED=False
-
-# The address of the LDAP server:
-AUTH_LDAP_SERVER_URI=ldap://HOST:PORT
-
-# The distinguishable name, used to identify entries:
-AUTH_LDAP_BIND_DN=ou=People,dc=example,dc=com

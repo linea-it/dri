@@ -11,8 +11,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-import ldap
-from django_auth_ldap.config import LDAPSearch
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -165,34 +163,12 @@ STATIC_URL = '/static/'
 AUTHENTICATION_BACKENDS = (
     'common.authentication.NcsaBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'django_auth_ldap.backend.LDAPBackend',
 )
 
 if USE_OAUTH:
     AUTHENTICATION_BACKENDS += ('allauth.account.auth_backends.AuthenticationBackend',)
 
-# LDAP Configuration:
-
-AUTH_LDAP_ENABLED = False
-
-try:
-    AUTH_LDAP_ENABLED = os.environ.get('AUTH_LDAP_ENABLED')
-except Exception as e:
-    raise ("Environment variable AUTH_LDAP_ENABLED can not be null.")
-
-if AUTH_LDAP_ENABLED:
-    try:
-        AUTH_LDAP_SERVER_URI = os.environ['AUTH_LDAP_SERVER_URI']
-        AUTH_LDAP_BIND_DN = os.environ['AUTH_LDAP_BIND_DN']
-        AUTH_LDAP_USER_SEARCH = LDAPSearch(
-            AUTH_LDAP_BIND_DN,
-            ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
-        )
-
-        # Autentication method insertion:
-        AUTHENTICATION_BACKENDS += ('django_auth_ldap.backend.LDAPBackend',)
-
-    except Exception as e:
-        raise ("Environment variable %s can not be null." % e)
 
 REST_FRAMEWORK = {
 

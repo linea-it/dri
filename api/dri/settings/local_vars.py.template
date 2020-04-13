@@ -1,4 +1,6 @@
 import os
+import ldap
+from django_auth_ldap.config import LDAPSearch
 
 # Just the 3 vars that the specific environment will use:
 # BASE_PROJECT, LOG_DIR, DATABASES
@@ -181,7 +183,7 @@ LOGGING = {
             'backupCount': 5,
             'filename': os.path.join(LOG_DIR, 'import_process.log'),
             'formatter': 'standard',
-        },                
+        },
         'product_export': {
             'level': 'DEBUG',
             'class': 'logging.handlers.RotatingFileHandler',
@@ -249,7 +251,7 @@ LOGGING = {
             'handlers': ['import_process'],
             'level': 'DEBUG',
             'propagate': True,
-        },   
+        },
         'product_export': {
             'handlers': ['product_export'],
             'level': 'DEBUG',
@@ -277,3 +279,28 @@ LOGGING = {
         },
     }
 }
+
+
+###### LDAP Authentication ######
+
+# Responsible for turn on and off the LDAP authentication:
+AUTH_LDAP_ENABLED=False
+
+if AUTH_LDAP_ENABLED:
+
+    # The address of the LDAP server:
+    AUTH_LDAP_SERVER_URI='ldap://HOST:PORT'
+
+    # The password of the LDAP server (leave empty if anonymous requests are available):
+    AUTH_LDAP_BIND_PASSWORD=''
+
+    # The distinguishable name, used to identify entries:
+    AUTH_LDAP_BIND_DN='cn=admin,dc=example,dc=com'
+
+    # The distinguishable name for searching users, used to identify entries:
+    AUTH_LDAP_USER_SEARCH_DN='ou=people,dc=example,dc=com'
+
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+        AUTH_LDAP_USER_SEARCH_DN,
+        ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
+    )
