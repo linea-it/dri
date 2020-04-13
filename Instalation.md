@@ -11,7 +11,6 @@ git clone https://github.com/linea-it/dri.git dri
 
 ```
 cd dri
-cp env_template .env
 cp docker-compose-development.yml docker-compose.yml
 docker-compose build
 ```
@@ -44,65 +43,38 @@ dri/settings/
  parameter and allowed hosts CORS in variable CORS_ORIGIN_WHITELIST.
 
 ## Setting Database 
-
-This step is needed only to use oracle or postgresql database. The default sqlite is pre-configured in the repository files
-
 ###  Postgresql
 Considering a new installation in a development environment with the postgresql + q3c database.
 
 Database settings must be made only in local_vars.py,
 
-Whereas the database used is postgresql + q3c and a development environment. the configuration of local_vars.py in the databases attribute is as follows. 
+Whereas the database used is postgresql + q3c and a development environment. the configuration of local_vars.py in the databases attribute is as follows.
 ```
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ['DB_NAME'],
-        'USER': os.environ['DB_USER'],
-        'PASSWORD': os.environ['DB_PASS'],
-        'HOST': os.environ['DB_HOST'],
-        'PORT': os.environ['DB_PORT'],
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'database',
+        'PORT': 5432,
         'OPTIONS': {
-            'options': '-c search_path=%s,public' % os.environ['DB_SCHEMA']
-        }        
+            'options': '-c search_path=dri_admin,public'
+        }
     },
     'catalog': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ['DB_NAME'],
-        'USER': os.environ['DB_USER'],
-        'PASSWORD': os.environ['DB_PASS'],
-        'HOST': os.environ['DB_HOST'],
-        'PORT': os.environ['DB_PORT'],
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'database',
+        'PORT': 5432,
         'OPTIONS': {
-            'options': '-c search_path=%s,public' % os.environ['CATALOG_DB_SCHEMA']
-        }
+            'options': '-c search_path=dri_catalog,public'
+        },
     },
 }
 ```
-these environment variables must be in the .env
-```
-# Database Settings for Admin Database
-DB_NAME=postgres
-DB_USER=postgres
-DB_PASS=postgres
-DB_HOST=database
-DB_PORT=5432
-DB_SCHEMA=dri_admin
-
-# Database Settings for Catalog Database
-CATALOG_DB_NAME=postgres
-CATALOG_DB_USER=postgres
-CATALOG_DB_PASS=postgres
-CATALOG_DB_HOST=database
-CATALOG_DB_PORT=5432
-CATALOG_DB_SCHEMA=dri_catalog
-
-# Variables used in the postgres container
-POSTGRES_PASSWORD=postgres
-POSTGRES_DB=postgres
-```
-
-
 
 Starting the database container alone, the first time will create the pg_data and pg_backups directory and create the user based on the POSTGRES_DB and POSTGRES_PASSWORD environment variables both with default value 'postgres' the user created is also 'postgres'
 
@@ -128,7 +100,7 @@ docker exec -it $(docker ps -q -f name=dri_database) psql -h localhost -U postgr
 ```
 
 ## Setup Backend
-With the .env file properly filled and the configuration file local_vars.py configured. it's time to raise the backend.
+With the configuration file local_vars.py configured. it's time to raise the backend.
 
 The first time the backend is executed, administrative tables and basic catalog tables will be created.
 Django takes care of this part, there is no need to do anything, the commands are in the entrypoint.sh that is executed every time the backend container is turned on.
@@ -154,7 +126,7 @@ docker exec -it $(docker ps -q -f name=dri_backend) python manage.py loaddata in
 
 
 ### Example catalog, outside the DRI catalog database.
-The step below is optional, do not perform this part unless you know what you are doing
+The step below is **optional**, do not perform this part unless you know what you are doing
 ```
 docker exec -it $(docker ps -q -f name=dri_database) psql -h localhost -U postgres -d postgres  -f /data/gaia_dump.sql 
 ```

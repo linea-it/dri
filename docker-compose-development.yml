@@ -3,8 +3,9 @@ services:
 
   database:
     image: linea/postgresql_q3c:latest
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
     expose:
       # Deixa a porta do banco de dados acessivel para ferramentas externas como o dbeaver por exemplo.
       - 5432
@@ -18,7 +19,6 @@ services:
     build: ./api
     command: ./entrypoint.sh
     environment:
-      - NCSA=true
       - CELERY_BROKER=amqp://dri:adminadmin@rabbit:5672
     volumes:
       - ./api:/app
@@ -28,8 +28,6 @@ services:
     depends_on:
       - rabbit
       - database
-    #ports:
-    #  - 8000:8000
 
   rabbit:
       image: rabbitmq:3-management
@@ -37,10 +35,8 @@ services:
       environment:
           - RABBITMQ_DEFAULT_USER=dri
           - RABBITMQ_DEFAULT_PASS=adminadmin
-      ports:
-          - "5672:5672"
-          - "15672:15672"
 
+  # Servidor de imagens PTIFFs
   # iipserver:
   #   image: linea/iipserver:latest
   #   environment:
@@ -55,20 +51,6 @@ services:
   #   volumes:
   #     - ./log/iipserver:/log
   #     - ./archive/images:/images
-
-
-  # Wordpress
-#  mysql:
-#    image: linea/dri_landing_page:MYSQLcef65a533dc17a5d7fcd901b52849cd4fdd7f040
-#    env_file:
-#      - .env
-
-#  wordpress:
-#    image: linea/dri_landing_page:WPcef65a533dc17a5d7fcd901b52849cd4fdd7f040
-#    env_file:
-#      - .env
-#    depends_on:
-#      - mysql
 
 # Frontend apps ExtJS with Sencha CMD app Watch
 # OBS: o container sky deve estar ligado para que os demais apps funcionem. 
@@ -126,5 +108,5 @@ services:
     depends_on:
       - backend
       # - iipserver
-      - rabbit
-#      - wordpress
+      - sky
+

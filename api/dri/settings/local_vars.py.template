@@ -6,7 +6,7 @@ import os
 # Substituir /home/glauber/dri pelo diretorio de intalacao do projeto.
 BASE_PROJECT = "/app"
 # the hostname and port number of the current Server
-BASE_HOST = "http://dri.com"
+BASE_HOST = "http://localhost"
 
 LOG_DIR = os.path.join('/log')
 
@@ -21,17 +21,46 @@ DATA_TMP_DIR = 'tmp'
 # Url base para o diretorio onde os arquivos gerados pela aplicacao podem ser acessados pelo servidor web
 DATA_SOURCE = "/data"
 
-# OBS: para o Oracle o nome da chave que representa o banco não pode ter mais de 30 caracteres e nem o database name, 
+
+# Exemplo de Database utilizando a imagem docker do postgresql
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(DATA_DIR, 'dri.db'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'database',
+        'PORT': 5432,
+        'OPTIONS': {
+            'options': '-c search_path=dri_admin,public'
+        }        
     },
     'catalog': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(DATA_DIR, 'catalog.db'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'database',
+        'PORT': 5432,
+        'OPTIONS': {
+            'options': '-c search_path=dri_catalog,public'
+        },
     },
 }
+
+# Exemplo utilizando Sqlite3 para desenvolvimento
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(DATA_DIR, 'dri.db'),
+#    },
+#    'catalog': {
+#        'ENGINE': 'django.db.backends.sqlite3',
+#        'NAME': os.path.join(DATA_DIR, 'catalog.db'),
+#    },
+#}
+
+# OBS: para o Oracle o nome da chave que representa o banco não pode ter mais de 30 caracteres e nem o database name, 
 
 # Esta configuracao e usada somente pela classe de authenticacao usando login do NCSA
 # deve ser preenchida com o nome da configuracao de database do NCSA OU None para nao usar a authenticacao no ncsa
