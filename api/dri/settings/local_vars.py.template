@@ -21,7 +21,7 @@ DATA_TMP_DIR = 'tmp'
 # Url base para o diretorio onde os arquivos gerados pela aplicacao podem ser acessados pelo servidor web
 DATA_SOURCE = "/data"
 
-
+# OBS: para o Oracle o nome da chave que representa o banco não pode ter mais de 30 caracteres e nem o database name, 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
