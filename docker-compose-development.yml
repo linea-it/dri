@@ -14,8 +14,6 @@ services:
       - ./log/backend:/log
     depends_on:
       - rabbit
-    #ports:
-    #  - 8000:8000
 
   rabbit:
       image: rabbitmq:3-management
@@ -57,18 +55,18 @@ services:
 #      - mysql
 
 # Frontend apps ExtJS with Sencha CMD app Watch
-# OBS: o container sky deve estar ligado para que os demais apps funcionem. 
+# OBS: o container sky deve estar ligado para que os demais apps funcionem.
 # ele é responsavel por servir os diretórios de package e outras dependencias.
   sky:
     image: linea/sencha_cmd:6.5.3.6
-    volumes: 
+    volumes:
       - ./frontend/:/code
     working_dir: /code/sky
     command: app watch
 
   target:
     image: linea/sencha_cmd:6.5.3.6
-    volumes: 
+    volumes:
       - ./frontend/:/code
     working_dir: /code/target
     command: app watch
@@ -77,7 +75,7 @@ services:
 
   explorer:
     image: linea/sencha_cmd:6.5.3.6
-    volumes: 
+    volumes:
       - ./frontend/:/code
     working_dir: /code/explorer
     command: app watch
@@ -86,7 +84,7 @@ services:
 
   userquery:
     image: linea/sencha_cmd:6.5.3.6
-    volumes: 
+    volumes:
       - ./frontend/:/code
     working_dir: /code/userquery
     command: app watch
@@ -95,7 +93,7 @@ services:
 
   # eyeballing:
   #   build: ./frontend/eyeballing
-  #   volumes: 
+  #   volumes:
   #     - ./frontend/eyeballing/:/app
   #   working_dir: /app
   #   command: yarn start
