@@ -100,7 +100,7 @@ if AUTH_LDAP_ENABLED:
     )
 
 # Target Viewer Rating, Reject Schema
-SCHEMA_RATING_REJECT = None
+SCHEMA_RATING_REJECT = 'dri_catalog'
 
 # Save As default Schema, Utilizado pela feature Target::Save As caso seja None, o schema utilizado
 # sera o mesmo do produto original mais vai requerer permissao. para o ncsa cada usuario tem um schema
