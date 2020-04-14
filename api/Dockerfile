@@ -23,6 +23,8 @@ RUN mv /oracle/instantclient_12_2 /oracle/instantclient
 RUN ln -s /oracle/instantclient/libclntsh.so.12.2 /oracle/instantclient/libclntsh.so
 RUN ln -s /oracle/instantclient/libocci.so.12.2 /oracle/instantclient/libocci.so
 
+RUN apt-get install -y libsasl2-dev libldap2-dev libssl-dev
+
 ENV ORACLE_HOME=/oracle/instantclient
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME
 
