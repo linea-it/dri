@@ -46,6 +46,31 @@ NCSA_AUTHENTICATION_USERS_TABLE = "None"
 # Default None, para public usar 'https://des.ncsa.illinois.edu/easyweb/signup/'
 NCSA_SIGNUP_LINK = None
 
+
+###### LDAP Authentication ######
+
+# Responsible for turn on and off the LDAP authentication:
+AUTH_LDAP_ENABLED=False
+
+if AUTH_LDAP_ENABLED:
+
+    # The address of the LDAP server:
+    AUTH_LDAP_SERVER_URI='ldap://HOST:PORT'
+
+    # The password of the LDAP server (leave empty if anonymous requests are available):
+    AUTH_LDAP_BIND_PASSWORD=''
+
+    # The distinguishable name, used to identify entries:
+    AUTH_LDAP_BIND_DN='cn=admin,dc=example,dc=com'
+
+    # The distinguishable name for searching users, used to identify entries:
+    AUTH_LDAP_USER_SEARCH_DN='ou=people,dc=example,dc=com'
+
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+        AUTH_LDAP_USER_SEARCH_DN,
+        ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
+    )
+
 # Target Viewer Rating, Reject Schema
 SCHEMA_RATING_REJECT = None
 
@@ -279,28 +304,3 @@ LOGGING = {
         },
     }
 }
-
-
-###### LDAP Authentication ######
-
-# Responsible for turn on and off the LDAP authentication:
-AUTH_LDAP_ENABLED=False
-
-if AUTH_LDAP_ENABLED:
-
-    # The address of the LDAP server:
-    AUTH_LDAP_SERVER_URI='ldap://HOST:PORT'
-
-    # The password of the LDAP server (leave empty if anonymous requests are available):
-    AUTH_LDAP_BIND_PASSWORD=''
-
-    # The distinguishable name, used to identify entries:
-    AUTH_LDAP_BIND_DN='cn=admin,dc=example,dc=com'
-
-    # The distinguishable name for searching users, used to identify entries:
-    AUTH_LDAP_USER_SEARCH_DN='ou=people,dc=example,dc=com'
-
-    AUTH_LDAP_USER_SEARCH = LDAPSearch(
-        AUTH_LDAP_USER_SEARCH_DN,
-        ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
-    )
