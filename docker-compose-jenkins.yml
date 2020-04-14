@@ -9,8 +9,6 @@ services:
       - CELERY_BROKER=amqp://dri:adminadmin@rabbit:5672
     depends_on:
       - rabbit
-    env_file:
-      - .env
 
   rabbit:
       image: rabbitmq:3-management
