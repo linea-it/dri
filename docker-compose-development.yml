@@ -14,10 +14,6 @@ services:
       - ./log/backend:/log
     depends_on:
       - rabbit
-    env_file:
-      - .env
-    #ports:
-    #  - 8000:8000
 
   rabbit:
       image: rabbitmq:3-management
