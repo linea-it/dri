@@ -1,15 +1,13 @@
 import React from 'react';
 
-import {
-  Grid, Container, List, ListItem, useScrollTrigger, Button, Avatar,
-} from '@material-ui/core';
-// import Grid from '@material-ui/core/Grid';
-// import List from '@material-ui/core/List';
-// import ListItem from '@material-ui/core/ListItem';
-// import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import useScrollTrigger from '@material-ui/core/useScrollTrigger';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Button from '@material-ui/core/Button';
 import { useLocation } from 'react-router-dom';
-import logo from '../../assets/img/linea.png';
+// import logo from '../../assets/img/linea.png';
 import styles from './styles';
+
 
 function Footer() {
   const location = useLocation();
@@ -27,11 +25,6 @@ function Footer() {
     {
       description: 'About us',
       href: '/about-us',
-      target: '_self',
-    },
-    {
-      description: 'Help',
-      href: '/help',
       target: '_self',
     },
     {
@@ -57,51 +50,17 @@ function Footer() {
   });
 
   return (
-    <>
-      <div className={classes.toolbarWrapper}>
-        <Container>
-          <Grid
-            container
-            direction="row"
-            justify="space-between"
-            alignItems="flex-start"
-            spacing={0}
-            className={classes.container}
-          >
-            <Grid item xs={12} sm={12} md={1}>
-              <img src={logo} alt="LIneA" className={classes.logo} />
-            </Grid>
-            <Grid item xs={12} sm={12} md={7}>
-              <List className={classes.menuList}>
-                {menus.map((menu, index) => (
-                  <ListItem key={index.toString()}>
-                    <a
-                      href={menu.href}
-                      target={menu.target}
-                      className={classes.menuLink}
-                    >
-                      {menu.description}
-                    </a>
-                  </ListItem>
-                ))}
-              </List>
-            </Grid>
-            <Grid item xs={12} sm={12} md={4} className={classes.icons}>
-              <div className={classes.separatorToolBar} />
-              <Button className={classes.button}>
-                <div className={classes.userWrapper}>
-                  <Avatar className={classes.avatar}>MT</Avatar>
-                </div>
-                <div>
-                  <span className={classes.username}>Matheus</span>
-                </div>
-              </Button>
-            </Grid>
-          </Grid>
-        </Container>
-        <div className={classes.backgroundHeader} />
-      </div>
-    </>
+    <AppBar position="static" className={classes.appbar}>
+      <Toolbar>
+        <Button color="inherit">Home</Button>
+        <Button color="inherit">About us</Button>
+        <Button color="inherit">Tutorials</Button>
+        <Button color="inherit">Contact us</Button>
+        <div className={classes.separator} />
+        {/* TODO: verificar se o usuario esta logado */}
+        <Button color="inherit">Login</Button>
+      </Toolbar>
+    </AppBar>
   );
 }
 

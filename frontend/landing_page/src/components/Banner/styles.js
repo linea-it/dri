@@ -44,7 +44,7 @@ const styles = makeStyles((theme) => ({
   },
   title: {
     fontFamily: 'Oxanium',
-    textTransform: 'uppercase',
+    // textTransform: 'uppercase',
     fontWeight: 100,
     marginTop: -30,
     fontSize: 28,

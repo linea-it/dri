@@ -22,9 +22,8 @@ function AboutUs() {
           </Typography>
           <Typography
             gutterBottom
-            className={classes.textFormat}
-            variant="overline"
-            component="h2"
+            // className={classes.textFormat}
+            variant="body1"
           >
             <div>
               <p>
