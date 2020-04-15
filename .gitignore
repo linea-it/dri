@@ -2,6 +2,7 @@
 docker-compose.yml
 
 # Diretorios de instalacao
+/api/env
 /env
 /data
 /db
@@ -37,3 +38,7 @@ __pycache__
 /api/db
 *.coverage
 .env
+# Diretórios do Postgresql
+/pg_data
+/pg_backup
+

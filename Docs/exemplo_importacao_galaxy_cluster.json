@@ -1,0 +1,109 @@
+{
+    "process": {
+        "owner_username": "gverde",
+        "process_name": "wazp",
+        "process_id": "5239",
+        "process_start_date": "2019-06-11T04:59:19Z",
+        "process_end_date": "2019-06-11T07:08:54Z",
+        "process_description": "Sample Catalog for Galaxy Clusters",
+        "process_comment": "Sample Catalog for Galaxy Clusters",
+        "releases": ["y1_wide_survey"],
+        "products": [{
+            "display_name": "Galaxy Clusters Sample",
+            "releases": ["y1_wide_survey"],
+            "fields": ["y1a1_coadd_spt"],
+            "table": "galaxy_clusters_sample",
+            "schema": "dri_catalog",
+            "database": "catalog",
+            "type": "catalog",
+            "class": "galaxy_clusters",
+            "name": "galaxy_clusters_sample",
+            "association": [{
+                    "ucd": "meta.id;meta.main",
+                    "property": "id"
+                },
+                {
+                    "ucd": "pos.eq.ra;meta.main",
+                    "property": "ra"
+                },
+                {
+                    "ucd": "pos.eq.dec;meta.main",
+                    "property": "dec"
+                },
+                {
+                    "ucd": "src.redshift.phot",
+                    "property": "zp"
+                },
+                {
+                    "ucd": "stat.snr",
+                    "property": "snr"
+                },
+                {
+                    "ucd": "phys.size.radius",
+                    "property": "radius_mpc"
+                },
+                {
+                    "ucd": "phys.angSize;src",
+                    "property": "radius_amin"
+                },                                                
+                {
+                    "ucd": "src.class.richness",
+                    "property": "ngals"
+                }
+            ]
+        },{
+            "display_name": "Clusters Members Sample",
+            "releases": ["y1_wide_survey"],
+            "fields": ["y1a1_coadd_spt"],
+            "table": "cluster_members_sample",
+            "schema": "dri_catalog",
+            "database": "catalog",
+            "type": "catalog",
+            "class": "cluster_members",
+            "name": "cluster_members_sample",
+            "association": [{
+                    "ucd": "meta.id;meta.main",
+                    "property": "seqnr"
+                },
+                {
+                    "ucd": "pos.eq.ra;meta.main",
+                    "property": "ra"
+                },
+                {
+                    "ucd": "pos.eq.dec;meta.main",
+                    "property": "dec"
+                },
+                {
+                    "ucd": "src.redshift.phot",
+                    "property": "zp"
+                },
+                {
+                    "ucd": "phot.mag;meta.main;em.opt.g",
+                    "property": "mag_g"
+                },
+                {
+                    "ucd": "phot.mag;meta.main;em.opt.r",
+                    "property": "mag_r"
+                },
+                {
+                    "ucd": "phot.mag;meta.main;em.opt.i",
+                    "property": "mag_i"
+                },
+                {
+                    "ucd": "phot.mag;meta.main;em.opt.z",
+                    "property": "mag_z"
+                },
+                {
+                    "ucd": "phot.mag;meta.main;em.opt.Y",
+                    "property": "mag_y"
+                },
+                {
+                    "ucd": "meta.id.cross",
+                    "property": "id_cluster"
+                }
+            ]
+        }]
+    },
+    "ticket":"UKW628",
+    "register_username": "gverde"
+}

@@ -214,8 +214,6 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'pgr_group',
             'pgr_display_name',
 
-            'ctl_num_objects',
-
             'epr_original_id',
             'epr_name',
             'epr_username',
@@ -227,6 +225,8 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'tbl_schema',
             'tbl_name',
             'tbl_size',
+            'tbl_num_columns',
+            'tbl_rows',
 
             'release_id',
             'release_display_name',

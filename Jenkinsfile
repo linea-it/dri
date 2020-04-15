@@ -4,6 +4,10 @@ pipeline {
         registryCredential = 'Dockerhub'
         dockerImageBack = ''
         dockerImageFront = ''
+        GIT_COMMIT_SHORT = sh(
+                script: "printf \$(git rev-parse --short ${GIT_COMMIT})",
+                returnStdout: true
+        )
     }
     agent any
 
@@ -15,7 +19,7 @@ pipeline {
                   dir('frontend') {
                       sh "cp nginx-deploy.conf nginx-proxy.conf"
                       script {
-                          dockerImageFront = docker.build registry + ":FRONT$GIT_COMMIT"
+                          dockerImageFront = docker.build registry + ":frontend_$GIT_COMMIT_SHORT"
                       }
                   }
               },
@@ -23,7 +27,7 @@ pipeline {
                   dir('api') {
                       sh "cp dri/settings/jenkins.py dri/settings/local_vars.py"
                       script {
-                          dockerImageBack = docker.build registry + ":BACK$GIT_COMMIT"
+                          dockerImageBack = docker.build registry + ":backend_$GIT_COMMIT_SHORT"
                       }
                   }
               }
@@ -32,7 +36,7 @@ pipeline {
       }
       stage('Test Backend') {
           steps {
-            sh "docker run $registry:BACK$GIT_COMMIT coverage run --source=. --omit='*migrations' manage.py test --verbosity=2"
+            sh "docker run $registry:backend_$GIT_COMMIT_SHORT coverage run --source=. --omit='*migrations' manage.py test --verbosity=2"
           }
       }
       stage('Push Images') {
@@ -46,14 +50,20 @@ pipeline {
               frontend: {
                   dir('frontend') {
                       script {
-                          docker.withRegistry( '', registryCredential ) {dockerImageFront.push()}
+                            docker.withRegistry( '', registryCredential ) {
+                              dockerImageFront.push()
+                              dockerImageFront.push("frontend_latest")
+                            }
                       }
                   }
               },
               backend: {
                   dir('api') {
                       script {
-                          docker.withRegistry( '', registryCredential ) {dockerImageBack.push()}
+                            docker.withRegistry( '', registryCredential ) {
+                                dockerImageBack.push()
+                                dockerImageBack.push("backend_latest")
+                            }
                       }
                   }
               }
@@ -63,8 +73,8 @@ pipeline {
     }
     post {
         always {
-            sh "docker rmi $registry:FRONT$GIT_COMMIT --force"
-            sh "docker rmi $registry:BACK$GIT_COMMIT --force"
+            sh "docker rmi $registry:frontend_$GIT_COMMIT_SHORT --force"
+            sh "docker rmi $registry:backend_$GIT_COMMIT_SHORT --force"
         }
     }
 }

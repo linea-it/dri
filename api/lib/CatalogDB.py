@@ -1,13 +1,14 @@
 import json
+import math
 import warnings
 
-from lib.sqlalchemy_wrapper import DBBase
-from sqlalchemy import Column
-from sqlalchemy import desc
+import sqlalchemy
+from sqlalchemy import Column, cast, desc
 from sqlalchemy import exc as sa_exc
-from sqlalchemy.sql import select, and_, or_
-from sqlalchemy.sql.expression import literal_column, between
-import math
+from sqlalchemy.sql import and_, or_, select
+from sqlalchemy.sql.expression import between, literal_column
+
+from lib.sqlalchemy_wrapper import DBBase
 
 
 class CatalogDB(DBBase):
@@ -393,6 +394,7 @@ class TargetObjectsDBHelper(CatalogTable):
                                                     associations=associations)
         # Catalogos de Target tem ligacao com o as tabelas Rating e Reject
         # Esse atributo deve vir do Settings
+        # TODO: Evitar o uso dessa variavel de ambiente, deve vir da classe DBBase. 
         self.schema_rating_reject = schema_rating_reject
 
         # Para o as querys de Target e necessario ter a instancia do product para fazer os join com Rating e Reject
@@ -442,7 +444,8 @@ class TargetObjectsDBHelper(CatalogTable):
                                      # User ID
                                      catalog_rating.c.owner == self.user.pk,
                                      # Object ID
-                                     self.get_column_obj(self.table, property_id) == catalog_rating.c.object_id,
+                                     # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog rating object_id é string
+                                     cast(self.get_column_obj(self.table, property_id), sqlalchemy.String)  == catalog_rating.c.object_id,
                                  ),
                                  isouter=True)
 
@@ -453,7 +456,8 @@ class TargetObjectsDBHelper(CatalogTable):
                                      # User ID
                                      catalog_reject.c.owner == self.user.pk,
                                      # Object Id OR Reject is NULL
-                                     or_(self.get_column_obj(self.table, property_id) == catalog_reject.c.object_id,
+                                     # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog reject object_id é string
+                                     or_(cast(self.get_column_obj(self.table, property_id), sqlalchemy.String) == catalog_reject.c.object_id,
                                          catalog_reject.c.id.is_(None))
                                  ),
                                  isouter=True)

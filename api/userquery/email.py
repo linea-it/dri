@@ -8,7 +8,7 @@ from common.notify import Notify
 
 class Email:
     def __init__(self):
-        self.logger = logging.getLogger('userquery email')
+        self.logger = logging.getLogger('userquery')
 
     def send(self, data):
         self.logger.info("Sending mail by template %s" % data["template"])

@@ -48,8 +48,6 @@ Ext.define('Explorer.view.coadd.Aladin', {
             )
         ]);
 
-        console.log(object)
-
         aladin.addCatalog(catalog);
 
     }

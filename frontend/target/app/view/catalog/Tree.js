@@ -84,7 +84,7 @@ Ext.define('Target.view.catalog.Tree', {
                 },
                 {
                     text: 'Rows',
-                    dataIndex: 'ctl_num_objects',
+                    dataIndex: 'tbl_rows',
                     sortable: true,
                     renderer: function (value, metadata, record) {
                         if (record.data.leaf) {
@@ -94,7 +94,7 @@ Ext.define('Target.view.catalog.Tree', {
                 },
                 {
                     text: 'Cols',
-                    dataIndex: 'ctl_num_columns',
+                    dataIndex: 'tbl_num_columns',
                     sortable: true,
                     renderer: function (value, metadata, record) {
                         if ((record.data.leaf) && (value > 0)){

@@ -128,16 +128,25 @@ Ext.define('Explorer.view.coadd.CoaddController', {
 
         objects.load({
             callback: function () {
-                if (this.count() === 1) {
+                if (this.count() > 0) {
                     me.onLoadObject(this.first());
 
                     view.setLoading(false);
+                } else {
+                    console.log("Não encontrou nenhum resultado.")
+                    view.setLoading(false);
+                    Ext.MessageBox.show({
+                        msg: 'Sorry No objects found.',
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING
+                    });
                 }
             }
         });
     },
 
     onLoadObject: function (object) {
+        // console.log("onLoadObject()", object)
         var me = this,
             vm = me.getViewModel(),
             grid = me.lookupReference('properties-grid'),
@@ -390,7 +399,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
     },
 
     onClickSimbad: function () {
-        console.log('onClickSimbad()');
+        // console.log('onClickSimbad()');
         // Criar uma URL para o Servico SIMBAD
         var me = this,
             vm = me.getViewModel(),
@@ -409,7 +418,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
     },
 
     onClickNed: function () {
-        console.log('onClickNed')
+        // console.log('onClickNed')
         // Criar uma URL para o Servico NED
         var me = this,
             vm = me.getViewModel(),
@@ -427,7 +436,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
     },
 
     onClickVizier: function () {
-        console.log('onClickVizier')
+        // console.log('onClickVizier')
         // Criar uma URL para o Servico VizierCDS
         var me = this,
             vm = me.getViewModel(),
@@ -444,6 +453,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
 
 
     loadSpectralDistribution: function () {
+        // console.log("loadSpectralDistribution()")
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('object_data'),
