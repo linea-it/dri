@@ -120,6 +120,10 @@ Ext.define('Sky.view.dataset.DatasetController', {
         // if (view.getPinned()){
         //     me.lMarker = visiomatic.markPosition(radec.ra, radec.dec, 'x-fa fa-map-marker fa-2x');
         // }
+
+        // TODO: Teste de Xray Contours deve ir para a componente interface
+        console.log("TESTE")
+        visiomatic.drawXrayContours(0, 0, {})
     },
 
     onChangePosition: function (radec, fov) {

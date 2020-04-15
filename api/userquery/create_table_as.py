@@ -33,7 +33,7 @@ class CreateTableAs:
         self.job = Job.objects.get(pk=job_id)
 
         # Get an instance of a logger
-        self.logger = logging.getLogger('userquery create_table_as')
+        self.logger = logging.getLogger('userquery')
 
         # state variables
         self.is_table_successfully_created = False
@@ -72,19 +72,33 @@ class CreateTableAs:
             self._notify_user_by_email_failure(self.error_message)
 
     def _create_table_by_job_id(self):
-        self.logger.info("_create_table_by_job_id - job_id: %s" % self.job.pk)
+        self.logger.info("Creating the table")
+        self.logger.debug("Job ID: [%s]" % self.job.pk)
 
-        db = None
+        db = DBBase('catalog')
+        if self.schema is None:
+            self.schema = db.get_connection_schema()
+            
+        self.logger.debug("Schema: %s" % self.schema)
+        self.logger.debug("Tablename: %s" % self.table_name)
+
         try:
-            db = DBBase('catalog')
-            db.create_table_raw_sql(self.table_name, self.job.sql_sentence, schema=self.schema,
-                                    timeout=self.job.timeout)
-            if self.associate_target_viewer:
-                db.create_auto_increment_column(self.table_name, 'meta_id', schema=self.schema)
-            self.is_table_successfully_created = True
 
             release = Release.objects.get(pk=self.release_id)
+            self.logger.debug("Release: %s" % release)
+
+            # Criacao da tabela
+            db.create_table_raw_sql(self.table_name, self.job.sql_sentence, schema=self.schema,
+                                    timeout=self.job.timeout)
+
+            # Criacao da Primary key
+            db.create_auto_increment_column(self.table_name, 'meta_id', schema=self.schema)
+
+            self.is_table_successfully_created = True
+
             count = db.get_count(self.table_name, schema=self.schema)
+            self.logger.debug("Rows Count: %s" % count)
+
             self.table = Table(table_name=self.table_name,
                                display_name=self.job.display_name,
                                owner=self.job.owner,
@@ -93,11 +107,21 @@ class CreateTableAs:
                                tbl_num_objects=count)
 
             self.table.save()
+
+            self.logger.info("Table Created successfully.")
+
         except Exception as e:
             self.error_message = str(e)
-            self.logger.info("CreateTableAs Error: %s" % self.error_message)
+            self.logger.error("Table creation failed: %s" % self.error_message)
+            self.logger.info("Checking if the table was created, if it has been, it will be droped.")
+
             if db.table_exists(self.table_name, schema=self.schema):
-                db.drop_table(self.table_name, schema=self.schema)
+                self.logger.info("Trying to drop the table.")
+                try:
+                    db.drop_table(self.table_name, schema=self.schema)
+                    self.logger.info("Table successfully droped")
+                except Exception as e:
+                    self.logger.error("Failed to drop the table. %s" % e)
 
     def _associate_target_viewer(self):
         if self.associate_target_viewer:

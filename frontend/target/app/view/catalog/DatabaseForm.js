@@ -9,7 +9,8 @@ Ext.define('Target.view.catalog.DatabaseForm', {
     requires: [
         'Target.view.catalog.DatabaseController',
         'Target.store.ProductClass',
-        'common.store.Releases'
+        'common.store.Releases',
+        'common.store.Databases'
     ],
 
     title: 'Database',
@@ -30,6 +31,10 @@ Ext.define('Target.view.catalog.DatabaseForm', {
             },
             releases: {
                 type: 'releases',
+                autoLoad: true
+            },
+            databases: {
+                type: 'databases',
                 autoLoad: true
             }
         }
@@ -105,13 +110,15 @@ Ext.define('Target.view.catalog.DatabaseForm', {
                     // value: 'y1_wide_survey'
                 },
                 {
-                    xtype: 'textfield',
+                    xtype: 'combobox',
                     name: 'database',
                     fieldLabel: 'Database',
-                    maxLength: 30,
-                    value: 'dessci',
-                    readOnly: true
-                },
+                    displayField: 'display_name',
+                    valueField: 'name',
+                    bind: {
+                        store: '{databases}'
+                    }
+                },                
                 {
                     xtype: 'textfield',
                     name: 'tablename',

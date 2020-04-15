@@ -302,6 +302,32 @@ def galaxy_cluster(request):
 
 
 @api_view(['GET'])
+def available_database(request):
+    """
+        Retorna os databases configurados como sendo DBs de Catalogo. 
+        não inclui o database administrativo. 
+    """
+    if request.method == 'GET':
+        dbs = list([])
+
+        # TODO: é provavel que ao adicionar mais bancos de dados, o target viewer de 
+        # problema com as tabelas de rating e reject
+        for db in settings.DATABASES:
+            if db is not 'default':
+                try:
+                    dbs.append(dict({
+                        'name': db,
+                        'display_name':settings.DATABASES[db]['DISPLAY_NAME']
+                    }))
+                except:
+                    dbs.append(dict({
+                        'name': db,
+                        'display_name':db
+                    }))
+
+        return Response(dict({'results': dbs, 'count': len(dbs)}))
+
+@api_view(['GET'])
 def teste(request):
     if request.method == 'GET':
         # from product.models import CutOutJob

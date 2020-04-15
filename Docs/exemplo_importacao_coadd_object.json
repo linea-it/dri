@@ -1,0 +1,29 @@
+{
+    "products": [{
+        "display_name": "Y3A2 Coadd",
+        "fields": [],
+        "releases": ["y3a2_coadd"],
+        "table": "coadd_objects",
+        "schema": "y3a2_coadd",
+        "database": "catalog",
+        "type": "catalog",
+        "class": "coadd_objects",
+        "name": "y3a2_coadd",
+        "association": [{
+                "ucd": "meta.id;meta.main",
+                "property": "coadd_object_id"
+            },
+            {
+                "ucd": "pos.eq.ra;meta.main",
+                "property": "ra"
+            },
+            {
+                "ucd": "pos.eq.dec;meta.main",
+                "property": "dec"
+            }
+        ]
+    }],
+    "ticket":"UKW628",
+    "register_username": "gverde"
+}
+

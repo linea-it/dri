@@ -48,7 +48,8 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 response: function(error, releases){
                     var release;
 
-                    if (!error){
+                    if (!error && releases.length > 0){
+                        console.log("Entrou no IF")
                         release = releases[0];
 
                         refs.cmbReleases.setStore(Ext.create('Ext.data.Store', {

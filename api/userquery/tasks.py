@@ -28,7 +28,7 @@ def create_table(self, job_id, user_id, table_name, table_display_name, release_
 
     logger = create_table_as.logger
 
-    logger.info("Task create_table_as has started\n")
+    logger.info("Task create_table_as has started")
 
     # start teble creation process
     create_table_as.do_all()
