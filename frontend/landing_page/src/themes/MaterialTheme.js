@@ -5,10 +5,10 @@ const theme = createMuiTheme({
   palette: {
     // background: '#151515', Cor utilizada nos outros apps
     // decidi usar a cor da palleta não percebi muita diferença.
-    appbarcolor:  grey[900],
+    appbarcolor: grey[900],
   },
   initContainer: {
-    paddingTop: 120,
+    paddingTop: 20,
   },
 });
 

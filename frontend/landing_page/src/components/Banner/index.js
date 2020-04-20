@@ -42,15 +42,15 @@ function Banner() {
               <tbody>
                 <tr>
                   <td>
-                    <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.desLogo} />
+                    <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
                   </td>
                   <td className={classes.positionTitle}>
                     <h1 className={classes.title}>
-                      LIneA Science Server
+                      LINEA SCIENCE SERVER
                     </h1>
-                    <h4 className={classes.subtitle}>
+                    <h1 className={classes.subtitle}>
                       Data Release Interface
-                    </h4>
+                    </h1>
                   </td>
                 </tr>
               </tbody>

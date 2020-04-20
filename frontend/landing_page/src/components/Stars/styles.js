@@ -5,8 +5,10 @@ const styles = makeStyles({
     position: 'absolute',
     bottom: 0,
     top: 0,
-    width: '100%',
     zIndex: 1,
+    marginTop: '65px',
+    width: '100vw',
+    height: '50vh',
   },
 });
 

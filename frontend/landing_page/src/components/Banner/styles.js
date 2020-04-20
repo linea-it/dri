@@ -60,9 +60,9 @@ const styles = makeStyles((theme) => ({
     textTransform: 'uppercase',
     fontWeight: 100,
     marginTop: -30,
-    fontSize: 18,
+    fontSize: 28,
     [theme.breakpoints.up('sm')]: {
-      fontSize: 25,
+      fontSize: 35,
       marginTop: -38,
     },
     paddingTop: 8,
@@ -77,9 +77,9 @@ const styles = makeStyles((theme) => ({
   },
   driLogo: {
     [theme.breakpoints.up('sm')]: {
-      maxWidth: 150,
+      maxWidth: 100,
     },
-    maxWidth: '100%',
+    maxWidth: 100,
   },
   titleWrapper: {
     [theme.breakpoints.up('sm')]: {
