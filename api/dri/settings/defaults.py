@@ -163,7 +163,6 @@ STATIC_URL = '/static/'
 AUTHENTICATION_BACKENDS = (
     'common.authentication.NcsaBackend',
     'django.contrib.auth.backends.ModelBackend',
-    'django_auth_ldap.backend.LDAPBackend',
 )
 
 if USE_OAUTH:
