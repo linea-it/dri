@@ -1,6 +1,12 @@
 import { makeStyles } from '@material-ui/core/styles';
 
 const styles = makeStyles((theme) => ({
+  list: {
+    padding: 0,
+  },
+  avatar: {
+    marginRight: 10,
+  },
   root: {
     flexGrow: 1,
   },
