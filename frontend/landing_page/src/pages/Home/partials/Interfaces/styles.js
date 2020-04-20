@@ -29,7 +29,6 @@ const styles = makeStyles((theme) => ({
   },
   grid: {
     margin: 'auto',
-    maxWidth: '75%',
   },
 }));
 

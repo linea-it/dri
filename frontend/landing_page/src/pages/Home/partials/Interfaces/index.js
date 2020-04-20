@@ -59,7 +59,7 @@ function Interfaces() {
           alignItems="center"
         >
           {interfaces.map((item) => (
-            <Grid key={item.id} item xs={12} sm={6} md={6} className={classes.card}>
+            <Grid key={item.id} item xs={12} sm={12} md={6} className={classes.card}>
               <Card>
                 <CardActionArea href={interfacesHost + item.pathname}>
                   <CardMedia

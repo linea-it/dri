@@ -48,7 +48,7 @@ function Supporters() {
     <div className={classes.root}>
       <Container>
         <Typography variant="h4" align="center" gutterBottom>
-          Supporters
+          LIneA is supported by
         </Typography>
         <Grid
           container
