@@ -1,28 +1,27 @@
 /* eslint-disable max-len */
 import React from 'react';
 import {
-  Grid, Container, Typography,
+  Grid, Container, Typography, Breadcrumbs, Link,
 } from '@material-ui/core';
 import styles from './styles';
 
 function AboutUs() {
   const classes = styles();
-
-
   return (
     <div className={classes.initContainer}>
       <Container>
         <Grid
           item
-          xs={9}
+          xs={12}
           className={classes.grid}
         >
-          <Typography variant="h4" align="center" gutterBottom>
-            About LIneA
-          </Typography>
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link color="inherit" href="/">
+              Home
+            </Link>
+            <Typography color="textPrimary">About us</Typography>
+          </Breadcrumbs>
           <Typography
-            gutterBottom
-            // className={classes.textFormat}
             variant="body1"
           >
             <div>
