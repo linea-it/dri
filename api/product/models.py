@@ -95,7 +95,7 @@ class Table(Product):
         max_length=128, verbose_name='Schema name', null=True, blank=True)
     tbl_name = models.CharField(
         max_length=128, verbose_name='Tablename', help_text='Tablename without schema')
-    tbl_rows = models.PositiveIntegerField(
+    tbl_rows = models.BigIntegerField(
         verbose_name='Num of rows', null=True, blank=True)
     tbl_num_columns = models.PositiveIntegerField(
         verbose_name='Num of columns', null=True, blank=True)
@@ -107,7 +107,7 @@ class Table(Product):
 
 
 class Catalog(Table):
-    ctl_num_objects = models.PositiveIntegerField(
+    ctl_num_objects = models.BigIntegerField(
         verbose_name='Num of objects', null=True, blank=True)
 
     def __str__(self):
