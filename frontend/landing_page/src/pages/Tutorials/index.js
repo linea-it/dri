@@ -12,6 +12,8 @@ import {
   ListItem,
   ListItemIcon,
   ListItemText,
+  Breadcrumbs,
+  Link,
 } from '@material-ui/core';
 import MovieIcon from '@material-ui/icons/Movie';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
@@ -60,9 +62,12 @@ function Tutorials() {
   return (
     <div className={classes.initContainer}>
       <Container>
-        <Typography variant="h4" align="center" gutterBottom>
-          Tutorials
-        </Typography>
+        <Breadcrumbs aria-label="breadcrumb">
+          <Link color="inherit" href="/">
+            Home
+          </Link>
+          <Typography color="textPrimary">About us</Typography>
+        </Breadcrumbs>
         <Grid
           container
           spacing={9}

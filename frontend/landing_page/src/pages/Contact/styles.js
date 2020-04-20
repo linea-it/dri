@@ -7,6 +7,7 @@ const styles = makeStyles((theme) => ({
   },
   grid: {
     margin: 'auto',
+    marginTop: 20,
   },
 }));
 
