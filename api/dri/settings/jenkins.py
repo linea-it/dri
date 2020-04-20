@@ -69,3 +69,8 @@ DES_CUTOUT_SERVICE = {
 }
 
 NCSA_AUTHENTICATION_DB = None
+
+
+# LDAP Authentication
+# Responsible for turn on and off the LDAP authentication:
+AUTH_LDAP_ENABLED = False
