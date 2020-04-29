@@ -10,7 +10,7 @@
 		"karma": "~0.8.6",
 		"uglify-js": "~>2.6.0",
 		"jake": "~0.5.16",
-		"jquery": "~2.1.4"
+		"jquery": "~3.5.0"
 	},
 	"main": "dist/visiomatic.js",
 	"scripts": {
