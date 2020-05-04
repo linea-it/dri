@@ -49,14 +49,16 @@ pipeline {
               parallel(
               frontend: {
                   dir('frontend') {
-                    if (env.BRANCH_NAME.toString().equals('master')) {
-                        // No caso de um merge em master 
-                        // Faz o push da imagem também como latest.
-                        script {
+                    script{
+                        if (env.BRANCH_NAME.toString().equals('master')) {
+                            // No caso de um merge em master 
+                            // Faz o push da imagem também como latest.
+                            
                             docker.withRegistry( '', registryCredential ) {
-                                dockerImageFront.push()
-                                dockerImageFront.push("frontend_latest")
+                                    dockerImageFront.push()
+                                    dockerImageFront.push("frontend_latest")
                             }
+                            
                         }
                     }
                     //  Para merges em qualquer branch faz o push apenas da imagem com o hash do commit.
@@ -69,14 +71,16 @@ pipeline {
               },
               backend: {
                   dir('api') {
-                    if (env.BRANCH_NAME.toString().equals('master')) {
-                        // No caso de um merge em master 
-                        // Faz o push da imagem também como latest.
-                        script {
+                    script{
+                        if (env.BRANCH_NAME.toString().equals('master')) {
+                            // No caso de um merge em master 
+                            // Faz o push da imagem também como latest.
+                            
                             docker.withRegistry( '', registryCredential ) {
                                 dockerImageBack.push()
                                 dockerImageBack.push("backend_latest")
                             }
+                        
                         }
                     }
                     //  Para merges em qualquer branch faz o push apenas da imagem com o hash do commit.
