@@ -104,7 +104,7 @@ pipeline {
                     curl -D - -X \"POST\" \
                     -H \"content-type: application/json\" \
                     -H \"X-Rundeck-Auth-Token: $RD_AUTH_TOKEN\" \
-                    -d '{\"argString\": \"-namespace $namespace -commit $GIT_COMMIT_SHORT -image $registry:$GIT_COMMIT_SHORTT -deployment $deployment\"}' \
+                    -d '{\"argString\": \"-namespace $namespace -commit $GIT_COMMIT_SHORT -image $registry:$GIT_COMMIT_SHORT -deployment $deployment\"}' \
                     https://run.linea.gov.br/api/1/job/857f1a42-ca4b-4172-9c92-ace1e1197b8c/executions
                     """
                 }
