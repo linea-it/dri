@@ -14,16 +14,16 @@ RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://ar
 RUN mkdir /oracle
 RUN apt-get update
 RUN apt-get install unzip
-RUN apt-get install python-dev -y
-RUN apt-get install build-essential -y
-RUN apt-get -y install libaio-dev
+RUN apt-get install -y --force-yes \
+    python-dev build-essential libaio-dev \
+    libsasl2-dev libldap2-dev libssl-dev 
+
 RUN unzip /app/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip -d /oracle
 RUN unzip /app/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /oracle
 RUN mv /oracle/instantclient_12_2 /oracle/instantclient
 RUN ln -s /oracle/instantclient/libclntsh.so.12.2 /oracle/instantclient/libclntsh.so
 RUN ln -s /oracle/instantclient/libocci.so.12.2 /oracle/instantclient/libocci.so
 
-RUN apt-get install -y libsasl2-dev libldap2-dev libssl-dev
 
 ENV ORACLE_HOME=/oracle/instantclient
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME
