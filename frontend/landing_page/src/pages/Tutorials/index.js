@@ -28,8 +28,8 @@ function Tutorials() {
   const [idPlayer, setIdPlayer] = useState('');
   const [videoOnDisplay, setVideoOnDisplay] = useState({ tutorial: '', video: '' });
   const [treeTutorial, setTreeTutorial] = useState([]);
-  const auxTreeTutorial = [];
   useEffect(() => {
+    const auxTreeTutorial = [];
     let menuFilter; let idVideo;
     async function fetchData() {
       const response = await api.get('tutorial/');

@@ -1,8 +1,5 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import CardMedia from '@material-ui/core/CardMedia';
-import Typography from '@material-ui/core/Typography';
-import Container from '@material-ui/core/Container';
+import { CardMedia,Typography, Grid } from '@material-ui/core';
 import styles from './styles';
 
 
@@ -11,66 +8,56 @@ function Supporters() {
 
   const interfaces = [
     {
+      id: 0,
+      title: 'Capes',
+      image: 'CAPES.png',
+    },
+    {
       id: 1,
-      title: 'CAPES',
-      image: 'logo-capes.png',
-      uri: 'http://www.capes.gov.br/',
+      title: 'CNPq',
+      image: 'cnpq.png',
     },
     {
       id: 2,
-      title: 'CNPq',
-      image: 'logo-cnpq.png',
-      uri: 'http://cnpq.br/',
+      title: 'FAPERJ',
+      image: 'faperj.png',
     },
     {
       id: 3,
-      title: 'FAPERJ',
-      image: 'logo_faperj.jpg',
-      uri: 'http://www.faperj.br/',
+      title: 'Finep',
+      image: 'finep.png',
     },
     {
       id: 4,
-      title: 'Finep',
-      image: 'marca-finep.jpg',
-      uri: 'http://www.finep.gov.br/',
+      title: 'INCT',
+      image: 'inct.png',
     },
-    {
-      id: 5,
-      title: 'INCT e-Universo',
-      image: 'e-universo_sans.png',
-      uri: 'http://www.linea.gov.br/010-ciencia/1-projetos/3-inct-do-e-universo-2/',
-    },
+
   ];
-
-  // const interfacesHost = process.env.REACT_APP_INTERFACES_HOST;
-
   return (
     <div className={classes.root}>
-      <Container>
-        <Typography variant="h4" align="center" gutterBottom>
-          LIneA is supported by
-        </Typography>
-        <Grid
-          container
-          direction="row"
-          justify="center"
-          alignItems="flex-start"
-        >
-          {interfaces.map((item) => (
-            <Grid key={item.id} item xs={12} sm={2}>
+      <Typography variant="h6" align="center" gutterBottom>
+        LIneA is supported by
+      </Typography>
+      <Grid
+        container
+        spacing={2}
+        direction="row"
+        justify="center"
+        alignItems="stretch"
+      >
+        {interfaces.map((item) => (
+            <Grid key={item.id} item>
               <CardMedia
-                className={classes.media}
+                className={classes.carouselItem}
                 component="img"
                 alt={item.title}
-                height="80"
                 image={`${process.env.PUBLIC_URL}/img/supporters/${item.image}`}
                 title={item.title}
-                onClick={() => { window.open(item.uri, '_blank'); }}
               />
             </Grid>
           ))}
-        </Grid>
-      </Container>
+      </Grid>     
     </div>
   );
 }

@@ -79,7 +79,7 @@ function Header() {
     return (
       <>
         <Button href={urlLogin} color="inherit">Sign in</Button>
-        <Button color="inherit">Sign up</Button>
+        {/* <Button color="inherit">Sign up</Button> */}
       </>
     );
   }
@@ -106,11 +106,11 @@ function Header() {
       href: '/tutorials',
       target: '_self',
     },
-    {
-      description: 'Contact us',
-      href: '/contact-us',
-      target: '_self',
-    },
+    // {
+    //   description: 'Contact us',
+    //   href: '/contact-us',
+    //   target: '_self',
+    // },
     // {
     //   description: 'Releases',
     //   href: 'https://github.com/linea-it/dri/releases',
@@ -121,7 +121,10 @@ function Header() {
   return (
     <AppBar position="static" className={classes.appbar}>
       <Toolbar>
-        {menus.map((menu, index) => <Button color="inherit" key={index} href={menu.href}>{menu.description}</Button>)}
+        {menus.map((menu, index) => 
+          <Button color="inherit" key={index} href={menu.href}>{menu.description}
+          </Button>
+        )}
         <div className={classes.separator} />
         {/* TODO: verificar se o usuario esta logado */}
         { user ? (user.username ? <UserLogged /> : <UserUnLogged />) : '' }

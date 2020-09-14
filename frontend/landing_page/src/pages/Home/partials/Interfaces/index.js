@@ -1,3 +1,5 @@
+/* eslint-disable max-len */
+/* eslint-disable no-unused-expressions */
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -6,7 +8,9 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
+import CardActions from '@material-ui/core/CardActions';
 import styles from './styles';
+import DialogCard from '../ModalInterfaces';
 
 function Interfaces() {
   const classes = styles();
@@ -46,22 +50,25 @@ function Interfaces() {
     },
   ];
 
-  const interfacesHost = `${window.location.protocol}//${window.location.host}`;
+  const interfacesHost = process.env.REACT_APP_INTERFACES_HOST;
 
   return (
     <div className={classes.root}>
       <Container>
         <Grid
           container
-          className={classes.grid}
+          spacing={2}
           direction="row"
           justify="center"
-          alignItems="center"
+          alignItems="stretch"
         >
           {interfaces.map((item) => (
-            <Grid key={item.id} item xs={12} sm={12} md={6} className={classes.card}>
+            <Grid key={item.id} item xs={12} sm={6} md={3}>
               <Card>
-                <CardActionArea href={interfacesHost + item.pathname}>
+                <CardActionArea
+                  href={item.url || interfacesHost + item.pathname}
+                  target={item.url ? '_blanc' : '_self'}
+                >
                   <CardMedia
                     alt={item.title}
                     className={classes.media}
@@ -74,22 +81,19 @@ function Interfaces() {
                       variant="h5"
                       component="h2"
                     >
-                      {/* <img
-                        src={`${process.env.PUBLIC_URL}/img/${item.icon}`}
-                        alt="Icon"
-                        className={classes.icon}
-                      /> */}
-
                       {/* <i className={`fa fa-${item.icon}`}></i> &nbsp;  */}
                       {item.title}
                     </Typography>
                   </CardMedia>
-                  <CardContent>
-                    <Typography variant="body2" color="textSecondary" component="p">
+                  <CardContent className={classes.cardContent}>
+                    <Typography variant="body2" color="textSecondary" component="div" className={classes.description}>
                       {item.description}
                     </Typography>
                   </CardContent>
                 </CardActionArea>
+                <CardActions className={classes.dialogCard}>
+                  {item.description.length > 80 ? <DialogCard item={item} /> : '' }
+                </CardActions>
               </Card>
             </Grid>
           ))}

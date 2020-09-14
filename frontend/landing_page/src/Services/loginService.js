@@ -46,9 +46,13 @@ axios.interceptors.response.use(
 
 // eslint-disable-next-line consistent-return
 export const getLoggedUser = () => axios.get('logged/get_logged/', { params: { format: 'json' } }).then((result) => result.data).catch((error) => {
+  if (error) {
+    return { username: undefined };
+  }
   if (error.response.status === 403) {
     return { username: undefined };
   }
+
 });
 
 const toLogin = () => {
