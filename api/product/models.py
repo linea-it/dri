@@ -99,7 +99,7 @@ class Table(Product):
         verbose_name='Num of rows', null=True, blank=True)
     tbl_num_columns = models.PositiveIntegerField(
         verbose_name='Num of columns', null=True, blank=True)
-    tbl_size = models.PositiveIntegerField(
+    tbl_size = models.BigIntegerField(
         verbose_name='Size in bytes', null=True, blank=True)
 
     def __str__(self):
@@ -107,8 +107,10 @@ class Table(Product):
 
 
 class Catalog(Table):
-    ctl_num_objects = models.BigIntegerField(
-        verbose_name='Num of objects', null=True, blank=True)
+    ctl_num_objects = models.PositiveIntegerField(
+        verbose_name='Num of objects', 
+        null=True, 
+        blank=True)
 
     def __str__(self):
         return self.prd_display_name
