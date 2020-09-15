@@ -66,7 +66,7 @@ function Tutorials() {
           <Link color="inherit" href="/">
             Home
           </Link>
-          <Typography color="textPrimary">About us</Typography>
+          <Typography color="textPrimary">Tutorials</Typography>
         </Breadcrumbs>
         <Grid
           container

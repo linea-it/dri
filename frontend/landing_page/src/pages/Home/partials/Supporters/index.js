@@ -10,7 +10,7 @@ function Supporters() {
     {
       id: 0,
       title: 'Capes',
-      image: 'CAPES.png',
+      image: 'capes.png',
     },
     {
       id: 1,
@@ -57,7 +57,7 @@ function Supporters() {
               />
             </Grid>
           ))}
-      </Grid>     
+      </Grid>
     </div>
   );
 }

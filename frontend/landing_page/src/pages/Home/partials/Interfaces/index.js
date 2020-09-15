@@ -66,7 +66,7 @@ function Interfaces() {
             <Grid key={item.id} item xs={12} sm={6} md={3}>
               <Card>
                 <CardActionArea
-                  href={item.url || interfacesHost + item.pathname}
+                  href={item.pathname}
                   target={item.url ? '_blanc' : '_self'}
                 >
                   <CardMedia
