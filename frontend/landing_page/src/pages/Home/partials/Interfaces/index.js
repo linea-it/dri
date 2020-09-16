@@ -4,13 +4,13 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
-import CardContent from '@material-ui/core/CardContent';
+// import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import Container from '@material-ui/core/Container';
-import CardActions from '@material-ui/core/CardActions';
+// import CardActions from '@material-ui/core/CardActions';
 import styles from './styles';
-import DialogCard from '../ModalInterfaces';
+// import DialogCard from '../ModalInterfaces';
 
 function Interfaces() {
   const classes = styles();
@@ -19,7 +19,7 @@ function Interfaces() {
     {
       id: 1,
       title: 'Sky Viewer',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
+      // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
       pathname: '/sky/',
       icon: 'sky_viewer.png',
       image: 'dri1.jpg',
@@ -27,7 +27,7 @@ function Interfaces() {
     {
       id: 2,
       title: 'Target Viwer',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
+      // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
       pathname: '/target/',
       icon: 'target_viewer.png',
       image: 'dri2.jpg',
@@ -35,7 +35,7 @@ function Interfaces() {
     {
       id: 3,
       title: 'User Query',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
+      // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
       pathname: '/userquery/',
       icon: 'user_query.png',
       image: 'dri3.jpg',
@@ -43,7 +43,7 @@ function Interfaces() {
     {
       id: 4,
       title: 'Tile Inspection',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
+      // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
       pathname: '/eyeballing/',
       icon: 'sky_viewer.png',
       image: 'dri4.jpg',
@@ -85,15 +85,15 @@ function Interfaces() {
                       {item.title}
                     </Typography>
                   </CardMedia>
-                  <CardContent className={classes.cardContent}>
+                  {/* <CardContent className={classes.cardContent}>
                     <Typography variant="body2" color="textSecondary" component="div" className={classes.description}>
                       {item.description}
                     </Typography>
-                  </CardContent>
+                  </CardContent> */}
                 </CardActionArea>
-                <CardActions className={classes.dialogCard}>
+                {/* <CardActions className={classes.dialogCard}>
                   {item.description.length > 80 ? <DialogCard item={item} /> : '' }
-                </CardActions>
+                </CardActions> */}
               </Card>
             </Grid>
           ))}

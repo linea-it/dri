@@ -8,7 +8,7 @@ const styles = makeStyles((theme) => ({
     margin: 'auto',
   },
   carouselItem: {
-    maxWidth: '180px',
+    maxWidth: '150px',
     width: 'auto',
     height: 'auto',
     margin: 'auto',

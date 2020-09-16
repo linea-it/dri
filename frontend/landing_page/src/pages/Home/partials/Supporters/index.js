@@ -29,8 +29,8 @@ function Supporters() {
     },
     {
       id: 4,
-      title: 'INCT',
-      image: 'inct.png',
+      title: 'INCT do Universo',
+      image: 'e-universo.png',
     },
 
   ];
