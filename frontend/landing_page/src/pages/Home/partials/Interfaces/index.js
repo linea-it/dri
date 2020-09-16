@@ -26,7 +26,7 @@ function Interfaces() {
     },
     {
       id: 2,
-      title: 'Target Viwer',
+      title: 'Target Viewer',
       // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
       pathname: '/target/',
       icon: 'target_viewer.png',
@@ -34,23 +34,21 @@ function Interfaces() {
     },
     {
       id: 3,
-      title: 'User Query',
-      // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
-      pathname: '/userquery/',
-      icon: 'user_query.png',
-      image: 'dri3.jpg',
-    },
-    {
-      id: 4,
       title: 'Tile Inspection',
       // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
       pathname: '/eyeballing/',
       icon: 'sky_viewer.png',
       image: 'dri4.jpg',
     },
+    {
+      id: 4,
+      title: 'User Query',
+      // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
+      pathname: '/userquery/',
+      icon: 'user_query.png',
+      image: 'dri3.jpg',
+    },
   ];
-
-  const interfacesHost = process.env.REACT_APP_INTERFACES_HOST;
 
   return (
     <div className={classes.root}>

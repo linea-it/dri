@@ -19,6 +19,22 @@ const styles = makeStyles((theme) => ({
   separator: {
     flexGrow: 1,
   },
+  menuList: {
+    display: 'flex',
+  },
+  menuLink: {
+    color: '#fff',
+    textDecoration: 'none',
+    fontWeight: 500,
+    textTransform: 'uppercase',
+    whiteSpace: 'nowrap',
+  },
+  logoLIneA: {
+    [theme.breakpoints.up('sm')]: {
+      maxWidth: 75,
+    },
+    maxWidth: 75,
+  },
 }));
 
 export default styles;

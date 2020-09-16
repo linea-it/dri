@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+/* eslint-disable no-empty */
 /* eslint-disable array-callback-return */
 /* eslint-disable max-len */
 /* eslint-disable eqeqeq */
@@ -28,6 +30,19 @@ function Tutorials() {
   const [idPlayer, setIdPlayer] = useState('');
   const [videoOnDisplay, setVideoOnDisplay] = useState({ tutorial: '', video: '' });
   const [treeTutorial, setTreeTutorial] = useState([]);
+
+  function compare(a, b) {
+    const bandA = a.title.toUpperCase();
+    const bandB = b.title.toUpperCase();
+    let comparison = 0;
+    if (bandA > bandB) {
+      comparison = 1;
+    } else if (bandA < bandB) {
+      comparison = -1;
+    }
+    return comparison;
+  }
+
   useEffect(() => {
     const auxTreeTutorial = [];
     let menuFilter; let idVideo;
@@ -42,15 +57,14 @@ function Tutorials() {
           auxTreeTutorial.push({ title: elem.application_display_name, videos: [{ title: elem.ttr_title, idVideo, description: elem.ttr_description }] });
         }
       });
-      setVideoOnDisplay({ tutorial: response.data[0].application_display_name, video: response.data[0].ttr_title });
-      setIdPlayer(response.data[0].ttr_src.substring(30, response.data[0].ttr_src.length));
+      // setVideoOnDisplay({ tutorial: response.data[0].application_display_name, video: response.data[0].ttr_title });
+      setIdPlayer('0');
     }
     setTreeTutorial(auxTreeTutorial);
     fetchData();
   }, []);
 
-
-  const [expanded, setExpanded] = React.useState('panel1');
+  const [expanded, setExpanded] = React.useState('');
   const handleChange = (panel) => (event, newExpanded) => {
     setExpanded(newExpanded ? panel : false);
   };
@@ -77,7 +91,7 @@ function Tutorials() {
           className={classes.root}
         >
           <Grid item xs={12} sm={4}>
-            {treeTutorial && treeTutorial.map((tutorial, index) => (
+            {treeTutorial && treeTutorial.sort(compare).map((tutorial, index) => (
               <ExpansionPanel
                 square
                 key={(index + 1).toString()}
@@ -104,13 +118,19 @@ function Tutorials() {
             ))}
           </Grid>
           <Grid item xs={12} sm={8}>
-            <YouTube
-              videoId={idPlayer}
-              opts={opts}
-            />
-            <Typography variant="subtitle1" align="center" gutterBottom>
-              {`${videoOnDisplay.tutorial} - ${videoOnDisplay.video}`}
-            </Typography>
+            { idPlayer != '0'
+              ? (
+                <>
+                  <YouTube
+                    videoId={idPlayer}
+                    opts={opts}
+                  />
+                  <Typography variant="subtitle1" align="center" gutterBottom>
+                    {`${videoOnDisplay.tutorial} - ${videoOnDisplay.video}`}
+                  </Typography>
+                </>
+              )
+              : ''}
           </Grid>
         </Grid>
       </Container>

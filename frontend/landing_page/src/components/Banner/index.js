@@ -1,6 +1,5 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import { YouTube, Twitter, GitHub } from '@material-ui/icons';
 import styles from './styles';
@@ -41,25 +40,24 @@ function Banner() {
             <table className={classes.table}>
               <tbody>
                 <tr>
+                  <td colSpan={2}>
+                    <h1 className={classes.title}>
+                      LIneA SCIENCE SERVER
+                    </h1>
+                  </td>
+                </tr>
+                <tr>
                   <td>
                     <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
                   </td>
                   <td className={classes.positionTitle}>
-                    <h1 className={classes.title}>
-                      LIneA SCIENCE SERVER
-                    </h1>
                     <h1 className={classes.subtitle}>
-                      Data Release Interface
+                      Data Release
                     </h1>
                   </td>
                 </tr>
               </tbody>
             </table>
-            {/* <Grid item xs={12} sm={10} md={8} className={classes.descriptionWrapper}>
-              <Typography variant="body2" component="p">
-                Lorem Ipsum é simplesmente uma simulação de texto da indústria tipográfica e de impressos, e vem sendo utilizado desde o século XVI, quando um impressor desconhecido pegou uma bandeja de tipos e os embaralhou para fazer um livro de modelos de tipos. Lorem Ipsum sobreviveu não só a cinco séculos, como também ao salto para a editoração eletrônica, permanecendo essencialmente inalterado. Se popularizou na década de 60, quando a Letraset lançou decalques contendo passagens de Lorem Ipsum, e mais recentemente quando passou a ser integrado a softwares de editoração eletrônica como Aldus PageMaker.
-              </Typography>
-            </Grid> */}
           </Grid>
           <div className={classes.floarRight}>
             <div className={classes.separatorToolBar} />

@@ -8,7 +8,7 @@ const styles = makeStyles({
     zIndex: 1,
     marginTop: '65px',
     width: '100vw',
-    height: '50vh',
+    height: '41vh',
   },
 });
 

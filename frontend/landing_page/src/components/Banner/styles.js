@@ -15,7 +15,7 @@ const styles = makeStyles((theme) => ({
     color: '#FFF',
     zIndex: 2,
     marginTop: '0',
-    minHeight: 350,
+    minHeight: 300,
   },
   table: {
     margin: 'auto',
@@ -83,7 +83,7 @@ const styles = makeStyles((theme) => ({
   },
   titleWrapper: {
     [theme.breakpoints.up('sm')]: {
-      margin: `${theme.spacing(12)}px 0 ${theme.spacing(8)}px`,
+      margin: `${theme.spacing(8)}px 0 ${theme.spacing(2)}px`,
     },
   },
   descriptionWrapper: {
