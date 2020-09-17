@@ -37,4 +37,4 @@ RUN pip install --upgrade pip \
 
 ADD . /app/
 
-ENTRYPOINT ./entrypoint.sh 
+# ENTRYPOINT ./entrypoint.sh 

@@ -100,7 +100,6 @@ if AUTH_LDAP_ENABLED:
     )
 
 # Target Viewer Rating, Reject Schema
-# Target Viewer Rating, Reject Schema
 # Lista de databases que o Target viewer pode acessar, deve ser o mesmo onde as tabelas rating e reject foram criada. 
 # As vezes é necessário ter o mesmo banco de dados com 2 configurações, como acontece com o catalog e dessci no NCSA. nesse caso o usuario só conhece o dessci
 # este campo deveria ser preenchido com o valor dessci.

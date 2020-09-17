@@ -247,3 +247,7 @@ SETTINGS_EXPORT = []
 #     '--with-coverage',
 #     '--cover-package=' + ','.join(PROJECT_APPS),
 # ]
+
+# LDAP Authentication
+# Responsible for turn on and off the LDAP authentication:
+AUTH_LDAP_ENABLED = False
