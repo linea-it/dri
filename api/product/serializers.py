@@ -194,6 +194,8 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
 
     is_owner = serializers.SerializerMethodField()
 
+    tbl_rows = serializers.SerializerMethodField()
+
     class Meta:
         model = Catalog
 
@@ -320,6 +322,12 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             return True
         else:
             return False
+
+    def get_tbl_rows(self, obj):
+        if obj.tbl_rows is None:
+            return obj.ctl_num_objects
+        else:
+            return obj.tbl_rows
 
 
 class MapSerializer(ProductSerializer):
