@@ -48,9 +48,21 @@ function Interfaces() {
   //   },
   // ];
 
+
+  const compareOrder = (a, b) => {
+    if ( a.app_order < b.app_order ){
+      return -1;
+    }
+    if ( a.app_order > b.app_order ){
+      return 1;
+    }
+    return 0;
+  }
+
+
   useEffect(() => {
     getApplication().then((res) => {
-      setInterfaces(res);
+      setInterfaces(res.sort(compareOrder));
     });
   }, []);
 
