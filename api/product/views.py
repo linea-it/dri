@@ -33,6 +33,8 @@ from rest_framework.permissions import IsAuthenticated
 from .viziercds import VizierCDS
 from django_filters.rest_framework import DjangoFilterBackend
 
+from rest_framework.decorators import action
+from common.healpix import ang2pix
 
 logger = logging.getLogger(__name__)
 
@@ -535,6 +537,57 @@ class MapViewSet(viewsets.ModelViewSet):
     serializer_class = MapSerializer
     filter_backends = (DjangoFilterBackend,)
     filter_class = MapFilter
+
+    @action(detail=False, methods=['get'])
+    def signal_by_position(self, request):
+        """[summary]
+
+        Exemplo: http://localhost/dri/api/map/signal_by_position/?ra=35.80384&dec=-9.66626&name=area_fraction_364
+        Args:
+            request ([type]): [description]
+
+        Raises:
+            Exception: [description]
+            Exception: [description]
+            Exception: [description]
+
+        Returns:
+            [type]: [description]
+        """
+        try:
+            ra = request.query_params['ra']
+        except:
+            raise Exception("RA parameter is mandatory")
+
+        try:
+            dec = request.query_params['dec']
+        except:
+            raise Exception("Dec parameter is mandatory")
+
+        prd_name = request.query_params.get('name', None)
+        prd_id = request.query_params.get('id', None)
+
+        if prd_name is None and prd_id is None:
+            raise Exception("ID or NAME parameter is mandatory")
+
+        if prd_name is not None:
+            map = Map.objects.get(prd_name=prd_name)
+        else:
+            map = Map.objects.get(id=int(prd_id))
+
+        # Converter a orientação para boolean
+        nest = True if map.mpa_ordering == 'nest' else False
+
+        # Converter ra e dec para Healpix
+        healpix = ang2pix(ra, dec, map.mpa_nside, nest)
+
+        # TODO: Executar a query na tabela do mapa.
+
+        return Response({
+            'success': True,
+            'display_name': map.prd_display_name,
+            'healpix': healpix
+        })
 
 
 class MaskViewSet(viewsets.ModelViewSet):
