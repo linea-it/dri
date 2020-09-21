@@ -40,13 +40,13 @@ class TableAdmin(admin.ModelAdmin):
 
 class CatalogAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'prd_name', 'prd_display_name', 'prd_class', 'ctl_num_objects',
+        'id', 'prd_name', 'prd_display_name', 'prd_class', 'ctl_num_objects', 'tbl_name'
     )
 
 
 class MapAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'prd_name', 'prd_display_name', 'prd_class', 'mpa_nside', 'mpa_ordering',
+        'id', 'prd_name', 'prd_display_name', 'prd_class', 'mpa_nside', 'mpa_ordering', 'tbl_name',
     )
     list_display_links = ('id', 'prd_name')
     search_fields = ('prd_name',)
@@ -125,6 +125,7 @@ class FiltersetdAdmin(admin.ModelAdmin):
 
 class FilterConditionAdmin(admin.ModelAdmin):
     list_display = ('id', 'filterset', 'fcd_property', 'fcd_property_name', 'fcd_operation', 'fcd_value')
+
 
 class BookmarkedAdmin(admin.ModelAdmin):
     list_display = ('id', 'product', 'owner', 'is_starred')

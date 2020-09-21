@@ -17,12 +17,16 @@ import threading
 from lib.db_oracle import DBOracle
 from lib.db_sqlite import DBSqlite
 from lib.db_postgresql import DBPostgresql
+import logging
+
 
 class DBBase:
-    # Django database engines 
+    # Django database engines
     available_engines = list(['sqlite3', 'oracle', 'postgresql_psycopg2'])
 
     def __init__(self, database, credentials=None):
+
+        self.log = logging.getLogger('django')
 
         self.connection_data = self.prepare_connection(database)
 
@@ -39,6 +43,24 @@ class DBBase:
 
         with self.engine.connect():
             self.metadata = MetaData(self.engine)
+
+    def debug_query(self, stm, with_parameters=False):
+        if settings.DEBUG:
+            sql = self.stm_to_str(stm, with_parameters)
+
+            self.log.info(sql)
+
+    def stm_to_str(self, stm, with_parameters=False):
+        try:
+            sql = str(stm.compile(
+                dialect=self.dialect,
+                compile_kwargs={"literal_binds": with_parameters}))
+        except:
+            sql = str(stm)
+        # Remove new lines
+        sql = sql.replace('\n', ' ').replace('\r', '')
+
+        return sql
 
     def prepare_connection(self, db_name):
         connection_data = {}
@@ -69,7 +91,7 @@ class DBBase:
             connection_data['PORT'] = db_settings_django['PORT']
             connection_data['DATABASE'] = db_settings_django['NAME']
 
-            # Para o caso do banco de dados estar configurado para um SCHEMA especifico. 
+            # Para o caso do banco de dados estar configurado para um SCHEMA especifico.
             try:
                 # Considerando que o valor de Options é  este
                 # 'OPTIONS': {'options': '-c search_path=dri_catalog,public'}
@@ -82,7 +104,6 @@ class DBBase:
                     self.schema = schema
             except:
                 self.schema = None
-
 
         else:
             raise Exception('Unknown database')
@@ -113,7 +134,6 @@ class DBBase:
 
     def get_connection_schema(self):
         return self.schema
-
 
     def get_table_columns(self, table, schema=None):
         # Desabilitar os warnings na criacao da tabela
@@ -202,7 +222,7 @@ class DBBase:
             return queryset.fetchone()[0]
         except:
             return 0
-    
+
     def get_estimated_rows_count(self, table, schema=None):
         """
             Retorna a quantidade de rows estimada para a tabela. 
@@ -217,20 +237,24 @@ class DBBase:
         except:
             return 0
 
-
     def table_exists(self, table, schema=None):
         table = self.database.get_table_name(table)
-        if schema:
-            schema = self.database.get_schema_name(schema)
 
         # Desabilitar os warnings na criacao da tabela
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=sa_exc.SAWarning)
 
-            return self.engine.has_table(table, schema)
+            if schema:
+                schema = self.database.get_schema_name(schema)
+                return self.engine.has_table(table, schema)
+            else:
+                return self.engine.has_table(table)
 
     def get_table_obj(self, table, schema=None):
-        return Table(table, self.metadata, autoload=True, schema=schema)
+        if schema is not None:
+            return Table(table, self.metadata, autoload=True, schema=schema)
+        else:
+            return Table(table, self.metadata, autoload=True)
 
     @staticmethod
     def get_column_obj(table_obj, column_name):
@@ -238,6 +262,7 @@ class DBBase:
 
     def fetchall_dict(self, stm):
         with self.engine.connect() as con:
+            self.debug_query(stm, True)
             queryset = con.execute(stm)
             result = list()
             for row in queryset.fetchall():
@@ -249,6 +274,11 @@ class DBBase:
         with self.engine.connect() as con:
             queryset = con.execute(stm)
             return dict(queryset.fetchone())
+
+    def fetch_scalar(self, stm):
+        with self.engine.connect() as con:
+            self.debug_query(stm, True)
+            return con.execute(stm).scalar()
 
     def stm_count(self, stm):
         with self.engine.connect() as con:
@@ -293,7 +323,7 @@ class DBBase:
                 # between
                 op = None
                 value = value.split(",")
-                clause = between(column,float(value[0]), float(value[1]))
+                clause = between(column, float(value[0]), float(value[1]))
             else:
                 op = '__%s__' % op
 
@@ -383,19 +413,18 @@ class DBBase:
                 trans = con.begin()
                 con.execute(drop_stm)
                 trans.commit()
-            
+
                 if not self.table_exists(table, schema):
                     return True
                 else:
                     trans.rollback()
-                    raise Exception ("Failed to drop the table. Tablename: [%s] Schema: [%s]" % (table, schema))
+                    raise Exception("Failed to drop the table. Tablename: [%s] Schema: [%s]" % (table, schema))
             except Exception as e:
                 trans.rollback()
                 raise e
 
-            
-
     # ------------------------ Filtro Por Posicao ----------------------------------
+
     def filter_by_coordinate_square(self, property_ra, property_dec, lowerleft, upperright):
         """
         Cria uma clausula Where para fazer uma query por posicao usando um quadrado.

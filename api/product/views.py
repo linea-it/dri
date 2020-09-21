@@ -3,38 +3,31 @@
 import operator
 
 import django_filters
-from common.filters import IsOwnerFilterBackend
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
-from django.http import HttpResponse
-from product.tasks import export_target_by_filter
-from rest_framework import filters
-from rest_framework import mixins
-from rest_framework import viewsets
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import list_route
+from django.http import HttpResponse, JsonResponse
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, mixins, viewsets
+from rest_framework.authentication import (BasicAuthentication,
+                                           SessionAuthentication,
+                                           TokenAuthentication)
+from rest_framework.decorators import (action, api_view, list_route,
+                                       permission_classes)
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from product.importproduct import ImportTargetListCSV
-from django.http import JsonResponse
-
+from common.filters import IsOwnerFilterBackend
+from common.healpix import ang2pix
 from lib.CatalogDB import CatalogDB
-from .filters import ProductPermissionFilterBackend
-from .serializers import *
-from .tasks import product_save_as
-from .tasks import import_target_list
+from lib.MapDB import MapTable
+from product.importproduct import ImportTargetListCSV
+from product.tasks import export_target_by_filter
 
 from .association import Association
-
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from .filters import ProductPermissionFilterBackend
+from .serializers import *
+from .tasks import import_target_list, product_save_as
 from .viziercds import VizierCDS
-from django_filters.rest_framework import DjangoFilterBackend
-
-from rest_framework.decorators import action
-from common.healpix import ang2pix
 
 logger = logging.getLogger(__name__)
 
@@ -581,12 +574,52 @@ class MapViewSet(viewsets.ModelViewSet):
         # Converter ra e dec para Healpix
         healpix = ang2pix(ra, dec, map.mpa_nside, nest)
 
-        # TODO: Executar a query na tabela do mapa.
+        # mmax = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).get_max_signal()
+        # mmin = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).get_min_signal()
+        signal = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).signal_by_healpix(healpix)
 
         return Response({
-            'success': True,
-            'display_name': map.prd_display_name,
-            'healpix': healpix
+            'healpix': healpix,
+            'signal': signal
+        })
+
+    @action(detail=False, methods=['get'])
+    def min_max_signal(self, request):
+
+        try:
+            ra = request.query_params['ra']
+        except:
+            raise Exception("RA parameter is mandatory")
+
+        try:
+            dec = request.query_params['dec']
+        except:
+            raise Exception("Dec parameter is mandatory")
+
+        prd_name = request.query_params.get('name', None)
+        prd_id = request.query_params.get('id', None)
+
+        if prd_name is None and prd_id is None:
+            raise Exception("ID or NAME parameter is mandatory")
+
+        if prd_name is not None:
+            map = Map.objects.get(prd_name=prd_name)
+        else:
+            map = Map.objects.get(id=int(prd_id))
+
+        # Converter a orientação para boolean
+        nest = True if map.mpa_ordering == 'nest' else False
+
+        # Converter ra e dec para Healpix
+        healpix = ang2pix(ra, dec, map.mpa_nside, nest)
+
+        # mmax = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).get_max_signal()
+        # mmin = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).get_min_signal()
+        signal = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).signal_by_healpix(healpix)
+
+        return Response({
+            'healpix': healpix,
+            'signal': signal
         })
 
 
