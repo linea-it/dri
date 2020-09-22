@@ -535,7 +535,9 @@ class MapViewSet(viewsets.ModelViewSet):
     def signal_by_position(self, request):
         """[summary]
 
-        Exemplo: http://localhost/dri/api/map/signal_by_position/?ra=35.80384&dec=-9.66626&name=area_fraction_364
+        Exemplo: 
+            http://localhost/dri/api/map/signal_by_position/?ra=35.80384&dec=-9.66626&id=591
+            http://localhost/dri/api/map/signal_by_position/?ra=35.80384&dec=-9.66626&name=nimages_10
         Args:
             request ([type]): [description]
 
@@ -574,8 +576,7 @@ class MapViewSet(viewsets.ModelViewSet):
         # Converter ra e dec para Healpix
         healpix = ang2pix(ra, dec, map.mpa_nside, nest)
 
-        # mmax = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).get_max_signal()
-        # mmin = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).get_min_signal()
+        # Faz a query pelo index healpix e retorna o valor do signal.
         signal = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).signal_by_healpix(healpix)
 
         return Response({
@@ -583,43 +584,28 @@ class MapViewSet(viewsets.ModelViewSet):
             'signal': signal
         })
 
-    @action(detail=False, methods=['get'])
-    def min_max_signal(self, request):
+    @action(detail=True, methods=['get'])
+    def min_max_signal(self, request, pk=None):
+        """[summary]
 
-        try:
-            ra = request.query_params['ra']
-        except:
-            raise Exception("RA parameter is mandatory")
+        Exemplo: http://localhost/dri/api/map/591/min_max_signal/
+        Args:
+            request ([type]): [description]
+            pk ([type], optional): [description]. Defaults to None.
 
-        try:
-            dec = request.query_params['dec']
-        except:
-            raise Exception("Dec parameter is mandatory")
+        Returns:
+            [type]: [description]
+        """
+        map = self.get_object()
 
-        prd_name = request.query_params.get('name', None)
-        prd_id = request.query_params.get('id', None)
+        map_table = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database)
 
-        if prd_name is None and prd_id is None:
-            raise Exception("ID or NAME parameter is mandatory")
-
-        if prd_name is not None:
-            map = Map.objects.get(prd_name=prd_name)
-        else:
-            map = Map.objects.get(id=int(prd_id))
-
-        # Converter a orientação para boolean
-        nest = True if map.mpa_ordering == 'nest' else False
-
-        # Converter ra e dec para Healpix
-        healpix = ang2pix(ra, dec, map.mpa_nside, nest)
-
-        # mmax = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).get_max_signal()
-        # mmin = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).get_min_signal()
-        signal = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).signal_by_healpix(healpix)
+        signal_max = map_table.max_signal()
+        signal_min = map_table.min_signal()
 
         return Response({
-            'healpix': healpix,
-            'signal': signal
+            'signal_max': signal_max,
+            'signal_min': signal_min
         })
 
 

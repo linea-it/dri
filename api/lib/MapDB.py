@@ -23,14 +23,12 @@ class MapTable(MapDB):
     def __init__(self, table, schema=None, database=None):
         super(MapTable, self).__init__(db=database)
 
-        self.log.info("------------ TESTE MAP --------------------")
-
         self.schema = schema
         if schema is None or schema is "":
             self.schema = None
 
         # Lista de Colunas obrigatórias para que está classe funcione corretamente.
-        self.mandatory_columns = list(['pixel', 'signal', 'teste'])
+        self.mandatory_columns = list(['pixel', 'signal', ])
 
         # columns = lista de instancias SqlAlchemy::Column() com todas as colunas da tabela
         self.columns = list()
@@ -44,7 +42,6 @@ class MapTable(MapDB):
             raise Exception("Table or view  %s.%s does not exist" % (self.schema, table))
 
         # Criar os Metadata da Tabela para o SqlAlchemy
-
         # Desabilitar os warnings na criacao da tabela
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=sa_exc.SAWarning)

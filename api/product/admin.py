@@ -8,7 +8,7 @@ class ProductAdmin(admin.ModelAdmin):
                     'prd_display_name', 'prd_owner', 'prd_product_id', 'prd_date',
                     'prd_class', 'prd_filter', 'prd_is_public', 'prd_is_permanent',)
     list_display_links = ('id', 'prd_process_id', 'prd_name',)
-    search_fields = ('prd_process_id', 'prd_name', 'prd_display_name', 'prd_product_id',)
+    search_fields = ('prd_name', 'prd_display_name', 'prd_display_name', )
 
 
 class ProductReleaseAdmin(admin.ModelAdmin):
