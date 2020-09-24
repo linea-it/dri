@@ -23,14 +23,16 @@ Ext.define('aladin.maps.MapSelectionViewModel', {
         release: null,
         aladin_last_map_survey: null,
         aladin_last_nonmap_survey: null,
-        map_selected: false
+        map_selected: false,
+        wait_picker: false,
+        current_map: null,
     },
 
-    formulas : {
-        aladin_switchable : function (get) {
+    formulas: {
+        aladin_switchable: function (get) {
             return (
                 (get('aladin_last_nonmap_survey') != null) &&
-                    (get('aladin_last_map_survey') != null)
+                (get('aladin_last_map_survey') != null)
             );
         }
     }

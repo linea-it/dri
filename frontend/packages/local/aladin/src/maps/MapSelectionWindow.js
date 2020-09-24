@@ -28,7 +28,7 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                     reference: 'cmbType',
                     fieldLabel: 'Map Type:',
                     labelAlign: 'top',
-                    emptyText: '<Types>',
+                    emptyText: 'Types',
                     displayField: 'pgr_display_name',
                     valueField: 'pgr_group',
                     store: {
@@ -47,7 +47,7 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                     reference: 'cmbClass',
                     fieldLabel: 'Map Class:',
                     labelAlign: 'top',
-                    emptyText: '<Classes>',
+                    emptyText: 'Classes',
                     displayField: 'pcl_display_name',
                     valueField: 'prd_class',
                     store: {
@@ -66,7 +66,7 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                     reference: 'cmbFilter',
                     fieldLabel: 'Filter:',
                     labelAlign: 'top',
-                    emptyText: '<Filters>',
+                    emptyText: 'Filters',
                     displayField: 'prd_filter',
                     valueField: 'id',
                     store: {
@@ -90,13 +90,30 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                         value: '{map_selected}'
                     }
                 },
+                {
+                    xtype: 'button',
+                    text: 'Picker Signal',
+                    iconCls: 'x-fa fa-eyedropper',
+                    enableToggle: true,
+                    toggleHandler: 'onTogglePickerMapSignal',
+                    bind: {
+                        // disabled: '{!aladin_last_map_survey}',
+                        pressed: '{wait_picker}'
+                    }
+                },
+                // TODO: Só para testes.
+                {
+                    xtype: 'button',
+                    text: 'Teste MAP',
+                    handler: 'testeMap'
+                },
             ]
         });
 
         me.callParent(arguments);
     },
 
-    setRelease: function(release) {
+    setRelease: function (release) {
         //console.log('setRelease(%o)', release);
 
         var me = this,
@@ -106,6 +123,18 @@ Ext.define('aladin.maps.MapSelectionWindow', {
             vm.set('release', release);
             me.fireEvent('changerelease', release);
         }
+    },
+
+    setAladin(aladin) {
+        console.log("setAladin(%o)", aladin);
+        var me = this;
+
+        // Adiciona um listener ao Aladin, para ouvir o evendo de picker que foi adicionado 
+        // pela ação do botão Picker.
+        aladin.addListener('mappickersignal', 'onPickerMapSignal', me.getController());
+
+        me.aladin = aladin;
+
     }
 
 });

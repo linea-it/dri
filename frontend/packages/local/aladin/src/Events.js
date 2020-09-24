@@ -15,7 +15,7 @@ Ext.define('aladin.Events', {
 
         me.addMouseMoveListener();
 
-        me.addMouseUP ();
+        me.addMouseUP();
 
     },
 
@@ -43,9 +43,9 @@ Ext.define('aladin.Events', {
             aladin = me.getAladin(),
             view = aladin.view,
             reticleCanvas = aladin.view.reticleCanvas,
-            radec, xymouse;
+            radec, xymouse, handler;
 
-        reticleCanvas.addEventListener('dblclick', function (e) {
+        handler = function (e) {
             xymouse = view.imageCanvas.relMouseCoords(e);
 
             radec = me.mousePositionToSky(xymouse);
@@ -70,7 +70,11 @@ Ext.define('aladin.Events', {
                     me.fireEvent('ondblclick', radec, me);
                 }
             }
-        });
+        }
+        // Remove o evento primeiro para evitar duplicar. 
+        reticleCanvas.removeEventListener('dblclick', handler);
+
+        reticleCanvas.addEventListener('dblclick', handler);
     },
 
     addMouseDown: function () {
@@ -78,9 +82,9 @@ Ext.define('aladin.Events', {
             aladin = me.getAladin(),
             view = aladin.view,
             reticleCanvas = view.reticleCanvas,
-            radec, xymouse;
+            radec, xymouse, handler;
 
-        reticleCanvas.addEventListener('mousedown', function (e) {
+        handler = function (e) {
             xymouse = view.imageCanvas.relMouseCoords(e);
 
             radec = me.mousePositionToSky(xymouse);
@@ -89,9 +93,12 @@ Ext.define('aladin.Events', {
                 me.mouseIsDown = true;
                 me.mouseInitialPosition = radec;
                 me.mouseLastPosition = radec;
-
             }
-        });
+        }
+        // Remove o evento primeiro para evitar duplicar. 
+        reticleCanvas.removeEventListener('mousedown', handler);
+
+        reticleCanvas.addEventListener('mousedown', handler);
     },
 
     addMouseMoveListener: function () {
@@ -99,9 +106,9 @@ Ext.define('aladin.Events', {
             aladin = me.getAladin(),
             view = aladin.view,
             reticleCanvas = view.reticleCanvas,
-            radec, xymouse;
+            radec, xymouse, handler;
 
-        reticleCanvas.addEventListener('mousemove', function (e) {
+        handler = function (e) {
             xymouse = view.imageCanvas.relMouseCoords(e);
 
             radec = me.mousePositionToSky(xymouse);
@@ -124,7 +131,12 @@ Ext.define('aladin.Events', {
                 }
 
             }
-        });
+        }
+
+        // Remove o evento primeiro para evitar duplicar. 
+        reticleCanvas.removeEventListener('mousemove', handler);
+
+        reticleCanvas.addEventListener('mousemove', handler);
     },
 
     addMouseUP: function () {
@@ -132,9 +144,9 @@ Ext.define('aladin.Events', {
             aladin = me.getAladin(),
             view = aladin.view,
             reticleCanvas = view.reticleCanvas,
-            radec, xymouse;
+            radec, xymouse, handler, pickerMode, pickerEventName;
 
-        reticleCanvas.addEventListener('mouseup', function (e) {
+        handler = function (e) {
             xymouse = view.imageCanvas.relMouseCoords(e);
 
             radec = me.mousePositionToSky(xymouse);
@@ -146,8 +158,27 @@ Ext.define('aladin.Events', {
                         me.fireEvent('onpanend', me.getRaDec(), me);
 
                     } else {
-                        me.fireEvent('onclick', me.mouseLastPosition, me);
+                        pickerMode = me.getPickerMode();
+                        pickerEventName = me.getPickerEventName();
+                        // Antes de disparar o evento de click verificar se a pickerMode está ativo
+                        // Se estiver o evento de click dispara o evento de picker. 
+                        // Se não estiver será um evento de Click normal.
+                        console.log(me.getPickerMode())
+                        if (me.getPickerMode()) {
+                            console.log("Aladin: OnPicker")
+                            console.log("Disparou um evento picker: %o", pickerEventName)
+                            // Garante que vai ter um evento para picker.
+                            if (!me.getPickerEventName()) {
+                                me.fireEvent('onpicker', me.mouseLastPosition, me);
+                            } else {
+                                me.fireEvent(me.getPickerEventName(), me.mouseLastPosition, me);
+                            }
 
+
+                        } else {
+                            console.log("Aladin: OnClick")
+                            me.fireEvent('onclick', me.mouseLastPosition, me);
+                        }
                     }
                 }
 
@@ -156,7 +187,13 @@ Ext.define('aladin.Events', {
                 me.mouseInitialPosition = [];
                 me.mouseLastPosition = [];
             }
-        });
+            e.stopPropagation()
+        }
+        // Remove o evento primeiro para evitar duplicar. 
+        reticleCanvas.removeEventListener('mouseup', handler);
+
+        // Adiciona o Evento
+        reticleCanvas.addEventListener('mouseup', handler);
     },
 
     mousePositionToSky: function (xymouse) {
@@ -167,7 +204,7 @@ Ext.define('aladin.Events', {
             radec = [];
 
         xy = AladinUtils.viewToXy(xymouse.x, xymouse.y, view.width,
-                view.height, view.largestDim, view.zoomFactor);
+            view.height, view.largestDim, view.zoomFactor);
 
         try {
             lonlat = view.projection.unproject(xy.x, xy.y);
@@ -215,9 +252,9 @@ Ext.define('aladin.Events', {
 
 
         if (me.windowMapSelection == null) {
-            me.windowMapSelection = Ext.create('aladin.maps.MapSelectionWindow',{
+            me.windowMapSelection = Ext.create('aladin.maps.MapSelectionWindow', {
                 width: 182,
-                height: 237,
+                height: 500,
                 x: 45,
                 y: 55,
                 resizable: false,
