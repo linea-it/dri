@@ -11,6 +11,8 @@ Ext.define('aladin.Events', {
 
         me.addDblClickListener();
 
+        me.addRightClickListener();
+
         me.addMouseDown();
 
         me.addMouseMoveListener();
@@ -37,6 +39,25 @@ Ext.define('aladin.Events', {
     //         }
     //     });
     // },
+
+    addRightClickListener: function () {
+        var me = this,
+            aladin = me.getAladin(),
+            view = aladin.view,
+            reticleCanvas = aladin.view.reticleCanvas,
+            radec, xymouse;
+
+        reticleCanvas.addEventListener('contextmenu', function (e) {
+            xymouse = view.imageCanvas.relMouseCoords(e);
+
+            radec = me.mousePositionToSky(xymouse);
+
+            if (radec) {
+                me.fireEvent('contextmenu', radec, me);
+
+            }
+        });
+    },
 
     addDblClickListener: function () {
         var me = this,
@@ -66,6 +87,10 @@ Ext.define('aladin.Events', {
                         repeat: 1
                     });
                     task.start();
+
+                    // Executar um metodo antes de disparar o evento.
+                    // isso permite tratar algumas coisas antes de evento acontecer.
+                    me.beforeEventDblClick();
 
                     me.fireEvent('ondblclick', radec, me);
                 }
@@ -163,9 +188,7 @@ Ext.define('aladin.Events', {
                         // Antes de disparar o evento de click verificar se a pickerMode está ativo
                         // Se estiver o evento de click dispara o evento de picker. 
                         // Se não estiver será um evento de Click normal.
-                        console.log(me.getPickerMode())
                         if (me.getPickerMode()) {
-                            console.log("Aladin: OnPicker")
                             console.log("Disparou um evento picker: %o", pickerEventName)
                             // Garante que vai ter um evento para picker.
                             if (!me.getPickerEventName()) {
@@ -173,8 +196,6 @@ Ext.define('aladin.Events', {
                             } else {
                                 me.fireEvent(me.getPickerEventName(), me.mouseLastPosition, me);
                             }
-
-
                         } else {
                             console.log("Aladin: OnClick")
                             me.fireEvent('onclick', me.mouseLastPosition, me);
@@ -270,6 +291,16 @@ Ext.define('aladin.Events', {
             me.windowMapSelection.hide();
         }
 
-    }
+    },
+
+    beforeEventDblClick: function () {
+        // console.log('beforeEventDblClick');
+        var me = this;
+        // Fecha a janela de mapas quando o usuario faz uma ação de dblclick no aladin.
+        // o comportamento do aladin é trocar de aplicação, por isso o ideal é fechar a janela.
+        if (me.windowMapSelection != null) {
+            me.windowMapSelection.close()
+        }
+    },
 
 });

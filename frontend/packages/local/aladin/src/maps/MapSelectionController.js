@@ -13,7 +13,8 @@ Ext.define('aladin.maps.MapSelectionController', {
     listen: {
         component: {
             'aladin-maps-mapselectionwindow': {
-                changerelease: 'onChangeRelease'
+                changerelease: 'onChangeRelease',
+                beforeclose: 'onBeforeClose'
             },
         }
     },
@@ -223,11 +224,10 @@ Ext.define('aladin.maps.MapSelectionController', {
     },
 
     onTogglePickerMapSignal: function (btn, state) {
-        console.log("onTogglePickerMapSignal: %o", state);
+        // console.log("onTogglePickerMapSignal: %o", state);
         var me = this,
             view = me.getView(),
             aladin = view.getAladin();
-
 
         // Modificar o estado do Aladin para esperar pela ação de seleção.
         aladin.setPickerMode(state, 'mappickersignal');
@@ -245,22 +245,21 @@ Ext.define('aladin.maps.MapSelectionController', {
         aladin.setLoading(true);
 
         Ext.Ajax.request({
-            // url: `${window.location.origin}/dri/api/get_token`,
             url: '/dri/api/map/signal_by_position/',
             method: 'GET',
             headers: {
                 'X-CSRFToken': Ext.util.Cookies.get('csrftoken'),
             },
             params: {
-                // csrfmiddlewaretoken: Ext.util.Cookies.get('csrftoken'),
                 ra: position[0],
                 dec: position[1],
                 id: map.get('id')
             },
             success: function (response) {
                 result = JSON.parse(response.responseText);
-                console.log("Fez a requisição")
+
                 console.log(result)
+                vm.set('map_signal', Number.parseFloat(result.signal).toPrecision(4))
 
                 aladin.setLoading(false);
 
@@ -274,9 +273,32 @@ Ext.define('aladin.maps.MapSelectionController', {
         });
     },
 
+    onBeforeClose: function () {
+        console.log('onBeforeClose');
+        var me = this,
+            btn = me.lookup('btnPicker');
+
+        // Sempre Desligar a função de picker ao fechar a janela.
+        btn.toggle(false)
+    },
+
+    onAladinContextMenu: function () {
+        // console.log('onAladinContextMenu')
+        var me = this,
+            vm = this.getViewModel(),
+            btn = me.lookup('btnPicker');
+
+        // Se a função de picker estiver ativa e houver um right click 
+        // Desliga a função de picker ao clicar com botão diretio no Aladin.
+        if (vm.get('wait_picker') == true) {
+            console.log("HAUHDAHSU")
+            btn.toggle(false);
+        }
+    },
+
     testeMap: function (btn) {
         console.log("Teste Select Map");
-        console.log(this)
+        // console.log(this)
         var me = this,
             vm = me.getViewModel(),
             view = vm.getView(),
@@ -300,7 +322,7 @@ Ext.define('aladin.maps.MapSelectionController', {
             callback: function () {
 
                 map = store.getById(591);
-                console.log("Map: %o", map);
+                // console.log("Map: %o", map);
 
                 cmb_filter.select(map);
                 view.getController().onSelectMapFilter(cmb_filter);

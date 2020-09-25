@@ -96,12 +96,22 @@ Ext.define('aladin.maps.MapSelectionWindow', {
                     iconCls: 'x-fa fa-eyedropper',
                     enableToggle: true,
                     toggleHandler: 'onTogglePickerMapSignal',
+                    reference: 'btnPicker',
                     bind: {
-                        // disabled: '{!aladin_last_map_survey}',
+                        disabled: '{!aladin_last_map_survey}',
                         pressed: '{wait_picker}'
                     }
                 },
                 // TODO: Só para testes.
+                {
+                    xtype: 'textfield',
+                    label: 'Signal',
+                    labelWidth: 50,
+                    // labelAlign: 'lef',
+                    bind: {
+                        value: '{map_signal}'
+                    }
+                },
                 {
                     xtype: 'button',
                     text: 'Teste MAP',
@@ -126,12 +136,16 @@ Ext.define('aladin.maps.MapSelectionWindow', {
     },
 
     setAladin(aladin) {
-        console.log("setAladin(%o)", aladin);
+        // console.log("setAladin(%o)", aladin);
         var me = this;
 
         // Adiciona um listener ao Aladin, para ouvir o evendo de picker que foi adicionado 
         // pela ação do botão Picker.
         aladin.addListener('mappickersignal', 'onPickerMapSignal', me.getController());
+
+        // Lister no right click no aladin, usa este evento para desabilitar a ação de picker.
+        aladin.addListener('contextmenu', 'onAladinContextMenu', me.getController());
+
 
         me.aladin = aladin;
 

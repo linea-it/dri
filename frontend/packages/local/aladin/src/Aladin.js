@@ -1216,7 +1216,6 @@ Ext.define('aladin.Aladin', {
         return false;
     },
 
-
     overlayDrawCircle: function (source, canvasCtx, viewParams) {
         // define custom draw function
         // http://aladin.unistra.fr/AladinLite/doc/API/examples/cat-custom-draw-function/
@@ -1233,12 +1232,16 @@ Ext.define('aladin.Aladin', {
     },
 
     setPickerMode: function (state, eventname) {
-        console.log("Aladin setPickerMode(%o, %o)", state, eventname);
+        // console.log("Aladin setPickerMode(%o, %o)", state, eventname);
         var me = this,
-            aladin = me.getAladin();
+            aladin = me.getAladin(),
+            view, reticleCanvas;
 
         // Previne que altere o estado do componente antes que ele esteja pronto.
         if (!me.aladinIsReady()) { return }
+
+        view = aladin.view;
+        reticleCanvas = view.reticleCanvas;
 
         // guardar o evendo que vai ser disparado quando o usuario fizer um click. 
         if (eventname) {
@@ -1247,22 +1250,20 @@ Ext.define('aladin.Aladin', {
 
         // Se state = true
         if (state) {
-            // Alterar o ponteiro do mouse para picker. 
             // Quando a propriedade pickerMode está com valor true, 
             // o evento de click do mouse sera substituido pelo evento que foi recebido como parametro. 
-            console.log("Alterar o ponteiro do mouse para picker. ")
-
             me.pickerMode = true;
 
             //  A função Add Events vai criar um evento customizado substituindo o click. 
             me.addCustomEvents()
 
+            // Alterar o ponteiro do mouse para picker. 
+            reticleCanvas.classList.add("aladin-cursor-crosshair");
 
         } else {
             // Se state = false
             // Voltar o ponteiro do mouse para normal. 
             // apagar o valor do evento a ser disparado. 
-            console.log("Voltar o ponteiro do mouse para normal.")
 
             me.pickerMode = false;
             // é necessário remover o evento customizado, a função add Remove todos os eventos antes de adicionar os eventos default.
@@ -1270,20 +1271,13 @@ Ext.define('aladin.Aladin', {
 
             // Apos remover o evento, volta o pickerEventName para o valor default.
             me.setPickerEventName('onpicker')
+
+            // Alterar o ponteiro do mouse para normal. 
+            reticleCanvas.classList.remove("aladin-cursor-crosshair");
+
         }
 
-        // Exemplo para trocar a cursor https://css-tricks.com/using-css-cursors/
-        // Base 64 do cursor: url("data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pg0KPCEtLSBHZW5lcmF0b3I6IEFkb2JlIElsbHVzdHJhdG9yIDE4LjAuMCwgU1ZHIEV4cG9ydCBQbHVnLUluIC4gU1ZHIFZlcnNpb246IDYuMDAgQnVpbGQgMCkgIC0tPg0KPCFET0NUWVBFIHN2ZyBQVUJMSUMgIi0vL1czQy8vRFREIFNWRyAxLjEvL0VOIiAiaHR0cDovL3d3dy53My5vcmcvR3JhcGhpY3MvU1ZHLzEuMS9EVEQvc3ZnMTEuZHRkIj4NCjxzdmcgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCINCgkgdmlld0JveD0iMCAwIDMyNSAzMjUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDMyNSAzMjU7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxwYXRoIGQ9Ik0zMTIuNzI0LDE2LjY0MWwtNC4xNS00LjE1MWMtMTYuMzQ0LTE2LjM0NC00Mi45MzgtMTYuMzQzLTU5LjI3OSwwLjAwMWwtNzYuMDY4LDc2LjA2OGwtNS43MzgtNS43MzcNCgljLTMuNzc5LTMuNzc4LTguODA2LTUuODYtMTQuMTUzLTUuODYxYy0wLjAwMiwwLTAuMDA0LDAtMC4wMDYsMGMtNS4zNTEsMC0xMC4zNzgsMi4wODItMTQuMTYsNS44NjZsLTEuNjE4LDEuNjIxDQoJYy0zLjc4MSwzLjc4LTUuODY0LDguODEtNS44NjQsMTQuMTU5Yy0wLjAwMSw1LjM1MSwyLjA4MiwxMC4zNzksNS44NjMsMTQuMTU5bDguODIsOC44MkwyMy4xNzcsMjQ0Ljc4DQoJYy0wLjY5MywwLjY5Mi0xLjIwNiwxLjU0NC0xLjQ5MywyLjQ4TDAuMjY0LDMxNy4wMDZjLTAuNjUyLDIuMTI0LTAuMDc4LDQuNDM0LDEuNDk0LDYuMDA1YzEuMTQyLDEuMTQyLDIuNjc1LDEuNzU3LDQuMjQzLDEuNzU3DQoJYzAuNTg4LDAsMS4xODItMC4wODcsMS43NjItMC4yNjVsNjkuNzQyLTIxLjQyNmMwLjkzNy0wLjI4NywxLjc4OC0wLjgsMi40OC0xLjQ5M2wxMjMuMTkyLTEyMy4xOTFsOS4yNzUsOS4yNzUNCgljMy43OCwzLjc4MSw4LjgwOSw1Ljg2NCwxNC4xNTksNS44NjRjNS4zNSwwLDEwLjM3OC0yLjA4MywxNC4xNi01Ljg2NWwxLjYyLTEuNjIxYzcuODA2LTcuODEyLDcuODA1LTIwLjUxNiwwLTI4LjMxOGwtNS43MzMtNS43MzYNCglsNzYuMDY5LTc2LjA2NmMwLjA1My0wLjA1MywwLjEwNS0wLjEwNywwLjE1NC0wLjE2YzcuODE3LTcuODk3LDEyLjExOS0xOC4zNTgsMTIuMTE4LTI5LjQ4Mw0KCUMzMjUsMzUuMDgyLDMyMC42NCwyNC41NTUsMzEyLjcyNCwxNi42NDF6IE03Mi41NTUsMjkyLjA0NGwtNTcuNDk2LDE3LjY2NGwxNy42NTgtNTcuNDk5bDEyMi4xMzctMTIyLjEzOWwzOS44MzgsMzkuODM4DQoJTDcyLjU1NSwyOTIuMDQ0eiBNMzA0LjI0MSw2Ny40MzZjLTAuMDQ4LDAuMDQ4LTAuMDk2LDAuMDk4LTAuMTQzLDAuMTQ3bC04MC4xNjcsODAuMTY0Yy0yLjM0MywyLjM0My0yLjM0NCw2LjE0Mi0wLjAwMiw4LjQ4NA0KCWw5Ljk3Niw5Ljk4YzMuMTI5LDMuMTI4LDMuMTI4LDguMjItMC4wMDIsMTEuMzUybC0xLjYxOCwxLjYyYy0xLjUxNSwxLjUxNC0zLjUzLDIuMzQ5LTUuNjc0LDIuMzQ5Yy0yLjE0NSwwLTQuMTU5LTAuODM0LTUuNjc0LTIuMzUNCglsLTc0LjkwMy03NC45MDJjLTEuNTE1LTEuNTE1LTIuMzQ5LTMuNTI5LTIuMzQ5LTUuNjc0czAuODM0LTQuMTU5LDIuMzUyLTUuNjc3bDEuNjItMS42MjJjMS41MTQtMS41MTUsMy41MjctMi4zNDgsNS42NzEtMi4zNDgNCgljMC4wMDEsMCwwLjAwMiwwLDAuMDAyLDBjMi4xNDUsMCw0LjE1OSwwLjgzNCw1LjY3MywyLjM0OGw5Ljk4Miw5Ljk3OWMyLjM0NCwyLjM0Miw2LjE0MiwyLjM0Myw4LjQ4NS0wLjAwMWw4MC4zMS04MC4zMTENCgljMTEuNjY0LTExLjY2NiwzMC42NDUtMTEuNjYyLDQyLjMwOSwwbDQuMTUsNC4xNTFjNS42NSw1LjY0OSw4Ljc2MiwxMy4xNjEsOC43NjIsMjEuMTU1QzMxMyw1NC4yNzQsMzA5Ljg5LDYxLjc4NywzMDQuMjQxLDY3LjQzNnoiDQoJLz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjxnPg0KPC9nPg0KPGc+DQo8L2c+DQo8Zz4NCjwvZz4NCjwvc3ZnPg0K")}
-
     },
-
-
-
-
-
-
-
-
 
     getDesFootprintCoordinates: function () {
         var area = [[23.00000, -7.00000],
