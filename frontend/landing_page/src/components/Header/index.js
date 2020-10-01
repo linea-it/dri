@@ -14,7 +14,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Avatar from '@material-ui/core/Avatar';
 // import logo from '../../assets/img/linea.png';
-import { getLoggedUser, urlLogin, urlLogout } from '../../Services/loginService';
+import { getLoggedUser, urlLogin, urlLogout } from '../../Services/api';
 import styles from './styles';
 
 function Header() {
@@ -98,7 +98,7 @@ function Header() {
       target: '_self',
     },
     {
-      description: 'About us',
+      description: 'About',
       href: '/about-us',
       target: '_self',
     },
@@ -107,11 +107,11 @@ function Header() {
       href: '/tutorials',
       target: '_self',
     },
-    // {
-    //   description: 'Contact us',
-    //   href: '/contact-us',
-    //   target: '_self',
-    // },
+    {
+      description: 'Contact',
+      href: '/contact-us',
+      target: '_self',
+    },
     // {
     //   description: 'Releases',
     //   href: 'https://github.com/linea-it/dri/releases',

@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable no-empty */
-/* eslint-disable array-callback-return */
 /* eslint-disable max-len */
 /* eslint-disable eqeqeq */
 import React, { useState, useEffect } from 'react';
@@ -21,7 +18,7 @@ import MovieIcon from '@material-ui/icons/Movie';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import styles from './styles';
-import api from '../../Services/api';
+import { tutorials } from '../../Services/api';
 
 
 function Tutorials() {
@@ -47,18 +44,19 @@ function Tutorials() {
     const auxTreeTutorial = [];
     let menuFilter; let idVideo;
     async function fetchData() {
-      const response = await api.get('tutorial/');
-      response.data.map((elem) => {
-        idVideo = elem.ttr_src.substring(30, elem.ttr_src.length);
-        menuFilter = auxTreeTutorial.filter((e) => e.title == elem.application_display_name);
-        if (auxTreeTutorial.filter((e) => e.title == elem.application_display_name).length > 0) {
-          menuFilter[0].videos.push({ title: elem.ttr_title, idVideo, description: elem.ttr_description });
-        } else {
-          auxTreeTutorial.push({ title: elem.application_display_name, videos: [{ title: elem.ttr_title, idVideo, description: elem.ttr_description }] });
-        }
+      tutorials().then((resTutorials) => {
+        resTutorials.forEach((elem) => {
+          idVideo = elem.ttr_src.substring(30, elem.ttr_src.length);
+          menuFilter = auxTreeTutorial.filter((e) => e.title == elem.application_display_name);
+          if (auxTreeTutorial.filter((e) => e.title == elem.application_display_name).length > 0) {
+            menuFilter[0].videos.push({ title: elem.ttr_title, idVideo, description: elem.ttr_description });
+          } else {
+            auxTreeTutorial.push({ title: elem.application_display_name, videos: [{ title: elem.ttr_title, idVideo, description: elem.ttr_description }] });
+          }
+        });
+        // setVideoOnDisplay({ tutorial: response.data[0].application_display_name, video: response.data[0].ttr_title });
+        setIdPlayer('0');
       });
-      // setVideoOnDisplay({ tutorial: response.data[0].application_display_name, video: response.data[0].ttr_title });
-      setIdPlayer('0');
     }
     setTreeTutorial(auxTreeTutorial);
     fetchData();

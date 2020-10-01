@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-indent */
 /* eslint-disable max-len */
 import React from 'react';
 import {
@@ -19,7 +20,7 @@ function AboutUs() {
             <Link color="inherit" href="/">
               Home
             </Link>
-            <Typography color="textPrimary">About us</Typography>
+            <Typography color="textPrimary">About</Typography>
           </Breadcrumbs>
           <Typography
             gutterBottom

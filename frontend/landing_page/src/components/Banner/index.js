@@ -40,9 +40,9 @@ function Banner() {
             <table className={classes.table}>
               <tbody>
                 <tr>
-                  <td colSpan={2}>
+                  <td colSpan={2} style={{ textAlign: '-webkit-center' }}>
                     <h1 className={classes.title}>
-                      LIneA SCIENCE SERVER
+                      LIneA Science Server
                     </h1>
                   </td>
                 </tr>
@@ -52,7 +52,7 @@ function Banner() {
                   </td>
                   <td className={classes.positionTitle}>
                     <h1 className={classes.subtitle}>
-                      Data Release
+                      DES Data Release
                     </h1>
                   </td>
                 </tr>

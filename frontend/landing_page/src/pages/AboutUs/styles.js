@@ -11,6 +11,8 @@ const styles = makeStyles((theme) => ({
   textFormat: {
     color: '#141412',
     marginTop: 40,
+    textTransform: 'none',
+    fontSize: '0.85rem',
   },
 }));
 

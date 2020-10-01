@@ -26,3 +26,8 @@ code {
 canvas {
   display: block;
 }
+
+.MuiTypography-overline {
+  text-transform: inherit!important;
+  font-size: 0.9rem!important;
+}

@@ -1,26 +1,24 @@
+/* eslint-disable max-len */
 import React, { useState } from 'react';
 import {
   Grid, Container, Typography, TextField, Button, Breadcrumbs, Link,
 } from '@material-ui/core';
 import EmailIcon from '@material-ui/icons/Email';
 import styles from './styles';
+import { sendEmail } from '../../Services/api';
 
 function Contact() {
   const classes = styles();
 
   const [formData, setformData] = useState({
-    name: '', email: '', subject: '', message: '', resultado: '',
+    name: '', from: '', subject: '', message: '',
   });
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const urlEmail = `${'mailto:contato-linea@linea.gov.br'
-    + '&subject='}${formData.subject
-    }&body=`
-    + `<b>Nome</b>: ${formData.name
-    }<br/> <b>Email</b>: ${formData.email
-    }<br/><br/> <b>Mensagem</b>: </br>${formData.message.replace(/\r?\n/g, '<br/>')}`;
-    window.open(urlEmail);
+    sendEmail(formData).then((res) => {
+      console.log(res);
+    });
   };
 
   return (
@@ -31,9 +29,17 @@ function Contact() {
             <Link color="inherit" href="/">
               Home
             </Link>
-            <Typography color="textPrimary">Contact us</Typography>
+            <Typography color="textPrimary">Contact</Typography>
           </Breadcrumbs>
           <Grid item xs={6} className={classes.grid}>
+            <Typography variant="h3" align="center" color="textPrimary">Contact</Typography>
+            <p>
+              <span>
+                If you have any problems related to the usage of the applications, click here to be redirected to the tutorials page.
+                Or if you still have questions, suggestions or complaints, you can contact us using the form below.
+              </span>
+            </p>
+            <br />
             <form
               autoComplete="off"
               onSubmit={handleSubmit}
@@ -59,8 +65,8 @@ function Contact() {
                   id="textFieldEmail"
                   type="email"
                   variant="outlined"
-                  value={formData.email}
-                  onChange={(event) => setformData({ ...formData, email: event.target.value })}
+                  value={formData.from}
+                  onChange={(event) => setformData({ ...formData, from: event.target.value })}
                   label="Email"
                   placeholder="Email"
                   fullWidth

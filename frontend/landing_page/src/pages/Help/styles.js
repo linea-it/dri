@@ -11,9 +11,6 @@ const styles = makeStyles((theme) => ({
   textFormat: {
     color: '#141412',
     paddingTop: 15,
-    // fontSize: '16px',
-    // lineHeight: 1.5,
-    // fontFamily: 'Helvetica Neue,Helvetica,Arial,sans-serif',
   },
 }));
 

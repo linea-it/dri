@@ -13,44 +13,14 @@ import { getApplication } from '../../../../Services/api';
 function Interfaces() {
   const classes = styles();
   const [interfaces, setInterfaces] = useState([]);
-  // const interfaces = [
-  //   {
-  //     id: 1,
-  //     title: 'Sky Viewer',
-  //     // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
-  //     pathname: '/sky/',
-  //     icon: 'sky_viewer.png',
-  //     image: 'dri1.jpg',
-  //   },
-  //   {
-  //     id: 2,
-  //     title: 'Target Viewer',
-  //     // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
-  //     pathname: '/target/',
-  //     icon: 'target_viewer.png',
-  //     image: 'dri2.jpg',
-  //   },
-  //   {
-  //     id: 3,
-  //     title: 'Tile Inspection',
-  //     // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
-  //     pathname: '/eyeballing/',
-  //     icon: 'sky_viewer.png',
-  //     image: 'dri4.jpg',
-  //   },
-  //   {
-  //     id: 4,
-  //     title: 'User Query',
-  //     // description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dignissim consequat nibh, eu congue massa. Cras at placerat neque.',
-  //     pathname: '/userquery/',
-  //     icon: 'user_query.png',
-  //     image: 'dri3.jpg',
-  //   },
-  // ];
+  const [qdtCards, setQdtCards] = useState(4);
 
   useEffect(() => {
     getApplication().then((res) => {
       setInterfaces(res);
+      if (res.length % 2 === 0) {
+        setQdtCards(res.length === 2 ? 6 : 3);
+      }
     });
   }, []);
 
@@ -65,7 +35,7 @@ function Interfaces() {
           alignItems="stretch"
         >
           {interfaces.map((item, index) => (
-            <Grid key={item.id} item xs={12} sm={6} md={4}>
+            <Grid key={item.id} item xs={12} sm={qdtCards} md={qdtCards}>
               <Card>
                 <CardActionArea
                   href={item.app_url}
