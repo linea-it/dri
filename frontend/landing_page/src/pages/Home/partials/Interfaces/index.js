@@ -1,3 +1,4 @@
+/* eslint-disable import/named */
 /* eslint-disable max-len */
 /* eslint-disable no-unused-expressions */
 import React, { useEffect, useState } from 'react';
