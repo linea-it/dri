@@ -197,7 +197,11 @@ Ext.define('aladin.maps.MapSelectionController', {
             aladin = view.getAladin();
 
         mapSurvey = aladin.createImageSurvey(survey);
-        aladin.setImageSurvey(mapSurvey);
+        // aladin.setImageSurvey(mapSurvey);
+
+        aladin.setOverlayImage(mapSurvey);
+
+
 
         vm.set('aladin_last_map_survey', mapSurvey);
         vm.set('current_map', survey.map_model);
@@ -245,7 +249,8 @@ Ext.define('aladin.maps.MapSelectionController', {
         aladin.setLoading(true);
 
         Ext.Ajax.request({
-            url: '/dri/api/map/signal_by_position/',
+            // url: '/dri/api/map/signal_by_position/',
+            url: '/dri/api/map/signal_by_neighbours/',
             method: 'GET',
             headers: {
                 'X-CSRFToken': Ext.util.Cookies.get('csrftoken'),
@@ -264,6 +269,7 @@ Ext.define('aladin.maps.MapSelectionController', {
                 aladin.setLoading(false);
 
                 // TODO Setar o valor Do Signal em algum lugar
+                me.overlaySignal(result, true);
 
             },
             failure: function (response, opts) {
@@ -271,10 +277,11 @@ Ext.define('aladin.maps.MapSelectionController', {
                 console.log("Falhou na Requisição")
             }
         });
+
     },
 
     onBeforeClose: function () {
-        console.log('onBeforeClose');
+        // console.log('onBeforeClose');
         var me = this,
             btn = me.lookup('btnPicker');
 
@@ -291,7 +298,6 @@ Ext.define('aladin.maps.MapSelectionController', {
         // Se a função de picker estiver ativa e houver um right click 
         // Desliga a função de picker ao clicar com botão diretio no Aladin.
         if (vm.get('wait_picker') == true) {
-            console.log("HAUHDAHSU")
             btn.toggle(false);
         }
     },
@@ -320,26 +326,99 @@ Ext.define('aladin.maps.MapSelectionController', {
 
         store.load({
             callback: function () {
-
                 map = store.getById(591);
-                // console.log("Map: %o", map);
-
                 cmb_filter.select(map);
                 view.getController().onSelectMapFilter(cmb_filter);
             }
         });
 
+        // view.getController().overlaySignal([{
+        //     pixel: 150639595,
+        //     signal: 7.390620231628418,
+        //     ra: 35.79345703125,
+        //     dec: -9.66027908368669
+        // }], false);
+    },
+
+    overlaySignal: function (signals, append) {
+        console.log('overlaySignal()')
+
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            overlay_catalog = vm.get('overlay_catalog'),
+            aladin = view.getAladin().getAladin(),
+            libA = view.getAladin().libA,
+            asources, cat;
+
+
+        console.log("aladin: %o", aladin);
+        console.log(libA)
+
+        // Se existir um Overlay Catalog
+        if (overlay_catalog !== null) {
+            // Append false significa que é para destruir o OverlayCatalog atual e criar um novo.
+            if (append === false) {
+                // Remove todos os sources do Overlay Catalog.
+                console.log("Apagar todos os sources")
+                overlay_catalog.removeAll()
+            }
+
+        } else {
+            // Se não existir Cria um Overlay Catalog 
+            overlay_catalog = me.createOverlayCatalog();
+            // Adiciona o catalog ao Aladin.
+            aladin.addCatalog(overlay_catalog);
+        }
 
 
 
+        // Para cada item do array de signals criar um sorce
+        asources = signals.map(function (record) {
+            // TODO: trocar para libA.
+            source = A.source(record.ra, record.dec, { signal: record.signal })
+
+            return source;
+        })
+        // Adiciona os Sources ao catalogo
+        overlay_catalog.addSources(asources);
+
+        vm.set('overlay_catalog', overlay_catalog)
+
+        return cat
+    },
+
+    createOverlayCatalog: function () {
+        console.log("createOverlayCatalog")
+        var me = this,
+            view = me.getView(),
+            libA = view.getAladin().libA;
+
+        // Criar um catalogo, que vai usar uma funcao customizada para desenhar os valores de signal.
+        overlay_catalog = libA.catalog({ name: 'Map Signals', shape: me.drawFunction });
+
+        return overlay_catalog
+    },
+
+    drawFunction: function (source, canvasCtx, viewParams) {
+        var size = 1
+        canvasCtx.beginPath();
+        canvasCtx.arc(source.x, source.y, size * 2, 0, 2 * Math.PI, false);
+        canvasCtx.closePath();
+        canvasCtx.strokeStyle = '#c38';
+        canvasCtx.fillStyle = '#c38';
+        canvasCtx.lineWidth = 3;
+        canvasCtx.globalAlpha = 0.7,
+            canvasCtx.stroke();
 
 
-        // vm.set('aladin_last_map_survey', map);
-        // vm.set('map_selected', true);
+        canvasCtx.globalAlpha = 0.9;
+        canvasCtx.globalAlpha = 1;
 
-        // aladin.setImageSurvey(aladin_survey);
-
-
+        canvasCtx.font = '15px Arial'
+        canvasCtx.fillStyle = '#abc';
+        canvasCtx.fillText(Number.parseFloat(source.data['signal']).toPrecision(4), source.x - 18, source.y - 5);
     }
+
 
 });

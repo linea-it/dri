@@ -549,7 +549,8 @@ Ext.define('aladin.Aladin', {
 
         if (imageSurvey) {
 
-            aladin.setImageSurvey(imageSurvey.id);
+            // aladin.setImageSurvey(imageSurvey.id);
+            aladin.setBaseImageLayer(imageSurvey.id);
 
             if (me.isFirstSurvey) {
 
@@ -586,6 +587,15 @@ Ext.define('aladin.Aladin', {
             // TODO NAO MOSTRAR SURVEY NENHUM
             aladin.setImageSurvey(empty.id);
         }
+    },
+
+    setOverlayImage: function (survey) {
+        console.log('setOverlayImage');
+        var me = this,
+            aladin = me.getAladin();
+
+        aladin.setOverlayImageLayer(survey);
+
     },
 
     setStoreSurveys: function (store) {

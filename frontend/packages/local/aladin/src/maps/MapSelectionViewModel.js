@@ -27,7 +27,8 @@ Ext.define('aladin.maps.MapSelectionViewModel', {
         wait_picker: false,
         current_map: null,
         // Valor Temporario
-        map_signal: null
+        map_signal: null,
+        overlay_catalog: null
     },
 
     formulas: {

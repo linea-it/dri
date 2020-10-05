@@ -17,7 +17,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from common.filters import IsOwnerFilterBackend
-from common.healpix import ang2pix
+from common.healpix import ang2pix, ang2pix_neighbours
 from lib.CatalogDB import CatalogDB
 from lib.MapDB import MapTable
 from product.importproduct import ImportTargetListCSV
@@ -576,13 +576,66 @@ class MapViewSet(viewsets.ModelViewSet):
         # Converter ra e dec para Healpix
         healpix = ang2pix(ra, dec, map.mpa_nside, nest)
 
-        # Faz a query pelo index healpix e retorna o valor do signal.
-        signal = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).signal_by_healpix(healpix)
+        row = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).row_by_healpix(healpix)
 
-        return Response({
-            'healpix': healpix,
-            'signal': signal
-        })
+        if 'signal' in row:
+            return Response(row)
+        else:
+            raise Exception('No results')
+
+    @action(detail=False, methods=['get'])
+    def signal_by_neighbours(self, request):
+        """[summary]
+
+        Exemplo: 
+            http://localhost/dri/api/map/signal_by_position/?ra=35.80384&dec=-9.66626&id=591
+            http://localhost/dri/api/map/signal_by_position/?ra=35.80384&dec=-9.66626&name=nimages_10
+        Args:
+            request ([type]): [description]
+
+        Raises:
+            Exception: [description]
+            Exception: [description]
+            Exception: [description]
+
+        Returns:
+            [type]: [description]
+        """
+        try:
+            ra = request.query_params['ra']
+        except:
+            raise Exception("RA parameter is mandatory")
+
+        try:
+            dec = request.query_params['dec']
+        except:
+            raise Exception("Dec parameter is mandatory")
+
+        prd_name = request.query_params.get('name', None)
+        prd_id = request.query_params.get('id', None)
+
+        if prd_name is None and prd_id is None:
+            raise Exception("ID or NAME parameter is mandatory")
+
+        if prd_name is not None:
+            map = Map.objects.get(prd_name=prd_name)
+        else:
+            map = Map.objects.get(id=int(prd_id))
+
+        # Converter a orientação para boolean
+        nest = True if map.mpa_ordering == 'nest' else False
+
+        # Converter ra e dec para Healpix e recebe a lista de pixels vizinhos.
+        neighbours = ang2pix_neighbours(ra, dec, map.mpa_nside, nest)
+        pixels = neighbours.tolist()
+        # Adiciona o pixel central
+        pixels.append(int(ang2pix(ra, dec, map.mpa_nside, nest)))
+
+        rows = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).rows_by_helpix_in(pixels)
+        if len(rows) > 0:
+            return Response(rows)
+        else:
+            raise Exception('No results')
 
     @action(detail=True, methods=['get'])
     def min_max_signal(self, request, pk=None):

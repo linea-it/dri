@@ -105,3 +105,37 @@ class MapTable(MapDB):
         value = self.fetch_scalar(stm)
 
         return value
+
+    def row_by_healpix(self, healpix):
+        """Returns row from table map for a specific healpix.
+
+        Args:
+            healpix (int): Healpix id
+
+        Returns:
+            dict: Row from table map
+        """
+        tbl = self.table
+
+        stm = select(tbl.c).where(and_(tbl.c.pixel == int(healpix)))
+
+        row = self.fetchone_dict(stm)
+
+        return row
+
+    def rows_by_helpix_in(self, pixels):
+        """Returns rows from table map for a list of healpix.
+
+        Args:
+            pixels (array): Array with Healpix id
+
+        Returns:
+            array: Rows from table map
+        """
+        tbl = self.table
+
+        stm = select(tbl.c).where(and_(tbl.c.pixel.in_(list(pixels))))
+
+        row = self.fetchall_dict(stm)
+
+        return row

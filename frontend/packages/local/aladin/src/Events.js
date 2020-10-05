@@ -48,6 +48,7 @@ Ext.define('aladin.Events', {
             radec, xymouse;
 
         reticleCanvas.addEventListener('contextmenu', function (e) {
+            e.stopPropagation()
             xymouse = view.imageCanvas.relMouseCoords(e);
 
             radec = me.mousePositionToSky(xymouse);
@@ -189,7 +190,6 @@ Ext.define('aladin.Events', {
                         // Se estiver o evento de click dispara o evento de picker. 
                         // Se não estiver será um evento de Click normal.
                         if (me.getPickerMode()) {
-                            console.log("Disparou um evento picker: %o", pickerEventName)
                             // Garante que vai ter um evento para picker.
                             if (!me.getPickerEventName()) {
                                 me.fireEvent('onpicker', me.mouseLastPosition, me);
@@ -197,7 +197,6 @@ Ext.define('aladin.Events', {
                                 me.fireEvent(me.getPickerEventName(), me.mouseLastPosition, me);
                             }
                         } else {
-                            console.log("Aladin: OnClick")
                             me.fireEvent('onclick', me.mouseLastPosition, me);
                         }
                     }
