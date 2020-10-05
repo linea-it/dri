@@ -202,7 +202,6 @@ Ext.define('aladin.maps.MapSelectionController', {
         aladin.setOverlayImage(mapSurvey);
 
 
-
         vm.set('aladin_last_map_survey', mapSurvey);
         vm.set('current_map', survey.map_model);
         vm.set('map_selected', true);
@@ -421,7 +420,36 @@ Ext.define('aladin.maps.MapSelectionController', {
         canvasCtx.font = '15px Arial'
         canvasCtx.fillStyle = '#abc';
         canvasCtx.fillText(Number.parseFloat(source.data['signal']).toPrecision(4), source.x - 18, source.y - 5);
-    }
+    },
+
+    createMapColorBar: function () {
+        console.log("CreateMapColorBar")
+        var me = this,
+            view = me.getView(),
+            aladin = view.getAladin();
+
+        w = Ext.create('Ext.Component', {
+            width: 80,
+            height: 500,
+            // x: 10,
+            // y: 10,
+            layout: 'fit',
+            renderTo: aladin.body,
+            header: false,
+            resizable: false,
+            constrain: true,
+            cls: 'aladin-map-color-bar',
+            style: {
+                position: 'absolute',
+                zIndex: 30,
+            },
+            html: '<img src="http://localhost/data/tmp/nimages_10.png" />',
+        });
+
+        aladin.windowColorbar = w;
+
+        return w;
+    },
 
 
 });

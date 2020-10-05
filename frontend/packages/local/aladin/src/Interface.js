@@ -72,7 +72,7 @@ Ext.define('aladin.Interfaces', {
         }
 
         currentSurvey = me.getImageSurvey();
-        if ((currentSurvey) && (currentSurvey.id != 'empty_survey')){
+        if ((currentSurvey) && (currentSurvey.id != 'empty_survey')) {
             image_survey = currentSurvey.name;
         }
 
@@ -98,6 +98,7 @@ Ext.define('aladin.Interfaces', {
         }
 
     },
+
 
     ////////////////////////////////////////////////////////////////////////////
     //                            Toolbars                                    //
@@ -140,7 +141,7 @@ Ext.define('aladin.Interfaces', {
                 scope: me,
                 handler: me.onShift,
                 bind: {
-                    disabled:'{!tile}'
+                    disabled: '{!tile}'
                 }
             });
         }
@@ -216,7 +217,7 @@ Ext.define('aladin.Interfaces', {
                         },
                         listeners: {
                             scope: this,
-                            specialkey: function (f,e) {
+                            specialkey: function (f, e) {
                                 if (e.getKey() == e.ENTER) {
                                     this.submitGoToPosition(f);
                                 }
@@ -232,13 +233,13 @@ Ext.define('aladin.Interfaces', {
             // Habilitar o botão apenas se o navegador for firefox,
             // a funcao do aladin de snapshot nao funciona no google chrome.
             if (Ext.firefoxVersion > 0) {
-              tools.push({
-                  xtype: 'button',
-                  tooltip: 'Snapshot',
-                  iconCls: 'x-fa fa-camera',
-                  scope: me,
-                  handler: me.exportAsPng
-              });
+                tools.push({
+                    xtype: 'button',
+                    tooltip: 'Snapshot',
+                    iconCls: 'x-fa fa-camera',
+                    scope: me,
+                    handler: me.exportAsPng
+                });
             }
         }
 

@@ -21,6 +21,8 @@ Ext.define('aladin.Aladin', {
     colorsDefault: ['#A0F65A', '#00BFFF', '#FF0000', '#FFFF00', '#FF7F00', '#7D26CD', '#FF1493'],
     colorsAvailable: [],
 
+    windowColorbar: null,
+
     config: {
 
         // Id da div que vai receber o aladin
@@ -549,6 +551,14 @@ Ext.define('aladin.Aladin', {
 
         if (imageSurvey) {
 
+            // Destruir a Map Colorbar caso exista
+            if (me.windowColorbar != null) {
+                console.log("TESTE: ")
+                console.log(me.windowColorbar)
+                me.windowColorbar.destroy()
+                me.windowColorbar = null
+            }
+
             // aladin.setImageSurvey(imageSurvey.id);
             aladin.setBaseImageLayer(imageSurvey.id);
 
@@ -591,6 +601,9 @@ Ext.define('aladin.Aladin', {
 
     setOverlayImage: function (survey) {
         console.log('setOverlayImage');
+
+        // TODO: Terminar este metodo ou voltar a usar o setImageSurvey
+
         var me = this,
             aladin = me.getAladin();
 

@@ -679,7 +679,7 @@ class MapViewSet(viewsets.ModelViewSet):
         filename = "%s.png" % map.prd_name
         filepath = os.path.join(data_dir, data_tmp_dir, filename)
 
-        map_color_bar(datamin=signal_min, datamax=signal_max, height=900, width=60, output=filepath, units='Exposures')
+        map_color_bar(datamin=signal_min, datamax=signal_max, height=500, width=60, output=filepath, units='Exposures')
 
         cb_base64 = None
         with open(filepath, "rb") as imageFile:
