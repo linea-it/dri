@@ -249,8 +249,7 @@ Ext.define('aladin.maps.MapSelectionController', {
         aladin.setLoading(true);
 
         Ext.Ajax.request({
-            // url: '/dri/api/map/signal_by_position/',
-            url: '/dri/api/map/signal_by_neighbours/',
+            url: '/dri/api/map/signal_by_position/',
             method: 'GET',
             headers: {
                 'X-CSRFToken': Ext.util.Cookies.get('csrftoken'),
@@ -258,7 +257,8 @@ Ext.define('aladin.maps.MapSelectionController', {
             params: {
                 ra: position[0],
                 dec: position[1],
-                id: map.get('id')
+                id: map.get('id'),
+                neighbours: true
             },
             success: function (response) {
                 result = JSON.parse(response.responseText);
@@ -269,6 +269,9 @@ Ext.define('aladin.maps.MapSelectionController', {
                 aladin.setLoading(false);
 
                 // TODO Setar o valor Do Signal em algum lugar
+                if (!Array.isArray(result)) {
+                    result = [result];
+                }
                 me.overlaySignal(result, true);
 
             },

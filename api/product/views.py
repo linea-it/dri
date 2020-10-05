@@ -533,21 +533,34 @@ class MapViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def signal_by_position(self, request):
-        """[summary]
+        """This endpoint returns the Signal value of a Map for a position.
+
+        Args:
+            request ([type]): [description]
+
+            ra (float): RA coordinate in degrees. (mandatory)
+
+            dec (float): Dec coordinate in degrees.(mandatory)
+
+            name: internal name for the map product. (usually it will be the prd_name attribute of the Products table.)
+
+            id: Internal ID for the map product. (usually it will be the id attribute of the Products table.)
+
+            neighbours (bool): This parameter allows the search for the pixel and its neighboring values. the return is no longer a single value and becomes an array with 9 elements, the central pixel + 8 neighbors. default = False.
+
+
+        Returns:
+            returns a dict when the neighbor parameter is false. or an array when when neighbors is true.
+            neighbors = False: 
+            {"pixel": 150639595, "signal": 7.390620231628418, "ra": 35.79345703125,"dec": -9.66027908368669}
+
+            OR neighbors = True
+            [{"pixel": 150639595, "signal": 7.390620231628418, "ra": 35.79345703125,"dec": -9.66027908368669}, {...}, {....}]
 
         Exemplo: 
             http://localhost/dri/api/map/signal_by_position/?ra=35.80384&dec=-9.66626&id=591
             http://localhost/dri/api/map/signal_by_position/?ra=35.80384&dec=-9.66626&name=nimages_10
-        Args:
-            request ([type]): [description]
-
-        Raises:
-            Exception: [description]
-            Exception: [description]
-            Exception: [description]
-
-        Returns:
-            [type]: [description]
+            http://localhost/dri/api/map/signal_by_position/?ra=35.79345703125&dec=-9.66027908368669&id=591&neighbours=true            
         """
         try:
             ra = request.query_params['ra']
@@ -561,6 +574,7 @@ class MapViewSet(viewsets.ModelViewSet):
 
         prd_name = request.query_params.get('name', None)
         prd_id = request.query_params.get('id', None)
+        neighbours = request.query_params.get('neighbours', False)
 
         if prd_name is None and prd_id is None:
             raise Exception("ID or NAME parameter is mandatory")
@@ -576,66 +590,27 @@ class MapViewSet(viewsets.ModelViewSet):
         # Converter ra e dec para Healpix
         healpix = ang2pix(ra, dec, map.mpa_nside, nest)
 
-        row = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).row_by_healpix(healpix)
+        if neighbours:
+            # Converter ra e dec para Healpix e recebe a lista de pixels vizinhos.
+            neighbours = ang2pix_neighbours(ra, dec, map.mpa_nside, nest)
+            pixels = neighbours.tolist()
+            # Adiciona o pixel central
+            pixels.append(int(healpix))
 
-        if 'signal' in row:
-            return Response(row)
+            rows = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).rows_by_helpix_in(pixels)
+
+            if len(rows) > 0:
+                return Response(rows)
+            else:
+                raise Exception('No results')
+
         else:
-            raise Exception('No results')
+            row = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).row_by_healpix(int(healpix))
 
-    @action(detail=False, methods=['get'])
-    def signal_by_neighbours(self, request):
-        """[summary]
-
-        Exemplo: 
-            http://localhost/dri/api/map/signal_by_position/?ra=35.80384&dec=-9.66626&id=591
-            http://localhost/dri/api/map/signal_by_position/?ra=35.80384&dec=-9.66626&name=nimages_10
-        Args:
-            request ([type]): [description]
-
-        Raises:
-            Exception: [description]
-            Exception: [description]
-            Exception: [description]
-
-        Returns:
-            [type]: [description]
-        """
-        try:
-            ra = request.query_params['ra']
-        except:
-            raise Exception("RA parameter is mandatory")
-
-        try:
-            dec = request.query_params['dec']
-        except:
-            raise Exception("Dec parameter is mandatory")
-
-        prd_name = request.query_params.get('name', None)
-        prd_id = request.query_params.get('id', None)
-
-        if prd_name is None and prd_id is None:
-            raise Exception("ID or NAME parameter is mandatory")
-
-        if prd_name is not None:
-            map = Map.objects.get(prd_name=prd_name)
-        else:
-            map = Map.objects.get(id=int(prd_id))
-
-        # Converter a orientação para boolean
-        nest = True if map.mpa_ordering == 'nest' else False
-
-        # Converter ra e dec para Healpix e recebe a lista de pixels vizinhos.
-        neighbours = ang2pix_neighbours(ra, dec, map.mpa_nside, nest)
-        pixels = neighbours.tolist()
-        # Adiciona o pixel central
-        pixels.append(int(ang2pix(ra, dec, map.mpa_nside, nest)))
-
-        rows = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database).rows_by_helpix_in(pixels)
-        if len(rows) > 0:
-            return Response(rows)
-        else:
-            raise Exception('No results')
+            if 'signal' in row:
+                return Response(row)
+            else:
+                raise Exception('No results')
 
     @action(detail=True, methods=['get'])
     def min_max_signal(self, request, pk=None):
