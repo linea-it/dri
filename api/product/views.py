@@ -1,12 +1,21 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import base64
 import operator
+import os
+from urllib.parse import urljoin
 
 import django_filters
+import numpy as np
+from common.filters import IsOwnerFilterBackend
+from common.healpix import ang2pix, ang2pix_neighbours
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.http import HttpResponse, JsonResponse
 from django_filters.rest_framework import DjangoFilterBackend
+from lib.CatalogDB import CatalogDB
+from lib.MapDB import MapTable
 from rest_framework import filters, mixins, viewsets
 from rest_framework.authentication import (BasicAuthentication,
                                            SessionAuthentication,
@@ -16,11 +25,8 @@ from rest_framework.decorators import (action, api_view, list_route,
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from common.filters import IsOwnerFilterBackend
-from common.healpix import ang2pix, ang2pix_neighbours
-from lib.CatalogDB import CatalogDB
-from lib.MapDB import MapTable
 from product.importproduct import ImportTargetListCSV
+from product.map import map_color_bar
 from product.tasks import export_target_by_filter
 
 from .association import Association
@@ -277,6 +283,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
                 # Se ja tiver o grupo External Catalog adiciona os catalogos do vizier como children
                 if group_name == 'external_catalogs' and external_catalogs_vizier is not None:
                     from pprint import pprint
+
                     # pprint(external_catalogs_vizier.get('children')[0].get('children'))
                     nodeg['children'].append(external_catalogs_vizier.get('children')[0])
 
@@ -634,6 +641,60 @@ class MapViewSet(viewsets.ModelViewSet):
         return Response({
             'signal_max': signal_max,
             'signal_min': signal_min
+        })
+
+    @action(detail=True, methods=['get'])
+    def color_bar_image(self, request, pk=None):
+        """Cria color bar baseada em um valor min e max, para o Mapa. 
+
+        Args:
+            request ([type]): [description]
+            pk ([type], optional): [description]. Defaults to None.
+
+        Returns:
+            dict: Retorna os valores de min, max, url para a imagem da colorbar, e a mesma imagem em formato base64.
+
+            {
+                "signal_max": 19.671899795532227,
+                "signal_min": 1.0,
+                "color_bar_image": "iVBORw0KGgoAAAA....==",
+                "image_url": "http://localhost/data/tmp/nimages_10.png"
+            }
+        """
+        # recupera a Instancia do Mapa
+        map = self.get_object()
+
+        # recupera os valores de Mix e Max da tabela de Mapa.
+        map_table = MapTable(table=map.tbl_name, schema=map.tbl_schema, database=map.tbl_database)
+
+        signal_max = map_table.max_signal()
+        signal_min = map_table.min_signal()
+
+        # Arredondamento dos limites
+        # signal_max = np.ceil(signal_max)
+        # signal_min = np.floor(signal_min)
+
+        data_dir = settings.DATA_DIR
+        data_tmp_dir = settings.DATA_TMP_DIR
+        filename = "%s.png" % map.prd_name
+        filepath = os.path.join(data_dir, data_tmp_dir, filename)
+
+        map_color_bar(datamin=signal_min, datamax=signal_max, height=900, width=60, output=filepath, units='Exposures')
+
+        cb_base64 = None
+        with open(filepath, "rb") as imageFile:
+            cb_base64 = base64.b64encode(imageFile.read())
+
+        host = settings.BASE_HOST
+        data_source = settings.DATA_SOURCE
+        relative_path = os.path.join(data_tmp_dir, filename)
+        url = urljoin(host, os.path.join(data_source, relative_path))
+
+        return Response({
+            'signal_max': signal_max,
+            'signal_min': signal_min,
+            'color_bar_image': cb_base64,
+            'image_url': url
         })
 
 
