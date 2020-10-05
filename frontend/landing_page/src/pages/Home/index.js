@@ -1,19 +1,21 @@
 import React from 'react';
-import Container from '@material-ui/core/Container';
 import Stars from '../../components/Stars';
 import Banner from '../../components/Banner';
 import Interfaces from './partials/Interfaces';
 import Supporters from './partials/Supporters';
+import styles from './styles';
 
 function Main() {
+  const classes = styles();
+
   return (
     <div>
       <Stars />
       <Banner />
-      <Container>
+      <div className={classes.root}>
         <Interfaces />
         <Supporters />
-      </Container>
+      </div>
     </div>
   );
 }

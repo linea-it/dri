@@ -47,10 +47,10 @@ function Banner() {
                   </td>
                 </tr>
                 <tr>
-                  <td>
-                    <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
-                  </td>
+                  {/* <td>
+                  </td> */}
                   <td className={classes.positionTitle}>
+                    <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
                     <h1 className={classes.subtitle}>
                       DES Data Release
                     </h1>

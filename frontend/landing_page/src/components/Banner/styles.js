@@ -49,36 +49,38 @@ const styles = makeStyles((theme) => ({
     marginTop: -30,
     fontSize: 28,
     [theme.breakpoints.up('sm')]: {
-      fontSize: 35,
+      fontSize: 60,
       marginTop: -38,
     },
     width: 'max-content',
     textShadow: 'black 0.1em 0.1em 0.2em',
   },
   subtitle: {
+    position: 'relative',
+    width: '400px',
+    marginTop: '-22px',
     fontFamily: 'Oxanium',
     fontWeight: 100,
-    marginTop: -30,
     fontSize: 28,
     [theme.breakpoints.up('sm')]: {
       fontSize: 35,
-      marginTop: -38,
+      marginTop: -26,
     },
     paddingTop: 8,
-    margin: 'auto',
-    width: 'max-content',
     textShadow: 'black 0.1em 0.1em 0.2em',
   },
   positionTitle: {
-    paddingTop: '8%',
     textAlign: '-webkit-center',
 
   },
   driLogo: {
+    margin: '-33px 0px 0px 85px',
+    position: 'relative',
+    float: 'left',
     [theme.breakpoints.up('sm')]: {
-      maxWidth: 100,
+      maxWidth: 80,
     },
-    maxWidth: 100,
+    maxWidth: 80,
   },
   titleWrapper: {
     [theme.breakpoints.up('sm')]: {

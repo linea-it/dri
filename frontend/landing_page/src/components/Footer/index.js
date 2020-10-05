@@ -15,9 +15,9 @@ function Footer() {
       >
         <Toolbar className={classes.toolbar}>
           <Typography color="inherit">
-            <span>Testing</span>
+            {/* <span>Testing</span> */}
             {' '}
-            <span className={classes.versionLink}>1.0.0</span>
+            {/* <span className={classes.versionLink}>1.0.0</span> */}
           </Typography>
           <Typography color="inherit">
             <span className={classes.poweredBy}>Powered by</span>

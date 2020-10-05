@@ -35,7 +35,11 @@ function Contact() {
             <Typography variant="h3" align="center" color="textPrimary">Contact</Typography>
             <p>
               <span>
-                If you have any problems related to the usage of the applications, click here to be redirected to the tutorials page.
+                If you have any problems related to the usage of the applications,
+                <Link href="/tutorials" variant="body2">
+                &nbsp;click here&nbsp;
+                </Link>
+                to be redirected to the tutorials page.
                 Or if you still have questions, suggestions or complaints, you can contact us using the form below.
               </span>
             </p>

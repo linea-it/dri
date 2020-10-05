@@ -18,7 +18,7 @@ const styles = makeStyles((theme) => ({
     textShadow: '0.1em 0.1em 0.1em black',
   },
   media: {
-    minHeight: 150,
+    minHeight: 220,
   },
   icon: {
     maxWidth: 50,
