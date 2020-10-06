@@ -1,9 +1,10 @@
+/* eslint-disable react/no-unescaped-entities */
 /* eslint-disable max-len */
-import React, { useState } from 'react';
+import React, { useRef } from 'react';
 import {
   Grid, Container, Typography, TextField, Button, Breadcrumbs, Link, Snackbar,
 } from '@material-ui/core';
-import Alert from '@material-ui/lab/Alert';
+import { Alert, AlertTitle } from '@material-ui/lab';
 import EmailIcon from '@material-ui/icons/Email';
 import styles from './styles';
 import { sendEmail } from '../../Services/api';
@@ -11,20 +12,30 @@ import { sendEmail } from '../../Services/api';
 function Contact() {
   const classes = styles();
 
-  const [formData, setformData] = useState({
-    name: '', from: '', subject: '', message: '',
-  });
-  const [open, setOpen] = React.useState(false);
+  const formRef = useRef();
+
+  const [open, setOpen] = React.useState('');
 
   const handleClose = () => {
-    setOpen(false);
+    setOpen('');
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    const formData = {
+      name: formRef.current.name.value,
+      subject: formRef.current.subject.value,
+      from: formRef.current.from.value,
+      message: formRef.current.message.value,
+    };
     sendEmail(formData).then((res) => {
-      if (!res.err) {
-        setOpen(true);
+      if (res.response.status === 200) {
+        setOpen('success');
+        formRef.current.reset();
+      } else if (res.response.status === 403) {
+        setOpen('unauthorized');
+      } else {
+        setOpen('unexpected');
       }
     });
   };
@@ -53,17 +64,16 @@ function Contact() {
             </p>
             <br />
             <form
+              ref={formRef}
               autoComplete="off"
               onSubmit={handleSubmit}
             >
               <div className={classes.textFields}>
                 <TextField
                   required
-                  id="textFieldName"
+                  id="name"
                   type="text"
                   variant="outlined"
-                  value={formData.name}
-                  onChange={(event) => setformData({ ...formData, name: event.target.value })}
                   label="Name"
                   placeholder="Name"
                   fullWidth
@@ -74,11 +84,9 @@ function Contact() {
               <div className={classes.textFields}>
                 <TextField
                   required
-                  id="textFieldEmail"
+                  id="from"
                   type="email"
                   variant="outlined"
-                  value={formData.from}
-                  onChange={(event) => setformData({ ...formData, from: event.target.value })}
                   label="Email"
                   placeholder="Email"
                   fullWidth
@@ -89,11 +97,9 @@ function Contact() {
               <div className={classes.textFields}>
                 <TextField
                   required
-                  id="textFieldSubject"
+                  id="subject"
                   type="text"
                   variant="outlined"
-                  value={formData.subject}
-                  onChange={(event) => setformData({ ...formData, subject: event.target.value })}
                   label="Subject"
                   placeholder="Subject"
                   fullWidth
@@ -104,11 +110,9 @@ function Contact() {
               <div className={classes.textFields}>
                 <TextField
                   required
-                  id="textFieldMessage"
+                  id="message"
                   type="text"
                   variant="outlined"
-                  value={formData.message}
-                  onChange={(event) => setformData({ ...formData, message: event.target.value })}
                   multiline
                   rows="8"
                   rowsMax="8"
@@ -133,9 +137,30 @@ function Contact() {
           </Grid>
         </Grid>
       </Container>
-      <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={open} autoHideDuration={6000} onClose={handleClose}>
+      <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={open === 'success'} autoHideDuration={6000} onClose={handleClose}>
         <Alert onClose={handleClose} severity="success">
-          Your message has been sent successfully!
+          <AlertTitle>Success</AlertTitle>
+          <p>Your message was sent! A ticket was opened on our issue tracking system and you'll receive a feedback when it gets approved.</p>
+        </Alert>
+      </Snackbar>
+      <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={open === 'unauthorized'} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="warning">
+          <AlertTitle>Unauthorized</AlertTitle>
+          <p>
+            <span>Sorry, you have to be authenticated in this application to send a message. In case you still need to contact us, </span>
+            <Link href="https://www.linea.gov.br/6-faleconosco/" target="_blank">click here</Link>
+            <span> to go to the "Contact Us" page on our website</span>
+          </p>
+        </Alert>
+      </Snackbar>
+      <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={open === 'unexpected'} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          <AlertTitle>Unexpected Error</AlertTitle>
+          <p>
+            <span>Sorry, an unexpected error has occurred. Could you please try again? If it still didn't work, you can </span>
+            <Link href="https://www.linea.gov.br/6-faleconosco/" target="_blank">click here</Link>
+            <span> to go to the "Contact Us" page on our website.</span>
+          </p>
         </Alert>
       </Snackbar>
     </div>

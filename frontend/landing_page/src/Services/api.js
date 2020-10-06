@@ -74,10 +74,7 @@ export const getApplication = () => axios.get('application/?format=json&ordering
 
 export const sendEmail = (formData) => axios.post('contact/', formData)
   .then((res) => res)
-  .catch((err) => {
-    console.error(err);
-    return {err: true};
-  });
+  .catch((err) => err);
 
 
 const toLogin = () => {
