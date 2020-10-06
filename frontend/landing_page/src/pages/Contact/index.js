@@ -1,8 +1,9 @@
 /* eslint-disable max-len */
 import React, { useState } from 'react';
 import {
-  Grid, Container, Typography, TextField, Button, Breadcrumbs, Link,
+  Grid, Container, Typography, TextField, Button, Breadcrumbs, Link, Snackbar,
 } from '@material-ui/core';
+import Alert from '@material-ui/lab/Alert';
 import EmailIcon from '@material-ui/icons/Email';
 import styles from './styles';
 import { sendEmail } from '../../Services/api';
@@ -13,11 +14,18 @@ function Contact() {
   const [formData, setformData] = useState({
     name: '', from: '', subject: '', message: '',
   });
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
     sendEmail(formData).then((res) => {
-      console.log(res);
+      if (!res.err) {
+        setOpen(true);
+      }
     });
   };
 
@@ -125,6 +133,11 @@ function Contact() {
           </Grid>
         </Grid>
       </Container>
+      <Snackbar anchorOrigin={{ vertical: 'top', horizontal: 'center' }} open={open} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success">
+          Your message has been sent successfully!
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
