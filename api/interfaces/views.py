@@ -17,7 +17,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
 
     filter_fields = ('id', 'app_name')
 
-    ordering_fields = ('id', 'app_name')
+    ordering_fields = ('id', 'app_name', 'app_order')
 
 
 class TutorialFilter(django_filters.FilterSet):
