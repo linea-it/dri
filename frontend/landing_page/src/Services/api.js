@@ -9,8 +9,9 @@ const host = process.env.REACT_APP_API || `${window.location.protocol}//${window
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
-axios.defaults.baseURL = `${host}/dri/api/`;
+// axios.defaults.baseURL = `${host}/dri/api/`;
 // axios.defaults.baseURL = `http://dri-testing.linea.gov.br/dri/api/`;
+axios.defaults.baseURL = `https://desportal.cosmology.illinois.edu/dri/api/`;
 
 // Interceptar a Resposta.
 // Add a response interceptor
@@ -75,7 +76,7 @@ export const sendEmail = (formData) => axios.post('contact/', formData)
   .then((res) => res)
   .catch((err) => {
     console.error(err);
-    return err;
+    return {err: true};
   });
 
 
