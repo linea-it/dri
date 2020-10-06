@@ -14,6 +14,9 @@ const styles = makeStyles((theme) => ({
     textTransform: 'none',
     fontSize: '0.85rem',
   },
+  div: {
+    fontFamily: 'arial',
+  },
 }));
 
 export default styles;
