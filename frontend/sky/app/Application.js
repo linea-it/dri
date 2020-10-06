@@ -35,15 +35,8 @@ Ext.define('Sky.Application', {
                 if (window.ga) ga('set', 'userId', data.id);
             },
             failure: function (response, opts) {
-                var protocol = window.location.protocol,
-                    pathname = window.location.pathname,
-                    hostname = window.location.hostname,
-                    location;
-
-                location = Ext.String.format(
-                    '{0}//{1}/dri/api/api-auth/login/?next={2}',
-                    protocol, hostname, pathname);
-
+                var pathname = window.location.pathname;
+                location = Ext.String.format('/dri/api/api-auth/login/?next={0}', pathname);
                 window.location.assign(location);
             }
         });
