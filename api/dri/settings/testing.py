@@ -15,3 +15,8 @@ DEBUG = True
 
 # Enables or disables sending daily email access statistics.
 SEND_DAILY_STATISTICS_EMAIL = False
+
+
+# Including LDAP authentication:
+if AUTH_LDAP_ENABLED:
+  AUTHENTICATION_BACKENDS += ('django_auth_ldap.backend.LDAPBackend',)

@@ -312,7 +312,7 @@ def available_database(request):
         # TODO: é provavel que ao adicionar mais bancos de dados, o target viewer de 
         # problema com as tabelas de rating e reject
         for db in settings.DATABASES:
-            if db is not 'default':
+            if db is not 'default' and db in settings.TARGET_VIEWER_DATABASES:
                 try:
                     dbs.append(dict({
                         'name': db,

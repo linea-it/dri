@@ -1,6 +1,9 @@
 # Arquivos Docker-compose
 docker-compose.yml
 
+# Arquivo de Configuração
+local_vars.py
+
 # Diretorios de instalacao
 /api/env
 /env
@@ -25,6 +28,8 @@ api/celerybeat-schedule
 
 # Diretorio de projeto vscode
 /.vscode/
+api/.vscode/*
+
 
 # Others
 *.pyc
