@@ -22,9 +22,14 @@ services:
       - CELERY_BROKER=amqp://dri:adminadmin@rabbit:5672
     volumes:
       - ./api:/app
-      - ./static:/app/dri/static
+      # Diretório onde o backend pode manipular arquivos.
       - ./archive:/archive
+      # Diretório de arquivos estaticos do Django deve ser compartilhado com o Ngnix.
+      - ./archive/static:/app/dri/static
+      # Diretório de logs do backend.      
       - ./log/backend:/log
+      # Diretório com dados iniciais a serem importados. necessário so na instalação.
+      #- ./database_subset:/app/common/fixtures
     depends_on:
       - rabbit
       - database
@@ -110,9 +115,13 @@ services:
     ports:
       - 80:8080
     volumes:
+      # Diretório onde o backend manipula arquivos, e que deve ficar acessivel ao servidor web.
       - ./archive:/var/www/data
-      - ./static:/var/www/static
+      # Diretório de arquivos estaticos do Django. 
+      - ./archive/static:/var/www/django_static
+      # Arquivo de configuração do Ngnix para este ambiente.
       - ./frontend/nginx-proxy-develop.conf:/etc/nginx/conf.d/default.conf
+      # Diretório de logs do servidor web. 
       # - ./log/nginx:/var/log
     depends_on:
       - backend

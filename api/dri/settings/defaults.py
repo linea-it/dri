@@ -158,12 +158,11 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
+STATIC_URL = '/django_static/'
 
 AUTHENTICATION_BACKENDS = (
     'common.authentication.NcsaBackend',
     'django.contrib.auth.backends.ModelBackend',
-    'django_auth_ldap.backend.LDAPBackend',
 )
 
 if USE_OAUTH:
@@ -248,3 +247,7 @@ SETTINGS_EXPORT = []
 #     '--with-coverage',
 #     '--cover-package=' + ','.join(PROJECT_APPS),
 # ]
+
+# LDAP Authentication
+# Responsible for turn on and off the LDAP authentication:
+AUTH_LDAP_ENABLED = False

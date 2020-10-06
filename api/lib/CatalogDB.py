@@ -9,7 +9,7 @@ from sqlalchemy.sql import and_, or_, select
 from sqlalchemy.sql.expression import between, literal_column
 
 from lib.sqlalchemy_wrapper import DBBase
-
+import logging
 
 class CatalogDB(DBBase):
     def __init__(self, db='catalog'):
@@ -392,10 +392,26 @@ class TargetObjectsDBHelper(CatalogTable):
                  user=None):
         super(TargetObjectsDBHelper, self).__init__(database=database, table=table, schema=schema,
                                                     associations=associations)
+        
+        self.log = logging.getLogger('django')
         # Catalogos de Target tem ligacao com o as tabelas Rating e Reject
         # Esse atributo deve vir do Settings
+        # Cria as instancias das tabelas de rating e reject
         # TODO: Evitar o uso dessa variavel de ambiente, deve vir da classe DBBase. 
         self.schema_rating_reject = schema_rating_reject
+
+        # Trata os casos em que a tabela do usuario está em um banco diferente do banco de catalogos da aplicação.
+        # so vai funcionar se os bancos forem os mesmos mas com tags diferentes na settings. 
+        # Exemplo Dessci e catalog, no Oracle ambas são o mesmo banco de dados. 
+        if database is not 'catalog':
+            db_catalog = CatalogDB()
+        
+            self.catalog_rating = db_catalog.get_table_obj('catalog_rating', schema=self.schema_rating_reject)
+            self.catalog_reject = db_catalog.get_table_obj('catalog_reject', schema=self.schema_rating_reject)
+        else:
+            self.catalog_rating = self.get_table_obj('catalog_rating', schema=self.schema_rating_reject)
+            self.catalog_reject = self.get_table_obj('catalog_reject', schema=self.schema_rating_reject)
+
 
         # Para o as querys de Target e necessario ter a instancia do product para fazer os join com Rating e Reject
         if product is None:
@@ -429,9 +445,9 @@ class TargetObjectsDBHelper(CatalogTable):
         # Adiciona um alias a tabela principal
         self.table = self.table.alias('a')
 
-        # Cria as instancias das tabelas de rating e reject
-        catalog_rating = self.get_table_obj('catalog_rating', schema=self.schema_rating_reject).alias('b')
-        catalog_reject = self.get_table_obj('catalog_reject', schema=self.schema_rating_reject).alias('c')
+        # Adiciona alias as tabelas rating e reject
+        catalog_rating = self.catalog_rating.alias('b')
+        catalog_reject = self.catalog_reject.alias('c')
 
         # Cria os Joins
         stm_join = self.table
@@ -444,8 +460,10 @@ class TargetObjectsDBHelper(CatalogTable):
                                      # User ID
                                      catalog_rating.c.owner == self.user.pk,
                                      # Object ID
+                                     self.get_column_obj(self.table, property_id) == catalog_rating.c.object_id,
                                      # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog rating object_id é string
-                                     cast(self.get_column_obj(self.table, property_id), sqlalchemy.String)  == catalog_rating.c.object_id,
+                                     # 15/09/2020 - este cast para string gerou um bug no Oracle                                   
+                                     # cast(self.get_column_obj(self.table, property_id), sqlalchemy.String)  == catalog_rating.c.object_id,
                                  ),
                                  isouter=True)
 
@@ -456,9 +474,12 @@ class TargetObjectsDBHelper(CatalogTable):
                                      # User ID
                                      catalog_reject.c.owner == self.user.pk,
                                      # Object Id OR Reject is NULL
+                                     or_(self.get_column_obj(self.table, property_id) == catalog_reject.c.object_id,
+                                         catalog_reject.c.id.is_(None))                                     
                                      # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog reject object_id é string
-                                     or_(cast(self.get_column_obj(self.table, property_id), sqlalchemy.String) == catalog_reject.c.object_id,
-                                         catalog_reject.c.id.is_(None))
+                                     # 15/09/2020 - este cast para string gerou um bug no Oracle
+                                     #  or_(cast(self.get_column_obj(self.table, property_id), sqlalchemy.String) == catalog_reject.c.object_id,
+                                     #      catalog_reject.c.id.is_(None))
                                  ),
                                  isouter=True)
 
@@ -560,6 +581,6 @@ class TargetObjectsDBHelper(CatalogTable):
             if self.start:
                 stm = stm.offset(literal_column(str(self.start)))
 
-        print(str(stm))
+        self.log.info("Target Query: [ %s ]" % str(stm))
 
         return stm

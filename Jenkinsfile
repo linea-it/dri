@@ -40,33 +40,57 @@ pipeline {
           }
       }
       stage('Push Images') {
-            when {
-                expression {
-                   env.BRANCH_NAME.toString().equals('master')
-                }
-            }
+            // when {
+            //     expression {
+            //        env.BRANCH_NAME.toString().equals('master')
+            //     }
+            // }
             steps {
               parallel(
               frontend: {
                   dir('frontend') {
-                      script {
+                    script{
+                        if (env.BRANCH_NAME.toString().equals('master')) {
+                            // No caso de um merge em master 
+                            // Faz o push da imagem também como latest.
+                            
                             docker.withRegistry( '', registryCredential ) {
-                              dockerImageFront.push()
-                              dockerImageFront.push("frontend_latest")
+                                    dockerImageFront.push()
+                                    dockerImageFront.push("frontend_latest")
                             }
-                      }
+                            
+                        }
+                    }
+                    //  Para merges em qualquer branch faz o push apenas da imagem com o hash do commit.
+                    script {
+                        docker.withRegistry( '', registryCredential ) {
+                            dockerImageFront.push()
+                        }
+                    }
                   }
               },
               backend: {
                   dir('api') {
-                      script {
+                    script{
+                        if (env.BRANCH_NAME.toString().equals('master')) {
+                            // No caso de um merge em master 
+                            // Faz o push da imagem também como latest.
+                            
                             docker.withRegistry( '', registryCredential ) {
                                 dockerImageBack.push()
                                 dockerImageBack.push("backend_latest")
                             }
-                      }
-                  }
-              }
+                        
+                        }
+                    }
+                    //  Para merges em qualquer branch faz o push apenas da imagem com o hash do commit.
+                    script {
+                        docker.withRegistry( '', registryCredential ) {
+                            dockerImageBack.push()
+                        }
+                    }
+                }
+            }
           )
         }
       }

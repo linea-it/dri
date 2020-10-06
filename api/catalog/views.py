@@ -345,7 +345,8 @@ class CatalogObjectsViewSet(ViewSet):
                             if release_set:
                                 release = release_set.release.rls_name
                                 # Se tiver release e ele for o Y3 subtrair 90 graus
-                                if release == 'y3a1_coadd' or release == 'dr1' or release == 'y6a1_coadd':
+                                areleases = ['y3a1_coadd', 'y6a1_coadd', 'y6a2_coadd', 'dr1', ]
+                                if release in areleases:
                                     t_image = 90 - t_image
 
                                 else:
