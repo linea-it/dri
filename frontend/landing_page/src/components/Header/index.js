@@ -97,11 +97,11 @@ function Header() {
       href: '/',
       target: '_self',
     },
-    // {
-    //   description: 'About',
-    //   href: '/about-us',
-    //   target: '_self',
-    // },
+    {
+      description: 'About',
+      href: '/about-us',
+      target: '_self',
+    },
     {
       description: 'Tutorials',
       href: '/tutorials',
