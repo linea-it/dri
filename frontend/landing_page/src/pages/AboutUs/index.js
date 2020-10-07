@@ -30,11 +30,17 @@ function AboutUs() {
             variant="overline"
             component="h2"
           >
-            <div className={classes.div}>
-<p><strong><em>About us</em></strong></p>
+          <Grid
+            item
+            md={7}
+            sm={10}
+            className={classes.grid}
+          >
+            <div>
+            <p><strong><em>About us</em></strong></p>
 <p>
 <span>The Laborat&oacute;rio Interinstitucional de e-Astronomia (LIneA) was created in November 2010 by an agreement signed by three research institutes of the Ministry of Science, Technology, Innovation and Communication (</span>
-<a href="http://www.mctic.gov.br/" target="_blank"><span>MCTIC</span></a>
+  <a href="http://www.mctic.gov.br/" target="_blank"><span>MCTIC</span></a>
 <span>) (</span>
 <a href="http://www.lncc.br/" target="_blank"><span>Laborat&oacute;rio Nacional de Computa&ccedil;&atilde;o Cient&iacute;fica</span></a>
 <span>, </span>
@@ -80,7 +86,6 @@ function AboutUs() {
 <p><strong><em>About the LIneA Science Server Interface</em></strong></p>
 <p><span>Currently the LIneA Science Server provides access to the following services:</span></p>
 <ul>
-<ul>
 <li>
 <strong>Sky viewer:</strong>
 <span> display a panoramic view of DES images across its footprint.</span>
@@ -94,10 +99,11 @@ function AboutUs() {
 <span> allows one to query the DES database which creates temporary tables listing the results which can be immediately viewed using the Target Viewer.</span>
 </li>
 <li>
-<strong>Tile Inspection:</strong>
-<span> to quickly examine and validate coadded images, only available for members of the collaboration.</span>
+<strong>
+Tile Inspection:
+<span>to quickly examine and validate coadded images, only available for members of the collaboration.</span>
+</strong>
 </li>
-</ul>
 </ul>
 <p><span>For more information see the tutorials.</span></p>
 <p><strong><em>Credits</em></strong></p>
@@ -111,6 +117,7 @@ function AboutUs() {
 <li><span>Current and past LIneA IT team members.</span></li>
 </ul>
             </div>
+          </Grid>
           </Typography>
         </Grid>
       </Container>

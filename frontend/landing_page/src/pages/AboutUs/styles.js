@@ -9,13 +9,14 @@ const styles = makeStyles((theme) => ({
     margin: 'auto',
   },
   textFormat: {
-    color: '#141412',
     marginTop: 40,
-    textTransform: 'none',
-    fontSize: '0.85rem',
-  },
-  div: {
+    fontSize: '1.1rem!important',
     fontFamily: 'arial',
+    fontWeight: '100',
+    lineHeight: '1.5',
+    textAlign: 'justify',
+    color: 'black',
+    letterSpacing: '0.0em',
   },
 }));
 
