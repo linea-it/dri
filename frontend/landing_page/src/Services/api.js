@@ -10,8 +10,6 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
 // axios.defaults.baseURL = `${host}/dri/api/`;
-// axios.defaults.baseURL = `http://dri-testing.linea.gov.br/dri/api/`;
-axios.defaults.baseURL = `https://desportal.cosmology.illinois.edu/dri/api/`;
 
 // Interceptar a Resposta.
 // Add a response interceptor
@@ -26,12 +24,11 @@ axios.interceptors.response.use(
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx
       if (!error.response.status === 403) {
-        // if (error.response.status === 401) {
-        // eslint-disable-next-line no-use-before-define
-        toLogin();
-        // } else {
-        //   toLogin();
-        // }
+        if (error.response.status === 401) {
+          toLogin();
+        } else {
+          toLogin();
+        }
       }
     } else if (error.request) {
       // The request was made but no response was received
