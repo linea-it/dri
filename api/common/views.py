@@ -17,7 +17,6 @@ from rest_framework import status
 import django_filters
 from rest_framework import filters
 from rest_framework.authtoken.models import Token
-from django.conf import settings
 import requests
 from urllib.parse import urljoin
 from django_filters.rest_framework import DjangoFilterBackend

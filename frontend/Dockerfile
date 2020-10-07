@@ -31,10 +31,15 @@ WORKDIR /code/userquery
 RUN /opt/Sencha/sencha app build production
 
 # Build ReactJS Apps
-FROM node:10-alpine as react_apps
+FROM node:10-alpine as eyeballing
 WORKDIR /app
 COPY ./eyeballing .
-# RUN yarn -v && yarn --ignore-optional
+RUN yarn -v && yarn 
+RUN yarn run build
+
+FROM node:10-alpine as landingpage
+WORKDIR /app
+COPY ./landing_page .
 RUN yarn -v && yarn 
 RUN yarn run build
 
@@ -59,6 +64,9 @@ RUN sed --regexp-extended --in-place=.bak 's%^pid\s+/var/run/nginx.pid;%pid /var
 COPY --from=sencha_apps /code/build/production /var/www/
 
 # Add eyeballing React App to image
-COPY --from=react_apps /app/build /var/www/eyeballing
+COPY --from=eyeballing /app/build /var/www/eyeballing
+
+# Add Landing Page React App to image
+COPY --from=landingpage /app/build /var/www/landing_page
 
 USER nginx

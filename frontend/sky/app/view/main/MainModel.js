@@ -10,7 +10,7 @@ Ext.define('Sky.view.main.MainModel', {
         name: 'Sky Viewer',
         internal_name: 'sky_viewer',
         desPortalLogo: 'resources/des-portal-logo.png',
-        help_url: 'dri/apps/home/help/help-sky-image-viewer/'
+        help_url: 'contact-us/'
     }
 
 });
