@@ -9,7 +9,7 @@ const host = process.env.REACT_APP_API || `${window.location.protocol}//${window
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.withCredentials = true;
-// axios.defaults.baseURL = `${host}/dri/api/`;
+axios.defaults.baseURL = `${host}/dri/api/`;
 
 // Interceptar a Resposta.
 // Add a response interceptor
