@@ -51,21 +51,20 @@ function AboutUs() {
               <a href="http://www.finep.gov.br/" target="_blank"><span>FINEP</span></a>
               <span> and the &ldquo;</span>
               <a href="http://inct.cnpq.br/" target="_blank"><em><span>Instituto Nacional de Ciencia e Tecnologia</span></em></a>
-              <span>(</span>
+              <span> (</span>
               <a href="https://www.linea.gov.br/3-inct-do-e-universo-2/" target="_blank"><span>INCT do e-Universo</span></a>
               <span>)&rdquo; program jointly&nbsp; funded&nbsp; by </span>
-              <a href="http://www.cnpq.br/" target="_blank"><span>CNPq </span></a>
-              <span>and</span>
-              <a href="http://www.faperj.br/" target="_blank"><span> FAPERJ</span></a>
+              <a href="http://www.cnpq.br/" target="_blank"><span>CNPq</span></a>
+              <span> and </span>
+              <a href="http://www.faperj.br/" target="_blank"><span>FAPERJ</span></a>
               <span>.</span>
             </p>
             <p><span>Some of its main projects for DES include:</span></p>
             <ol>
               <li>
                 <span>The </span>
-                <strong>Quick Reduce,</strong>
-                <span> a</span>
-                <span>pipeline available at CTIO to assess the quality of the images gathered by DECam;</span>
+                <strong>Quick Reduce</strong>
+                <span>, a pipeline available at CTIO to assess the quality of the images gathered by DECam;</span>
               </li>
               <li>
                 <span>The </span>
@@ -74,13 +73,13 @@ function AboutUs() {
               </li>
               <li>
                 <span>The </span>
-                <strong>LIneA Data Server, </strong>
-                <span>an interface available at Fermilab since April 2014 to enable the visualization of images and catalogs, and to carry out queries in the DESDM database.</span>
+                <strong>LIneA Data Server</strong>
+                <span>, an interface available at Fermilab since April 2014 to enable the visualization of images and catalogs, and to carry out queries in the DESDM database.</span>
               </li>
               <li>
                 <span>The </span>
-                <strong>LIneA Science Server, </strong>
-                <span>an improved version of the Data Server available at NCSA since the first public release of DES data release.</span>
+                <strong>LIneA Science Server</strong>
+                <span>, an improved version of the Data Server available at NCSA since the first public release of DES data release.</span>
               </li>
             </ol>
             <p><strong><em>About the LIneA Science Server Interface</em></strong></p>
