@@ -10,7 +10,7 @@ const styles = makeStyles((theme) => ({
   },
   textFormat: {
     marginTop: 40,
-    fontSize: '1.1rem!important',
+    fontSize: '1.07rem!important',
     fontFamily: 'arial',
     fontWeight: '100',
     lineHeight: '1.5',
