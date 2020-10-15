@@ -23,21 +23,15 @@ Ext.define('Explorer.Application', {
                 var data = JSON.parse(response.responseText);
                 window.sessionStorage.setItem('dri_username', data.username);
 
-                // Identificar o usuario no Google Analitics
-                ga('set', 'userId', data.id);
+                // Informa o Id o usuario para o GA, para que possa reconher usuarios unicos.
+                window.gtag('config', 'GA_MEASUREMENT_ID', {
+                    'user_id': data.id
+                });
             },
             failure: function (response, opts) {
-                var protocol = window.location.protocol,
-                    pathname = window.location.pathname,
-                    hostname = window.location.hostname,
-                    location;
-
-                location = Ext.String.format(
-                    '{0}//{1}/dri/api/api-auth/login/?next={2}',
-                    protocol, hostname, pathname);
-
+                var pathname = window.location.pathname;
+                location = Ext.String.format('/dri/api/api-auth/login/?next={0}', pathname);
                 window.location.assign(location);
-
             }
         });
 
