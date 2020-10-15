@@ -1,6 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable max-len */
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Grid, Container, Typography, TextField, Button, Breadcrumbs, Link, Snackbar,
 } from '@material-ui/core';
