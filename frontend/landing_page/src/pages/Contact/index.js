@@ -15,8 +15,10 @@ function Contact() {
 
   const formRef = useRef();
 
+  const recaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
+
   const [open, setOpen] = useState('');
-  const [submitEnabled, setSubmitEnabled] = useState(false);
+  const [submitEnabled, setSubmitEnabled] = useState(recaptchaKey ? false : true);
 
   const handleClose = () => {
     setOpen('');
@@ -133,9 +135,9 @@ function Contact() {
                   placeholder="Message"
                 />
               </div>
-              {process.env.REACT_APP_RECAPTCHA_SITE_KEY ? (
+              {recaptchaKey ? (
                 <ReCAPTCHA
-                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
+                  sitekey={recaptchaKey}
                   onChange={onRecaptchaChange}
                 />
               ) : null}
