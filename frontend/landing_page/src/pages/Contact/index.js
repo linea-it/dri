@@ -35,10 +35,10 @@ function Contact() {
       };
 
       sendEmail(formData).then((res) => {
-        if (res.response.status === 200) {
+        if (res.status === 200) {
           setOpen('success');
           formRef.current.reset();
-        } else if (res.response.status === 403) {
+        } else if (res.status === 403) {
           setOpen('unauthorized');
         } else {
           setOpen('unexpected');

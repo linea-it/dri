@@ -4,7 +4,7 @@ from smtplib import SMTPException
 
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -20,6 +20,7 @@ from rest_framework.authtoken.models import Token
 import requests
 from urllib.parse import urljoin
 from django_filters.rest_framework import DjangoFilterBackend
+
 
 class FilterViewSet(viewsets.ModelViewSet):
     """
@@ -73,7 +74,7 @@ class UsersInSameGroupViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def contact_us(request):
     """
         API Endpoint to send a email to helpdesk
@@ -144,7 +145,7 @@ def get_providers():
             result = []
             for provider in registry.get_list():
                 if (isinstance(provider, OAuth2Provider)
-                    or isinstance(provider, OAuthProvider)):
+                        or isinstance(provider, OAuthProvider)):
                     try:
                         app = SocialApp.objects.get(provider=provider.id,
                                                     sites=site)
@@ -281,8 +282,7 @@ def galaxy_cluster(request):
             raise Exception("The PLUGIN_GALAXY_CLUSTER_HOST variable is not configured in settings.")
 
         params = "density_map?clusterSource=%s&clusterId=%s&vacSource=%s&lon=%s&lat=%s&radius=%s" % (
-        clusterSource, clusterId, vacSource, lon, lat, radius)
-
+            clusterSource, clusterId, vacSource, lon, lat, radius)
 
         url = urljoin(host, params)
 
@@ -309,22 +309,23 @@ def available_database(request):
     if request.method == 'GET':
         dbs = list([])
 
-        # TODO: é provavel que ao adicionar mais bancos de dados, o target viewer de 
+        # TODO: é provavel que ao adicionar mais bancos de dados, o target viewer de
         # problema com as tabelas de rating e reject
         for db in settings.DATABASES:
             if db is not 'default' and db in settings.TARGET_VIEWER_DATABASES:
                 try:
                     dbs.append(dict({
                         'name': db,
-                        'display_name':settings.DATABASES[db]['DISPLAY_NAME']
+                        'display_name': settings.DATABASES[db]['DISPLAY_NAME']
                     }))
                 except:
                     dbs.append(dict({
                         'name': db,
-                        'display_name':db
+                        'display_name': db
                     }))
 
         return Response(dict({'results': dbs, 'count': len(dbs)}))
+
 
 @api_view(['GET'])
 def teste(request):
@@ -334,7 +335,6 @@ def teste(request):
         #
         # cutoutjob = CutOutJob.objects.get(pk=78)
         # print(cutoutjob.pk)
-
 
         # Testar submissao
         # cutoutjob.cjb_status = 'st'
