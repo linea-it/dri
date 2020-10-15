@@ -31,8 +31,10 @@ Ext.define('Sky.Application', {
             success: function (response) {
                 var data = JSON.parse(response.responseText);
 
-                // Identificar o usuario no Google Analitics
-                if (window.ga) ga('set', 'userId', data.id);
+                // Informa o Id o usuario para o GA, para que possa reconher usuarios unicos.
+                window.gtag('config', 'GA_MEASUREMENT_ID', {
+                    'user_id': data.id
+                });
             },
             failure: function (response, opts) {
                 var pathname = window.location.pathname;
@@ -47,7 +49,6 @@ Ext.define('Sky.Application', {
     },
 
     onAppUpdate: function () {
-        // window.location.reload();
-
+        window.location.reload();
     }
 });

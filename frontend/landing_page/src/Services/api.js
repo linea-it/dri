@@ -2,9 +2,8 @@
 /* eslint-disable import/prefer-default-export */
 import axios from 'axios';
 
-const host = process.env.REACT_APP_API || `${window.location.protocol}//${window.location.hostname}${
-  window.location.port ? ':' : ''
-}${window.location.port}`;
+const host = process.env.REACT_APP_API || `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' : ''
+  }${window.location.port}`;
 
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
@@ -21,31 +20,46 @@ axios.interceptors.response.use(
   (error) => {
     // Do something with response error
     if (error.response) {
-      // The request was made and the server responded with a status code
-      // that falls out of the range of 2xx
-      if (!error.response.status === 403) {
-        if (error.response.status === 401) {
-          toLogin();
-        } else {
-          toLogin();
-        }
+      switch (error.response.status) {
+        case 401:
+          // Na landinpage o Login é opicional. não é necessário redirecionar para o login.
+          break;
+        case 403:
+          // Na landinpage o Login é opicional. não é necessário redirecionar para o login.
+          break;
+        case 404:
+          to404();
+          break;
+        default:
+          console.log(error.request);
       }
     } else if (error.request) {
       // The request was made but no response was received
-      // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-      // http.ClientRequest in node.js
       console.log(error.request);
+      // to404();
     } else {
       // Something happened in setting up the request that triggered an Error
-      console.log('Error', error.message);
+      console.log(error.message);
+      // to404();
     }
-    console.log(error.config);
+
+
     return Promise.reject(error);
   },
 );
 
 // eslint-disable-next-line consistent-return
-export const getLoggedUser = () => axios.get('logged/get_logged/', { params: { format: 'json' } }).then((result) => result.data).catch((error) => {
+export const getLoggedUser = () => axios.get('logged/get_logged/', { params: { format: 'json' } }).then((result) => {
+
+  var data = result.data;
+
+  // Informa o Id o usuario para o GA, para que possa reconher usuarios unicos.
+  window.gtag('config', 'GA_MEASUREMENT_ID', {
+    'user_id': data.id
+  });
+
+  return data
+}).catch((error) => {
   if (error) {
     return { username: undefined };
   }
@@ -53,7 +67,6 @@ export const getLoggedUser = () => axios.get('logged/get_logged/', { params: { f
     return { username: undefined };
   }
 });
-
 
 export const tutorials = () => axios.get('tutorial/')
   .then((res) => res.data)
@@ -75,6 +88,10 @@ export const sendEmail = (formData) => axios.post('contact/', formData)
 
 
 const toLogin = () => {
+  // window.open(`${host}/404`);
+};
+
+const to404 = () => {
   window.open(`${host}/404`);
 };
 
