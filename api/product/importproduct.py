@@ -122,7 +122,7 @@ class ImportTargetListCSV:
             self.logger.debug("Delimiter: [%s]" % self.delimiter)
 
             # Descobrir se o csv aparenta ter headers
-            self.have_headers = csv.Sniffer().has_header(self.csv_data)
+            self.have_headers = self.has_headers(self.csv_data)
             self.logger.debug("Headers: %s" % self.have_headers)
 
             # Parse e Validação do CSV, cria um pandas dataframe
@@ -194,6 +194,25 @@ class ImportTargetListCSV:
             self.logger.error(e)
 
             raise(e)
+
+    def has_headers(self, data):
+        """Checa se o csv tem Headers, 
+        uma particularidade é que a função nativa do csv retorna errado quando o csv tem apenas uma linha.
+        para isso foi feito um check pela quantidade de linhas do csv, se tiver apenas 1 que é o mesmo que ter 0 /n na string
+        então o retorna False. 
+        Se tiver mais de uma linha o retorno é o resultado da função csv.Sniffer().has_header
+
+        Args:
+            data ([type]): [description]
+
+        Returns:
+            [type]: [description]
+        """
+        if (data.count("\n") == 0):
+            # Só tem uma linha então não tem Headers
+            return False
+        else:
+            return csv.Sniffer().has_header(self.csv_data)
 
     def check_product_exist(self, internal_name):
         """Verificar se ja existe um produto registrado com este nome
