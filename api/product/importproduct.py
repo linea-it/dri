@@ -163,6 +163,13 @@ class ImportTargetListCSV:
             except Exception as e:
                 msg = "Failed to create the table and import the data. Error: [%s]" % e
                 self.logger.error(msg)
+                # Verifica se a tabela foi criada
+                if self.db.table_exists(self.internal_name, self.schema):
+                    # Drop Table
+                    self.db.drop_table(self.internal_name, self.schema)
+
+                    self.logger.info("Droped  Table: [%s] Schema: [%s]" % (self.internal_name, self.schema))
+
                 raise (Exception(msg))
 
             # Registrar a nova tabela como produto.
@@ -187,49 +194,6 @@ class ImportTargetListCSV:
             self.logger.error(e)
 
             raise(e)
-
-        # # Parse and Valid CSV Data o retorno sera os dados da tabela
-        # self._table_data = self.parse_csv_data(self.csv_data)
-
-        # # Depois de fazer o cast nos types de todos os valores e os dados terem passados
-        # # nas validacoes basicas descobrir o tipo de dados de cada coluna usando a
-        # # primeira linha de dados
-        # self._columns_type = self.get_columns_type(self._table_data[0])
-
-        # try:
-        #     # Recuperar o nome do schema se o banco for postgresq.
-        #     # TODO: Não tenho certeza do impact desta parte no oracle, por isso
-        #     # estou condicionando a regra ao postgresql.
-        #     if self.db.get_engine() == "postgresql_psycopg2":
-        #         self.schema = self.db.get_connection_schema()
-        #         self.logger.debug("Postgresql Schema: %s" % self.schema)
-
-        #     # tendo os dados e o nome das colunas pode ser criado a tabela com SqlAlchemy
-        #     self.table = self.create_table(self.internal_name, self._columns_type, schema=self.schema)
-
-        #     # Inserir os dados na nova tabela
-        #     self.populate_table(self.table, self._table_data)
-
-        #     # Registrar a nova tabela como produto.
-        #     self.product = self.register_new_table_as_product(self.user, self.internal_name, self.display_name,
-        #                                                       self.database, self.schema,
-        #                                                       self.internal_name, self.product_class, self.releases,
-        #                                                       self.description)
-
-        #     return self.product
-
-        # except Exception as e:
-        #     self.logger.info("Failed to create the table or import the data. dropping the table and the sequence if they were created.")
-        #     # Verifica se a tabela foi criada
-        #     if self.db.table_exists(self.internal_name, self.schema):
-        #         # Drop Table
-        #         self.db.drop_table(self.internal_name, self.schema)
-
-        #         self.logger.info("Droped  Table: [%s] Schema: [%s]" % (self.internal_name, self.schema))
-
-        #         # Drop Sequence
-        #         self.db.drop_sequence(self.internal_name, self.schema)
-        #         self.logger.info("Droped Sequence for Table: [%s] Schema: [%s]" % (self.internal_name, self.schema))
 
     def check_product_exist(self, internal_name):
         """Verificar se ja existe um produto registrado com este nome
@@ -331,147 +295,6 @@ class ImportTargetListCSV:
 
         return self.internal_name
 
-    # def parse_csv_data(self, csv_data):
-    #     self.logger.info("Starting Parse CSV")
-
-    #     # Descobir os headers do csv
-    #     lines = csv_data.split("\n")
-    #     self.logger.debug("Lines: %s" % len(lines))
-
-    #     if len(lines) == 0:
-    #         raise Exception("No data in csv")
-
-    #     self.headers = self.get_headers(lines[0])
-    #     self.logger.debug("Headers: %s", self.headers)
-
-    #     # TODO se tiver headers deve remover essa linha antes de passar para o metodo
-    #     # que retorna os dados.
-    #     if self.have_headers:
-    #         pass
-
-    #     rows = self.parse_rows(self.headers, lines)
-
-    #     # TODO remover esse Debug
-    #     self.logger.debug("ROWS:  %s" % rows)
-
-    #     return rows
-
-    # def get_headers(self, first_line):
-    #     self.logger.info("Get Headers")
-
-    #     self.logger.debug("First Line: %s" % first_line)
-
-    #     headers = []
-    #     tmp_headers = []
-
-    #     first_line = first_line.replace("/n", "")
-
-    #     # separar as colunas
-    #     cols = first_line.split(self.csv_separator)
-    #     count_headers = len(cols)
-
-    #     # testar se as colunas sao strings
-    #     for col in cols:
-
-    #         col = self.cast_value_type(col)
-
-    #         if isinstance(col, str):
-    #             tmp_headers.append(col.lower().strip().strip("\n"))
-
-    #     # Se nao houver nome de colunas na primeira linha usar as required_properties
-    #     if len(tmp_headers) == 0:
-    #         self.have_headers = False
-    #         tmp_headers = self.require_properties
-    #     else:
-    #         self.have_headers = True
-    #         # tem nome de colunas na primeira linha
-    #         # TODO testar com nome de colunas
-
-    #         # TODO as colunas nao podem ter caracters especiais apenas alphanumericos
-    #         pass
-
-    #     headers = tmp_headers
-
-    #     return headers
-
-    # def parse_rows(self, headers, lines):
-    #     self.logger.info("Parse Rows")
-
-    #     self.logger.debug("Have Headers: %s", self.have_headers)
-
-    #     rows = list()
-
-    #     # Para cada linha validar
-    #     for line in lines:
-    #         self.logger.debug("ROW: %s" % line)
-    #         values = line.split(self.csv_separator)
-
-    #         # Incrementar o contador de linhas para ajudar nas mensagens de erro
-    #         self._last_data_line = self._last_data_line + 1
-
-    #         row = dict({})
-
-    #         for index, value in enumerate(values, start=0):
-    #             # Tratar o campo header
-    #             header = self.headers[index].strip().replace("\n", "").lower()
-
-    #             # Tratar o Valor, tentar descorbrir o tipo e convertelo.
-    #             value = self.cast_value_type(value)
-
-    #             # Validar cada valor de acordo com a sua coluna.
-    #             value = self.check_is_valid(header, value)
-
-    #             self.logger.debug("Header: %s Value: %s" % (header, value))
-
-    #             row.update({
-    #                 header: value
-    #             })
-
-    #         # Adicionar a key meta_id para evitar erro no insert.
-    #         if "meta_id" not in row:
-    #             row.update({"meta_id": None})
-
-    #         rows.append(row)
-
-    #     return rows
-
-    # def cast_value_type(self, value):
-    #     try:
-    #         value = value.replace("\n", "").strip()
-
-    #         value = ast.literal_eval(value)
-
-    #     except:
-    #         value = str(value)
-
-    #     return value
-
-    # def get_columns_type(self, first_row):
-    #     self.logger.info("Extract Column types from first data row")
-
-    #     self.logger.debug(first_row)
-
-    #     for property in first_row:
-    #         # Verificar se a coluna ja nao tem tipo padrao definido
-    #         if property not in self._columns_type:
-    #             # se nao tiver descobrir o tipo de dados e criar um dict com o nome da
-    #             # coluna e
-    #             pass
-    #             # tclass = type(first_row.get(property))
-
-    #             # if isinstance(tclass, float):
-    #             #     self.logger.debug(self._columns_type)
-    #             #
-    #             # self._columns_type.append(dict({
-    #             #     property: dict({
-    #             #         "property": property,
-    #             #         "type_name": "<type_name>"
-    #             #     }))
-
-    #     self.logger.debug(self._columns_type)
-
-    #     return self._columns_type
-
     def get_associations(self):
         associations = list()
         for column in self.columns_type:
@@ -483,77 +306,6 @@ class ImportTargetListCSV:
             }))
 
         return associations
-
-    # # %%%%%%%%%%%%%%%%%%%%%%%%%% Create Table %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    # def create_table(self, name, columns_type, schema=None):
-    #     self.logger.info("Create table with SqlAlchemy")
-
-    #     self.logger.debug("Table name: %s" % name)
-
-    #     cols = list()
-    #     for col in columns_type:
-    #         cols.append(columns_type.get(col))
-
-    #     try:
-    #         table = self.db.create_table(name, columns=cols, schema=schema)
-
-    #         self.logger.debug("Table %s Created" % name)
-
-    #         return table
-
-    #     except Exception as e:
-    #         raise e
-
-    # def populate_table(self, table, data):
-    #     self.logger.info("Populate Table")
-
-    #     try:
-    #         start = time.time()
-
-    #         self.logger.info(table.insert())
-    #         self.logger.info(data)
-
-    #         # with self.db.engine.connect().execution_options(isolation_level="AUTOCOMMIT") as con:
-
-    #         with self.db.engine.connect() as connection:
-    #             with connection.begin() as transaction:
-    #                 try:
-    #                     # markers = ",".join("?" * len(values[0]))
-    #                     # ins = "INSERT INTO {tablename} VALUES ({markers})"
-    #                     # ins = ins.format(tablename=widgets_table.name, markers=markers)
-
-    #                     connection.execute(table.insert(), dict(data))
-    #                 except:
-    #                     transaction.rollback()
-    #                     raise
-    #                 else:
-    #                     transaction.commit()
-
-    #             # for row in data:
-    #             #     table.insert().values(row)
-
-    #         #
-    #         # table.insert().values(data)
-    #         # self.db.engine.execute(table.insert().values(data))
-    #         # trans.commit()
-
-    #         # if len(data) == 1:
-    #         #     table.insert().values(data)
-    #         # else:
-    #         #     self.db.engine.execute(table.insert(), data)
-
-    #         self.logger.info("TESTE! Passou o Insert")
-
-    #         duration = time.time() - start
-
-    #         self.logger.info("Insert %s rows in %s" % (len(data), "{:.2f} seconds".format(duration)))
-
-    #     except Exception as e:
-    #         trace = traceback.format_exc()
-    #         self.logger.error(trace)
-    #         self.logger.error(e)
-    #         # TODO se falhar na importação dos dados deve remover a tabela e a sequencia.
-    #         raise e
 
     def register_new_table_as_product(self, user, internal_name, display_name, database, schema, tablename,
                                       product_class,
