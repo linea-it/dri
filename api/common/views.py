@@ -350,4 +350,30 @@ def teste(request):
         #
         # GarbageColectorProduct().purge_products_expiration_time()
 
+        # Exemplo de teste para desenvolvimento do User Query
+        # from userquery.create_table_as import CreateTableAs
+        # from userquery.models import Job, Table
+        # job = Job.objects.get(pk=4)
+        # job.job_status = 'st'
+        # job.save()
+
+        # try:
+        #     t = Table.objects.get(table_name='teste_uq')
+        #     t.delete()
+        # except Exception as e:
+        #     pass
+
+        # ct = CreateTableAs(
+        #     job_id=job.id,
+        #     user_id=job.owner.id,
+        #     table_name='teste_uq',
+        #     table_display_name='Teste User Query',
+        #     release_id=24,
+        #     release_name='y6a1_coadd',
+        #     associate_target_viewer=True,
+        #     task_id='101010',
+        #     schema=None
+        # )
+        # ct.do_all()
+
         return Response(dict({'status': "success"}))
