@@ -295,7 +295,7 @@ class ImportTargetListCSV:
             acls = list()
             for cls in ProductClass.objects.all():
                 acls.append(cls.pcl_name)
-            raise Exception("It is class is not available. these are available: %s" % (", ".join(acls)))
+            raise Exception("This class is unavailable. The available classes are: %s" % (", ".join(acls)))
 
     def set_internal_name(self, internal_name):
         """
