@@ -367,7 +367,7 @@ class ImportTargetListCSV:
         # Retornar o Produto que foi registrado.
         newproduct = Product.objects.get(prd_name=self.internal_name)
 
-        self.logger.info("New Product as Registered: %s - %s" % (newproduct.pk, newproduct.prd_display_name))
+        self.logger.info("A New Product Was Registered: %s - %s" % (newproduct.pk, newproduct.prd_display_name))
 
         return newproduct
 
