@@ -6,7 +6,7 @@ celery==4.1.1
 coverage==4.5.2
 cx-Oracle==7.0.0
 defusedxml==0.5.0
-Django==2.1.5
+Django==2.2.13
 django-allauth==0.32.0
 django-auth-ldap==2.1.1
 django-celery-results==1.0.1
