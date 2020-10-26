@@ -4,7 +4,7 @@ from smtplib import SMTPException
 
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -20,6 +20,7 @@ from rest_framework.authtoken.models import Token
 import requests
 from urllib.parse import urljoin
 from django_filters.rest_framework import DjangoFilterBackend
+
 
 class FilterViewSet(viewsets.ModelViewSet):
     """
@@ -73,7 +74,7 @@ class UsersInSameGroupViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def contact_us(request):
     """
         API Endpoint to send a email to helpdesk
@@ -144,7 +145,7 @@ def get_providers():
             result = []
             for provider in registry.get_list():
                 if (isinstance(provider, OAuth2Provider)
-                    or isinstance(provider, OAuthProvider)):
+                        or isinstance(provider, OAuthProvider)):
                     try:
                         app = SocialApp.objects.get(provider=provider.id,
                                                     sites=site)
@@ -281,8 +282,7 @@ def galaxy_cluster(request):
             raise Exception("The PLUGIN_GALAXY_CLUSTER_HOST variable is not configured in settings.")
 
         params = "density_map?clusterSource=%s&clusterId=%s&vacSource=%s&lon=%s&lat=%s&radius=%s" % (
-        clusterSource, clusterId, vacSource, lon, lat, radius)
-
+            clusterSource, clusterId, vacSource, lon, lat, radius)
 
         url = urljoin(host, params)
 
@@ -309,45 +309,64 @@ def available_database(request):
     if request.method == 'GET':
         dbs = list([])
 
-        # TODO: é provavel que ao adicionar mais bancos de dados, o target viewer de 
+        # TODO: é provavel que ao adicionar mais bancos de dados, o target viewer de
         # problema com as tabelas de rating e reject
         for db in settings.DATABASES:
             if db is not 'default' and db in settings.TARGET_VIEWER_DATABASES:
                 try:
                     dbs.append(dict({
                         'name': db,
-                        'display_name':settings.DATABASES[db]['DISPLAY_NAME']
+                        'display_name': settings.DATABASES[db]['DISPLAY_NAME']
                     }))
                 except:
                     dbs.append(dict({
                         'name': db,
-                        'display_name':db
+                        'display_name': db
                     }))
 
         return Response(dict({'results': dbs, 'count': len(dbs)}))
 
+
 @api_view(['GET'])
 def teste(request):
     if request.method == 'GET':
-        # from product.models import CutOutJob
-        # from product.tasks import start_des_cutout_job_by_id, check_jobs_running
-        #
-        # cutoutjob = CutOutJob.objects.get(pk=78)
-        # print(cutoutjob.pk)
 
+        # import logging
 
-        # Testar submissao
-        # cutoutjob.cjb_status = 'st'
-        # cutoutjob.save()
-        # start_des_cutout_job_by_id(78)
+        # log = logging.getLogger('import_target_csv')
 
-        # Testar Check Status
-        # cutoutjob.cjb_status = 'rn'
-        # cutoutjob.save()
-        # check_jobs_running()
+        # log.info("------------------ TESTE ----------------")
 
-        # from product.garbagecolector import GarbageColectorProduct
-        #
-        # GarbageColectorProduct().purge_products_expiration_time()
+        # from product.importproduct import ImportTargetListCSV
+        # it = ImportTargetListCSV()
+        # upload_data = {'mime': 'csv', 'type': 'catalog', 'class': 'objects', 'name': 'testeupload', 'displayName': 'testeupload', 'releases': ['y6a1_coadd'], 'isPublic': False, 'description': '', 'csvData': '31.12232, -6.20153\n29.92641, -5.96732\n40.09991 , -8.43430\n-179.4548 , -9.43430'}
+        # upload_data_header = {'mime': 'csv', 'type': 'catalog', 'class': 'objects', 'name': 'testeupload', 'displayName': 'testeupload', 'releases': ['y6a1_coadd'], 'isPublic': False, 'description': '', 'csvData': 'ra, dec, name\n31.12232, -6.20153, galaxy1\n29.92641, -5.96732, galaxy2\n40.09991 , -8.43430, galaxy3'}
+        # it.start_import(request.user.id, upload_data)
+
+        # Exemplo de teste para desenvolvimento do User Query
+        # from userquery.create_table_as import CreateTableAs
+        # from userquery.models import Job, Table
+        # job = Job.objects.get(pk=4)
+        # job.job_status = 'st'
+        # job.save()
+
+        # try:
+        #     t = Table.objects.get(table_name='teste_uq')
+        #     t.delete()
+        # except Exception as e:
+        #     pass
+
+        # ct = CreateTableAs(
+        #     job_id=job.id,
+        #     user_id=job.owner.id,
+        #     table_name='teste_uq',
+        #     table_display_name='Teste User Query',
+        #     release_id=24,
+        #     release_name='y6a1_coadd',
+        #     associate_target_viewer=True,
+        #     task_id='101010',
+        #     schema=None
+        # )
+        # ct.do_all()
 
         return Response(dict({'status': "success"}))

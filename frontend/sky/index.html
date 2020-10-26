@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <html manifest="">
+
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="UTF-8">
@@ -48,32 +49,32 @@
 
     <!-- Loading -->
     <script>
-        function hideLoading(){
-            linea_logo.style.display='none';
+        function hideLoading() {
+            linea_logo.style.display = 'none';
         }
     </script>
 
-    <!-- Google Analitics -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-85679627-1"></script>
     <script>
-        //Evita usar o Google Analytics em desenvolvimento
-        if (location.pathname.indexOf('/dev/')!=0){
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
 
-            ga('create', 'UA-85679627-1', 'auto');
-            ga('send', 'pageview');
-        }
+        gtag('config', 'UA-85679627-1');
     </script>
+
 
     <!-- The line below must be kept intact for Sencha Cmd to build your application -->
-    <script id="microloader" data-app="23e8d35d-093f-4581-a508-3922dc20fcbf" type="text/javascript" src="bootstrap.js"></script>
+    <script id="microloader" data-app="23e8d35d-093f-4581-a508-3922dc20fcbf" type="text/javascript"
+        src="bootstrap.js"></script>
 
 </head>
+
 <body onload="hideLoading()" style="background: #24292E;">
 
-    <div id='linea_logo' style="position: absolute;top: 50%;left: 50%;width: 522px;height: 500px;margin-top: -250px;margin-left: -261px;">
+    <div id='linea_logo'
+        style="position: absolute;top: 50%;left: 50%;width: 522px;height: 500px;margin-top: -250px;margin-left: -261px;">
         <!-- <img src="resources/linea_logo.jpg" > -->
         <!-- <img src="resources/linea_logo_transparent.png"> -->
 
@@ -83,4 +84,5 @@
 
     </div>
 </body>
+
 </html>
