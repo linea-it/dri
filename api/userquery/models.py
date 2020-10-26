@@ -68,6 +68,13 @@ class Job(models.Model):
         max_length=128, default="Unnamed", verbose_name='Original query name')
     job_id = models.TextField(verbose_name='Job Cerely ID')
 
+    error = models.TextField(
+        verbose_name="Error",
+        null=True,
+        blank=True
+    )
+
+
 class Table(models.Model):
     table_name = models.CharField(
         max_length=128, null=False, unique=True, verbose_name='Name')
