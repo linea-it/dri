@@ -20,6 +20,7 @@ from lib.db_postgresql import DBPostgresql
 from lib.db_sqlite import DBSqlite
 
 
+
 class DBBase:
     # Django database engines
     available_engines = list(['sqlite3', 'oracle', 'postgresql_psycopg2'])
@@ -67,6 +68,8 @@ class DBBase:
             connection_data['PORT'] = aux[1]
             connection_data['USER'] = db_settings_django['USER']
             connection_data['PASSWORD'] = db_settings_django['PASSWORD']
+
+            self.schema = None
 
         elif connection_data['ENGINE'] == 'postgresql_psycopg2':
             connection_data['USER'] = db_settings_django['USER']
@@ -445,6 +448,30 @@ class DBBase:
             except Exception as e:
                 trans.rollback()
                 raise e
+
+    def drop_sequence(self, table, schema=None):
+        """
+        Use this method to Drop a table in the database.
+        """
+        table_name = table
+        if schema is not None and schema is not "":
+            table_name = "%s.%s" % (schema, table)
+
+        sequence_name = "%s_seq" % table_name
+
+        with self.engine.connect() as con:
+            try:
+
+                drop_stm = "DROP SEQUENCE %s" % sequence_name
+
+                trans = con.begin()
+                con.execute(drop_stm)
+                trans.commit()
+
+                return True
+            except Exception as e:
+                trans.rollback()
+                raise Exception("Failed to drop sequence Tablename: [%s] Schema: [%s] Sequence: [%s] Error: [%s]" % (table, schema, sequence_name, e))
 
     # ------------------------ Filtro Por Posicao ----------------------------------
 

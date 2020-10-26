@@ -330,25 +330,18 @@ def available_database(request):
 @api_view(['GET'])
 def teste(request):
     if request.method == 'GET':
-        # from product.models import CutOutJob
-        # from product.tasks import start_des_cutout_job_by_id, check_jobs_running
-        #
-        # cutoutjob = CutOutJob.objects.get(pk=78)
-        # print(cutoutjob.pk)
 
-        # Testar submissao
-        # cutoutjob.cjb_status = 'st'
-        # cutoutjob.save()
-        # start_des_cutout_job_by_id(78)
+        # import logging
 
-        # Testar Check Status
-        # cutoutjob.cjb_status = 'rn'
-        # cutoutjob.save()
-        # check_jobs_running()
+        # log = logging.getLogger('import_target_csv')
 
-        # from product.garbagecolector import GarbageColectorProduct
-        #
-        # GarbageColectorProduct().purge_products_expiration_time()
+        # log.info("------------------ TESTE ----------------")
+
+        # from product.importproduct import ImportTargetListCSV
+        # it = ImportTargetListCSV()
+        # upload_data = {'mime': 'csv', 'type': 'catalog', 'class': 'objects', 'name': 'testeupload', 'displayName': 'testeupload', 'releases': ['y6a1_coadd'], 'isPublic': False, 'description': '', 'csvData': '31.12232, -6.20153\n29.92641, -5.96732\n40.09991 , -8.43430\n-179.4548 , -9.43430'}
+        # upload_data_header = {'mime': 'csv', 'type': 'catalog', 'class': 'objects', 'name': 'testeupload', 'displayName': 'testeupload', 'releases': ['y6a1_coadd'], 'isPublic': False, 'description': '', 'csvData': 'ra, dec, name\n31.12232, -6.20153, galaxy1\n29.92641, -5.96732, galaxy2\n40.09991 , -8.43430, galaxy3'}
+        # it.start_import(request.user.id, upload_data)
 
         # Exemplo de teste para desenvolvimento do User Query
         # from userquery.create_table_as import CreateTableAs
