@@ -33,17 +33,17 @@
   <link rel='stylesheet' href="%PUBLIC_URL%/visiomatic/Leaflet/dist/leaflet.css" />
   <link rel='stylesheet' href="%PUBLIC_URL%/visiomatic/visiomatic/dist/visiomatic.css" />
 
-  <!-- Google Analitics -->
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-85679627-1"></script>
   <script>
-    //Evita usar o Google Analytics em desenvolvimento
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-    ga('create', 'UA-85679627-1', 'auto');
-    ga('send', 'pageview');
+    gtag('config', 'UA-85679627-1');
   </script>
+  </script>
+
 
   <title>Tile Inspection</title>
   <!-- <script src="%PUBLIC_URL%/env-config.js"></script> -->

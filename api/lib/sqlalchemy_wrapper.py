@@ -18,8 +18,9 @@ from lib.db_oracle import DBOracle
 from lib.db_sqlite import DBSqlite
 from lib.db_postgresql import DBPostgresql
 
+
 class DBBase:
-    # Django database engines 
+    # Django database engines
     available_engines = list(['sqlite3', 'oracle', 'postgresql_psycopg2'])
 
     def __init__(self, database, credentials=None):
@@ -62,6 +63,8 @@ class DBBase:
             connection_data['USER'] = db_settings_django['USER']
             connection_data['PASSWORD'] = db_settings_django['PASSWORD']
 
+            self.schema = None
+
         elif connection_data['ENGINE'] == 'postgresql_psycopg2':
             connection_data['USER'] = db_settings_django['USER']
             connection_data['PASSWORD'] = db_settings_django['PASSWORD']
@@ -69,7 +72,7 @@ class DBBase:
             connection_data['PORT'] = db_settings_django['PORT']
             connection_data['DATABASE'] = db_settings_django['NAME']
 
-            # Para o caso do banco de dados estar configurado para um SCHEMA especifico. 
+            # Para o caso do banco de dados estar configurado para um SCHEMA especifico.
             try:
                 # Considerando que o valor de Options é  este
                 # 'OPTIONS': {'options': '-c search_path=dri_catalog,public'}
@@ -82,7 +85,6 @@ class DBBase:
                     self.schema = schema
             except:
                 self.schema = None
-
 
         else:
             raise Exception('Unknown database')
@@ -113,7 +115,6 @@ class DBBase:
 
     def get_connection_schema(self):
         return self.schema
-
 
     def get_table_columns(self, table, schema=None):
         # Desabilitar os warnings na criacao da tabela
@@ -202,7 +203,7 @@ class DBBase:
             return queryset.fetchone()[0]
         except:
             return 0
-    
+
     def get_estimated_rows_count(self, table, schema=None):
         """
             Retorna a quantidade de rows estimada para a tabela. 
@@ -216,7 +217,6 @@ class DBBase:
             return queryset.fetchone()[0]
         except:
             return 0
-
 
     def table_exists(self, table, schema=None):
         table = self.database.get_table_name(table)
@@ -293,7 +293,7 @@ class DBBase:
                 # between
                 op = None
                 value = value.split(",")
-                clause = between(column,float(value[0]), float(value[1]))
+                clause = between(column, float(value[0]), float(value[1]))
             else:
                 op = '__%s__' % op
 
@@ -383,19 +383,42 @@ class DBBase:
                 trans = con.begin()
                 con.execute(drop_stm)
                 trans.commit()
-            
+
                 if not self.table_exists(table, schema):
                     return True
                 else:
                     trans.rollback()
-                    raise Exception ("Failed to drop the table. Tablename: [%s] Schema: [%s]" % (table, schema))
+                    raise Exception("Failed to drop the table. Tablename: [%s] Schema: [%s]" % (table, schema))
             except Exception as e:
                 trans.rollback()
                 raise e
 
-            
+    def drop_sequence(self, table, schema=None):
+        """
+        Use this method to Drop a table in the database.
+        """
+        table_name = table
+        if schema is not None and schema is not "":
+            table_name = "%s.%s" % (schema, table)
+
+        sequence_name = "%s_seq" % table_name
+
+        with self.engine.connect() as con:
+            try:
+
+                drop_stm = "DROP SEQUENCE %s" % sequence_name
+
+                trans = con.begin()
+                con.execute(drop_stm)
+                trans.commit()
+
+                return True
+            except Exception as e:
+                trans.rollback()
+                raise Exception("Failed to drop sequence Tablename: [%s] Schema: [%s] Sequence: [%s] Error: [%s]" % (table, schema, sequence_name, e))
 
     # ------------------------ Filtro Por Posicao ----------------------------------
+
     def filter_by_coordinate_square(self, property_ra, property_dec, lowerleft, upperright):
         """
         Cria uma clausula Where para fazer uma query por posicao usando um quadrado.
