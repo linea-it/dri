@@ -343,4 +343,30 @@ def teste(request):
         # upload_data_header = {'mime': 'csv', 'type': 'catalog', 'class': 'objects', 'name': 'testeupload', 'displayName': 'testeupload', 'releases': ['y6a1_coadd'], 'isPublic': False, 'description': '', 'csvData': 'ra, dec, name\n31.12232, -6.20153, galaxy1\n29.92641, -5.96732, galaxy2\n40.09991 , -8.43430, galaxy3'}
         # it.start_import(request.user.id, upload_data)
 
+        # Exemplo de teste para desenvolvimento do User Query
+        # from userquery.create_table_as import CreateTableAs
+        # from userquery.models import Job, Table
+        # job = Job.objects.get(pk=4)
+        # job.job_status = 'st'
+        # job.save()
+
+        # try:
+        #     t = Table.objects.get(table_name='teste_uq')
+        #     t.delete()
+        # except Exception as e:
+        #     pass
+
+        # ct = CreateTableAs(
+        #     job_id=job.id,
+        #     user_id=job.owner.id,
+        #     table_name='teste_uq',
+        #     table_display_name='Teste User Query',
+        #     release_id=24,
+        #     release_name='y6a1_coadd',
+        #     associate_target_viewer=True,
+        #     task_id='101010',
+        #     schema=None
+        # )
+        # ct.do_all()
+
         return Response(dict({'status': "success"}))
