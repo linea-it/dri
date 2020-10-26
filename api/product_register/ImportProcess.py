@@ -27,6 +27,7 @@ from product_register.models import ProcessRelease
 from .models import Authorization, Export, ExternalProcess, Site
 import traceback
 
+
 class Import():
     db = None
 
@@ -79,7 +80,6 @@ class Import():
                 self.process = None
 
                 self.import_products(self.data.get('products'))
-
 
                 self.logger.info("Import process Finished")
                 self.logger.info("--------------------------------------------")
@@ -260,7 +260,7 @@ class Import():
             msg = "Table or view  %s.%s does not exist" % (data.get('schema', None), data.get('table'))
             self.logger.error(msg)
             raise Exception(msg)
-       
+
         self.logger.info("Database: [%s]" % database)
 
         # Recuperar a classe do produto
@@ -286,7 +286,7 @@ class Import():
             self.logger.debug("Table Size: %s" % tbl_size)
         else:
             self.logger.info("Calculating table metadata")
-            
+
             # Recuperar a quantidade de linhas da tabela
             tbl_rows = self.db.get_estimated_rows_count(data.get('table'), schema=data.get('schema', None))
             # A o count estimado for 0, faz o count convencional.
@@ -294,7 +294,7 @@ class Import():
                 self.logger.info("It was not possible to use the line estimate.")
                 self.logger.info("Number of table rows using count.")
                 tbl_rows = self.db.get_count(data.get('table'), schema=data.get('schema', None))
-                self.logger.debug("Table Rows: %s" % tbl_rows)                
+                self.logger.debug("Table Rows: %s" % tbl_rows)
             else:
                 self.logger.debug("Table Estimated Rows: %s" % tbl_rows)
 
@@ -388,7 +388,6 @@ class Import():
 
                 # guarda a classe do produto e a instancia de ProductModel
                 self._products_classes[product.prd_class.pcl_name] = product
-
 
                 self.logger.info("Product [%s] successfully registered" % product.prd_display_name)
                 return True

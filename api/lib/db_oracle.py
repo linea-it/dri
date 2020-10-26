@@ -1,22 +1,23 @@
 from sqlalchemy.dialects import oracle
 
+
 class DBOracle:
     def __init__(self, db):
         self.db = db
 
     def get_string_connection(self):
         url = (
-                  "oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
-                  "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
-                  "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
-                  "SERVICE_NAME=%(database)s)))"
-              ) % {
-                  'username': self.db['USER'], 
-                  'password': self.db['PASSWORD'],
-                  'host': self.db['HOST'], 
-                  'port': self.db['PORT'],
-                  'database': self.db['DATABASE']
-              }
+            "oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
+            "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
+            "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
+            "SERVICE_NAME=%(database)s)))"
+        ) % {
+            'username': self.db['USER'],
+            'password': self.db['PASSWORD'],
+            'host': self.db['HOST'],
+            'port': self.db['PORT'],
+            'database': self.db['DATABASE']
+        }
         return url
 
     def get_engine(self):
@@ -58,10 +59,16 @@ class DBOracle:
             table_name = "%s.%s" % (schema, table)
 
         sql = list()
+        # Adiciona uma nova coluna vazia a tabela.
         sql.append("alter table %(table)s add %(column_name)s number" % {"table": table_name, "column_name": column_name})
-        sql.append("create sequence seq_id" % {"table": table_name, "column_name": column_name})
-        sql.append("update %(table)s set %(column_name)s = seq_id.nextval" % {"table": table_name, "column_name": column_name})
-        sql.append("drop sequence seq_id" % {"table": table_name, "column_name": column_name})
+        # Cria uma sequencia (Autoincrement em outros bancos).
+        sql.append("create sequence %(table)s_seq" % {"table": table_name})
+        # Atualiza todas as linhas da tabela na coluna criada com o valor do autoincrement.
+        sql.append("update %(table)s set %(column_name)s = %(table)s_seq.nextval" % {"table": table_name, "column_name": column_name})
+        # Drop Sequence que foi criada anteriormente.
+        sql.append("drop sequence %(table)s_seq" % {"table": table_name})
+        # Altera a coluna criada e transforma ela em Primary Key
+        sql.append("alter table %(table)s add CONSTRAINT %(table)s_pk PRIMARY KEY ( %(column_name)s )" % {"table": table_name, "column_name": column_name})
 
         return sql
 
@@ -70,4 +77,3 @@ class DBOracle:
 
     def get_schema_name(self, schema):
         return schema.upper()
-

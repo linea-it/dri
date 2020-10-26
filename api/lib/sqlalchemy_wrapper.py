@@ -1,22 +1,24 @@
-import warnings
 import collections
+import logging
+import threading
+import warnings
 
 from django.conf import settings
-from sqlalchemy import create_engine, inspect, MetaData, func, Table, Column, Integer, String, Float, Boolean
+from sqlalchemy import (Boolean, Column, Float, Integer, MetaData, String,
+                        Table, create_engine)
 from sqlalchemy import exc as sa_exc
-from sqlalchemy.dialects import oracle
-from sqlalchemy.dialects import sqlite
+from sqlalchemy import func, inspect
+from sqlalchemy.dialects import oracle, sqlite
 from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.sql import select, and_, text
-from sqlalchemy.sql.expression import Executable, ClauseElement
-from sqlalchemy.sql.expression import literal_column, between
 from sqlalchemy.schema import Sequence
-
-import threading
+from sqlalchemy.sql import and_, select, text
+from sqlalchemy.sql.expression import (ClauseElement, Executable, between,
+                                       literal_column)
 
 from lib.db_oracle import DBOracle
-from lib.db_sqlite import DBSqlite
 from lib.db_postgresql import DBPostgresql
+from lib.db_sqlite import DBSqlite
+
 
 
 class DBBase:
@@ -24,6 +26,8 @@ class DBBase:
     available_engines = list(['sqlite3', 'oracle', 'postgresql_psycopg2'])
 
     def __init__(self, database, credentials=None):
+
+        self.schema = None
 
         self.connection_data = self.prepare_connection(database)
 
@@ -40,6 +44,8 @@ class DBBase:
 
         with self.engine.connect():
             self.metadata = MetaData(self.engine)
+
+        self.log = logging.getLogger('django')
 
     def prepare_connection(self, db_name):
         connection_data = {}
@@ -104,6 +110,9 @@ class DBBase:
         if db_settings['ENGINE'] == 'postgresql_psycopg2':
             return DBPostgresql(db_settings)
 
+    def setLogger(self, logger):
+        self.log = logger
+
     def get_string_connection(self):
         return self.database.get_string_connection()
 
@@ -153,15 +162,6 @@ class DBBase:
         # properties['table_num_columns'] = queryset.fetchone()[0]
 
         return properties
-
-    def create_auto_increment_column(self, table, column_name, schema=None):
-        # only create the column if it does not exists.
-        if column_name in self.get_table_columns(table, schema=schema):
-            return
-        sql = self.database.get_create_auto_increment_column(table, column_name, schema=schema)
-        with self.engine.connect() as con:
-            for _sql in sql:
-                con.execute(_sql)
 
     def get_count(self, table, schema=None):
         with self.engine.connect() as con:
@@ -312,6 +312,9 @@ class DBBase:
                 t_columns.append(self.get_column_obj(table, col))
         return t_columns
 
+    def statement_to_str(self, stm):
+        return str(stm.compile(dialect=self.dialect.dialect(), compile_kwargs={"literal_binds": True})).replace("\n", " ")
+
     # --------------------- Create Table As ------------------------- #
     class CreateTableAs(Executable, ClauseElement):
         def __init__(self, name, query, dialect):
@@ -337,7 +340,7 @@ class DBBase:
 
         with self.engine.connect() as con:
             create_stm = self.CreateTableAs(tablename, stm, self.dialect)
-            print(create_stm)
+            self.log.debug(create_stm)
             return con.execute(create_stm)
 
     def create_table_raw_sql(self, table, sql, schema=None, timeout=None):
@@ -348,20 +351,73 @@ class DBBase:
 
         sql_create_table = text('CREATE TABLE %s AS %s' % (table_name, sql))
 
-        con = self.engine.connect()
-        trans = con.begin()
-        t = threading.Timer(timeout, con.close)
-        if timeout:
-            t.start()
-        try:
-            con.execute(sql_create_table)
-            trans.commit()
-        except Exception as e:
-            trans.rollback()
-            raise Exception("Timeout for query execution - %s" % str(e))
-        t.cancel()
+        self.log.debug("Create Table SQL: [ %s ]" % self.statement_to_str(sql_create_table))
+
+        # con = self.engine.connect()
+        # trans = con.begin()
+        # t = threading.Timer(timeout, con.close)
+        # if timeout:
+        #     t.start()
+        # try:
+        #     con.execute(sql_create_table)
+        #     trans.commit()
+        # except Exception as e:
+        #     trans.rollback()
+        #     raise Exception("Timeout for query execution - %s" % str(e))
+        # t.cancel()
+
+        with self.engine.connect() as con:
+            trans = con.begin()
+
+            if timeout:
+                t = threading.Timer(timeout, self.create_table_timeout)
+                t.start()
+
+            try:
+                con.execute(sql_create_table)
+                trans.commit()
+                self.log.info("Table Created successfully: Table: [%s] Schema: [%s]" % (table, schema))
+
+            except Exception as e:
+                trans.rollback()
+                self.log.error("Table creation failed: Table: [%s] Schema: [%s] Error: [%s]" % (table, schema, e))
+
+                raise Exception("Table creation failed - %s" % str(e))
+
+            if timeout:
+                t.cancel()
+
+    def create_table_timeout(self, con):
+        con.close()
+        self.log.error("Table creation failed, Timeout for query execution.")
+        raise Exception("Timeout for query execution.")
+
+    def create_auto_increment_column(self, table, column_name, schema=None):
+        self.log.info("Creating primary key. Table: [%s] Schema: [%s] Column: [%s]" % (table, schema, column_name))
+        # only create the column if it does not exists.
+        if column_name in self.get_table_columns(table, schema=schema):
+            return
+
+        sql = self.database.get_create_auto_increment_column(table, column_name, schema=schema)
+        with self.engine.connect() as con:
+            trans = con.begin()
+
+            try:
+                # Dependendo do banco de dados pode ser um array de instruções.
+                # TODO: deveria checar se a variavel é um array ou string.
+                for _sql in sql:
+                    self.log.debug("SQL: [%s]" % (_sql.replace("\n", " ")))
+
+                    con.execute(_sql)
+
+            except Exception as e:
+                trans.rollback()
+                self.log.error("Primary Key creation failed. Table: [%s] Schema: [%s] Column: [%s] Error: [%s]" % (table, schema, column_name, e))
+
+                raise Exception("Primary Key creation failed - %s" % str(e))
 
     # ----------------------------- Drop Table ----------------------
+
     class DropTable(Executable, ClauseElement):
         def __init__(self, table, schema=None):
             self.schema = schema
