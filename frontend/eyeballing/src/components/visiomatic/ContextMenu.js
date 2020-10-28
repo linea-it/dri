@@ -11,7 +11,9 @@ import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
 import DriApi from '../../api/Api';
+import AlertDialog from '../comment/AlertDialog';
 
 const useStyles = makeStyles(theme => ({
   closeButton: {
@@ -36,6 +38,7 @@ const useStyles = makeStyles(theme => ({
 
 function ContextMenu({
   open,
+  updateOpen,
   event,
   handleClose,
   currentDataset,
@@ -48,6 +51,7 @@ function ContextMenu({
   const [features, setFeatures] = useState([]);
   const [selectedFeature, setSelectedFeature] = useState('');
   const [otherReason, setOtherReason] = useState('');
+  const [alertDeleteOpen, setAlertDeleteOpen] = useState(false);
 
   useEffect(() => {
     api.getFeatures().then(rows => setFeatures(rows));
@@ -57,19 +61,56 @@ function ContextMenu({
 
   const handleOtherReason = e => setOtherReason(e.target.value);
 
+  useEffect(() => {
+    if (updateOpen === true && open === false) {
+      let feature = features.filter(row => row.ftr_name === event.comment.split(' at')[0])[0];
+      if (!feature) {
+        feature = features.filter(row => row.ftr_name === 'Other')[0];
+        setOtherReason(event.comment);
+      }
+      setSelectedFeature(String(feature.id));
+    } else {
+      setSelectedFeature('');
+    }
+  }, [features, updateOpen, open, event]);
+
+
+  const handleContextMenuClose = () => {
+    setSelectedFeature('');
+    setOtherReason('');
+    handleClose();
+  };
+
   const handleSave = () => {
     const currentFeatureName = features.filter(feature => feature.id === Number(selectedFeature))[0].ftr_name;
-    if (currentFeatureName === 'Other') {
-      api.createDatasetComment(currentDataset, `${otherReason} at ${latLngToHMSDMS(event.latlng)}`, 2, event.latlng.lng, event.latlng.lat)
+
+    if (updateOpen === false) {
+      if (currentFeatureName === 'Other') {
+        api.createDatasetComment(currentDataset, `${otherReason} at ${latLngToHMSDMS(event.latlng)}`, 2, event.latlng.lng, event.latlng.lat)
+          .then(() => {
+            handleContextMenuClose();
+            getDatasetCommentsByType();
+          })
+          .catch(err => console.error(err));
+      } else {
+        api.createDatasetComment(currentDataset, `${currentFeatureName} at ${latLngToHMSDMS(event.latlng)}`, 2, event.latlng.lng, event.latlng.lat)
+          .then(() => {
+            handleContextMenuClose();
+            getDatasetCommentsByType();
+          })
+          .catch(err => console.error(err));
+      }
+    } else if (currentFeatureName === 'Other') {
+      api.updateComment(event.id, otherReason)
         .then(() => {
-          handleClose();
+          handleContextMenuClose();
           getDatasetCommentsByType();
         })
         .catch(err => console.error(err));
     } else {
-      api.createDatasetComment(currentDataset, `${currentFeatureName} at ${latLngToHMSDMS(event.latlng)}`, 2, event.latlng.lng, event.latlng.lat)
+      api.updateComment(event.id, `${currentFeatureName} at ${latLngToHMSDMS(event.latlng)}`)
         .then(() => {
-          handleClose();
+          handleContextMenuClose();
           getDatasetCommentsByType();
         })
         .catch(err => console.error(err));
@@ -77,47 +118,89 @@ function ContextMenu({
     reloadData();
   };
 
+  const handleDelete = () => {
+    api.deleteComment(event.id)
+      .then(() => {
+        setAlertDeleteOpen(false);
+        handleContextMenuClose();
+        getDatasetCommentsByType();
+      })
+      .catch(err => console.error(err));
+    reloadData();
+  };
+
   return (
-    <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth className={classes.root}>
-      <DialogContent dividers>
-        <DialogTitle className={classes.dialogTitle}>Features</DialogTitle>
-        <IconButton aria-label="Close" className={classes.closeButton} onClick={handleClose}>
-          <CloseIcon className={classes.closeIcon} />
-        </IconButton>
-      </DialogContent>
-      <DialogContent>
-        <RadioGroup value={selectedFeature} onChange={handleChange}>
-          {features.map(feature => (
-            <FormControlLabel
-              key={feature.id}
-              value={String(feature.id)}
-              control={<Radio />}
-              label={feature.ftr_name}
-            />
-          ))}
-          {selectedFeature === '10' ? (
-            <TextField
-              multiline
-              rows="3"
-              value={otherReason}
-              onChange={handleOtherReason}
-              variant="outlined"
-            />
-          ) : null}
-        </RadioGroup>
-      </DialogContent>
-      <DialogContent>
-        <Button
-          variant="contained"
-          color="primary"
-          fullWidth
-          className={classes.button}
-          onClick={handleSave}
-        >
-          Save
-        </Button>
-      </DialogContent>
-    </Dialog>
+    <>
+      <Dialog onClose={handleClose} open={open || updateOpen} maxWidth="sm" fullWidth className={classes.root}>
+        <DialogContent dividers>
+          <DialogTitle className={classes.dialogTitle}>Features</DialogTitle>
+          <IconButton aria-label="Close" className={classes.closeButton} onClick={handleClose}>
+            <CloseIcon className={classes.closeIcon} />
+          </IconButton>
+        </DialogContent>
+        <DialogContent>
+          <RadioGroup value={selectedFeature} onChange={handleChange}>
+            {features.map(feature => (
+              <FormControlLabel
+                key={feature.id}
+                value={String(feature.id)}
+                control={<Radio />}
+                label={feature.ftr_name}
+              />
+            ))}
+            {selectedFeature === '10' ? (
+              <TextField
+                multiline
+                rows="3"
+                value={otherReason}
+                onChange={handleOtherReason}
+                variant="outlined"
+              />
+            ) : null}
+          </RadioGroup>
+        </DialogContent>
+        <DialogContent>
+          <Grid container spacing={2}>
+            <Grid item xs={12} sm={updateOpen ? 6 : 12}>
+              <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                className={classes.button}
+                onClick={updateOpen && event && event.is_owner !== true ? null : handleSave}
+                disabled={updateOpen && event && event.is_owner !== true}
+              >
+                {updateOpen ? 'Update' : 'Save'}
+              </Button>
+
+            </Grid>
+            {updateOpen ? (
+              <Grid item xs={12} sm={updateOpen ? 6 : 12}>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  fullWidth
+                  className={classes.button}
+                  onClick={event && event.is_owner ? () => setAlertDeleteOpen(true) : null}
+                  disabled={event && event.is_owner !== true}
+                >
+                  Delete
+                </Button>
+              </Grid>
+            ) : null}
+          </Grid>
+        </DialogContent>
+      </Dialog>
+      {updateOpen ? (
+        <AlertDialog
+          open={alertDeleteOpen}
+          title="Are you sure?"
+          content="This comment will be deleted."
+          handleCancel={() => setAlertDeleteOpen(false)}
+          handleOk={() => handleDelete()}
+        />
+      ) : null}
+    </>
   );
 }
 

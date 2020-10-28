@@ -39,7 +39,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     onLoadPanel: function (dataset) {
         var me = this;
-        
+
         me.loadData(dataset);
     },
 
@@ -77,7 +77,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
             vm = me.getViewModel(),
             current = vm.get('currentDataset'),
             release = current.get('release');
-        
+
         view.setLoading(false);
         vm.set('release', release);
 
@@ -117,9 +117,13 @@ Ext.define('Sky.view.dataset.DatasetController', {
         visiomatic.setView(radec.ra, radec.dec, fov);
 
         //PIN (Marcador estilo google)
-        if (view.getPinned()){
-            me.lMarker = visiomatic.markPosition(radec.ra, radec.dec, 'x-fa fa-map-marker fa-2x');
-        }
+        // if (view.getPinned()){
+        //     me.lMarker = visiomatic.markPosition(radec.ra, radec.dec, 'x-fa fa-map-marker fa-2x');
+        // }
+
+        // TODO: Teste de Xray Contours deve ir para a componente interface
+        console.log("TESTE")
+        visiomatic.drawXrayContours(0, 0, {})
     },
 
     onChangePosition: function (radec, fov) {

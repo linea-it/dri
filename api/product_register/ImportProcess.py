@@ -25,6 +25,7 @@ from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ProcessRelease
 
 from .models import Authorization, Export, ExternalProcess, Site
+import traceback
 
 
 class Import():
@@ -45,12 +46,17 @@ class Import():
 
     def start_import(self, request):
 
+        self.logger.info("Import process started")
+
         self.user = request.user
         self.data = request.data
         self.site = self.get_site(self.user)
         self.context = {
             'request': request
         }
+
+        self.logger.debug("Payload:")
+        self.logger.debug(self.data)
 
         # Ticket server para identificar o owner do processo quando
         # o processo esta sendo importado por outro sistema, nesse caso o user logado
@@ -75,13 +81,15 @@ class Import():
 
                 self.import_products(self.data.get('products'))
 
+                self.logger.info("Import process Finished")
+                self.logger.info("--------------------------------------------")
                 return Response(
                     status=status.HTTP_201_CREATED
                 )
 
             else:
                 return Response(
-                    data={"It is still not possible to import a product without being associated with a process."},
+                    data={"It is still not possible to import a process without being associated with a product."},
                     status=status.HTTP_501_NOT_IMPLEMENTED
                 )
 
@@ -105,6 +113,9 @@ class Import():
 
     # =============================< PROCESS >=============================
     def import_process(self, data):
+        self.logger.info("Starting process registration")
+
+        self.logger.debug("Process Data: %s" % str(data))
 
         process, created = ExternalProcess.objects.update_or_create(
             epr_site=self.site,
@@ -122,6 +133,8 @@ class Import():
 
         if process:
             self.process = process
+
+            self.logger.info("Process [%s] Registered with ID [%s]" % (process.epr_original_id, process.id))
 
             add_release = True
             # Associar um Release ao Processo
@@ -148,9 +161,9 @@ class Import():
             )
 
         else:
-            raise Exception(
-                "A failure has occurred and it was not possible to register the process '%s'." % (
-                    data.get('process_name')))
+            msg = "A failure has occurred and it was not possible to register the process '%s'." % (data.get('process_name'))
+            self.logger.error(msg)
+            raise Exception(msg)
 
     def process_release(self, process, releases):
         for r in releases:
@@ -167,7 +180,9 @@ class Import():
                 pr.save()
 
             except Release.DoesNotExist:
-                raise Exception("this Release '%s' is not valid." % rls_name)
+                msg = "this Release '%s' is not valid." % rls_name
+                self.logger.error(msg)
+                raise Exception(msg)
 
     def process_tags(self, process, tags, add_release=True):
         for t in tags:
@@ -181,7 +196,9 @@ class Import():
                     self.process_release(process, [rls_name])
 
             except Tag.DoesNotExist:
-                raise Exception("this Tag '%s' is not valid." % tag_name)
+                msg = "this Tag '%s' is not valid." % tag_name
+                self.logger.error(msg)
+                raise Exception(msg)
 
     def process_export(self, process, data):
 
@@ -208,7 +225,9 @@ class Import():
                 self.register_mask(product)
 
             else:
-                raise Exception("Product Type '%s' not implemented yet." % product.get('type'))
+                msg = "Product Type '%s' not implemented yet." % product.get('type')
+                self.logger.error(msg)
+                raise Exception(msg)
 
         # Verificar a classe dos produtos se for galaxy cluster ou cluster members deve ser feita a ligacao entre as 2
         if ('galaxy_clusters' in self._products_classes) and ('cluster_members' in self._products_classes):
@@ -229,6 +248,7 @@ class Import():
         Returns:
 
         """
+        self.logger.info("Starting product registration")
         # Instancia do banco de catalogo
         # Recupera a instancia de banco de dados enviada pela requisicao ou utiliza o catalog como default
         database = data.get('database', 'catalog')
@@ -237,25 +257,54 @@ class Import():
             self.db = CatalogDB(db=database)
 
         if not self.db.table_exists(data.get('table'), schema=data.get('schema', None)):
-            raise Exception("Table or view  %s.%s does not exist" %
-                            (data.get('schema', None), data.get('table')))
+            msg = "Table or view  %s.%s does not exist" % (data.get('schema', None), data.get('table'))
+            self.logger.error(msg)
+            raise Exception(msg)
 
-        # Recuperar a quantidade de linhas da tabela
-        count = 0
-        if data.get('class') is not 'coadd_objects':
-            count = self.db.get_count(data.get('table'), schema=data.get('schema', None))
+        self.logger.info("Database: [%s]" % database)
 
         # Recuperar a classe do produto
         cls = self.get_product_class(data.get('class'))
+
+        self.logger.debug("Product Class: [%s]" % cls.pcl_name)
 
         tbl_info = data.get('ora_table_info', None)
         tbl_rows = None
         tbl_num_columns = None
         tbl_size = None
+
         if tbl_info:
+            self.logger.info("Using table metadata from Json")
+
             tbl_rows = tbl_info.get('n_imported_rows', None)
+            self.logger.debug("Table Rows: %s" % tbl_rows)
+
             tbl_num_columns = tbl_info.get('n_imported_columns', None)
+            self.logger.debug("Table Columns: %s" % tbl_num_columns)
+
             tbl_size = tbl_info.get('table_size_in_bytes', None)
+            self.logger.debug("Table Size: %s" % tbl_size)
+        else:
+            self.logger.info("Calculating table metadata")
+
+            # Recuperar a quantidade de linhas da tabela
+            tbl_rows = self.db.get_estimated_rows_count(data.get('table'), schema=data.get('schema', None))
+            # A o count estimado for 0, faz o count convencional.
+            if tbl_rows == 0:
+                self.logger.info("It was not possible to use the line estimate.")
+                self.logger.info("Number of table rows using count.")
+                tbl_rows = self.db.get_count(data.get('table'), schema=data.get('schema', None))
+                self.logger.debug("Table Rows: %s" % tbl_rows)
+            else:
+                self.logger.debug("Table Estimated Rows: %s" % tbl_rows)
+
+            # Recuperar a quantidade de colunas da tabela
+            tbl_num_columns = self.db.get_table_columns_count(data.get('table'), schema=data.get('schema', None))
+            self.logger.debug("Table Columns: %s" % tbl_num_columns)
+
+            # Tamanho da tabela em bytes
+            tbl_size = self.db.get_table_size_bytes(data.get('table'), schema=data.get('schema', None))
+            self.logger.debug("Table Size: %s" % tbl_size)
 
         # Data do produto caso o produto tenha processo a data do produto = data de start do processo
         date = None
@@ -264,9 +313,13 @@ class Import():
         else:
             date = datetime.now()
 
+        self.logger.debug("Date: %s" % date)
+
         # Verificar se o process id do produto e igual ao proccess id do external_proccess
         # TODO esta etapa deve ser substituida com a implementacao de import inputs ou provenance
         if self.process is not None and self.process.epr_original_id != str(data.get("process_id")):
+            self.logger.info("Product associated with Process")
+
             # Se for diferente cria um novo external proccess para ser associado ao producto.
             product_process, created = ExternalProcess.objects.update_or_create(
                 epr_site=self.site,
@@ -291,50 +344,64 @@ class Import():
 
         else:
             product_process = self.process
+            self.logger.info("Product is not associated with any process")
 
-        product, created = Catalog.objects.update_or_create(
-            prd_owner=self.owner,
-            prd_name=data.get('name').replace(' ', '_').lower(),
-            tbl_database=data.get('database', None),
-            tbl_schema=data.get('schema', None),
-            tbl_name=data.get('table'),
-            defaults={
-                "prd_process_id": product_process,
-                "prd_class": cls,
-                "prd_display_name": data.get('display_name'),
-                "prd_product_id": data.get('product_id', None),
-                "prd_version": data.get('version', None),
-                "prd_description": data.get('description', None),
-                "prd_date": date,
-                "prd_is_public": data.get('is_public', False),
-                "tbl_rows": tbl_rows,
-                "tbl_num_columns": tbl_num_columns,
-                "tbl_size": tbl_size,
-                "ctl_num_objects": count,
-            }
-        )
+        try:
 
-        if product:
-            add_release = True
+            product, created = Catalog.objects.update_or_create(
+                prd_owner=self.owner,
+                prd_name=data.get('name').replace(' ', '_').lower(),
+                tbl_database=data.get('database', None),
+                tbl_schema=data.get('schema', None),
+                tbl_name=data.get('table'),
+                defaults={
+                    "prd_process_id": product_process,
+                    "prd_class": cls,
+                    "prd_display_name": data.get('display_name'),
+                    "prd_product_id": data.get('product_id', None),
+                    "prd_version": data.get('version', None),
+                    "prd_description": data.get('description', None),
+                    "prd_date": date,
+                    "prd_is_public": data.get('is_public', False),
+                    "tbl_rows": int(tbl_rows),
+                    "tbl_num_columns": int(tbl_num_columns),
+                    "tbl_size": int(tbl_size),
+                    "ctl_num_objects": int(tbl_rows),
+                }
+            )
 
-            if 'releases' in data and len(data.get('releases')) > 0:
-                self.product_release(product, data.get('releases'))
-                add_release = False
+            if product:
+                self.logger.info("Product [%s] Registered with ID [%s]" % (product.prd_display_name, product.id))
 
-            # Registrar O produto a seus respectivos Tags
-            if 'fields' in data:
-                self.product_tag(product, data.get('fields'), add_release)
+                add_release = True
 
-            # Registar as colunas do catalogo
-            self.register_catalog_content(product, data, created)
+                if 'releases' in data and len(data.get('releases')) > 0:
+                    self.product_release(product, data.get('releases'))
+                    add_release = False
 
-            # guarda a classe do produto e a instancia de ProductModel
-            self._products_classes[product.prd_class.pcl_name] = product
+                # Registrar O produto a seus respectivos Tags
+                if 'fields' in data:
+                    self.product_tag(product, data.get('fields'), add_release)
 
-            return True
-        else:
-            raise Exception(
-                "A failure has occurred and it was not possible to register the product '%s'." % (data.get('name')))
+                # Registar as colunas do catalogo
+                self.register_catalog_content(product, data, created)
+
+                # guarda a classe do produto e a instancia de ProductModel
+                self._products_classes[product.prd_class.pcl_name] = product
+
+                self.logger.info("Product [%s] successfully registered" % product.prd_display_name)
+                return True
+            else:
+                msg = "A failure has occurred and it was not possible to register the product '%s'." % (data.get('name'))
+                self.logger.error(msg)
+                raise Exception(msg)
+
+        except Exception as e:
+            trace = traceback.format_exc()
+            self.logger.error(trace)
+            msg = "A failure has occurred and it was not possible to register the product '%s'. %s" % (data.get('name'), e)
+            self.logger.error(msg)
+            raise Exception(msg)
 
     def get_product_class(self, name):
         try:
@@ -439,7 +506,9 @@ class Import():
                     pc.save()
 
             except:
-                raise Exception("it was not possible to create association for this column: %s" % property)
+                msg = "it was not possible to create association for this column: %s" % property
+                self.logger.error(msg)
+                raise Exception(msg)
 
     def product_release(self, product, releases):
         for r in releases:
@@ -455,8 +524,12 @@ class Import():
 
                 pr.save()
 
+                self.logger.info("Product [%s] was associated with Release [%s]" % (product.prd_display_name, release.rls_display_name))
+
             except Release.DoesNotExist:
-                raise Exception("this Release '%s' is not valid." % rls_name)
+                msg = "this Release '%s' is not valid." % rls_name
+                self.logger.error(msg)
+                raise Exception(msg)
 
     def product_tag(self, product, tags, add_release):
 
@@ -478,8 +551,12 @@ class Import():
                     rls_name = tag.tag_release.rls_name
                     self.product_release(product, [rls_name])
 
+                self.logger.info("Product [%s] was associated with Tag [%s]" % (product.prd_display_name, tag.tag_display_name))
+
             except Tag.DoesNotExist:
-                raise Exception("this Tag '%s' is not valid." % tag_name)
+                msg = "this Tag '%s' is not valid." % tag_name
+                self.logger.error(msg)
+                raise Exception(msg)
 
     def link_galaxy_cluster_with_cluster_members(self):
         """
@@ -506,9 +583,9 @@ class Import():
             )
 
         except ProductContent.DoesNotExist:
-            raise Exception(
-                "this cluster members product %s does not have a property with ucd meta.id.cross to be associated with "
-                "the galaxy cluster product." % cm.prd_display_name)
+            msg = "this cluster members product %s does not have a property with ucd meta.id.cross to be associated with the galaxy cluster product." % cm.prd_display_name
+            self.logger.error(msg)
+            raise Exception(msg)
 
     def link_galaxy_cluster_with_vac_cluster(self):
         """

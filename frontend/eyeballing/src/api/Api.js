@@ -48,6 +48,11 @@ class DriApi {
   loggedUser = async () => {
     const res = await axios.get('/logged/get_logged/');
     const user = await res.data;
+
+    window.gtag('config', 'GA_MEASUREMENT_ID', {
+      'user_id': user.id,
+    });
+
     return user;
   };
 
@@ -152,6 +157,8 @@ class DriApi {
   getDatasetCommentsByType = (dts_dataset, type) => axios.get('/comment/dataset/', {
     params: { dts_dataset, dts_type: type },
   }).then(res => res.data);
+
+  getTutorial = () => axios.get('/tutorial/', { params: { app_name: 'tile_inspection' } }).then(res => res.data);
 }
 export default DriApi;
 

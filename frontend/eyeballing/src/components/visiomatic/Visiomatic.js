@@ -89,14 +89,15 @@ class VisiomaticPanel extends Component {
   get initialState() {
     return {
       contextMenuOpen: false,
+      contextMenuUpdateOpen: false,
       contextMenuEvt: null,
       points: [],
     };
   }
 
-  // onLayerAdd = () => {
-  //   this.setView();
-  // };
+  onLayerAdd = () => {
+    this.setView();
+  };
 
   onLayerRemove = () => {
     this.layer = null;
@@ -110,9 +111,22 @@ class VisiomaticPanel extends Component {
     });
   }
 
+  onContextMenuUpdateOpen = (feature, latlng) => {
+    const event = {
+      ...feature,
+      latlng,
+    };
+
+    this.setState({
+      contextMenuUpdateOpen: true,
+      contextMenuEvt: event,
+    });
+  }
+
   onContextMenuClose = () => {
     this.setState({
       contextMenuOpen: false,
+      contextMenuUpdateOpen: false,
       contextMenuEvt: null,
     });
   }
@@ -151,6 +165,7 @@ class VisiomaticPanel extends Component {
         type: 'Point',
         coordinates: [comment.dts_ra, comment.dts_dec],
       },
+      is_owner: comment.is_owner,
     }));
 
     const collection = {
@@ -185,7 +200,8 @@ class VisiomaticPanel extends Component {
       pointToLayer: (feature, latlng) => {
         l.marker(latlng, { icon: greenIcon })
           .bindPopup(popup(feature, latlng))
-          .addTo(map);
+          .addTo(map)
+          .on('contextmenu', () => this.onContextMenuUpdateOpen(feature, latlng));
       },
     });
 
@@ -218,7 +234,7 @@ class VisiomaticPanel extends Component {
     // Image Preference
     this.libL.control.iip.image().addTo(sidebar);
 
-    // map.on('layeradd', this.onLayerAdd, this);
+    map.on('layeradd', this.onLayerAdd, this);
     map.on('layerremove', this.onLayerRemove, this);
     map.on('contextmenu', this.onContextMenuOpen, this);
     map.on('overlaycatalog', this.overlayCatalog, this);
@@ -242,13 +258,16 @@ class VisiomaticPanel extends Component {
   }
 
   componentDidUpdate(prevProps) {
+    if (prevProps.image !== this.props.image) {
+      this.changeImage();
+    }
+
     if (prevProps.points !== this.props.points) {
       this.overlayCatalog();
-      if(prevProps.points.length > 0 && this.props.points.length > 0) {
+      if (prevProps.points.length > 0 && this.props.points.length > 0) {
         this.setView();
       }
     }
-    this.changeImage();
   }
 
 
@@ -302,7 +321,7 @@ class VisiomaticPanel extends Component {
 
       this.layer = this.libL.tileLayer
         .iip(url, {
-          credentials: process.env.VISIOMATIC_CREDENTIAL,
+          credentials: process.env.REACT_APP_VISIOMATIC_CREDENTIAL === 'true',
           center: false,
           fov: false,
           // center: latlng,
@@ -356,7 +375,7 @@ class VisiomaticPanel extends Component {
       m = 0;
     }
     const str = `${(h < 10 ? '0' : '') + h.toString()}:${m < 10 ? '0' : ''}${m.toString()
-    }:${sf < 10.0 ? '0' : ''}${sf.toFixed(3)}`;
+      }:${sf < 10.0 ? '0' : ''}${sf.toFixed(3)}`;
 
     const lat = Math.abs(latlng.lat);
 
@@ -389,11 +408,12 @@ class VisiomaticPanel extends Component {
           style={{
             width: '100%',
             height: 'calc(100vh - 150px)',
-          // height: '100%',
+            // height: '100%',
           }}
         />
         <ContextMenu
           open={this.state.contextMenuOpen}
+          updateOpen={this.state.contextMenuUpdateOpen}
           event={this.state.contextMenuEvt}
           handleClose={this.onContextMenuClose}
           currentDataset={this.props.currentDataset}

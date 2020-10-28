@@ -29,19 +29,12 @@
      *  An array of the paths to all the applications present in this workspace
      */
     "apps": [
-        "tile",
-        "tiles",
         "sky",
         "eyeballing",
-        "catalogserver",
         "target",
         "products",
         "explorer",
         "userquery",
-        "d3teste",
-        "catalog_builder",
-        "DynamicForm",
-        "catalog_builder2"
     ],
 
     /**

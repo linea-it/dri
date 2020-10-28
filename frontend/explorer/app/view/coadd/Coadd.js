@@ -10,7 +10,8 @@ Ext.define('Explorer.view.coadd.Coadd', {
         'Explorer.view.coadd.Properties',
         'Explorer.view.coadd.Visiomatic',
         'Explorer.view.coadd.Aladin',
-        'Explorer.view.coadd.SpectralDistribution'
+        'Explorer.view.coadd.SpectralDistribution',
+        'Ext.window.MessageBox'
     ],
 
     controller: 'coadd',

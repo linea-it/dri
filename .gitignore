@@ -1,12 +1,18 @@
 # Arquivos Docker-compose
 docker-compose.yml
 
+# Arquivo de Configuração
+local_vars.py
+
 # Diretorios de instalacao
+/api/env
 /env
 /data
 /db
 /log/*.log
-/log/backend
+/log/backend/*
+/log/nginx/*
+/log/iipserver/*
 /bkp
 /archive
 /static
@@ -22,6 +28,8 @@ api/celerybeat-schedule
 
 # Diretorio de projeto vscode
 /.vscode/
+api/.vscode/*
+
 
 # Others
 *.pyc
@@ -35,3 +43,8 @@ __pycache__
 /api/db
 *.coverage
 .env
+
+# Diretórios do Postgresql
+/pg_data
+/pg_backup
+

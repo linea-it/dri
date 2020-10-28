@@ -96,14 +96,14 @@ Ext.define('Sky.view.dataset.Dataset', {
                             },
                             menu: []
                         },
-                        {
-                            xtype: 'button',
-                            iconCls: 'x-fa fa-map-marker',
-                            tooltip: 'Show/Hide Pin',
-                            enableToggle: true,
-                            pressed: true,
-                            toggleHandler: 'showHideMarker'
-                        },
+                        // {
+                        //     xtype: 'button',
+                        //     iconCls: 'x-fa fa-map-marker',
+                        //     tooltip: 'Show/Hide Pin',
+                        //     enableToggle: true,
+                        //     pressed: true,
+                        //     toggleHandler: 'showHideMarker'
+                        // },
                         {
                             xtype: 'button',
                             iconCls: 'x-fa fa-arrows',
@@ -234,7 +234,7 @@ Ext.define('Sky.view.dataset.Dataset', {
                 fov = me.getDefaultMinFov();
             }
             me.setFov(fov);
-            me.setPinned(false);            
+            me.setPinned(false);
         }
 
         coordinate = radec.ra + ', ' + radec.dec;

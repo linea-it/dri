@@ -134,6 +134,7 @@ function Home() {
   const [totalCount, setTotalCount] = useState(0);
   const [commentsWithFeature, setCommentsWithFeature] = useState([]);
   const datasetLoading = useRef(false);
+  const [tutorial, setTutorial] = useState([]);
 
 
   const api = new DriApi();
@@ -152,6 +153,7 @@ function Home() {
       setReleases(res);
       setCurrentRelease(res.length > 0 ? res[0].id : '');
     });
+    api.getTutorial().then(res => setTutorial(res));
   }, []);
 
   const loadMoreDatasets = useCallback((e) => {
@@ -219,7 +221,11 @@ function Home() {
 
   const handleComment = (dataset) => {
     api.commentsByDataset(dataset.id).then((res) => {
-      setCurrentDataset(dataset);
+      // In case of the comment button being fired,
+      // verify if it isn't the button of the current dataset.
+      if (dataset.id !== currentDataset.id) {
+        setCurrentDataset(dataset);
+      }
       setComments(res);
       setShowComment(true);
     });
@@ -330,15 +336,18 @@ function Home() {
 
 
   const handleInputSearch = (value) => {
-    setInputSearchValue(value);
     setTotalCount(0);
-    loadData();
+    setInputSearchValue(value);
   };
 
   const handleDelete = commentId => api.deleteComment(commentId).then(() => {
     handleComment(currentDataset);
     loadData();
   });
+
+  useEffect(() => {
+    loadData();
+  }, [inputSearchValue]);
 
 
   const Row = (i) => {
@@ -406,6 +415,7 @@ function Home() {
         title="Tile Inspection"
         username={username}
         releases={releases}
+        tutorial={tutorial}
         currentRelease={currentRelease}
         onChangeRelease={onChangeRelease}
       />
@@ -463,11 +473,11 @@ function Home() {
                       }
                       item={Row}
                       endReached={e => loadMoreDatasets(e)}
-                      // footer={() => (
-                      //   <div style={{ padding: '2rem', textAlign: 'center' }}>
-                      //     Loading...
-                      //   </div>
-                      // )}
+                      footer={() => (
+                        <div style={{ padding: '1rem', textAlign: 'center' }}>
+                          Loading...
+                        </div>
+                      )}
                     />
                     <Divider />
                     {loading ? (

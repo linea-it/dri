@@ -308,10 +308,10 @@ Ext.define('Target.view.preview.PreviewController', {
 
         if (feature && feature.properties) {
             catalog_id = feature.properties._meta_catalog_id;
-            object_id  = feature.id;
-        }else {
+            object_id = feature.id;
+        } else {
             catalog_id = catalog.get('id');
-            object_id  = object.get('_meta_id');
+            object_id = object.get('_meta_id');
         }
 
         if (object_id > 0) {
@@ -321,10 +321,10 @@ Ext.define('Target.view.preview.PreviewController', {
                 iconCls: 'x-fa fa-comments',
                 layout: 'fit',
                 closeAction: 'destroy',
-                constrainHeader:true,
+                constrainHeader: true,
                 width: 500,
                 height: 300,
-                autoShow:true,
+                autoShow: true,
                 onEsc: Ext.emptyFn,
                 items: [
                     {
@@ -354,10 +354,10 @@ Ext.define('Target.view.preview.PreviewController', {
             iconCls: 'x-fa fa-comments',
             layout: 'fit',
             closeAction: 'destroy',
-            constrainHeader:true,
+            constrainHeader: true,
             width: 500,
             height: 300,
-            autoShow:true,
+            autoShow: true,
             onEsc: Ext.emptyFn,
             items: [
                 {
@@ -378,10 +378,10 @@ Ext.define('Target.view.preview.PreviewController', {
 
     onChangeComments: function (event) {
         var me = this,
-           view = me.getView(),
-           visiomatic = me.lookupReference('visiomatic'),
-           vm = me.getViewModel(),
-           lmembers = vm.get('overlayMembers');
+            view = me.getView(),
+            visiomatic = me.lookupReference('visiomatic'),
+            vm = me.getViewModel(),
+            lmembers = vm.get('overlayMembers');
 
         if (event && event.comment) {
             //TODO: atualizar o número de comentários em lmembers.feature.properties.
@@ -502,7 +502,7 @@ Ext.define('Target.view.preview.PreviewController', {
         var me = this,
             visiomatic = me.lookupReference('visiomatic');
 
-        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - crop');
+        Ext.GlobalEvents.fireEvent('eventregister', 'TargetViewer - crop');
         visiomatic.initCrop();
 
     },
@@ -535,13 +535,13 @@ Ext.define('Target.view.preview.PreviewController', {
         var me = this,
             visiomatic = me.lookupReference('visiomatic');
 
-        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - save_fits');
+        Ext.GlobalEvents.fireEvent('eventregister', 'TargetViewer - save_fits');
         visiomatic.showDownloadWindow();
 
     },
 
     onEvent: function () {
-        Ext.GlobalEvents.fireEvent('eventregister','teste');
+        Ext.GlobalEvents.fireEvent('eventregister', 'teste');
 
     }
 

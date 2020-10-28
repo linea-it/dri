@@ -39,6 +39,8 @@ Ext.define('Target.model.CatalogTree', {
                 return null;
             }
         }},
+        {name: 'tbl_rows', type: 'int'},
+        {name: 'tbl_num_columns', type: 'int'}
 
     ]
 

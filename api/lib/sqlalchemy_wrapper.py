@@ -1,122 +1,33 @@
-import warnings
 import collections
+import logging
+import threading
+import warnings
 
 from django.conf import settings
-from sqlalchemy import create_engine, inspect, MetaData, func, Table, Column, Integer, String, Float, Boolean
+from sqlalchemy import (Boolean, Column, Float, Integer, MetaData, String,
+                        Table, create_engine)
 from sqlalchemy import exc as sa_exc
-from sqlalchemy.dialects import oracle
-from sqlalchemy.dialects import sqlite
+from sqlalchemy import func, inspect
+from sqlalchemy.dialects import oracle, sqlite
 from sqlalchemy.ext.compiler import compiles
-from sqlalchemy.sql import select, and_, text
-from sqlalchemy.sql.expression import Executable, ClauseElement
-from sqlalchemy.sql.expression import literal_column, between
 from sqlalchemy.schema import Sequence
+from sqlalchemy.sql import and_, select, text
+from sqlalchemy.sql.expression import (ClauseElement, Executable, between,
+                                       literal_column)
 
-import threading
-
-
-class DBOracle:
-    def __init__(self, db):
-        self.db = db
-
-    def get_string_connection(self):
-        url = (
-                  "oracle://%(username)s:%(password)s@(DESCRIPTION=(" +
-                  "ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=%(host)s)(" +
-                  "PORT=%(port)s)))(CONNECT_DATA=(SERVER=dedicated)(" +
-                  "SERVICE_NAME=%(database)s)))"
-              ) % {
-                  'username': self.db['USER'], 'password': self.db['PASSWORD'],
-                  'host': self.db['HOST'], 'port': self.db['PORT'],
-                  'database': self.db['DATABASE']
-              }
-        return url
-
-    def get_engine(self):
-        return "oracle"
-
-    def get_dialect(self):
-        return oracle
-
-    def get_raw_sql_limit(self, offset, limit):
-        return "OFFSET %s ROWS FETCH NEXT %s ROWS ONLY" % (offset, limit)
-
-    def get_raw_sql_column_properties(self, table, schema=None):
-        sql = "SELECT column_name, data_type FROM all_tab_columns WHERE table_name='%s'" % table
-        if schema:
-            sql += " AND owner='%s'" % schema
-        return sql
-
-    def get_raw_sql_table_rows(self, table, schema=None):
-        sql = "SELECT NUM_ROWS FROM dba_tables WHERE TABLE_NAME='%s'" % table
-        if schema:
-            sql += " AND owner='%s'" % schema
-        return sql
-
-    def get_raw_sql_size_table_bytes(self, table, schema=None):
-        sql = "SELECT BYTES FROM dba_segments WHERE segment_type='TABLE' and segment_name='%s'" % table
-        if schema:
-            sql += " AND owner='%s'" % schema
-        return sql
-
-    def get_raw_sql_number_columns(self, table, schema=None):
-        sql = "SELECT COUNT(*) FROM all_tab_columns WHERE TABLE_NAME = '%s'" % table
-        if schema:
-            sql += " AND owner = '%s'" % schema
-        return sql
-
-    def get_create_auto_increment_column(self, table, column_name, schema=None):
-        table_name = table
-        if schema is not None and schema is not "":
-            table_name = "%s.%s" % (schema, table)
-
-        sql = list()
-        sql.append("alter table %(table)s add %(column_name)s number" % {"table": table_name, "column_name": column_name})
-        sql.append("create sequence seq_id" % {"table": table_name, "column_name": column_name})
-        sql.append("update %(table)s set %(column_name)s = seq_id.nextval" % {"table": table_name, "column_name": column_name})
-        sql.append("drop sequence seq_id" % {"table": table_name, "column_name": column_name})
-
-        return sql
-
-    def get_table_name(self, table):
-        return table.upper()
-
-    def get_schema_name(self, schema):
-        return schema.upper()
+from lib.db_oracle import DBOracle
+from lib.db_postgresql import DBPostgresql
+from lib.db_sqlite import DBSqlite
 
 
-class DBSqlite:
-    def __init__(self, db):
-        self.db = db
 
-    def get_string_connection(self):
-        url = "sqlite:///%s" % self.db['PATH_FILE']
-        return url
-
-    def get_engine(self):
-        return "sqlite3"
-
-    def get_dialect(self):
-        return sqlite
-
-    def get_raw_sql_limit(self, line_number):
-        return "LIMIT(%s)" % line_number
-
-    def get_table_properties(self, table, schema=None):
-        raise("Implement this method")
-
-    def get_table_name(self, table):
-        return table
-
-    def get_schema_name(self, schema):
-        return schema
-
-
-# classe generica - nao ligada a este problema
 class DBBase:
-    available_engines = list(['sqlite3', 'oracle'])
+    # Django database engines
+    available_engines = list(['sqlite3', 'oracle', 'postgresql_psycopg2'])
 
     def __init__(self, database, credentials=None):
+
+        self.schema = None
 
         self.connection_data = self.prepare_connection(database)
 
@@ -133,6 +44,8 @@ class DBBase:
 
         with self.engine.connect():
             self.metadata = MetaData(self.engine)
+
+        self.log = logging.getLogger('django')
 
     def prepare_connection(self, db_name):
         connection_data = {}
@@ -156,6 +69,29 @@ class DBBase:
             connection_data['USER'] = db_settings_django['USER']
             connection_data['PASSWORD'] = db_settings_django['PASSWORD']
 
+            self.schema = None
+
+        elif connection_data['ENGINE'] == 'postgresql_psycopg2':
+            connection_data['USER'] = db_settings_django['USER']
+            connection_data['PASSWORD'] = db_settings_django['PASSWORD']
+            connection_data['HOST'] = db_settings_django['HOST']
+            connection_data['PORT'] = db_settings_django['PORT']
+            connection_data['DATABASE'] = db_settings_django['NAME']
+
+            # Para o caso do banco de dados estar configurado para um SCHEMA especifico.
+            try:
+                # Considerando que o valor de Options é  este
+                # 'OPTIONS': {'options': '-c search_path=dri_catalog,public'}
+                # procura pela chave search_path e separa os schemas na ','
+                #  o schema usado sera o primeiro
+                opt = db_settings_django['OPTIONS']['options']
+                if opt.find('search_path='):
+                    a = opt.split('search_path=')[1]
+                    schema = a.split(',')[0]
+                    self.schema = schema
+            except:
+                self.schema = None
+
         else:
             raise Exception('Unknown database')
 
@@ -171,11 +107,23 @@ class DBBase:
         if db_settings['ENGINE'] == 'oracle':
             return DBOracle(db_settings)
 
+        if db_settings['ENGINE'] == 'postgresql_psycopg2':
+            return DBPostgresql(db_settings)
+
+    def setLogger(self, logger):
+        self.log = logger
+
     def get_string_connection(self):
         return self.database.get_string_connection()
 
     def get_engine(self):
         return self.database.get_engine()
+
+    def get_connection_data(self):
+        return self.connection_data
+
+    def get_connection_schema(self):
+        return self.schema
 
     def get_table_columns(self, table, schema=None):
         # Desabilitar os warnings na criacao da tabela
@@ -215,15 +163,6 @@ class DBBase:
 
         return properties
 
-    def create_auto_increment_column(self, table, column_name, schema=None):
-        # only create the column if it does not exists.
-        if column_name in self.get_table_columns(table, schema=schema):
-            return
-        sql = self.database.get_create_auto_increment_column(table, column_name, schema=schema)
-        with self.engine.connect() as con:
-            for _sql in sql:
-                con.execute(_sql)
-
     def get_count(self, table, schema=None):
         with self.engine.connect() as con:
             with warnings.catch_warnings():
@@ -234,6 +173,50 @@ class DBBase:
                 stm = select([func.count()]).select_from(table)
                 result = con.execute(stm)
                 return result.fetchone()[0]
+
+    def get_table_size_bytes(self, table, schema=None):
+        """
+            Retorna o tamanho de uma tabela em bytes. 
+        """
+        try:
+            sql = self.database.get_raw_sql_size_table_bytes(table, schema=schema)
+            with self.engine.connect() as con:
+                queryset = con.execute(sql)
+            return queryset.fetchone()[0]
+        except:
+            try:
+                # Se nao tiver uma funcao expecifica para contar as colunas
+                # recupera todas as colunas e retorna a quantidade
+                columns = self.get_table_columns(table, schema=None)
+                return len(columns)
+            except:
+                return 0
+
+    def get_table_columns_count(self, table, schema=None):
+        """
+            Retorna a quantidade de colunas de uma tabela. 
+        """
+        try:
+            sql = self.database.get_raw_sql_number_columns(table, schema=schema)
+            with self.engine.connect() as con:
+                queryset = con.execute(sql)
+            return queryset.fetchone()[0]
+        except:
+            return 0
+
+    def get_estimated_rows_count(self, table, schema=None):
+        """
+            Retorna a quantidade de rows estimada para a tabela. 
+            Consultando as tabelas adm do SGBD. 
+            é mas rapida que um count em tabelas grandes, mas pode ser pouco precisa.
+        """
+        try:
+            sql = self.database.get_raw_sql_table_rows(table, schema=schema)
+            with self.engine.connect() as con:
+                queryset = con.execute(sql)
+            return queryset.fetchone()[0]
+        except:
+            return 0
 
     def table_exists(self, table, schema=None):
         table = self.database.get_table_name(table)
@@ -310,7 +293,7 @@ class DBBase:
                 # between
                 op = None
                 value = value.split(",")
-                clause = between(column,float(value[0]), float(value[1]))
+                clause = between(column, float(value[0]), float(value[1]))
             else:
                 op = '__%s__' % op
 
@@ -328,6 +311,9 @@ class DBBase:
             for col in columns:
                 t_columns.append(self.get_column_obj(table, col))
         return t_columns
+
+    def statement_to_str(self, stm):
+        return str(stm.compile(dialect=self.dialect.dialect(), compile_kwargs={"literal_binds": True})).replace("\n", " ")
 
     # --------------------- Create Table As ------------------------- #
     class CreateTableAs(Executable, ClauseElement):
@@ -354,7 +340,7 @@ class DBBase:
 
         with self.engine.connect() as con:
             create_stm = self.CreateTableAs(tablename, stm, self.dialect)
-            print(create_stm)
+            self.log.debug(create_stm)
             return con.execute(create_stm)
 
     def create_table_raw_sql(self, table, sql, schema=None, timeout=None):
@@ -365,20 +351,73 @@ class DBBase:
 
         sql_create_table = text('CREATE TABLE %s AS %s' % (table_name, sql))
 
-        con = self.engine.connect()
-        trans = con.begin()
-        t = threading.Timer(timeout, con.close)
-        if timeout:
-            t.start()
-        try:
-            con.execute(sql_create_table)
-            trans.commit()
-        except Exception as e:
-            trans.rollback()
-            raise Exception("Timeout for query execution - %s" % str(e))
-        t.cancel()
+        self.log.debug("Create Table SQL: [ %s ]" % self.statement_to_str(sql_create_table))
+
+        # con = self.engine.connect()
+        # trans = con.begin()
+        # t = threading.Timer(timeout, con.close)
+        # if timeout:
+        #     t.start()
+        # try:
+        #     con.execute(sql_create_table)
+        #     trans.commit()
+        # except Exception as e:
+        #     trans.rollback()
+        #     raise Exception("Timeout for query execution - %s" % str(e))
+        # t.cancel()
+
+        with self.engine.connect() as con:
+            trans = con.begin()
+
+            if timeout:
+                t = threading.Timer(timeout, self.create_table_timeout)
+                t.start()
+
+            try:
+                con.execute(sql_create_table)
+                trans.commit()
+                self.log.info("Table Created successfully: Table: [%s] Schema: [%s]" % (table, schema))
+
+            except Exception as e:
+                trans.rollback()
+                self.log.error("Table creation failed: Table: [%s] Schema: [%s] Error: [%s]" % (table, schema, e))
+
+                raise Exception("Table creation failed - %s" % str(e))
+
+            if timeout:
+                t.cancel()
+
+    def create_table_timeout(self, con):
+        con.close()
+        self.log.error("Table creation failed, Timeout for query execution.")
+        raise Exception("Timeout for query execution.")
+
+    def create_auto_increment_column(self, table, column_name, schema=None):
+        self.log.info("Creating primary key. Table: [%s] Schema: [%s] Column: [%s]" % (table, schema, column_name))
+        # only create the column if it does not exists.
+        if column_name in self.get_table_columns(table, schema=schema):
+            return
+
+        sql = self.database.get_create_auto_increment_column(table, column_name, schema=schema)
+        with self.engine.connect() as con:
+            trans = con.begin()
+
+            try:
+                # Dependendo do banco de dados pode ser um array de instruções.
+                # TODO: deveria checar se a variavel é um array ou string.
+                for _sql in sql:
+                    self.log.debug("SQL: [%s]" % (_sql.replace("\n", " ")))
+
+                    con.execute(_sql)
+
+            except Exception as e:
+                trans.rollback()
+                self.log.error("Primary Key creation failed. Table: [%s] Schema: [%s] Column: [%s] Error: [%s]" % (table, schema, column_name, e))
+
+                raise Exception("Primary Key creation failed - %s" % str(e))
 
     # ----------------------------- Drop Table ----------------------
+
     class DropTable(Executable, ClauseElement):
         def __init__(self, table, schema=None):
             self.schema = schema
@@ -394,10 +433,48 @@ class DBBase:
         Use this method to Drop a table in the database.
         """
         with self.engine.connect() as con:
-            drop_stm = self.DropTable(table, schema)
-            return con.execute(drop_stm)
+            try:
+                drop_stm = self.DropTable(table, schema)
+
+                trans = con.begin()
+                con.execute(drop_stm)
+                trans.commit()
+
+                if not self.table_exists(table, schema):
+                    return True
+                else:
+                    trans.rollback()
+                    raise Exception("Failed to drop the table. Tablename: [%s] Schema: [%s]" % (table, schema))
+            except Exception as e:
+                trans.rollback()
+                raise e
+
+    def drop_sequence(self, table, schema=None):
+        """
+        Use this method to Drop a table in the database.
+        """
+        table_name = table
+        if schema is not None and schema is not "":
+            table_name = "%s.%s" % (schema, table)
+
+        sequence_name = "%s_seq" % table_name
+
+        with self.engine.connect() as con:
+            try:
+
+                drop_stm = "DROP SEQUENCE %s" % sequence_name
+
+                trans = con.begin()
+                con.execute(drop_stm)
+                trans.commit()
+
+                return True
+            except Exception as e:
+                trans.rollback()
+                raise Exception("Failed to drop sequence Tablename: [%s] Schema: [%s] Sequence: [%s] Error: [%s]" % (table, schema, sequence_name, e))
 
     # ------------------------ Filtro Por Posicao ----------------------------------
+
     def filter_by_coordinate_square(self, property_ra, property_dec, lowerleft, upperright):
         """
         Cria uma clausula Where para fazer uma query por posicao usando um quadrado.

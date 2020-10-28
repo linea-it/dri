@@ -11,7 +11,7 @@ class TargetViewer:
     def register(user, table_pk, release_name, description=None):
         """ register table im target viewer """
 
-        logger = logging.getLogger('register_table_in_the_target_viewer')
+        logger = logging.getLogger('userquery')
         logger.info("Register the new table as a product")
 
         table = Table.objects.get(pk=table_pk)
@@ -57,16 +57,16 @@ class TargetViewer:
         table.product = product
         table.save()
 
-        logger.info("New Product -id %s- was Registered" % product.pk)
+        logger.info("New Product was Registered. Product ID: [%s]" % product.pk)
 
     @staticmethod
     def unregister(product_id):
         """ uregister table im target viewer """
 
-        logger = logging.getLogger('uregister_table_in_the_target_viewer')
+        logger = logging.getLogger('userquery')
         logger.info("Unregister the new table as a product")
 
         product = ProductTable.objects.get(product_ptr_id=product_id)
         product.delete()
         
-        logger.info("Product -id %s- was Registered" % product_id)
+        logger.info("Product was Unregistered. Product ID: [%s]" % product_id)

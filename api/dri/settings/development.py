@@ -16,3 +16,8 @@ SEND_DAILY_STATISTICS_EMAIL = False
 
 
 from dri.settings.local_vars import *
+
+# Including LDAP authentication:
+if AUTH_LDAP_ENABLED:
+  AUTHENTICATION_BACKENDS += ('django_auth_ldap.backend.LDAPBackend',)
+

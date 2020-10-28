@@ -194,6 +194,8 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
 
     is_owner = serializers.SerializerMethodField()
 
+    tbl_rows = serializers.SerializerMethodField()
+
     class Meta:
         model = Catalog
 
@@ -214,8 +216,6 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'pgr_group',
             'pgr_display_name',
 
-            'ctl_num_objects',
-
             'epr_original_id',
             'epr_name',
             'epr_username',
@@ -227,6 +227,8 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             'tbl_schema',
             'tbl_name',
             'tbl_size',
+            'tbl_num_columns',
+            'tbl_rows',
 
             'release_id',
             'release_display_name',
@@ -320,6 +322,12 @@ class CatalogSerializer(serializers.HyperlinkedModelSerializer):
             return True
         else:
             return False
+
+    def get_tbl_rows(self, obj):
+        if obj.tbl_rows is None:
+            return obj.ctl_num_objects
+        else:
+            return obj.tbl_rows
 
 
 class MapSerializer(ProductSerializer):

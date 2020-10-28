@@ -158,7 +158,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
+STATIC_URL = '/django_static/'
 
 AUTHENTICATION_BACKENDS = (
     'common.authentication.NcsaBackend',
@@ -167,6 +167,7 @@ AUTHENTICATION_BACKENDS = (
 
 if USE_OAUTH:
     AUTHENTICATION_BACKENDS += ('allauth.account.auth_backends.AuthenticationBackend',)
+
 
 REST_FRAMEWORK = {
 
@@ -190,8 +191,8 @@ REST_FRAMEWORK = {
 
 SITE_ID = 1
 
-ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS=True
-LOGIN_REDIRECT_URL = '/dri/apps/home/'
+ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
+LOGIN_REDIRECT_URL = '/'
 SOCIALACCOUNT_QUERY_EMAIL = True
 SOCIALACCOUNT_ADAPTER = 'validation.adapter.DriAccountAdapter'
 
@@ -246,3 +247,7 @@ SETTINGS_EXPORT = []
 #     '--with-coverage',
 #     '--cover-package=' + ','.join(PROJECT_APPS),
 # ]
+
+# LDAP Authentication
+# Responsible for turn on and off the LDAP authentication:
+AUTH_LDAP_ENABLED = False
