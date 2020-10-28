@@ -8,15 +8,6 @@ ENVIRONMENT_NAME = "Development"
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-# Log Levels
-# This log level describes the severity of the messages that the logger will handle. Python defines the following log levels:
-# - DEBUG: Low level system information for debugging purposes
-# - INFO: General system information
-# - WARNING: Information describing a minor problem that has occurred.
-# - ERROR: Information describing a major problem that has occurred.
-# - CRITICAL: Information describing a critical problem that has occurred.
-LOG_LEVEL = 'INFO'
-
 # the hostname and port number of the current Server
 BASE_HOST = "http://localhost"
 
