@@ -331,42 +331,20 @@ def available_database(request):
 def teste(request):
     if request.method == 'GET':
 
-        # import logging
+        import logging
+        from product.models import CutOutJob
+        from product.descutoutservice import DesCutoutService
 
-        # log = logging.getLogger('import_target_csv')
+        log = logging.getLogger('descutoutservice')
 
-        # log.info("------------------ TESTE ----------------")
+        log.debug("------ TESTE DESCUT ------")
 
-        # from product.importproduct import ImportTargetListCSV
-        # it = ImportTargetListCSV()
-        # upload_data = {'mime': 'csv', 'type': 'catalog', 'class': 'objects', 'name': 'testeupload', 'displayName': 'testeupload', 'releases': ['y6a1_coadd'], 'isPublic': False, 'description': '', 'csvData': '31.12232, -6.20153\n29.92641, -5.96732\n40.09991 , -8.43430\n-179.4548 , -9.43430'}
-        # upload_data_header = {'mime': 'csv', 'type': 'catalog', 'class': 'objects', 'name': 'testeupload', 'displayName': 'testeupload', 'releases': ['y6a1_coadd'], 'isPublic': False, 'description': '', 'csvData': 'ra, dec, name\n31.12232, -6.20153, galaxy1\n29.92641, -5.96732, galaxy2\n40.09991 , -8.43430, galaxy3'}
-        # it.start_import(request.user.id, upload_data)
+        # recuperar o Job de cutout
+        job = CutOutJob.objects.get(pk=1)
 
-        # Exemplo de teste para desenvolvimento do User Query
-        # from userquery.create_table_as import CreateTableAs
-        # from userquery.models import Job, Table
-        # job = Job.objects.get(pk=4)
-        # job.job_status = 'st'
-        # job.save()
+        log.debug("Job: [%s]" % job)
 
-        # try:
-        #     t = Table.objects.get(table_name='teste_uq')
-        #     t.delete()
-        # except Exception as e:
-        #     pass
-
-        # ct = CreateTableAs(
-        #     job_id=job.id,
-        #     user_id=job.owner.id,
-        #     table_name='teste_uq',
-        #     table_display_name='Teste User Query',
-        #     release_id=24,
-        #     release_name='y6a1_coadd',
-        #     associate_target_viewer=True,
-        #     task_id='101010',
-        #     schema=None
-        # )
-        # ct.do_all()
+        dc = DesCutoutService()
+        dc.start_job_by_id(job.id)
 
         return Response(dict({'status': "success"}))

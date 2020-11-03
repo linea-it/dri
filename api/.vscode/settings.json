@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "/home/glauber/projetos/linea/dri/api/env/bin/python3",
+    "python.pythonPath": "env/bin/python",
     "git.ignoreLimitWarning": true
 }

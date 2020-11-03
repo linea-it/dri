@@ -29,7 +29,6 @@ export = Export()
 importtargetlistcsv = ImportTargetListCSV()
 
 
-
 @task(name="start_des_cutout_job_by_id")
 def start_des_cutout_job_by_id(cutoutjob_id):
     """
@@ -39,12 +38,14 @@ def start_des_cutout_job_by_id(cutoutjob_id):
 
         :param cutoutjob_id: Chave pk do model product.CutOutModel
     """
-    descutout.start_job_by_id(int(cutoutjob_id))
+    # descutout.start_job_by_id(int(cutoutjob_id))
+    pass
 
 
 @periodic_task(
     # run_every=(crontab(minute='*/1')),
-    run_every=(crontab(minute='*/%s' % descutout.check_jobs_task_delay)),
+    # Tempo de delay para a task check_jobs em minutos
+    run_every=(crontab(minute='*/%s' % 1)),
     # run_every=10.0,
     name="check_jobs_running",
     ignore_result=True
@@ -55,7 +56,8 @@ def check_jobs_running():
         e verifica no servico DESCutout o status do job
         e os marca com status
     """
-    descutout.check_jobs()
+    # descutout.check_jobs()
+    pass
 
 
 @task(name="download_cutoutjob")
@@ -201,7 +203,6 @@ def notify_user_by_email(cutoutjob_id):
     try:
         cutoutJobNotify.create_email_message(cutoutjob)
 
-
     except SMTPException as e:
         logger.error(e)
 
@@ -248,7 +249,6 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
         # Notificação de inicio
         export.notify_user_export_start(user, product)
 
-
         # Criar o diretorio de export
         export_dir = export.create_export_dir(name=product.prd_name)
 
@@ -281,7 +281,6 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
 
                 logger.info("Finished Task target_to_csv")
 
-
             elif filetype == "fits":
                 # Task To Fits
                 logger.info("Starting Task target_to_fits")
@@ -311,20 +310,17 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
 
                 logger.info("Finished Task target_to_fits")
 
-
         # Cutouts
         if cutoutjob_id not in [None, "", False, "false", "False", 0]:
             export_cutoutjob(cutoutjob_id, export_dir)
 
         logger.debug("Teste: %s" % cutoutjob_id)
 
-
         # Cria um arquivo zip com todos os arquivos gerados pelo export.
         url = export.create_zip(export_dir)
 
         # Notifica o Usuario sobre o Download.
         export.notify_user_export_success(user.pk, product.prd_display_name, url)
-
 
     except Exception as e:
         logger.error(e)
@@ -456,7 +452,6 @@ def product_save_as(user_id, product_id, name, filter_id=None, description=None)
     saveas.create_table_by_product_id(user_id, product_id, name, filter_id, description)
 
 
-
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Product Import Target List CSV %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
 @task(name="import_target_list")
 @shared_task
@@ -464,5 +459,3 @@ def import_target_list(user_id, data):
 
     if data.get('mime') == 'csv':
         importtargetlistcsv.start_import(user_id, data)
-
-

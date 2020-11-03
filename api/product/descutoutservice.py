@@ -17,6 +17,7 @@ from product.association import Association
 from product.models import Catalog
 from product.models import CutOutJob
 from product.models import Cutout
+from urllib.parse import urljoin
 
 
 class DesCutoutService:
@@ -26,61 +27,107 @@ class DesCutoutService:
         # Get an instance of a logger
         self.logger = logging.getLogger("descutoutservice")
 
-        self.logger.info("Start!")
-
-        self.logger.info("Retrieving settings for des cutout service")
-
-        try:
-            params = settings.DES_CUTOUT_SERVICE
-            # self.logger.debug(params)
-
-            self.api_version = params["API_VERSION"]
-
-            self.host = params["HOST"]
-            self.user = params["USER"]
-            self.password = params["PASSWORD"]
-            self.token = params["TOKEN"]
-
-            self.email = params["EMAIL"]
-
-            self.check_jobs_task_delay = params["CUTOUT_TASK_CHECK_JOBS_DELAY"]
-
-            # Diretorio raiz onde ficaram as imagens do cutout
-            self.data_dir = settings.DATA_DIR
-            self.cutout_dir = params["CUTOUT_DIR"]
-
-            # Limit de Objetos que podem ser enviados ao descut
-            self.cutout_max_objects = params["MAX_OBJECTS"]
-
-            # Deletar os jobs no DESCUT depois de baixar as imagens
-            self.delete_job_after_download = params["DELETE_JOB_AFTER_DOWNLOAD"]
-
-            self.host_token = None
-            if params["API_GET_TOKEN"] is not None:
-                self.host_token = self.host + params["API_GET_TOKEN"]
-
-            self.host_create_jobs = self.host + params["API_CREATE_JOBS"]
-
-            self.host_check_jobs = self.host + params["API_CHECK_JOBS"]
-
-
-        except Exception as e:
-            msg = ("Error in the Cutouts parameters in the settings. "
-                   "Check the DES_CUTOUT_SERVICE section if it is configured correctly. ERROR: %s" % e)
-            raise Exception(msg)
-
-        # Tipos de arquivos recebidos que nao sao imagens
-        self.not_images = ["log", "csv", "stifflog"]
-
-        # Nome do arquivo de resultados
-        self.result_file = "result_file.txt"
-
         # fazer os request sem verificar o certificado SSL / HTTPS
         self.verify_ssl = False
 
-        self.logger.debug("host_token: %s" % self.host_token)
-        self.logger.debug("host_create_jobs: %s" % self.host_create_jobs)
-        self.logger.debug("host_check_jobs: %s" % self.host_check_jobs)
+        # self.logger.info("Start!")
+
+        # self.logger.info("Retrieving settings for des cutout service")
+
+        # try:
+        #     params = settings.DES_CUTOUT_SERVICE
+        #     # self.logger.debug(params)
+
+        #     self.api_version = params["API_VERSION"]
+
+        #     self.host = params["HOST"]
+        #     self.user = params["USER"]
+        #     self.password = params["PASSWORD"]
+        #     self.token = params["TOKEN"]
+
+        #     self.email = params["EMAIL"]
+
+        #     self.check_jobs_task_delay = params["CUTOUT_TASK_CHECK_JOBS_DELAY"]
+
+        #     # Diretorio raiz onde ficaram as imagens do cutout
+        #     self.data_dir = settings.DATA_DIR
+        #     self.cutout_dir = params["CUTOUT_DIR"]
+
+        #     # Limit de Objetos que podem ser enviados ao descut
+        #     self.cutout_max_objects = params["MAX_OBJECTS"]
+
+        #     # Deletar os jobs no DESCUT depois de baixar as imagens
+        #     self.delete_job_after_download = params["DELETE_JOB_AFTER_DOWNLOAD"]
+
+        #     self.host_token = None
+        #     if params["API_GET_TOKEN"] is not None:
+        #         self.host_token = self.host + params["API_GET_TOKEN"]
+
+        #     self.host_create_jobs = self.host + params["API_CREATE_JOBS"]
+
+        #     self.host_check_jobs = self.host + params["API_CHECK_JOBS"]
+
+        # except Exception as e:
+        #     msg = ("Error in the Cutouts parameters in the settings. "
+        #            "Check the DES_CUTOUT_SERVICE section if it is configured correctly. ERROR: %s" % e)
+        #     raise Exception(msg)
+
+        # # Tipos de arquivos recebidos que nao sao imagens
+        # self.not_images = ["log", "csv", "stifflog"]
+
+        # # Nome do arquivo de resultados
+        # self.result_file = "result_file.txt"
+
+        # self.logger.debug("host_token: %s" % self.host_token)
+        # self.logger.debug("host_create_jobs: %s" % self.host_create_jobs)
+        # self.logger.debug("host_check_jobs: %s" % self.host_check_jobs)
+
+    def start_job_by_id(self, id):
+        self.logger.info("Des Cutout Start Job by ID %s" % id)
+
+        # Recupera o Model CutoutJob pelo id
+        try:
+            cutoutjob = self.get_cutoutjobs_by_id(id)
+
+            self.logger.debug("CutoutJob Name: %s" % cutoutjob.cjb_display_name)
+
+            # Notificacao por email
+            # CutoutJobNotify().create_email_message(cutoutjob)
+
+            # Faz o login
+            token = self.descut_login()
+
+            # Preparar para os parametros para o Submit.
+
+        except CutOutJob.DoesNotExist as e:
+            self.logger.error(e)
+            raise e
+
+        except Exception as e:
+            self.logger.error(e)
+            raise e
+
+    def descut_login(self, ):
+        """Obtains an auth token using the username and password credentials for a given database.
+        """
+
+        config = settings.DESCUTOUT_SERVICE
+
+        url = "{}/login".format(config['API_URL'])
+        self.logger.debug("Login URL: [%s]" % url)
+
+        # Dados para a Autenticação.
+        data = {'username': config['USERNAME'], 'password': config['PASSWORD'], 'database': config['DATABASE']}
+
+        # Login to obtain an auth token
+        r = requests.post(url, data, verify=self.verify_ssl)
+
+        self.logger.debug("Login Status: [%s]" % r.json()['status'])
+
+        if r.json()['status'] != 'ok':
+            raise Exception(r.json()['message'])
+
+        return r.json()['token']
 
     def generate_token(self):
         """
@@ -115,24 +162,24 @@ class DesCutoutService:
         else:
             return self.token
 
-    def check_token_status(self, token):
-        """
-        Check Token status: Check the expiration time for a token
-        Returns: bool()
-        """
-        self.logger.info("Check the expiration time for a token")
+    # def check_token_status(self, token):
+    #     """
+    #     Check Token status: Check the expiration time for a token
+    #     Returns: bool()
+    #     """
+    #     self.logger.info("Check the expiration time for a token")
 
-        if self.host_token is not None:
+    #     if self.host_token is not None:
 
-            req = requests.get(
-                self.host_token + "?token=" + token, verify=self.verify_ssl)
+    #         req = requests.get(
+    #             self.host_token + "?token=" + token, verify=self.verify_ssl)
 
-            if req.json()["status"].lower() == "ok":
-                return True
-            else:
-                return False
-        else:
-            return True
+    #         if req.json()["status"].lower() == "ok":
+    #             return True
+    #         else:
+    #             return False
+    #     else:
+    #         return True
 
     def create_job(self, token, data):
         """
@@ -430,40 +477,6 @@ class DesCutoutService:
                 "This cutoutjob %s can not be started because the current status '%s' is different from 'starting'" % (
                     job.pk, job.cjb_status))
             raise Exception(msg)
-
-    def start_job_by_id(self, id):
-        self.logger.info("Des Cutout Start Job by ID %s" % id)
-
-        # Recupera o Model CutoutJob pelo id
-        try:
-            cutoutjob = self.get_cutoutjobs_by_id(id)
-
-            self.logger.debug("CutoutJob Name: %s" % cutoutjob.cjb_display_name)
-
-            # Notificacao por email
-            CutoutJobNotify().create_email_message(cutoutjob)
-
-            self.start_job(cutoutjob)
-
-        except CutOutJob.DoesNotExist as e:
-            self.logger.critical(e)
-            raise e
-
-        except Exception as e:
-            self.logger.critical(e)
-            raise e
-
-    def start_jobs(self):
-        self.logger.info("Des Cutout Start Jobs with status is 'starting'")
-
-        # Recuperar a lista de jobs com o status "st"
-        cutoutjobs = self.get_cutoutjobs_by_status("st")
-
-        self.logger.info("There are %s CutoutJobs to start" % len(cutoutjobs))
-
-        for job in cutoutjobs:
-            # TODO chamar o metodo start_job
-            pass
 
     def delete_job(self, cutoutjob):
 
@@ -918,12 +931,11 @@ class CutoutJobNotify:
             subject = "%s Mosaic Failed" % cutoutjob.pk
 
             message = ("email: %s\nusername: %s\ncutoutjob: %s - %s\ntarget: %s - %s" % (cutoutjob.owner.username,
-                                                                                      cutoutjob.owner.email,
-                                                                                      cutoutjob.pk,
-                                                                                      cutoutjob.cjb_display_name,
-                                                                                      cutoutjob.cjb_product.pk,
-                                                                                      cutoutjob.cjb_product.prd_display_name))
-
+                                                                                         cutoutjob.owner.email,
+                                                                                         cutoutjob.pk,
+                                                                                         cutoutjob.cjb_display_name,
+                                                                                         cutoutjob.cjb_product.pk,
+                                                                                         cutoutjob.cjb_product.prd_display_name))
 
             Notify().send_email_failure_helpdesk(subject, message)
 
