@@ -12,24 +12,39 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
+import ldap
+from django_auth_ldap.config import LDAPSearch
+
+# Paths e URLs da aplicação NÃO devem ser altarados!.
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Diretorio de intalacao do projeto dentro do container.
+BASE_PROJECT = "/app"
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
+# Diretorio onde ficam os arquivos estaticos gerados pela aplicacao, arquivos como imagens, csvs, zips que necessitam
+# ter uma url acessivel para download.
+DATA_DIR = os.path.join('/archive')
+# Diretorio para arquivos temporarios, gerados pelo sistema e que ficarão disponiveis para o usuario fazer o download.
+# esse diretorio deve ser usado junto com o DATA_DIR, deve OBRIGATORIAMENTE ser um diretorio dentro do DATA_DIR
+DATA_TMP_DIR = 'tmp'
+# Url base para o diretorio onde os arquivos gerados pela aplicacao podem ser acessados pelo servidor web
+DATA_SOURCE = "/data"
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'n25!pd%vs_s_@9^8=cudeuvc1&tfw0er+u#rhn(ex9t4@ml728'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+LOG_LEVEL = 'DEBUG'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+CORS_ALLOW_CREDENTIALS = True
+CORS_ORIGIN_ALLOW_ALL = True
 
 USE_OAUTH = True
 
 # Application definition
-
 BASE_APPS = [
     'django.contrib.admin',
     'django.contrib.sites',
@@ -55,7 +70,6 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'url_filter',
     'django_celery_results',
-    # 'django_nose'
 ]
 
 PROJECT_APPS = [
@@ -90,7 +104,6 @@ MIDDLEWARE = [
     'current_user.CurrentUserMiddleware',
 ]
 
-
 ROOT_URLCONF = 'dri.urls'
 
 TEMPLATES = [
@@ -111,11 +124,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'dri.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
-
-DATABASES = {}
 
 DATABASE_ROUTERS = ['catalog.router.CatalogRouter']
 
@@ -212,17 +220,6 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 # CELERY SETTINGS
-# start celery with
-#  celery worker --workdir api --app dri -l info
-# or such configs will not be used
-# CELERY_BROKER_URL = 'amqp://dri:driapi@rabbit:5672'
-# CELERY_BROKER_URL = 'pyamqp:://dri:dri@rabbit:5672'
-# CELERY_IMPORTS: ('product.tasks', 'common.tasks', 'common.tasks', 'activity_statistic.tasks', 'userquery.tasks',)
-# CELERY_RESULT_BACKEND = 'django-db'
-# CELERY_ACCEPT_CONTENT = ['json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
-
 CELERY = {
     'BROKER_URL': os.environ.get('CELERY_BROKER', 'localhost'),
     'CELERY_IMPORTS': ('product.tasks', 'common.tasks', 'common.tasks', 'activity_statistic.tasks', 'userquery.tasks',),
@@ -232,22 +229,328 @@ CELERY = {
     'CELERY_ACCEPT_CONTENT': ['json'],
 }
 
+# Lista as Variaveis que vao ser exportadas para os templates do Django. https://pypi.python.org/pypi/django-settings-export
+SETTINGS_EXPORT = [
+    'NCSA_SIGNUP_LINK'
+]
 
-# Enables or disables sending daily email access statistics.
-SEND_DAILY_STATISTICS_EMAIL = False
+# Variaveis a seguir Devem ser sobreescritas pelo local_vars.py
 
-SETTINGS_EXPORT = []
+# Identification of the environment
+ENVIRONMENT_NAME = "Development"
 
-# Run Test with Django Nose http://django-testing-docs.readthedocs.io/en/latest/coverage.html#coverage-reports
-# Use nose to run all tests
-# TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+# Está Variavel é usada para montar algumas urls dinamicamente DEVE ser sobreescrita pelo local_vars.py
+# Deve contar o protoloco e hostname onde a aplicação está instalada ex: BASE_HOST = "http://localhost"
+BASE_HOST = "http://localhost"
 
-# Tell nose to measure coverage on the 'foo' and 'bar' apps
-# NOSE_ARGS = [
-#     '--with-coverage',
-#     '--cover-package=' + ','.join(PROJECT_APPS),
-# ]
+# Database
+# Esta variavel deve ser preechida no local_vars.py deve conter obrigatóriamente
+# 2 bancos de dados denominados de default e catalog.
+# - N bancos de dados podem ser cadastradados.
+# - O mesmo banco pode ser cadastrado mais de uma vez com alias diferentes, as vezes é necessário para usar schemas diferentes do mesmo banco, exemplo dos bancos oracle do NCSA.
+# - Pode ser cadastrados bancos de dados de tipos diferentes exemplo Oracle e Postgresql.
+# - para o Oracle o nome da chave que representa o banco não pode ter mais de 30 caracteres e nem o database name,
+# https://docs.djangoproject.com/en/1.9/ref/settings/#databases
+DATABASES = {}
+# Exemplo de Database utilizando a imagem docker do postgresql
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres',
+#         'HOST': 'database',
+#         'PORT': 5432,
+#         'OPTIONS': {
+#             'options': '-c search_path=dri_admin,public'
+#         }
+#     },
+#     'catalog': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'postgres',
+#         'USER': 'postgres',
+#         'PASSWORD': 'postgres',
+#         'HOST': 'database',
+#         'PORT': 5432,
+#         'OPTIONS': {
+#             'options': '-c search_path=dri_catalog,public'
+#         },
+#     },
+# }
+
+# Autenticação no NCSA
+# Esta configuracao e usada somente pela classe de authenticacao usando login do NCSA
+# deve ser preenchida com o nome da configuracao de database do NCSA OU None para nao usar a authenticacao no ncsa
+NCSA_AUTHENTICATION_DB = "None"
+# Nome da tabela onde ficam os dados do usuario com schema se tiver ex: DES_USER para colaboracao e DES_ADMIN.DES_USER para DR1 publico ou None para desabilitar
+NCSA_AUTHENTICATION_USERS_TABLE = "None"
+# Habilita ou desabilita o link de signup no form de login.
+# None desabilita e String com Url para o form de login para habilitar.
+# Default None, para NCSA public usar 'https://des.ncsa.illinois.edu/easyweb/signup/'
+NCSA_SIGNUP_LINK = None
 
 # LDAP Authentication
 # Responsible for turn on and off the LDAP authentication:
 AUTH_LDAP_ENABLED = False
+if AUTH_LDAP_ENABLED:
+    # The address of the LDAP server:
+    AUTH_LDAP_SERVER_URI = 'ldap://HOST:PORT'
+    # The password of the LDAP server (leave empty if anonymous requests are available):
+    AUTH_LDAP_BIND_PASSWORD = ''
+    # The distinguishable name, used to identify entries:
+    AUTH_LDAP_BIND_DN = 'cn=admin,dc=example,dc=com'
+    # The distinguishable name for searching users, used to identify entries:
+    AUTH_LDAP_USER_SEARCH_DN = 'ou=people,dc=example,dc=com'
+    AUTH_LDAP_USER_SEARCH = LDAPSearch(
+        AUTH_LDAP_USER_SEARCH_DN,
+        ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
+    )
+# Including LDAP authentication:
+if AUTH_LDAP_ENABLED:
+    AUTHENTICATION_BACKENDS += ('django_auth_ldap.backend.LDAPBackend',)
+
+# Email Notification configs
+# Dados de configuração do servidor de email que será usado para envio das notificações.
+EMAIL_HOST = ''
+EMAIL_PORT = ''
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_TLS = True
+# Email utilizado para enviar as notificacoes do science server
+EMAIL_NOTIFICATION = 'noreply@desportal.cosmology.illinois.edu'
+# Lista de email que receberão uma copia de todas as notificacoes
+EMAIL_NOTIFICATION_COPY_TO = list([])
+# Email para o helpdesk LIneA
+EMAIL_HELPDESK = 'helpdesk@linea.gov.br'
+# Email de contato do LIneA
+EMAIL_HELPDESK_CONTACT = 'contato-dri@linea.gov.br'
+# Email que recebera as notificacoes e relatorios gerados pelo science server
+EMAIL_ADMIN = ''
+# Enables or disables sending daily email access statistics.
+SEND_DAILY_STATISTICS_EMAIL = False
+
+# Configs das Aplicações:
+# TARGET VIEWER:
+# Habilita ou desabilita a interface de registro de produtos pela opcao Database,
+# esta Settings e usada apenas pelo frontend.
+PRODUCT_REGISTER_DB_INTERFACE = True
+# Habilita ou Desabilita a opcao de escolher o Folder na hora de registrar um produto.
+PRODUCT_REGISTER_FOLDERS = True
+# Habilita ou Desabilita a opção de registrar um produto como publico, pela interface.
+PRODUCT_REGISTER_ENABLE_PUBLIC = False
+# Target Viewer Rating, Reject Schema Feature
+# Lista de databases que o Target viewer pode acessar, deve ser o mesmo onde as tabelas rating e reject foram criada.
+# As vezes é necessário ter o mesmo banco de dados com 2 configurações, como acontece com o catalog e dessci no NCSA.
+# nesse caso o usuario só conhece o dessci
+# este campo deveria ser preenchido com o valor dessci.
+TARGET_VIEWER_DATABASES = []
+# Schema onde estão as tabelas rating e reject.
+SCHEMA_RATING_REJECT = None
+# Save As default Schema, Utilizado pela feature Target::Save As caso seja None, o schema utilizado
+# sera o mesmo do produto original mais vai requerer permissao.
+# para o ncsa cada usuario tem um schema utilizar o nome de usuario da conf 'catalog'
+SCHEMA_SAVE_AS = None
+# USER_QUERY:
+# Tempo de execucao de um job no User query.
+USER_QUERY_EXECUTION_TIMEOUT = 300
+# Limite de linhas de uma query
+USER_QUERY_MAX_ROWS = 100000
+# DES Cutout Service:
+# DESCUT Colaboracao
+DES_CUTOUT_SERVICE = {
+    # 1 para a versao do Descut Colaboracao 2 para versao Descut Public
+    'API_VERSION': 1,
+    'HOST': 'https://descut.cosmology.illinois.edu',
+    'USER': '',
+    'PASSWORD': '',
+    # Path onde ficaram os arquivos de cutout, esse parametro sera usado em conjunto com DATA_DIR para criar o path
+    # absoluto para os arquivos.
+    'CUTOUT_DIR': 'targets/cutouts',
+    # Url base que sera usada para exibir as imagens geradas esse parametro deve ser mapeado no dri.conf no apache
+    'CUTOUT_SOURCE': '/data',
+    # Tempo de delay para a task check_jobs em minutos
+    'CUTOUT_TASK_CHECK_JOBS_DELAY': 1,
+    # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos
+    'AVAILABLE_RELEASES': [],
+    # Quantidade limit de objetos a ser passada para o descutout
+    'MAX_OBJECTS': 300,
+    # Token de authenticacao utilizado apenas para o DescutPublico para colaboracao usar None
+    'TOKEN': None,
+    # Esta opcao deve ser False para o DescutPublico e True para Colaboracao
+    'DELETE_JOB_AFTER_DOWNLOAD': True,
+    # Url para gerar o token, para o publico usar None.
+    'API_GET_TOKEN': '/api/token/',
+    # Url para a API reponsavel por criar os jobs
+    'API_CREATE_JOBS': '/api/jobs/',
+    # Url para a API responsavel por retornar o status dos jobs
+    'API_CHECK_JOBS': '/api/jobs/',
+    # No DescutPublico e necessario passar um email para onde seram enviadas as notificacoes do descut.
+    'EMAIL': ''
+}
+# Others app config:
+# Tempo limite em horas para que um produto fique disponivel, apos este tempo
+# o produto sera removido pelo garbage colector e sua tabela sera dropada. Use None para desabilitar.
+PRODUCT_EXPIRATION_TIME = None
+# Plugin Galaxy Cluster para o Explorer #TODO: Este plugin não existe mais!!!.
+# Url para acessar o container com o plugin do galaxy cluster
+PLUGIN_GALAXY_CLUSTER_HOST = "http://localhost:8000"
+
+# Logs
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s [%(levelname)s] %(message)s'
+        },
+    },
+    'handlers': {
+        'default': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join('/log', 'django.log'),
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+        'db_handler': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join('/log', 'django_db.log'),
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'standard',
+        },
+        # DRI APPS Logs
+        'descutoutservice': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'cutout.log'),
+            'formatter': 'standard',
+        },
+        'downloads': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'downloads.log'),
+            'formatter': 'standard',
+        },
+        'import_process': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'import_process.log'),
+            'formatter': 'standard',
+        },
+        'product_export': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'product_export.log'),
+            'formatter': 'standard',
+        },
+        'import_target_csv': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'import_target_csv.log'),
+            'formatter': 'standard',
+        },
+        'product_saveas': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'product_saveas.log'),
+            'formatter': 'standard',
+        },
+        'ncsa_authentication': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'ncsa_authentication.log'),
+            'formatter': 'standard',
+        },
+        'garbage_colector': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'garbage_colector.log'),
+            'formatter': 'standard',
+        },
+        'userquery': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'userquery.log'),
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['default'],
+            'level': LOG_LEVEL,
+            'propagate': True
+        },
+        'django.db.backends': {
+            'handlers': ['db_handler'],
+            'level': LOG_LEVEL,
+            'propagate': False
+        },
+        # DRI APPS Logs
+        'descutoutservice': {
+            'handlers': ['descutoutservice'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'downloads': {
+            'handlers': ['downloads'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'import_process': {
+            'handlers': ['import_process'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'product_export': {
+            'handlers': ['product_export'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'import_target_csv': {
+            'handlers': ['import_target_csv'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'product_saveas': {
+            'handlers': ['product_saveas'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'ncsa_authentication': {
+            'handlers': ['ncsa_authentication'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'garbage_colector': {
+            'handlers': ['garbage_colector'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'userquery': {
+            'handlers': ['userquery'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+    }
+}
