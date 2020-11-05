@@ -62,94 +62,100 @@ def check_jobs_running():
 
 @task(name="download_cutoutjob")
 def download_cutoutjob(id):
-    logger = descutout.logger
 
-    logger.info("Start downloading Cutout Job [ %s ]" % id)
+    descutout.download_by_id(id)
 
-    cutoutjob = descutout.get_cutoutjobs_by_id(id)
 
-    # Changing the CutoutJob Status for Downloading
-    descutout.change_cutoutjob_status(cutoutjob, "dw")
+# @task(name="download_cutoutjob")
+# def download_cutoutjob(id):
+#     logger = descutout.logger
 
-    cutoutdir = descutout.get_cutout_dir(cutoutjob)
+#     logger.info("Start downloading Cutout Job [ %s ]" % id)
 
-    allarqs = list()
+#     cutoutjob = descutout.get_cutoutjobs_by_id(id)
 
-    image_formats = cutoutjob.cjb_image_formats
-    if image_formats is None:
-        image_formats = 'png'
+#     # Changing the CutoutJob Status for Downloading
+#     descutout.change_cutoutjob_status(cutoutjob, "dw")
 
-    formats = image_formats.split(',')
+#     cutoutdir = descutout.get_cutout_dir(cutoutjob)
 
-    logger.info("Only download the files with these formats: [ %s ]" % image_formats)
+#     allarqs = list()
 
-    # Deixar na memoria a lista de objetos ja associada com os nomes dos arquivos
-    objects = descutout.get_objects_from_file(cutoutjob)
+#     image_formats = cutoutjob.cjb_image_formats
+#     if image_formats is None:
+#         image_formats = 'png'
 
-    # Recuperar o arquivo de Results
-    result_file_path = os.path.join(descutout.data_dir, cutoutjob.cjb_results_file)
-    logger.debug("Result File Path: %s" % result_file_path)
-    with open(result_file_path, 'r') as result_file:
-        lines = result_file.readlines()
-        for url in lines:
-            arq = descutout.parse_result_url(url)
+#     formats = image_formats.split(',')
 
-            # Verifica se o formato do arquivo esta na lista de formatos a serem baixados
-            # os formatos ficam no campo cjb_image_formats
-            if arq.get('file_type').lower() in formats:
-                allarqs.append(arq)
+#     logger.info("Only download the files with these formats: [ %s ]" % image_formats)
 
-                object_id = None
-                object_ra = None
-                object_dec = None
-                file_size = None
-                finish = None
+#     # Deixar na memoria a lista de objetos ja associada com os nomes dos arquivos
+#     objects = descutout.get_objects_from_file(cutoutjob)
 
-                logger.info("Downloading [ %s ]" % arq.get('filename'))
+#     # Recuperar o arquivo de Results
+#     result_file_path = os.path.join(descutout.data_dir, cutoutjob.cjb_results_file)
+#     logger.debug("Result File Path: %s" % result_file_path)
+#     with open(result_file_path, 'r') as result_file:
+#         lines = result_file.readlines()
+#         for url in lines:
+#             arq = descutout.parse_result_url(url)
 
-                for obj in objects:
-                    if arq.get("thumbname") == obj.get("thumbname"):
-                        object_id = obj.get("id")
-                        object_ra = obj.get("ra")
-                        object_dec = obj.get("dec")
+#             # Verifica se o formato do arquivo esta na lista de formatos a serem baixados
+#             # os formatos ficam no campo cjb_image_formats
+#             if arq.get('file_type').lower() in formats:
+#                 allarqs.append(arq)
 
-                start = timezone.now()
-                file_path = Download().download_file_from_url(
-                    arq.get('url'),
-                    cutoutdir,
-                    arq.get('filename'),
-                    ignore_errors=True
-                )
+#                 object_id = None
+#                 object_ra = None
+#                 object_dec = None
+#                 file_size = None
+#                 finish = None
 
-                if file_path is not None:
-                    file_size = os.path.getsize(file_path)
-                    finish = timezone.now()
+#                 logger.info("Downloading [ %s ]" % arq.get('filename'))
 
-                cutout = descutout.create_cutout_model(
-                    cutoutjob,
-                    filename=arq.get('filename'),
-                    thumbname=arq.get('thumbname'),
-                    type=arq.get('file_type'),
-                    filter=None,
-                    object_id=object_id,
-                    object_ra=object_ra,
-                    object_dec=object_dec,
-                    file_path=file_path,
-                    file_size=file_size,
-                    start=start,
-                    finish=finish)
+#                 for obj in objects:
+#                     if arq.get("thumbname") == obj.get("thumbname"):
+#                         object_id = obj.get("id")
+#                         object_ra = obj.get("ra")
+#                         object_dec = obj.get("dec")
 
-    result_file.close()
+#                 start = timezone.now()
+#                 file_path = Download().download_file_from_url(
+#                     arq.get('url'),
+#                     cutoutdir,
+#                     arq.get('filename'),
+#                     ignore_errors=True
+#                 )
 
-    # Deletar o job no Servico
-    descutout.delete_job(cutoutjob)
+#                 if file_path is not None:
+#                     file_size = os.path.getsize(file_path)
+#                     finish = timezone.now()
 
-    # Adicionar o tempo de termino
-    cutoutjob.cjb_finish_time = timezone.now()
-    cutoutjob.save()
+#                 cutout = descutout.create_cutout_model(
+#                     cutoutjob,
+#                     filename=arq.get('filename'),
+#                     thumbname=arq.get('thumbname'),
+#                     type=arq.get('file_type'),
+#                     filter=None,
+#                     object_id=object_id,
+#                     object_ra=object_ra,
+#                     object_dec=object_dec,
+#                     file_path=file_path,
+#                     file_size=file_size,
+#                     start=start,
+#                     finish=finish)
 
-    # Changing the CutoutJob Status for Done
-    descutout.change_cutoutjob_status(cutoutjob, "ok")
+#     result_file.close()
+
+#     # Deletar o job no Servico
+#     descutout.delete_job(cutoutjob)
+
+#     # Adicionar o tempo de termino
+#     cutoutjob.cjb_finish_time = timezone.now()
+#     cutoutjob.save()
+
+#     # Changing the CutoutJob Status for Done
+#     descutout.change_cutoutjob_status(cutoutjob, "ok")
 
 
 @task(name="purge_cutoutjob_dir")

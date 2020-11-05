@@ -1,8 +1,12 @@
 import csv
 import datetime
+import json
 import logging
 import os
+import traceback
+from pathlib import Path
 from pprint import pformat
+from urllib.parse import urljoin
 
 import humanize
 import requests
@@ -13,11 +17,11 @@ from django.db.models import Sum
 from django.template.loader import render_to_string
 from django.utils import timezone
 from lib.CatalogDB import CatalogObjectsDBHelper
-from product.association import Association
-from product.models import Catalog
-from product.models import CutOutJob
-from product.models import Cutout
-from urllib.parse import urljoin
+from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+from product.models import Catalog, Cutout, CutOutJob
+
+requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
 class DesCutoutService:
@@ -30,84 +34,143 @@ class DesCutoutService:
         # fazer os request sem verificar o certificado SSL / HTTPS
         self.verify_ssl = False
 
-        # self.logger.info("Start!")
+    def get_cutoutjobs_by_id(self, id):
+        try:
+            return CutOutJob.objects.get(pk=int(id))
+        except CutOutJob.DoesNotExist as e:
+            self.on_error(id, e)
 
-        # self.logger.info("Retrieving settings for des cutout service")
+    def get_job_path(self, id):
+        basepath = os.path.join(settings.DATA_DIR, 'cutouts')
+        job_path = os.path.join(basepath, str(id))
+        return job_path
 
-        # try:
-        #     params = settings.DES_CUTOUT_SERVICE
-        #     # self.logger.debug(params)
+    def create_job_path(self, id):
+        job_path = self.get_job_path(id)
+        self.logger.debug("Trying to create the job directory")
 
-        #     self.api_version = params["API_VERSION"]
+        try:
 
-        #     self.host = params["HOST"]
-        #     self.user = params["USER"]
-        #     self.password = params["PASSWORD"]
-        #     self.token = params["TOKEN"]
+            Path(job_path).mkdir(parents=True, exist_ok=True)
+            self.logger.info("Directory successfully created [%s]" % job_path)
+            return job_path
 
-        #     self.email = params["EMAIL"]
+        except OSError as error:
+            self.logger.error("Failed to create the directory [%s]" % job_path)
+            raise error
 
-        #     self.check_jobs_task_delay = params["CUTOUT_TASK_CHECK_JOBS_DELAY"]
-
-        #     # Diretorio raiz onde ficaram as imagens do cutout
-        #     self.data_dir = settings.DATA_DIR
-        #     self.cutout_dir = params["CUTOUT_DIR"]
-
-        #     # Limit de Objetos que podem ser enviados ao descut
-        #     self.cutout_max_objects = params["MAX_OBJECTS"]
-
-        #     # Deletar os jobs no DESCUT depois de baixar as imagens
-        #     self.delete_job_after_download = params["DELETE_JOB_AFTER_DOWNLOAD"]
-
-        #     self.host_token = None
-        #     if params["API_GET_TOKEN"] is not None:
-        #         self.host_token = self.host + params["API_GET_TOKEN"]
-
-        #     self.host_create_jobs = self.host + params["API_CREATE_JOBS"]
-
-        #     self.host_check_jobs = self.host + params["API_CHECK_JOBS"]
-
-        # except Exception as e:
-        #     msg = ("Error in the Cutouts parameters in the settings. "
-        #            "Check the DES_CUTOUT_SERVICE section if it is configured correctly. ERROR: %s" % e)
-        #     raise Exception(msg)
-
-        # # Tipos de arquivos recebidos que nao sao imagens
-        # self.not_images = ["log", "csv", "stifflog"]
-
-        # # Nome do arquivo de resultados
-        # self.result_file = "result_file.txt"
-
-        # self.logger.debug("host_token: %s" % self.host_token)
-        # self.logger.debug("host_create_jobs: %s" % self.host_create_jobs)
-        # self.logger.debug("host_check_jobs: %s" % self.host_check_jobs)
+    def get_summary_path(self, id, jobid):
+        summary_path = os.path.join(self.get_job_path(id), '{}_summary.json'.format(jobid))
+        return summary_path
 
     def start_job_by_id(self, id):
-        self.logger.info("Des Cutout Start Job by ID %s" % id)
+        self.logger.info("Des Cutout Starting Job by ID %s" % id)
 
         # Recupera o Model CutoutJob pelo id
         try:
-            cutoutjob = self.get_cutoutjobs_by_id(id)
+            job = self.get_cutoutjobs_by_id(id)
 
-            self.logger.debug("CutoutJob Name: %s" % cutoutjob.cjb_display_name)
+            self.logger.debug("CutoutJob Name: %s" % job.cjb_display_name)
+
+            # Alterar o status para Before Submit
+            job.cjb_status = 'bs'
+            job.save()
+
+            # Criar um diretório para os arquivos do Job.
+            job.cjb_cutouts_path = self.create_job_path(id)
+            job.save()
 
             # Notificacao por email
             # CutoutJobNotify().create_email_message(cutoutjob)
 
-            # Faz o login
-            token = self.descut_login()
+            # {
+            #     "positions": "RA,DEC\n29.562019000000,-63.902864000000\n29.604203000000,-63.900322000000\n30.572807000000,-63.897566000000\n",
+            #     "xsize": 1.1,
+            #     "ysize": 1.1,
+            #     "make_fits": true,
+            #     "colors_fits": "grizy",
+            #     "make_rgb_stiff": true,
+            #     "make_rgb_lupton": true,
+            #     "rgb_stiff_colors": "gri;rig;zgi",
+            #     "rgb_lupton_colors": "gri;rig;zgi",
+            #     "rgb_minimum": 1.1,
+            #     "rgb_stretch": 50.1,
+            #     "rgb_asinh": 10.1
+            # }
 
-            # Preparar para os parametros para o Submit.
+            # Parametros de submissão
+            data = dict({})
+
+            # Tamanho dos Cutouts
+            if job.cjb_xsize:
+                data.update({"xsize": job.cjb_xsize})
+            if job.cjb_ysize:
+                data.update({"ysize": job.cjb_ysize})
+
+            # Geração de Imagens Fits
+            # TODO criar esse campo no model
+            cjb_fits = True
+            # Todo se não for passado as cores usar um valor default.
+            cjb_fits_colors = "grizy"
+
+            if cjb_fits:
+                data.update({
+                    "make_fits": True,
+                    "colors_fits": cjb_fits_colors
+                })
+
+            # Geração de Imagens Coloridas com Stiff
+            cjb_stiff = True
+            cjb_stiff_colors = "gri;rig;zgi"
+
+            if cjb_stiff:
+                data.update({
+                    "make_rgb_stiff": True,
+                    "rgb_stiff_colors": cjb_stiff_colors
+                })
+
+            # Geração de Imagens Coloridas com lupton
+            cjb_lupton = True
+            cjb_lupton_colors = "gri;rig;zgi"
+
+            if cjb_lupton:
+                data.update({
+                    "make_rgb_lupton": True,
+                    "rgb_lupton_colors": cjb_lupton_colors
+                })
+
+            # Seleção do Release
+            data.update({
+                "release": job.cjb_tag
+            })
+
+            # TODO: Preparar a lista de objetos para submissão
+            # Checar o tamanho do lista e dividir em varios jobs caso ultrapasse o limit.
+            data.update({
+                "positions": "RA,DEC\n29.562019000000,-63.902864000000\n29.604203000000,-63.900322000000\n30.572807000000,-63.897566000000\n",
+            })
+
+            # Submeter o Job e guardar o id retornado pelo Descut
+            job.cjb_job_id = self.submit_job(data)
+            # Cutout Job enviado e aguardando termino na API
+            # Alterar o status para Running
+            job.cjb_status = 'rn'
+            job.save()
+
+            self.logger.info("Status changed to Running")
+
+            # Apartir daqui o job está rodando no NCSA.
+            # Uma daemon vai ficar checando o andamento do Job usando o metodo check_job_by_id.
 
         except CutOutJob.DoesNotExist as e:
-            self.logger.error(e)
+            self.on_error(id, e)
             raise e
 
         except Exception as e:
-            self.logger.error(e)
+            self.on_error(id, e)
             raise e
 
-    def descut_login(self, ):
+    def login(self, ):
         """Obtains an auth token using the username and password credentials for a given database.
         """
 
@@ -129,111 +192,151 @@ class DesCutoutService:
 
         return r.json()['token']
 
-    def generate_token(self):
+    def submit_job(self, data):
+        """Submits a query job and returns the complete server response which includes the job ID.
+
+        Args:
+            data ([type]): [description]
+
+        Returns:
+            [type]: [description]
         """
-        Returns a token to create other requests
-        Returns: str(token)
-        """
-        self.logger.info("Generating a new Authentication token")
+        self.logger.info("Submiting Descut Job")
+        self.logger.debug(data)
 
-        if self.host_token is not None:
+        config = settings.DESCUTOUT_SERVICE
+        url = "{}/job/cutout".format(config['API_URL'])
 
-            # Create Authetication Token
-            req = requests.post(
-                self.host_token,
-                data={
-                    "username": self.user,
-                    "password": self.password
-                },
-                verify=self.verify_ssl)
-
-            try:
-                self.logger.debug(req.text)
-
-                return req.json()["token"]
-            except Exception as e:
-                text = req.json()
-                msg = ("Token generation error %s - %s" % (req.status_code, text["message"]))
-
-                self.logger.critical(msg)
-
-            raise Exception(msg)
-
-        else:
-            return self.token
-
-    # def check_token_status(self, token):
-    #     """
-    #     Check Token status: Check the expiration time for a token
-    #     Returns: bool()
-    #     """
-    #     self.logger.info("Check the expiration time for a token")
-
-    #     if self.host_token is not None:
-
-    #         req = requests.get(
-    #             self.host_token + "?token=" + token, verify=self.verify_ssl)
-
-    #         if req.json()["status"].lower() == "ok":
-    #             return True
-    #         else:
-    #             return False
-    #     else:
-    #         return True
-
-    def create_job(self, token, data):
-        """
-        Submit a Job to service
-            :param token:
-            :param data: {
-                "token"        : "aaa...",          # required
-                "ra"           : str(ra),           # required
-                "dec"          : str(dec),          # required
-                "job_type"     : "coadd",           # required "coadd" or "single"
-                "comment"      : "String"           # required Adicionado em 09/2017
-                "xsize"        : str(xs),           # optional (default : 1.0)
-                "ysize"        : str(ys),           # optional (default : 1.0)
-                "tag"          : "Y3A1_COADD",      # optional for "coadd" jobs (default: Y3A1_COADD, see Coadd Help page for more options)
-                "band"         : "g,r,i",           # optional for "single" epochs jobs (default: all bands)
-                "no_blacklist" : "false",           # optional for "single" epochs jobs (default: "false"). return or not blacklisted exposures
-                "list_only"    : "false",           # required for DR1 public version (default : "false") "true": will not generate pngs (faster)
-                "email"        : "myemail@mmm.com"  # optional will send email when job is finished
-                "username"     : "Username"         # Required for DR1 public version
-
-            }
-        """
-        self.logger.info("Sending request to create a new job in the Service")
-
-        data["token"] = token
-
-        self.logger.debug("Host Jobs: %s" % self.host_create_jobs)
-
-        req = requests.post(
-            self.host_create_jobs,
+        # Submit job
+        r = requests.put(
+            url,
             data=data,
+            headers={'Authorization': 'Bearer {}'.format(self.login())},
             verify=self.verify_ssl
         )
 
-        self.logger.debug(req)
+        response = r.json()
+        self.logger.debug("Response: %s" % response)
+        self.logger.debug("Response Status: [%s]" % response["status"])
+
+        if response["status"] == "ok":
+            # Retorna o jobid para ser guardado no Job
+            self.logger.debug("Descut Job Submited with Jobid: [%s]" % response["jobid"])
+            return response["jobid"]
+        else:
+            msg = "Error submitting job: %s" % response["message"]
+            raise Exception(msg)
+
+    def check_job_by_id(self, id):
+        self.logger.info("Des Cutout Check Job by ID %s" % id)
+
+        # Recupera o Model CutoutJob pelo id
+        job = self.get_cutoutjobs_by_id(id)
 
         try:
-            if req.json()["status"] == "ok":
-                self.logger.debug(req.text)
+            # Verifica se o status do job no Descut
+            job_summary = self.check_job_status(job.cjb_job_id)
 
-                return req.json()
+            # Se o retorno do Check for None signica que o job ainda não foi finalizado.
+            if job_summary is None:
+                return
 
-            else:
-                self.logger.warning(req.text)
-                msg = ("Create Job Error: " % req.json()["message"])
-                raise Exception(msg)
+            # self.logger.debug(job_summary)
+
+            # Criar um arquivo com o summary json retornado pelo Descut
+            # Como é possivel que um Cutout job possa ter mais de um Descut job o arquivo tem
+            # como nome o jobid_summary.json
+            summary_path = self.get_summary_path(id, job_summary["job_id"])
+            with open(summary_path, "w") as fp:
+                json.dump(job_summary, fp)
+
+            # Alterar o status para Before Download
+            job.cjb_status = "bd"
+            job.save()
 
         except Exception as e:
+            self.on_error(id, e)
 
-            self.logger.error(req.text)
+    def check_job_status(self, jobid):
+        """[summary]
 
-            msg = ("Request Create Job error %s - %s" % (req.status_code, req.text))
+        Args:
+            jobid ([type]): [description]
 
-            raise Exception(msg)
+        Raises:
+            Exception: [description]
+
+        Returns:
+            [type]: [description]
+        """
+
+        self.logger.info("Check Status for Descut Jobid: [%s]")
+
+        config = settings.DESCUTOUT_SERVICE
+        url = "{}/job/status".format(config['API_URL'])
+
+        r = requests.post(
+            url,
+            data={
+                "job-id": jobid
+            },
+            headers={'Authorization': 'Bearer {}'.format(self.login())},
+            verify=self.verify_ssl
+        )
+
+        response = r.json()
+        self.logger.debug("Response Status: [%s]" % response["status"])
+
+        if response["status"] == "ok":
+            # A requisição foi bem sucedida
+            job = response["jobs"][0]
+            # Verificar o status_job:
+            if job["job_status"] == "success":
+                self.logger.info("DES Job finished and ready for download and registration.")
+
+                return job
+
+            elif job["job_status"] == "failure":
+                # Neste caso o Job falhou na execução do lado do Descut, retorna erro e finaliza o job.
+                self.logger.error("DES Job Finished with Descut Error: %s" % job["job_status_message"])
+
+                raise Exception(job["job_status_message"])
+
+            else:
+                # Job nem terminou  com sucesso e nem falhou pode estar rodando ainda,
+                # não fazer nada neste caso só logar uma mensagem de debug.
+                self.logger.debug("Des Job status: [%s]" % job["job_status"])
+                return None
+
+        else:
+            msg = "Error checking DES Job status: %s" % response["message"]
+            self.logger.error(msg)
+
+    def download_by_id(self, id):
+
+        self.logger.info("Starting download Cutout Job [ %s ]" % id)
+
+        # Recupera o Model CutoutJob pelo id
+        job = self.get_cutoutjobs_by_id(id)
+
+        # TODO:
+        # Mudar o status para Downloading
+        # Baixar o tar.gz com todos os dados
+        # Extrair o tar.gz
+        # Registrar as imagens coloridas
+        # Excluir o tar.gz
+
+    def on_error(self, id, error):
+        trace = traceback.format_exc()
+        self.logger.error(trace)
+        self.logger.error(error)
+        # TODO:
+        # Alterar o status do Job
+        # Alterar a data de termino
+        # Alterar o campo de erro
+
+
+# ----------------------------------------------///////////////////////////////////////////--------------------------------------------------
 
     def get_job_results(self, token, jobid):
         """
@@ -490,9 +593,6 @@ class DesCutoutService:
         # Pegar todos os CutoutJobs com status = st (Start)
         return CutOutJob.objects.filter(cjb_status=str(status))
 
-    def get_cutoutjobs_by_id(self, id):
-        return CutOutJob.objects.get(pk=int(id))
-
     def change_cutoutjob_status(self, cutoutjob, status):
         self.logger.info("Changing the CutoutJob Status %s for %s" % (cutoutjob.cjb_status, status))
         cutoutjob.cjb_status = status
@@ -723,41 +823,6 @@ class DesCutoutService:
             key += str(dec)
 
         return key
-
-    def test_api_help(self):
-        print("-------------- test_api_help --------------")
-        token = self.generate_token()
-
-        ra = [10.0, 20.0, 30.0]
-        dec = [40.0, 50.0, 60.0]
-        xs = [1.0, 2.0, 3.0, 4.0]
-        ys = [2.0]
-
-        # create body of request
-        body = {
-            "token": token,  # required
-            "ra": str(ra),  # required
-            "dec": str(dec),  # required
-            "job_type": "coadd",  # required "coadd" or "single"
-            "xsize": str(xs),  # optional (default : 1.0)
-            "ysize": str(ys),  # optional (default : 1.0)
-            "band": "g,r,i",  # optional for "single" epochs jobs (default: all bands)
-            "no_blacklist": "false",
-            # optional for "single" epochs jobs (default: "false"). return or not blacklisted exposures
-            "list_only": "false",  # optional (default : "false") "true": will not generate pngs (faster)
-            "email": "false"  # optional will send email when job is finished
-        }
-
-        req = requests.post("http://descut.cosmology.illinois.edu/api/jobs/", data=body, verify=self.verify_ssl)
-
-        # create body for files if needed
-        # body_files = {"csvfile": open("mydata.csv", "rb")}  # To load csv file as part of request
-        # To include files
-        # req = requests.post("http://descut.cosmology.illinois.edu/api/jobs/", data=body, files=body_files)
-
-        print(req)
-        print(req.text)
-        print(req.json()["job"])
 
     def create_cutout_model(self,
                             cutoutjob, filename, thumbname, type, filter=None, object_id=None, object_ra=None,

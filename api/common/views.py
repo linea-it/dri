@@ -332,19 +332,55 @@ def teste(request):
     if request.method == 'GET':
 
         import logging
+        from datetime import datetime
+        import shutil
+        import os
         from product.models import CutOutJob
         from product.descutoutservice import DesCutoutService
+        from django.utils.timezone import utc
 
         log = logging.getLogger('descutoutservice')
 
         log.debug("------ TESTE DESCUT ------")
 
+        dc = DesCutoutService()
+
         # recuperar o Job de cutout
         job = CutOutJob.objects.get(pk=1)
-
         log.debug("Job: [%s]" % job)
 
-        dc = DesCutoutService()
-        dc.start_job_by_id(job.id)
+        # TESTE DE SUBMIT -------------
+
+        # Resetar o Job
+        # job.cjb_status = "st"
+        # job.cjb_start_time = datetime.utcnow().replace(tzinfo=utc)
+        # job.cjb_finish_time = None
+        # job.cjb_cutouts_path = None
+        # job.cjb_job_id = None
+        # job.save()
+
+        # Remover o diretório
+        # try:
+        #     shutil.rmtree(dc.get_job_path(job.pk))
+        # except OSError as e:
+        #     log.debug(e)
+
+        # dc.start_job_by_id(job.id)
+
+        # TESTE DE SUBMIT -------------
+
+        # TESTE DE Check Status -------------
+        # Resetar o Job
+        job.cjb_status = "rn"
+        job.save()
+        # Apagar o arquivo json
+        try:
+            os.unlink(dc.get_summary_path(job.pk, job.cjb_job_id))
+        except OSError as e:
+            log.debug(e)
+
+        dc.check_job_by_id(job.id)
+
+        # TESTE DE Check Status -------------
 
         return Response(dict({'status': "success"}))
