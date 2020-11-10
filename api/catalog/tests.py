@@ -11,6 +11,8 @@ from catalog.serializers import CommentsSerializer
 
 
 class CommentsAPITestCase(APITestCase):
+    databases = '__all__'
+
     def setUp(self):
         self.user = User.objects.create_user("dri", "dri@linea.org", "dri")
         self.client.login(username='dri', password='dri')

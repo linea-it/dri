@@ -1,22 +1,20 @@
 import copy
-
-import django_filters
-from lib.sqlalchemy_wrapper import DBBase
-from rest_framework import filters
-from rest_framework import viewsets
-from rest_framework.decorators import api_view, list_route
-from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-from django_filters.rest_framework import OrderingFilter
-
-from .models import Release, Tag, Tile, Dataset, Survey
-from .serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, \
-    SurveySerializer, DatasetFootprintSerializer
-from django.conf import settings
 import os
 from urllib.parse import urljoin
 
+import django_filters
 from common.models import Filter
+from django.conf import settings
+from django_filters.rest_framework import DjangoFilterBackend, OrderingFilter
+from lib.sqlalchemy_wrapper import DBBase
+from rest_framework import filters, viewsets
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+from .models import Dataset, Release, Survey, Tag, Tile
+from .serializers import (DatasetFootprintSerializer, DatasetSerializer,
+                          ReleaseSerializer, SurveySerializer, TagSerializer,
+                          TileSerializer)
 
 # Create your views here.
 
@@ -73,11 +71,10 @@ class DatasetFilter(django_filters.FilterSet):
     position = django_filters.CharFilter(method='filter_position')
     release = django_filters.CharFilter(method='filter_release')
     inspected = django_filters.CharFilter(method='filter_inspected')
-    
 
     class Meta:
         model = Dataset
-        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', 'release',]
+        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', 'release', ]
         order_by = True
 
     def filter_release(self, queryset, name, value):

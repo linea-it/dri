@@ -34,18 +34,18 @@ from userquery import views as userquery_views
 
 router = routers.DefaultRouter()
 
-router.register(r'logged', common_views.LoggedUserViewSet, base_name='logged')
-router.register(r'users_same_group', common_views.UsersInSameGroupViewSet, base_name='users_same_group')
+router.register(r'logged', common_views.LoggedUserViewSet, basename='logged')
+router.register(r'users_same_group', common_views.UsersInSameGroupViewSet, basename='users_same_group')
 
 router.register(r'releases', coadd_views.ReleaseViewSet)
 router.register(r'tags', coadd_views.TagViewSet)
 router.register(r'tiles', coadd_views.TileViewSet)
-router.register(r'dataset', coadd_views.DatasetViewSet, base_name='dataset')
-router.register(r'footprints', coadd_views.DatasetFootprintViewSet, base_name='footprints')
+router.register(r'dataset', coadd_views.DatasetViewSet, basename='dataset')
+router.register(r'footprints', coadd_views.DatasetFootprintViewSet, basename='footprints')
 router.register(r'surveys', coadd_views.SurveyViewSet)
 
-router.register(r'productclass', product_classifier_views.ProductClassViewSet, base_name='productclass')
-router.register(r'productgroup', product_classifier_views.ProductGroupViewSet, base_name='productgroup')
+router.register(r'productclass', product_classifier_views.ProductClassViewSet, basename='productclass')
+router.register(r'productgroup', product_classifier_views.ProductGroupViewSet, basename='productgroup')
 router.register(r'productclasscontent', product_classifier_views.ProductClassContentViewSet)
 
 router.register(r'product', product_views.ProductViewSet)
@@ -58,7 +58,7 @@ router.register(r'productrelated', product_views.ProductRelatedViewSet)
 router.register(r'productcontent', product_views.ProductContentViewSet)
 router.register(r'productassociation', product_views.ProductContentAssociationViewSet)
 router.register(r'association', product_views.ProductAssociationViewSet)
-router.register(r'AllProducts', product_views.AllProductViewSet, base_name='allproducts')
+router.register(r'AllProducts', product_views.AllProductViewSet, basename='allproducts')
 router.register(r'productsetting', product_views.ProductSettingViewSet)
 router.register(r'currentsetting', product_views.CurrentSettingViewSet)
 router.register(r'contentsetting', product_views.ProductContentSettingViewSet)
@@ -70,9 +70,9 @@ router.register(r'workgroup_users', product_views.WorkgroupUserViewSet)
 router.register(r'filterset', product_views.FiltersetViewSet)
 router.register(r'filtercondition', product_views.FilterConditionViewSet)
 router.register(r'bookmarked', product_views.BookmarkedViewSet)
-router.register(r'productexport', product_views.ExportViewSet, base_name='export_product')
-router.register(r'productsaveas', product_views.SaveAsViewSet, base_name='product_save_as')
-router.register(r'import_target_list', product_views.ImportTargetListViewSet, base_name='import_target_list')
+router.register(r'productexport', product_views.ExportViewSet, basename='export_product')
+router.register(r'productsaveas', product_views.SaveAsViewSet, basename='product_save_as')
+router.register(r'import_target_list', product_views.ImportTargetListViewSet, basename='import_target_list')
 
 router.register(r'feature', validation_views.FeatureViewSet)
 router.register(r'flagged', validation_views.FlaggedViewSet)
@@ -84,18 +84,18 @@ router.register(r'filters', common_views.FilterViewSet)
 
 router.register(r'site', product_register_views.SiteViewSet)
 router.register(r'importexternalprocess', product_register_views.ExternalProcessImportViewSet,
-                base_name='importprocess')
+                basename='importprocess')
 router.register(r'importauthorization', product_register_views.AuthorizationViewSet)
 
 router.register(r'application', interfaces_views.ApplicationViewSet)
 router.register(r'tutorial', interfaces_views.TutorialViewSet)
 
 # API Relacionadas ao Banco de Dados de Catalogo
-router.register(r'target', catalog_views.TargetViewSet, base_name='target')
+router.register(r'target', catalog_views.TargetViewSet, basename='target')
 router.register(r'objectsrating', catalog_views.RatingViewSet)
 router.register(r'objectsreject', catalog_views.RejectViewSet)
 router.register(r'objectscomments', catalog_views.CommentsViewSet)
-router.register(r'catalogobjects', catalog_views.CatalogObjectsViewSet, base_name='catalog_objects')
+router.register(r'catalogobjects', catalog_views.CatalogObjectsViewSet, basename='catalog_objects')
 
 # Comment API
 router.register(r'comment/position', comment_views.PositionViewSet)
@@ -106,11 +106,11 @@ router.register(r'userquery_query', userquery_views.QueryViewSet)
 router.register(r'userquery_sample', userquery_views.SampleViewSet)
 router.register(r'userquery_job', userquery_views.JobViewSet)
 router.register(r'userquery_table', userquery_views.TableViewSet)
-router.register(r'userquery_validate', userquery_views.QueryValidate, base_name='validate_query')
-router.register(r'userquery_preview', userquery_views.QueryPreview, base_name='preview_query')
-router.register(r'userquery_property', userquery_views.TableProperties, base_name='table')
-router.register(r'userquery_target', userquery_views.TargetViewerRegister, base_name='target_viewer_register')
-router.register(r'userquery_download', userquery_views.TableDownload, base_name='table_download')
+router.register(r'userquery_validate', userquery_views.QueryValidate, basename='validate_query')
+router.register(r'userquery_preview', userquery_views.QueryPreview, basename='preview_query')
+router.register(r'userquery_property', userquery_views.TableProperties, basename='table')
+router.register(r'userquery_target', userquery_views.TargetViewerRegister, basename='target_viewer_register')
+router.register(r'userquery_download', userquery_views.TableDownload, basename='table_download')
 
 # Aladin API
 router.register(r'aladin/image', aladin_views.ImageViewSet)
@@ -127,7 +127,7 @@ urlpatterns = [
     url(r'^dri/api/get_fits_by_tilename', coadd_views.get_fits_by_tilename),
     url(r'^dri/api/vizier/', product_views.vizier_cds),
     url(r'^dri/api/send_statistic_email/', common_views.send_statistic_email),
-    url(r'^dri/api/available_database/', common_views.available_database),    
+    url(r'^dri/api/available_database/', common_views.available_database),
     url(r'^dri/api/teste/', common_views.teste),
 
 
