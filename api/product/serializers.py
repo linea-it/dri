@@ -429,14 +429,12 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
             'ctt_object_id',
             'ctt_object_ra',
             'ctt_object_dec',
+            'ctt_img_format',
             'ctt_filter',
-            'ctt_thumbname',
             # 'ctt_file_path',
             'ctt_file_name',
             'ctt_file_type',
             'ctt_file_size',
-            'ctt_download_start_time',
-            'ctt_download_finish_time',
             'ctt_file_source',
             'timestamp'
         )

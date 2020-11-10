@@ -338,6 +338,7 @@ def teste(request):
         from product.models import CutOutJob
         from product.descutoutservice import DesCutoutService
         from django.utils.timezone import utc
+        import pandas as pd
 
         log = logging.getLogger('descutoutservice')
 
@@ -348,6 +349,27 @@ def teste(request):
         # recuperar o Job de cutout
         job = CutOutJob.objects.get(pk=1)
         log.debug("Job: [%s]" % job)
+
+        # a = list([
+        #     dict({"meta_id": 1, "meta_ra": 29.562019, "meta_dec": -63.902864}),
+        #     dict({"meta_id": 2, "meta_ra": 29.604203, "meta_dec": -63.900322}),
+        #     dict({"meta_id": 3, "meta_ra": 30.572807, "meta_dec": -63.897566}),
+        # ])
+
+        # df = pd.DataFrame(a)
+        # df = df.set_index('meta_id')
+        # log.debug(df.head)
+
+        # a = df[(df['meta_ra'] == 30.572807) & (df['meta_dec'] == -63.897566)]
+
+        # log.debug(a)
+
+        # df.to_csv(
+        #     os.path.join(dc.get_job_path(job.id), "targets.csv"),
+        #     sep=";",
+        #     header=True,
+        #     index=True
+        # )
 
         # TESTE DE SUBMIT -------------
 
@@ -371,16 +393,38 @@ def teste(request):
 
         # TESTE DE Check Status -------------
         # Resetar o Job
-        job.cjb_status = "rn"
-        job.save()
-        # Apagar o arquivo json
-        try:
-            os.unlink(dc.get_summary_path(job.pk, job.cjb_job_id))
-        except OSError as e:
-            log.debug(e)
+        # job.cjb_status = "rn"
+        # job.save()
+        # # Apagar o arquivo json
+        # try:
+        #     os.unlink(dc.get_summary_path(job.pk, job.cjb_job_id))
+        # except OSError as e:
+        #     log.debug(e)
 
-        dc.check_job_by_id(job.id)
+        # dc.check_job_by_id(job.id)
 
         # TESTE DE Check Status -------------
+
+        # TESTE DE Download -------------
+        # # Resetar o Job
+        # job.cjb_status = "bd"
+        # job.save()
+
+        # try:
+        #     # Remove o tarfile
+        #     tar_file = os.path.join(dc.get_job_path(job.id), "{}.tar.gz".format(job.cjb_job_id))
+        #     os.unlink(tar_file)
+        #     # Remove o path já extraido
+        #     shutil.rmtree(os.path.join(dc.get_job_path(job.id), str(job.cjb_job_id)))
+
+        # except OSError as e:
+        #     log.debug(e)
+
+        # dc.download_by_jobid(job.id, job.cjb_job_id)
+        # TESTE DE Download -------------
+
+        # TESTE DE Registro -------------
+
+        dc.register_cutouts_by_jobid(job.id, job.cjb_job_id)
 
         return Response(dict({'status': "success"}))

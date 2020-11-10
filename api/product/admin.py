@@ -62,10 +62,8 @@ class CutOutJobAdmin(admin.ModelAdmin):
 
 class CutoutAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_object_ra', 'ctt_object_dec', 'ctt_filter', 'ctt_thumbname',
-        'ctt_file_name', 'ctt_file_path', 'ctt_file_type', 'ctt_file_size', 'ctt_download_start_time',
-        'ctt_download_finish_time',
-    )
+        'id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_object_ra', 'ctt_object_dec', 'ctt_img_format', 'ctt_filter',
+        'ctt_file_name', 'ctt_file_path', 'ctt_file_type', 'ctt_file_size', )
     list_display_links = ('id',)
     search_fields = ('id',)
 
@@ -125,6 +123,7 @@ class FiltersetdAdmin(admin.ModelAdmin):
 
 class FilterConditionAdmin(admin.ModelAdmin):
     list_display = ('id', 'filterset', 'fcd_property', 'fcd_property_name', 'fcd_operation', 'fcd_value')
+
 
 class BookmarkedAdmin(admin.ModelAdmin):
     list_display = ('id', 'product', 'owner', 'is_starred')

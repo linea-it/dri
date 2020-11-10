@@ -80,3 +80,7 @@ def drop_product_table(sender, instance, using, **kwargs):
         except Exception as e:
             # Tenta dropar a tabela se nao conseguir nao faz nada.
             pass
+
+
+post_save.connect(start_des_cutout_job, sender=CutOutJob)
+pre_delete.connect(drop_product_table, sender=Product)

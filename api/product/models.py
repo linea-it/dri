@@ -1,3 +1,4 @@
+from django.db.models.signals import post_save, pre_delete
 from coadd.models import Release, Tag
 from django.db import models
 from product_classifier.models import ProductClass
@@ -108,8 +109,8 @@ class Table(Product):
 
 class Catalog(Table):
     ctl_num_objects = models.PositiveIntegerField(
-        verbose_name='Num of objects', 
-        null=True, 
+        verbose_name='Num of objects',
+        null=True,
         blank=True)
 
     def __str__(self):
@@ -167,7 +168,7 @@ class CurrentSetting(models.Model):
         ProductSetting, on_delete=models.CASCADE, verbose_name='Setting')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,  null=True, blank=True, verbose_name='Owner')
+        on_delete=models.CASCADE, null=True, blank=True, verbose_name='Owner')
 
     def __str__(self):
         return str(self.pk)
@@ -345,6 +346,7 @@ class CutOutJob(models.Model):
     def __str__(self):
         return str(self.cjb_display_name)
 
+
 class Cutout(models.Model):
     cjb_cutout_job = models.ForeignKey(
         CutOutJob, on_delete=models.CASCADE, verbose_name='Cutout Job', default=None)
@@ -357,10 +359,10 @@ class Cutout(models.Model):
     ctt_object_dec = models.CharField(
         max_length=10, verbose_name='Dec', null=True, blank=True,
         help_text='Dec in degrees, the association will be used to identify the column')
+    ctt_img_format = models.TextField(
+        max_length=10, verbose_name='Image Format', null=True, blank=True, default=None, help_text="Image file format can be fits, stiff, or lupton.")
     ctt_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', on_delete=models.CASCADE, null=True, blank=True, default=None)
-    ctt_thumbname = models.CharField(
-        max_length=255, verbose_name='Thumbname', null=True, blank=True, default=None)
     ctt_file_path = models.TextField(
         max_length=4096, verbose_name='File Path', null=True, blank=True, default=None)
     ctt_file_name = models.CharField(
@@ -369,10 +371,6 @@ class Cutout(models.Model):
         max_length=5, verbose_name='File Extension', null=True, blank=True, default=None)
     ctt_file_size = models.PositiveIntegerField(
         verbose_name='File Size', null=True, blank=True, default=None, help_text='File Size in bytes')
-    ctt_download_start_time = models.DateTimeField(
-        auto_now_add=True, null=True, blank=True, verbose_name='Download Start')
-    ctt_download_finish_time = models.DateTimeField(
-        auto_now_add=False, null=True, blank=True, verbose_name='Download finish')
 
     class Meta:
         unique_together = ('cjb_cutout_job', 'ctt_file_name')
@@ -480,11 +478,9 @@ class BookmarkProduct(models.Model):
         return str(self.pk)
 
 
-
 # -------------------------------- Signals --------------------------------------
 # Esses signals connect devem ficar no final do arquivo para nao dar problema de import.
-from django.db.models.signals import post_save, pre_delete
-from .signals import start_des_cutout_job, drop_product_table
-
-post_save.connect(start_des_cutout_job, sender=CutOutJob)
-pre_delete.connect(drop_product_table, sender=Product)
+# pylint: disable = E402
+# from .signals import start_des_cutout_job, drop_product_table
+# post_save.connect(start_des_cutout_job, sender=CutOutJob)
+# pre_delete.connect(drop_product_table, sender=Product)

@@ -3,12 +3,14 @@ import datetime
 import json
 import logging
 import os
+import tarfile
 import traceback
 from pathlib import Path
 from pprint import pformat
 from urllib.parse import urljoin
 
 import humanize
+import pandas as pd
 import requests
 from common.download import Download
 from common.notify import Notify
@@ -20,7 +22,7 @@ from lib.CatalogDB import CatalogObjectsDBHelper
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from product.models import Catalog, Cutout, CutOutJob
-
+from common.models import Filter
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
@@ -60,7 +62,7 @@ class DesCutoutService:
             raise error
 
     def get_summary_path(self, id, jobid):
-        summary_path = os.path.join(self.get_job_path(id), '{}_summary.json'.format(jobid))
+        summary_path = os.path.join(self.get_job_path(id), str(jobid), 'summary.json')
         return summary_path
 
     def start_job_by_id(self, id):
@@ -147,7 +149,7 @@ class DesCutoutService:
             # TODO: Preparar a lista de objetos para submissão
             # Checar o tamanho do lista e dividir em varios jobs caso ultrapasse o limit.
             data.update({
-                "positions": "RA,DEC\n29.562019000000,-63.902864000000\n29.604203000000,-63.900322000000\n30.572807000000,-63.897566000000\n",
+                "positions": "RA,DEC\n29.562019,-63.902864\n29.604203,-63.900322\n30.572807,-63.897566\n",
             })
 
             # Submeter o Job e guardar o id retornado pelo Descut
@@ -243,12 +245,12 @@ class DesCutoutService:
 
             # self.logger.debug(job_summary)
 
-            # Criar um arquivo com o summary json retornado pelo Descut
-            # Como é possivel que um Cutout job possa ter mais de um Descut job o arquivo tem
-            # como nome o jobid_summary.json
-            summary_path = self.get_summary_path(id, job_summary["job_id"])
-            with open(summary_path, "w") as fp:
-                json.dump(job_summary, fp)
+            # # Criar um arquivo com o summary json retornado pelo Descut
+            # # Como é possivel que um Cutout job possa ter mais de um Descut job o arquivo tem
+            # # como nome o jobid_summary.json
+            # summary_path = self.get_summary_path(id, job_summary["job_id"])
+            # with open(summary_path, "w") as fp:
+            #     json.dump(job_summary, fp)
 
             # Alterar o status para Before Download
             job.cjb_status = "bd"
@@ -312,19 +314,194 @@ class DesCutoutService:
             msg = "Error checking DES Job status: %s" % response["message"]
             self.logger.error(msg)
 
-    def download_by_id(self, id):
+    def download_by_jobid(self, id, jobid):
 
-        self.logger.info("Starting download Cutout Job [ %s ]" % id)
+        self.logger.info("Starting download Cutouts ID:[%s] Jobid [ %s ]" % (id, jobid))
+
+        try:
+            # Recupera o Model CutoutJob pelo id
+            job = self.get_cutoutjobs_by_id(id)
+
+            # Alterar o status para Downloading
+            job.cjb_status = "dw"
+            job.save()
+
+            config = settings.DESCUTOUT_SERVICE
+
+            # Baixar o tar.gz com todos os dados
+            filename = "{}.tar.gz".format(jobid)
+            url = "{files_url}/{username}/cutout/{filename}".format({"files_url": config.FILES_URL, "username": config.USERNAME, "filename": filename})
+            job_path = self.get_job_path(id)
+
+            tar_filepath = Download().download_file_from_url(url, job_path, filename)
+
+            if os.path.exists(tar_filepath):
+                self.logger.info("Files was successfully downloaded!")
+                self.logger.debug("Filepath: [%s]" % tar_filepath)
+
+                # Extrair o tar.gz
+                self.extract_file(tar_filepath, job_path)
+
+                # Verificar se ao extrarir o arquivo criou o diretório
+                image_path = os.path.join(job_path, str(jobid))
+                if not os.path.exists(image_path):
+                    raise Exception("Failed to extract the tar.gz file: [%s]" % filename)
+
+                # Arquivo já foi extraido, apagar o tar.gz
+                os.unlink(tar_filepath)
+                self.logger.info("File was extracted and tar.gz was deleted.")
+
+                # Inciar o registro das imagens geradas
+
+            else:
+                raise Exception("%s file not downloaded" % filename)
+
+        except Exception as e:
+            msg = "Error downloading Des job files: %s" % e
+            self.on_error(id, msg)
+
+    def register_cutouts_by_jobid(self, id, jobid):
+        self.logger.info("Starting Registration of Cutouts ID:[%s] Jobid [ %s ]" % (id, jobid))
 
         # Recupera o Model CutoutJob pelo id
         job = self.get_cutoutjobs_by_id(id)
 
-        # TODO:
-        # Mudar o status para Downloading
-        # Baixar o tar.gz com todos os dados
-        # Extrair o tar.gz
-        # Registrar as imagens coloridas
-        # Excluir o tar.gz
+        # Ler o Targets.csv, arquivo com a lista de todas as coordenadas que foram enviadas.
+        targets_file = os.path.join(self.get_job_path(job.id), "targets.csv")
+        df_targets = pd.read_csv(
+            targets_file,
+            sep=";",
+            index_col="meta_id",
+            dtype=dict({
+                "meta_ra": "str",
+                "meta_dec": "str",
+            }))
+
+        # self.logger.debug(df_targets.head())
+
+        # Ler o Summary.json
+        summary_file = self.get_summary_path(id, jobid)
+        self.logger.debug("Summary File: [%s]" % summary_file)
+        with open(summary_file) as fp:
+            summary = json.load(fp)
+
+        # Array com os dados do cutout, cada coordenada de targets gera um elemento neste array.
+        # cada elemento tem todas as configurações usadas, as coordendas e um array FILES com os arquivos gerados para esta coordenada.
+        cutouts = summary["cutouts"][0:1]
+
+        # Para cada cutout, procurar no targets qual é o id relacionado a esta coordenada.
+        # esse Id sera usado para registrar os arquivos desta coordenada com um target especifico.
+        for cutout in cutouts:
+            self.logger.debug(cutout)
+            try:
+                # Procura no dataframe targets um registro que tenhas as coordenadas Ra e Dec iguais as do cutout.
+                # Por algum motivo a comparação entre as coordenas só funcionou usando String,
+                # usando float, não encontra todos os valores mesmo sendo visualmente identicos.
+                result = df_targets.loc[(df_targets["meta_ra"] == str(cutout["RA"])) & (df_targets["meta_dec"] == str(cutout["DEC"]))]
+                result.reset_index(inplace=True)
+                result = result.to_dict('records')
+
+                if len(result) == 1:
+                    target = result[0]
+                    self.logger.debug("Cutout RA: [%s] Dec: [%s] Target Id: [%s]" % (cutout["RA"], cutout["DEC"], target["meta_id"]))
+
+                    # TODO: Para cada Arquivo de imagem, criar um registro no Model Cutouts
+                    afiles = self.summary_cutout_to_files(job, jobid, cutout, target["meta_id"])
+
+                else:
+                    self.logger.warning("Cutout RA: [%s] Dec: [%s] Was not associated with a target! Match: %s" % (cutout["RA"], cutout["DEC"], result))
+
+            except Exception as e:
+                self.logger.warning("Cutout RA: [%s] Dec: [%s] Was not associated with a target! %s" % (cutout["RA"], cutout["DEC"], e))
+
+    def summary_cutout_to_files(self, job, jobid, cutout, object_id):
+
+        records = []
+
+        # Correção do erro de formato no JSON do DES.
+        afiles = cutout['FILES'].replace("[", "").replace("]", "").replace("\"", "").split(",")
+
+        try:
+            for filename in afiles:
+
+                filename = filename.strip()
+
+                name, extension = os.path.splitext(filename)
+                extension = extension.strip(".")
+
+                img_filter = name.split("_")[1]
+                band = self.get_band_model(img_filter)
+
+                img_format = None
+                if extension == "fits":
+                    img_format = "fits"
+                else:
+                    img_format = name.split('_')[2]
+
+                job_path = self.get_job_path(job.id)
+
+                file_path = os.path.join(job_path, jobid, cutout['TILENAME'], name.split("_")[0])
+
+                record = Cutout.objects.create(
+                    cjb_cutout_job=job,
+                    ctt_file_name=filename,
+                    ctt_file_type=extension,
+                    ctt_filter=band,
+                    ctt_object_id=object_id,
+                    ctt_object_ra=cutout['RA'],
+                    ctt_object_dec=cutout['DEC'],
+                    ctt_img_format=img_format,
+                    ctt_file_path=file_path,
+                    ctt_file_size=os.path.getsize(os.path.join(file_path, filename)),
+                )
+
+                self.logger.debug(record)
+
+                records.append(record)
+
+            Cutout.objects.bulk_create(records)
+
+        except Exception as e:
+            self.on_error(jobid, e)
+
+    def get_band_model(self, band):
+        try:
+            record = Filter.objects.get(filter=band)
+        except Filter.DoesNotExist:
+            record = Filter.objects.create(
+                project="DES",
+                filter=band,
+            )
+            record.save()
+            self.logger.info("A record was created for the %s band in the model common.Filter" % band)
+
+        return record
+
+    # def create_cutout_model(self, cutoutjob, ):
+
+    #     cutout = Cutout.objects.create(
+    #         cjb_cutout_job=cutoutjob,
+    #         ctt_file_name=filename,
+    #         ctt_file_type=type,
+    #         ctt_filter=filter,
+    #         ctt_object_id=object_id,
+    #         ctt_object_ra=object_ra,
+    #         ctt_object_dec=object_dec,
+    #         defaults={
+    #             "ctt_file_size": file_size,
+    #             "ctt_file_path": file_path,
+    #             "ctt_thumbname": thumbname,
+    #             "ctt_download_start_time": start,
+    #             "ctt_download_finish_time": finish
+    #         }
+    #     )
+
+    #     return cutout
+
+    def extract_file(self, filepath, path):
+        tar = tarfile.open(filepath)
+        tar.extractall(path)
+        tar.close()
 
     def on_error(self, id, error):
         trace = traceback.format_exc()
@@ -824,51 +1001,51 @@ class DesCutoutService:
 
         return key
 
-    def create_cutout_model(self,
-                            cutoutjob, filename, thumbname, type, filter=None, object_id=None, object_ra=None,
-                            object_dec=None, file_path=None, file_size=None, start=None, finish=None):
+    # def create_cutout_model(self,
+    #                         cutoutjob, filename, thumbname, type, filter=None, object_id=None, object_ra=None,
+    #                         object_dec=None, file_path=None, file_size=None, start=None, finish=None):
 
-        # Tratamento do file_path para remover o path absoluto guardando apenas o path configurado no settings cutoutdir
-        if file_path is not None:
-            file_path = file_path.split(self.cutout_dir)[1]
-            file_path = os.path.join(self.cutout_dir, file_path.strip('/'))
+    #     # Tratamento do file_path para remover o path absoluto guardando apenas o path configurado no settings cutoutdir
+    #     if file_path is not None:
+    #         file_path = file_path.split(self.cutout_dir)[1]
+    #         file_path = os.path.join(self.cutout_dir, file_path.strip('/'))
 
-        # Tratar Ra e Dec para 5 casas decimais
-        if object_ra is not None:
-            object_ra = float('%.5f' % float(object_ra))
+    #     # Tratar Ra e Dec para 5 casas decimais
+    #     if object_ra is not None:
+    #         object_ra = float('%.5f' % float(object_ra))
 
-        if object_dec is not None:
-            object_dec = float('%.5f' % float(object_dec))
+    #     if object_dec is not None:
+    #         object_dec = float('%.5f' % float(object_dec))
 
-        try:
+    #     try:
 
-            cutout, created = Cutout.objects.update_or_create(
-                cjb_cutout_job=cutoutjob,
-                ctt_file_name=filename,
-                ctt_file_type=type,
-                ctt_filter=filter,
-                ctt_object_id=object_id,
-                ctt_object_ra=object_ra,
-                ctt_object_dec=object_dec,
-                defaults={
-                    "ctt_file_size": file_size,
-                    "ctt_file_path": file_path,
-                    "ctt_thumbname": thumbname,
-                    "ctt_download_start_time": start,
-                    "ctt_download_finish_time": finish
-                }
-            )
+    #         cutout, created = Cutout.objects.update_or_create(
+    #             cjb_cutout_job=cutoutjob,
+    #             ctt_file_name=filename,
+    #             ctt_file_type=type,
+    #             ctt_filter=filter,
+    #             ctt_object_id=object_id,
+    #             ctt_object_ra=object_ra,
+    #             ctt_object_dec=object_dec,
+    #             defaults={
+    #                 "ctt_file_size": file_size,
+    #                 "ctt_file_path": file_path,
+    #                 "ctt_thumbname": thumbname,
+    #                 "ctt_download_start_time": start,
+    #                 "ctt_download_finish_time": finish
+    #             }
+    #         )
 
-            self.logger.debug("Cutout ID %s Registred" % cutout.pk)
-            return cutout
+    #         self.logger.debug("Cutout ID %s Registred" % cutout.pk)
+    #         return cutout
 
-        except Exception as e:
-            self.logger.error(e)
+    #     except Exception as e:
+    #         self.logger.error(e)
 
-            # Changing the CutoutJob Status for Error
-            self.change_cutoutjob_status(cutoutjob, "er")
+    #         # Changing the CutoutJob Status for Error
+    #         self.change_cutoutjob_status(cutoutjob, "er")
 
-            raise (e)
+    #         raise (e)
 
 
 class CutoutJobNotify:
