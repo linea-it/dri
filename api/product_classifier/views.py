@@ -1,12 +1,13 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework import filters
 from django.db.models import Q
 import django_filters
 from .models import ProductClass, ProductGroup, ProductClassContent
 from .serializers import ProductClassSerializer, ProductGroupSerializer, ProductClassContentSerializer
 from django_filters.rest_framework import DjangoFilterBackend
+
 
 class ProductClassViewSet(viewsets.ModelViewSet):
     queryset = ProductClass.objects.all()
@@ -31,7 +32,7 @@ class ProductGroupViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('pgr_name', 'pgr_display_name')
 
-    @list_route()
+    @action(detail=False)
     def get_group(self, request):
         queryset = ProductGroup.objects.select_related().filter(is_catalog=True)
         result = {

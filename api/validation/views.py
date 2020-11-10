@@ -10,7 +10,6 @@ from common.filters import *
 from rest_framework import filters
 from rest_framework import viewsets
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.decorators import list_route
 from rest_framework.response import Response
 
 logger = logging.getLogger(__name__)
