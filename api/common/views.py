@@ -372,7 +372,6 @@ def teste(request):
         # )
 
         # TESTE DE SUBMIT -------------
-
         # Resetar o Job
         # job.cjb_status = "st"
         # job.cjb_start_time = datetime.utcnow().replace(tzinfo=utc)
@@ -381,7 +380,7 @@ def teste(request):
         # job.cjb_job_id = None
         # job.save()
 
-        # Remover o diretório
+        # # Remover o diretório
         # try:
         #     shutil.rmtree(dc.get_job_path(job.pk))
         # except OSError as e:
@@ -390,6 +389,10 @@ def teste(request):
         # dc.start_job_by_id(job.id)
 
         # TESTE DE SUBMIT -------------
+
+        # TESTE QUERY
+        # dc.get_catalog_objects(job.cjb_product.pk, 2)
+        dc.get_catalog_count(job.cjb_product.pk)
 
         # TESTE DE Check Status -------------
         # Resetar o Job
@@ -425,6 +428,6 @@ def teste(request):
 
         # TESTE DE Registro -------------
 
-        dc.register_cutouts_by_jobid(job.id, job.cjb_job_id)
+        # dc.register_cutouts_by_jobid(job.id, job.cjb_job_id)
 
         return Response(dict({'status': "success"}))

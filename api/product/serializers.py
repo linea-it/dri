@@ -343,9 +343,12 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
 
     owner = serializers.SerializerMethodField()
     execution_time = serializers.SerializerMethodField()
-    count_files = serializers.SerializerMethodField()
-    file_sizes = serializers.SerializerMethodField()
+    h_file_sizes = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
+
+    status_name = serializers.CharField(
+        source='get_cjb_status_display'
+    )
 
     class Meta:
         model = CutOutJob
@@ -355,13 +358,16 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_product',
             'cjb_display_name',
             'cjb_status',
-            'cjb_job_id',
+            'status_name',
+            'cjb_tag',
             'cjb_xsize',
             'cjb_ysize',
-            'cjb_job_type',
-            'cjb_tag',
-            'cjb_band',
-            'cjb_Blacklist',
+            'cjb_make_fits',
+            'cjb_fits_colors',
+            'cjb_make_stiff',
+            'cjb_stiff_colors',
+            'cjb_make_lupton',
+            'cjb_lupton_colors',
             'cjb_label_position',
             'cjb_label_properties',
             'cjb_label_colors',
@@ -369,11 +375,11 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_start_time',
             'cjb_finish_time',
             'cjb_description',
-            'cjb_image_formats',
+            'cjb_files',
+            'cjb_file_size',
             'owner',
             'execution_time',
-            'count_files',
-            'file_sizes',
+            'h_file_sizes',
             'is_owner'
         )
 
@@ -390,18 +396,9 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
         except:
             return None
 
-    def get_count_files(self, obj):
+    def get_h_file_sizes(self, obj):
         try:
-            return obj.cutout_set.count()
-
-        except:
-            return None
-
-    def get_file_sizes(self, obj):
-        try:
-            sum_sizes = obj.cutout_set.aggregate(sum_size=Sum('ctt_file_size'))
-            return humanize.naturalsize(sum_sizes.get("sum_size"))
-
+            return humanize.naturalsize(obj.cjb_file_size)
         except:
             return None
 

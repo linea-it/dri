@@ -1,10 +1,10 @@
 import csv
-import datetime
 import json
 import logging
 import os
 import tarfile
 import traceback
+from datetime import datetime, timedelta
 from pathlib import Path
 from pprint import pformat
 from urllib.parse import urljoin
@@ -13,16 +13,19 @@ import humanize
 import pandas as pd
 import requests
 from common.download import Download
+from common.models import Filter
 from common.notify import Notify
 from django.conf import settings
 from django.db.models import Sum
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.timezone import utc
 from lib.CatalogDB import CatalogObjectsDBHelper
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from product.models import Catalog, Cutout, CutOutJob
-from common.models import Filter
+
+from product.association import Association
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
@@ -85,21 +88,6 @@ class DesCutoutService:
             # Notificacao por email
             # CutoutJobNotify().create_email_message(cutoutjob)
 
-            # {
-            #     "positions": "RA,DEC\n29.562019000000,-63.902864000000\n29.604203000000,-63.900322000000\n30.572807000000,-63.897566000000\n",
-            #     "xsize": 1.1,
-            #     "ysize": 1.1,
-            #     "make_fits": true,
-            #     "colors_fits": "grizy",
-            #     "make_rgb_stiff": true,
-            #     "make_rgb_lupton": true,
-            #     "rgb_stiff_colors": "gri;rig;zgi",
-            #     "rgb_lupton_colors": "gri;rig;zgi",
-            #     "rgb_minimum": 1.1,
-            #     "rgb_stretch": 50.1,
-            #     "rgb_asinh": 10.1
-            # }
-
             # Parametros de submissão
             data = dict({})
 
@@ -110,35 +98,24 @@ class DesCutoutService:
                 data.update({"ysize": job.cjb_ysize})
 
             # Geração de Imagens Fits
-            # TODO criar esse campo no model
-            cjb_fits = True
-            # Todo se não for passado as cores usar um valor default.
-            cjb_fits_colors = "grizy"
-
-            if cjb_fits:
+            if job.cjb_make_fits:
                 data.update({
                     "make_fits": True,
-                    "colors_fits": cjb_fits_colors
+                    "colors_fits": job.cjb_fits_colors
                 })
 
             # Geração de Imagens Coloridas com Stiff
-            cjb_stiff = True
-            cjb_stiff_colors = "gri;rig;zgi"
-
-            if cjb_stiff:
+            if job.cjb_make_stiff:
                 data.update({
                     "make_rgb_stiff": True,
-                    "rgb_stiff_colors": cjb_stiff_colors
+                    "rgb_stiff_colors": job.cjb_stiff_colors
                 })
 
             # Geração de Imagens Coloridas com lupton
-            cjb_lupton = True
-            cjb_lupton_colors = "gri;rig;zgi"
-
-            if cjb_lupton:
+            if job.cjb_make_lupton:
                 data.update({
                     "make_rgb_lupton": True,
-                    "rgb_lupton_colors": cjb_lupton_colors
+                    "rgb_lupton_colors": job.cjb_lupton_colors
                 })
 
             # Seleção do Release
@@ -147,13 +124,22 @@ class DesCutoutService:
             })
 
             # TODO: Preparar a lista de objetos para submissão
+
+            # Recuperar da settings a quantidade maxima de rows por job
+            config = settings.DESCUTOUT_SERVICE
+            max_objects = config.MAX_OBJECTS
+
             # Checar o tamanho do lista e dividir em varios jobs caso ultrapasse o limit.
+
+            #
+
             data.update({
                 "positions": "RA,DEC\n29.562019,-63.902864\n29.604203,-63.900322\n30.572807,-63.897566\n",
             })
 
             # Submeter o Job e guardar o id retornado pelo Descut
-            job.cjb_job_id = self.submit_job(data)
+            # job.cjb_job_id = self.submit_job(data)
+
             # Cutout Job enviado e aguardando termino na API
             # Alterar o status para Running
             job.cjb_status = 'rn'
@@ -242,15 +228,6 @@ class DesCutoutService:
             # Se o retorno do Check for None signica que o job ainda não foi finalizado.
             if job_summary is None:
                 return
-
-            # self.logger.debug(job_summary)
-
-            # # Criar um arquivo com o summary json retornado pelo Descut
-            # # Como é possivel que um Cutout job possa ter mais de um Descut job o arquivo tem
-            # # como nome o jobid_summary.json
-            # summary_path = self.get_summary_path(id, job_summary["job_id"])
-            # with open(summary_path, "w") as fp:
-            #     json.dump(job_summary, fp)
 
             # Alterar o status para Before Download
             job.cjb_status = "bd"
@@ -387,12 +364,12 @@ class DesCutoutService:
 
         # Array com os dados do cutout, cada coordenada de targets gera um elemento neste array.
         # cada elemento tem todas as configurações usadas, as coordendas e um array FILES com os arquivos gerados para esta coordenada.
-        cutouts = summary["cutouts"][0:1]
+        cutouts = summary["cutouts"]
 
+        total_images = 0
         # Para cada cutout, procurar no targets qual é o id relacionado a esta coordenada.
         # esse Id sera usado para registrar os arquivos desta coordenada com um target especifico.
         for cutout in cutouts:
-            self.logger.debug(cutout)
             try:
                 # Procura no dataframe targets um registro que tenhas as coordenadas Ra e Dec iguais as do cutout.
                 # Por algum motivo a comparação entre as coordenas só funcionou usando String,
@@ -403,22 +380,25 @@ class DesCutoutService:
 
                 if len(result) == 1:
                     target = result[0]
-                    self.logger.debug("Cutout RA: [%s] Dec: [%s] Target Id: [%s]" % (cutout["RA"], cutout["DEC"], target["meta_id"]))
+                    self.logger.info("Cutout RA: [%s] Dec: [%s] Target Id: [%s]" % (cutout["RA"], cutout["DEC"], target["meta_id"]))
 
                     # TODO: Para cada Arquivo de imagem, criar um registro no Model Cutouts
-                    afiles = self.summary_cutout_to_files(job, jobid, cutout, target["meta_id"])
+                    records = self.register_images(job, jobid, cutout, target["meta_id"])
 
+                    total_images += len(records)
                 else:
                     self.logger.warning("Cutout RA: [%s] Dec: [%s] Was not associated with a target! Match: %s" % (cutout["RA"], cutout["DEC"], result))
 
             except Exception as e:
-                self.logger.warning("Cutout RA: [%s] Dec: [%s] Was not associated with a target! %s" % (cutout["RA"], cutout["DEC"], e))
+                self.on_error(jobid, e)
 
-    def summary_cutout_to_files(self, job, jobid, cutout, object_id):
+        self.logger.info("Total of [%s] images were registered" % total_images)
+
+    def register_images(self, job, jobid, cutout, object_id):
 
         records = []
 
-        # Correção do erro de formato no JSON do DES.
+        # TODO: Remover esta Correção do erro de formato no JSON do DES.
         afiles = cutout['FILES'].replace("[", "").replace("]", "").replace("\"", "").split(",")
 
         try:
@@ -444,6 +424,7 @@ class DesCutoutService:
 
                 record = Cutout.objects.create(
                     cjb_cutout_job=job,
+                    ctt_jobid=jobid,
                     ctt_file_name=filename,
                     ctt_file_type=extension,
                     ctt_filter=band,
@@ -455,14 +436,14 @@ class DesCutoutService:
                     ctt_file_size=os.path.getsize(os.path.join(file_path, filename)),
                 )
 
-                self.logger.debug(record)
-
                 records.append(record)
 
-            Cutout.objects.bulk_create(records)
+            Cutout.objects.bulk_create(records, ignore_conflicts=True)
+
+            return records
 
         except Exception as e:
-            self.on_error(jobid, e)
+            raise Exception("Failed to register images. %s" % e)
 
     def get_band_model(self, band):
         try:
@@ -477,31 +458,95 @@ class DesCutoutService:
 
         return record
 
-    # def create_cutout_model(self, cutoutjob, ):
+    def get_catalog_count(self, product_id):
+        catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
 
-    #     cutout = Cutout.objects.create(
-    #         cjb_cutout_job=cutoutjob,
-    #         ctt_file_name=filename,
-    #         ctt_file_type=type,
-    #         ctt_filter=filter,
-    #         ctt_object_id=object_id,
-    #         ctt_object_ra=object_ra,
-    #         ctt_object_dec=object_dec,
-    #         defaults={
-    #             "ctt_file_size": file_size,
-    #             "ctt_file_path": file_path,
-    #             "ctt_thumbname": thumbname,
-    #             "ctt_download_start_time": start,
-    #             "ctt_download_finish_time": finish
-    #         }
-    #     )
+        # Instancia da classe de Banco de dados utilizada para query em tabelas de catalogos.
+        catalog_db = CatalogObjectsDBHelper(
+            catalog.tbl_name,
+            schema=catalog.tbl_schema,
+            database=catalog.tbl_database
+        )
 
-    #     return cutout
+        # Seta o log na instancia da catalog_db para que as querys executadas aparareçam no log de cutout.
+        catalog_db.setLogger(self.logger)
+
+        count = catalog_db.count()
+
+        self.logger.info("Total number of objects in the catalog: [%s]" % count)
+
+        return count
+
+    def get_catalog_objects(self, product_id, limit=None, start=None):
+
+        catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
+
+        self.logger.info("Executing the query in the catalog table. Table: [%s]" % (catalog.tbl_name))
+
+        # colunas associadas ao produto
+        associations = Association().get_associations_by_product_id(product_id)
+        self.logger.debug("Associations: [%s]" % associations)
+
+        # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
+        columns = Association().get_properties_associated(product_id)
+        self.logger.debug("Columns: [%s]" % columns)
+
+        # Instancia da classe de Banco de dados utilizada para query em tabelas de catalogos.
+        catalog_db = CatalogObjectsDBHelper(
+            catalog.tbl_name,
+            schema=catalog.tbl_schema,
+            database=catalog.tbl_database
+        )
+        # Seta o log na instancia da catalog_db para que as querys executadas aparareçam no log de cutout.
+        catalog_db.setLogger(self.logger)
+
+        # Lista com os resultados da query.
+        records = list()
+
+        # Executa a query
+        rows, count = catalog_db.query(
+            columns=columns,
+            limit=limit,
+            start=start
+        )
+
+        # Para cada linha alterar os nomes de colunas utilizando as informações de associação.
+        # O resultado é um array records onde cada record tem sempre os mesmos atributos (meta_id, meta_ra, meta_dec)
+        # independente dos nomes originais das colunas.
+        for row in rows:
+            record = dict({
+                "meta_id": row[associations["meta.id;meta.main"]],
+                "meta_ra": row[associations["pos.eq.ra;meta.main"]],
+                "meta_dec": row[associations["pos.eq.dec;meta.main"]],
+            })
+            records.append(record)
+
+        del rows
+
+        self.logger.debug(records)
+
+        return records
 
     def extract_file(self, filepath, path):
         tar = tarfile.open(filepath)
         tar.extractall(path)
         tar.close()
+
+    def on_success(self, id):
+        # Recupera o Model CutoutJob pelo id
+        job = self.get_cutoutjobs_by_id(id)
+
+        # Guardar o tamanho total e a quantidade das imagens geradas.
+        job.cjb_file_size = job.cutout_set.aggregate(sum_size=Sum('ctt_file_size')).get("sum_size")
+        job.cjb_files = job.cutout_set.count()
+        job.save()
+
+        # TODO: Apagar Os Jobs no Descut
+
+        # TODO: Enviar email de sucesso
+        job.cjb_status = "ok"
+        job.cjb_finish_time = datetime.utcnow().replace(tzinfo=utc)
+        job.save()
 
     def on_error(self, id, error):
         trace = traceback.format_exc()
@@ -907,67 +952,67 @@ class DesCutoutService:
         self.logger.debug("Result File %s" % f)
         return f
 
-    def get_catalog_objects(self, job):
-        product_id = job.cjb_product_id
-        cutoutdir = self.get_cutout_dir(job)
-        catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
+    # def get_catalog_objects(self, job):
+    #     product_id = job.cjb_product_id
+    #     cutoutdir = self.get_cutout_dir(job)
+    #     catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
 
-        # colunas associadas ao produto
-        associations = Association().get_associations_by_product_id(product_id)
+    #     # colunas associadas ao produto
+    #     associations = Association().get_associations_by_product_id(product_id)
 
-        # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
-        columns = Association().get_properties_associated(product_id)
+    #     # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
+    #     columns = Association().get_properties_associated(product_id)
 
-        catalog_db = CatalogObjectsDBHelper(
-            catalog.tbl_name,
-            schema=catalog.tbl_schema,
-            database=catalog.tbl_database
-        )
+    #     catalog_db = CatalogObjectsDBHelper(
+    #         catalog.tbl_name,
+    #         schema=catalog.tbl_schema,
+    #         database=catalog.tbl_database
+    #     )
 
-        rows, count = catalog_db.query(
-            columns=columns,
-            limit=self.cutout_max_objects
-        )
+    #     rows, count = catalog_db.query(
+    #         columns=columns,
+    #         limit=self.cutout_max_objects
+    #     )
 
-        # Criar um arquivo que servira de index para a associar os objetos as imagens
+    #     # Criar um arquivo que servira de index para a associar os objetos as imagens
 
-        # Lista de Ra e dec que serao passadas como parametro
-        lra = list()
-        ldec = list()
+    #     # Lista de Ra e dec que serao passadas como parametro
+    #     lra = list()
+    #     ldec = list()
 
-        with open(os.path.join(cutoutdir, "objects.csv"), "w") as objects_csv:
-            fieldnames = ["key", "id", "ra_original", "ra", "dec"]
-            writer = csv.DictWriter(objects_csv, fieldnames=fieldnames)
-            writer.writeheader()
+    #     with open(os.path.join(cutoutdir, "objects.csv"), "w") as objects_csv:
+    #         fieldnames = ["key", "id", "ra_original", "ra", "dec"]
+    #         writer = csv.DictWriter(objects_csv, fieldnames=fieldnames)
+    #         writer.writeheader()
 
-            for row in rows:
-                ra_original = float(row.get(associations.get("pos.eq.ra;meta.main")))
-                ra = ra_original
-                dec = float(row.get(associations.get("pos.eq.dec;meta.main")))
+    #         for row in rows:
+    #             ra_original = float(row.get(associations.get("pos.eq.ra;meta.main")))
+    #             ra = ra_original
+    #             dec = float(row.get(associations.get("pos.eq.dec;meta.main")))
 
-                if ra < 0 and ra > -180:
-                    ra = ra + 360
+    #             if ra < 0 and ra > -180:
+    #                 ra = ra + 360
 
-                obj = dict({
-                    "id": row.get(associations.get("meta.id;meta.main")),
-                    "ra_original": ra_original,
-                    "ra": ra,
-                    "dec": dec,
-                    "key": str(self.get_object_position_key(ra, dec))
-                })
+    #             obj = dict({
+    #                 "id": row.get(associations.get("meta.id;meta.main")),
+    #                 "ra_original": ra_original,
+    #                 "ra": ra,
+    #                 "dec": dec,
+    #                 "key": str(self.get_object_position_key(ra, dec))
+    #             })
 
-                writer.writerow(obj)
+    #             writer.writerow(obj)
 
-                lra.append(ra)
-                ldec.append(dec)
+    #             lra.append(ra)
+    #             ldec.append(dec)
 
-        objects_csv.close()
+    #     objects_csv.close()
 
-        return dict({
-            "ra": str(lra),
-            "dec": str(ldec),
-            "count": len(rows)
-        })
+    #     return dict({
+    #         "ra": str(lra),
+    #         "dec": str(ldec),
+    #         "count": len(rows)
+    #     })
 
     def get_objects_from_file(self, cutoutjob):
         cutoutdir = self.get_cutout_dir(cutoutjob)
@@ -1103,8 +1148,8 @@ class CutoutJobNotify:
 
             tdelta = finish - start
             seconds = tdelta.total_seconds()
-            execution_time = str(datetime.timedelta(seconds=seconds)).split('.')[0]
-            execution_time_humanized = humanize.naturaldelta(datetime.timedelta(seconds=seconds))
+            execution_time = str(timedelta(seconds=seconds)).split('.')[0]
+            execution_time_humanized = humanize.naturaldelta(timedelta(seconds=seconds))
 
             image_formats = cutoutjob.cjb_image_formats
             if image_formats is None:
@@ -1153,7 +1198,7 @@ class CutoutJobNotify:
             finish = timezone.now()
             tdelta = finish - start
             seconds = tdelta.total_seconds()
-            execution_time_humanized = humanize.naturaldelta(datetime.timedelta(seconds=seconds))
+            execution_time_humanized = humanize.naturaldelta(timedelta(seconds=seconds))
 
             context = dict({
                 "username": cutoutjob.owner.username,

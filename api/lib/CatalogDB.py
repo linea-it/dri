@@ -1,15 +1,16 @@
 import json
+import logging
 import math
 import warnings
 
 import sqlalchemy
 from sqlalchemy import Column, cast, desc
 from sqlalchemy import exc as sa_exc
+from sqlalchemy import func
 from sqlalchemy.sql import and_, or_, select
 from sqlalchemy.sql.expression import between, literal_column
 
 from lib.sqlalchemy_wrapper import DBBase
-import logging
 
 
 class CatalogDB(DBBase):
@@ -328,6 +329,15 @@ class CatalogTable(CatalogDB):
 
         return and_(raCondition, decCondition).self_group()
 
+    def count(self):
+        with self.engine.connect() as con:
+
+            stm = select([func.count()]).select_from(self.table)
+            self.log.debug("SQL: [%s]" % self.statement_to_str(stm))
+
+            result = con.execute(stm)
+            return result.fetchone()[0]
+
 
 class CatalogObjectsDBHelper(CatalogTable):
     def create_stm(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None,
@@ -343,7 +353,7 @@ class CatalogObjectsDBHelper(CatalogTable):
         stm = select(self.query_columns).select_from(self.table)
 
         filters = list()
-        coordinates_filter = ""
+        coordinates_filter = None
 
         for condition in self.filters:
             if condition.get("op") == "coordinates":
@@ -359,7 +369,10 @@ class CatalogObjectsDBHelper(CatalogTable):
 
         base_filters = and_(*self.do_filter(self.table, filters))
 
-        stm = stm.where(and_(base_filters, coordinates_filter))
+        if coordinates_filter:
+            stm = stm.where(and_(base_filters, coordinates_filter))
+        else:
+            stm = stm.where(base_filters)
 
         # Ordenacao
         if self.ordering is not None:
@@ -382,7 +395,7 @@ class CatalogObjectsDBHelper(CatalogTable):
             if self.start:
                 stm = stm.offset(literal_column(str(self.start)))
 
-        print(str(stm))
+        self.log.debug("SQL: [%s]" % self.statement_to_str(stm))
 
         return stm
 
@@ -544,9 +557,9 @@ class TargetObjectsDBHelper(CatalogTable):
 
         # Filtros
         filters = list()
-        rating_filters = ""
-        reject_filters = ""
-        coordinate_filters = ""
+        rating_filters = and_()
+        reject_filters = and_()
+        coordinate_filters = and_()
 
         # Targets podem ter filtros especias checar a existencia deles
         if self.filters is not None and len(self.filters) > 0:
@@ -582,6 +595,7 @@ class TargetObjectsDBHelper(CatalogTable):
         base_filters = and_(*self.do_filter(self.table, filters))
 
         stm = stm.where(and_(base_filters, coordinate_filters, rating_filters, reject_filters))
+        # stm = stm.where(and_(rating_filters, reject_filters))
 
         # Ordenacao
         if self.ordering is not None:
@@ -611,6 +625,6 @@ class TargetObjectsDBHelper(CatalogTable):
             if self.start:
                 stm = stm.offset(literal_column(str(self.start)))
 
-        self.log.info("Target Query: [ %s ]" % str(stm))
+        self.log.info("Target Query: [ %s ]" % self.statement_to_str(stm))
 
         return stm
