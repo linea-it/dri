@@ -60,6 +60,14 @@ class CutOutJobAdmin(admin.ModelAdmin):
     search_fields = ('cjb_display_name',)
 
 
+class DesjobAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'djb_cutout_job', 'djb_jobid', 'djb_status', 'djb_start_time', 'djb_finish_time', 'djb_message',
+    )
+    list_display_links = ('id',)
+    search_fields = ('djb_jobid',)
+
+
 class CutoutAdmin(admin.ModelAdmin):
     list_display = (
         'id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_object_ra', 'ctt_object_dec', 'ctt_img_format', 'ctt_filter',
@@ -137,6 +145,7 @@ admin.site.register(Table, TableAdmin)
 admin.site.register(Catalog, CatalogAdmin)
 admin.site.register(Map, MapAdmin)
 admin.site.register(CutOutJob, CutOutJobAdmin)
+admin.site.register(Desjob, DesjobAdmin)
 admin.site.register(Cutout, CutoutAdmin)
 admin.site.register(Mask, MaskAdmin)
 admin.site.register(ProductContent, ProductContentAdmin)

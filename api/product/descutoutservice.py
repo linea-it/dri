@@ -1,6 +1,8 @@
 import csv
+import io
 import json
 import logging
+import math
 import os
 import tarfile
 import traceback
@@ -23,9 +25,9 @@ from django.utils.timezone import utc
 from lib.CatalogDB import CatalogObjectsDBHelper
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
-from product.models import Catalog, Cutout, CutOutJob
-
 from product.association import Association
+from product.models import Catalog, Cutout, CutOutJob, Desjob
+
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
@@ -123,22 +125,58 @@ class DesCutoutService:
                 "release": job.cjb_tag
             })
 
-            # TODO: Preparar a lista de objetos para submissão
+            # Preparar a lista de objetos para submissão
 
             # Recuperar da settings a quantidade maxima de rows por job
             config = settings.DESCUTOUT_SERVICE
-            max_objects = config.MAX_OBJECTS
+            max_objects = config["MAX_OBJECTS"]
 
             # Checar o tamanho do lista e dividir em varios jobs caso ultrapasse o limit.
+            count = self.get_catalog_count(job.cjb_product_id)
 
-            #
+            # Quantidade de Paginas ou jobs que serao necessários.
+            pages_count = math.ceil(float(count) / max_objects)
+            self.logger.debug("Pages: [%s]" % pages_count)
 
-            data.update({
-                "positions": "RA,DEC\n29.562019,-63.902864\n29.604203,-63.900322\n30.572807,-63.897566\n",
-            })
+            # Fazer a query dos objetos dividindo em paginas pelo tamanho maximo de objetos que o Desaccess aceita.
+            for page in range(1, pages_count + 1):
+                self.logger.debug("Current Page: [%s]" % page)
 
-            # Submeter o Job e guardar o id retornado pelo Descut
-            # job.cjb_job_id = self.submit_job(data)
+                # Calculo do Offset para a paginação.
+                offset = ((page - 1) * max_objects)
+                self.logger.debug("Offset: [%s]" % offset)
+
+                rows = self.get_catalog_objects(job.cjb_product.pk, limit=max_objects, offset=offset)
+
+                df = pd.DataFrame(rows)
+
+                s_positions = io.StringIO()
+                df.to_csv(s_positions, columns=["meta_ra", "meta_dec"], header=["RA", "DEC"], index=False)
+
+                data.update({
+                    "positions": s_positions.getvalue(),
+                })
+
+                # Submeter o Job e guardar o id retornado pelo Descut
+                jobid = self.submit_job(data)
+
+                # Cria uma instancia do Desjob
+                record = Desjob.objects.create(
+                    djb_cutout_job=job,
+                    djb_jobid=jobid)
+                record.save()
+
+                self.logger.info("New Desjob was created. Desjob: [%s] Jobid: [%s]" % (record.pk, jobid))
+
+                # Criar um arquivo csv com as posições enviadas para este job
+                target_csv = os.path.join(self.get_job_path(job.id), "{}_targets.csv".format(jobid))
+                df.to_csv(
+                    target_csv,
+                    sep=";",
+                    header=True,
+                    index=False
+                )
+                self.logger.debug("Csv file with the positions of this jobid was created. CSV: [%s]" % target_csv)
 
             # Cutout Job enviado e aguardando termino na API
             # Alterar o status para Running
@@ -208,8 +246,9 @@ class DesCutoutService:
         self.logger.debug("Response Status: [%s]" % response["status"])
 
         if response["status"] == "ok":
-            # Retorna o jobid para ser guardado no Job
+            # Retorna o jobid
             self.logger.debug("Descut Job Submited with Jobid: [%s]" % response["jobid"])
+
             return response["jobid"]
         else:
             msg = "Error submitting job: %s" % response["message"]
@@ -218,20 +257,42 @@ class DesCutoutService:
     def check_job_by_id(self, id):
         self.logger.info("Des Cutout Check Job by ID %s" % id)
 
-        # Recupera o Model CutoutJob pelo id
-        job = self.get_cutoutjobs_by_id(id)
-
         try:
-            # Verifica se o status do job no Descut
-            job_summary = self.check_job_status(job.cjb_job_id)
+            # Recupera o Model CutoutJob pelo id
+            job = self.get_cutoutjobs_by_id(id)
 
-            # Se o retorno do Check for None signica que o job ainda não foi finalizado.
-            if job_summary is None:
-                return
+            # Para cada Desjob associado ao CutoutJob com status None.
+            desjobs = job.desjob_set.filter(djb_status=None)
 
-            # Alterar o status para Before Download
-            job.cjb_status = "bd"
-            job.save()
+            for desjob in desjobs:
+                try:
+                    # Verifica se o status do job no Descut
+                    job_summary = self.check_job_status(desjob.djb_jobid)
+
+                    # Se o retorno do Check for None signica que o job ainda não foi finalizado.
+                    if job_summary is None:
+                        return
+
+                    # self.logger.debug(job_summary)
+
+                    # Alterar o Status do Desjob
+                    desjob.djb_status = job_summary["job_status"]
+                    desjob.djb_message = job_summary["job_status_message"]
+                    desjob.djb_start_time = job_summary["job_time_start"]
+                    desjob.djb_finish_time = job_summary["job_time_complete"]
+
+                    desjob.save()
+
+                except Exception as e:
+                    self.on_error(id, e)
+
+            # Verifica se todos os Desjobs tiverem acabado de executar muda o status.
+            desjobs = job.desjob_set.filter(djb_status=None)
+            if len(desjobs) == 0:
+                self.logger.info("All Desjobs finished executing.")
+                # Alterar o status para Before Download
+                job.cjb_status = "bd"
+                job.save()
 
         except Exception as e:
             self.on_error(id, e)
@@ -291,6 +352,17 @@ class DesCutoutService:
             msg = "Error checking DES Job status: %s" % response["message"]
             self.logger.error(msg)
 
+    def download_by_id(self, id):
+        # Recupera o Model CutoutJob pelo id
+        job = self.get_cutoutjobs_by_id(id)
+
+        # Alterar o status para Downloading
+        job.cjb_status = "dw"
+        job.save()
+
+        for desjob in job.desjob_set.filter(djb_status="success"):
+            self.download_by_jobid(job.id, desjob.djb_jobid)
+
     def download_by_jobid(self, id, jobid):
 
         self.logger.info("Starting download Cutouts ID:[%s] Jobid [ %s ]" % (id, jobid))
@@ -299,15 +371,14 @@ class DesCutoutService:
             # Recupera o Model CutoutJob pelo id
             job = self.get_cutoutjobs_by_id(id)
 
-            # Alterar o status para Downloading
-            job.cjb_status = "dw"
-            job.save()
+            # Recupera o Model Desjob
+            desjob = job.desjob_set.get(djb_jobid=jobid)
 
             config = settings.DESCUTOUT_SERVICE
 
             # Baixar o tar.gz com todos os dados
             filename = "{}.tar.gz".format(jobid)
-            url = "{files_url}/{username}/cutout/{filename}".format({"files_url": config.FILES_URL, "username": config.USERNAME, "filename": filename})
+            url = "{}/{}/cutout/{}".format(config["FILES_URL"], config["USERNAME"], filename)
             job_path = self.get_job_path(id)
 
             tar_filepath = Download().download_file_from_url(url, job_path, filename)
@@ -328,7 +399,12 @@ class DesCutoutService:
                 os.unlink(tar_filepath)
                 self.logger.info("File was extracted and tar.gz was deleted.")
 
+                # Altera o status do Desjob para downloaded
+                desjob.djb_status = "downloaded"
+                desjob.save()
+
                 # Inciar o registro das imagens geradas
+                self.register_cutouts_by_jobid(id, jobid)
 
             else:
                 raise Exception("%s file not downloaded" % filename)
@@ -343,8 +419,11 @@ class DesCutoutService:
         # Recupera o Model CutoutJob pelo id
         job = self.get_cutoutjobs_by_id(id)
 
+        # Recupera o Model Desjob
+        desjob = job.desjob_set.get(djb_jobid=jobid)
+
         # Ler o Targets.csv, arquivo com a lista de todas as coordenadas que foram enviadas.
-        targets_file = os.path.join(self.get_job_path(job.id), "targets.csv")
+        targets_file = os.path.join(self.get_job_path(job.id), "{}_targets.csv".format(jobid))
         df_targets = pd.read_csv(
             targets_file,
             sep=";",
@@ -375,6 +454,7 @@ class DesCutoutService:
                 # Por algum motivo a comparação entre as coordenas só funcionou usando String,
                 # usando float, não encontra todos os valores mesmo sendo visualmente identicos.
                 result = df_targets.loc[(df_targets["meta_ra"] == str(cutout["RA"])) & (df_targets["meta_dec"] == str(cutout["DEC"]))]
+
                 result.reset_index(inplace=True)
                 result = result.to_dict('records')
 
@@ -383,7 +463,7 @@ class DesCutoutService:
                     self.logger.info("Cutout RA: [%s] Dec: [%s] Target Id: [%s]" % (cutout["RA"], cutout["DEC"], target["meta_id"]))
 
                     # TODO: Para cada Arquivo de imagem, criar um registro no Model Cutouts
-                    records = self.register_images(job, jobid, cutout, target["meta_id"])
+                    records = self.register_images(job, desjob, cutout, target["meta_id"])
 
                     total_images += len(records)
                 else:
@@ -394,15 +474,16 @@ class DesCutoutService:
 
         self.logger.info("Total of [%s] images were registered" % total_images)
 
-    def register_images(self, job, jobid, cutout, object_id):
+    def register_images(self, job, desjob, cutout, object_id):
 
+        jobid = desjob.djb_jobid
         records = []
 
         # TODO: Remover esta Correção do erro de formato no JSON do DES.
-        afiles = cutout['FILES'].replace("[", "").replace("]", "").replace("\"", "").split(",")
+        # afiles = cutout['FILES'].replace("[", "").replace("]", "").replace("\"", "").split(",")
 
         try:
-            for filename in afiles:
+            for filename in cutout['FILES']:
 
                 filename = filename.strip()
 
@@ -424,6 +505,7 @@ class DesCutoutService:
 
                 record = Cutout.objects.create(
                     cjb_cutout_job=job,
+                    cjb_des_job=desjob,
                     ctt_jobid=jobid,
                     ctt_file_name=filename,
                     ctt_file_type=extension,
@@ -477,7 +559,7 @@ class DesCutoutService:
 
         return count
 
-    def get_catalog_objects(self, product_id, limit=None, start=None):
+    def get_catalog_objects(self, product_id, limit=None, offset=None):
 
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
 
@@ -507,17 +589,20 @@ class DesCutoutService:
         rows, count = catalog_db.query(
             columns=columns,
             limit=limit,
-            start=start
+            start=offset
         )
 
         # Para cada linha alterar os nomes de colunas utilizando as informações de associação.
         # O resultado é um array records onde cada record tem sempre os mesmos atributos (meta_id, meta_ra, meta_dec)
         # independente dos nomes originais das colunas.
         for row in rows:
+            ra = row[associations["pos.eq.ra;meta.main"]]
+            dec = row[associations["pos.eq.dec;meta.main"]]
+
             record = dict({
                 "meta_id": row[associations["meta.id;meta.main"]],
-                "meta_ra": row[associations["pos.eq.ra;meta.main"]],
-                "meta_dec": row[associations["pos.eq.dec;meta.main"]],
+                "meta_ra": float("{:.6f}".format(ra)),
+                "meta_dec": float("{:.6f}".format(dec))
             })
             records.append(record)
 

@@ -1,3 +1,4 @@
+from operator import index
 from django.db.models.signals import post_save, pre_delete
 from coadd.models import Release, Tag
 from django.db import models
@@ -352,9 +353,37 @@ class CutOutJob(models.Model):
         return str(self.cjb_display_name)
 
 
+class Desjob(models.Model):
+    djb_cutout_job = models.ForeignKey(
+        CutOutJob, on_delete=models.CASCADE, verbose_name='Cutout Job', default=None)
+
+    djb_jobid = models.CharField(
+        max_length=1024, verbose_name='DES Job ID', db_index=True, null=True, blank=True, help_text="Descut job id that generated the image.")
+
+    djb_status = models.CharField(
+        max_length=20, verbose_name='DES Job Status', null=True, blank=True)
+
+    djb_message = models.TextField(
+        verbose_name='DES Job Message', null=True, blank=True)
+
+    djb_start_time = models.DateTimeField(
+        auto_now_add=True, null=True, blank=True, verbose_name='Start')
+
+    djb_finish_time = models.DateTimeField(
+        auto_now_add=False, null=True, blank=True, verbose_name='Finish')
+
+    class Meta:
+        unique_together = ('djb_cutout_job', 'djb_jobid')
+
+    def __str__(self):
+        return str(self.pk)
+
+
 class Cutout(models.Model):
     cjb_cutout_job = models.ForeignKey(
         CutOutJob, on_delete=models.CASCADE, verbose_name='Cutout Job', default=None)
+    cjb_des_job = models.ForeignKey(
+        Desjob, on_delete=models.CASCADE, verbose_name='Des Job', default=None)
     ctt_object_id = models.CharField(
         max_length=5, verbose_name='Object ID', null=True, blank=True,
         help_text='The association is used to know which column will be considered as id.')

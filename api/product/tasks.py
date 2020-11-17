@@ -62,8 +62,7 @@ def check_jobs_running():
 
 @task(name="download_cutoutjob")
 def download_cutoutjob(id):
-    pass
-    # descutout.download_by_id(id)
+    descutout.download_by_jobid(id)
 
 
 # @task(name="download_cutoutjob")

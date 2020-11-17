@@ -372,7 +372,7 @@ def teste(request):
         # )
 
         # TESTE DE SUBMIT -------------
-        # Resetar o Job
+        # # Resetar o Job
         # job.cjb_status = "st"
         # job.cjb_start_time = datetime.utcnow().replace(tzinfo=utc)
         # job.cjb_finish_time = None
@@ -392,15 +392,26 @@ def teste(request):
 
         # TESTE QUERY
         # dc.get_catalog_objects(job.cjb_product.pk, 2)
-        dc.get_catalog_count(job.cjb_product.pk)
+        # dc.get_catalog_count(job.cjb_product.pk)
 
         # TESTE DE Check Status -------------
-        # Resetar o Job
+        # # Resetar o Job
         # job.cjb_status = "rn"
         # job.save()
-        # # Apagar o arquivo json
+
         # try:
-        #     os.unlink(dc.get_summary_path(job.pk, job.cjb_job_id))
+
+        #     for desjob in job.desjob_set.all():
+        #         # Apagar o arquivo json
+        #         os.unlink(os.path.join(dc.get_job_path(job.pk), "{}_targets.csv".format(desjob.djb_jobid)))
+
+        #         # Apagar os registros de Desjob
+        #         desjob.djb_status = None
+        #         desjob.djb_message = None
+        #         desjob.djb_start_time = None
+        #         desjob.djb_finish_time = None
+        #         desjob.save()
+
         # except OSError as e:
         #     log.debug(e)
 
@@ -409,21 +420,28 @@ def teste(request):
         # TESTE DE Check Status -------------
 
         # TESTE DE Download -------------
-        # # Resetar o Job
-        # job.cjb_status = "bd"
-        # job.save()
+        # Resetar o Job
+        job.cjb_status = "bd"
+        job.save()
 
-        # try:
-        #     # Remove o tarfile
-        #     tar_file = os.path.join(dc.get_job_path(job.id), "{}.tar.gz".format(job.cjb_job_id))
-        #     os.unlink(tar_file)
-        #     # Remove o path já extraido
-        #     shutil.rmtree(os.path.join(dc.get_job_path(job.id), str(job.cjb_job_id)))
+        try:
+            for desjob in job.desjob_set.all():
+                # Remove o tarfile
+                # tar_file = os.path.join(dc.get_job_path(job.id), "{}.tar.gz".format(desjob.djb_jobid))
+                # os.unlink(tar_file)
+                # Remove o path já extraido
+                a = os.path.join(dc.get_job_path(job.id), str(desjob.djb_jobid))
+                if os.path.exists(a):
+                    shutil.rmtree(a)
 
-        # except OSError as e:
-        #     log.debug(e)
+                desjob.djb_status = "success"
+                desjob.save()
 
-        # dc.download_by_jobid(job.id, job.cjb_job_id)
+        except OSError as e:
+            log.debug(e)
+
+        dc.download_by_id(job.id)
+
         # TESTE DE Download -------------
 
         # TESTE DE Registro -------------
