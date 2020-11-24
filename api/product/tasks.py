@@ -34,9 +34,10 @@ importtargetlistcsv = ImportTargetListCSV()
 )
 def start_des_cutout_job():
     """
-        Esta Task vai instanciar a Classe DesCutoutService,
-        executar o methodo start_job_by_id
-        esse job vai enviar o job para o servico do des.
+        Recupera todos os Cutoutjob com status start. 
+        instancia a Classe DesCutoutService,
+        executa o methodo start_job_by_id.
+        esse metodo vai enviar o job para o servico do des.
     """
     # Para cada job com status Start executa o metodo de submissão
     for job in CutOutJob.objects.filter(cjb_status="st"):
@@ -54,7 +55,7 @@ def start_des_cutout_job():
 def check_jobs_running():
     """
         Recupera todos os cutoutjobs com status Running
-        e verifica no servico DESCutout o status do job
+        e verifica no servico DESaccess o status do job
         e os marca com status
     """
     # Pegar todos os CutoutJobs com status running
@@ -71,6 +72,10 @@ def check_jobs_running():
     ignore_result=True
 )
 def download_cutoutjob():
+    """Recupera todos os cutoutjobs com status before download. 
+    executa o metodo download_by_id. este metodo vai fazer o download dos resultados. 
+    e finalizar o job.
+    """
     # Para cada job com status Before Download executa o metodo de
     for job in CutOutJob.objects.filter(cjb_status="bd"):
         descutout.download_by_id(job.pk)
@@ -78,25 +83,13 @@ def download_cutoutjob():
 
 @task(name="purge_cutoutjob_dir")
 def purge_cutoutjob_dir(cutoutjob_id):
+    """Remove um diretório de cutout job do armazenamento local. 
+    esta task é disparada toda vez que um model CutouJob é deletado. usando signal.
+
+    Args:
+        cutoutjob_id (int): CutoutJob model primary key
+    """
     descutout.purge_cutoutjob_dir(cutoutjob_id)
-
-
-@task(name="notify_user_by_email")
-def notify_user_by_email(cutoutjob_id):
-    logger = descutout.logger
-
-    logger.info("Notify user about Cutout Job [ %s ]" % cutoutjob_id)
-
-    cutoutjob = descutout.get_cutoutjobs_by_id(cutoutjob_id)
-
-    user = cutoutjob.owner
-    logger.debug("User: %s" % user.username)
-
-    try:
-        cutoutJobNotify.create_email_message(cutoutjob)
-
-    except SMTPException as e:
-        logger.error(e)
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Export Product Tasks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#

@@ -1,4 +1,3 @@
-import csv
 import io
 import json
 import logging
@@ -12,7 +11,7 @@ from pathlib import Path
 
 import humanize
 import pandas as pd
-import requests
+from common.desaccess import DesAccessApi
 from common.download import Download
 from common.models import Filter
 from common.notify import Notify
@@ -22,15 +21,22 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from django.utils.timezone import utc
 from lib.CatalogDB import CatalogObjectsDBHelper
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 from product.association import Association
 from product.models import Catalog, Cutout, CutOutJob, Desjob
 
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
-
 
 class DesCutoutService:
+    """This Allows the execution of a Cutout job using the DESaccess API.
+    has methods for submitting, monitoring, downloading and registering jobs and their results.
+
+    Some job steps are asynchronous and are controlled by Celery tasks.
+
+    the process starts with the creation of a Cutoutjob model. that starts with status start.
+    A celery daemon searches from time to time for jobs with this status and submits that job to DESacces.
+    Another celery daemon looks for jobs that have been submitted, and when they finish running, the results are downloaded and recorded.
+
+    """
     db = None
 
     def __init__(self):
@@ -40,18 +46,51 @@ class DesCutoutService:
         # fazer os request sem verificar o certificado SSL / HTTPS
         self.verify_ssl = False
 
+        # Cria uma instancia da classe DesAccesApi que é responsavel pela integração com o serviço DESaccess.
+        self.desapi = DesAccessApi()
+        # Configura para usar o mesmo log desta classe,
+        # assim as mensagens de log referente as requisições vão ficar visiveis neste log.
+        self.desapi.setLogger(self.logger)
+
     def get_cutoutjobs_by_id(self, id):
+        """Returns a CutoutJob model by its id.
+
+        Args:
+            id (int): CutoutJob model primary key
+
+        Returns:
+            product.models.CutOutJob: Instance of CutOutJob.
+        """
         try:
             return CutOutJob.objects.get(pk=int(id))
         except CutOutJob.DoesNotExist as e:
             self.on_error(id, e)
 
     def get_job_path(self, id):
+        """Returns the path where the job's local files are located.
+
+        Args:
+            id (int): CutoutJob model primary key
+
+        Returns:
+            str: Path where are the files for this job.
+        """
         basepath = os.path.join(settings.DATA_DIR, 'cutouts')
         job_path = os.path.join(basepath, str(id))
         return job_path
 
     def create_job_path(self, id):
+        """Creates a directory for the cutout job.
+
+        Args:
+            id (int): CutoutJob model primary key
+
+        Raises:
+            error: Failed to create the directory
+
+        Returns:
+            str: Path where are the files for this job.
+        """
         job_path = self.get_job_path(id)
         self.logger.debug("Trying to create the job directory")
 
@@ -66,10 +105,31 @@ class DesCutoutService:
             raise error
 
     def get_summary_path(self, id, jobid):
+        """Returns the path to a DES job's summary file.
+
+        Args:
+            id (int): CutoutJob model primary key
+            jobid (str): Universally unique identifier of DES job
+
+        Returns:
+            str: Path to summary.json file
+        """
         summary_path = os.path.join(self.get_job_path(id), str(jobid), 'summary.json')
         return summary_path
 
     def start_job_by_id(self, id):
+        """This method submits a local job to DESaccess and creates a desjob. 
+        it also makes the selection of the parameters that will be used by the desjob to create the cutouts.
+
+        Depending on the number of positions that will be sent more than one DES job can be created.
+
+        At the end of this function the job will be in running status. 
+        a daemon will look for jobs in this status and check when the DES job has finished running.
+
+        Args:
+            id (int): CutoutJob model primary key
+
+        """
         self.logger.info("Des Cutout Starting Job by ID %s" % id)
 
         # Recupera o Model CutoutJob pelo id
@@ -127,7 +187,7 @@ class DesCutoutService:
             # Preparar a lista de objetos para submissão
 
             # Recuperar da settings a quantidade maxima de rows por job
-            config = settings.DESCUTOUT_SERVICE
+            config = settings.DESACCESS_API
             max_objects = config["MAX_OBJECTS"]
 
             # Checar o tamanho do lista e dividir em varios jobs caso ultrapasse o limit.
@@ -158,7 +218,7 @@ class DesCutoutService:
                 })
 
                 # Submeter o Job e guardar o id retornado pelo Descut
-                jobid = self.submit_job(data)
+                jobid = self.desapi.submit_cutout_job(data)
 
                 # Cria uma instancia do Desjob
                 record = Desjob.objects.create(
@@ -196,65 +256,14 @@ class DesCutoutService:
             self.on_error(id, e)
             raise e
 
-    def login(self, ):
-        """Obtains an auth token using the username and password credentials for a given database.
-        """
-
-        config = settings.DESCUTOUT_SERVICE
-
-        url = "{}/login".format(config['API_URL'])
-        # self.logger.debug("Login URL: [%s]" % url)
-
-        # Dados para a Autenticação.
-        data = {'username': config['USERNAME'], 'password': config['PASSWORD'], 'database': config['DATABASE']}
-
-        # Login to obtain an auth token
-        r = requests.post(url, data, verify=self.verify_ssl)
-
-        self.logger.debug("Login Status: [%s]" % r.json()['status'])
-
-        if r.json()['status'] != 'ok':
-            raise Exception(r.json()['message'])
-
-        return r.json()['token']
-
-    def submit_job(self, data):
-        """Submits a query job and returns the complete server response which includes the job ID.
+    def check_job_by_id(self, id):
+        """This method checks the status of all DES Jobs related to this Cutout Job. 
+        When all DES jobs finish Cutout Job status is changed to Before Download, 
+        at this point another daemon is looking for jobs with this status to download and register files.
 
         Args:
-            data ([type]): [description]
-
-        Returns:
-            [type]: [description]
+            id (int): CutoutJob model primary key
         """
-        self.logger.info("Submiting Descut Job")
-        self.logger.debug(data)
-
-        config = settings.DESCUTOUT_SERVICE
-        url = "{}/job/cutout".format(config['API_URL'])
-
-        # Submit job
-        r = requests.put(
-            url,
-            data=data,
-            headers={'Authorization': 'Bearer {}'.format(self.login())},
-            verify=self.verify_ssl
-        )
-
-        response = r.json()
-        self.logger.debug("Response: %s" % response)
-        self.logger.debug("Response Status: [%s]" % response["status"])
-
-        if response["status"] == "ok":
-            # Retorna o jobid
-            self.logger.debug("Descut Job Submited with Jobid: [%s]" % response["jobid"])
-
-            return response["jobid"]
-        else:
-            msg = "Error submitting job: %s" % response["message"]
-            raise Exception(msg)
-
-    def check_job_by_id(self, id):
         self.logger.info("Des Cutout Check Job by ID %s" % id)
 
         try:
@@ -267,7 +276,7 @@ class DesCutoutService:
             for desjob in desjobs:
                 try:
                     # Verifica se o status do job no Descut
-                    job_summary = self.check_job_status(desjob.djb_jobid)
+                    job_summary = self.desapi.check_job_status(desjob.djb_jobid)
 
                     # Se o retorno do Check for None signica que o job ainda não foi finalizado.
                     if job_summary is None:
@@ -287,7 +296,7 @@ class DesCutoutService:
             # Verifica se todos os Desjobs tiverem acabado de executar muda o status.
             desjobs = job.desjob_set.filter(djb_status=None)
             if len(desjobs) == 0:
-                self.logger.info("All Desjobs finished executing.")
+                self.logger.info("All DES Jobs for this Cutout Job have been executed.")
                 # Alterar o status para Before Download
                 job.cjb_status = "bd"
                 job.save()
@@ -295,62 +304,14 @@ class DesCutoutService:
         except Exception as e:
             self.on_error(id, e)
 
-    def check_job_status(self, jobid):
-        """[summary]
+    def download_by_id(self, id):
+        """Starts the download phase of the results. 
+        Each DES Job associated with the Cutout Job is downloaded sequentially. 
+        at the end of downloading all results, Cutout Job is successfully completed.
 
         Args:
-            jobid ([type]): [description]
-
-        Raises:
-            Exception: [description]
-
-        Returns:
-            [type]: [description]
+            id (int): CutoutJob model primary key
         """
-
-        self.logger.info("Check Status for Descut Jobid: [%s]" % jobid)
-
-        config = settings.DESCUTOUT_SERVICE
-        url = "{}/job/status".format(config['API_URL'])
-
-        r = requests.post(
-            url,
-            data={
-                "job-id": jobid
-            },
-            headers={'Authorization': 'Bearer {}'.format(self.login())},
-            verify=self.verify_ssl
-        )
-
-        response = r.json()
-        self.logger.debug("Response Status: [%s]" % response["status"])
-
-        if response["status"] == "ok":
-            # A requisição foi bem sucedida
-            job = response["jobs"][0]
-            # Verificar o status_job:
-            if job["job_status"] == "success":
-                self.logger.info("DES Job finished and ready for download and registration.")
-
-                return job
-
-            elif job["job_status"] == "failure":
-                # Neste caso o Job falhou na execução do lado do Descut, retorna erro e finaliza o job.
-                self.logger.error("DES Job Finished with Descut Error: %s" % job["job_status_message"])
-
-                raise Exception(job["job_status_message"])
-
-            else:
-                # Job nem terminou  com sucesso e nem falhou pode estar rodando ainda,
-                # não fazer nada neste caso só logar uma mensagem de debug.
-                self.logger.debug("Des Job status: [%s]" % job["job_status"])
-                return None
-
-        else:
-            msg = "Error checking DES Job status: %s" % response["message"]
-            self.logger.error(msg)
-
-    def download_by_id(self, id):
         # Recupera o Model CutoutJob pelo id
         job = self.get_cutoutjobs_by_id(id)
 
@@ -365,7 +326,16 @@ class DesCutoutService:
         self.on_success(id)
 
     def download_by_jobid(self, id, jobid):
+        """Performs the download of the results of a DES Job.
+        the result is a tar.gz file with all the files. 
+        this tar.gz is extracted. 
+        a position can generate more than one file, and all files are registered in the Cutout model.
 
+        Args:
+            id (int): CutoutJob model primary key
+            jobid (str): Universally unique identifier of DES job
+
+        """
         self.logger.info("Starting download Cutouts ID:[%s] Jobid [ %s ]" % (id, jobid))
 
         try:
@@ -375,11 +345,9 @@ class DesCutoutService:
             # Recupera o Model Desjob
             desjob = job.desjob_set.get(djb_jobid=jobid)
 
-            config = settings.DESCUTOUT_SERVICE
-
             # Baixar o tar.gz com todos os dados
-            filename = "{}.tar.gz".format(jobid)
-            url = "{}/{}/cutout/{}".format(config["FILES_URL"], config["USERNAME"], filename)
+            filename = self.desapi.get_cutout_tar_filename(jobid)
+            url = self.desapi.get_cutout_files_url(jobid)
             job_path = self.get_job_path(id)
 
             tar_filepath = Download().download_file_from_url(url, job_path, filename)
@@ -415,6 +383,14 @@ class DesCutoutService:
             self.on_error(id, msg)
 
     def register_cutouts_by_jobid(self, id, jobid):
+        """Register all files in a DES Job. 
+        each file will have a record in the Cutout model. 
+        for each file an association with a position will be made.
+
+        Args:
+            id (int): CutoutJob model primary key
+            jobid (str): Universally unique identifier of DES job
+        """
         self.logger.info("Starting Registration of Cutouts ID:[%s] Jobid [ %s ]" % (id, jobid))
 
         # Recupera o Model CutoutJob pelo id
@@ -476,6 +452,18 @@ class DesCutoutService:
         self.logger.info("Total of [%s] images were registered" % total_images)
 
     def register_images(self, job, desjob, cutout, object_id):
+        """Creates a record in the Cutout model.
+        For each position/object register all image files.
+
+        Args:
+            job (product.models.CutOutJob): Cutout Job instance.
+            desjob (product.models.DesJob): Des Job instance.
+            cutout (dict): File information already associated with position.
+            object_id (str): Object Id referring to the position.
+
+        Returns:
+            array: Array of Cutout model instances
+        """
 
         jobid = desjob.djb_jobid
         records = []
@@ -526,6 +514,14 @@ class DesCutoutService:
             raise Exception("Failed to register images. %s" % e)
 
     def get_band_model(self, band):
+        """Returns the common.Filter model for a band by name.
+
+        Args:
+            band (str): band name exemple "g"
+
+        Returns:
+            common.models.Filter: A instance of Filter model.
+        """
         try:
             record = Filter.objects.get(filter=band)
         except Filter.DoesNotExist:
@@ -539,6 +535,14 @@ class DesCutoutService:
         return record
 
     def get_catalog_count(self, product_id):
+        """Executes a query in the catalog and returns the total number of records.
+
+        Args:
+            product_id (int): Primary key of the Product model that represents the catalog that will be made the query.
+
+        Returns:
+            int: Total catalog lines.
+        """
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
 
         # Instancia da classe de Banco de dados utilizada para query em tabelas de catalogos.
@@ -558,6 +562,18 @@ class DesCutoutService:
         return count
 
     def get_catalog_objects(self, product_id, limit=None, offset=None):
+        """Executes a query in the catalog and returns an array of objects already using association for the id, ra and dec columns.
+
+        This query can be paged using the limit and offset parameters.  
+
+        Args:
+            product_id (int): Primary key of the Product model that represents the catalog that will be made the query.
+            limit (int, optional): Maximum number of rows in this query.. Defaults to None.
+            offset (int optional): From which result the query will be executed. Defaults to None.
+
+        Returns:
+            array: Returns an array of catalog objects, where each object has the attributes meta_id, meta_ra and meta_dec.
+        """
 
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
 
@@ -608,39 +624,25 @@ class DesCutoutService:
 
         return records
 
-    def delete_desjob(self, jobid):
-        self.logger.info("Removing Job on Desaccess. Jobid: [%s]" % jobid)
-
-        config = settings.DESCUTOUT_SERVICE
-        url = "{}/job/delete".format(config['API_URL'])
-
-        # Delete job
-        r = requests.delete(
-            url,
-            data=dict({
-                "job-id": jobid
-            }),
-            headers={'Authorization': 'Bearer {}'.format(self.login())},
-            verify=self.verify_ssl
-        )
-        response = r.json()
-        self.logger.debug("Response: %s" % response)
-        self.logger.debug("Response Status: [%s]" % response["status"])
-
-        if response["status"] == "ok":
-            # Retorna o jobid
-            self.logger.debug("Descut Job Deleted with Jobid: [%s]" % jobid)
-
-        else:
-            msg = "Error Deleting job: %s" % response["message"]
-            raise Exception(msg)
-
     def extract_file(self, filepath, path):
+        """Extract a tar.gz file to a directory.
+
+        Args:
+            filepath (str): path to the tar.gz file to be extracted.
+            path (str): path where the file will be extracted.
+        """
         tar = tarfile.open(filepath)
         tar.extractall(path)
         tar.close()
 
     def purge_cutoutjob_dir(self, id):
+        """Removes all files from a Cutout Job from the local directory. 
+        this method must be executed every time a Cutout Job model is deleted. 
+        for this, this method is linked to the model using Signal.
+
+        Args:
+            id (int): CutoutJob model primary key
+        """
         try:
             # Recupera o Model CutoutJob pelo id
             jobpath = self.get_job_path(id)
@@ -654,6 +656,14 @@ class DesCutoutService:
             self.logger.error(e)
 
     def on_success(self, id):
+        """This method is performed at the end of the Cutout Job. 
+        changes status to success, saves information about job completion. 
+        and execute the method that erases DES Job in the DESaccess service.
+
+        Args:
+            id (int): CutoutJob model primary key
+        """
+
         self.logger.debug("Finishing the CutoutJob. ID: [%s]" % id)
 
         try:
@@ -662,7 +672,7 @@ class DesCutoutService:
 
             # Apagar Os Jobs no Descut
             for desjob in job.desjob_set.all():
-                self.delete_desjob(desjob.djb_jobid)
+                self.desapi.delete_job(desjob.djb_jobid)
                 # Muda o Status do Desjob para deleted.
                 desjob.djb_status = 'deleted'
                 desjob.save()
@@ -683,6 +693,13 @@ class DesCutoutService:
             self.on_error(id, e)
 
     def on_error(self, id, error):
+        """This method is executed only in case of a Cutout job failure.
+        change the status to error and save the error message and notify the user of the failure.
+
+        Args:
+            id (int): CutoutJob model primary key
+            error (str): Error or execption message that caused the failure.
+        """
         trace = traceback.format_exc()
         self.logger.error(trace)
         self.logger.error(error)
@@ -702,7 +719,7 @@ class DesCutoutService:
         CutoutJobNotify().create_email_message(job)
 
 
-# ----------------------------------------------///////////////////////////////////////////--------------------------------------------------
+# ----------------------------------------------< CUTOUT NOTIFICATION >--------------------------------------------------
 class CutoutJobNotify:
     def __init__(self):
         # Get an instance of a logger
