@@ -4,22 +4,19 @@ import os
 import shutil
 from smtplib import SMTPException
 
-from celery import chord
-from celery import shared_task
-from celery import task
+from celery import chord, shared_task, task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
 from common.download import Download
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils import timezone
-from product.descutoutservice import DesCutoutService, CutoutJobNotify
+
+from product.descutoutservice import CutoutJobNotify, DesCutoutService
 from product.export import Export
-from product.models import CutOutJob
-from product.models import FilterCondition
-from product.models import Product
-from product.saveas import SaveAs
 from product.importproduct import ImportTargetListCSV
+from product.models import CutOutJob, FilterCondition, Product
+from product.saveas import SaveAs
 from product.serializers import FConditionSerializer
 
 descutout = DesCutoutService()
@@ -29,17 +26,21 @@ export = Export()
 importtargetlistcsv = ImportTargetListCSV()
 
 
-@task(name="start_des_cutout_job_by_id")
-def start_des_cutout_job_by_id(cutoutjob_id):
+@periodic_task(
+    # Tempo de delay para a task check_jobs em minutos
+    run_every=(crontab(minute='*/%s' % 1)),
+    name="start_des_cutout_job",
+    ignore_result=True
+)
+def start_des_cutout_job():
     """
         Esta Task vai instanciar a Classe DesCutoutService,
         executar o methodo start_job_by_id
         esse job vai enviar o job para o servico do des.
-
-        :param cutoutjob_id: Chave pk do model product.CutOutModel
     """
-    # descutout.start_job_by_id(int(cutoutjob_id))
-    pass
+    # Para cada job com status Start executa o metodo de submissão
+    for job in CutOutJob.objects.filter(cjb_status="st"):
+        descutout.start_job_by_id(job.pk)
 
 
 @periodic_task(
@@ -56,142 +57,28 @@ def check_jobs_running():
         e verifica no servico DESCutout o status do job
         e os marca com status
     """
-    # descutout.check_jobs()
-    pass
+    # Pegar todos os CutoutJobs com status running
+    jobs = CutOutJob.objects.filter(cjb_status="rn")
+    # Faz um for para cara job
+    for job in jobs:
+        descutout.check_job_by_id(job.pk)
 
 
-@task(name="download_cutoutjob")
-def download_cutoutjob(id):
-    descutout.download_by_jobid(id)
-
-
-# @task(name="download_cutoutjob")
-# def download_cutoutjob(id):
-#     logger = descutout.logger
-
-#     logger.info("Start downloading Cutout Job [ %s ]" % id)
-
-#     cutoutjob = descutout.get_cutoutjobs_by_id(id)
-
-#     # Changing the CutoutJob Status for Downloading
-#     descutout.change_cutoutjob_status(cutoutjob, "dw")
-
-#     cutoutdir = descutout.get_cutout_dir(cutoutjob)
-
-#     allarqs = list()
-
-#     image_formats = cutoutjob.cjb_image_formats
-#     if image_formats is None:
-#         image_formats = 'png'
-
-#     formats = image_formats.split(',')
-
-#     logger.info("Only download the files with these formats: [ %s ]" % image_formats)
-
-#     # Deixar na memoria a lista de objetos ja associada com os nomes dos arquivos
-#     objects = descutout.get_objects_from_file(cutoutjob)
-
-#     # Recuperar o arquivo de Results
-#     result_file_path = os.path.join(descutout.data_dir, cutoutjob.cjb_results_file)
-#     logger.debug("Result File Path: %s" % result_file_path)
-#     with open(result_file_path, 'r') as result_file:
-#         lines = result_file.readlines()
-#         for url in lines:
-#             arq = descutout.parse_result_url(url)
-
-#             # Verifica se o formato do arquivo esta na lista de formatos a serem baixados
-#             # os formatos ficam no campo cjb_image_formats
-#             if arq.get('file_type').lower() in formats:
-#                 allarqs.append(arq)
-
-#                 object_id = None
-#                 object_ra = None
-#                 object_dec = None
-#                 file_size = None
-#                 finish = None
-
-#                 logger.info("Downloading [ %s ]" % arq.get('filename'))
-
-#                 for obj in objects:
-#                     if arq.get("thumbname") == obj.get("thumbname"):
-#                         object_id = obj.get("id")
-#                         object_ra = obj.get("ra")
-#                         object_dec = obj.get("dec")
-
-#                 start = timezone.now()
-#                 file_path = Download().download_file_from_url(
-#                     arq.get('url'),
-#                     cutoutdir,
-#                     arq.get('filename'),
-#                     ignore_errors=True
-#                 )
-
-#                 if file_path is not None:
-#                     file_size = os.path.getsize(file_path)
-#                     finish = timezone.now()
-
-#                 cutout = descutout.create_cutout_model(
-#                     cutoutjob,
-#                     filename=arq.get('filename'),
-#                     thumbname=arq.get('thumbname'),
-#                     type=arq.get('file_type'),
-#                     filter=None,
-#                     object_id=object_id,
-#                     object_ra=object_ra,
-#                     object_dec=object_dec,
-#                     file_path=file_path,
-#                     file_size=file_size,
-#                     start=start,
-#                     finish=finish)
-
-#     result_file.close()
-
-#     # Deletar o job no Servico
-#     descutout.delete_job(cutoutjob)
-
-#     # Adicionar o tempo de termino
-#     cutoutjob.cjb_finish_time = timezone.now()
-#     cutoutjob.save()
-
-#     # Changing the CutoutJob Status for Done
-#     descutout.change_cutoutjob_status(cutoutjob, "ok")
+@periodic_task(
+    # Tempo de delay para a task check_jobs em minutos
+    run_every=(crontab(minute='*/%s' % 1)),
+    name="download_cutoutjob",
+    ignore_result=True
+)
+def download_cutoutjob():
+    # Para cada job com status Before Download executa o metodo de
+    for job in CutOutJob.objects.filter(cjb_status="bd"):
+        descutout.download_by_id(job.pk)
 
 
 @task(name="purge_cutoutjob_dir")
-def purge_cutoutjob_dir(cutoutjob_id, product=None):
-    """
-        :param cutoutjob_id: Chave pk do model product.CutOutModel
-    """
-    logger = descutout.logger
-
-    logger.info("Purge a Cutout Job [ %s ]" % cutoutjob_id)
-
-    cutoutjob = None
-
-    try:
-        if product is None:
-            cutoutjob = descutout.get_cutoutjobs_by_id(cutoutjob_id)
-            cutout_dir = descutout.get_cutout_dir(cutoutjob)
-
-        else:
-            cutout_dir = descutout.get_cutout_dir(product=product, jobid=cutoutjob_id)
-
-        logger.debug(cutout_dir)
-
-        shutil.rmtree(cutout_dir)
-        # shutil.rmtree(cutout_dir, ignore_errors=True)
-
-        logger.info("Removed Dir [ %s ]" % cutout_dir)
-
-        logger.info("Deleting a Cutout Job [ %s ]" % cutoutjob_id)
-
-        if cutoutjob is not None:
-            cutoutjob.delete()
-
-        logger.info("Purge Done!")
-
-    except Exception as e:
-        raise e
+def purge_cutoutjob_dir(cutoutjob_id):
+    descutout.purge_cutoutjob_dir(cutoutjob_id)
 
 
 @task(name="notify_user_by_email")

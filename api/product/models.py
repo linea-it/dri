@@ -311,9 +311,6 @@ class CutOutJob(models.Model):
         verbose_name='Status'
     )
 
-    cjb_job_id = models.CharField(
-        max_length=1024, verbose_name='Job ID', null=True, blank=True)
-
     # Fields Referentes as labels que serao aplicadas ao cutout
     cjb_label_position = models.CharField(
         max_length=10, verbose_name='Label Position', choices=(('inside', 'Inside'), ('outside', 'Outside')),
@@ -348,6 +345,9 @@ class CutOutJob(models.Model):
 
     cjb_file_size = models.PositiveIntegerField(
         verbose_name='File Size', null=True, blank=True, default=None, help_text='Total size of files generated in this job')
+
+    cjb_error = models.TextField(
+        verbose_name='Error Message', null=True, blank=True)
 
     def __str__(self):
         return str(self.cjb_display_name)
