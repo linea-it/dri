@@ -135,6 +135,9 @@ function Home() {
   const [commentsWithFeature, setCommentsWithFeature] = useState([]);
   const datasetLoading = useRef(false);
   const [tutorial, setTutorial] = useState([]);
+  const [hasInspection, setHasInspection] = useState(false);
+  const [allTiles, setAllTiles] = useState([]);
+  const searchRef = useRef('');
 
 
   const api = new DriApi();
@@ -148,63 +151,53 @@ function Home() {
   };
 
   useEffect(() => {
+    api.getTileInspectionOption().then(res => setHasInspection(res.TILE_INSPECTION_OPTION));
     api.loggedUser().then(res => setUsername(res.username));
     api.allReleases().then((res) => {
       setReleases(res);
-      setCurrentRelease(res.length > 0 ? res[0].id : '');
+
+      // Getting first item of all available releases:
+      let release = res.length > 0 ? res[0].id : '';
+
+      // Filter by releases with the default flag equal to true
+      const releaseDefault = res.filter(row => row.rls_default);
+
+      // If there's any release with the default flag on,
+      // set the first item as the current release.
+      if (releaseDefault.length > 0) {
+        release = releaseDefault[0].id;
+      }
+
+      setCurrentRelease(release);
     });
     api.getTutorial().then(res => setTutorial(res));
   }, []);
 
-  const loadMoreDatasets = useCallback((e) => {
-    const filters = [{
-      property: 'inspected',
-      value: filterInspect,
-    }];
-
-    if (datasetLoading.current) {
-      return;
-    }
-
-    datasetLoading.current = true;
-    api.datasetsByRelease({
-      release: currentRelease, filters, search: inputSearchValue, offset: e || 0, limit: 20,
-    })
-      .then((data) => {
-        const datasetConcat = datasets.concat(data.results);
-        let datasetTotalCount = datasetConcat.length;
-        if (datasetConcat.length < 20) {
-          datasetTotalCount = data.count;
-        }
-
-        setTotalCount(datasetTotalCount);
-
-        setDatasets(datasetConcat);
-        if (data.count > 20) {
-          datasetLoading.current = false;
-        }
-      });
-  }, [datasets, currentRelease]);
-
   useEffect(() => {
+    // reloadData();
     if (loading === true && currentRelease !== '') {
       api.datasetsByRelease({ release: currentRelease }).then((res) => {
+        if (hasInspection) {
         // Totais de Tiles boas, ruim e não inspecionadas
-        const goodTiles = countBy(res, el => el.isp_value);
-        goodTiles.tiles = res.length;
-        setCounts(goodTiles);
+          const goodTiles = countBy(res, el => el.isp_value);
+          goodTiles.tiles = res.length;
+          setCounts(goodTiles);
+        } else {
+          setCounts({ tiles: res.length });
+        }
         setLoading(false);
+        setAllTiles(res);
       });
       datasetLoading.current = false;
       loadMoreDatasets(0);
     }
-  }, [currentRelease, filterInspect, loading]);
+  }, [hasInspection, currentRelease, filterInspect, loading]);
 
-  useEffect(() => {
-    if (loading === true && currentRelease !== '') loadMoreDatasets(0);
-  }, [totalCount]);
+  // useEffect(() => {
+  //   if (loading === true && currentRelease !== '') loadMoreDatasets(0);
+  // }, [totalCount]);
 
-  const loadData = () => {
+  const reloadData = () => {
     if (currentRelease !== '') {
       setDatasets([]);
       // setCurrentDataset({});
@@ -237,20 +230,22 @@ function Home() {
   };
 
   useEffect(() => {
-    getDatasetCommentsByType();
-  }, [currentDataset]);
+    if (hasInspection) {
+      getDatasetCommentsByType();
+    }
+  }, [currentDataset, hasInspection]);
 
   const onComment = (dataset, comment) => {
     if (comment.id !== null) {
       // update
       api.updateComment(comment.id, comment.inputValue, null, null).then(() => {
-        loadData();
+        reloadData();
         handleComment(dataset);
       });
     } else {
       const dts_type = comment.dts_type || '0';
       api.createDatasetComment(dataset.id, comment.inputValue, dts_type, null, null).then(() => {
-        loadData();
+        reloadData();
         if (showComment === true) {
           handleComment(dataset);
         }
@@ -315,7 +310,7 @@ function Home() {
         handleClickSnackBar();
       });
     }
-    loadData();
+    reloadData();
   };
 
   const handleMenuContrastOpen = () => setMenuContrastOpen(true);
@@ -331,23 +326,87 @@ function Home() {
     setFilterInspect(value);
     setShowFilterDialog(false);
     setTotalCount(0);
-    loadData();
+    reloadData();
   };
 
+  const filterByRaDec = (ra, dec) => {
+    /**
+     * e necessario converter os cantos da tile em ra para -180 e 180
+     * para que as tiles que ficam perto do 0 nao deem erro.
+     *
+     */
 
-  const handleInputSearch = (value) => {
-    setTotalCount(0);
-    setInputSearchValue(value);
+    const result = [];
+
+
+    allTiles.forEach((tile) => {
+      if (ra > 180) {
+        ra -= 360;
+      }
+
+      let urall = tile.tli_urall;
+      let uraur = tile.tli_uraur;
+
+      if (urall > 180) {
+        urall -= 360;
+      }
+
+      if (uraur > 180) {
+        uraur -= 360;
+      }
+
+      // tli_urall < ra
+      // AND tli_udecll < dec
+      // AND tli_uraur > ra
+      // AND tli_udecur > dec
+      if (urall < ra && tile.tli_udecll < dec && uraur > ra && tile.tli_udecur > dec) {
+        result.push(tile);
+        return false;
+      }
+    });
+
+    return result;
   };
+
+  const handleInputSearch = () => {
+    reloadData();
+    setLoading(true);
+    const searchSplit = searchRef.current.value.split(',');
+    if (searchSplit.length === 2) {
+      const datasetByPosition = filterByRaDec(
+        parseFloat(searchSplit[0]),
+        parseFloat(searchSplit[1]),
+      );
+
+      console.log('datasetByPosition', datasetByPosition);
+
+      if (datasetByPosition.length > 0) {
+        // searchRef.current.value = datasetByPosition.tli_tilename;
+        // reloadData();
+        setLoading(false);
+        datasetLoading.current = false;
+        setDatasets(datasetByPosition);
+        console.log('hasInspection, currentRelease, filterInspect, loading, datasetLoading', hasInspection, currentRelease, filterInspect, loading, datasetLoading.current);
+        // loadMoreDatasets(0);
+      }
+    } else {
+      reloadData();
+      loadMoreDatasets(0);
+    }
+  };
+
+  // useEffect(() => {
+  //   console.log('datasets', datasets);
+  // }, [datasets]);
 
   const handleDelete = commentId => api.deleteComment(commentId).then(() => {
     handleComment(currentDataset);
-    loadData();
+    reloadData();
   });
 
-  useEffect(() => {
-    loadData();
-  }, [inputSearchValue]);
+  // useEffect(() => {
+  //   loadMoreDatasets(0);
+  // }, [inputSearchValue]);
 
 
   const Row = (i) => {
@@ -365,7 +424,7 @@ function Home() {
         >
           <ListItemText
             primary={datasets[i].tli_tilename}
-            secondary={(
+            secondary={hasInspection ? (
               <MaterialLink
                 className={datasets[i].comments > 0 ? classes.datasetWithComment : null}
                 onClick={(e) => {
@@ -376,32 +435,70 @@ function Home() {
               >
                 {`${datasets[i].comments} comments`}
               </MaterialLink>
-            )}
+            ) : null}
           />
-
-          <ListItemSecondaryAction>
-            <IconButton onClick={() => qualifyDataset(datasets[i], 'ok')}>
-              {datasets[i].isp_value ? (
-                <ThumbUpIcon className={classes.okButton} />
-              ) : (
-                <ThumbUpIcon />
-              )}
-            </IconButton>
-            <IconButton onClick={() => qualifyDataset(datasets[i], 'notok')}>
-              {datasets[i].isp_value === false ? (
-                <ThumbDownIcon color="error" />
-              ) : (
-                <ThumbDownIcon />
-              )}
-            </IconButton>
-            <IconButton onClick={() => handleComment(datasets[i])}>
-              <Comment />
-            </IconButton>
-          </ListItemSecondaryAction>
+          {hasInspection ? (
+            <ListItemSecondaryAction>
+              <IconButton onClick={() => qualifyDataset(datasets[i], 'ok')}>
+                {datasets[i].isp_value ? (
+                  <ThumbUpIcon className={classes.okButton} />
+                ) : (
+                  <ThumbUpIcon />
+                )}
+              </IconButton>
+              <IconButton onClick={() => qualifyDataset(datasets[i], 'notok')}>
+                {datasets[i].isp_value === false ? (
+                  <ThumbDownIcon color="error" />
+                ) : (
+                  <ThumbDownIcon />
+                )}
+              </IconButton>
+              <IconButton onClick={() => handleComment(datasets[i])}>
+                <Comment />
+              </IconButton>
+            </ListItemSecondaryAction>
+          ) : null}
         </ListItem>
       );
     }
   };
+
+  const loadMoreDatasets = (e) => {
+    const filters = [{
+      property: 'inspected',
+      value: filterInspect,
+    }];
+
+    if (datasetLoading.current) {
+      return;
+    }
+
+    console.log('hello, world', datasetLoading.current);
+
+    datasetLoading.current = true;
+    api.datasetsByRelease({
+      release: currentRelease,
+      filters,
+      search: searchRef.current.value,
+      offset: e || 0,
+      limit: 20,
+    })
+      .then((data) => {
+        const datasetConcat = datasets.concat(data.results);
+        let datasetTotalCount = datasetConcat.length;
+        if (datasetConcat.length < 20) {
+          datasetTotalCount = data.count;
+        }
+
+        setTotalCount(datasetTotalCount);
+
+        setDatasets(datasetConcat);
+        if (data.count > 20) {
+          datasetLoading.current = false;
+        }
+      });
+  };
+
 
   const header = 64;
   const toolbar = 64;
@@ -436,25 +533,33 @@ function Home() {
                 <Grid item xs={6} sm={4} md={3} lg={3}>
                   <Card className={classes.tilelist}>
                     <Toolbar className={classes.toolbar}>
-                      <SearchField inputSearchValue={inputSearchValue} handleInputSearch={handleInputSearch} />
+                      <SearchField
+                        searchRef={searchRef}
+                        // inputSearchValue={inputSearchValue}
+                        handleInputSearch={handleInputSearch}
+                      />
                       <div className={classes.grow} />
-                      <Tooltip title="Filter">
-                        <IconButton onClick={handleMenuFilterOpen} className={classes.menuButton} disabled={inputSearchValue !== ''}>
-                          <FilterListIcon className={classes.menuButtonIcon} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Contrast">
-                        <IconButton onClick={handleMenuContrastOpen} className={classes.menuButton}>
-                          <SettingsIcon className={classes.menuButtonIcon} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Reporting">
-                        <Link to="/eyeballing/comments/">
-                          <IconButton onClick={() => {}} className={classes.menuButton}>
-                            <TableChart className={classes.menuButtonIcon} />
-                          </IconButton>
-                        </Link>
-                      </Tooltip>
+                      {hasInspection ? (
+                        <>
+                          <Tooltip title="Filter">
+                            <IconButton onClick={handleMenuFilterOpen} className={classes.menuButton} disabled={searchRef.current.value !== ''}>
+                              <FilterListIcon className={classes.menuButtonIcon} />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Contrast">
+                            <IconButton onClick={handleMenuContrastOpen} className={classes.menuButton}>
+                              <SettingsIcon className={classes.menuButtonIcon} />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Reporting">
+                            <Link to="/eyeballing/comments/">
+                              <IconButton className={classes.menuButton}>
+                                <TableChart className={classes.menuButtonIcon} />
+                              </IconButton>
+                            </Link>
+                          </Tooltip>
+                        </>
+                      ) : null}
                     </Toolbar>
                     <Virtuoso
                       style={{
@@ -469,96 +574,108 @@ function Home() {
                       }}
                       overscan={20}
                       initialItemCount={20}
-                      totalCount={totalCount
-                      }
+                      totalCount={totalCount}
                       item={Row}
                       endReached={e => loadMoreDatasets(e)}
-                      footer={() => (
+                      footer={() => (datasetLoading.current ? (
                         <div style={{ padding: '1rem', textAlign: 'center' }}>
                           Loading...
                         </div>
-                      )}
+                      ) : null)}
                     />
                     <Divider />
-                    {loading ? (
-                      <LinearProgress color="secondary" className={classes.linearProgress} />
-                    ) : (
-                      <CardActions className={classes.cardActionCounter}>
-                        <Counter counts={counts} />
-                      </CardActions>
-                    )}
-
+                    <>
+                      {loading ? (
+                        <LinearProgress color="secondary" className={classes.linearProgress} />
+                      ) : (
+                        <CardActions className={classes.cardActionCounter}>
+                          <Counter hasInspection={hasInspection} counts={counts} />
+                        </CardActions>
+                      )}
+                    </>
                   </Card>
                 </Grid>
                 <Grid item xs={6} sm={8} md={9} lg={9}>
                   <Card className={classes.card}>
-                    <VisiomaticPanel
-                      image={
-                      !isEmpty(currentDataset)
-                        ? currentDataset.image_src_ptif
-                        : null
-                    }
-                      className={classes.visiomatic}
-                      center={[currentDataset.tli_ra, currentDataset.tli_dec]}
-                      fov={2}
-                      contrast={contrast}
-                      currentDataset={currentDataset.id || null}
-                      points={commentsWithFeature}
-                      getDatasetCommentsByType={getDatasetCommentsByType}
-                      reloadData={loadData}
-                    />
+                    {currentRelease !== '' ? (
+                      <VisiomaticPanel
+                        image={
+                        !isEmpty(currentDataset)
+                          ? currentDataset.image_src_ptif
+                          : null
+                      }
+                        className={classes.visiomatic}
+                        center={[currentDataset.tli_ra, currentDataset.tli_dec]}
+                        fov={2}
+                        contrast={contrast}
+                        currentDataset={currentDataset.id || null}
+                        points={commentsWithFeature}
+                        getDatasetCommentsByType={getDatasetCommentsByType}
+                        reloadData={reloadData}
+                        hasInspection={hasInspection}
+                      />
+                    ) : null}
                   </Card>
                 </Grid>
               </Grid>
-              <CommentDialog
-                open={showComment}
-                dataset={currentDataset}
-                comments={comments}
-                handleClose={() => setShowComment(false)}
-                handleSubmit={onComment}
-                handleDelete={handleDelete}
-              />
+              {hasInspection ? (
+                <CommentDialog
+                  open={showComment}
+                  dataset={currentDataset}
+                  comments={comments}
+                  handleClose={() => setShowComment(false)}
+                  handleSubmit={onComment}
+                  handleDelete={handleDelete}
+                />
+              ) : null}
             </div>
-            <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={handleClickSnackBar} />
+            {hasInspection ? <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={handleClickSnackBar} /> : null}
           </React.Fragment>
         )}
       />
-      <Route
-        path="/eyeballing/comments/"
-        render={() => (
-          <TileTable
-            currentRelease={currentRelease}
-            className={classes.card}
-            backLink={(
-              <Link to="/eyeballing/" style={{ color: 'inherit', textDecoration: 'none' }}>
-                <IconButton
-                  aria-label="Home"
-                  aria-controls="home-appbar"
-                  aria-haspopup="true"
-                  color="inherit"
-                  className={classes.backLinkIcon}
-                >
-                  <ArrowBack />
-                  <Typography variant="button" display="block">
-                    Back
-                  </Typography>
-                </IconButton>
-              </Link>
+      {hasInspection ? (
+        <Route
+          path="/eyeballing/comments/"
+          render={() => (
+            <TileTable
+              currentRelease={currentRelease}
+              className={classes.card}
+              backLink={(
+                <Link to="/eyeballing/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                  <IconButton
+                    aria-label="Home"
+                    aria-controls="home-appbar"
+                    aria-haspopup="true"
+                    color="inherit"
+                    className={classes.backLinkIcon}
+                  >
+                    <ArrowBack />
+                    <Typography variant="button" display="block">
+                      Back
+                    </Typography>
+                  </IconButton>
+                </Link>
+            )}
+            />
           )}
-          />
-        )}
-      />
+        />
+      ) : null}
       <Footer />
-      <ChooseContrast
-        selectedValue={contrast}
-        open={menuContrastOpen}
-        handleClose={handleMenuContrastClose}
-      />
-      <ChooseFilterDialog
-        open={showFilterDialog}
-        selectedValue={filterInspect}
-        handleClose={handleMenuFilterClose}
-      />
+
+      {hasInspection ? (
+        <>
+          <ChooseContrast
+            selectedValue={contrast}
+            open={menuContrastOpen}
+            handleClose={handleMenuContrastClose}
+          />
+          <ChooseFilterDialog
+            open={showFilterDialog}
+            selectedValue={filterInspect}
+            handleClose={handleMenuFilterClose}
+          />
+        </>
+      ) : null}
 
     </Router>
   );

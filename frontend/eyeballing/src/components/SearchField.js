@@ -46,20 +46,15 @@ const styles = theme => ({
 function SearchField(props) {
   const { classes } = props;
 
-
-  function handleInputSearch(event) {
-    const value = event.target.value.toUpperCase();
-    props.handleInputSearch(value);
-  }
-
   return (
     <div className={classes.search}>
       <div className={classes.searchIcon}>
         <SearchIcon />
       </div>
       <InputBase
-        onChange={handleInputSearch}
-        value={props.inputSearchValue}
+        inputRef={props.searchRef}
+        onChange={props.handleInputSearch}
+        // value={props.inputSearchValue}
         placeholder="Search…"
         classes={{
           root: classes.inputRoot,
@@ -71,9 +66,9 @@ function SearchField(props) {
   );
 }
 
-SearchField.propTypes = {
-  inputSearchValue: PropTypes.string.isRequired,
-  handleInputSearch: PropTypes.func.isRequired,
-};
+// SearchField.propTypes = {
+//   inputSearchValue: PropTypes.string.isRequired,
+//   handleInputSearch: PropTypes.func.isRequired,
+// };
 
 export default withStyles(styles)(SearchField);

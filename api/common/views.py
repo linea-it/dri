@@ -303,8 +303,8 @@ def galaxy_cluster(request):
 @api_view(['GET'])
 def available_database(request):
     """
-        Retorna os databases configurados como sendo DBs de Catalogo. 
-        não inclui o database administrativo. 
+        Retorna os databases configurados como sendo DBs de Catalogo.
+        não inclui o database administrativo.
     """
     if request.method == 'GET':
         dbs = list([])

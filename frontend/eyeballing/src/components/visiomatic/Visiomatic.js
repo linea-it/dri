@@ -65,6 +65,7 @@ class VisiomaticPanel extends Component {
     currentDataset: PropTypes.number,
     points: PropTypes.array,
     reloadData: PropTypes.func,
+    hasInspection: PropTypes.bool.isRequired,
   };
 
   constructor(props) {
@@ -236,8 +237,11 @@ class VisiomaticPanel extends Component {
 
     map.on('layeradd', this.onLayerAdd, this);
     map.on('layerremove', this.onLayerRemove, this);
-    map.on('contextmenu', this.onContextMenuOpen, this);
-    map.on('overlaycatalog', this.overlayCatalog, this);
+
+    if (this.props.hasInspection) {
+      map.on('contextmenu', this.onContextMenuOpen, this);
+      map.on('overlaycatalog', this.overlayCatalog, this);
+    }
     this.map = map;
     // this.changeImage();
   }
@@ -262,11 +266,15 @@ class VisiomaticPanel extends Component {
       this.changeImage();
     }
 
-    if (prevProps.points !== this.props.points) {
+    if (this.props.hasInspection && prevProps.points !== this.props.points) {
       this.overlayCatalog();
       if (prevProps.points.length > 0 && this.props.points.length > 0) {
         this.setView();
       }
+    }
+
+    if (this.props.hasInspection && prevProps.contrast !== this.props.contrast) {
+      this.changeImage();
     }
   }
 
@@ -317,7 +325,7 @@ class VisiomaticPanel extends Component {
       // TODO: Deve ser removido solucao temporaria
       url = url.replace('http://', 'https://');
 
-      const colorRanges = this.getColorRanges();
+      const currentColorRanges = this.getColorRanges();
 
       this.layer = this.libL.tileLayer
         .iip(url, {
@@ -333,7 +341,7 @@ class VisiomaticPanel extends Component {
           colorSat: 2.0,
           quality: 100,
           channelLabelMatch: '[ugrizY]',
-          minMaxValues: colorRanges.minMaxValues,
+          minMaxValues: currentColorRanges.minMaxValues,
           // minMaxValues: [
           //   // g
           //   [-0.390453905, 1000],
@@ -375,7 +383,7 @@ class VisiomaticPanel extends Component {
       m = 0;
     }
     const str = `${(h < 10 ? '0' : '') + h.toString()}:${m < 10 ? '0' : ''}${m.toString()
-      }:${sf < 10.0 ? '0' : ''}${sf.toFixed(3)}`;
+    }:${sf < 10.0 ? '0' : ''}${sf.toFixed(3)}`;
 
     const lat = Math.abs(latlng.lat);
 
@@ -399,6 +407,8 @@ class VisiomaticPanel extends Component {
   }
 
   render() {
+    const { hasInspection } = this.props;
+
     // Ajuste no Tamanho do container
     return (
       <>
@@ -411,16 +421,18 @@ class VisiomaticPanel extends Component {
             // height: '100%',
           }}
         />
-        <ContextMenu
-          open={this.state.contextMenuOpen}
-          updateOpen={this.state.contextMenuUpdateOpen}
-          event={this.state.contextMenuEvt}
-          handleClose={this.onContextMenuClose}
-          currentDataset={this.props.currentDataset}
-          latLngToHMSDMS={this.latLngToHMSDMS}
-          getDatasetCommentsByType={this.props.getDatasetCommentsByType}
-          reloadData={this.props.reloadData}
-        />
+        {hasInspection ? (
+          <ContextMenu
+            open={this.state.contextMenuOpen}
+            updateOpen={this.state.contextMenuUpdateOpen}
+            event={this.state.contextMenuEvt}
+            handleClose={this.onContextMenuClose}
+            currentDataset={this.props.currentDataset}
+            latLngToHMSDMS={this.latLngToHMSDMS}
+            getDatasetCommentsByType={this.props.getDatasetCommentsByType}
+            reloadData={this.props.reloadData}
+          />
+        ) : null}
       </>
     );
   }
