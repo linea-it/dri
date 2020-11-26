@@ -18,7 +18,6 @@ import {
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
-import { Virtuoso } from 'react-virtuoso';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -26,6 +25,7 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Comment from '@material-ui/icons/Comment';
 import Divider from '@material-ui/core/Divider';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import TileTable from './components/TileTable';
 import SnackBar from './components/SnackBar';
 import ChooseFilterDialog from './components/ChooseFilterDialog';
@@ -139,6 +139,8 @@ function Home() {
   const [allTiles, setAllTiles] = useState([]);
   const searchRef = useRef('');
 
+  const [loadingList, setLoadingList] = useState(true);
+
 
   const api = new DriApi();
   const classes = useStyles();
@@ -174,38 +176,45 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    // reloadData();
     if (loading === true && currentRelease !== '') {
       api.datasetsByRelease({ release: currentRelease }).then((res) => {
         if (hasInspection) {
-        // Totais de Tiles boas, ruim e não inspecionadas
+          // Totais de Tiles boas, ruim e não inspecionadas
           const goodTiles = countBy(res, el => el.isp_value);
           goodTiles.tiles = res.length;
           setCounts(goodTiles);
         } else {
           setCounts({ tiles: res.length });
         }
+        if (allTiles.length === 0) {
+          setAllTiles(res);
+        }
         setLoading(false);
-        setAllTiles(res);
       });
-      datasetLoading.current = false;
-      loadMoreDatasets(0);
     }
   }, [hasInspection, currentRelease, filterInspect, loading]);
 
-  // useEffect(() => {
-  //   if (loading === true && currentRelease !== '') loadMoreDatasets(0);
-  // }, [totalCount]);
+  useEffect(() => {
+    if (loadingList && currentRelease !== '') {
+      loadMoreDatasets();
+    }
+  }, [currentRelease, loadingList]);
+
+  const reloadList = () => {
+    setLoadingList(true);
+    setDatasets([]);
+    setTotalCount(0);
+    datasetLoading.current = false;
+  };
+
+  const reloadAllTiles = () => {
+    setLoading(true);
+    setCounts({});
+  };
 
   const reloadData = () => {
-    if (currentRelease !== '') {
-      setDatasets([]);
-      // setCurrentDataset({});
-      setCounts({});
-      setTotalCount(0);
-      setLoading(true);
-      datasetLoading.current = false;
-    }
+    reloadList();
+    reloadAllTiles();
   };
 
   const onSelectDataset = dataset => setCurrentDataset(dataset);
@@ -239,15 +248,15 @@ function Home() {
     if (comment.id !== null) {
       // update
       api.updateComment(comment.id, comment.inputValue, null, null).then(() => {
-        reloadData();
         handleComment(dataset);
+        reloadList();
       });
     } else {
       const dts_type = comment.dts_type || '0';
       api.createDatasetComment(dataset.id, comment.inputValue, dts_type, null, null).then(() => {
-        reloadData();
         if (showComment === true) {
           handleComment(dataset);
+          reloadList();
         }
       });
     }
@@ -295,22 +304,20 @@ function Home() {
     if (dataset.inspected !== null) {
       if (valueRef !== null) {
         api.updateInspectValue(dataset.inspected, valueRef).then(() => {
-          setLoading(true);
           handleClickSnackBar();
         });
       } else {
         api.deleteInspect(dataset.inspected).then(() => {
-          setLoading(true);
           handleClickSnackBar();
         });
       }
     } else {
       api.createinspect(dataset.id, valueRef).then(() => {
-        setLoading(true);
         handleClickSnackBar();
       });
     }
-    reloadData();
+    reloadList();
+    reloadAllTiles();
   };
 
   const handleMenuContrastOpen = () => setMenuContrastOpen(true);
@@ -323,10 +330,12 @@ function Home() {
   const handleMenuFilterOpen = () => setShowFilterDialog(true);
 
   const handleMenuFilterClose = (value) => {
-    setFilterInspect(value);
-    setShowFilterDialog(false);
-    setTotalCount(0);
-    reloadData();
+    if (value !== filterInspect) {
+      setFilterInspect(value);
+      setShowFilterDialog(false);
+      setTotalCount(0);
+      reloadList();
+    }
   };
 
   const filterByRaDec = (ra, dec) => {
@@ -337,7 +346,6 @@ function Home() {
      */
 
     const result = [];
-
 
     allTiles.forEach((tile) => {
       if (ra > 180) {
@@ -369,118 +377,99 @@ function Home() {
   };
 
   const handleInputSearch = () => {
-    reloadData();
-    setLoading(true);
     const searchSplit = searchRef.current.value.split(',');
+
     if (searchSplit.length === 2) {
       const datasetByPosition = filterByRaDec(
         parseFloat(searchSplit[0]),
         parseFloat(searchSplit[1]),
       );
 
-      console.log('datasetByPosition', datasetByPosition);
-
       if (datasetByPosition.length > 0) {
-        // searchRef.current.value = datasetByPosition.tli_tilename;
-        // reloadData();
-        setLoading(false);
-        datasetLoading.current = false;
+        datasetLoading.current = true;
         setDatasets(datasetByPosition);
-        console.log('hasInspection, currentRelease, filterInspect, loading, datasetLoading', hasInspection, currentRelease, filterInspect, loading, datasetLoading.current);
-        // loadMoreDatasets(0);
+        setTotalCount(datasetByPosition.length);
+        datasetLoading.current = false;
       }
     } else {
-      reloadData();
-      loadMoreDatasets(0);
+      reloadList();
     }
   };
-
-  // useEffect(() => {
-  //   console.log('datasets', datasets);
-  // }, [datasets]);
 
   const handleDelete = commentId => api.deleteComment(commentId).then(() => {
     handleComment(currentDataset);
-    reloadData();
+    reloadList();
   });
 
-  // useEffect(() => {
-  //   loadMoreDatasets(0);
-  // }, [inputSearchValue]);
+  const Rows = () => datasets.map(dataset => (
+    <ListItem
+      className={classes.listItem}
+      button
+      key={dataset.id}
+      onClick={() => {
+        onSelectDataset(dataset);
+      }}
+      divider
+      selected={dataset.id === currentDataset.id}
+    >
+      <ListItemText
+        primary={dataset.tli_tilename}
+        secondary={hasInspection ? (
+          <MaterialLink
+            className={dataset.comments > 0 ? classes.datasetWithComment : null}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              handleComment(dataset);
+            }}
+          >
+            {`${dataset.comments} comments`}
+          </MaterialLink>
+        ) : null}
+      />
+      {hasInspection ? (
+        <ListItemSecondaryAction>
+          <IconButton onClick={() => qualifyDataset(dataset, 'ok')}>
+            {dataset.isp_value ? (
+              <ThumbUpIcon className={classes.okButton} />
+            ) : (
+              <ThumbUpIcon />
+            )}
+          </IconButton>
+          <IconButton onClick={() => qualifyDataset(dataset, 'notok')}>
+            {dataset.isp_value === false ? (
+              <ThumbDownIcon color="error" />
+            ) : (
+              <ThumbDownIcon />
+            )}
+          </IconButton>
+          <IconButton onClick={() => handleComment(dataset)}>
+            <Comment />
+          </IconButton>
+        </ListItemSecondaryAction>
+      ) : null}
+    </ListItem>
+  ));
 
-
-  const Row = (i) => {
-    if (datasets.length > 0 && datasets[i]) {
-      return (
-        <ListItem
-          className={classes.listItem}
-          button
-          key={datasets[i].id}
-          onClick={() => {
-            onSelectDataset(datasets[i]);
-          }}
-          divider
-          selected={datasets[i].id === currentDataset.id}
-        >
-          <ListItemText
-            primary={datasets[i].tli_tilename}
-            secondary={hasInspection ? (
-              <MaterialLink
-                className={datasets[i].comments > 0 ? classes.datasetWithComment : null}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleComment(datasets[i]);
-                }}
-              >
-                {`${datasets[i].comments} comments`}
-              </MaterialLink>
-            ) : null}
-          />
-          {hasInspection ? (
-            <ListItemSecondaryAction>
-              <IconButton onClick={() => qualifyDataset(datasets[i], 'ok')}>
-                {datasets[i].isp_value ? (
-                  <ThumbUpIcon className={classes.okButton} />
-                ) : (
-                  <ThumbUpIcon />
-                )}
-              </IconButton>
-              <IconButton onClick={() => qualifyDataset(datasets[i], 'notok')}>
-                {datasets[i].isp_value === false ? (
-                  <ThumbDownIcon color="error" />
-                ) : (
-                  <ThumbDownIcon />
-                )}
-              </IconButton>
-              <IconButton onClick={() => handleComment(datasets[i])}>
-                <Comment />
-              </IconButton>
-            </ListItemSecondaryAction>
-          ) : null}
-        </ListItem>
-      );
+  const loadMoreDatasets = () => {
+    if (searchRef.current.value.split(',').length > 1) {
+      return;
     }
-  };
 
-  const loadMoreDatasets = (e) => {
+    const offset = datasets.length;
+
+
     const filters = [{
       property: 'inspected',
       value: filterInspect,
     }];
-
-    if (datasetLoading.current) {
-      return;
-    }
-
-    console.log('hello, world', datasetLoading.current);
 
     datasetLoading.current = true;
     api.datasetsByRelease({
       release: currentRelease,
       filters,
       search: searchRef.current.value,
-      offset: e || 0,
+      offset,
       limit: 20,
     })
       .then((data) => {
@@ -496,6 +485,7 @@ function Home() {
         if (data.count > 20) {
           datasetLoading.current = false;
         }
+        setLoadingList(false);
       });
   };
 
@@ -561,28 +551,33 @@ function Home() {
                         </>
                       ) : null}
                     </Toolbar>
-                    <Virtuoso
+                    <div
+                      id="datasetList"
                       style={{
+                        overflowY: 'auto',
                         height: (
                           window.innerHeight
-                        - header
-                        - toolbar
-                        - footer
-                        - tilesCount
-                        - containerPadding
+                          - header
+                          - toolbar
+                          - footer
+                          - tilesCount
+                          - containerPadding
                         ),
                       }}
-                      overscan={20}
-                      initialItemCount={20}
-                      totalCount={totalCount}
-                      item={Row}
-                      endReached={e => loadMoreDatasets(e)}
-                      footer={() => (datasetLoading.current ? (
-                        <div style={{ padding: '1rem', textAlign: 'center' }}>
-                          Loading...
-                        </div>
-                      ) : null)}
-                    />
+                    >
+
+                      <InfiniteScroll
+                        id="datasetList"
+
+                        dataLength={totalCount}
+                        next={loadMoreDatasets}
+                        hasMore={datasets.length < 10169}
+                        loader={loadingList ? <h4>Loading...</h4> : null}
+                        scrollableTarget="datasetList"
+                      >
+                        {Rows()}
+                      </InfiniteScroll>
+                    </div>
                     <Divider />
                     <>
                       {loading ? (
