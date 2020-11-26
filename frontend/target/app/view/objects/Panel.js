@@ -73,6 +73,7 @@ Ext.define('Target.view.objects.Panel', {
                             disabled: '{!haveResults}'
                         }
                     },
+                    // TODO: Levar o botão de comments do objeto para a barra de tarefas do preview.
                     {
                         xtype: 'button',
                         iconCls: 'x-fa fa-commenting',
@@ -144,11 +145,13 @@ Ext.define('Target.view.objects.Panel', {
                     xtype: 'targets-objects-mosaic',
                     reference: 'TargetMosaic',
                     bind: {
-                        store: '{objects}'
+                        store: '{objects}',
+                        cutoutJob: '{cutoutJob}',
                     },
                     listeners: {
                         select: 'onSelectObject',
-                        itemdblclick: 'onCutoutDblClick'
+                        itemdblclick: 'onCutoutDblClick',
+                        activate: 'onMosaicActivate',
                     },
                     tbar: [
                         {
@@ -156,12 +159,13 @@ Ext.define('Target.view.objects.Panel', {
                             reference: 'cmbCutoutJob',
                             emptyText: 'Choose Cutout',
                             displayField: 'cjb_display_name',
-                            store: {
-                                type: 'cutoutjobs'
+                            bind: {
+                                store: '{cutoutjobs}',
+                                selection: '{cutoutJob}',
                             },
-                            listeners: {
-                                select: 'onSelectCutoutJob'
-                            },
+                            // listeners: {
+                            //     select: 'onSelectCutoutJob'
+                            // },
                             editable: false
                         },
                         {

@@ -377,10 +377,7 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_description',
             'cjb_files',
             'cjb_file_size',
-            << << << < HEAD
             'cjb_error',
-            == == == =
-            >>>>>> > 9c585a5384891c445a43f93a465f881a8613c538
             'owner',
             'execution_time',
             'h_file_sizes',

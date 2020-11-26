@@ -63,6 +63,10 @@ Ext.define('Target.view.objects.ObjectsModel', {
         cutouts: {
             type: 'cutouts',
             autoLoad: false
+        },
+        cutoutjobs: {
+            type: 'cutoutjobs',
+            autoLoad: false
         }
     },
 
@@ -82,6 +86,10 @@ Ext.define('Target.view.objects.ObjectsModel', {
         currentRecord: {
             type: 'Target.model.Object',
             create: true
-        }
+        },
+        cutoutJob: {
+            type: 'Target.model.CutoutJob',
+            create: true
+        },
     }
 });

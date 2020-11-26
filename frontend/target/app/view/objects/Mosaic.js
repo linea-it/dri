@@ -10,8 +10,8 @@ Ext.define('Target.view.objects.Mosaic', {
 
     columns: [
         Ext.create('Ext.grid.RowNumberer'),
-        {text: 'Tilename',  dataIndex: 'tilename', flex: 1},
-        {text: 'Count',  dataIndex: 'num_objects', width: 60}
+        { text: 'Tilename', dataIndex: 'tilename', flex: 1 },
+        { text: 'Count', dataIndex: 'num_objects', width: 60 }
     ],
 
     config: {
@@ -28,32 +28,60 @@ Ext.define('Target.view.objects.Mosaic', {
 
     },
 
-    setCutoutJob: function (cutoutJob, cutouts) {
-        var me = this,
-            labelProperties = [],
-            properties;
-
+    /**
+     * Seta o Cutout Job que sera utilizado 
+     * para carregar a lista de cutouts.
+     * Só altera o cutoutJob se ele for valido e diferente do anterior. 
+     * Ao alterar o cutoutJob atual dispara um evento.
+     * @param {Target.model.CutoutJob} cutoutJob 
+     */
+    setCutoutJob: function (cutoutJob) {
+        // console.log("Mosaic::setCutoutJob(%o)", cutoutJob);
         if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
-            me.cutoutJob = cutoutJob;
 
-            me.setCutouts(cutouts);
-
-            properties = cutoutJob.get('cjb_label_properties');
-
-            if ((properties) && (properties !== '')) {
-
-                labelProperties = properties.split(',');
-
-                if (labelProperties.length > 0) {
-                    me.setLabelProperties(labelProperties);
-
-                    me.createView();
-                }
-            } else {
-                me.createView();
+            // Só disparar o evento caso o cutout job seja diferente do atual.
+            if ((this.cutoutJob) && (cutoutJob.get('id') === this.cutoutJob.get('id'))) {
+                return;
             }
+
+            this.cutoutJob = cutoutJob
+
+            // TODO: Preparar as opções de imagens disponiveis para este Job.
+
+            // Disparar um evento para o carregamento dos cutouts.
+            console.log("Mosaic::Alterou o Cutout Job");
         }
     },
+
+    // TODO: Revisar a parte que carrega os cutouts.
+    // setCutoutJob: function (cutoutJob, cutouts) {
+    //     var me = this,
+    //         labelProperties = [],
+    //         properties;
+
+    //     if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
+    //         me.cutoutJob = cutoutJob;
+
+    //         // TODO: Revisar a parte que carrega os cutouts.
+
+    //         // me.setCutouts(cutouts);
+
+    //         // properties = cutoutJob.get('cjb_label_properties');
+
+    //         // if ((properties) && (properties !== '')) {
+
+    //         //     labelProperties = properties.split(',');
+
+    //         //     if (labelProperties.length > 0) {
+    //         //         me.setLabelProperties(labelProperties);
+
+    //         //         me.createView();
+    //         //     }
+    //         // } else {
+    //         //     me.createView();
+    //         // }
+    //     }
+    // },
 
     createView: function () {
         //console.log("Targets Mosaic - createView()");
@@ -83,21 +111,21 @@ Ext.define('Target.view.objects.Mosaic', {
         }
 
         string_tpl = '<tpl for=".">' +
-                        '<div class="thumb-wrap" id="target_{_meta_ra}-{_meta_dec}">' +
-                            '<div class="thumb">' +
-                                labels_inside +
-                                '<img style="width:200px; height:200px;"' +
-                                    'src="{[this.getImageSource(values._meta_id)]}"' +
-                                    'title="ID: {_meta_id} RA: {[this.formatNumber(values._meta_ra)]} ' +
-                                        'Dec: {[this.formatNumber(values._meta_dec)]}"' +
-                                    'onError="this.onerror=null;this.src=\'resources/cutout_placeholder.png\';" >' +
-                                labels_outside +
-                            '</div>' +
-                        '</div>' +
-                    '</tpl>' +
-                    '<div class="x-clear"></div>';
+            '<div class="thumb-wrap" id="target_{_meta_ra}-{_meta_dec}">' +
+            '<div class="thumb">' +
+            labels_inside +
+            '<img style="width:200px; height:200px;"' +
+            'src="{[this.getImageSource(values._meta_id)]}"' +
+            'title="ID: {_meta_id} RA: {[this.formatNumber(values._meta_ra)]} ' +
+            'Dec: {[this.formatNumber(values._meta_dec)]}"' +
+            'onError="this.onerror=null;this.src=\'resources/cutout_placeholder.png\';" >' +
+            labels_outside +
+            '</div>' +
+            '</div>' +
+            '</tpl>' +
+            '<div class="x-clear"></div>';
 
-        var tpl =  Ext.create('Ext.XTemplate',
+        var tpl = Ext.create('Ext.XTemplate',
             string_tpl.toString(),
             {
                 getImageSource: me.getImageSource,
@@ -106,12 +134,12 @@ Ext.define('Target.view.objects.Mosaic', {
 
         var _view = Ext.create('Ext.view.View', {
             tpl: tpl,
-            store:  store,
+            store: store,
             itemSelector: 'div.thumb-wrap',
             emptyText: 'Choose a CutoutJob',
             multiSelect: false,
             trackOver: true,
-            overItemCls:'x-item-over',
+            overItemCls: 'x-item-over',
             listeners: {
                 scope: me,
                 select: function (selModel, record, index) {
@@ -165,11 +193,11 @@ Ext.define('Target.view.objects.Mosaic', {
 
         tpl_label = '<spam class="mosaic-labels" {0}>{1}: {[this.formatNumber(values.{1})]}</spam>',
 
-        Ext.each(labelProperties, function (label) {
-            label_element = Ext.String.format(tpl_label, color, label);
+            Ext.each(labelProperties, function (label) {
+                label_element = Ext.String.format(tpl_label, color, label);
 
-            labels.push(label_element);
-        }, me);
+                labels.push(label_element);
+            }, me);
 
         tpl_labels = Ext.String.format('<div class="{0}">{1}</div>', class_labels, labels.join('</br>'));
 
@@ -178,7 +206,7 @@ Ext.define('Target.view.objects.Mosaic', {
     },
 
     getImageSource: function (meta_id) {
-//        console.log('getImageSource(%o)', meta_id);
+        //        console.log('getImageSource(%o)', meta_id);
 
         var me = this,
             cutouts = me.getCutouts(),
@@ -196,7 +224,7 @@ Ext.define('Target.view.objects.Mosaic', {
         var precision = 5,
             aValue, decimal;
 
-        if (typeof(value) === 'number') {
+        if (typeof (value) === 'number') {
             if (value.toString().indexOf('.') != -1) {
 
                 aValue = value.toString().split('.');
@@ -205,12 +233,12 @@ Ext.define('Target.view.objects.Mosaic', {
                 if (decimal) {
                     // se tiver mais casas decimais
                     if (decimal.length > precision) {
-                        value =  value.toFixed(precision);
+                        value = value.toFixed(precision);
                     }
                 }
             }
         } else {
-            if (typeof(value) === 'string') {
+            if (typeof (value) === 'string') {
                 if (value.indexOf('.') != -1) {
                     if (parseFloat(value) != 'NaN') {
                         value = parseFloat(value);
@@ -220,7 +248,7 @@ Ext.define('Target.view.objects.Mosaic', {
                         if (decimal) {
                             // se tiver mais casas decimais
                             if (decimal.length > precision) {
-                                value =  value.toFixed(precision);
+                                value = value.toFixed(precision);
                             }
                         }
                     }
