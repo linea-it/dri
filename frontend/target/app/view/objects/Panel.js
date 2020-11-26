@@ -84,7 +84,7 @@ Ext.define('Target.view.objects.Panel', {
                     },
                     {
                         iconCls: 'x-fa fa-picture-o',
-                        tooltip: 'Create Mosaic',
+                        tooltip: 'Create Cutout',
                         handler: 'onClickCreateCutouts'
                     },
                     {
@@ -106,10 +106,10 @@ Ext.define('Target.view.objects.Panel', {
                         },
                         items: [
                             {
-                                xtype    : 'textfield',
+                                xtype: 'textfield',
                                 reference: 'txtFilterSet',
                                 emptyText: 'No filter',
-                                editable : false
+                                editable: false
                             }
                         ]
                     },
@@ -321,7 +321,7 @@ Ext.define('Target.view.objects.Panel', {
         btn.setPressed(false);
 
         // Filtros
-        filterset = Ext.create('Target.model.FilterSet',{});
+        filterset = Ext.create('Target.model.FilterSet', {});
         vm.set('filterSet', filterset);
         vm.set('filters', null);
 

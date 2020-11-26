@@ -157,8 +157,8 @@ Ext.define('Target.view.objects.ObjectsController', {
             currentSetting = vm.get('currentSetting');
 
         store.addFilter([
-            {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
-            {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
+            { 'property': 'pcn_product_id', value: currentSetting.get('cst_product') },
+            { 'property': 'pca_setting', value: currentSetting.get('cst_setting') }
         ]);
 
         store.load({
@@ -177,7 +177,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             store = vm.getStore('displayContents');
 
         store.addFilter([
-            {'property': 'pcn_product_id', value: currentCatalog.get('id')}
+            { 'property': 'pcn_product_id', value: currentCatalog.get('id') }
         ]);
 
         store.load({
@@ -204,7 +204,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                     header: false,
                     closable: false,
                     msg: 'It is necessary to make association for property ID, RA and Dec.',
-                    buttons: Ext.MessageBox.OKCANCEL ,
+                    buttons: Ext.MessageBox.OKCANCEL,
                     fn: function (btn) {
                         if (btn === 'ok') {
                             me.showAssociation();
@@ -298,7 +298,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }, me);
 
                 // Aplicar os Filtros
-                if ((aFilters.length > 0))  {
+                if ((aFilters.length > 0)) {
                     store.addFilter(aFilters);
                 }
             }
@@ -556,7 +556,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             closeAction: 'destroy',
             width: 880,
             height: 500,
-            modal:true,
+            modal: true,
             items: [{
                 xtype: 'targets-wizard',
                 product: catalog,
@@ -596,7 +596,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             closeAction: 'destroy',
             width: 800,
             height: 620,
-            modal:true,
+            modal: true,
             items: [{
                 xtype: 'targets-association',
                 listeners: {
@@ -688,7 +688,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winFilters = null;
         }
 
-        me.winFilters = Ext.create('Target.view.objects.FiltersWindow',{
+        me.winFilters = Ext.create('Target.view.objects.FiltersWindow', {
             listeners: {
                 scope: me,
                 applyfilters: 'onWindowApplyFilters',
@@ -724,7 +724,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             txtFilterSet = me.lookup('txtFilterSet'),
             filterset;
 
-        filterset = Ext.create('Target.model.FilterSet',{});
+        filterset = Ext.create('Target.model.FilterSet', {});
 
         txtFilterSet.reset();
 
@@ -755,7 +755,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 iconCls: 'x-fa fa-comments',
                 layout: 'fit',
                 closeAction: 'destroy',
-                constrainHeader:true,
+                constrainHeader: true,
                 width: 500,
                 height: 300,
                 modal: true,
@@ -822,7 +822,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }
             });
         } else {
-            filterset = Ext.create('Target.model.FilterSet',{});
+            filterset = Ext.create('Target.model.FilterSet', {});
 
             vm.set('filterSet', filterset);
             vm.set('filters', null);
@@ -872,7 +872,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winSaveAs = null;
         }
 
-        me.winSaveAs = Ext.create('Target.view.objects.SaveCatalogWindow',{});
+        me.winSaveAs = Ext.create('Target.view.objects.SaveCatalogWindow', {});
 
         me.winSaveAs.setCurrentCatalog(currentCatalog, activeFilter);
 
@@ -892,7 +892,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winCutout = null;
         }
 
-        me.winCutout = Ext.create('Target.view.settings.CutoutJobForm',{
+        me.winCutout = Ext.create('Target.view.settings.CutoutJobForm', {
             modal: true,
             objectsCount: objects.getTotalCount()
         });
@@ -919,7 +919,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winDownload = null;
         }
 
-        me.winDownload = Ext.create('Target.view.objects.DownloadWindow',{});
+        me.winDownload = Ext.create('Target.view.objects.DownloadWindow', {});
 
         me.winDownload.setCurrentCatalog(currentCatalog);
         me.winDownload.setFilter(activeFilter.id);
@@ -976,7 +976,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 me.winCutoutjobInfo = null;
             }
 
-            me.winCutoutjobInfo = Ext.create('Target.view.objects.CutoutJobDetailWindow',{
+            me.winCutoutjobInfo = Ext.create('Target.view.objects.CutoutJobDetailWindow', {
                 width: 300,
                 height: 420,
                 title: cutoutjob.get('cjb_display_name'),

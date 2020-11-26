@@ -347,7 +347,7 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
     is_owner = serializers.SerializerMethodField()
 
     status_name = serializers.CharField(
-        source='get_cjb_status_display'
+        source='get_cjb_status_display', read_only=True
     )
 
     class Meta:
@@ -377,6 +377,7 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_description',
             'cjb_files',
             'cjb_file_size',
+            'cjb_error',
             'owner',
             'execution_time',
             'h_file_sizes',
