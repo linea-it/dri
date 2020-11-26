@@ -303,8 +303,8 @@ def galaxy_cluster(request):
 @api_view(['GET'])
 def available_database(request):
     """
-        Retorna os databases configurados como sendo DBs de Catalogo. 
-        não inclui o database administrativo. 
+        Retorna os databases configurados como sendo DBs de Catalogo.
+        não inclui o database administrativo.
     """
     if request.method == 'GET':
         dbs = list([])
@@ -331,40 +331,40 @@ def available_database(request):
 def teste(request):
     if request.method == 'GET':
 
-        import logging
-        from datetime import datetime
-        import shutil
-        import os
-        from product.models import CutOutJob, Product
-        from product.descutoutservice import DesCutoutService
-        from django.utils.timezone import utc
-        import pandas as pd
+        # import logging
+        # from datetime import datetime
+        # import shutil
+        # import os
+        # from product.models import CutOutJob, Product
+        # from product.descutoutservice import DesCutoutService
+        # from django.utils.timezone import utc
+        # import pandas as pd
 
-        log = logging.getLogger('descutoutservice')
+        # log = logging.getLogger('descutoutservice')
 
-        log.debug("------ TESTE DESCUT ------")
+        # log.debug("------ TESTE DESCUT ------")
 
-        dc = DesCutoutService()
+        # dc = DesCutoutService()
 
-        job = CutOutJob.objects.create(
-            cjb_product=Product.objects.get(pk=24),
-            owner=request.user,
-            cjb_display_name="Teste Cutout",
-            cjb_tag="Y6A1",
-            cjb_xsize=1,
-            cjb_ysize=1,
-            cjb_make_fits=True,
-            cjb_fits_colors="grizy",
-            cjb_make_stiff=True,
-            cjb_stiff_colors="gri;rig;zgi",
-            cjb_make_lupton=True,
-            cjb_lupton_colors="gri;rig;zgi",
-            cjb_status="st",
-            cjb_label_position="inside",
-            cjb_label_properties="meta_id,ra,dec",
-            cjb_label_colors="2eadf5",
-            cjb_label_font_size="10"
-        )
-        job.save()
+        # job = CutOutJob.objects.create(
+        #     cjb_product=Product.objects.get(pk=2),
+        #     owner=request.user,
+        #     cjb_display_name="Teste Cutout",
+        #     cjb_tag="Y6A1",
+        #     cjb_xsize=1,
+        #     cjb_ysize=1,
+        #     cjb_make_fits=True,
+        #     cjb_fits_colors="grizy",
+        #     cjb_make_stiff=True,
+        #     cjb_stiff_colors="gri;rig;zgi",
+        #     cjb_make_lupton=True,
+        #     cjb_lupton_colors="gri;rig;zgi",
+        #     cjb_status="st",
+        #     cjb_label_position="inside",
+        #     cjb_label_properties="meta_id,ra,dec",
+        #     cjb_label_colors="2eadf5",
+        #     cjb_label_font_size="10"
+        # )
+        # job.save()
 
         return Response(dict({'status': "success"}))

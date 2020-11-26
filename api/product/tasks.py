@@ -7,10 +7,8 @@ from smtplib import SMTPException
 from celery import chord, shared_task, task
 from celery.decorators import periodic_task
 from celery.task.schedules import crontab
-from common.download import Download
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.utils import timezone
 
 from product.descutoutservice import CutoutJobNotify, DesCutoutService
 from product.export import Export
