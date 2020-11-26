@@ -20,7 +20,6 @@ from lib.db_postgresql import DBPostgresql
 from lib.db_sqlite import DBSqlite
 
 
-
 class DBBase:
     # Django database engines
     available_engines = list(['sqlite3', 'oracle', 'postgresql_psycopg2'])
@@ -168,9 +167,12 @@ class DBBase:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore", category=sa_exc.SAWarning)
 
-                table = Table(table, self.metadata,
-                              autoload=True, schema=schema)
+                table = Table(table, self.metadata, autoload=True, schema=schema)
+
                 stm = select([func.count()]).select_from(table)
+
+                self.log.debug("SQL: [%s]" % self.statement_to_str(stm))
+
                 result = con.execute(stm)
                 return result.fetchone()[0]
 

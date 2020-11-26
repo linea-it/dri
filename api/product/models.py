@@ -1,3 +1,5 @@
+from operator import index
+from django.db.models.signals import post_save, pre_delete
 from coadd.models import Release, Tag
 from django.db import models
 from product_classifier.models import ProductClass
@@ -108,8 +110,8 @@ class Table(Product):
 
 class Catalog(Table):
     ctl_num_objects = models.PositiveIntegerField(
-        verbose_name='Num of objects', 
-        null=True, 
+        verbose_name='Num of objects',
+        null=True,
         blank=True)
 
     def __str__(self):
@@ -167,7 +169,7 @@ class CurrentSetting(models.Model):
         ProductSetting, on_delete=models.CASCADE, verbose_name='Setting')
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,  null=True, blank=True, verbose_name='Owner')
+        on_delete=models.CASCADE, null=True, blank=True, verbose_name='Owner')
 
     def __str__(self):
         return str(self.pk)
@@ -272,23 +274,35 @@ class CutOutJob(models.Model):
     cjb_display_name = models.CharField(
         max_length=40, verbose_name='Name')
 
+    cjb_tag = models.CharField(
+        max_length=60, verbose_name='Release Tag', null=True, blank=True)
+
     cjb_xsize = models.CharField(
         max_length=5, verbose_name='Xsize', help_text='xsize in arcmin, default is 1.0', default='1.0')
 
     cjb_ysize = models.CharField(
         max_length=5, verbose_name='ysize', help_text='ysize in arcmin, default is 1.0', default='1.0')
 
-    cjb_job_type = models.CharField(
-        max_length=10, verbose_name='Job Type', choices=(('coadd', 'Coadd Images'), ('single', 'Single Epoch')))
+    cjb_make_fits = models.BooleanField(
+        verbose_name='Make Fits', default=False, help_text='Generate cutout data files in FITS format')
 
-    cjb_tag = models.CharField(
-        max_length=60, verbose_name='Release Tag', null=True, blank=True)
+    cjb_fits_colors = models.CharField(
+        max_length=10, verbose_name='Fits Colors', null=True, blank=True, default="grizy", help_text="Color bands to output (string value containing characters from the set 'grizy').")
 
-    cjb_band = models.CharField(
-        max_length=20, verbose_name='Filters', null=True, blank=True)
+    # OBS: A criação de imagens Stiff estão ligadas por default.
+    cjb_make_stiff = models.BooleanField(
+        verbose_name='Make Stiff', default=True, help_text='Generate cutout data files in RGB color using STIFF format')
 
-    cjb_Blacklist = models.BooleanField(
-        verbose_name='Blacklist', default=False, help_text='Exclude blacklisted ccds')
+    cjb_stiff_colors = models.CharField(
+        max_length=20, verbose_name='Stiff Colors', null=True, blank=True, default="gri;rig;zgi",
+        help_text="Sets of color band triplets, delineated by semi-colons, denoting by letter ordering the bands to use for Red, Green, Blue in the generated RGB images in STIFF format. Example: gri;zgi will produce two RGB images with Red/Green/Blue using bands G/R/I and Z/G/I, respectively.")
+
+    cjb_make_lupton = models.BooleanField(
+        verbose_name='Make Lupton', default=False, help_text='Generate cutout data files in RGB color using the Lupton method')
+
+    cjb_lupton_colors = models.CharField(
+        max_length=20, verbose_name='Lupton Colors', null=True, blank=True, default="gri;rig;zgi",
+        help_text="Sets of color band triplets, delineated by semi-colons, denoting by letter ordering the bands to use for Red, Green, Blue in the generated RGB images in Lupton format. Example: gri;zgi will produce two RGB images with Red/Green/Blue using bands G/R/I and Z/G/I, respectively.")
 
     cjb_status = models.CharField(
         max_length=25,
@@ -296,9 +310,6 @@ class CutOutJob(models.Model):
         default='st',
         verbose_name='Status'
     )
-
-    cjb_job_id = models.CharField(
-        max_length=1024, verbose_name='Job ID', null=True, blank=True)
 
     # Fields Referentes as labels que serao aplicadas ao cutout
     cjb_label_position = models.CharField(
@@ -320,14 +331,6 @@ class CutOutJob(models.Model):
         max_length=4096, verbose_name='Cutout Paths',
         null=True, blank=True, default=None, help_text="Path of the directory where the cutouts of this job are.")
 
-    cjb_results_file = models.TextField(
-        max_length=4096, verbose_name='Result File',
-        null=True, blank=True, default=None, help_text="File that contains the links returned by the DesCutouts service")
-
-    cjb_matched_file = models.TextField(
-        max_length=4096, verbose_name='Matched File',
-        null=True, blank=True, default=None, help_text="File containing the relations between ra, dec with the image")
-
     cjb_start_time = models.DateTimeField(
         auto_now_add=True, null=True, blank=True, verbose_name='Start')
 
@@ -337,17 +340,50 @@ class CutOutJob(models.Model):
     cjb_description = models.CharField(
         max_length=1024, verbose_name='Description', null=True, blank=True)
 
-    cjb_image_formats = models.CharField(
-        max_length=10, verbose_name='Image Formats', null=True, blank=True,
-        help_text="list of image extensions that will be downloaded from the descut. example \'png,fits\'"
-    )
+    cjb_files = models.PositiveIntegerField(
+        verbose_name='Files', null=True, blank=True, default=None, help_text='Total of files generated in this job')
+
+    cjb_file_size = models.PositiveIntegerField(
+        verbose_name='File Size', null=True, blank=True, default=None, help_text='Total size of files generated in this job')
+
+    cjb_error = models.TextField(
+        verbose_name='Error Message', null=True, blank=True)
 
     def __str__(self):
         return str(self.cjb_display_name)
 
+
+class Desjob(models.Model):
+    djb_cutout_job = models.ForeignKey(
+        CutOutJob, on_delete=models.CASCADE, verbose_name='Cutout Job', default=None)
+
+    djb_jobid = models.CharField(
+        max_length=1024, verbose_name='DES Job ID', db_index=True, null=True, blank=True, help_text="Descut job id that generated the image.")
+
+    djb_status = models.CharField(
+        max_length=20, verbose_name='DES Job Status', null=True, blank=True)
+
+    djb_message = models.TextField(
+        verbose_name='DES Job Message', null=True, blank=True)
+
+    djb_start_time = models.DateTimeField(
+        auto_now_add=True, null=True, blank=True, verbose_name='Start')
+
+    djb_finish_time = models.DateTimeField(
+        auto_now_add=False, null=True, blank=True, verbose_name='Finish')
+
+    class Meta:
+        unique_together = ('djb_cutout_job', 'djb_jobid')
+
+    def __str__(self):
+        return str(self.pk)
+
+
 class Cutout(models.Model):
     cjb_cutout_job = models.ForeignKey(
         CutOutJob, on_delete=models.CASCADE, verbose_name='Cutout Job', default=None)
+    cjb_des_job = models.ForeignKey(
+        Desjob, on_delete=models.CASCADE, verbose_name='Des Job', default=None)
     ctt_object_id = models.CharField(
         max_length=5, verbose_name='Object ID', null=True, blank=True,
         help_text='The association is used to know which column will be considered as id.')
@@ -357,10 +393,10 @@ class Cutout(models.Model):
     ctt_object_dec = models.CharField(
         max_length=10, verbose_name='Dec', null=True, blank=True,
         help_text='Dec in degrees, the association will be used to identify the column')
+    ctt_img_format = models.TextField(
+        max_length=10, verbose_name='Image Format', null=True, blank=True, default=None, help_text="Image file format can be fits, stiff, or lupton.")
     ctt_filter = models.ForeignKey(
         'common.Filter', verbose_name='Filter', on_delete=models.CASCADE, null=True, blank=True, default=None)
-    ctt_thumbname = models.CharField(
-        max_length=255, verbose_name='Thumbname', null=True, blank=True, default=None)
     ctt_file_path = models.TextField(
         max_length=4096, verbose_name='File Path', null=True, blank=True, default=None)
     ctt_file_name = models.CharField(
@@ -369,10 +405,8 @@ class Cutout(models.Model):
         max_length=5, verbose_name='File Extension', null=True, blank=True, default=None)
     ctt_file_size = models.PositiveIntegerField(
         verbose_name='File Size', null=True, blank=True, default=None, help_text='File Size in bytes')
-    ctt_download_start_time = models.DateTimeField(
-        auto_now_add=True, null=True, blank=True, verbose_name='Download Start')
-    ctt_download_finish_time = models.DateTimeField(
-        auto_now_add=False, null=True, blank=True, verbose_name='Download finish')
+    ctt_jobid = models.CharField(
+        max_length=1024, verbose_name='DES Job ID', null=True, blank=True, help_text="Descut job id that generated the image.")
 
     class Meta:
         unique_together = ('cjb_cutout_job', 'ctt_file_name')
@@ -382,10 +416,7 @@ class Cutout(models.Model):
         ]
 
     def __str__(self):
-        return str(self.pk)
-
-        # ctt_original_url = models.CharField(
-        #     max_length=5, verbose_name='Url to download the file on the cutouts server')
+        return "{} - {}".format(str(self.pk), self.ctt_file_name)
 
 
 # ------------------------------ Permissoes por Produtos ------------------------------
@@ -480,11 +511,9 @@ class BookmarkProduct(models.Model):
         return str(self.pk)
 
 
-
 # -------------------------------- Signals --------------------------------------
 # Esses signals connect devem ficar no final do arquivo para nao dar problema de import.
-from django.db.models.signals import post_save, pre_delete
-from .signals import start_des_cutout_job, drop_product_table
-
-post_save.connect(start_des_cutout_job, sender=CutOutJob)
-pre_delete.connect(drop_product_table, sender=Product)
+# pylint: disable = E402
+# from .signals import start_des_cutout_job, drop_product_table
+# post_save.connect(start_des_cutout_job, sender=CutOutJob)
+# pre_delete.connect(drop_product_table, sender=Product)

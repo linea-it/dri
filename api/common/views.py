@@ -303,8 +303,8 @@ def galaxy_cluster(request):
 @api_view(['GET'])
 def available_database(request):
     """
-        Retorna os databases configurados como sendo DBs de Catalogo. 
-        não inclui o database administrativo. 
+        Retorna os databases configurados como sendo DBs de Catalogo.
+        não inclui o database administrativo.
     """
     if request.method == 'GET':
         dbs = list([])
@@ -332,41 +332,39 @@ def teste(request):
     if request.method == 'GET':
 
         # import logging
+        # from datetime import datetime
+        # import shutil
+        # import os
+        # from product.models import CutOutJob, Product
+        # from product.descutoutservice import DesCutoutService
+        # from django.utils.timezone import utc
+        # import pandas as pd
 
-        # log = logging.getLogger('import_target_csv')
+        # log = logging.getLogger('descutoutservice')
 
-        # log.info("------------------ TESTE ----------------")
+        # log.debug("------ TESTE DESCUT ------")
 
-        # from product.importproduct import ImportTargetListCSV
-        # it = ImportTargetListCSV()
-        # upload_data = {'mime': 'csv', 'type': 'catalog', 'class': 'objects', 'name': 'testeupload', 'displayName': 'testeupload', 'releases': ['y6a1_coadd'], 'isPublic': False, 'description': '', 'csvData': '31.12232, -6.20153\n29.92641, -5.96732\n40.09991 , -8.43430\n-179.4548 , -9.43430'}
-        # upload_data_header = {'mime': 'csv', 'type': 'catalog', 'class': 'objects', 'name': 'testeupload', 'displayName': 'testeupload', 'releases': ['y6a1_coadd'], 'isPublic': False, 'description': '', 'csvData': 'ra, dec, name\n31.12232, -6.20153, galaxy1\n29.92641, -5.96732, galaxy2\n40.09991 , -8.43430, galaxy3'}
-        # it.start_import(request.user.id, upload_data)
+        # dc = DesCutoutService()
 
-        # Exemplo de teste para desenvolvimento do User Query
-        # from userquery.create_table_as import CreateTableAs
-        # from userquery.models import Job, Table
-        # job = Job.objects.get(pk=4)
-        # job.job_status = 'st'
-        # job.save()
-
-        # try:
-        #     t = Table.objects.get(table_name='teste_uq')
-        #     t.delete()
-        # except Exception as e:
-        #     pass
-
-        # ct = CreateTableAs(
-        #     job_id=job.id,
-        #     user_id=job.owner.id,
-        #     table_name='teste_uq',
-        #     table_display_name='Teste User Query',
-        #     release_id=24,
-        #     release_name='y6a1_coadd',
-        #     associate_target_viewer=True,
-        #     task_id='101010',
-        #     schema=None
+        # job = CutOutJob.objects.create(
+        #     cjb_product=Product.objects.get(pk=2),
+        #     owner=request.user,
+        #     cjb_display_name="Teste Cutout",
+        #     cjb_tag="Y6A1",
+        #     cjb_xsize=1,
+        #     cjb_ysize=1,
+        #     cjb_make_fits=True,
+        #     cjb_fits_colors="grizy",
+        #     cjb_make_stiff=True,
+        #     cjb_stiff_colors="gri;rig;zgi",
+        #     cjb_make_lupton=True,
+        #     cjb_lupton_colors="gri;rig;zgi",
+        #     cjb_status="st",
+        #     cjb_label_position="inside",
+        #     cjb_label_properties="meta_id,ra,dec",
+        #     cjb_label_colors="2eadf5",
+        #     cjb_label_font_size="10"
         # )
-        # ct.do_all()
+        # job.save()
 
         return Response(dict({'status': "success"}))
