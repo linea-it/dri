@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useRef, useCallback,
+  useState, useEffect, useRef,
 } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Link as MaterialLink } from '@material-ui/core';
@@ -117,7 +117,8 @@ function Home() {
   const [currentRelease, setCurrentRelease] = useState('');
   const [datasets, setDatasets] = useState([]);
   const [currentDataset, setCurrentDataset] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loadingAllTiles, setLoadingAllTiles] = useState(true);
+  const [loadingList, setLoadingList] = useState(true);
   const [showComment, setShowComment] = useState(false);
   const [comments, setComments] = useState([]);
   const [menuContrastOpen, setMenuContrastOpen] = useState(false);
@@ -129,7 +130,6 @@ function Home() {
   });
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [filterInspect, setFilterInspect] = useState('');
-  const [inputSearchValue, setInputSearchValue] = useState('');
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [commentsWithFeature, setCommentsWithFeature] = useState([]);
@@ -137,16 +137,15 @@ function Home() {
   const [tutorial, setTutorial] = useState([]);
   const [hasInspection, setHasInspection] = useState(false);
   const [allTiles, setAllTiles] = useState([]);
+  const [searchEnabled, setSearchEnabled] = useState(false);
   const searchRef = useRef('');
-
-  const [loadingList, setLoadingList] = useState(true);
 
 
   const api = new DriApi();
   const classes = useStyles();
 
   const onChangeRelease = (value) => {
-    setLoading(true);
+    setLoadingAllTiles(true);
     setCurrentRelease(value);
     setDatasets([]);
     setCurrentDataset({});
@@ -176,7 +175,7 @@ function Home() {
   }, []);
 
   useEffect(() => {
-    if (loading === true && currentRelease !== '') {
+    if (loadingAllTiles === true && currentRelease !== '') {
       api.datasetsByRelease({ release: currentRelease }).then((res) => {
         if (hasInspection) {
           // Totais de Tiles boas, ruim e não inspecionadas
@@ -189,10 +188,48 @@ function Home() {
         if (allTiles.length === 0) {
           setAllTiles(res);
         }
-        setLoading(false);
+        setLoadingAllTiles(false);
       });
     }
-  }, [hasInspection, currentRelease, filterInspect, loading]);
+  }, [hasInspection, currentRelease, filterInspect, loadingAllTiles]);
+
+  const loadMoreDatasets = () => {
+    if (searchRef.current.value.split(',').length > 1) {
+      return;
+    }
+
+    const offset = datasets.length;
+
+
+    const filters = [{
+      property: 'inspected',
+      value: filterInspect,
+    }];
+
+    datasetLoading.current = true;
+    api.datasetsByRelease({
+      release: currentRelease,
+      filters,
+      search: searchRef.current.value,
+      offset,
+      limit: 20,
+    })
+      .then((data) => {
+        const datasetConcat = datasets.concat(data.results);
+        let datasetTotalCount = datasetConcat.length;
+        if (datasetConcat.length < 20) {
+          datasetTotalCount = data.count;
+        }
+
+        setTotalCount(datasetTotalCount);
+
+        setDatasets(datasetConcat);
+        if (data.count > 20) {
+          datasetLoading.current = false;
+        }
+        setLoadingList(false);
+      });
+  };
 
   useEffect(() => {
     if (loadingList && currentRelease !== '') {
@@ -201,20 +238,15 @@ function Home() {
   }, [currentRelease, loadingList]);
 
   const reloadList = () => {
-    setLoadingList(true);
     setDatasets([]);
     setTotalCount(0);
     datasetLoading.current = false;
+    setLoadingList(true);
   };
 
   const reloadAllTiles = () => {
-    setLoading(true);
+    setLoadingAllTiles(true);
     setCounts({});
-  };
-
-  const reloadData = () => {
-    reloadList();
-    reloadAllTiles();
   };
 
   const onSelectDataset = dataset => setCurrentDataset(dataset);
@@ -401,6 +433,14 @@ function Home() {
     reloadList();
   });
 
+  useEffect(() => {
+    if (allTiles.length > 0) {
+      setSearchEnabled(true);
+    } else {
+      setSearchEnabled(false);
+    }
+  }, [allTiles]);
+
   const Rows = () => datasets.map(dataset => (
     <ListItem
       className={classes.listItem}
@@ -451,45 +491,6 @@ function Home() {
     </ListItem>
   ));
 
-  const loadMoreDatasets = () => {
-    if (searchRef.current.value.split(',').length > 1) {
-      return;
-    }
-
-    const offset = datasets.length;
-
-
-    const filters = [{
-      property: 'inspected',
-      value: filterInspect,
-    }];
-
-    datasetLoading.current = true;
-    api.datasetsByRelease({
-      release: currentRelease,
-      filters,
-      search: searchRef.current.value,
-      offset,
-      limit: 20,
-    })
-      .then((data) => {
-        const datasetConcat = datasets.concat(data.results);
-        let datasetTotalCount = datasetConcat.length;
-        if (datasetConcat.length < 20) {
-          datasetTotalCount = data.count;
-        }
-
-        setTotalCount(datasetTotalCount);
-
-        setDatasets(datasetConcat);
-        if (data.count > 20) {
-          datasetLoading.current = false;
-        }
-        setLoadingList(false);
-      });
-  };
-
-
   const header = 64;
   const toolbar = 64;
   const footer = 64;
@@ -499,7 +500,7 @@ function Home() {
   return (
     <Router>
       <Header
-        title="Tile Inspection"
+        title="Tile Viewer"
         username={username}
         releases={releases}
         tutorial={tutorial}
@@ -525,8 +526,8 @@ function Home() {
                     <Toolbar className={classes.toolbar}>
                       <SearchField
                         searchRef={searchRef}
-                        // inputSearchValue={inputSearchValue}
                         handleInputSearch={handleInputSearch}
+                        disabled={!searchEnabled}
                       />
                       <div className={classes.grow} />
                       {hasInspection ? (
@@ -568,7 +569,6 @@ function Home() {
 
                       <InfiniteScroll
                         id="datasetList"
-
                         dataLength={totalCount}
                         next={loadMoreDatasets}
                         hasMore={datasets.length < 10169}
@@ -580,7 +580,7 @@ function Home() {
                     </div>
                     <Divider />
                     <>
-                      {loading ? (
+                      {loadingAllTiles ? (
                         <LinearProgress color="secondary" className={classes.linearProgress} />
                       ) : (
                         <CardActions className={classes.cardActionCounter}>
@@ -606,7 +606,7 @@ function Home() {
                         currentDataset={currentDataset.id || null}
                         points={commentsWithFeature}
                         getDatasetCommentsByType={getDatasetCommentsByType}
-                        reloadData={reloadData}
+                        reloadData={reloadList}
                         hasInspection={hasInspection}
                       />
                     ) : null}

@@ -1,6 +1,3 @@
-/* eslint-disable import/named */
-/* eslint-disable max-len */
-/* eslint-disable no-unused-expressions */
 import React, { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Card from '@material-ui/core/Card';
@@ -34,7 +31,7 @@ function Interfaces() {
             <Card>
               <CardActionArea
                 href={item.app_url}
-                target={item.url ? '_blanc' : '_self'}
+                target={item.url ? '_blank' : '_self'}
               >
                 <CardMedia
                   alt={item.app_display_name}
@@ -48,19 +45,10 @@ function Interfaces() {
                     variant="h5"
                     component="h2"
                   >
-                    {/* <i className={`fa fa-${item.icon}`}></i> &nbsp;  */}
                     {item.app_display_name}
                   </Typography>
                 </CardMedia>
-                {/* <CardContent className={classes.cardContent}>
-                    <Typography variant="body2" color="textSecondary" component="div" className={classes.description}>
-                      {item.description}
-                    </Typography>
-                  </CardContent> */}
               </CardActionArea>
-              {/* <CardActions className={classes.dialogCard}>
-                  {item.description.length > 80 ? <DialogCard item={item} /> : '' }
-                </CardActions> */}
             </Card>
           </Grid>
         ))}

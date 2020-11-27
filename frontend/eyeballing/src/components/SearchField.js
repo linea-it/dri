@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles, fade } from '@material-ui/core/styles';
+import { makeStyles, fade } from '@material-ui/core/styles';
 import InputBase from '@material-ui/core/InputBase';
 import SearchIcon from '@material-ui/icons/Search';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
-const styles = theme => ({
+
+const useStyles = makeStyles(theme => ({
   search: {
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
@@ -41,20 +43,21 @@ const styles = theme => ({
       width: 200,
     },
   },
-});
+}));
 
 function SearchField(props) {
-  const { classes } = props;
+  const classes = useStyles();
+  const { searchRef, handleInputSearch, disabled } = props;
 
   return (
     <div className={classes.search}>
       <div className={classes.searchIcon}>
-        <SearchIcon />
+        {disabled ? <CircularProgress color="inherit" size={24} /> : <SearchIcon />}
       </div>
       <InputBase
-        inputRef={props.searchRef}
-        onChange={props.handleInputSearch}
-        // value={props.inputSearchValue}
+        inputRef={searchRef}
+        onChange={handleInputSearch}
+        disabled={disabled}
         placeholder="Search…"
         classes={{
           root: classes.inputRoot,
@@ -66,9 +69,10 @@ function SearchField(props) {
   );
 }
 
-// SearchField.propTypes = {
-//   inputSearchValue: PropTypes.string.isRequired,
-//   handleInputSearch: PropTypes.func.isRequired,
-// };
+SearchField.propTypes = {
+  handleInputSearch: PropTypes.func.isRequired,
+  searchRef: PropTypes.node.isRequired,
+  disabled: PropTypes.bool.isRequired,
+};
 
-export default withStyles(styles)(SearchField);
+export default SearchField;
