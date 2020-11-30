@@ -26,6 +26,7 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Comment from '@material-ui/icons/Comment';
 import Divider from '@material-ui/core/Divider';
+import Download from '@material-ui/icons/GetApp';
 import TileTable from './components/TileTable';
 import SnackBar from './components/SnackBar';
 import ChooseFilterDialog from './components/ChooseFilterDialog';
@@ -36,6 +37,7 @@ import SearchField from './components/SearchField';
 import VisiomaticPanel from './components/visiomatic/Visiomatic';
 import Footer from './components/Footer';
 import Header from './components/Header';
+import DownloadDialog from './components/download';
 import DriApi from './api/Api';
 
 
@@ -135,6 +137,15 @@ function Home() {
   const [commentsWithFeature, setCommentsWithFeature] = useState([]);
   const datasetLoading = useRef(false);
   const [tutorial, setTutorial] = useState([]);
+  const [downloadInfo, setDownloadInfo] = useState({
+    visible: false,
+    tilename: null,
+    center: null,
+    corners: null,
+    images: null,
+    catalogs: null,
+    currentRelease: null,
+  });
 
 
   const api = new DriApi();
@@ -151,7 +162,8 @@ function Home() {
     api.loggedUser().then(res => setUsername(res.username));
     api.allReleases().then((res) => {
       setReleases(res);
-      setCurrentRelease(res.length > 0 ? res[0].id : '');
+      // setCurrentRelease(res.length > 0 ? res[0].id : '');
+      setCurrentRelease(res.length > 0 ? res[1].id : '');
     });
     api.getTutorial().then(res => setTutorial(res));
   }, []);
@@ -349,6 +361,30 @@ function Home() {
     loadData();
   }, [inputSearchValue]);
 
+  const handleDownloadClick = (datasetId) => {
+    setDownloadInfo({ visible: true });
+
+    api.getTileInfo(datasetId)
+      .then((res) => {
+        console.log('download', res);
+
+        const selectedRelease = releases.filter(release => release.id === currentRelease)[0];
+
+        setDownloadInfo({
+          visible: true,
+          tilename: res.tilename,
+          center: [res.ra_cent, res.dec_cent],
+          corners: {
+            ra: [res.racmin, res.racmax],
+            dec: [res.decmin, res.decmax],
+          },
+          images: res.images,
+          catalogs: res.catalogs,
+          currentRelease: selectedRelease.rls_name,
+        });
+      });
+  };
+
 
   const Row = (i) => {
     if (datasets.length > 0 && datasets[i]) {
@@ -397,10 +433,25 @@ function Home() {
             <IconButton onClick={() => handleComment(datasets[i])}>
               <Comment />
             </IconButton>
+            <IconButton onClick={() => handleDownloadClick(datasets[i].id)}>
+              <Download />
+            </IconButton>
           </ListItemSecondaryAction>
         </ListItem>
       );
     }
+  };
+
+  const handleDownloadClose = () => {
+    setDownloadInfo({
+      visible: false,
+      tilename: null,
+      center: null,
+      corners: null,
+      images: null,
+      catalogs: null,
+      currentRelease: null,
+    });
   };
 
   const header = 64;
@@ -520,6 +571,16 @@ function Home() {
               />
             </div>
             <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={handleClickSnackBar} />
+            <DownloadDialog
+              open={downloadInfo.visible}
+              handleClose={handleDownloadClose}
+              tilename={downloadInfo.tilename}
+              center={downloadInfo.center}
+              corners={downloadInfo.corners}
+              images={downloadInfo.images}
+              catalogs={downloadInfo.catalogs}
+              currentRelease={downloadInfo.currentRelease}
+            />
           </React.Fragment>
         )}
       />

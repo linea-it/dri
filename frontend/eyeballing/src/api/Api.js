@@ -159,6 +159,8 @@ class DriApi {
   }).then(res => res.data);
 
   getTutorial = () => axios.get('/tutorial/', { params: { app_name: 'tile_inspection' } }).then(res => res.data);
+
+  getTileInfo = (id) => axios.get(`/dataset/${id}/desaccess_tile_info/`).then(res => res.data)
 }
 export default DriApi;
 
