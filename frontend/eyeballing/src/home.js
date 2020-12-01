@@ -27,6 +27,8 @@ import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Comment from '@material-ui/icons/Comment';
 import Divider from '@material-ui/core/Divider';
 import Download from '@material-ui/icons/GetApp';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import TileTable from './components/TileTable';
 import SnackBar from './components/SnackBar';
 import ChooseFilterDialog from './components/ChooseFilterDialog';
@@ -88,11 +90,6 @@ const useStyles = makeStyles(theme => ({
   backLinkIcon: {
     borderRadius: 0,
   },
-  // rootDatasetList: {
-  //   width: '100%',
-  //   backgroundColor: theme.palette.background.paper,
-  //   listStyleType: 'none',
-  // },
   okButton: {
     color: theme.typography.successColor,
   },
@@ -110,6 +107,10 @@ const useStyles = makeStyles(theme => ({
   },
   cardActionCounter: {
     padding: '15px 8px 8px 8px',
+  },
+  backdrop: {
+    zIndex: 2001, // Because the z-index of the .leaflet-top.leaflet.left is 2000.
+    color: '#fff',
   },
 }));
 
@@ -137,15 +138,8 @@ function Home() {
   const [commentsWithFeature, setCommentsWithFeature] = useState([]);
   const datasetLoading = useRef(false);
   const [tutorial, setTutorial] = useState([]);
-  const [downloadInfo, setDownloadInfo] = useState({
-    visible: false,
-    tilename: null,
-    center: null,
-    corners: null,
-    images: null,
-    catalogs: null,
-    currentRelease: null,
-  });
+  const [downloadInfo, setDownloadInfo] = useState({ visible: false });
+  const [backdropOpen, setBackdropOpen] = useState(false);
 
 
   const api = new DriApi();
@@ -361,13 +355,11 @@ function Home() {
     loadData();
   }, [inputSearchValue]);
 
-  const handleDownloadClick = (datasetId) => {
-    setDownloadInfo({ visible: true });
+  const handleDownloadClick = (tile) => {
+    setBackdropOpen(true);
 
-    api.getTileInfo(datasetId)
+    api.getTileInfo(tile)
       .then((res) => {
-        console.log('download', res);
-
         const selectedRelease = releases.filter(release => release.id === currentRelease)[0];
 
         setDownloadInfo({
@@ -376,12 +368,14 @@ function Home() {
           center: [res.ra_cent, res.dec_cent],
           corners: {
             ra: [res.racmin, res.racmax],
-            dec: [res.decmin, res.decmax],
+            dec: [res.deccmin, res.deccmax],
           },
-          images: res.images,
-          catalogs: res.catalogs,
-          currentRelease: selectedRelease.rls_name,
+          currentRelease: selectedRelease.rls_display_name,
+          releases: res.releases,
+          registeredReleases: releases.map(release => release.rls_display_name.toUpperCase()),
         });
+
+        setBackdropOpen(false);
       });
   };
 
@@ -433,7 +427,7 @@ function Home() {
             <IconButton onClick={() => handleComment(datasets[i])}>
               <Comment />
             </IconButton>
-            <IconButton onClick={() => handleDownloadClick(datasets[i].id)}>
+            <IconButton onClick={() => handleDownloadClick(datasets[i].tile)}>
               <Download />
             </IconButton>
           </ListItemSecondaryAction>
@@ -445,12 +439,6 @@ function Home() {
   const handleDownloadClose = () => {
     setDownloadInfo({
       visible: false,
-      tilename: null,
-      center: null,
-      corners: null,
-      images: null,
-      catalogs: null,
-      currentRelease: null,
     });
   };
 
@@ -571,16 +559,22 @@ function Home() {
               />
             </div>
             <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={handleClickSnackBar} />
-            <DownloadDialog
-              open={downloadInfo.visible}
-              handleClose={handleDownloadClose}
-              tilename={downloadInfo.tilename}
-              center={downloadInfo.center}
-              corners={downloadInfo.corners}
-              images={downloadInfo.images}
-              catalogs={downloadInfo.catalogs}
-              currentRelease={downloadInfo.currentRelease}
-            />
+            {downloadInfo.visible && (
+              <DownloadDialog
+                open={downloadInfo.visible}
+                handleClose={handleDownloadClose}
+                tilename={downloadInfo.tilename}
+                center={downloadInfo.center}
+                corners={downloadInfo.corners}
+                images={downloadInfo.images}
+                catalogs={downloadInfo.catalogs}
+                currentRelease={downloadInfo.currentRelease}
+                releases={downloadInfo.releases}
+              />
+            )}
+            <Backdrop open={backdropOpen} className={classes.backdrop}>
+              <CircularProgress color="inherit" />
+            </Backdrop>
           </React.Fragment>
         )}
       />
