@@ -25,7 +25,10 @@ Ext.define('Target.view.objects.ObjectsController', {
                 beforeLoadPanel: 'onBeforeLoadPanel',
                 beforeloadcatalog: 'loadCurrentSetting',
                 beforedeactivate: 'onBeforeDeactivate'
-            }
+            },
+            'targets-objects-mosaic': {
+                onChangeCutoutJob: 'onChangeCutoutJob',
+            },
         },
         store: {
             '#Catalogs': {
@@ -149,6 +152,29 @@ Ext.define('Target.view.objects.ObjectsController', {
         // Se não tiver seleciona o cutout job mais recente.
         vm.set('cutoutJob', store.first());
 
+    },
+
+    onChangeCutoutJob: function (cutoutJob, mosaicPanel) {
+        // console.log('onChangeCutoutJob(%o)', cutoutJob);
+        var me = this,
+            vm = me.getViewModel(),
+            imagesFormat = vm.getStore('imagesFormat'),
+            combo = me.lookup('cmbCutoutImage'),
+            imgDefault;
+
+        // Verifica se existe no job a imagem Stiff nas cores gri. 
+        imgDefault = imagesFormat.getAt(imagesFormat.findExact('name', 'stiff_gri'));
+
+        if ((imgDefault) && (imgDefault !== -1)) {
+            // Usa a imagem stiff gri como default.
+            combo.select(imgDefault);
+        } else {
+            // Se a imagem default existir para este job usa a primeira disponivel.
+            combo.select(imagesFormat.first());
+        }
+
+        // Carrega a Store de Cutouts.
+        me.loadCutouts();
     },
 
     loadCurrentSetting: function () {
@@ -972,21 +998,36 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     },
 
-    loadCutouts: function (cutoutJobId) {
-        console.log("loadCutouts(%o)", cutoutJobId)
+    onSelectImageFormat: function (combo, record) {
+        console.log('onSelectImageFormat(%o)', record);
+        var me = this;
+
+        me.loadCutouts();
+    },
+
+    loadCutouts: function () {
+        // console.log("loadCutouts()")
         var me = this,
             vm = me.getViewModel(),
-            cutouts = vm.getStore('cutouts');
+            cutoutJob = vm.get('cutoutJob'),
+            imageFormat = vm.get('currentImageFormat'),
+            cutouts = vm.getStore('cutouts'),
+            temp, imgFormat, imgFilter;
+
+        temp = imageFormat.get('name').split('_');
+        imgFormat = temp[0];
+        imgFilter = temp[1];
 
         cutouts.addFilter([{
             property: 'cjb_cutout_job',
-            value: cutoutJobId
-        },
-            // TODO: Enviar o tipo de imagem que será exibida.
-            // {
-            //     property: 'ctt_file_type',
-            //     value: 'png'
-            // }
+            value: cutoutJob.get('id')
+        }, {
+            property: 'ctt_img_format',
+            value: imgFormat
+        }, {
+            property: 'ctt_filter__filter',
+            value: imgFilter
+        }
         ]);
 
         cutouts.load({
@@ -996,14 +1037,17 @@ Ext.define('Target.view.objects.ObjectsController', {
         });
     },
 
+    /**
+     * Apos a Store de cutout ser carregada, 
+     * executa o metodo do painel Mosaic 
+     * que vai criar a visualiação das imagens.
+     */
     onLoadCutouts: function (store) {
-        console.log("onLoadCutouts(%o)", store);
+        // console.log("onLoadCutouts(%o)", store);
         var me = this,
             mosaic = me.lookup('TargetMosaic');
 
-        // Seta no Painel Mosaic o CutoutJob Selecionado.
-        // OBS: era feito depois da lista de cutouts estar carregada.
-        // mosaic.setCutoutJob(cutoutJob, this);            
+        mosaic.loadMosaics();
     },
 
     onClickInfoCutoutJob: function () {

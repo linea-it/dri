@@ -30,7 +30,8 @@ Ext.define('Target.view.objects.ObjectsModel', {
         mosaic_is_visible: false,
         haveResults: false,
         // Se houver um filtro salvo ativo
-        haveFilter: false
+        haveFilter: false,
+        currentImageFormat: null,
     },
 
     stores: {
@@ -67,7 +68,13 @@ Ext.define('Target.view.objects.ObjectsModel', {
         cutoutjobs: {
             type: 'cutoutjobs',
             autoLoad: false
-        }
+        },
+        // Tipos de imagens disponiveis dependendo do cutoutJob selecionado.
+        // Esta store vai ser preenchida pelo painel Mosaic::setCutoutJob         
+        imagesFormat: {
+            fields: ['name', 'displayName'],
+            data: [],
+        },
     },
 
     links: {

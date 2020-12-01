@@ -415,8 +415,11 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
     cjb_cutout_job = serializers.PrimaryKeyRelatedField(
         queryset=CutOutJob.objects.all(), many=False)
 
+    cjb_des_job = serializers.PrimaryKeyRelatedField(
+        queryset=Desjob.objects.all(), many=False)
+
+    ctt_img_color = serializers.CharField(source='ctt_filter.filter')
     ctt_file_source = serializers.SerializerMethodField()
-    timestamp = serializers.SerializerMethodField()
 
     class Meta:
         model = Cutout
@@ -424,40 +427,37 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'cjb_cutout_job',
+            'cjb_des_job',
             'ctt_object_id',
             'ctt_object_ra',
             'ctt_object_dec',
             'ctt_img_format',
-            'ctt_filter',
+            'ctt_img_color',
+            # 'ctt_filter',
             # 'ctt_file_path',
             'ctt_file_name',
             'ctt_file_type',
             'ctt_file_size',
+            # 'ctt_jobid',
             'ctt_file_source',
-            'timestamp'
         )
 
     def get_ctt_file_source(self, obj):
         try:
-            cutout_source = settings.DES_CUTOUT_SERVICE['CUTOUT_SOURCE']
+            # Exemplo do source para o arquivo de imagem.
+            # http://localhost/data/cutouts/18/7bd2a79749974decab360f401310bf60/DES0305-3415/DESJ030506.1606-341532.4000/DESJ030506.1606-341532.4000_gri_stiff.png
 
-            if obj.ctt_file_path is not None:
+            # Recuperar o Host
+            host = settings.BASE_HOST
 
-                source = os.path.join(cutout_source, obj.ctt_file_path)
+            # Substituir o path de Archive por /data que é o alias
+            base_source = host + obj.ctt_file_path.replace("/archive", "/data")
 
-                return source
-            else:
-                return None
-
-        except KeyError as e:
-            raise Exception("The CUTOUT_SOURCE parameter has not been configured, "
-                            " add this attribute to the DES_CUTOUT_SERVICE section.")
-
+            # Adicionar o filename
+            source = "{}/{}?_dc={}".format(base_source, obj.ctt_file_name, time.time())
+            return source
         except Exception as e:
-            raise (e)
-
-    def get_timestamp(self, obj):
-        return time.time()
+            return None
 
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):

@@ -663,7 +663,7 @@ class CutoutViewSet(viewsets.ModelViewSet):
 
     serializer_class = CutoutSerializer
 
-    filter_fields = ('id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_filter',)
+    filter_fields = ('id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_img_format', 'ctt_filter',)
 
     ordering_fields = ('id',)
 

@@ -147,6 +147,9 @@ Ext.define('Target.view.objects.Panel', {
                     bind: {
                         store: '{objects}',
                         cutoutJob: '{cutoutJob}',
+                        cutouts: '{cutouts}',
+                        imagesFormat: '{imagesFormat}',
+                        currentImageFormat: '{currentImageFormat}',
                     },
                     listeners: {
                         select: 'onSelectObject',
@@ -163,9 +166,6 @@ Ext.define('Target.view.objects.Panel', {
                                 store: '{cutoutjobs}',
                                 selection: '{cutoutJob}',
                             },
-                            // listeners: {
-                            //     select: 'onSelectCutoutJob'
-                            // },
                             editable: false
                         },
                         {
@@ -176,7 +176,23 @@ Ext.define('Target.view.objects.Panel', {
                             bind: {
                                 disabled: '{!cmbCutoutJob.selection}'
                             }
-                        }
+                        },
+                        {
+                            xtype: 'combobox',
+                            reference: 'cmbCutoutImage',
+                            emptyText: 'Choose Image',
+                            displayField: 'displayName',
+                            valueField: 'name',
+                            queryMode: 'local',
+                            bind: {
+                                store: '{imagesFormat}',
+                                selection: '{currentImageFormat}',
+                            },
+                            editable: false,
+                            listeners: {
+                                select: 'onSelectImageFormat'
+                            }
+                        },
                     ]
                 }
             ],

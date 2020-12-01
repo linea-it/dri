@@ -20,7 +20,8 @@ Ext.define('Target.view.objects.Mosaic', {
         cutoutJob: null,
         labelProperties: [],
         cutouts: null,
-        imagesFormat: 'png'
+        imagesFormat: null,
+        currentImageFormat: null,
     },
 
     setStore: function (store) {
@@ -37,54 +38,85 @@ Ext.define('Target.view.objects.Mosaic', {
      */
     setCutoutJob: function (cutoutJob) {
         // console.log("Mosaic::setCutoutJob(%o)", cutoutJob);
+        var me = this,
+            colors;
+
         if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
 
+            me.imagesFormat.removeAll();
+
             // Só disparar o evento caso o cutout job seja diferente do atual.
-            if ((this.cutoutJob) && (cutoutJob.get('id') === this.cutoutJob.get('id'))) {
+            if ((me.cutoutJob) && (cutoutJob.get('id') === me.cutoutJob.get('id'))) {
                 return;
             }
 
-            this.cutoutJob = cutoutJob
+            me.cutoutJob = cutoutJob
 
             // TODO: Preparar as opções de imagens disponiveis para este Job.
+            if (cutoutJob.get('cjb_make_stiff')) {
+                colors = cutoutJob.get('cjb_stiff_colors').split(';')
+
+                Ext.Array.each(colors, function (value) {
+                    me.imagesFormat.add({
+                        name: "stiff_" + value,
+                        displayName: "Stiff - " + value,
+                    })
+                })
+            }
+
+            if (cutoutJob.get('cjb_make_lupton')) {
+                colors = cutoutJob.get('cjb_lupton_colors').split(';')
+
+                Ext.Array.each(colors, function (value) {
+                    me.imagesFormat.add({
+                        name: "lupton_" + value,
+                        displayName: "Lupton - " + value,
+                    })
+                })
+            }
 
             // Disparar um evento para o carregamento dos cutouts.
-            console.log("Mosaic::Alterou o Cutout Job");
+            me.fireEvent('onChangeCutoutJob', me.cutoutJob, me);
         }
     },
 
-    // TODO: Revisar a parte que carrega os cutouts.
-    // setCutoutJob: function (cutoutJob, cutouts) {
-    //     var me = this,
-    //         labelProperties = [],
-    //         properties;
+    loadMosaics: function () {
+        var me = this,
+            cutouts = me.cutouts,
+            cutoutJob = me.cutoutJob,
+            labelProperties = [],
+            properties;
 
-    //     if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
-    //         me.cutoutJob = cutoutJob;
+        if ((cutouts) && (cutouts.count() > 0)) {
+            properties = cutoutJob.get('cjb_label_properties');
 
-    //         // TODO: Revisar a parte que carrega os cutouts.
+            if ((properties) && (properties !== '')) {
 
-    //         // me.setCutouts(cutouts);
+                labelProperties = properties.split(',');
 
-    //         // properties = cutoutJob.get('cjb_label_properties');
+                if (labelProperties.length > 0) {
+                    me.setLabelProperties(labelProperties);
 
-    //         // if ((properties) && (properties !== '')) {
+                    me.createView();
+                }
+            } else {
+                me.createView();
+            }
+        } else {
+            me.clearMosaics();
+        }
+    },
 
-    //         //     labelProperties = properties.split(',');
+    clearMosaics: function () {
+        var me = this;
 
-    //         //     if (labelProperties.length > 0) {
-    //         //         me.setLabelProperties(labelProperties);
-
-    //         //         me.createView();
-    //         //     }
-    //         // } else {
-    //         //     me.createView();
-    //         // }
-    //     }
-    // },
+        if (me._view) {
+            me.remove(me._view);
+            me._view = null;
+        }
+    },
 
     createView: function () {
-        //console.log("Targets Mosaic - createView()");
         var me = this,
             store = me.getStore(),
             labelProperties = me.getLabelProperties(),
@@ -206,16 +238,12 @@ Ext.define('Target.view.objects.Mosaic', {
     },
 
     getImageSource: function (meta_id) {
-        //        console.log('getImageSource(%o)', meta_id);
+        // console.log('getImageSource(%o)', meta_id);
 
         var me = this,
-            cutouts = me.getCutouts(),
-            imagesFormat = me.getImagesFormat(),
-            imageSource;
+            cutouts = me.getCutouts();
 
-        imageSource = cutouts.getImageSourceByObjectId(
-            meta_id,
-            imagesFormat, true);
+        imageSource = cutouts.getImageSourceByObjectId(meta_id);
 
         return imageSource;
     },
