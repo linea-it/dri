@@ -112,6 +112,27 @@ const useStyles = makeStyles(theme => ({
     zIndex: 2001, // Because the z-index of the .leaflet-top.leaflet.left is 2000.
     color: '#fff',
   },
+  tileListContainer: {
+    [theme.breakpoints.between('sm', 'lg')]: {
+      width: 382,
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
+  },
+  visiomaticContainer: {
+    [theme.breakpoints.between('sm', 'lg')]: {
+      width: 'calc(100% - 382px)',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
+  },
+  tileButton: {
+    [theme.breakpoints.down('xl')]: {
+      padding: theme.spacing(1),
+    },
+  },
 }));
 
 function Home() {
@@ -157,7 +178,7 @@ function Home() {
     api.allReleases().then((res) => {
       setReleases(res);
       // setCurrentRelease(res.length > 0 ? res[0].id : '');
-      setCurrentRelease(res.length > 0 ? res[1].id : '');
+      setCurrentRelease(res.length > 0 ? res[5].id : '');
     });
     api.getTutorial().then(res => setTutorial(res));
   }, []);
@@ -355,24 +376,16 @@ function Home() {
     loadData();
   }, [inputSearchValue]);
 
-  const handleDownloadClick = (tile) => {
+  const handleDownloadClick = (datasetId) => {
     setBackdropOpen(true);
 
-    api.getTileInfo(tile)
+    api.getDatasetInfo(datasetId)
       .then((res) => {
-        const selectedRelease = releases.filter(release => release.id === currentRelease)[0];
-
         setDownloadInfo({
           visible: true,
           tilename: res.tilename,
-          center: [res.ra_cent, res.dec_cent],
-          corners: {
-            ra: [res.racmin, res.racmax],
-            dec: [res.deccmin, res.deccmax],
-          },
-          currentRelease: selectedRelease.rls_display_name,
-          releases: res.releases,
-          registeredReleases: releases.map(release => release.rls_display_name.toUpperCase()),
+          images: res.images,
+          catalogs: res.catalogs,
         });
 
         setBackdropOpen(false);
@@ -410,24 +423,24 @@ function Home() {
           />
 
           <ListItemSecondaryAction>
-            <IconButton onClick={() => qualifyDataset(datasets[i], 'ok')}>
+            <IconButton className={classes.tileButton} onClick={() => qualifyDataset(datasets[i], 'ok')}>
               {datasets[i].isp_value ? (
                 <ThumbUpIcon className={classes.okButton} />
               ) : (
                 <ThumbUpIcon />
               )}
             </IconButton>
-            <IconButton onClick={() => qualifyDataset(datasets[i], 'notok')}>
+            <IconButton className={classes.tileButton} onClick={() => qualifyDataset(datasets[i], 'notok')}>
               {datasets[i].isp_value === false ? (
                 <ThumbDownIcon color="error" />
               ) : (
                 <ThumbDownIcon />
               )}
             </IconButton>
-            <IconButton onClick={() => handleComment(datasets[i])}>
+            <IconButton className={classes.tileButton} onClick={() => handleComment(datasets[i])}>
               <Comment />
             </IconButton>
-            <IconButton onClick={() => handleDownloadClick(datasets[i].tile)}>
+            <IconButton className={classes.tileButton} onClick={() => handleDownloadClick(datasets[i].id)}>
               <Download />
             </IconButton>
           </ListItemSecondaryAction>
@@ -472,7 +485,7 @@ function Home() {
                 alignItems="stretch"
                 spacing={2}
               >
-                <Grid item xs={6} sm={4} md={3} lg={3}>
+                <Grid item lg={3} className={classes.tileListContainer}>
                   <Card className={classes.tilelist}>
                     <Toolbar className={classes.toolbar}>
                       <SearchField inputSearchValue={inputSearchValue} handleInputSearch={handleInputSearch} />
@@ -529,7 +542,7 @@ function Home() {
 
                   </Card>
                 </Grid>
-                <Grid item xs={6} sm={8} md={9} lg={9}>
+                <Grid item lg={9} className={classes.visiomaticContainer}>
                   <Card className={classes.card}>
                     <VisiomaticPanel
                       image={
@@ -564,12 +577,8 @@ function Home() {
                 open={downloadInfo.visible}
                 handleClose={handleDownloadClose}
                 tilename={downloadInfo.tilename}
-                center={downloadInfo.center}
-                corners={downloadInfo.corners}
                 images={downloadInfo.images}
                 catalogs={downloadInfo.catalogs}
-                currentRelease={downloadInfo.currentRelease}
-                releases={downloadInfo.releases}
               />
             )}
             <Backdrop open={backdropOpen} className={classes.backdrop}>
