@@ -176,7 +176,7 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                         },
                         {
                             xtype: 'fieldset',
-                            title: 'Make Fits',
+                            title: 'Fits',
                             checkboxToggle: true,
                             checkboxName: 'makeFits',
                             collapsed: true,
