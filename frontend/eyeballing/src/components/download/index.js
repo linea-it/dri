@@ -12,6 +12,7 @@ import {
   TableCell,
   TableRow,
   CircularProgress,
+  Typography,
 } from '@material-ui/core';
 import {
   Close as CloseIcon,
@@ -26,6 +27,7 @@ function DownloadDialog({
   tilename,
   images,
   catalogs,
+  error,
 }) {
   const classes = useStyles();
   const [isAuthenticating, setIsAuthenticating] = useState('');
@@ -56,42 +58,46 @@ function DownloadDialog({
       <DialogContent className={classes.dialogContent}>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Filename</TableCell>
-                  <TableCell>Band</TableCell>
-                  <TableCell>Image</TableCell>
-                  <TableCell>Catalog</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {Object.keys(images).map(key => (
-                  <TableRow key={key}>
-                    <TableCell>
-                      {`${tilename}_${key}.fits.gz`}
-                    </TableCell>
-                    <TableCell>
-                      {key === 'y' ? key.toUpperCase() : key}
-                    </TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => handleItemClick(images[key])}>
-                        {isAuthenticating === images[key]
-                          ? <CircularProgress size={20} />
-                          : <DownloadIcon />}
-                      </IconButton>
-                    </TableCell>
-                    <TableCell>
-                      <IconButton onClick={() => handleItemClick(catalogs[key])}>
-                        {isAuthenticating === catalogs[key]
-                          ? <CircularProgress size={20} />
-                          : <DownloadIcon />}
-                      </IconButton>
-                    </TableCell>
+            {!error ? (
+              <Table size="small">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Filename</TableCell>
+                    <TableCell>Band</TableCell>
+                    <TableCell>Image</TableCell>
+                    <TableCell>Catalog</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHead>
+                <TableBody>
+                  {Object.keys(images).map(key => (
+                    <TableRow key={key}>
+                      <TableCell>
+                        {`${tilename}_${key}.fits.gz`}
+                      </TableCell>
+                      <TableCell>
+                        {key === 'y' ? key.toUpperCase() : key}
+                      </TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => handleItemClick(images[key])}>
+                          {isAuthenticating === images[key]
+                            ? <CircularProgress size={20} />
+                            : <DownloadIcon />}
+                        </IconButton>
+                      </TableCell>
+                      <TableCell>
+                        <IconButton onClick={() => handleItemClick(catalogs[key])}>
+                          {isAuthenticating === catalogs[key]
+                            ? <CircularProgress size={20} />
+                            : <DownloadIcon />}
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <Typography>Oops! No download was found for this tile.</Typography>
+            )}
           </Grid>
         </Grid>
       </DialogContent>
@@ -109,14 +115,21 @@ DownloadDialog.propTypes = {
     i: PropTypes.string,
     z: PropTypes.string,
     y: PropTypes.string,
-  }).isRequired,
+  }),
   catalogs: PropTypes.shape({
     g: PropTypes.string,
     r: PropTypes.string,
     i: PropTypes.string,
     z: PropTypes.string,
     y: PropTypes.string,
-  }).isRequired,
+  }),
+  error: PropTypes.bool,
+};
+
+DownloadDialog.defaultProps = {
+  error: false,
+  images: null,
+  catalogs: null,
 };
 
 export default DownloadDialog;

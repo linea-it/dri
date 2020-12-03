@@ -178,7 +178,7 @@ function Home() {
     api.allReleases().then((res) => {
       setReleases(res);
       // setCurrentRelease(res.length > 0 ? res[0].id : '');
-      setCurrentRelease(res.length > 0 ? res[5].id : '');
+      setCurrentRelease(res.length > 0 ? res[2].id : '');
     });
     api.getTutorial().then(res => setTutorial(res));
   }, []);
@@ -376,18 +376,24 @@ function Home() {
     loadData();
   }, [inputSearchValue]);
 
-  const handleDownloadClick = (datasetId) => {
+  const handleDownloadClick = (dataset) => {
     setBackdropOpen(true);
-
-    api.getDatasetInfo(datasetId)
+    api.getDatasetInfo(dataset.id)
       .then((res) => {
         setDownloadInfo({
           visible: true,
-          tilename: res.tilename,
+          tilename: dataset.tli_tilename,
           images: res.images,
           catalogs: res.catalogs,
         });
 
+        setBackdropOpen(false);
+      }).catch(() => {
+        setDownloadInfo({
+          visible: true,
+          tilename: dataset.tli_tilename,
+          error: true,
+        });
         setBackdropOpen(false);
       });
   };
@@ -440,7 +446,7 @@ function Home() {
             <IconButton className={classes.tileButton} onClick={() => handleComment(datasets[i])}>
               <Comment />
             </IconButton>
-            <IconButton className={classes.tileButton} onClick={() => handleDownloadClick(datasets[i].id)}>
+            <IconButton className={classes.tileButton} onClick={() => handleDownloadClick(datasets[i])}>
               <Download />
             </IconButton>
           </ListItemSecondaryAction>
@@ -485,7 +491,7 @@ function Home() {
                 alignItems="stretch"
                 spacing={2}
               >
-                <Grid item lg={3} className={classes.tileListContainer}>
+                <Grid item lg={3} xl={2} className={classes.tileListContainer}>
                   <Card className={classes.tilelist}>
                     <Toolbar className={classes.toolbar}>
                       <SearchField inputSearchValue={inputSearchValue} handleInputSearch={handleInputSearch} />
@@ -542,7 +548,7 @@ function Home() {
 
                   </Card>
                 </Grid>
-                <Grid item lg={9} className={classes.visiomaticContainer}>
+                <Grid item lg={9} xl={10} className={classes.visiomaticContainer}>
                   <Card className={classes.card}>
                     <VisiomaticPanel
                       image={
@@ -575,6 +581,7 @@ function Home() {
             {downloadInfo.visible && (
               <DownloadDialog
                 open={downloadInfo.visible}
+                error={downloadInfo.error}
                 handleClose={handleDownloadClose}
                 tilename={downloadInfo.tilename}
                 images={downloadInfo.images}
