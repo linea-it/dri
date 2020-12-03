@@ -139,6 +139,15 @@ SCHEMA_SAVE_AS = None
 USER_QUERY_EXECUTION_TIMEOUT = 300
 # Limite de linhas de uma query
 USER_QUERY_MAX_ROWS = 100000
+# TILE VIEWER/TILE INSPECTION (antigo eyeballing):
+# Esta config muda o comportamento da ferramenta Tile Viewer. 
+# Quando Ligada habilita as funcionalidades de validação e inspeção das tiles 
+# Comentários, avaliações (Good, Bad), avaiação por posição e relatórios.
+# Quando Desligada a ferramente se torna Tile Viewer, ficam só as 
+# funcões de navegação entre tiles, visualização e download.
+# True: para Tile Inspection (essa opção deve estar ligada somente no ambiente da colaboração NCSA.)
+# False: para Tile Viewer (essa é a opção default) 
+TILE_VIEWER_INSPECTION_ENABLED=False
 
 # DES ACCESS API
 # Usada para o Cutout de targets e Download das imagens de Tiles.
@@ -167,11 +176,6 @@ PRODUCT_EXPIRATION_TIME = None
 # Plugin Galaxy Cluster para o Explorer #TODO: Este plugin não existe mais!!!.
 # Url para acessar o container com o plugin do galaxy cluster
 PLUGIN_GALAXY_CLUSTER_HOST = "http://localhost:8000"
-
-# Tile Inspection Config:
-# Habilita a possibilidade de se inspecionar a Tile.
-# Comentários, avaliações (Good, Bad), avaiação por posição.
-TILE_INSPECTION_OPTION = True
 
 # Log Levels
 # This log level describes the severity of the messages that the logger will handle. Python defines the following log levels:

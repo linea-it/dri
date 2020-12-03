@@ -152,7 +152,7 @@ function Home() {
   };
 
   useEffect(() => {
-    api.getTileInspectionOption().then(res => setHasInspection(res.TILE_INSPECTION_OPTION));
+    api.getTileInspectionOption().then(res => setHasInspection(res.TILE_VIEWER_INSPECTION_ENABLED));
     api.loggedUser().then(res => setUsername(res.username));
     api.allReleases().then((res) => {
       setReleases(res);
@@ -473,15 +473,15 @@ function Home() {
             {dataset.isp_value ? (
               <ThumbUpIcon className={classes.okButton} />
             ) : (
-              <ThumbUpIcon />
-            )}
+                <ThumbUpIcon />
+              )}
           </IconButton>
           <IconButton onClick={() => qualifyDataset(dataset, 'notok')}>
             {dataset.isp_value === false ? (
               <ThumbDownIcon color="error" />
             ) : (
-              <ThumbDownIcon />
-            )}
+                <ThumbDownIcon />
+              )}
           </IconButton>
           <IconButton onClick={() => handleComment(dataset)}>
             <Comment />
@@ -583,10 +583,10 @@ function Home() {
                       {loadingAllTiles ? (
                         <LinearProgress color="secondary" className={classes.linearProgress} />
                       ) : (
-                        <CardActions className={classes.cardActionCounter}>
-                          <Counter hasInspection={hasInspection} counts={counts} />
-                        </CardActions>
-                      )}
+                          <CardActions className={classes.cardActionCounter}>
+                            <Counter hasInspection={hasInspection} counts={counts} />
+                          </CardActions>
+                        )}
                     </>
                   </Card>
                 </Grid>
@@ -595,10 +595,10 @@ function Home() {
                     {currentRelease !== '' ? (
                       <VisiomaticPanel
                         image={
-                        !isEmpty(currentDataset)
-                          ? currentDataset.image_src_ptif
-                          : null
-                      }
+                          !isEmpty(currentDataset)
+                            ? currentDataset.image_src_ptif
+                            : null
+                        }
                         className={classes.visiomatic}
                         center={[currentDataset.tli_ra, currentDataset.tli_dec]}
                         fov={2}
@@ -650,7 +650,7 @@ function Home() {
                     </Typography>
                   </IconButton>
                 </Link>
-            )}
+              )}
             />
           )}
         />

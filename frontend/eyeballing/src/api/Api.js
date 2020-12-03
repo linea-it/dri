@@ -161,7 +161,7 @@ class DriApi {
 
   getTutorial = () => axios.get('/tutorial/', { params: { app_name: 'tile_inspection' } }).then(res => res.data);
 
-  getTileInspectionOption = () => axios.get('/get_setting/', { params: { name: 'TILE_INSPECTION_OPTION' } }).then(res => res.data)
+  getTileInspectionOption = () => axios.get('/get_setting/', { params: { name: 'TILE_VIEWER_INSPECTION_ENABLED' } }).then(res => res.data)
 }
 export default DriApi;
 
