@@ -5,7 +5,7 @@ Ext.define('Target.view.objects.DownloadWindow', {
 
     title: 'Download',
     width: 300,
-    height: 400,
+    height: 300,
     modal: true,
     autoShow: true,
 
@@ -53,8 +53,8 @@ Ext.define('Target.view.objects.DownloadWindow', {
                                     xtype: 'checkboxgroup',
                                     columns: 1,
                                     items: [
-                                        {boxLabel: 'CSV', name: 'table_format', inputValue: 'csv', checked: true},
-                                        {boxLabel: 'FITS', name: 'table_format', inputValue: 'fits'}
+                                        { boxLabel: 'CSV', name: 'table_format', inputValue: 'csv', checked: true },
+                                        { boxLabel: 'FITS', name: 'table_format', inputValue: 'fits' }
                                         //{boxLabel: 'JSON', name: 'table_format', inputValue: 'json'}
                                     ]
                                 }
@@ -74,25 +74,6 @@ Ext.define('Target.view.objects.DownloadWindow', {
                             editable: false,
                             disabled: true
                         },
-                        {
-                            xtype: 'fieldset',
-                            title: 'Report',
-                            defaults: {
-                                anchor: '100%'
-                            },
-                            items: [
-                                {
-                                    xtype: 'checkboxgroup',
-                                    disabled: true,
-                                    columns: 1,
-                                    items: [
-                                        // {boxLabel: 'HTML', name: 'report_format', inputValue: 'html'},
-                                        {boxLabel: 'PDF', name: 'report_format', inputValue: 'pdf'}
-                                    ]
-                                }
-                            ],
-                            margin: '10 0 0 0'
-                        }
                     ]
                 }
             ],
@@ -150,7 +131,6 @@ Ext.define('Target.view.objects.DownloadWindow', {
             values,
             table_format = [],
             cutouts = null,
-            report_format = [],
             filter = null;
 
         if (form.isValid()) {
@@ -170,10 +150,6 @@ Ext.define('Target.view.objects.DownloadWindow', {
                 cutouts = values.cutouts;
             }
 
-            if (values.report_format) {
-                report_format = values.report_format;
-            }
-
             if (filter_id > 0) {
                 filter = filter_id;
             }
@@ -186,12 +162,11 @@ Ext.define('Target.view.objects.DownloadWindow', {
                     'filetypes': table_format,
                     'cutout': cutouts,
                     'filter': filter
-                    //                    'report_format': report_format
                 },
                 success: function (response) {
                     me.onCancel();
                     Ext.MessageBox.alert('', 'The job will run in the background and you will be notified when it is finished.');
-                    Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - download_catalogs');
+                    Ext.GlobalEvents.fireEvent('eventregister', 'TargetViewer - download_catalogs');
                 },
                 failure: function (response, opts) {
                     var msg = response.status + ' ' + response.statusText;

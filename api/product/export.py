@@ -28,7 +28,6 @@ class Export:
 
         self.exclude_columns = ['meta_reject', 'meta_reject_id', 'meta_rating', 'meta_rating_id']
 
-
     def create_export_dir(self, name):
         """
         Cria um diretorio onde vao ficar os aquivos gerados.
@@ -84,7 +83,6 @@ class Export:
         self.logger.info("Retrieving the columns for the headers")
         columns = list()
 
-
         for property in row:
             cname = str(property.lower().strip())
 
@@ -105,12 +103,13 @@ class Export:
 
         self.logger.info("Export table \"%s\" to csv" % table)
 
+        # TODO: Pode ser melhorado o processo usando Pandas.Dataframe.to_csv()
         name = ("%s.csv" % table)
 
         filename = os.path.join(export_dir, name)
         self.logger.debug("Filename: %s" % filename)
 
-        rows, count = self.get_catalog_objects(product_id, table, user_id, schema, database,  filters=filters)
+        rows, count = self.get_catalog_objects(product_id, table, user_id, schema, database, filters=filters)
 
         self.logger.debug("Row Count: %s" % count)
 
@@ -154,6 +153,8 @@ class Export:
         """
 
         self.logger.info("Export table \"%s\" to csv" % table)
+
+        # TODO: Pode ser melhorado o processo usando Pandas.Dataframe.to_csv()
 
         name = ("%s.csv" % table)
 
@@ -241,7 +242,6 @@ class Export:
 
         self.logger.debug("User: %s" % user.username)
 
-
         # Recuperar o produto
         try:
             product = Product.objects.get(pk=int(product_id))
@@ -249,7 +249,6 @@ class Export:
 
         except Product.DoesNotExist as e:
             self.logger.error("Product matching query does not exist. Product Id: %s" % product_id)
-
 
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(product_id=product_id)
@@ -282,17 +281,15 @@ class Export:
         :param path_destination: path absoluto do diretorio onde sera criado o zip.
         :param format: por enquanto apenas o formato .zip
         """
-        self.logger.info("Export cutouts of Job %s" % name)
+        self.logger.info("Export cutouts of Job [%s]" % name)
 
         self.logger.debug("Cutout Job path: %s" % path_origin)
-
-        origin_path = os.path.join(settings.DATA_DIR, path_origin.strip("/"))
 
         data_dir_tmp = settings.DATA_TMP_DIR
 
         destination_path = path_destination
 
-        self.logger.debug("Origin Path: %s" % origin_path)
+        self.logger.debug("Origin Path: %s" % path_origin)
         self.logger.debug("Destination Path: %s" % destination_path)
 
         not_images_extensions = list([".txt", ".csv", ".log"])
@@ -305,7 +302,7 @@ class Export:
             self.logger.debug("Zip File: %s" % filename)
 
             with zipfile.ZipFile(filename, 'w') as ziphandle:
-                for root, dirs, files in os.walk(origin_path):
+                for root, dirs, files in os.walk(path_origin):
                     for file in files:
                         origin_file = os.path.join(root, file)
                         fname, extension = os.path.splitext(origin_file)
@@ -436,4 +433,3 @@ class Export:
 
         else:
             self.logger.info("It was not possible to notify the user, for not having the email registered.")
-
