@@ -64,8 +64,8 @@ Ext.define('Target.view.objects.DownloadWindow', {
                             xtype: 'combobox',
                             itemId: 'cmbCutoutJob',
                             name: 'cutouts',
-                            fieldLabel: 'Mosaic',
-                            emptyText: 'Choose Mosaic',
+                            fieldLabel: 'Cutout',
+                            emptyText: 'Choose Cutout',
                             displayField: 'cjb_display_name',
                             valueField: 'id',
                             store: {
