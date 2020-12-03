@@ -8,17 +8,15 @@ Ext.define('Target.view.settings.CutoutJobForm', {
 
     xtype: 'target-cutoutjob-form',
 
-    title: 'Create Mosaic',
+    title: 'Create Cutout',
     width: 450,
-    height: 540,
+    height: 600,
     layout: 'fit',
     modal: true,
-
+    constrain: true,
     controller: 'cutoutjob',
     viewModel: 'cutoutjob',
-
     closeAction: 'hide',
-
     config: {
         currentProduct: null,
         currentSetting: null,
@@ -34,48 +32,35 @@ Ext.define('Target.view.settings.CutoutJobForm', {
 
         // recupera do settings os releases disponiveis no servico de cutout
         try {
-            me.availableReleases = Settings.DES_CUTOUT_SERVICE__AVAILABLE_RELEASES
+            me.availableReleases = Settings.DESACCESS_API__AVAILABLE_RELEASES
         }
         catch (err) {
-            console.warn("Setting DES_CUTOUT_SERVICE__AVAILABLE_RELEASES not loaded.");
+            console.warn("Setting DESACCESS_API__AVAILABLE_RELEASES not loaded.");
         }
 
-        // recupera do settings a quantidade maxima de objetos que podem
-        // ser enviadas para o descut
-        try {
-            me.maxObjects = Settings.DES_CUTOUT_SERVICE__MAX_OBJECTS
-        }
-        catch (err) {
-            console.warn("Setting DES_CUTOUT_SERVICE__MAX_OBJECTS not loaded.");
-        }
-
-        // Desabilitar outros releases caso esteja definido no settings no Backend
-        // Na secao DES_CUTOUT_SERVICE
-        toBeRemoved = []
-        if (me.availableReleases != null){
+        if (me.availableReleases != null) {
             vm.set('enableRelease', true);
-            if ((Array.isArray(me.availableReleases)) &&
-                (me.availableReleases.length > 0)){
 
-                tags.each(function (record) {
-                    if (me.availableReleases.indexOf(record.get('name')) == -1) {
-                        toBeRemoved.push(record);
-                    }
-                })
-
-                tags.remove(toBeRemoved);
+            // Listar na Combobox Release apenas os releases que estão na settings. 
+            if ((Array.isArray(me.availableReleases)) && (me.availableReleases.length > 0)) {
+                // Para cada release aceito pelo DESaccess
+                Ext.Array.each(me.availableReleases, function (release) {
+                    // Adiciona na Store tags.
+                    tags.add({ name: release, displayName: release });
+                });
             }
+
         } else {
             // Esconde a combobox de Releases
             vm.set('enableRelease', false);
         }
 
         Ext.apply(this, {
-
             items: [
                 {
                     xtype: 'form',
-                    bodyPadding: 20,
+                    scrollable: 'vertical',
+                    bodyPadding: 10,
                     defaults: {
                         labelWidth: 125,
                         anchor: '95%',
@@ -90,39 +75,11 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             maxLength: 40
                         },
                         {
-                            xtype: 'radiogroup',
-                            fieldLabel: 'Type',
-                            cls: 'x-check-group-alt',
-                            name: 'job_type',
-                            items: [
-                                {boxLabel: 'Coadd Images', inputValue: 'coadd', checked: true},
-                                {boxLabel: 'Single Epoch', inputValue: 'single', reference: 'rdSingleEpoch', disabled: true}
-                            ]
-                        },
-                        {
-                            xtype: 'numberfield',
-                            fieldLabel: 'X Size (arcsec)',
-                            value: 60,
-                            name: 'xsize',
-                            hideTrigger: true
-                            // minValue: 1,
-                            // maxValue: 10
-                        },
-                        {
-                            xtype: 'numberfield',
-                            fieldLabel: 'Y Size (arcsec)',
-                            value: 60,
-                            name: 'ysize',
-                            hideTrigger: true
-                            // minValue: 1,
-                            // maxValue: 10
-                        },
-                        {
                             xtype: 'combobox',
                             reference: 'CmbReleaseTag',
                             name: 'tag',
                             fieldLabel: 'Release TAG',
-                            emptyText: 'Release tag for coadd cutouts',
+                            emptyText: 'Release tag for cutouts',
                             valueField: 'name',
                             displayField: 'displayName',
                             minChars: 0,
@@ -130,54 +87,121 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             editable: true,
                             bind: {
                                 store: '{tags}',
-                                disabled: '{rdSingleEpoch.checked}'
+                                visible: '{enableRelease}',
                             }
                         },
                         {
-                            xtype: 'checkboxgroup',
-                            fieldLabel: 'Filters',
-                            cls: 'x-check-group-alt',
-                            reference: 'cbgBands',
+                            xtype: 'fieldcontainer',
+                            fieldLabel: 'Cutout Size (arcminutes)',
+                            layout: 'hbox',
                             items: [
-                                {boxLabel: 'g', name: 'band', inputValue: 'g'},
-                                {boxLabel: 'r', name: 'band', inputValue: 'r'},
-                                {boxLabel: 'i', name: 'band', inputValue: 'i'},
-                                {boxLabel: 'z', name: 'band', inputValue: 'z'},
-                                {boxLabel: 'Y', name: 'band', inputValue: 'Y'},
                                 {
-                                    boxLabel: 'All',
-                                    name: 'band-all',
-                                    reference: 'cbAllBands',
-                                    listeners: {
-                                        change: 'onCheckAllBands'
-                                    }
-                                }
-                            ],
-                            bind: {
-                                hidden: '{!rdSingleEpoch.checked}',
-                                disabled: '{!rdSingleEpoch.checked}'
-
-                            }
-                        },
-                        {
-                            xtype: 'checkbox',
-                            boxLabel: 'Exclude blacklisted ccds',
-                            name: 'no_blacklist',
-                            inputValue: true,
-                            bind: {
-                                hidden: '{!rdSingleEpoch.checked}',
-                                disabled: '{!rdSingleEpoch.checked}'
-                            }
-                        },
-                        {
-                            xtype: 'radiogroup',
-                            fieldLabel: 'Image Formats',
-                            cls: 'x-check-group-alt',
-                            name: 'image_formats',
-                            items: [
-                                {boxLabel: 'only PNGs (fast)', inputValue: 'png', checked: true},
-                                {boxLabel: 'PNGs and Fits', inputValue: 'png,fits'}
+                                    xtype: 'numberfield',
+                                    fieldLabel: 'X',
+                                    value: 1,
+                                    name: 'xsize',
+                                    labelWidth: 20,
+                                    minValue: 0.1,
+                                    maxValue: 12,
+                                    step: 0.1,
+                                    flex: 1,
+                                    margin: '0 10 0 0'
+                                },
+                                {
+                                    xtype: 'numberfield',
+                                    fieldLabel: 'Y',
+                                    value: 1,
+                                    name: 'ysize',
+                                    labelWidth: 20,
+                                    minValue: 0.1,
+                                    maxValue: 12,
+                                    step: 0.1,
+                                    flex: 1
+                                },
                             ]
+                        },
+                        {
+                            xtype: 'fieldset',
+                            title: 'Color Image STIFF format',
+                            checkboxToggle: true,
+                            checkboxName: 'makeStiff',
+                            collapsed: false,
+                            items: [
+                                {
+                                    xtype: 'checkboxgroup',
+                                    fieldLabel: 'Bands',
+                                    name: 'stiffColors',
+                                    reference: 'cbgStiffColor',
+                                    items: [
+                                        { boxLabel: 'gri', inputValue: 'gri', checked: true },
+                                        { boxLabel: 'rig', inputValue: 'rig' },
+                                        { boxLabel: 'zgi', inputValue: 'zgi' },
+                                        {
+                                            boxLabel: 'All',
+                                            name: 'stiffColorsAll',
+                                            listeners: {
+                                                change: 'onCheckAllStiffBands'
+                                            }
+                                        }
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            xtype: 'fieldset',
+                            title: 'Color Image Lupton method',
+                            checkboxToggle: true,
+                            checkboxName: 'makeLupton',
+                            collapsed: true,
+                            items: [
+                                {
+                                    xtype: 'checkboxgroup',
+                                    fieldLabel: 'Bands',
+                                    name: 'luptonColors',
+                                    reference: 'cbgLuptonColor',
+                                    items: [
+                                        { boxLabel: 'gri', inputValue: 'gri' },
+                                        { boxLabel: 'rig', inputValue: 'rig' },
+                                        { boxLabel: 'zgi', inputValue: 'zgi' },
+                                        {
+                                            boxLabel: 'All',
+                                            name: 'luptonColorsAll',
+                                            listeners: {
+                                                change: 'onCheckAllLuptonBands'
+                                            }
+                                        }
+                                    ],
+                                },
+                            ],
+                        },
+                        {
+                            xtype: 'fieldset',
+                            title: 'Fits',
+                            checkboxToggle: true,
+                            checkboxName: 'makeFits',
+                            collapsed: true,
+                            items: [
+                                {
+                                    xtype: 'checkboxgroup',
+                                    fieldLabel: 'Bands',
+                                    name: 'fitsColors',
+                                    reference: 'cbgFitsColor',
+                                    items: [
+                                        { boxLabel: 'g', inputValue: 'g' },
+                                        { boxLabel: 'r', inputValue: 'r' },
+                                        { boxLabel: 'i', inputValue: 'i' },
+                                        { boxLabel: 'z', inputValue: 'z' },
+                                        { boxLabel: 'Y', inputValue: 'y' },
+                                        {
+                                            boxLabel: 'All',
+                                            name: 'fitsColorsAll',
+                                            listeners: {
+                                                change: 'onCheckAllFitsBands'
+                                            }
+                                        }
+                                    ],
+                                },
+                            ],
                         },
                         {
                             xtype: 'fieldset',
@@ -193,8 +217,8 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     cls: 'x-check-group-alt',
                                     name: 'label_position',
                                     items: [
-                                        {boxLabel: 'Inside', inputValue: 'inside', checked: true},
-                                        {boxLabel: 'Outside', inputValue: 'outside'}
+                                        { boxLabel: 'Inside', inputValue: 'inside', checked: true },
+                                        { boxLabel: 'Outside', inputValue: 'outside' }
                                     ]
                                 },
                                 {
@@ -257,22 +281,9 @@ Ext.define('Target.view.settings.CutoutJobForm', {
     },
 
     afterRender: function () {
-        console.log('afterRender')
-        var me = this,
-            vm = me.getViewModel(),
-            se = me.lookup('rdSingleEpoch'),
-            cmbTag = me.lookup('CmbReleaseTag');
-
+        // console.log('afterRender')
+        var me = this;
         me.callParent(arguments);
-
-        // Esconder a combobox Tag de acordo com a settings no Backend
-        // Outra regra interfere na visibilidade da combo e a selecao de Single
-        // Epoch
-        if ((vm.get('enableRelease')) && (!se.checked)) {
-            cmbTag.setVisible(true)
-        } else {
-            cmbTag.setVisible(false)
-        }
     },
 
     setCurrentProduct: function (record) {

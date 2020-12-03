@@ -164,6 +164,14 @@ class DesCutoutService:
                     "make_fits": True,
                     "colors_fits": job.cjb_fits_colors
                 })
+            else:
+                # Enviar o parametro que indica para o DESaccess que não é para incluir os fits
+                # utilizados na geração das imagens coloridas.
+                # discard_fits_files (bool) Discard FITS files that are only created in order to produce requested RGB images.
+                # FITS files that are explicitly requested are retained.
+                data.update({
+                    "discard_fits_files": True
+                })
 
             # Geração de Imagens Coloridas com Stiff
             if job.cjb_make_stiff:
