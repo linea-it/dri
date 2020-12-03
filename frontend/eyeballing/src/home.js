@@ -169,8 +169,7 @@ function Home() {
   const onChangeRelease = (value) => {
     setLoading(true);
     setCurrentRelease(value);
-    setDatasets([]);
-    setCurrentDataset({});
+    loadData();
   };
 
   useEffect(() => {
