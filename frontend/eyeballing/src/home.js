@@ -147,8 +147,8 @@ function Home() {
   const onChangeRelease = (value) => {
     setLoadingAllTiles(true);
     setCurrentRelease(value);
-    setDatasets([]);
-    setCurrentDataset({});
+    reloadList();
+    reloadAllTiles();
   };
 
   useEffect(() => {
