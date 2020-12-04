@@ -13,7 +13,7 @@ from rest_framework import mixins
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import list_route
+from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -123,7 +123,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
 
     ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')
 
-    @list_route()
+    @action(detail=False)
     def get_class_tree_by_group(self, request):
         """
             Este metodo retorna uma tree, com todos os produtos de um grupo. estes produtos esto
@@ -330,7 +330,7 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id', 'pcc_column_name',)
 
-    @list_route()
+    @action(detail=False)
     def get_display_content(self, request):
 
         pcn_product_id = request.query_params.get('pcn_product_id', None)
@@ -494,7 +494,7 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('id',)
 
-    @list_route()
+    @action(detail=False)
     def get_ucds_by_product(self, request):
 
         product_id = request.query_params.get('product_id', None)
@@ -663,7 +663,7 @@ class CutoutViewSet(viewsets.ModelViewSet):
 
     serializer_class = CutoutSerializer
 
-    filter_fields = ('id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_filter',)
+    filter_fields = ('id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_img_format', 'ctt_filter',)
 
     ordering_fields = ('id',)
 

@@ -343,9 +343,12 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
 
     owner = serializers.SerializerMethodField()
     execution_time = serializers.SerializerMethodField()
-    count_files = serializers.SerializerMethodField()
-    file_sizes = serializers.SerializerMethodField()
+    h_file_sizes = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
+
+    status_name = serializers.CharField(
+        source='get_cjb_status_display', read_only=True
+    )
 
     class Meta:
         model = CutOutJob
@@ -355,13 +358,16 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_product',
             'cjb_display_name',
             'cjb_status',
-            'cjb_job_id',
+            'status_name',
+            'cjb_tag',
             'cjb_xsize',
             'cjb_ysize',
-            'cjb_job_type',
-            'cjb_tag',
-            'cjb_band',
-            'cjb_Blacklist',
+            'cjb_make_fits',
+            'cjb_fits_colors',
+            'cjb_make_stiff',
+            'cjb_stiff_colors',
+            'cjb_make_lupton',
+            'cjb_lupton_colors',
             'cjb_label_position',
             'cjb_label_properties',
             'cjb_label_colors',
@@ -369,11 +375,12 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
             'cjb_start_time',
             'cjb_finish_time',
             'cjb_description',
-            'cjb_image_formats',
+            'cjb_files',
+            'cjb_file_size',
+            'cjb_error',
             'owner',
             'execution_time',
-            'count_files',
-            'file_sizes',
+            'h_file_sizes',
             'is_owner'
         )
 
@@ -390,18 +397,9 @@ class CutoutJobSerializer(serializers.HyperlinkedModelSerializer):
         except:
             return None
 
-    def get_count_files(self, obj):
+    def get_h_file_sizes(self, obj):
         try:
-            return obj.cutout_set.count()
-
-        except:
-            return None
-
-    def get_file_sizes(self, obj):
-        try:
-            sum_sizes = obj.cutout_set.aggregate(sum_size=Sum('ctt_file_size'))
-            return humanize.naturalsize(sum_sizes.get("sum_size"))
-
+            return humanize.naturalsize(obj.cjb_file_size)
         except:
             return None
 
@@ -417,8 +415,11 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
     cjb_cutout_job = serializers.PrimaryKeyRelatedField(
         queryset=CutOutJob.objects.all(), many=False)
 
+    cjb_des_job = serializers.PrimaryKeyRelatedField(
+        queryset=Desjob.objects.all(), many=False)
+
+    ctt_img_color = serializers.CharField(source='ctt_filter.filter')
     ctt_file_source = serializers.SerializerMethodField()
-    timestamp = serializers.SerializerMethodField()
 
     class Meta:
         model = Cutout
@@ -426,42 +427,37 @@ class CutoutSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             'id',
             'cjb_cutout_job',
+            'cjb_des_job',
             'ctt_object_id',
             'ctt_object_ra',
             'ctt_object_dec',
-            'ctt_filter',
-            'ctt_thumbname',
+            'ctt_img_format',
+            'ctt_img_color',
+            # 'ctt_filter',
             # 'ctt_file_path',
             'ctt_file_name',
             'ctt_file_type',
             'ctt_file_size',
-            'ctt_download_start_time',
-            'ctt_download_finish_time',
+            # 'ctt_jobid',
             'ctt_file_source',
-            'timestamp'
         )
 
     def get_ctt_file_source(self, obj):
         try:
-            cutout_source = settings.DES_CUTOUT_SERVICE['CUTOUT_SOURCE']
+            # Exemplo do source para o arquivo de imagem.
+            # http://localhost/data/cutouts/18/7bd2a79749974decab360f401310bf60/DES0305-3415/DESJ030506.1606-341532.4000/DESJ030506.1606-341532.4000_gri_stiff.png
 
-            if obj.ctt_file_path is not None:
+            # Recuperar o Host
+            host = settings.BASE_HOST
 
-                source = os.path.join(cutout_source, obj.ctt_file_path)
+            # Substituir o path de Archive por /data que é o alias
+            base_source = host + obj.ctt_file_path.replace("/archive", "/data")
 
-                return source
-            else:
-                return None
-
-        except KeyError as e:
-            raise Exception("The CUTOUT_SOURCE parameter has not been configured, "
-                            " add this attribute to the DES_CUTOUT_SERVICE section.")
-
+            # Adicionar o filename
+            source = "{}/{}?_dc={}".format(base_source, obj.ctt_file_name, time.time())
+            return source
         except Exception as e:
-            raise (e)
-
-    def get_timestamp(self, obj):
-        return time.time()
+            return None
 
 
 class MaskSerializer(serializers.HyperlinkedModelSerializer):

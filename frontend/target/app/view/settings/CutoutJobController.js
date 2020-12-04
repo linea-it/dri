@@ -44,8 +44,8 @@ Ext.define('Target.view.settings.CutoutJobController', {
         vm.set('currentSetting', setting);
 
         contents.addFilter([
-            {'property': 'pcn_product_id', value: product.get('id')},
-            {'property': 'pca_setting', value: setting.get('cst_setting')}
+            { 'property': 'pcn_product_id', value: product.get('id') },
+            { 'property': 'pca_setting', value: setting.get('cst_setting') }
         ]);
 
     },
@@ -82,123 +82,116 @@ Ext.define('Target.view.settings.CutoutJobController', {
     },
 
     onSubmitJob: function () {
-        // Criar uma entrada na tabela cutout jobs usar a store para isso
+        // Criar uma entrada na tabela cutout jobs. usa a store para isso
         var me = this,
             view = me.getView(),
             vm = me.getViewModel(),
             cutoutjobs = vm.getStore('cutoutjobs'),
             product = vm.get('currentProduct'),
             form = view.down('form'),
-            values, job;
+            values, job, flagImage, colors, properties;
 
         if (form.isValid()) {
-
-            view.setLoading(true);
 
             values = form.getValues();
 
             job = Ext.create('Target.model.CutoutJob', {
                 cjb_product: product.get('id'),
                 cjb_display_name: values.job_name,
-                cjb_job_type: values.job_type,
-                cjb_xsize: parseFloat(values.xsize / 60).toFixed(3),
-                cjb_ysize: parseFloat(values.ysize / 60).toFixed(3),
-                cjb_Blacklist: false,
+                cjb_xsize: parseFloat(values.xsize),
+                cjb_ysize: parseFloat(values.ysize),
                 cjb_status: 'st', // Status Start
                 cjb_description: values.cjb_description,
-                cjb_image_formats: values.image_formats
             });
 
-            if (values.job_type == 'single') {
-                // Se for job Single Epoch
-
-                if (values.band) {
-                    try {
-                        job.set('cjb_band', values.band.join());
-                    }
-                    catch (err) {
-                        job.set('cjb_band', values.band);
-                    }
-                }
-
-                if (values.no_blacklist) {
-                    job.set('cjb_Blacklist', true);
-
-                }
-
-            } else {
-                // Se for Coadd Images
-
-                if ((values.tag) && (values.tag !== '')) {
-                    job.set('cjb_tag', values.tag);
-
-                }
+            // Release
+            if ((values.tag) && (values.tag !== '')) {
+                job.set('cjb_tag', values.tag);
             }
 
-            if ((values.label_properties) && (values.label_properties.length > 0)) {
+            // Flag para indicar que ao menos uma imagem colorida precisa ser escolhida.
+            flagImage = false;
+
+            // Color Images Stiff
+            if ((values.makeStiff === 'on') && (values.stiffColors)) {
+
+                colors = Ext.isArray(values.stiffColors) ? values.stiffColors.join(';') : values.stiffColors;
+                job.set('cjb_make_stiff', true);
+                job.set('cjb_stiff_colors', colors.toLowerCase())
+
+                flagImage = true;
+            }
+
+            // Color Images Lupton
+            if ((values.makeLupton === 'on') && (values.luptonColors)) {
+
+                colors = Ext.isArray(values.luptonColors) ? values.luptonColors.join(';') : values.luptonColors;
+                job.set('cjb_make_lupton', true);
+                job.set('cjb_lupton_colors', colors.toLowerCase())
+
+                flagImage = true;
+            }
+
+            // Fits images
+            if ((values.makeFits === 'on') && (values.fitsColors)) {
+
+                colors = Ext.isArray(values.fitsColors) ? values.fitsColors.join('') : values.fitsColors;
+                job.set('cjb_make_fits', true);
+                job.set('cjb_fits_colors', colors.toLowerCase())
+            }
+
+            // Labels
+            if ((values.label_properties)) {
+
+                properties = Ext.isArray(values.label_properties) ? values.label_properties.join() : values.label_properties;
                 job.set('cjb_label_position', values.label_position);
                 job.set('cjb_label_colors', values.label_color);
                 job.set('cjb_label_font_size', values.label_font_size);
-
-                job.set('cjb_label_properties', values.label_properties.join().toLowerCase());
-
+                job.set('cjb_label_properties', properties);
             }
+
+            if (!flagImage) {
+                Ext.MessageBox.alert('Select a color image.', 'it is necessary to choose at least one color image.');
+                return;
+            }
+
+            // TODO: Verificar a quantidade de imagens que serão geradas e avisar o usuario que pode demorar.
+
+            view.setLoading(true);
 
             // adicionar o record a store e fazer o sync
             cutoutjobs.add(job);
 
             cutoutjobs.sync({
-                callback: function () {
-                    // Reload a store com os jobs
-                    cutoutjobs.load();
+                success: function () {
 
                     // Limpar o Formulario
                     form.reset();
 
-                    // Remover o loading
-                    view.setLoading(false);
-
                     view.fireEvent('submitedjob', me);
-                    Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - create_mosaic');
+                    Ext.GlobalEvents.fireEvent('eventregister', 'TargetViewer - create_mosaic');
 
                     // Fechar a Janela
-                    me.afterSubmitJob(view);
+                    view.close();
+
+                    // Avisar o usuario que o Job foi submetido e será executado em background.
+                    Ext.MessageBox.alert('Job was submitted', "The job will run in the background and you will be notified when it is finished.");
+                },
+                failure: function () {
+                    // Avisar o usuario que Job falhou ao ser submetido.
+                    Ext.MessageBox.alert('Failed to submit the job.', 'An error occurred and the Job was not submitted, please try again. if the error persists, let us know through the helpdesk.');
+                },
+                callback: function () {
+                    // Reload a store com os jobs
+                    cutoutjobs.load();
+
+                    // Remover o loading
+                    view.setLoading(false);
                 }
             });
         }
     },
 
-
-    afterSubmitJob: function (view) {
-        // console.log('afterSubmitJob(%o)', view);
-        var me = this,
-            objectsCount = view.getObjectsCount(),
-            maxObjects = view.getMaxObjects();
-
-        view.close();
-
-        // Checar a quantidade de objetos na lista se for maior que 100
-        // Mostar um popup informando a limitiacao do sistema
-        if (objectsCount > maxObjects) {
-            Ext.MessageBox.alert(
-                '',
-                "The cutout tool has currently a limit of "+maxObjects+" objects. We are working to fix this limitation.<br>"+
-                "The job will run in the background and you will be notified when it is finished.");
-        } else {
-            Ext.MessageBox.alert(
-               '',
-               "The job will run in the background and you will be notified when it is finished.");
-        }
-    },
-
-    // onClickDownload: function () {
-    //     console.log('onClickDownload');
-
-    //     // Criar um arquivo com as urls para download das imagens
-    //     // parecido com o que usamos para baixar do descut mas
-    //     // com as nossas urls.
-
-    // }
     onDeactive: function () {
         var me = this;
 
@@ -208,16 +201,34 @@ Ext.define('Target.view.settings.CutoutJobController', {
 
     },
 
-    onCheckAllBands: function (checkbox, state) {
+    onCheckAllFitsBands: function (checkbox, state) {
         var me = this,
-            cbGroup = me.lookup('cbgBands');
+            cbGroup = me.lookup('cbgFitsColor');
 
         cbGroup.eachBox(function (cb) {
             cb.setValue(state);
 
         }, me);
+    },
 
-    }
+    onCheckAllStiffBands: function (checkbox, state) {
+        var me = this,
+            cbGroup = me.lookup('cbgStiffColor');
+
+        cbGroup.eachBox(function (cb) {
+            cb.setValue(state);
+
+        }, me);
+    },
+
+    onCheckAllLuptonBands: function (checkbox, state) {
+        var me = this,
+            cbGroup = me.lookup('cbgLuptonColor');
+
+        cbGroup.eachBox(function (cb) {
+            cb.setValue(state);
+
+        }, me);
+    },
 
 });
-//

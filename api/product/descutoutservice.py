@@ -1,798 +1,735 @@
-import csv
-import datetime
+import io
+import json
 import logging
+import math
 import os
-from pprint import pformat
+import shutil
+import tarfile
+import traceback
+from datetime import datetime, timedelta
+from pathlib import Path
 
 import humanize
-import requests
+import pandas as pd
+from common.desaccess import DesAccessApi
 from common.download import Download
+from common.models import Filter
 from common.notify import Notify
 from django.conf import settings
 from django.db.models import Sum
 from django.template.loader import render_to_string
 from django.utils import timezone
+from django.utils.timezone import utc
 from lib.CatalogDB import CatalogObjectsDBHelper
+
 from product.association import Association
-from product.models import Catalog
-from product.models import CutOutJob
-from product.models import Cutout
+from product.models import Catalog, Cutout, CutOutJob, Desjob
 
 
 class DesCutoutService:
+    """This Allows the execution of a Cutout job using the DESaccess API.
+    has methods for submitting, monitoring, downloading and registering jobs and their results.
+
+    Some job steps are asynchronous and are controlled by Celery tasks.
+
+    the process starts with the creation of a Cutoutjob model. that starts with status start.
+    A celery daemon searches from time to time for jobs with this status and submits that job to DESacces.
+    Another celery daemon looks for jobs that have been submitted, and when they finish running, the results are downloaded and recorded.
+
+    """
     db = None
 
     def __init__(self):
         # Get an instance of a logger
         self.logger = logging.getLogger("descutoutservice")
 
-        self.logger.info("Start!")
-
-        self.logger.info("Retrieving settings for des cutout service")
-
-        try:
-            params = settings.DES_CUTOUT_SERVICE
-            # self.logger.debug(params)
-
-            self.api_version = params["API_VERSION"]
-
-            self.host = params["HOST"]
-            self.user = params["USER"]
-            self.password = params["PASSWORD"]
-            self.token = params["TOKEN"]
-
-            self.email = params["EMAIL"]
-
-            self.check_jobs_task_delay = params["CUTOUT_TASK_CHECK_JOBS_DELAY"]
-
-            # Diretorio raiz onde ficaram as imagens do cutout
-            self.data_dir = settings.DATA_DIR
-            self.cutout_dir = params["CUTOUT_DIR"]
-
-            # Limit de Objetos que podem ser enviados ao descut
-            self.cutout_max_objects = params["MAX_OBJECTS"]
-
-            # Deletar os jobs no DESCUT depois de baixar as imagens
-            self.delete_job_after_download = params["DELETE_JOB_AFTER_DOWNLOAD"]
-
-            self.host_token = None
-            if params["API_GET_TOKEN"] is not None:
-                self.host_token = self.host + params["API_GET_TOKEN"]
-
-            self.host_create_jobs = self.host + params["API_CREATE_JOBS"]
-
-            self.host_check_jobs = self.host + params["API_CHECK_JOBS"]
-
-
-        except Exception as e:
-            msg = ("Error in the Cutouts parameters in the settings. "
-                   "Check the DES_CUTOUT_SERVICE section if it is configured correctly. ERROR: %s" % e)
-            raise Exception(msg)
-
-        # Tipos de arquivos recebidos que nao sao imagens
-        self.not_images = ["log", "csv", "stifflog"]
-
-        # Nome do arquivo de resultados
-        self.result_file = "result_file.txt"
-
         # fazer os request sem verificar o certificado SSL / HTTPS
         self.verify_ssl = False
 
-        self.logger.debug("host_token: %s" % self.host_token)
-        self.logger.debug("host_create_jobs: %s" % self.host_create_jobs)
-        self.logger.debug("host_check_jobs: %s" % self.host_check_jobs)
+        # Cria uma instancia da classe DesAccesApi que é responsavel pela integração com o serviço DESaccess.
+        self.desapi = DesAccessApi()
+        # Configura para usar o mesmo log desta classe,
+        # assim as mensagens de log referente as requisições vão ficar visiveis neste log.
+        self.desapi.setLogger(self.logger)
 
-    def generate_token(self):
-        """
-        Returns a token to create other requests
-        Returns: str(token)
-        """
-        self.logger.info("Generating a new Authentication token")
+    def get_cutoutjobs_by_id(self, id):
+        """Returns a CutoutJob model by its id.
 
-        if self.host_token is not None:
-
-            # Create Authetication Token
-            req = requests.post(
-                self.host_token,
-                data={
-                    "username": self.user,
-                    "password": self.password
-                },
-                verify=self.verify_ssl)
-
-            try:
-                self.logger.debug(req.text)
-
-                return req.json()["token"]
-            except Exception as e:
-                text = req.json()
-                msg = ("Token generation error %s - %s" % (req.status_code, text["message"]))
-
-                self.logger.critical(msg)
-
-            raise Exception(msg)
-
-        else:
-            return self.token
-
-    def check_token_status(self, token):
-        """
-        Check Token status: Check the expiration time for a token
-        Returns: bool()
-        """
-        self.logger.info("Check the expiration time for a token")
-
-        if self.host_token is not None:
-
-            req = requests.get(
-                self.host_token + "?token=" + token, verify=self.verify_ssl)
-
-            if req.json()["status"].lower() == "ok":
-                return True
-            else:
-                return False
-        else:
-            return True
-
-    def create_job(self, token, data):
-        """
-        Submit a Job to service
-            :param token:
-            :param data: {
-                "token"        : "aaa...",          # required
-                "ra"           : str(ra),           # required
-                "dec"          : str(dec),          # required
-                "job_type"     : "coadd",           # required "coadd" or "single"
-                "comment"      : "String"           # required Adicionado em 09/2017
-                "xsize"        : str(xs),           # optional (default : 1.0)
-                "ysize"        : str(ys),           # optional (default : 1.0)
-                "tag"          : "Y3A1_COADD",      # optional for "coadd" jobs (default: Y3A1_COADD, see Coadd Help page for more options)
-                "band"         : "g,r,i",           # optional for "single" epochs jobs (default: all bands)
-                "no_blacklist" : "false",           # optional for "single" epochs jobs (default: "false"). return or not blacklisted exposures
-                "list_only"    : "false",           # required for DR1 public version (default : "false") "true": will not generate pngs (faster)
-                "email"        : "myemail@mmm.com"  # optional will send email when job is finished
-                "username"     : "Username"         # Required for DR1 public version
-
-            }
-        """
-        self.logger.info("Sending request to create a new job in the Service")
-
-        data["token"] = token
-
-        self.logger.debug("Host Jobs: %s" % self.host_create_jobs)
-
-        req = requests.post(
-            self.host_create_jobs,
-            data=data,
-            verify=self.verify_ssl
-        )
-
-        self.logger.debug(req)
-
-        try:
-            if req.json()["status"] == "ok":
-                self.logger.debug(req.text)
-
-                return req.json()
-
-            else:
-                self.logger.warning(req.text)
-                msg = ("Create Job Error: " % req.json()["message"])
-                raise Exception(msg)
-
-        except Exception as e:
-
-            self.logger.error(req.text)
-
-            msg = ("Request Create Job error %s - %s" % (req.status_code, req.text))
-
-            raise Exception(msg)
-
-    def get_job_results(self, token, jobid):
-        """
-        Get Job Results : Mainly returns a list of links to files
-
-        return
-            links (string): quando o job termina com sucesso
-            None: quando o job ainda nao terminou
-            False: quando o job retorna com status failure
-        """
-
-        self.logger.info("Get Results for job %s" % jobid)
-
-        # TODO Diferenca entre Colaboracao e DR1 Public talvez transformar em metodos diferentes.
-        if self.api_version == 1:
-
-            req = requests.get(
-                self.host_check_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
-
-            self.logger.debug(req.text)
-
-            data = req.json()
-
-            if data["status"] != "error" and data["job_status"] == "SUCCESS":
-
-                if "links" in data and data["links"] is not None:
-                    self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
-
-                    return data["links"]
-                else:
-                    # Nao retornou a lista de resultado
-                    self.logger.warning("Descut returned success, but not the list of download links.")
-                    return None
-
-            elif data["status"] != "error" and data["job_status"] == "PENDING":
-                # O job ainda nao terminou no servidor
-                self.logger.info("This job %s is still running" % jobid)
-                return None
-
-            else:
-                return False
-
-        else:
-
-            data = {
-                "token": token,
-                "jobid": jobid
-            }
-            req = requests.post(
-                self.host_check_jobs,
-                data=data,
-                verify=self.verify_ssl,
-            )
-
-            self.logger.debug(req.text)
-
-            data = req.json()
-
-            if data["status"] != "error" and data["job_status"] == "SUCCESS":
-
-                if "files" in data and data["files"] is not None:
-                    self.logger.info("This job %s is finished and is ready to be downloaded" % jobid)
-
-                    return data["files"]
-                else:
-                    # Nao retornou a lista de resultado
-                    self.logger.warning("Descut returned success, but not the list of download links.")
-                    return None
-
-            elif data["status"] != "error" and data["job_status"] == "PENDING":
-                # O job ainda nao terminou no servidor
-                self.logger.info("This job %s is still running" % jobid)
-                return None
-
-            else:
-                return False
-
-    def delete_job_results(self, token, jobid):
-        """
-        Delete Jobs: Delete Job by its Id
-
-        """
-        self.logger.info("Deleting job %s in DesCutout service" % jobid)
-
-        if self.api_version == 1 and self.delete_job_after_download is True:
-            req = requests.delete(
-                self.host_check_jobs + "?token=" + token + "&jobid=" + jobid, verify=self.verify_ssl)
-
-            data = req.json()
-            self.logger.debug(data)
-
-            if data["status"] != "error" and data["status"] == "ok":
-                self.logger.info("Deleted job!")
-
-                return True
-            else:
-                return False
-        else:
-            return True
-
-    def parse_result_url(self, url):
-        """
-        Divide uma url retornada pelo Des Cutout Service em um objeto
         Args:
-            url: str()
+            id (int): CutoutJob model primary key
 
         Returns:
+            product.models.CutOutJob: Instance of CutOutJob.
+        """
+        try:
+            return CutOutJob.objects.get(pk=int(id))
+        except CutOutJob.DoesNotExist as e:
+            self.on_error(id, e)
+
+    def get_job_path(self, id):
+        """Returns the path where the job's local files are located.
+
+        Args:
+            id (int): CutoutJob model primary key
+
+        Returns:
+            str: Path where are the files for this job.
+        """
+        basepath = os.path.join(settings.DATA_DIR, 'cutouts')
+        job_path = os.path.join(basepath, str(id))
+        return job_path
+
+    def create_job_path(self, id):
+        """Creates a directory for the cutout job.
+
+        Args:
+            id (int): CutoutJob model primary key
+
+        Raises:
+            error: Failed to create the directory
+
+        Returns:
+            str: Path where are the files for this job.
+        """
+        job_path = self.get_job_path(id)
+        self.logger.debug("Trying to create the job directory")
+
+        try:
+
+            Path(job_path).mkdir(parents=True, exist_ok=True)
+            self.logger.info("Directory successfully created [%s]" % job_path)
+            return job_path
+
+        except OSError as error:
+            self.logger.error("Failed to create the directory [%s]" % job_path)
+            raise error
+
+    def get_summary_path(self, id, jobid):
+        """Returns the path to a DES job's summary file.
+
+        Args:
+            id (int): CutoutJob model primary key
+            jobid (str): Universally unique identifier of DES job
+
+        Returns:
+            str: Path to summary.json file
+        """
+        summary_path = os.path.join(self.get_job_path(id), str(jobid), 'summary.json')
+        return summary_path
+
+    def start_job_by_id(self, id):
+        """This method submits a local job to DESaccess and creates a desjob. 
+        it also makes the selection of the parameters that will be used by the desjob to create the cutouts.
+
+        Depending on the number of positions that will be sent more than one DES job can be created.
+
+        At the end of this function the job will be in running status. 
+        a daemon will look for jobs in this status and check when the DES job has finished running.
+
+        Args:
+            id (int): CutoutJob model primary key
 
         """
-        arq = dict({
-            "thumbname": None,
-            "filename": None,
-            "file_type": None,
-            # "ra_sex": None,
-            # "dec_sex": None,
-            # "ra": None,
-            # "dec": None,
-            "filter": None,
-            "url": url.strip()
-        })
+        self.logger.info("Des Cutout Starting Job by ID %s" % id)
 
-        # filename = ultima parte da url
-        aurl = url.split("/")
-        filename = aurl[len(aurl) - 1]
-        arq.update({"filename": filename.strip()})
+        # Recupera o Model CutoutJob pelo id
+        try:
+            job = self.get_cutoutjobs_by_id(id)
 
-        # file_type extensao do arquivo
-        file_type = filename.split(".")[len(filename.split(".")) - 1]
-        arq.update({"file_type": file_type.strip()})
+            self.logger.debug("CutoutJob Name: %s" % job.cjb_display_name)
 
-        if file_type not in self.not_images:
-            # Filtro da Imagem.
-            try:
-                filter = filename.split("_")[1].split(".")[0]
-                arq.update({"filter": filter.strip()})
+            # Notificacao por email de Inicio do Job
+            CutoutJobNotify().create_email_message(job)
 
-                # thumbname = filename split _
-                thumbname = filename.split("_")[0]
-                arq.update({"thumbname": thumbname.strip()})
+            # Alterar o status para Before Submit
+            job.cjb_status = 'bs'
+            job.save()
 
-            except:
-                # NAO TEM BANDA
-                # TODO descobrir um jeito de saber quais as bandas usadas para imagem colorida
+            # Criar um diretório para os arquivos do Job.
+            job.cjb_cutouts_path = self.create_job_path(id)
+            job.save()
 
-                thumbname = filename[0:21]
-                arq.update({"thumbname": thumbname.strip()})
+            # Parametros de submissão
+            data = dict({})
 
-        return arq
-
-    def start_job(self, job):
-
-        product_id = job.cjb_product_id
-
-        # Se o Estatus for Starting
-        if job.cjb_status == "st":
-
-            # Criando o token de acesso
-            token = self.generate_token()
-            self.logger.debug("Token: %s" % token)
-
-            # Muda o Status para Before Submit
-            self.change_cutoutjob_status(job, "bs")
-
-            # Recupera os objetos do catalogo
-            self.logger.info("Retrieving the objects to be sent")
-
-            objects = self.get_catalog_objects(job)
-
-            self.logger.info("There are %s objects to send" % objects.get("count"))
-
-            # Comment, este comentario e visivel so na interface do descut
-            comment = "Science Server Cutout Job Id: %s Product ID: %s" % (job.pk, product_id)
-
-            data = dict({
-                "job_type": job.cjb_job_type,
-                "ra": objects.get("ra"),
-                "dec": objects.get("dec"),
-                "comment": comment,
-            })
-
-            # Params Obrigatorios para DR1 public version
-            if self.api_version == 2:
-                data.update({
-                    "username": self.user,
-                    "password": self.password,
-                    "list_only": "false",
-                    "email": self.email,
-                    "jobname": comment
-                })
-
+            # Tamanho dos Cutouts
             if job.cjb_xsize:
                 data.update({"xsize": job.cjb_xsize})
             if job.cjb_ysize:
                 data.update({"ysize": job.cjb_ysize})
 
-            if job.cjb_job_type == "single":
-                if job.cjb_band:
-                    data.update({"band": job.cjb_band})
-                if job.cjb_Blacklist:
-                    data.update({"no_blacklist": "true"})
-                else:
-                    data.update({"no_blacklist": "false"})
+            # Geração de Imagens Fits
+            # Enviar o parametro que indica para o DESaccess que não é para incluir os fits
+            # utilizados na geração das imagens coloridas, incluir somente a cores solicitadas no colors_fits.
+            # discard_fits_files (bool) Discard FITS files that are only created in order to produce requested RGB images.
+            # FITS files that are explicitly requested are retained.
+            if job.cjb_make_fits:
+                data.update({
+                    "make_fits": True,
+                    "colors_fits": job.cjb_fits_colors,
+                    "discard_fits_files": True
+                })
             else:
-                if job.cjb_tag:
-                    data.update({"tag": job.cjb_tag})
+                data.update({
+                    "make_fits": False,
+                    "discard_fits_files": True
+                })
 
-            self.logger.debug("Data to be send coordinates:")
-            self.logger.debug(pformat(data))
+            # Geração de Imagens Coloridas com Stiff
+            if job.cjb_make_stiff:
+                data.update({
+                    "make_rgb_stiff": True,
+                    "rgb_stiff_colors": job.cjb_stiff_colors
+                })
 
-            # Submit a Job
-            try:
-                result = self.create_job(token, data)
+            # Geração de Imagens Coloridas com lupton
+            if job.cjb_make_lupton:
+                data.update({
+                    "make_rgb_lupton": True,
+                    "rgb_lupton_colors": job.cjb_lupton_colors
+                })
 
-                self.logger.info("Updating CutoutJob to keep job id returned")
+            # Seleção do Release
+            data.update({
+                "release": job.cjb_tag
+            })
 
-                # Diferencas entre DR1 e Colaboracao
-                jobid = None
-                try:
-                    jobid = result["job"]
+            # Preparar a lista de objetos para submissão
 
-                except:
-                    jobid = result["jobid"]
+            # Recuperar da settings a quantidade maxima de rows por job
+            config = settings.DESACCESS_API
+            max_objects = config["MAX_OBJECTS"]
 
-                self.logger.debug("Job ID: %s" % jobid)
+            # Checar o tamanho do lista e dividir em varios jobs caso ultrapasse o limit.
+            count = self.get_catalog_count(job.cjb_product_id)
 
-                job.cjb_job_id = str(jobid)
-                job.save()
+            # Quantidade de Paginas ou jobs que serao necessários.
+            pages_count = math.ceil(float(count) / max_objects)
+            # self.logger.debug("Pages: [%s]" % pages_count)
 
-                # Changing the CutoutJob Status for Running
-                self.change_cutoutjob_status(job, "rn")
+            # Fazer a query dos objetos dividindo em paginas pelo tamanho maximo de objetos que o Desaccess aceita.
+            for page in range(1, pages_count + 1):
+                # self.logger.debug("Current Page: [%s]" % page)
 
-                self.logger.info("Done! The new job was created successfully")
+                # Calculo do Offset para a paginação.
+                offset = ((page - 1) * max_objects)
+                # self.logger.debug("Offset: [%s]" % offset)
 
-            except Exception as e:
-                # Changing the CutoutJob Status for Error
-                self.change_cutoutjob_status(job, "er")
+                rows = self.get_catalog_objects(job.cjb_product.pk, limit=max_objects, offset=offset)
 
-                raise e
-        else:
-            msg = (
-                "This cutoutjob %s can not be started because the current status '%s' is different from 'starting'" % (
-                    job.pk, job.cjb_status))
-            raise Exception(msg)
+                df = pd.DataFrame(rows)
 
-    def start_job_by_id(self, id):
-        self.logger.info("Des Cutout Start Job by ID %s" % id)
+                # Cria uma string no formato csv para ser enviada para Desaccess.
+                s_positions = io.StringIO()
+                df.to_csv(s_positions, columns=["meta_ra", "meta_dec"], header=["RA", "DEC"], index=False)
 
-        # Recupera o Model CutoutJob pelo id
-        try:
-            cutoutjob = self.get_cutoutjobs_by_id(id)
+                data.update({
+                    "positions": s_positions.getvalue(),
+                })
 
-            self.logger.debug("CutoutJob Name: %s" % cutoutjob.cjb_display_name)
+                # Submeter o Job e guardar o id retornado pelo Descut
+                jobid = self.desapi.submit_cutout_job(data)
 
-            # Notificacao por email
-            CutoutJobNotify().create_email_message(cutoutjob)
+                # Cria uma instancia do Desjob
+                record = Desjob.objects.create(
+                    djb_cutout_job=job,
+                    djb_jobid=jobid)
+                record.save()
 
-            self.start_job(cutoutjob)
+                self.logger.info("New Desjob was created. Desjob: [%s] Jobid: [%s]" % (record.pk, jobid))
+
+                # Criar um arquivo csv com as posições enviadas para este job este aquivo sera usado para associar os resultados.
+                target_csv = os.path.join(self.get_job_path(job.id), "{}_targets.csv".format(jobid))
+                df.to_csv(
+                    target_csv,
+                    sep=";",
+                    header=True,
+                    index=False
+                )
+                self.logger.debug("Csv file with the positions of this jobid was created. CSV: [%s]" % target_csv)
+
+            # Cutout Job enviado e aguardando termino na API
+            # Alterar o status para Running
+            job.cjb_status = 'rn'
+            job.save()
+
+            self.logger.info("Status changed to Running")
+
+            # Apartir daqui o job está rodando no NCSA.
+            # Uma daemon vai ficar checando o andamento do Job usando o metodo check_job_by_id.
 
         except CutOutJob.DoesNotExist as e:
-            self.logger.critical(e)
+            self.on_error(id, e)
             raise e
 
         except Exception as e:
-            self.logger.critical(e)
+            self.on_error(id, e)
             raise e
 
-    def start_jobs(self):
-        self.logger.info("Des Cutout Start Jobs with status is 'starting'")
-
-        # Recuperar a lista de jobs com o status "st"
-        cutoutjobs = self.get_cutoutjobs_by_status("st")
-
-        self.logger.info("There are %s CutoutJobs to start" % len(cutoutjobs))
-
-        for job in cutoutjobs:
-            # TODO chamar o metodo start_job
-            pass
-
-    def delete_job(self, cutoutjob):
-
-        if cutoutjob.cjb_job_id is not None:
-            token = self.generate_token()
-
-            self.delete_job_results(token, cutoutjob.cjb_job_id)
-
-    def get_cutoutjobs_by_status(self, status):
-
-        # Pegar todos os CutoutJobs com status = st (Start)
-        return CutOutJob.objects.filter(cjb_status=str(status))
-
-    def get_cutoutjobs_by_id(self, id):
-        return CutOutJob.objects.get(pk=int(id))
-
-    def change_cutoutjob_status(self, cutoutjob, status):
-        self.logger.info("Changing the CutoutJob Status %s for %s" % (cutoutjob.cjb_status, status))
-        cutoutjob.cjb_status = status
-        cutoutjob.save()
-
-    def check_jobs(self):
-        """
-        Verifica todos os jobs com status running
-        """
-
-        # Pegar todos os CutoutJobs com status running
-        jobs = CutOutJob.objects.filter(cjb_status="rn")
-
-        if jobs.count() > 0:
-            self.logger.info("Check %s Jobs with status running" % jobs.count())
-
-        # Faz um for para cara job
-        for job in jobs:
-            self.logger.info("Get Status for job %s" % job.pk)
-
-            # Cria um Token
-            token = self.generate_token()
-
-            # Consulta o Job no servico
-            list_files = self.get_job_results(token, job.cjb_job_id)
-
-            if list_files is False:
-                # Changing the CutoutJob Status for Error in the DesCutout side.
-                self.change_cutoutjob_status(job, "je")
-                break
-
-            if list_files is not None:
-                #  Path onde ficaram os arquivos de cutout
-                cutoutdir = self.get_cutout_dir(job)
-
-                # Guardar o Arquivo de resultado com os links a serem baixados
-                result_file = self.save_result_links_file(job, list_files)
-
-                job.cjb_results_file = result_file.split(self.data_dir)[1].strip("/")
-
-                # Baixar o Arquivo Matched que sera usado para associar os arquivos baixados com os objetos.
-                matched = None
-                for link in list_files:
-                    arq = self.parse_result_url(link)
-                    if arq.get("file_type") == "csv" and arq.get("filename").find("matched") > -1:
-                        matched = arq
-                        break
-
-                if matched is not None:
-                    matched_file = Download().download_file_from_url(
-                        matched.get("url"),
-                        cutoutdir,
-                        matched.get("filename"))
-
-                    # Criar um arquivo associando os arquivos ao seu objeto
-                    objects = self.get_objects_from_file(job)
-
-                    with open(matched_file, "r") as matched_csv:
-                        matched_reader = csv.DictReader(matched_csv)
-
-                        for row in matched_reader:
-                            key = self.get_object_position_key(row.get("RA"), row.get("DEC"))
-
-                            for obj in objects:
-                                if key == obj.get("key"):
-                                    obj.update({"thumbname": row.get("THUMBNAME")})
-                                    break
-
-                    matched_csv.close()
-                    job.cjb_matched_file = matched_file.split(self.data_dir)[1].strip("/")
-
-                    # Escrever o novo arquivo de objetos com o nome do arquivo
-                    with open(os.path.join(cutoutdir, "objects.csv"), "w") as new_objects_csv:
-                        fieldnames = ["key", "id", "ra_original", "ra", "dec", "thumbname"]
-                        writer = csv.DictWriter(new_objects_csv, fieldnames=fieldnames)
-                        writer.writeheader()
-                        for obj in objects:
-                            print("Escrevendo o novo  objeto")
-                            self.logger.debug(obj)
-                            writer.writerow(obj)
-
-                    new_objects_csv.close()
-
-                job.cjb_cutouts_path = cutoutdir.split(self.data_dir)[1].strip("/")
-
-                # Changing the CutoutJob Status for Before Download
-                self.change_cutoutjob_status(job, "bd")
-
-    def get_cutout_dir(self, cutout_job=None, product=None, jobid=None):
-        """
-        Criar um Diretorio agrupando os jobs de cutouts por produtos
-        <product_id>/<cutout_job_id>/*
+    def check_job_by_id(self, id):
+        """This method checks the status of all DES Jobs related to this Cutout Job. 
+        When all DES jobs finish Cutout Job status is changed to Before Download, 
+        at this point another daemon is looking for jobs with this status to download and register files.
 
         Args:
-            cutout_job: instancia do model CutoutJob
-            OR
-            product: chave pk do model Product em conjunto com
-            jobid: chave pk do model CutoutJob
+            id (int): CutoutJob model primary key
+        """
+        self.logger.info("Des Cutout Check Job by ID %s" % id)
 
-        Returns: str(<product_id>/<cutout_job_id>/)
+        try:
+            # Recupera o Model CutoutJob pelo id
+            job = self.get_cutoutjobs_by_id(id)
+
+            # Para cada Desjob associado ao CutoutJob com status None.
+            desjobs = job.desjob_set.filter(djb_status=None)
+
+            for desjob in desjobs:
+                try:
+                    # Verifica se o status do job no Descut
+                    job_summary = self.desapi.check_job_status(desjob.djb_jobid)
+
+                    # Se o retorno do Check for None signica que o job ainda não foi finalizado.
+                    if job_summary is None:
+                        return
+
+                    # Alterar o Status do Desjob
+                    desjob.djb_status = job_summary["job_status"]
+                    desjob.djb_message = job_summary["job_status_message"]
+                    desjob.djb_start_time = job_summary["job_time_start"]
+                    desjob.djb_finish_time = job_summary["job_time_complete"]
+
+                    desjob.save()
+
+                except Exception as e:
+                    self.on_error(id, e)
+
+            # Verifica se todos os Desjobs tiverem acabado de executar muda o status.
+            desjobs = job.desjob_set.filter(djb_status=None)
+            if len(desjobs) == 0:
+                self.logger.info("All DES Jobs for this Cutout Job have been executed.")
+                # Alterar o status para Before Download
+                job.cjb_status = "bd"
+                job.save()
+
+        except Exception as e:
+            self.on_error(id, e)
+
+    def download_by_id(self, id):
+        """Starts the download phase of the results. 
+        Each DES Job associated with the Cutout Job is downloaded sequentially. 
+        at the end of downloading all results, Cutout Job is successfully completed.
+
+        Args:
+            id (int): CutoutJob model primary key
+        """
+        # Recupera o Model CutoutJob pelo id
+        job = self.get_cutoutjobs_by_id(id)
+
+        # Alterar o status para Downloading
+        job.cjb_status = "dw"
+        job.save()
+
+        for desjob in job.desjob_set.filter(djb_status="success"):
+            self.download_by_jobid(job.id, desjob.djb_jobid)
+
+        # Depois de baixar todos os desjobs finalizar o CutoutJob
+        self.on_success(id)
+
+    def download_by_jobid(self, id, jobid):
+        """Performs the download of the results of a DES Job.
+        the result is a tar.gz file with all the files. 
+        this tar.gz is extracted. 
+        a position can generate more than one file, and all files are registered in the Cutout model.
+
+        Args:
+            id (int): CutoutJob model primary key
+            jobid (str): Universally unique identifier of DES job
+
+        """
+        self.logger.info("Starting download Cutouts ID:[%s] Jobid [ %s ]" % (id, jobid))
+
+        try:
+            # Recupera o Model CutoutJob pelo id
+            job = self.get_cutoutjobs_by_id(id)
+
+            # Recupera o Model Desjob
+            desjob = job.desjob_set.get(djb_jobid=jobid)
+
+            # Baixar o tar.gz com todos os dados
+            filename = self.desapi.get_cutout_tar_filename(jobid)
+            url = self.desapi.get_cutout_files_url(jobid)
+            job_path = self.get_job_path(id)
+
+            tar_filepath = Download().download_file_from_url(url, job_path, filename)
+
+            if os.path.exists(tar_filepath):
+                self.logger.info("Files was successfully downloaded!")
+                self.logger.debug("Filepath: [%s]" % tar_filepath)
+
+                # Extrair o tar.gz
+                self.extract_file(tar_filepath, job_path)
+
+                # Verificar se ao extrarir o arquivo criou o diretório
+                image_path = os.path.join(job_path, str(jobid))
+                if not os.path.exists(image_path):
+                    raise Exception("Failed to extract the tar.gz file: [%s]" % filename)
+
+                # Arquivo já foi extraido, apagar o tar.gz
+                os.unlink(tar_filepath)
+                self.logger.info("File was extracted and tar.gz was deleted.")
+
+                # Altera o status do Desjob para downloaded
+                desjob.djb_status = "downloaded"
+                desjob.save()
+
+                # Inciar o registro das imagens geradas
+                self.register_cutouts_by_jobid(id, jobid)
+
+            else:
+                raise Exception("%s file not downloaded" % filename)
+
+        except Exception as e:
+            msg = "Error downloading Des job files: %s" % e
+            self.on_error(id, msg)
+
+    def register_cutouts_by_jobid(self, id, jobid):
+        """Register all files in a DES Job. 
+        each file will have a record in the Cutout model. 
+        for each file an association with a position will be made.
+
+        Args:
+            id (int): CutoutJob model primary key
+            jobid (str): Universally unique identifier of DES job
+        """
+        self.logger.info("Starting Registration of Cutouts ID:[%s] Jobid [ %s ]" % (id, jobid))
+
+        # Recupera o Model CutoutJob pelo id
+        job = self.get_cutoutjobs_by_id(id)
+
+        # Recupera o Model Desjob
+        desjob = job.desjob_set.get(djb_jobid=jobid)
+
+        # Ler o Targets.csv, arquivo com a lista de todas as coordenadas que foram enviadas.
+        targets_file = os.path.join(self.get_job_path(job.id), "{}_targets.csv".format(jobid))
+        df_targets = pd.read_csv(
+            targets_file,
+            sep=";",
+            index_col="meta_id",
+            dtype=dict({
+                "meta_ra": "str",
+                "meta_dec": "str",
+            }))
+
+        # self.logger.debug(df_targets.head())
+
+        # Ler o Summary.json
+        summary_file = self.get_summary_path(id, jobid)
+        self.logger.debug("Summary File: [%s]" % summary_file)
+        with open(summary_file) as fp:
+            summary = json.load(fp)
+
+        # Array com os dados do cutout, cada coordenada de targets gera um elemento neste array.
+        # cada elemento tem todas as configurações usadas, as coordendas e um array FILES com os arquivos gerados para esta coordenada.
+        cutouts = summary["cutouts"]
+
+        total_images = 0
+        # Para cada cutout, procurar no targets qual é o id relacionado a esta coordenada.
+        # esse Id sera usado para registrar os arquivos desta coordenada com um target especifico.
+        for cutout in cutouts:
+            try:
+                # Procura no dataframe targets um registro que tenhas as coordenadas Ra e Dec iguais as do cutout.
+                # Por algum motivo a comparação entre as coordenas só funcionou usando String,
+                # usando float, não encontra todos os valores mesmo sendo visualmente identicos.
+                result = df_targets.loc[(df_targets["meta_ra"] == str(cutout["RA"])) & (df_targets["meta_dec"] == str(cutout["DEC"]))]
+
+                result.reset_index(inplace=True)
+                result = result.to_dict('records')
+
+                if len(result) == 1:
+                    target = result[0]
+                    self.logger.info("Cutout RA: [%s] Dec: [%s] Target Id: [%s]" % (cutout["RA"], cutout["DEC"], target["meta_id"]))
+
+                    # TODO: Para cada Arquivo de imagem, criar um registro no Model Cutouts
+                    records = self.register_images(job, desjob, cutout, target["meta_id"])
+
+                    total_images += len(records)
+                else:
+                    self.logger.warning("Cutout RA: [%s] Dec: [%s] Was not associated with a target! Match: %s" % (cutout["RA"], cutout["DEC"], result))
+
+            except Exception as e:
+                self.on_error(jobid, e)
+
+        self.logger.info("Total of [%s] images were registered" % total_images)
+
+    def register_images(self, job, desjob, cutout, object_id):
+        """Creates a record in the Cutout model.
+        For each position/object register all image files.
+
+        Args:
+            job (product.models.CutOutJob): Cutout Job instance.
+            desjob (product.models.DesJob): Des Job instance.
+            cutout (dict): File information already associated with position.
+            object_id (str): Object Id referring to the position.
+
+        Returns:
+            array: Array of Cutout model instances
+        """
+
+        jobid = desjob.djb_jobid
+        records = []
+
+        try:
+            for filename in cutout['FILES']:
+
+                filename = filename.strip()
+
+                name, extension = os.path.splitext(filename)
+                extension = extension.strip(".")
+
+                img_filter = name.split("_")[1]
+                band = self.get_band_model(img_filter)
+
+                img_format = None
+                if extension == "fits":
+                    img_format = "fits"
+                else:
+                    img_format = name.split('_')[2]
+
+                job_path = self.get_job_path(job.id)
+
+                file_path = os.path.join(job_path, jobid, cutout['TILENAME'], name.split("_")[0])
+
+                record = Cutout.objects.create(
+                    cjb_cutout_job=job,
+                    cjb_des_job=desjob,
+                    ctt_jobid=jobid,
+                    ctt_file_name=filename,
+                    ctt_file_type=extension,
+                    ctt_filter=band,
+                    ctt_object_id=object_id,
+                    ctt_object_ra=cutout['RA'],
+                    ctt_object_dec=cutout['DEC'],
+                    ctt_img_format=img_format,
+                    ctt_file_path=file_path,
+                    ctt_file_size=os.path.getsize(os.path.join(file_path, filename)),
+                )
+
+                records.append(record)
+
+            Cutout.objects.bulk_create(records, ignore_conflicts=True)
+
+            return records
+
+        except Exception as e:
+            raise Exception("Failed to register images. %s" % e)
+
+    def get_band_model(self, band):
+        """Returns the common.Filter model for a band by name.
+
+        Args:
+            band (str): band name exemple "g"
+
+        Returns:
+            common.models.Filter: A instance of Filter model.
         """
         try:
-            if cutout_job is not None:
-                cutout_dir = os.path.join(
-                    self.data_dir,
-                    self.cutout_dir,
-                    str(cutout_job.cjb_product_id),
-                    str(cutout_job.id))
-            else:
-                cutout_dir = os.path.join(
-                    self.data_dir,
-                    self.cutout_dir,
-                    str(product),
-                    str(jobid))
+            record = Filter.objects.get(filter=band)
+        except Filter.DoesNotExist:
+            record = Filter.objects.create(
+                project="DES",
+                filter=band,
+            )
+            record.save()
+            self.logger.info("A record was created for the %s band in the model common.Filter" % band)
 
-            os.makedirs(cutout_dir)
-            return cutout_dir
+        return record
 
-        except OSError:
-            # Cutout path already exists
-            return cutout_dir
+    def get_catalog_count(self, product_id):
+        """Executes a query in the catalog and returns the total number of records.
 
-    def save_result_links_file(self, cutoutjob, links):
-        self.logger.info("Save result links to a file")
+        Args:
+            product_id (int): Primary key of the Product model that represents the catalog that will be made the query.
 
-        cutoutdir = self.get_cutout_dir(cutoutjob)
-        f = os.path.join(cutoutdir, self.result_file)
-
-        with open(f, "w") as result:
-            for l in links:
-                result.write(l + "\n")
-
-            result.close()
-
-        self.logger.debug("Result File %s" % f)
-        return f
-
-    def get_catalog_objects(self, job):
-        product_id = job.cjb_product_id
-        cutoutdir = self.get_cutout_dir(job)
+        Returns:
+            int: Total catalog lines.
+        """
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
 
-        # colunas associadas ao produto
-        associations = Association().get_associations_by_product_id(product_id)
-
-        # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
-        columns = Association().get_properties_associated(product_id)
-
+        # Instancia da classe de Banco de dados utilizada para query em tabelas de catalogos.
         catalog_db = CatalogObjectsDBHelper(
             catalog.tbl_name,
             schema=catalog.tbl_schema,
             database=catalog.tbl_database
         )
 
+        # Seta o log na instancia da catalog_db para que as querys executadas aparareçam no log de cutout.
+        catalog_db.setLogger(self.logger)
+
+        count = catalog_db.count()
+
+        self.logger.info("Total number of objects in the catalog: [%s]" % count)
+
+        return count
+
+    def get_catalog_objects(self, product_id, limit=None, offset=None):
+        """Executes a query in the catalog and returns an array of objects already using association for the id, ra and dec columns.
+
+        This query can be paged using the limit and offset parameters.  
+
+        Args:
+            product_id (int): Primary key of the Product model that represents the catalog that will be made the query.
+            limit (int, optional): Maximum number of rows in this query.. Defaults to None.
+            offset (int optional): From which result the query will be executed. Defaults to None.
+
+        Returns:
+            array: Returns an array of catalog objects, where each object has the attributes meta_id, meta_ra and meta_dec.
+        """
+
+        catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
+
+        self.logger.info("Executing the query in the catalog table. Table: [%s]" % (catalog.tbl_name))
+
+        # colunas associadas ao produto
+        associations = Association().get_associations_by_product_id(product_id)
+        self.logger.debug("Associations: [%s]" % associations)
+
+        # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
+        columns = Association().get_properties_associated(product_id)
+        self.logger.debug("Columns: [%s]" % columns)
+
+        # Instancia da classe de Banco de dados utilizada para query em tabelas de catalogos.
+        catalog_db = CatalogObjectsDBHelper(
+            catalog.tbl_name,
+            schema=catalog.tbl_schema,
+            database=catalog.tbl_database
+        )
+        # Seta o log na instancia da catalog_db para que as querys executadas aparareçam no log de cutout.
+        catalog_db.setLogger(self.logger)
+
+        # Lista com os resultados da query.
+        records = list()
+
+        # Executa a query
         rows, count = catalog_db.query(
             columns=columns,
-            limit=self.cutout_max_objects
+            limit=limit,
+            start=offset
         )
 
-        # Criar um arquivo que servira de index para a associar os objetos as imagens
+        # Para cada linha alterar os nomes de colunas utilizando as informações de associação.
+        # O resultado é um array records onde cada record tem sempre os mesmos atributos (meta_id, meta_ra, meta_dec)
+        # independente dos nomes originais das colunas.
+        for row in rows:
+            ra = row[associations["pos.eq.ra;meta.main"]]
+            dec = row[associations["pos.eq.dec;meta.main"]]
 
-        # Lista de Ra e dec que serao passadas como parametro
-        lra = list()
-        ldec = list()
+            record = dict({
+                "meta_id": row[associations["meta.id;meta.main"]],
+                "meta_ra": float("{:.6f}".format(ra)),
+                "meta_dec": float("{:.6f}".format(dec))
+            })
+            records.append(record)
 
-        with open(os.path.join(cutoutdir, "objects.csv"), "w") as objects_csv:
-            fieldnames = ["key", "id", "ra_original", "ra", "dec"]
-            writer = csv.DictWriter(objects_csv, fieldnames=fieldnames)
-            writer.writeheader()
+        del rows
 
-            for row in rows:
-                ra_original = float(row.get(associations.get("pos.eq.ra;meta.main")))
-                ra = ra_original
-                dec = float(row.get(associations.get("pos.eq.dec;meta.main")))
+        return records
 
-                if ra < 0 and ra > -180:
-                    ra = ra + 360
+    def extract_file(self, filepath, path):
+        """Extract a tar.gz file to a directory.
 
-                obj = dict({
-                    "id": row.get(associations.get("meta.id;meta.main")),
-                    "ra_original": ra_original,
-                    "ra": ra,
-                    "dec": dec,
-                    "key": str(self.get_object_position_key(ra, dec))
-                })
-
-                writer.writerow(obj)
-
-                lra.append(ra)
-                ldec.append(dec)
-
-        objects_csv.close()
-
-        return dict({
-            "ra": str(lra),
-            "dec": str(ldec),
-            "count": len(rows)
-        })
-
-    def get_objects_from_file(self, cutoutjob):
-        cutoutdir = self.get_cutout_dir(cutoutjob)
-        objects = list()
-        with open(os.path.join(cutoutdir, "objects.csv"), "r") as objects_csv:
-            objects_reader = csv.DictReader(objects_csv)
-            for object in objects_reader:
-                objects.append(object)
-        objects_csv.close()
-
-        return objects
-
-    def get_object_position_key(self, ra, dec):
-        """
-        Monta uma chave usando ra e dec do objeto
         Args:
-            ra: float() com 3 casas decimais
-            dec: float() com 3 casas decimais
-
-        Returns: string() ra+dec ou ra-dec
+            filepath (str): path to the tar.gz file to be extracted.
+            path (str): path where the file will be extracted.
         """
-        ra = float("{:6.3f}".format(float(ra)))
-        dec = float("{:6.3f}".format(float(dec)))
+        tar = tarfile.open(filepath)
+        tar.extractall(path)
+        tar.close()
 
-        # montar uma chave usando ra dec
-        key = str(ra)
-        if float(dec) > 0:
-            key += "+" + str(dec)
-        else:
-            key += str(dec)
+    def purge_cutoutjob_dir(self, id):
+        """Removes all files from a Cutout Job from the local directory. 
+        this method must be executed every time a Cutout Job model is deleted. 
+        for this, this method is linked to the model using Signal.
 
-        return key
-
-    def test_api_help(self):
-        print("-------------- test_api_help --------------")
-        token = self.generate_token()
-
-        ra = [10.0, 20.0, 30.0]
-        dec = [40.0, 50.0, 60.0]
-        xs = [1.0, 2.0, 3.0, 4.0]
-        ys = [2.0]
-
-        # create body of request
-        body = {
-            "token": token,  # required
-            "ra": str(ra),  # required
-            "dec": str(dec),  # required
-            "job_type": "coadd",  # required "coadd" or "single"
-            "xsize": str(xs),  # optional (default : 1.0)
-            "ysize": str(ys),  # optional (default : 1.0)
-            "band": "g,r,i",  # optional for "single" epochs jobs (default: all bands)
-            "no_blacklist": "false",
-            # optional for "single" epochs jobs (default: "false"). return or not blacklisted exposures
-            "list_only": "false",  # optional (default : "false") "true": will not generate pngs (faster)
-            "email": "false"  # optional will send email when job is finished
-        }
-
-        req = requests.post("http://descut.cosmology.illinois.edu/api/jobs/", data=body, verify=self.verify_ssl)
-
-        # create body for files if needed
-        # body_files = {"csvfile": open("mydata.csv", "rb")}  # To load csv file as part of request
-        # To include files
-        # req = requests.post("http://descut.cosmology.illinois.edu/api/jobs/", data=body, files=body_files)
-
-        print(req)
-        print(req.text)
-        print(req.json()["job"])
-
-    def create_cutout_model(self,
-                            cutoutjob, filename, thumbname, type, filter=None, object_id=None, object_ra=None,
-                            object_dec=None, file_path=None, file_size=None, start=None, finish=None):
-
-        # Tratamento do file_path para remover o path absoluto guardando apenas o path configurado no settings cutoutdir
-        if file_path is not None:
-            file_path = file_path.split(self.cutout_dir)[1]
-            file_path = os.path.join(self.cutout_dir, file_path.strip('/'))
-
-        # Tratar Ra e Dec para 5 casas decimais
-        if object_ra is not None:
-            object_ra = float('%.5f' % float(object_ra))
-
-        if object_dec is not None:
-            object_dec = float('%.5f' % float(object_dec))
-
+        Args:
+            id (int): CutoutJob model primary key
+        """
         try:
+            # Recupera o Model CutoutJob pelo id
+            jobpath = self.get_job_path(id)
+            self.logger.info("Removing Cutout Job Dir. ID: [%s]" % id)
 
-            cutout, created = Cutout.objects.update_or_create(
-                cjb_cutout_job=cutoutjob,
-                ctt_file_name=filename,
-                ctt_file_type=type,
-                ctt_filter=filter,
-                ctt_object_id=object_id,
-                ctt_object_ra=object_ra,
-                ctt_object_dec=object_dec,
-                defaults={
-                    "ctt_file_size": file_size,
-                    "ctt_file_path": file_path,
-                    "ctt_thumbname": thumbname,
-                    "ctt_download_start_time": start,
-                    "ctt_download_finish_time": finish
-                }
-            )
+            shutil.rmtree(jobpath)
 
-            self.logger.debug("Cutout ID %s Registred" % cutout.pk)
-            return cutout
+            self.logger.info("Removed Dir [ %s ]" % jobpath)
 
         except Exception as e:
             self.logger.error(e)
 
-            # Changing the CutoutJob Status for Error
-            self.change_cutoutjob_status(cutoutjob, "er")
+    def on_success(self, id):
+        """This method is performed at the end of the Cutout Job. 
+        changes status to success, saves information about job completion. 
+        and execute the method that erases DES Job in the DESaccess service.
 
-            raise (e)
+        Args:
+            id (int): CutoutJob model primary key
+        """
+
+        self.logger.debug("Finishing the CutoutJob. ID: [%s]" % id)
+
+        try:
+            # Recupera o Model CutoutJob pelo id
+            job = self.get_cutoutjobs_by_id(id)
+
+            # Apagar Os Jobs no Descut
+            for desjob in job.desjob_set.all():
+                self.desapi.delete_job(desjob.djb_jobid)
+                # Muda o Status do Desjob para deleted.
+                desjob.djb_status = 'deleted'
+                desjob.save()
+
+            # Guardar o tamanho total e a quantidade das imagens geradas.
+            job.cjb_file_size = job.cutout_set.aggregate(sum_size=Sum('ctt_file_size')).get("sum_size")
+            job.cjb_files = job.cutout_set.count()
+            # Muda o Status para Done
+            job.cjb_status = "ok"
+            job.cjb_finish_time = datetime.utcnow().replace(tzinfo=utc)
+            job.save()
+
+            # Notificacao por email de Inicio do Job
+            CutoutJobNotify().create_email_message(job)
+
+            self.logger.info("Cutout Job Finish. ID: [%s]" % id)
+        except Exception as e:
+            self.on_error(id, e)
+
+    def on_error(self, id, error):
+        """This method is executed only in case of a Cutout job failure.
+        change the status to error and save the error message and notify the user of the failure.
+
+        Args:
+            id (int): CutoutJob model primary key
+            error (str): Error or execption message that caused the failure.
+        """
+        trace = traceback.format_exc()
+        self.logger.error(trace)
+        self.logger.error(error)
+
+        # Recupera o Model CutoutJob pelo id
+        job = self.get_cutoutjobs_by_id(id)
+
+        # Alterar o status do Job
+        job.cjb_status = "er"
+        # Alterar a data de termino
+        job.cjb_finish_time = datetime.utcnow().replace(tzinfo=utc)
+        # Alterar o campo de erro
+        job.cjb_error = "{} ERROR: [{}]".format(str(trace), error)
+        job.save()
+
+        # Notificacao por email de Inicio do Job
+        CutoutJobNotify().create_email_message(job)
 
 
+# ----------------------------------------------< CUTOUT NOTIFICATION >--------------------------------------------------
 class CutoutJobNotify:
     def __init__(self):
         # Get an instance of a logger
@@ -802,6 +739,7 @@ class CutoutJobNotify:
 
         if cutoutjob.owner.email:
             to_email = cutoutjob.owner.email
+            message = None
 
             if cutoutjob.cjb_status == 'st':
                 subject = "Mosaic in progress"
@@ -826,8 +764,8 @@ class CutoutJobNotify:
                 self.generate_failure_ticket(cutoutjob)
 
             if message:
+                self.logger.info("Sending Notification Email. Subject: [%s]" % subject)
                 Notify().send_email(subject, message, to_email)
-
         else:
             self.logger.info("It was not possible to notify the user, for not having the email registered.")
 
@@ -842,36 +780,28 @@ class CutoutJobNotify:
             if cutoutjob.cjb_tag:
                 tag = cutoutjob.cjb_tag.upper()
 
-            if cutoutjob.cutout_set.count():
-                sum_sizes = cutoutjob.cutout_set.aggregate(sum_size=Sum('ctt_file_size'))
-                files_size = humanize.naturalsize(sum_sizes.get("sum_size"))
+            if cutoutjob.cjb_files > 0:
+                files_size = humanize.naturalsize(cutoutjob.cjb_file_size)
 
             tdelta = finish - start
             seconds = tdelta.total_seconds()
-            execution_time = str(datetime.timedelta(seconds=seconds)).split('.')[0]
-            execution_time_humanized = humanize.naturaldelta(datetime.timedelta(seconds=seconds))
-
-            image_formats = cutoutjob.cjb_image_formats
-            if image_formats is None:
-                image_formats = 'png'
+            execution_time = str(timedelta(seconds=seconds)).split('.')[0]
+            execution_time_humanized = humanize.naturaldelta(timedelta(seconds=seconds))
 
             context = dict({
                 "username": cutoutjob.owner.username,
                 "target_display_name": cutoutjob.cjb_product.prd_display_name,
                 "cutoutjob_display_name": cutoutjob.cjb_display_name,
-                "cutoutjob_type:": cutoutjob.cjb_job_type,
                 "cutoutjob_tag": tag,
                 "cutoutjob_xsize": int((float(cutoutjob.cjb_xsize) * 60)),  # converter para arcsec
                 "cutoutjob_ysize": int((float(cutoutjob.cjb_ysize) * 60)),
-                "cutoutjob_image_formats": image_formats,
                 "n_objects": cutoutjob.cjb_product.table.catalog.ctl_num_objects,
-                "n_files": cutoutjob.cutout_set.count(),
+                "n_files": cutoutjob.cjb_files,
                 "files_size": files_size,
                 "start": str(start.strftime("%Y-%m-%d %H:%M")),
                 "finish": str(finish.strftime("%Y-%m-%d %H:%M")),
                 "execution_time": execution_time,
                 "execution_time_humanized": execution_time_humanized
-
             })
 
             return render_to_string("cutout_notification_finish.html", context)
@@ -898,7 +828,7 @@ class CutoutJobNotify:
             finish = timezone.now()
             tdelta = finish - start
             seconds = tdelta.total_seconds()
-            execution_time_humanized = humanize.naturaldelta(datetime.timedelta(seconds=seconds))
+            execution_time_humanized = humanize.naturaldelta(timedelta(seconds=seconds))
 
             context = dict({
                 "username": cutoutjob.owner.username,
@@ -918,12 +848,11 @@ class CutoutJobNotify:
             subject = "%s Mosaic Failed" % cutoutjob.pk
 
             message = ("email: %s\nusername: %s\ncutoutjob: %s - %s\ntarget: %s - %s" % (cutoutjob.owner.username,
-                                                                                      cutoutjob.owner.email,
-                                                                                      cutoutjob.pk,
-                                                                                      cutoutjob.cjb_display_name,
-                                                                                      cutoutjob.cjb_product.pk,
-                                                                                      cutoutjob.cjb_product.prd_display_name))
-
+                                                                                         cutoutjob.owner.email,
+                                                                                         cutoutjob.pk,
+                                                                                         cutoutjob.cjb_display_name,
+                                                                                         cutoutjob.cjb_product.pk,
+                                                                                         cutoutjob.cjb_product.prd_display_name))
 
             Notify().send_email_failure_helpdesk(subject, message)
 

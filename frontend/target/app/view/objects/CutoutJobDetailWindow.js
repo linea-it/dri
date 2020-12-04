@@ -3,13 +3,16 @@ Ext.define('Target.view.objects.CutoutJobDetailWindow', {
 
     xtype: 'target-cutoutjob-detail',
 
-    title: 'Mosaic',
+    title: 'Cutout Job',
     modal: true,
     autoShow: true,
 
     closeAction: 'destroy',
 
     bodyPadding: 20,
+
+    width: 300,
+    height: 470,
 
     layout: {
         type: 'vbox',
@@ -33,7 +36,7 @@ Ext.define('Target.view.objects.CutoutJobDetailWindow', {
                     },
                     border: false,
                     fieldDefaults: {
-//                        labelAlign: 'top',
+                        //                        labelAlign: 'top',
                         labelWidth: 100,
                         readOnly: true
                     },
@@ -42,11 +45,6 @@ Ext.define('Target.view.objects.CutoutJobDetailWindow', {
                             xtype: 'textfield',
                             fieldLabel: 'Release TAG',
                             name: 'cjb_tag'
-                        },
-                        {
-                            xtype: 'textfield',
-                            fieldLabel: 'Type',
-                            name: 'cjb_type'
                         },
                         {
                             xtype: 'textfield',
@@ -66,12 +64,27 @@ Ext.define('Target.view.objects.CutoutJobDetailWindow', {
                         {
                             xtype: 'textfield',
                             fieldLabel: 'Files',
-                            name: 'count_files'
+                            name: 'cjb_files'
                         },
                         {
                             xtype: 'textfield',
                             fieldLabel: 'Size',
-                            name: 'file_sizes'
+                            name: 'h_file_sizes'
+                        },
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: 'Stiff Bands',
+                            name: 'cjb_stiff_colors'
+                        },
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: 'Lupton Bands',
+                            name: 'cjb_lupton_colors'
+                        },
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: 'Fits Bands',
+                            name: 'cjb_fits_colors'
                         },
                         {
                             xtype: 'textarea',
@@ -109,7 +122,10 @@ Ext.define('Target.view.objects.CutoutJobDetailWindow', {
         if ((cutoutjob) && (cutoutjob.get('id') > 0)) {
             me.cutoutjob = cutoutjob;
 
+            // Carrega os campos do formulário com os dados do Job
             form.loadRecord(me.cutoutjob)
+
+            me.setTitle(cutoutjob.get('cjb_display_name'))
         }
     },
 
