@@ -236,12 +236,7 @@ class ProductRelated(models.Model):
 # ------------------------------ Cutouts ------------------------------
 class CutOutJob(models.Model):
     """
-        Este Model possui um Signal conectado a ele
-        toda vez que este model disparar o evento post_save
-        o metodo start_des_cutout_job do arquivo .signals sera executado.
-        este metodo ira enviar o job para o servico do DesCutout
-
-        OBS: este signal esta no final do arquivo. para evitar erros de import.
+        Este Model possui um Signal conectado a ele. 
     """
     status_job = (
         # Jobs que ainda nao foram enviados

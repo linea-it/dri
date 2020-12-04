@@ -220,7 +220,6 @@ def get_setting(request):
                 orinal_name = name
                 if name.find("__") > -1:
                     arr = name.split("__")
-                    print(arr)
                     key = arr[0]
                     name = arr[1].replace('__', '')
 

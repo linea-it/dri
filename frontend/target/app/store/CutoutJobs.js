@@ -11,6 +11,8 @@ Ext.define('Target.store.CutoutJobs', {
 
     remoteFilter: true,
 
+    remoteSort: true,
+
     pageSize: 0,
 
     proxy: {

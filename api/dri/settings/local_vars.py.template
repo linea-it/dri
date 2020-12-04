@@ -11,17 +11,17 @@ DEBUG = False
 # the hostname and port number of the current Server
 BASE_HOST = "http://localhost"
 
-# A list of strings representing the host/domain names that this Django site can serve. 
+# A list of strings representing the host/domain names that this Django site can serve.
 ALLOWED_HOSTS = ['*']
 
 
 # Database
-# Esta variavel deve ser preechida no local_vars.py deve conter obrigatóriamente 
-# 2 bancos de dados denominados de default e catalog. 
+# Esta variavel deve ser preechida no local_vars.py deve conter obrigatóriamente
+# 2 bancos de dados denominados de default e catalog.
 # - N bancos de dados podem ser cadastradados.
 # - O mesmo banco pode ser cadastrado mais de uma vez com alias diferentes, as vezes é necessário para usar schemas diferentes do mesmo banco, exemplo dos bancos oracle do NCSA.
 # - Pode ser cadastrados bancos de dados de tipos diferentes exemplo Oracle e Postgresql.
-# - para o Oracle o nome da chave que representa o banco não pode ter mais de 30 caracteres e nem o database name, 
+# - para o Oracle o nome da chave que representa o banco não pode ter mais de 30 caracteres e nem o database name,
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 DATABASES = {
     'default': {
@@ -33,7 +33,7 @@ DATABASES = {
         'PORT': 5432,
         'OPTIONS': {
             'options': '-c search_path=dri_admin,public'
-        }        
+        }
     },
     'catalog': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -139,6 +139,15 @@ SCHEMA_SAVE_AS = None
 USER_QUERY_EXECUTION_TIMEOUT = 300
 # Limite de linhas de uma query
 USER_QUERY_MAX_ROWS = 100000
+# TILE VIEWER/TILE INSPECTION (antigo eyeballing):
+# Esta config muda o comportamento da ferramenta Tile Viewer. 
+# Quando Ligada habilita as funcionalidades de validação e inspeção das tiles 
+# Comentários, avaliações (Good, Bad), avaiação por posição e relatórios.
+# Quando Desligada a ferramente se torna Tile Viewer, ficam só as 
+# funcões de navegação entre tiles, visualização e download.
+# True: para Tile Inspection (essa opção deve estar ligada somente no ambiente da colaboração NCSA.)
+# False: para Tile Viewer (essa é a opção default) 
+TILE_VIEWER_INSPECTION_ENABLED=False
 
 # DES ACCESS API
 # Usada para o Cutout de targets e Download das imagens de Tiles.

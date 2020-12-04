@@ -44,6 +44,7 @@ axios.interceptors.response.use(
   },
 );
 
+
 class DriApi {
   loggedUser = async () => {
     const res = await axios.get('/logged/get_logged/');
@@ -169,6 +170,8 @@ class DriApi {
   getTokenizedTileUrl = url => axios.post('/tiles/desaccess_get_download_url/', { file_url: url }).then(res => res.data.download_url)
 
   getTileByName = name => axios.get('/tiles/', { params: { search: name } }).then(res => res.data)
+
+  getTileInspectionOption = () => axios.get('/get_setting/', { params: { name: 'TILE_VIEWER_INSPECTION_ENABLED' } }).then(res => res.data)
 }
 export default DriApi;
 

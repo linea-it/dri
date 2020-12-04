@@ -73,6 +73,7 @@ Ext.define('Target.view.objects.Panel', {
                             disabled: '{!haveResults}'
                         }
                     },
+                    // TODO: Levar o botão de comments do objeto para a barra de tarefas do preview.
                     {
                         xtype: 'button',
                         iconCls: 'x-fa fa-commenting',
@@ -84,7 +85,7 @@ Ext.define('Target.view.objects.Panel', {
                     },
                     {
                         iconCls: 'x-fa fa-picture-o',
-                        tooltip: 'Create Mosaic',
+                        tooltip: 'Create Cutout',
                         handler: 'onClickCreateCutouts'
                     },
                     {
@@ -106,10 +107,10 @@ Ext.define('Target.view.objects.Panel', {
                         },
                         items: [
                             {
-                                xtype    : 'textfield',
+                                xtype: 'textfield',
                                 reference: 'txtFilterSet',
                                 emptyText: 'No filter',
-                                editable : false
+                                editable: false
                             }
                         ]
                     },
@@ -144,11 +145,16 @@ Ext.define('Target.view.objects.Panel', {
                     xtype: 'targets-objects-mosaic',
                     reference: 'TargetMosaic',
                     bind: {
-                        store: '{objects}'
+                        store: '{objects}',
+                        cutoutJob: '{cutoutJob}',
+                        cutouts: '{cutouts}',
+                        imagesFormat: '{imagesFormat}',
+                        currentImageFormat: '{currentImageFormat}',
                     },
                     listeners: {
                         select: 'onSelectObject',
-                        itemdblclick: 'onCutoutDblClick'
+                        itemdblclick: 'onCutoutDblClick',
+                        activate: 'onMosaicActivate',
                     },
                     tbar: [
                         {
@@ -156,11 +162,9 @@ Ext.define('Target.view.objects.Panel', {
                             reference: 'cmbCutoutJob',
                             emptyText: 'Choose Cutout',
                             displayField: 'cjb_display_name',
-                            store: {
-                                type: 'cutoutjobs'
-                            },
-                            listeners: {
-                                select: 'onSelectCutoutJob'
+                            bind: {
+                                store: '{cutoutjobs}',
+                                selection: '{cutoutJob}',
                             },
                             editable: false
                         },
@@ -172,7 +176,23 @@ Ext.define('Target.view.objects.Panel', {
                             bind: {
                                 disabled: '{!cmbCutoutJob.selection}'
                             }
-                        }
+                        },
+                        {
+                            xtype: 'combobox',
+                            reference: 'cmbCutoutImage',
+                            emptyText: 'Choose Image',
+                            displayField: 'displayName',
+                            valueField: 'name',
+                            queryMode: 'local',
+                            bind: {
+                                store: '{imagesFormat}',
+                                selection: '{currentImageFormat}',
+                            },
+                            editable: false,
+                            listeners: {
+                                select: 'onSelectImageFormat'
+                            }
+                        },
                     ]
                 }
             ],
@@ -321,7 +341,7 @@ Ext.define('Target.view.objects.Panel', {
         btn.setPressed(false);
 
         // Filtros
-        filterset = Ext.create('Target.model.FilterSet',{});
+        filterset = Ext.create('Target.model.FilterSet', {});
         vm.set('filterSet', filterset);
         vm.set('filters', null);
 
