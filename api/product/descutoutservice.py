@@ -159,16 +159,17 @@ class DesCutoutService:
                 data.update({"ysize": job.cjb_ysize})
 
             # Geração de Imagens Fits
+            # Enviar o parametro que indica para o DESaccess que não é para incluir os fits
+            # utilizados na geração das imagens coloridas, incluir somente a cores solicitadas no colors_fits.
+            # discard_fits_files (bool) Discard FITS files that are only created in order to produce requested RGB images.
+            # FITS files that are explicitly requested are retained.
             if job.cjb_make_fits:
                 data.update({
                     "make_fits": True,
-                    "colors_fits": job.cjb_fits_colors
+                    "colors_fits": job.cjb_fits_colors,
+                    "discard_fits_files": True
                 })
             else:
-                # Enviar o parametro que indica para o DESaccess que não é para incluir os fits
-                # utilizados na geração das imagens coloridas.
-                # discard_fits_files (bool) Discard FITS files that are only created in order to produce requested RGB images.
-                # FITS files that are explicitly requested are retained.
                 data.update({
                     "discard_fits_files": True
                 })

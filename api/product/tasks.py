@@ -105,7 +105,8 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
 
     logger = export.logger
 
-    logger.info("Starting Export Task for the product %s" % product_id)
+    logger.info("---------------------------------------------")
+    logger.info("Starting Export Task for the product [%s]" % product_id)
     logger.debug("User: %s" % user_id)
     logger.debug("Product: %s" % product_id)
     logger.debug("Filetypes: %s" % ", ".join(filetypes))
@@ -114,7 +115,6 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
 
     # Criar o Diretorio de export
     try:
-
         # Recuperar o Model Product
         product = Product.objects.select_related().get(pk=int(product_id))
 
@@ -124,11 +124,7 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
 
     user = User.objects.get(pk=int(user_id))
 
-    # Chords Task http://docs.celeryproject.org/en/latest/userguide/canvas.html#chords
-    header = list()
-
     try:
-
         # Notificação de inicio
         export.notify_user_export_start(user, product)
 
@@ -288,18 +284,9 @@ def export_cutoutjob(cutoutjob_id, export_dir):
 
     path = cutoutjob.cjb_cutouts_path
 
-    # Mantendo compatibilidade com Jobs anteriores ao path ser guardado
-    # TODO: Pode ser removido se todos os cutouts com o campo cjb_cutouts_path forem removidos
-    if path is None or path == "":
-        logger.warning(
-            "CutoutJob does not have the path field, the path will be generated using the result_file field.")
-        path = cutoutjob.cjb_results_file
-        path = os.path.dirname(path)
-        path = path.split(settings.DATA_DIR)[1]
-
     export.product_cutouts(
         name=cutoutjob.cjb_display_name,
-        path_origin=path.strip("/"),
+        path_origin=path,
         path_destination=export_dir
     )
 
