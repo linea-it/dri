@@ -48,6 +48,8 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                     // Adiciona na Store tags.
                     tags.add({ name: release, displayName: release });
                 });
+
+                vm.set('currentTag', tags.first());
             }
 
         } else {
@@ -85,9 +87,11 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                             minChars: 0,
                             queryMode: 'local',
                             editable: true,
+                            allowBlank: false,
                             bind: {
                                 store: '{tags}',
                                 visible: '{enableRelease}',
+                                selection: '{currentTag}',
                             }
                         },
                         {
