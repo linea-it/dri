@@ -138,18 +138,13 @@ function Home() {
   const [hasInspection, setHasInspection] = useState(false);
   const [allTiles, setAllTiles] = useState([]);
   const [searchEnabled, setSearchEnabled] = useState(false);
+  const [visiomaticCenter, setVisiomaticCenter] = useState([]);
+  const [fov, setFov] = useState(2);
   const searchRef = useRef('');
 
 
   const api = new DriApi();
   const classes = useStyles();
-
-  const onChangeRelease = (value) => {
-    setLoadingAllTiles(true);
-    setCurrentRelease(value);
-    reloadList();
-    reloadAllTiles();
-  };
 
   useEffect(() => {
     api.getTileInspectionOption().then(res => setHasInspection(res.TILE_VIEWER_INSPECTION_ENABLED));
@@ -194,7 +189,7 @@ function Home() {
   }, [hasInspection, currentRelease, filterInspect, loadingAllTiles]);
 
   const loadMoreDatasets = () => {
-    if (searchRef.current.value.split(',').length > 1) {
+    if (searchRef.current && searchRef.current.value.split(',').length > 1) {
       return;
     }
 
@@ -210,7 +205,7 @@ function Home() {
     api.datasetsByRelease({
       release: currentRelease,
       filters,
-      search: searchRef.current.value,
+      search: searchRef.current && searchRef.current.value,
       offset,
       limit: 20,
     })
@@ -250,6 +245,26 @@ function Home() {
   };
 
   const onSelectDataset = dataset => setCurrentDataset(dataset);
+
+  useEffect(() => {
+    if (Object.keys(currentDataset).length > 0) {
+      const searchSplit = searchRef.current.value.split(',');
+
+      if (searchSplit.length === 2) {
+        setVisiomaticCenter([
+          searchSplit[0],
+          searchSplit[1],
+        ]);
+        setFov(0.5);
+      } else {
+        setVisiomaticCenter([
+          currentDataset.tli_ra,
+          currentDataset.tli_dec,
+        ]);
+        setFov(2);
+      }
+    }
+  }, [currentDataset]);
 
   const handleClickSnackBar = () => setOpenSnackBar(!openSnackBar);
 
@@ -433,6 +448,13 @@ function Home() {
     reloadList();
   });
 
+  const onChangeRelease = (value) => {
+    setLoadingAllTiles(true);
+    setCurrentRelease(value);
+    reloadList();
+    reloadAllTiles();
+  };
+
   useEffect(() => {
     if (allTiles.length > 0) {
       setSearchEnabled(true);
@@ -473,15 +495,15 @@ function Home() {
             {dataset.isp_value ? (
               <ThumbUpIcon className={classes.okButton} />
             ) : (
-                <ThumbUpIcon />
-              )}
+              <ThumbUpIcon />
+            )}
           </IconButton>
           <IconButton onClick={() => qualifyDataset(dataset, 'notok')}>
             {dataset.isp_value === false ? (
               <ThumbDownIcon color="error" />
             ) : (
-                <ThumbDownIcon />
-              )}
+              <ThumbDownIcon />
+            )}
           </IconButton>
           <IconButton onClick={() => handleComment(dataset)}>
             <Comment />
@@ -533,7 +555,7 @@ function Home() {
                       {hasInspection ? (
                         <>
                           <Tooltip title="Filter">
-                            <IconButton onClick={handleMenuFilterOpen} className={classes.menuButton} disabled={searchRef.current.value !== ''}>
+                            <IconButton onClick={handleMenuFilterOpen} className={classes.menuButton} disabled={searchRef.current && searchRef.current.value !== ''}>
                               <FilterListIcon className={classes.menuButtonIcon} />
                             </IconButton>
                           </Tooltip>
@@ -583,10 +605,10 @@ function Home() {
                       {loadingAllTiles ? (
                         <LinearProgress color="secondary" className={classes.linearProgress} />
                       ) : (
-                          <CardActions className={classes.cardActionCounter}>
-                            <Counter hasInspection={hasInspection} counts={counts} />
-                          </CardActions>
-                        )}
+                        <CardActions className={classes.cardActionCounter}>
+                          <Counter hasInspection={hasInspection} counts={counts} />
+                        </CardActions>
+                      )}
                     </>
                   </Card>
                 </Grid>
@@ -600,8 +622,8 @@ function Home() {
                             : null
                         }
                         className={classes.visiomatic}
-                        center={[currentDataset.tli_ra, currentDataset.tli_dec]}
-                        fov={2}
+                        center={visiomaticCenter}
+                        fov={fov}
                         contrast={contrast}
                         currentDataset={currentDataset.id || null}
                         points={commentsWithFeature}
