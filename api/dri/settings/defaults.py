@@ -355,37 +355,25 @@ SCHEMA_SAVE_AS = None
 USER_QUERY_EXECUTION_TIMEOUT = 300
 # Limite de linhas de uma query
 USER_QUERY_MAX_ROWS = 100000
-# DES Cutout Service:
-# DESCUT Colaboracao
-DES_CUTOUT_SERVICE = {
-    # 1 para a versao do Descut Colaboracao 2 para versao Descut Public
-    'API_VERSION': 1,
-    'HOST': 'https://descut.cosmology.illinois.edu',
-    'USER': '',
-    'PASSWORD': '',
-    # Path onde ficaram os arquivos de cutout, esse parametro sera usado em conjunto com DATA_DIR para criar o path
-    # absoluto para os arquivos.
-    'CUTOUT_DIR': 'targets/cutouts',
-    # Url base que sera usada para exibir as imagens geradas esse parametro deve ser mapeado no dri.conf no apache
-    'CUTOUT_SOURCE': '/data',
-    # Tempo de delay para a task check_jobs em minutos
-    'CUTOUT_TASK_CHECK_JOBS_DELAY': 1,
-    # Lista dos Releases que podem ser usados para cutout em lowercase. use [] para permitir todos
-    'AVAILABLE_RELEASES': [],
-    # Quantidade limit de objetos a ser passada para o descutout
-    'MAX_OBJECTS': 300,
-    # Token de authenticacao utilizado apenas para o DescutPublico para colaboracao usar None
-    'TOKEN': None,
-    # Esta opcao deve ser False para o DescutPublico e True para Colaboracao
-    'DELETE_JOB_AFTER_DOWNLOAD': True,
-    # Url para gerar o token, para o publico usar None.
-    'API_GET_TOKEN': '/api/token/',
-    # Url para a API reponsavel por criar os jobs
-    'API_CREATE_JOBS': '/api/jobs/',
-    # Url para a API responsavel por retornar o status dos jobs
-    'API_CHECK_JOBS': '/api/jobs/',
-    # No DescutPublico e necessario passar um email para onde seram enviadas as notificacoes do descut.
-    'EMAIL': ''
+
+# DES ACCESS API
+# Usada para o Cutout de targets e Download das imagens de Tiles.
+# API Reference: https://deslabs.ncsa.illinois.edu/desaccess/docs/api/
+# Essas configs são usadas pelas classes common.desaccess e product.descutoutservice
+DESACCESS_API = {
+    # URL Principal do Serviço.
+    'API_URL': 'https://deslabs.ncsa.illinois.edu/desaccess/api',
+    # URL para download dos resultados do cutout job.
+    'FILES_URL': 'https://deslabs.ncsa.illinois.edu/files-desaccess',
+    # Usuario Oracle do NCSA com acesso ao desaccess.
+    'USERNAME': None,
+    'PASSWORD': None,
+    # Database Oracle que será usado para authenticar as credenciais. must be either 'dessci' or 'desoper' usar mesmo database usado em NCSA_AUTHENTICATION_DB
+    'DATABASE': 'dessci',
+    # Lista dos Releases disponiveis no serviço do descut. OBS: está lista de releases é utilizada pela interface no formulário de submissão.
+    'AVAILABLE_RELEASES': ['Y6A1', 'Y3A2', 'Y1A1', 'SVA1'],
+    # Max de cutouts que o Descut aceita por job. default is 20000
+    'MAX_OBJECTS': 20000
 }
 # Others app config:
 # Tempo limite em horas para que um produto fique disponivel, apos este tempo

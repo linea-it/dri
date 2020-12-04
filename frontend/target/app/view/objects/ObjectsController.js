@@ -25,7 +25,10 @@ Ext.define('Target.view.objects.ObjectsController', {
                 beforeLoadPanel: 'onBeforeLoadPanel',
                 beforeloadcatalog: 'loadCurrentSetting',
                 beforedeactivate: 'onBeforeDeactivate'
-            }
+            },
+            'targets-objects-mosaic': {
+                onChangeCutoutJob: 'onChangeCutoutJob',
+            },
         },
         store: {
             '#Catalogs': {
@@ -73,38 +76,105 @@ Ext.define('Target.view.objects.ObjectsController', {
         // console.log('2 - onLoadCatalogs');
         var me = this,
             vm = me.getViewModel(),
-            currentCatalog,
-            refs = me.getReferences(),
-            objectsGrid = refs.targetsObjectsGrid,
-            filtersets = vm.getStore('filterSets'),
-            combo = me.lookup('cmbCutoutJob'),
-            cutoutsJobs = combo.getStore();
+            currentCatalog;
 
         if (store.count() === 1) {
             currentCatalog = store.first();
 
             vm.set('currentCatalog', currentCatalog);
 
-            //objectsGrid.setLoading(false);
-
             me.loadCurrentSetting();
 
-            // Adicionar Filtro a store CutoutJobs
-            // combobox Mosaic-cutoutJobs
-            cutoutsJobs.addFilter([
-                {
-                    property: 'cjb_product',
-                    value: currentCatalog.get('id')
-                },
-                {
-                    property: 'cjb_status',
-                    value: 'ok'
-                }
-            ]);
-
-            cutoutsJobs.load();
-
+            // Carrega a Lista de Cutouts Jobs para este Produto.
+            me.loadCutoutJobs(currentCatalog.get('id'));
         }
+    },
+
+    /**
+     * Carrega a Lista de Cutout Jobs 
+     * relacioandas a um produto e com status ok ou seja finalizados.
+     * ordenados pelo mais recente. 
+     * @param  {Number} productId Id do produto/catalogo que está sendo visualizado.
+     */
+    loadCutoutJobs: function (productId) {
+        // console.log('loadCutoutJobs(%o)', productId)
+        var me = this,
+            vm = me.getViewModel(),
+            cutoutsJobs = vm.getStore('cutoutjobs');
+
+        // Apenas os jobs relacioandos ao produto e finalizados.
+        cutoutsJobs.addFilter([
+            {
+                property: 'cjb_product',
+                value: productId
+            },
+            {
+                property: 'cjb_status',
+                value: 'ok'
+            }
+        ]);
+
+        // Ordenados pelo mais recente.
+        cutoutsJobs.setSorters([
+            {
+                property: 'cjb_finish_time',
+                direction: 'DESC'
+            }
+        ]);
+
+        cutoutsJobs.load({
+            callback: function () {
+                me.onLoadCutoutJobs(cutoutsJobs);
+            }
+        });
+    },
+
+    /**
+     * Executado toda vez que que a store cutoutJobs for carregada.
+     * Verifica se o painel Mosaic já tem algum job selecioando, 
+     * se não tiver seleciona o job mais recente por default.
+     * @param  {Target.store.CutoutJobs} store Instancia da cutoutJobs 
+     * store que está no viewModel.
+     */
+    onLoadCutoutJobs: function (store) {
+        // console.log('onLoadCutoutJobs(%o)', store);
+        var me = this,
+            vm = me.getViewModel(),
+            cutoutJob = vm.get('cutoutJob');
+
+        // Toda vez que a store de Jobs for carregada
+        // Verificar se o painel mosaic já tem algum cutout job selecionado. 
+        if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
+            // Já tem um cutoutJob selecionado não faz nada.
+            return
+        }
+
+        // Se não tiver seleciona o cutout job mais recente.
+        vm.set('cutoutJob', store.first());
+
+    },
+
+    onChangeCutoutJob: function (cutoutJob, mosaicPanel) {
+        // console.log('onChangeCutoutJob(%o)', cutoutJob);
+        var me = this,
+            vm = me.getViewModel(),
+            imagesFormat = vm.getStore('imagesFormat'),
+            combo = me.lookup('cmbCutoutImage'),
+            imgDefault;
+
+        // Verifica se existe no job a imagem Stiff nas cores gri. 
+        imgDefault = imagesFormat.getAt(imagesFormat.findExact('name', 'stiff_gri'));
+
+        if ((imgDefault) && (imgDefault !== -1)) {
+            // Usa a imagem stiff gri como default.
+            combo.select(imgDefault);
+        } else {
+            // Se a imagem default existir para este job usa a primeira disponivel.
+            combo.select(imagesFormat.first());
+        }
+
+        // Carrega a Store de Cutouts.
+        me.loadCutouts();
     },
 
     loadCurrentSetting: function () {
@@ -157,8 +227,8 @@ Ext.define('Target.view.objects.ObjectsController', {
             currentSetting = vm.get('currentSetting');
 
         store.addFilter([
-            {'property': 'pcn_product_id', value: currentSetting.get('cst_product')},
-            {'property': 'pca_setting', value: currentSetting.get('cst_setting')}
+            { 'property': 'pcn_product_id', value: currentSetting.get('cst_product') },
+            { 'property': 'pca_setting', value: currentSetting.get('cst_setting') }
         ]);
 
         store.load({
@@ -177,7 +247,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             store = vm.getStore('displayContents');
 
         store.addFilter([
-            {'property': 'pcn_product_id', value: currentCatalog.get('id')}
+            { 'property': 'pcn_product_id', value: currentCatalog.get('id') }
         ]);
 
         store.load({
@@ -204,7 +274,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                     header: false,
                     closable: false,
                     msg: 'It is necessary to make association for property ID, RA and Dec.',
-                    buttons: Ext.MessageBox.OKCANCEL ,
+                    buttons: Ext.MessageBox.OKCANCEL,
                     fn: function (btn) {
                         if (btn === 'ok') {
                             me.showAssociation();
@@ -298,7 +368,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }, me);
 
                 // Aplicar os Filtros
-                if ((aFilters.length > 0))  {
+                if ((aFilters.length > 0)) {
                     store.addFilter(aFilters);
                 }
             }
@@ -556,7 +626,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             closeAction: 'destroy',
             width: 880,
             height: 500,
-            modal:true,
+            modal: true,
             items: [{
                 xtype: 'targets-wizard',
                 product: catalog,
@@ -596,7 +666,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             closeAction: 'destroy',
             width: 800,
             height: 620,
-            modal:true,
+            modal: true,
             items: [{
                 xtype: 'targets-association',
                 listeners: {
@@ -688,7 +758,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winFilters = null;
         }
 
-        me.winFilters = Ext.create('Target.view.objects.FiltersWindow',{
+        me.winFilters = Ext.create('Target.view.objects.FiltersWindow', {
             listeners: {
                 scope: me,
                 applyfilters: 'onWindowApplyFilters',
@@ -724,7 +794,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             txtFilterSet = me.lookup('txtFilterSet'),
             filterset;
 
-        filterset = Ext.create('Target.model.FilterSet',{});
+        filterset = Ext.create('Target.model.FilterSet', {});
 
         txtFilterSet.reset();
 
@@ -755,7 +825,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 iconCls: 'x-fa fa-comments',
                 layout: 'fit',
                 closeAction: 'destroy',
-                constrainHeader:true,
+                constrainHeader: true,
                 width: 500,
                 height: 300,
                 modal: true,
@@ -822,7 +892,7 @@ Ext.define('Target.view.objects.ObjectsController', {
                 }
             });
         } else {
-            filterset = Ext.create('Target.model.FilterSet',{});
+            filterset = Ext.create('Target.model.FilterSet', {});
 
             vm.set('filterSet', filterset);
             vm.set('filters', null);
@@ -872,7 +942,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winSaveAs = null;
         }
 
-        me.winSaveAs = Ext.create('Target.view.objects.SaveCatalogWindow',{});
+        me.winSaveAs = Ext.create('Target.view.objects.SaveCatalogWindow', {});
 
         me.winSaveAs.setCurrentCatalog(currentCatalog, activeFilter);
 
@@ -892,7 +962,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winCutout = null;
         }
 
-        me.winCutout = Ext.create('Target.view.settings.CutoutJobForm',{
+        me.winCutout = Ext.create('Target.view.settings.CutoutJobForm', {
             modal: true,
             objectsCount: objects.getTotalCount()
         });
@@ -919,7 +989,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             me.winDownload = null;
         }
 
-        me.winDownload = Ext.create('Target.view.objects.DownloadWindow',{});
+        me.winDownload = Ext.create('Target.view.objects.DownloadWindow', {});
 
         me.winDownload.setCurrentCatalog(currentCatalog);
         me.winDownload.setFilter(activeFilter.id);
@@ -928,46 +998,62 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     },
 
-    reloadCutoutJobs: function () {
-        var me = this,
-            vm = me.getViewModel(),
-            combo = me.lookup('cmbCutoutJob'),
-            store = combo.getStore();
+    onSelectImageFormat: function (combo, record) {
+        console.log('onSelectImageFormat(%o)', record);
+        var me = this;
 
-        store.load();
+        me.loadCutouts();
     },
 
-    onSelectCutoutJob: function (cmb) {
+    loadCutouts: function () {
+        // console.log("loadCutouts()")
         var me = this,
             vm = me.getViewModel(),
-            cutoutJob = cmb.selection,
-            mosaic = me.lookup('TargetMosaic'),
-            cutouts = vm.getStore('cutouts');
+            cutoutJob = vm.get('cutoutJob'),
+            imageFormat = vm.get('currentImageFormat'),
+            cutouts = vm.getStore('cutouts'),
+            temp, imgFormat, imgFilter;
 
-        if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
-            cutouts.addFilter([{
-                property: 'cjb_cutout_job',
-                value: cutoutJob.get('id')
-            },
-            {
-                property: 'ctt_file_type',
-                value: 'png'
-            }]);
+        temp = imageFormat.get('name').split('_');
+        imgFormat = temp[0];
+        imgFilter = temp[1];
 
-            cutouts.load({
-                callback: function () {
-                    // Setar no Mosaic o Cutout Job Selecionado
-                    mosaic.setCutoutJob(cutoutJob, this);
-                }
-            });
+        cutouts.addFilter([{
+            property: 'cjb_cutout_job',
+            value: cutoutJob.get('id')
+        }, {
+            property: 'ctt_img_format',
+            value: imgFormat
+        }, {
+            property: 'ctt_filter__filter',
+            value: imgFilter
         }
+        ]);
 
+        cutouts.load({
+            callback: function () {
+                me.onLoadCutouts(cutouts);
+            }
+        });
+    },
+
+    /**
+     * Apos a Store de cutout ser carregada, 
+     * executa o metodo do painel Mosaic 
+     * que vai criar a visualiação das imagens.
+     */
+    onLoadCutouts: function (store) {
+        // console.log("onLoadCutouts(%o)", store);
+        var me = this,
+            mosaic = me.lookup('TargetMosaic');
+
+        mosaic.loadMosaics();
     },
 
     onClickInfoCutoutJob: function () {
         var me = this,
-            combo = me.lookup('cmbCutoutJob'),
-            cutoutjob = combo.selection;
+            vm = me.getViewModel(),
+            cutoutjob = vm.get('cutoutJob');
 
         if ((cutoutjob) && (cutoutjob.get('id') > 0)) {
 
@@ -976,10 +1062,8 @@ Ext.define('Target.view.objects.ObjectsController', {
                 me.winCutoutjobInfo = null;
             }
 
-            me.winCutoutjobInfo = Ext.create('Target.view.objects.CutoutJobDetailWindow',{
-                width: 300,
-                height: 420,
-                title: cutoutjob.get('cjb_display_name'),
+            me.winCutoutjobInfo = Ext.create('Target.view.objects.CutoutJobDetailWindow', {
+                // title: cutoutjob.get('cjb_display_name'),
                 listeners: {
                     scope: me,
                     deletecutoutjob: 'onDeleteCutoutjob'
@@ -1029,6 +1113,23 @@ Ext.define('Target.view.objects.ObjectsController', {
         url = imageSource;
 
         window.open(url, '_blank');
-    }
+    },
+
+    /**
+     * Executado toda vez que o painel Mosaic
+     * for ativado e ficar visivel.
+     * Apos a ativação vai carregar a lista de cutoutJobs.
+     * isso é feito para garantir que a combobox de jobs sempre estara atualizada.
+     * @param  {Target.view.objects.Mosaic} panel Instancia do painel Mosaic.
+     */
+    onMosaicActivate: function (panel) {
+        // console.log("onMosaicActivate(%o)", panel);
+        var me = this,
+            vm = me.getViewModel(),
+            product = vm.get('currentCatalog');
+
+        // Toda vez que o painel for ativado, carregar a lista de cutout jobs
+        me.loadCutoutJobs(product.get('id'));
+    },
 
 });
