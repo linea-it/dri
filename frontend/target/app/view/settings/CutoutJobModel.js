@@ -10,7 +10,8 @@ Ext.define('Target.view.settings.CutoutJobModel', {
     ],
 
     data: {
-        enableRelease: false
+        enableRelease: false,
+        currentTag: null,
     },
 
     links: {

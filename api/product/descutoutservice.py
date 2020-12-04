@@ -171,6 +171,7 @@ class DesCutoutService:
                 })
             else:
                 data.update({
+                    "make_fits": False,
                     "discard_fits_files": True
                 })
 
