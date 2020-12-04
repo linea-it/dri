@@ -44,13 +44,14 @@ axios.interceptors.response.use(
   },
 );
 
+
 class DriApi {
   loggedUser = async () => {
     const res = await axios.get('/logged/get_logged/');
     const user = await res.data;
 
     window.gtag('config', 'GA_MEASUREMENT_ID', {
-      'user_id': user.id,
+      user_id: user.id,
     });
 
     return user;
@@ -159,6 +160,8 @@ class DriApi {
   }).then(res => res.data);
 
   getTutorial = () => axios.get('/tutorial/', { params: { app_name: 'tile_inspection' } }).then(res => res.data);
+
+  getTileInspectionOption = () => axios.get('/get_setting/', { params: { name: 'TILE_VIEWER_INSPECTION_ENABLED' } }).then(res => res.data)
 }
 export default DriApi;
 

@@ -107,7 +107,7 @@ function TileTable({ backLink, currentRelease }) {
 
   const columns = [
     { name: 'dts_dataset__tile__tli_tilename', title: 'Tile', getCellValue: row => row.tilename },
-    { name: 'dts_dataset__inspected__isp_value', title: 'Status', getCellValue: row => row.isp_value },
+    { name: 'dts_dataset__inspected__isp_value', title: 'Status', getCellValue: row => renderInspectionValue(row.isp_value) },
     { name: 'owner__username', title: 'Owner', getCellValue: row => row.owner },
     { name: 'dts_date', title: 'Date', getCellValue: row => row.dts_date },
     { name: 'dts_comment', title: 'Comments', getCellValue: row => row.dts_comment },
@@ -121,10 +121,10 @@ function TileTable({ backLink, currentRelease }) {
     { columnName: 'dts_comment', width: 'auto' },
   ];
 
-  function renderInspectionValue(rowData) {
-    if (rowData.isp_value !== null) {
+  function renderInspectionValue(status) {
+    if (status !== null) {
       return (
-        rowData.isp_value === true ? (
+        status === true ? (
           <ThumbUpIcon className={classes.okButton} />
         ) : (
           <ThumbDownIcon color="error" />
@@ -141,26 +141,25 @@ function TileTable({ backLink, currentRelease }) {
     setRows([]);
   }
 
-  async function loadData() {
-    const comments = await api.comments({
+  function loadData() {
+    api.comments({
       release: currentRelease,
       sorting,
       search,
       dts_type: filterComment,
       offset: currentPage === 0 ? 0 : currentPage * 9,
       limit: 10,
-    });
-
-    if (comments.results && comments.results.length > 0) {
-      setRows(comments.results.map(row => ({
-        ...row,
-        isp_value: renderInspectionValue(row),
-      })));
-      setTotalCount(comments.count);
+    }).then((comments) => {
+      if (comments.results && comments.results.length > 0) {
+        setRows(comments.results);
+        setTotalCount(comments.count);
+        setLoading(false);
+      } else {
+        clearData();
+      }
+    }).finally(() => {
       setLoading(false);
-    } else {
-      clearData();
-    }
+    });
   }
 
   async function loadDownloadData() {

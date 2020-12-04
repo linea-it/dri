@@ -45,59 +45,65 @@ export default function Counter(props) {
         {props.counts.tiles ? props.counts.tiles : 0}
       </Typography>
 
-      <Typography
-        variant="subtitle2"
-        gutterBottom
-        className={classes.label}
-        noWrap
-      >
-        Good:
-      </Typography>
-      <Typography
-        variant="subtitle2"
-        className={`${classes.value}  ${classes.goodColor}`}
-        gutterBottom
-        noWrap
-      >
-        {props.counts.true ? props.counts.true : 0}
-      </Typography>
+      {props.hasInspection ? (
+        <>
+          <Typography
+            variant="subtitle2"
+            gutterBottom
+            className={classes.label}
+            noWrap
+          >
+            Good:
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            className={`${classes.value}  ${classes.goodColor}`}
+            gutterBottom
+            noWrap
+          >
+            {props.counts.true ? props.counts.true : 0}
+          </Typography>
 
-      <Typography
-        variant="subtitle2"
-        gutterBottom
-        className={classes.label}
-        noWrap
-      >
-        Bad:
-      </Typography>
-      <Typography
-        variant="subtitle2"
-        className={`${classes.value}  ${classes.badColor}`}
-        gutterBottom
-        noWrap
-      >
-        {props.counts.false ? props.counts.false : 0}
-      </Typography>
+          <Typography
+            variant="subtitle2"
+            gutterBottom
+            className={classes.label}
+            noWrap
+          >
+            Bad:
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            className={`${classes.value}  ${classes.badColor}`}
+            gutterBottom
+            noWrap
+          >
+            {props.counts.false ? props.counts.false : 0}
+          </Typography>
 
-      <Typography
-        variant="subtitle2"
-        gutterBottom
-        className={classes.label}
-        noWrap
-      >
-        Not:
-      </Typography>
-      <Typography
-        variant="subtitle2"
-        className={classes.value}
-        gutterBottom
-        noWrap
-      >
-        {props.counts.null ? props.counts.null : 0}
-      </Typography>
+          <Typography
+            variant="subtitle2"
+            gutterBottom
+            className={classes.label}
+            noWrap
+          >
+            Not:
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            className={classes.value}
+            gutterBottom
+            noWrap
+          >
+            {props.counts.null ? props.counts.null : 0}
+          </Typography>
+
+        </>
+      ) : null}
     </div>
   );
 }
 Counter.propTypes = {
   counts: PropTypes.object.isRequired,
+  hasInspection: PropTypes.bool.isRequired,
 };
