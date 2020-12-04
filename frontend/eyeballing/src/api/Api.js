@@ -161,6 +161,16 @@ class DriApi {
 
   getTutorial = () => axios.get('/tutorial/', { params: { app_name: 'tile_inspection' } }).then(res => res.data);
 
+  getDatasetInfo = id => axios.get(`/dataset/${id}/desaccess_tile_info/`).then(res => res.data)
+
+  getTokenizedDatasetUrl = url => axios.post('/dataset/desaccess_get_download_url/', { file_url: url }).then(res => res.data.download_url)
+
+  getTileInfo = id => axios.get(`/tiles/${id}/desaccess_tile_info/`).then(res => res.data)
+
+  getTokenizedTileUrl = url => axios.post('/tiles/desaccess_get_download_url/', { file_url: url }).then(res => res.data.download_url)
+
+  getTileByName = name => axios.get('/tiles/', { params: { search: name } }).then(res => res.data)
+
   getTileInspectionOption = () => axios.get('/get_setting/', { params: { name: 'TILE_VIEWER_INSPECTION_ENABLED' } }).then(res => res.data)
 }
 export default DriApi;

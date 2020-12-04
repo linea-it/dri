@@ -25,6 +25,9 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Comment from '@material-ui/icons/Comment';
 import Divider from '@material-ui/core/Divider';
+import Download from '@material-ui/icons/GetApp';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import TileTable from './components/TileTable';
 import SnackBar from './components/SnackBar';
@@ -36,6 +39,7 @@ import SearchField from './components/SearchField';
 import VisiomaticPanel from './components/visiomatic/Visiomatic';
 import Footer from './components/Footer';
 import Header from './components/Header';
+import DownloadDialog from './components/download';
 import DriApi from './api/Api';
 
 
@@ -86,11 +90,6 @@ const useStyles = makeStyles(theme => ({
   backLinkIcon: {
     borderRadius: 0,
   },
-  // rootDatasetList: {
-  //   width: '100%',
-  //   backgroundColor: theme.palette.background.paper,
-  //   listStyleType: 'none',
-  // },
   okButton: {
     color: theme.typography.successColor,
   },
@@ -108,6 +107,31 @@ const useStyles = makeStyles(theme => ({
   },
   cardActionCounter: {
     padding: '15px 8px 8px 8px',
+  },
+  backdrop: {
+    zIndex: 2001, // Because the z-index of the .leaflet-top.leaflet.left is 2000.
+    color: '#fff',
+  },
+  tileListContainer: {
+    [theme.breakpoints.between('sm', 'lg')]: {
+      width: 382,
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
+  },
+  visiomaticContainer: {
+    [theme.breakpoints.between('sm', 'lg')]: {
+      width: 'calc(100% - 382px)',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
+  },
+  tileButton: {
+    [theme.breakpoints.down('xl')]: {
+      padding: theme.spacing(1),
+    },
   },
 }));
 
@@ -135,6 +159,8 @@ function Home() {
   const [commentsWithFeature, setCommentsWithFeature] = useState([]);
   const datasetLoading = useRef(false);
   const [tutorial, setTutorial] = useState([]);
+  const [downloadInfo, setDownloadInfo] = useState({ visible: false });
+  const [backdropOpen, setBackdropOpen] = useState(false);
   const [hasInspection, setHasInspection] = useState(false);
   const [allTiles, setAllTiles] = useState([]);
   const [searchEnabled, setSearchEnabled] = useState(false);
@@ -255,7 +281,7 @@ function Home() {
           searchSplit[0],
           searchSplit[1],
         ]);
-        setFov(0.5);
+        setFov(0.3);
       } else {
         setVisiomaticCenter([
           currentDataset.tli_ra,
@@ -448,6 +474,28 @@ function Home() {
     reloadList();
   });
 
+  const handleDownloadClick = (dataset) => {
+    setBackdropOpen(true);
+    api.getDatasetInfo(dataset.id)
+      .then((res) => {
+        setDownloadInfo({
+          visible: true,
+          tilename: dataset.tli_tilename,
+          images: res.images,
+          catalogs: res.catalogs,
+        });
+
+        setBackdropOpen(false);
+      }).catch(() => {
+        setDownloadInfo({
+          visible: true,
+          tilename: dataset.tli_tilename,
+          error: true,
+        });
+        setBackdropOpen(false);
+      });
+  };
+
   const onChangeRelease = (value) => {
     setLoadingAllTiles(true);
     setCurrentRelease(value);
@@ -489,29 +537,40 @@ function Home() {
           </MaterialLink>
         ) : null}
       />
-      {hasInspection ? (
-        <ListItemSecondaryAction>
-          <IconButton onClick={() => qualifyDataset(dataset, 'ok')}>
-            {dataset.isp_value ? (
-              <ThumbUpIcon className={classes.okButton} />
-            ) : (
-              <ThumbUpIcon />
-            )}
-          </IconButton>
-          <IconButton onClick={() => qualifyDataset(dataset, 'notok')}>
-            {dataset.isp_value === false ? (
-              <ThumbDownIcon color="error" />
-            ) : (
-              <ThumbDownIcon />
-            )}
-          </IconButton>
-          <IconButton onClick={() => handleComment(dataset)}>
-            <Comment />
-          </IconButton>
-        </ListItemSecondaryAction>
-      ) : null}
+      <ListItemSecondaryAction>
+        {hasInspection ? (
+          <>
+            <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'ok')}>
+              {dataset.isp_value ? (
+                <ThumbUpIcon className={classes.okButton} />
+              ) : (
+                <ThumbUpIcon />
+              )}
+            </IconButton>
+            <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'notok')}>
+              {dataset.isp_value === false ? (
+                <ThumbDownIcon color="error" />
+              ) : (
+                <ThumbDownIcon />
+              )}
+            </IconButton>
+            <IconButton className={classes.tileButton} onClick={() => handleComment(dataset)}>
+              <Comment />
+            </IconButton>
+          </>
+        ) : null}
+        <IconButton className={classes.tileButton} onClick={() => handleDownloadClick(dataset)}>
+          <Download />
+        </IconButton>
+      </ListItemSecondaryAction>
     </ListItem>
   ));
+
+  const handleDownloadClose = () => {
+    setDownloadInfo({
+      visible: false,
+    });
+  };
 
   const header = 64;
   const toolbar = 64;
@@ -543,7 +602,7 @@ function Home() {
                 alignItems="stretch"
                 spacing={2}
               >
-                <Grid item xs={6} sm={4} md={3} lg={3}>
+                <Grid item lg={3} xl={2} className={classes.tileListContainer}>
                   <Card className={classes.tilelist}>
                     <Toolbar className={classes.toolbar}>
                       <SearchField
@@ -612,7 +671,7 @@ function Home() {
                     </>
                   </Card>
                 </Grid>
-                <Grid item xs={6} sm={8} md={9} lg={9}>
+                <Grid item lg={9} xl={10} className={classes.visiomaticContainer}>
                   <Card className={classes.card}>
                     {currentRelease !== '' ? (
                       <VisiomaticPanel
@@ -646,6 +705,19 @@ function Home() {
                 />
               ) : null}
             </div>
+            {downloadInfo.visible && (
+              <DownloadDialog
+                open={downloadInfo.visible}
+                error={downloadInfo.error}
+                handleClose={handleDownloadClose}
+                tilename={downloadInfo.tilename}
+                images={downloadInfo.images}
+                catalogs={downloadInfo.catalogs}
+              />
+            )}
+            <Backdrop open={backdropOpen} className={classes.backdrop}>
+              <CircularProgress color="inherit" />
+            </Backdrop>
             {hasInspection ? <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={handleClickSnackBar} /> : null}
           </React.Fragment>
         )}
