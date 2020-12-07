@@ -1,10 +1,8 @@
 
-
-.leaflet-bar a {
-    background-color: transparent !important;
-    border-bottom: none !important;
+// Remove a regra do visiomatic que estava deixando os cotroles de zoom com o fundo preto.
+.leaflet-control-zoom {
+    filter: none;
 }
-
 /** Marker utilizado para highlight objetos de catalogo */
 .visiomatic-marker-position {
     color: #C8ED00;
