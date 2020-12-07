@@ -122,7 +122,6 @@ Ext.define('Sky.view.dataset.DatasetController', {
         // }
 
         // TODO: Teste de Xray Contours deve ir para a componente interface
-        console.log("TESTE")
         visiomatic.drawXrayContours(0, 0, {})
     },
 
@@ -217,7 +216,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
     getDatasetInOtherReleases: function (current) {
         var me = this,
             view = me.getView();
-            vm = me.getViewModel(),
+        vm = me.getViewModel(),
             store = vm.getStore('compare');
 
         // Desabilitar o botao compare
@@ -326,7 +325,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
         let dec = searchResult.tli_dec.toString().replace('.', ',')
         let fov = 0 //pinned
 
-        if (searchResult){
+        if (searchResult) {
             coordinate = encodeURIComponent((ra > 0) ? `${ra}+${dec}` : `${ra}${dec}`)
             hash = 'dataset/' + searchResult.id + '/' + coordinate + '/' + fov;
             this.redirectTo(hash, true);
@@ -334,7 +333,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
             visiomatic.coordinatesToLatLng(value, function (latlng) {
                 if (visiomatic.isInsideTile(latlng.lng, latlng.lat)) {
                     visiomatic.panTo(value);
-                }else {
+                } else {
                     Ext.MessageBox.alert('Alert', 'There is no DES tile in the current release on this position.');
                 }
             });
@@ -345,7 +344,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
         var me = this,
             visiomatic = me.lookupReference('visiomatic');
 
-        Ext.GlobalEvents.fireEvent('eventregister','SkyViewer - crop');
+        Ext.GlobalEvents.fireEvent('eventregister', 'SkyViewer - crop');
         visiomatic.initCrop();
     },
 
@@ -353,7 +352,7 @@ Ext.define('Sky.view.dataset.DatasetController', {
         var me = this,
             visiomatic = me.lookupReference('visiomatic');
 
-        Ext.GlobalEvents.fireEvent('eventregister','SkyViewer - save_fits');
+        Ext.GlobalEvents.fireEvent('eventregister', 'SkyViewer - save_fits');
         visiomatic.showDownloadWindow();
 
     },
@@ -369,10 +368,10 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
         if (feature && feature.properties) {
             catalog_id = feature.properties._meta_catalog_id;
-            object_id  = feature.id;
-        }else {
+            object_id = feature.id;
+        } else {
             catalog_id = catalog.get('id');
-            object_id  = object.get('_meta_id');
+            object_id = object.get('_meta_id');
         }
 
         if (object_id > 0) {
@@ -382,10 +381,10 @@ Ext.define('Sky.view.dataset.DatasetController', {
                 iconCls: 'x-fa fa-comments',
                 layout: 'fit',
                 closeAction: 'destroy',
-                constrainHeader:true,
+                constrainHeader: true,
                 width: 500,
                 height: 300,
-                autoShow:true,
+                autoShow: true,
                 onEsc: Ext.emptyFn,
                 items: [
                     {
@@ -412,10 +411,10 @@ Ext.define('Sky.view.dataset.DatasetController', {
             iconCls: 'x-fa fa-comments',
             layout: 'fit',
             closeAction: 'destroy',
-            constrainHeader:true,
+            constrainHeader: true,
             width: 500,
             height: 300,
-            autoShow:true,
+            autoShow: true,
             onEsc: Ext.emptyFn,
             items: [
                 {
@@ -433,10 +432,10 @@ Ext.define('Sky.view.dataset.DatasetController', {
 
     onChangeComments: function (event) {
         var me = this,
-           view = me.getView(),
-           visiomatic = me.lookupReference('visiomatic'),
-           vm = me.getViewModel(),
-           lmembers = vm.get('overlayMembers');
+            view = me.getView(),
+            visiomatic = me.lookupReference('visiomatic'),
+            vm = me.getViewModel(),
+            lmembers = vm.get('overlayMembers');
 
         if (event && event.comment) {
             //TODO: atualizar o número de comentários em lmembers.feature.properties.
