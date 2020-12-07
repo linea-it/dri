@@ -13,6 +13,7 @@ Ext.define('Target.store.CatalogsTree', {
     autoLoad: false,
 
     remoteFilter: true,
+    remoteSort: false,
 
     proxy: {
         api: {
@@ -20,6 +21,14 @@ Ext.define('Target.store.CatalogsTree', {
             create: '/dri/api/catalog/',
             update: '/dri/api/catalog/'
         }
-    }
+    },
+
+    sorters: [
+        {
+            property: 'prd_date',
+            direction: 'DESC'
+        }
+    ]
+
 
 });
