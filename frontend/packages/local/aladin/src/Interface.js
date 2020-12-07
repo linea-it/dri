@@ -72,7 +72,7 @@ Ext.define('aladin.Interfaces', {
         }
 
         currentSurvey = me.getImageSurvey();
-        if ((currentSurvey) && (currentSurvey.id != 'empty_survey')){
+        if ((currentSurvey) && (currentSurvey.id != 'empty_survey')) {
             image_survey = currentSurvey.name;
         }
 
@@ -140,7 +140,7 @@ Ext.define('aladin.Interfaces', {
                 scope: me,
                 handler: me.onShift,
                 bind: {
-                    disabled:'{!tile}'
+                    disabled: '{!tile}'
                 }
             });
         }
@@ -216,7 +216,7 @@ Ext.define('aladin.Interfaces', {
                         },
                         listeners: {
                             scope: this,
-                            specialkey: function (f,e) {
+                            specialkey: function (f, e) {
                                 if (e.getKey() == e.ENTER) {
                                     this.submitGoToPosition(f);
                                 }
@@ -232,13 +232,13 @@ Ext.define('aladin.Interfaces', {
             // Habilitar o botão apenas se o navegador for firefox,
             // a funcao do aladin de snapshot nao funciona no google chrome.
             if (Ext.firefoxVersion > 0) {
-              tools.push({
-                  xtype: 'button',
-                  tooltip: 'Snapshot',
-                  iconCls: 'x-fa fa-camera',
-                  scope: me,
-                  handler: me.exportAsPng
-              });
+                tools.push({
+                    xtype: 'button',
+                    tooltip: 'Snapshot',
+                    iconCls: 'x-fa fa-camera',
+                    scope: me,
+                    handler: me.exportAsPng
+                });
             }
         }
 
@@ -291,30 +291,6 @@ Ext.define('aladin.Interfaces', {
         var me = this,
             items = [];
 
-        // Tile Grid
-        // Adicionar um placeholder inicial para manter a ordem do menu.
-        items.push({
-            xtype: 'menucheckitem',
-            text: 'Tiles Grid',
-            itemId: 'TileGridMenu',
-            menu: [],
-            menuAlign: 'tr',
-            checkHandler: me.onCheckTileGridMenu,
-            disabled: true,
-            checked: me.getTilesGridVisible()
-        });
-
-        // -------------------- Separador -----------------------------
-        items.push('-');
-
-        // Color Map Menu
-        if (me.getEnableColorMap()) {
-
-            items.push(me.createColorMapMenu());
-        }
-
-        // -------------------- Separador -----------------------------
-        items.push('-');
         // Des Footprint
         if (me.getEnableFootprint()) {
             var isHidden = me.getHideFootprint();
@@ -327,8 +303,43 @@ Ext.define('aladin.Interfaces', {
                 scope: me,
                 checkHandler: me.showDesFootprint
             });
-
         }
+
+        // Tile Grid
+        // Adicionar um placeholder inicial para manter a ordem do menu.
+        items.push({
+            xtype: 'menucheckitem',
+            text: 'Tiles Grid',
+            itemId: 'TileGridMenu',
+            menu: [],
+            menuAlign: 'tr',
+            checkHandler: me.onCheckTileGridMenu,
+            scope: me,
+            disabled: true,
+            checked: me.getTilesGridVisible()
+        });
+
+        // Healpix Grid
+        if (me.getEnableHealpixGrid()) {
+            items.push({
+                xtype: 'menucheckitem',
+                text: 'Healpix Grid',
+                scope: me,
+                checkHandler: me.showHealpixGrid
+            });
+        }
+
+        // -------------------- Separador -----------------------------
+        items.push('-');
+
+        // Color Map Menu
+        if (me.getEnableColorMap()) {
+
+            items.push(me.createColorMapMenu());
+        }
+
+        // -------------------- Separador -----------------------------
+        items.push('-');
 
         // Reticle
         if (me.getEnableReticle()) {
@@ -338,16 +349,6 @@ Ext.define('aladin.Interfaces', {
                 checked: true,
                 scope: me,
                 checkHandler: me.showReticle
-            });
-        }
-
-        // Healpix Grid
-        if (me.getEnableHealpixGrid()) {
-            items.push({
-                xtype: 'menucheckitem',
-                text: 'Healpix Grid',
-                scope: me,
-                checkHandler: me.showHealpixGrid
             });
         }
 
@@ -369,32 +370,65 @@ Ext.define('aladin.Interfaces', {
     ////////////////////////////////////////////////////////////////////////////
     //                            Tile Grid Menu                              //
     ////////////////////////////////////////////////////////////////////////////
-
+    /**
+     * Cria um menu com a lista de fields do release. 
+     * cada field tem uma checkbox no menu que permite ligar ou deligar a grid de tiles.
+     * caso o release tenha apenas 1 field o menu é omitido e fica só uma checkbox.
+     */
     createTileGridMenu: function () {
         var me = this,
             viewMenu = me.down('#ViewMenu'),
             items = me.createTileGridMenuItems(),
             menu = me.down('#TileGridMenu');
 
-        if (!menu) {
-            menu = {
-                text: 'Tiles Grid',
-                itemId: 'TileGridMenu',
-                menu: items
-            };
+        if (items.length > 1) {
+            // Se o release tem mais de um field é criad um Submenu 
+            // cada field é um item do submenu.
+            if (!menu) {
+                menu = {
+                    text: 'Tiles Grid',
+                    itemId: 'TileGridMenu',
+                    menu: items,
+                    scope: me,
+                    checkHandler: me.onCheckTileGridMenu,
+                };
 
-            viewMenu.getMenu().add(menu);
+                viewMenu.getMenu().add(menu);
 
+            } else {
+                // Remover os items anteriores do menu
+                menu.getMenu().removeAll();
+
+                // Adicionar os novos items
+                menu.getMenu().add(items);
+
+                // Altera a função que será executada ao marcar o checkbox do menu
+                menu.checkHandler = me.onCheckTileGridMenu;
+
+                // habilitar o botão
+                menu.enable();
+
+            }
         } else {
+            // Se o release tiver apenas 1 field. 
+            // Transforma o Menu em um checkbox unico, 
+            // Altera o seu comportamento para executar direto 
+            // a função de ligar e desligar a tile grid.
+
             // Remover os items anteriores do menu
             menu.getMenu().removeAll();
 
-            // Adicionar os novos items
-            menu.getMenu().add(items);
+            // Desabilita o submenu. 
+            menu.setMenu(false);
+
+            // Informação do field.
+            menu.tag = items[0].tag;
+
+            // Altera a função que será executada ao marcar a checkbox.
+            menu.checkHandler = me.onCheckTileGrid
 
             // habilitar o botão
             menu.enable();
-
         }
     },
 
