@@ -588,10 +588,10 @@ function Home() {
         currentRelease={currentRelease}
         onChangeRelease={onChangeRelease}
       />
-      <Route exact path="/" render={() => <Redirect to="/eyeballing" />} />
+      <Route exact path="/" render={() => <Redirect to="/tile_viewer" />} />
       <Route
         exact
-        path="/eyeballing/"
+        path="/tile_viewer/"
         render={() => (
           <React.Fragment>
             <div className={classes.content}>
@@ -624,7 +624,7 @@ function Home() {
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Reporting">
-                            <Link to="/eyeballing/comments/">
+                            <Link to="/tile_viewer/comments/">
                               <IconButton className={classes.menuButton}>
                                 <TableChart className={classes.menuButtonIcon} />
                               </IconButton>
@@ -724,13 +724,13 @@ function Home() {
       />
       {hasInspection ? (
         <Route
-          path="/eyeballing/comments/"
+          path="/tile_viewer/comments/"
           render={() => (
             <TileTable
               currentRelease={currentRelease}
               className={classes.card}
               backLink={(
-                <Link to="/eyeballing/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <Link to="/tile_viewer/" style={{ color: 'inherit', textDecoration: 'none' }}>
                   <IconButton
                     aria-label="Home"
                     aria-controls="home-appbar"

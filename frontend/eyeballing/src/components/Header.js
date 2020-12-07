@@ -56,10 +56,10 @@ function Header(props) {
     logout();
   }
 
-  function handleHomeEyeballing() {
+  function handleHomeTileViewer() {
     const { protocol } = window.location;
     const { host } = window.location;
-    const location = `${protocol}//${host}/eyeballing`;
+    const location = `${protocol}//${host}/tile_viewer`;
 
     window.location.assign(location);
   }
@@ -84,7 +84,7 @@ function Header(props) {
     <React.Fragment>
       <AppBar position="static">
         <Toolbar>
-          <IconButton color="inherit" onClick={handleHomeEyeballing}>
+          <IconButton color="inherit" onClick={handleHomeTileViewer}>
             <img alt="logo DES" src={logo} />
           </IconButton>
           <Typography className={classes.grow} variant="h6" color="inherit">
