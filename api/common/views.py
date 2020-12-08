@@ -327,6 +327,22 @@ def available_database(request):
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
+def get_ncsa_signup(request):
+    """Returns the URL of the NCSA registration page. 
+    this url is stored in the settings.NCSA_SIGNUP_LINK has a default value of None, 
+    but for the public NCSA environment the value is a complete url 
+    like this: 'https://des.ncsa.illinois.edu/easyweb/signup/'
+
+
+    Returns:
+        dict: A dictionary with the ncsa_signup attribute with the url string or None.
+    """
+    if request.method == 'GET':
+        return Response(dict({'ncsa_signup': settings.NCSA_SIGNUP_LINK}))
+
+
+@api_view(['GET'])
 def teste(request):
     if request.method == 'GET':
 
