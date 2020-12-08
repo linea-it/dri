@@ -15,7 +15,7 @@ Ext.define('aladin.Events', {
 
         me.addMouseMoveListener();
 
-        me.addMouseUP ();
+        me.addMouseUP();
 
     },
 
@@ -167,7 +167,7 @@ Ext.define('aladin.Events', {
             radec = [];
 
         xy = AladinUtils.viewToXy(xymouse.x, xymouse.y, view.width,
-                view.height, view.largestDim, view.zoomFactor);
+            view.height, view.largestDim, view.zoomFactor);
 
         try {
             lonlat = view.projection.unproject(xy.x, xy.y);
@@ -215,13 +215,12 @@ Ext.define('aladin.Events', {
 
 
         if (me.windowMapSelection == null) {
-            me.windowMapSelection = Ext.create('aladin.maps.MapSelectionWindow',{
+            me.windowMapSelection = Ext.create('aladin.maps.MapSelectionWindow', {
                 width: 182,
                 height: 237,
-                x: 45,
-                y: 55,
                 resizable: false,
-                aladin: me
+                aladin: me,
+                constrain: true
             });
         }
 
