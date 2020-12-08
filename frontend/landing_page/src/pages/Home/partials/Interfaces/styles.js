@@ -6,7 +6,7 @@ const styles = makeStyles((theme) => ({
     position: 'relative',
     zIndex: 2,
     marginTop: theme.spacing(6),
-    marginBottom: theme.spacing(12),
+    marginBottom: theme.spacing(6),
     // margin: '48px auto 96px auto',
   },
   titleItem: {
