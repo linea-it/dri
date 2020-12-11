@@ -191,8 +191,9 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
-    btnClear_onClick: function () {
-        this.clearQuery();
+    onClickBtnClear: function () {
+        var me = this;
+        me.clearQuery();
     },
 
     // evento: ao clicar no botão start job
@@ -252,12 +253,24 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     },
 
     getFormData() {
-        var refs = this.getReferences();
-        var data = refs.frmQuery.getForm().getValues();
+        console.log('getFormData()')
+        // var me = this,
+        //     formPanel = me.lookup('frmQuery'),
+        //     data = formPanel.getForm().getValues(),
+        //     sqlField = me.lookup('sql_sentence');
 
-        data.sql_sentence = refs.sql_sentence.getValue();
+        // data.sql_sentence = sqlField.getValue();
 
-        return data;
+        // return data;
+        return {}
+    },
+
+    onChangeSqlField: function (field) {
+        console.log('onChangeSqlField(%o)', field);
+        var me = this,
+            vm = me.getViewModel();
+
+        vm.set('sql_value', field)
     },
 
     // evento: ao clicar no botão save
@@ -285,12 +298,6 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 }
             );
         }
-
-        // if (query && query.is_sample){
-        //     this.mnuSaveAs_onClick(button);
-        // }else{
-        //     this.saveQuery(query.id, data);
-        // }
     },
 
     // evento: ao clicar no botão delete
@@ -298,40 +305,116 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         this.deleteQuery();
     },
 
+    createNewQuery: function (record, form) {
+        console.log('createNewQuery()');
+        var me = this,
+            view = me.getView();
+
+        view.setLoading(true);
+
+        record.save({
+            success: function (record, operation) {
+                // Query foi criada com sucesso. 
+                // atualiza o form com o novo record contendo o id. 
+                form.setQuery(record);
+
+                // exibe uma mensagem ingormando que a query foi criada.
+                Ext.toast('Query data saved', null, 't');
+
+                me.onSaveQuery()
+            },
+            failure: function (record, operation) {
+                // A Criação de uma nova query falhou mostrar uma mensagem de falha.
+                var response = operation.error.response
+                var obj = Ext.decode(response.responseText);
+
+                Ext.MessageBox.show({
+                    title: 'Query not saved',
+                    msg: obj.message,
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
+            },
+            callback: function (record, operation, success) {
+                view.setLoading(false);
+            }
+        })
+    },
+
+    onSaveQuery: function () {
+        console.log('onSaveQuery()');
+        // Executado toda vez que uma nova query é criada.
+        // TODO atualizar os componentes que precisam ser atualizados depois que uma query é criada ou alterada.
+    },
+
+
+    onClearQueryForm: function (form) {
+        console.log('onClearQueryForm()');
+
+        // TODO: limpar os outros componentes como a lista de preview.
+    },
+
     // evento: ao clicar no botão check
-    btnCheck_onClick: function () {
-        var me = this;
-        var refs = me.getReferences();
-        var query = me.getActiveQuery();
+    onCheckQuery: function (record, form) {
+        var me = this,
+            view = me.getView();
 
         Api.log('check_query');
-        Api.validate({
-            cache: false,
-            params: {
-                id: query.id,
-                sql_sentence: refs.sql_sentence.getValue()
-            },
-            request: function () {
-                me.setLoading(true, 'Check in progress...');
-            },
-            response: function (error, result) {
-                me.setLoading(false);
-                result = result || {};
 
-                if (!error) {
-                    if (result.is_validated) {
+        if ((record.get('sql_sentence')) && (record.get('sql_sentence') !== '')) {
+            view.setLoading(true, 'Checking query syntax');
+
+            Ext.Ajax.request({
+                cors: true,
+                method: 'POST',
+                url: '/dri/api/userquery_validate/',
+                // Headers necessarios para fazer um Post Autenticado no Django
+                headers: {
+                    'Accept': 'application/json',
+                    'Application': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': Ext.util.Cookies.get('csrftoken')
+                },
+                params: Ext.util.JSON.encode(
+                    {
+                        sql_sentence: record.get('sql_sentence')
+                    }
+                ),
+                success: function (response) {
+                    var obj = Ext.decode(response.responseText);
+
+                    // Remove o loading
+                    view.setLoading(false);
+
+                    if (obj.is_validated) {
+                        // Query valida apenas exibe uma mensagem
                         Ext.toast('Query validated successfully', null, 't');
                     } else {
+                        // Mesmo a requisição retornando um status 200 pode ser que te a query não seja valida.
                         Ext.MessageBox.show({
                             title: 'Query validated error',
-                            msg: result.error_message.split('[')[0],
-                            buttons: Ext.Msg.OK,
+                            msg: obj.error_message,
+                            buttons: Ext.MessageBox.OK,
                             icon: Ext.MessageBox.WARNING
                         });
                     }
-                }
-            }
-        });
+                },
+                failure: function (response, opts) {
+                    view.setLoading(false);
+
+                    // Caso a requisição retorne status diferente de 200 Exibe a mensagem de erro. 
+
+                    var obj = Ext.decode(response.responseText);
+
+                    Ext.MessageBox.show({
+                        title: 'Query validated error',
+                        msg: obj.message,
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING
+                    });
+                },
+            });
+        }
     },
 
     // evento: ao clicar no botão de preview
@@ -347,6 +430,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
     // ao ser modificado qualquer dado do formulário query
     form_onDataChange: function (field, newVal, oldVal) {
+        console.log('form_onDataChange()')
         var refs = this.getReferences();
         var vm = this.getViewModel();
         var release = this.getActiveRelease();
@@ -365,10 +449,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         vm.set('activeQuery.' + field.name, newVal);
         var sqlExist = Boolean(vm.get('activeQuery.sql_sentence'));
 
-        refs.btnSave.setDisabled(!release || !Boolean(data.name && data.sql_sentence));
-        refs.btnCheck.setDisabled(!sqlExist);
-        refs.btnPreview.setDisabled(!sqlExist);
-        refs.btnStartJob.setDisabled(!sqlExist || !release);
+        // refs.btnSave.setDisabled(!release || !Boolean(data.name && data.sql_sentence));
+        // refs.btnCheck.setDisabled(!sqlExist);
+        // refs.btnPreview.setDisabled(!sqlExist);
+        // refs.btnStartJob.setDisabled(!sqlExist || !release);
     },
 
     mnuSaveAs_onClick: function (button) {
@@ -744,38 +828,41 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     },
 
     clearQuery: function () {
+        console.log("clearQuery()")
         var me = this;
-        var refs = me.getReferences();
-        var c, i, length = refs.grdPreview.headerCt.items.length;
+        formPanel = me.lookup('frmQuery');
 
-        me.alertQueryChanged(
-            // confirm
-            function () {
-                Api.log('clear');
 
-                for (i = 0; i < length; i++) {
-                    c = refs.grdPreview.headerCt.getComponent(0);
-                    refs.grdPreview.headerCt.remove(c);
-                }
+        // // var refs = me.getReferences();
+        // // var c, i, length = refs.grdPreview.headerCt.items.length;
 
-                // refs.cmbReleases.reset();
-                refs.frmQuery.getForm().reset();
-                refs.grdPreview.getView().refresh();
+        // me.alertQueryChanged(
+        //     // confirm
+        //     function () {
+        //         Api.log('clear');
 
-                me.getViewModel().set('activeQuery', null);
+        //         // for (i = 0; i < length; i++) {
+        //         //     c = refs.grdPreview.headerCt.getComponent(0);
+        //         //     refs.grdPreview.headerCt.remove(c);
+        //         // }
 
-                // refs.tvwInputTables.setRootNode(null);
-                // refs.tvwMyTables.setRootNode(null);
-                // refs.tvwOtherTables.setRootNode(null);
+        //         refs.frmQuery.getForm().reset();
+        //         refs.grdPreview.getView().refresh();
 
-                refs.tvwMyQueries.getSelectionModel().deselectAll();
-                refs.tvwSampleQueries.getSelectionModel().deselectAll();
-            },
+        //         me.getViewModel().set('activeQuery', null);
 
-            // cancel
-            function () {
+        //         // refs.tvwInputTables.setRootNode(null);
+        //         // refs.tvwMyTables.setRootNode(null);
+        //         // refs.tvwOtherTables.setRootNode(null);
 
-            });
+        //         refs.tvwMyQueries.getSelectionModel().deselectAll();
+        //         refs.tvwSampleQueries.getSelectionModel().deselectAll();
+        //     },
+
+        //     // cancel
+        //     function () {
+
+        //     });
 
     },
 
@@ -897,7 +984,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     },
 
     getActiveQuery: function () {
-        return this.getViewModel().get('activeQuery');
+        var me = this,
+            vm = me.getViewModel();
+
+        return vm.get('activeQuery');
     },
 
     getActiveRelease: function (release) {
@@ -1604,22 +1694,41 @@ var main = Ext.define('UserQuery.view.main.MainController', {
     },
 
     updateActiveQuery: function (query) {
-        var refs = this.getReferences();
-        var vm = this.getViewModel();
-        var q = this.getActiveQuery() || {};
+        console.log('updateActiveQuery(%o)', query);
+        var me = this,
+            formQuery = me.lookup('newFrmQuery');
+        // Cria uma instancia do model query baseado na seleção do usuario.
 
-        Object.assign(q, query);
-
-        query._oldValues = {
+        record = Ext.create('UserQuery.model.Query', {
             name: query.name,
             description: query.description,
+            release: query.release,
             sql_sentence: query.sql_sentence
-        };
-        query._valuesChanges = {};
+        });
 
-        query.exist = query.id ? true : false;
-        refs.frmQuery.getForm().setValues(query);
-        vm.set('activeQuery', query);
+        if (query.id) {
+            record.set('id', query.id)
+        }
+
+        formQuery.setQuery(record);
+
+
+        // var refs = this.getReferences();
+        // var vm = this.getViewModel();
+        // var q = this.getActiveQuery() || {};
+
+        // Object.assign(q, query);
+
+        // query._oldValues = {
+        //     name: query.name,
+        //     description: query.description,
+        //     sql_sentence: query.sql_sentence
+        // };
+        // query._valuesChanges = {};
+
+        // query.exist = query.id ? true : false;
+        // refs.frmQuery.getForm().setValues(query);
+        // vm.set('activeQuery', query);
     }
 });
 
@@ -1667,115 +1776,3 @@ function textWithMenuClick(event, el, id, record) {
     }, 100);
 
 }
-
-// mnuItemRelease_onClick: function(item){
-//     this.createEmptyQuery(item.config.data.id);
-// },
-
-// tvwJobList_onSelectionChange: function(tv, node){
-//     var refs = this.getReferences();
-//     var data = node.data;
-
-//     refs.ctnJobDetail.setHtml('<h3>JOB '+data.text+' Detail</h3>'+
-//                               '<table>'+
-//                                 '<tr><td style="font-weight:bold;">ID: </td><td>'+data.id+'</td></tr>'+
-//                                 '<tr><td style="font-weight:bold;">Status: </td><td>'+data.job_status+'</td></tr>'+
-//                                 '<tr><td style="font-weight:bold;">Start: </td><td>'+data.start_date_time+'</td></tr>'+
-//                                 '<tr><td style="font-weight:bold;">End: </td><td>'+data.end_date_time+'</td></tr>'+                                
-//                                 '<tr><td style="font-weight:bold;white-space:nowrap;">Table Name: </td><td>'+data.table_name+'</td></tr>'+
-//                                 '<tr><td style="font-weight:bold;">Owner: </td><td>'+data.owner+'</td></tr>'+
-//                                 '<tr><td style="font-weight:bold;">Timeout: </td><td>'+data.timeout+'</td></tr>'+
-//                                 '<tr><td style="font-weight:bold;">SQL: </td><td>'+data.sql_sentence+'</td></tr>'+
-//                               '</table>'
-//                             );
-// },
-
-// onItemSelected: function (sender, record) {
-//     Ext.Msg.confirm('Confirm', 'Are you sure?', 'onConfirm', this);
-// },
-
-// function getElementMousePosition(event) {
-//     event = event || window.event;
-
-//     var target = event.target || event.srcElement,
-//         style = target.currentStyle || window.getComputedStyle(target, null),
-//         borderLeftWidth = parseInt(style['borderLeftWidth'], 10),
-//         borderTopWidth = parseInt(style['borderTopWidth'], 10),
-//         rect = target.getBoundingClientRect(),
-//         offsetX = event.clientX - borderLeftWidth - rect.left,
-//         offsetY = event.clientY - borderTopWidth - rect.top;
-
-//     return [offsetX, offsetY];
-// };
-
-// function setCaretPositionFromPoint(x, y){
-//     // Try the standards-based way first
-//     if (document.caretPositionFromPoint) {
-//         var pos = document.caretPositionFromPoint(x, y);
-//         range = document.createRange();
-//         range.setStart(pos.offsetNode, pos.offset);
-//         range.collapse();
-//     //    range.insertNode(img);
-//     }
-//     // Next, the WebKit way
-//     else if (document.caretRangeFromPoint) {
-//         range = document.caretRangeFromPoint(x, y);
-//     //    range.insertNode(img);
-//     }
-//     // Finally, the IE way
-//     else if (document.body.createTextRange) {
-//         range = document.body.createTextRange();
-//         range.moveToPoint(x, y);
-//     //    var spanId = "temp_" + ("" + Math.random()).slice(2);
-//     //    range.pasteHTML('<span id="' + spanId + '">&nbsp;</span>');
-//     //    var span = document.getElementById(spanId);
-//     //    span.parentNode.replaceChild(img, span);
-//     }
-// }
-
-// function setCaretPosition(el, caretPos) {
-//     el.value = el.value;
-//     // ^ this is used to not only get "focus", but
-//     // to make sure we don't have it everything -selected-
-//     // (it causes an issue in chrome, and having it doesn't hurt any other browser)
-
-//     if (el !== null) {
-
-//         if (el.createTextRange) {
-//             var range = el.createTextRange();
-//             range.move('character', caretPos);
-//             range.select();
-//             return true;
-//         }
-
-//         else {
-//             // (el.selectionStart === 0 added for Firefox bug)
-//             if (el.selectionStart || el.selectionStart === 0) {
-//                 el.focus();
-//                 el.setSelectionRange(caretPos, caretPos);
-//                 return true;
-//             }
-
-//             else  { // fail city, fortunately this never happens (as far as I've tested) :)
-//                 el.focus();
-//                 return false;
-//             }
-//         }
-//     }
-// }
-// function getColsOrder(sql, cols){
-//     var a1 = [];
-//     var a2 = (/\bselect\b\s+([\S\s]+?)from/i.exec(sql) || [""])[1].split(/\s*,\s*/g);
-
-//     a2.forEach(function(c){
-//         var s = c.trim().split(' ');
-//         a1.push(s[s.length-1]);
-//     });
-
-
-//     return a1;
-// }
-// getColsOrder("select top 10 a,b xx, c as yy from abc where a in ('a')", ['a','c', 'b']);
-
-
-

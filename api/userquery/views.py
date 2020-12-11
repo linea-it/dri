@@ -238,7 +238,6 @@ class QueryValidate(viewsets.ModelViewSet):
             return JsonResponse(rqv.get_json_response())
 
         except Exception as e:
-            print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
 
 

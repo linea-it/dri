@@ -10,7 +10,8 @@ Ext.define('UserQuery.view.main.MainModel', {
         name: 'User Query',
         internal_name: 'user_query',
         desPortalLogo: 'resources/des-portal-logo.png',
-        help_url: 'contact-us/'
+        help_url: 'contact-us/',
+        sql_value: ''
     }
 
 });

@@ -102,8 +102,8 @@ router.register(r'comment/position', comment_views.PositionViewSet)
 router.register(r'comment/dataset', comment_views.CommentDatasetViewSet)
 
 # UserQuery API
-router.register(r'userquery_query', userquery_views.QueryViewSet)
-router.register(r'userquery_sample', userquery_views.SampleViewSet)
+router.register(r'userquery_query', userquery_views.QueryViewSet, basename='queries')
+router.register(r'userquery_sample', userquery_views.SampleViewSet, basename='sample_queries')
 router.register(r'userquery_job', userquery_views.JobViewSet)
 router.register(r'userquery_table', userquery_views.TableViewSet)
 router.register(r'userquery_validate', userquery_views.QueryValidate, basename='validate_query')

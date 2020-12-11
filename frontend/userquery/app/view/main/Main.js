@@ -16,6 +16,8 @@ Ext.define('UserQuery.view.main.Main', {
 
         'codemirror.Codemirror',
         'common.statistics.Events',
+
+        'UserQuery.view.query.QueryForm',
     ],
 
     controller: 'main',
@@ -36,78 +38,36 @@ Ext.define('UserQuery.view.main.Main', {
             xtype: 'dri-header'
         },
 
-        // toolbar
-        {
-            xtype: 'toolbar',
-            region: 'north',
-            items: [
-                // {
-                //     xtype: 'button',
-                //     tooltip: 'New',
-                //     handler: 'btnNew_onClick',
-                //     iconCls: 'x-fa fa-file-o',
-                //     // menu: {xtype: 'menu', plain: true, items: {
-                //     //     xtype: 'button',
-                //     //     text: 'User options',
-                //     //     handler: 'onBtnNew_Click'
-                //     // }}
-                // },
-                {
-                    xtype: 'button',
-                    tooltip: 'Clear Query',
-                    handler: 'btnClear_onClick',
-                    iconCls: 'x-fa fa-file-o',
-                    // menu: {xtype: 'menu', plain: true, items: {
-                    //     xtype: 'button',
-                    //     text: 'User options',
-                    //     handler: 'onBtnNew_Click'
-                    // }}
-                },
-                // {
-                //     xtype: 'button',
-                //     tooltip: 'Open',
-                //     handler: 'btnOpen_onClick',
-                //     iconCls: 'x-fa fa-folder-open'
-                // },
-                '-',
-                // {
-                //     xtype: 'button',
-                //     tooltip: 'Delete Query',
-                //     disabled: true,
-                //     bind: {
-                //         disabled: '{!activeQuery.exist}'
-                //     },
-                //     handler: 'btnDelete_onClick',
-                //     iconCls: 'x-fa fa-trash-o'
-                // },
-                // '-',
-                {
-                    xtype: 'button', // 'splitbutton',
-                    tooltip: 'Save Query',
-                    disabled: true,
-                    reference: 'btnSave',
-                    iconCls: 'x-fa fa-floppy-o',
-                    handler: 'btnSave_onClick',
-                    // menu: {xtype: 'menu', plain: true, items: {
-                    //     text: 'Save As',
-                    //     handler: 'mnuSaveAs_onClick'
-                    // }}
-                },
-                {
-                    xtype: 'button',
-                    tooltip: 'Execute Query',
-                    reference: 'btnStartJob',
-                    disabled: true,
-                    // bind: {
-                    //     disabled: '{!activeQuery.exist}'
-                    // },
-                    handler: 'btnStartJob_onClick',
-                    iconCls: 'x-fa fa-play'
-                },
-                // '->',
-                // {xtype: 'button', text:'My Jobs', tooltip:'My Jobs', iconCls: 'x-fa fa-info-circle'}
-            ]
-        },
+        // // toolbar
+        // {
+        //     xtype: 'toolbar',
+        //     region: 'north',
+        //     items: [
+        //         {
+        //             xtype: 'button',
+        //             tooltip: 'Clear Query',
+        //             handler: 'btnClear_onClick',
+        //             iconCls: 'x-fa fa-file-o',
+        //         },
+        //         '-',
+        //         {
+        //             xtype: 'button', // 'splitbutton',
+        //             tooltip: 'Save Query',
+        //             disabled: true,
+        //             reference: 'btnSave',
+        //             iconCls: 'x-fa fa-floppy-o',
+        //             handler: 'btnSave_onClick',
+        //         },
+        //         {
+        //             xtype: 'button',
+        //             tooltip: 'Execute Query',
+        //             reference: 'btnStartJob',
+        //             disabled: true,
+        //             handler: 'btnStartJob_onClick',
+        //             iconCls: 'x-fa fa-play'
+        //         },
+        //     ]
+        // },
 
         // client area
         {
@@ -128,11 +88,6 @@ Ext.define('UserQuery.view.main.Main', {
                     split: true,
                     width: 300,
                     minWidth: 100,
-                    // tools: [{
-                    //     type: 'down',
-                    //     tooltip: 'Change Release',
-                    //     handler: 'pnlLeftToolDown_onClick'
-                    // }],
                     header: {
                         xtype: 'header',
                         titlePosition: 0,
@@ -164,15 +119,7 @@ Ext.define('UserQuery.view.main.Main', {
                                 ]
                             }]
                     },
-                    bind: {
-                        //title: '{activeRelease.display}'
-                    },
                     layout: 'border',
-                    // layout: {
-                    //     type: 'accordion',
-                    //     titleCollapse: true,
-                    //     animate: true
-                    // },
                     items: [
                         {
                             xtype: 'panel',
@@ -381,23 +328,51 @@ Ext.define('UserQuery.view.main.Main', {
                 {
                     xtype: 'panel',
                     region: 'center',
-                    bind: {
-                        title: 'Query Definition' // '{activeQuery.name}'
-                    },
                     layout: 'border',
                     items: [
-                        // form
+                        {
+                            xtype: 'userquery-query-form',
+                            title: 'Query Definition',
+                            reference: 'newFrmQuery',
+                            region: 'center',
+                            listeners: {
+                                checkquery: 'onCheckQuery',
+                                clearform: 'onClearQueryForm',
+                                savequery: 'createNewQuery'
+                            }
+                        },
+                        // // form
                         {
                             xtype: 'form',
+                            title: 'Query Definition',
                             reference: 'frmQuery',
-                            region: 'center',
+                            // region: 'center',
+                            region: 'east',
                             layout: 'vbox',
                             bodyPadding: 15,
-                            defaults: {
-                                listeners: {
-                                    change: 'form_onDataChange'
-                                }
-                            },
+                            disabled: true,
+                            visible: false,
+                            tbar: [
+                                {
+                                    xtype: 'button',
+                                    tooltip: 'Clear Query',
+                                    handler: 'onClickBtnClear',
+                                    iconCls: 'x-fa fa-file-o',
+                                },
+                                {
+                                    xtype: 'button', // 'splitbutton',
+                                    tooltip: 'Save Query',
+                                    disabled: true,
+                                    reference: 'btnSave',
+                                    iconCls: 'x-fa fa-floppy-o',
+                                    handler: 'btnSave_onClick',
+                                },
+                            ],
+                            // defaults: {
+                            //     listeners: {
+                            //         change: 'form_onDataChange'
+                            //     }
+                            // },
                             items: [{
                                 xtype: 'textfield',
                                 fieldLabel: 'Name* ',
@@ -417,40 +392,41 @@ Ext.define('UserQuery.view.main.Main', {
                                 name: 'sql_sentence',
                                 reference: 'sql_sentence',
                                 width: '100%',
-                                flex: 1
-                            },
-                            // {
-                            //     xtype: 'textareafield',
-                            //     fieldLabel: 'SQL Sentence* ',
-                            //     name: 'sql_sentence',
-                            //     reference: 'sql_sentence',
-                            //     width: '100%',
-                            //     flex: 1
-                            // },
-                            {
-                                xtype: 'container',
-                                width: '100%',
-                                layout: {
-                                    type: 'hbox',
-                                    pack: 'end'
-                                },
-                                defaults: {
-                                    margin: '0 0 0 10'
-                                },
-                                items: [{
-                                    xtype: 'button',
-                                    text: 'Check',
-                                    reference: 'btnCheck',
-                                    handler: 'btnCheck_onClick'
-                                },
-                                {
-                                    xtype: 'button',
-                                    text: 'Preview',
-                                    reference: 'btnPreview',
-                                    handler: 'btnPreview_onClick'
+                                flex: 1,
+                                listeners: {
+                                    change: 'onChangeSqlField'
                                 }
-                                ]
                             }
+                            ],
+                            buttons: [{
+                                xtype: 'button',
+                                text: 'Check',
+                                reference: 'btnCheck',
+                                handler: 'onClickBtnCheck',
+                                bind: {
+                                    disabled: '{!sql_value}'
+                                }
+                            },
+                            {
+                                xtype: 'button',
+                                text: 'Preview',
+                                reference: 'btnPreview',
+                                handler: 'btnPreview_onClick',
+                                bind: {
+                                    disabled: '{!sql_value}'
+                                }
+                            },
+                            {
+                                xtype: 'button',
+                                text: 'Execute Query',
+                                tooltip: 'Execute Query',
+                                reference: 'btnStartJob',
+                                handler: 'btnStartJob_onClick',
+                                iconCls: 'x-fa fa-play',
+                                bind: {
+                                    disabled: '{!sql_value}'
+                                }
+                            },
                             ]
                         },
 
@@ -477,16 +453,6 @@ Ext.define('UserQuery.view.main.Main', {
                                         }
                                     ]
                                 },
-                                // {
-                                //     title: 'Table Content',
-                                //     items:[
-                                //         {
-                                //             xtype: 'grid',
-                                //             reference: 'grdTable',
-                                //             store: Ext.create('Ext.data.Store')
-                                //         }
-                                //     ]
-                                // },                                
                                 {
                                     title: 'My JOBs',
                                     listeners: {
@@ -497,12 +463,11 @@ Ext.define('UserQuery.view.main.Main', {
                                             xtype: 'grid',
                                             reference: 'grdJobs',
                                             store: Ext.create('Ext.data.Store'),
-                                            viewConfig: {
-                                                //stripeRows: false, 
-                                                getRowClass: function (record) {
-                                                    return record.get('row_cls') || 'row-cls';
-                                                }
-                                            }
+                                            // viewConfig: {
+                                            //     getRowClass: function (record) {
+                                            //         return record.get('row_cls') || 'row-cls';
+                                            //     }
+                                            // }
                                         }
                                     ]
                                 }
@@ -512,7 +477,6 @@ Ext.define('UserQuery.view.main.Main', {
                 }
             ]
         },
-
         // footer bar
         {
             xtype: 'dri-footer'
