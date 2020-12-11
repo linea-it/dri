@@ -1,4 +1,5 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -6,10 +7,13 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import HomeIcon from '@material-ui/icons/Home';
+import LogoutIcon from '@material-ui/icons/ExitToApp';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
 import HelpIcon from '@material-ui/icons/Help';
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import SelectReleases from './SelectReleases';
 import logo from '../assets/img/icon-des.png';
 import { logout } from '../api/Api';
@@ -20,17 +24,17 @@ const styles = theme => ({
     top: 'auto',
     bottom: 0,
   },
-  media: {
-    height: '',
-    width: '',
-  },
   grow: {
     flexGrow: 1,
   },
   username: {
     marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
   },
   menuButton: {
+    marginRight: theme.spacing(1),
+  },
+  menuIcon: {
     marginRight: theme.spacing(1),
   },
 });
@@ -42,6 +46,8 @@ function Header(props) {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [tutorialOpen, setTutorialOpen] = React.useState(false);
+
+  const history = useHistory();
 
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -76,8 +82,12 @@ function Header(props) {
     setAnchorEl(null);
   }
 
-  function handleHelp() {
+  function handleTutorial() {
     setTutorialOpen(true);
+  }
+
+  function handleHelp() {
+    history.push('/contact-us/');
   }
 
   return (
@@ -111,16 +121,6 @@ function Header(props) {
           >
             <HomeIcon />
           </IconButton>
-
-          <IconButton
-            // className={classes.menuButton}
-            onClick={handleHelp}
-            color="inherit"
-            title="Help"
-          >
-            <HelpIcon />
-          </IconButton>
-
           <IconButton
             className={classes.menuButton}
             onClick={handleClick}
@@ -137,7 +137,25 @@ function Header(props) {
             onClose={handleClose}
           >
             <MenuItem onClick={handleAbout}>About LIneA</MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            <MenuItem onClick={handleTutorial}>
+              <HelpIcon className={classes.menuIcon} fontSize="small" />
+              <Typography>
+                Tutorials
+              </Typography>
+            </MenuItem>
+            <MenuItem onClick={handleHelp}>
+              <HelpOutlineIcon className={classes.menuIcon} fontSize="small" />
+              <Typography>
+                Help
+              </Typography>
+            </MenuItem>
+            <Divider />
+            <MenuItem onClick={handleLogout}>
+              <LogoutIcon className={classes.menuIcon} fontSize="small" />
+              <Typography>
+                Logout
+              </Typography>
+            </MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
