@@ -121,7 +121,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
 
     filter_class = CatalogFilter
 
-    ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class')
+    ordering_fields = ('id', 'prd_name', 'prd_display_name', 'prd_class', 'prd_date', 'release_display_name')
 
     @action(detail=False)
     def get_class_tree_by_group(self, request):

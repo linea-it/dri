@@ -289,6 +289,16 @@ Ext.define('Target.view.preview.PreviewController', {
         );
     },
 
+    onClickComment: function (btn) {
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            object = vm.get('currentRecord');
+
+        console.log("onClickComment(%o)", object);
+        view.fireEvent('onclickopencomments', object, view);
+    },
+
     /**
      * @description
      * @param latlng Object Posição x,y referente a lat long da imagem
@@ -543,6 +553,7 @@ Ext.define('Target.view.preview.PreviewController', {
     onEvent: function () {
         Ext.GlobalEvents.fireEvent('eventregister', 'teste');
 
-    }
+    },
+
 
 });
