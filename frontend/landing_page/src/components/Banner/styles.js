@@ -6,7 +6,7 @@ const styles = makeStyles((theme) => ({
     background: `url(${process.env.PUBLIC_URL}/img/home1.jpg)`,
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
-    paddingTop: '40px',
+    paddingTop: '20px',
   },
   container: {
     background: 'transparent',
@@ -15,7 +15,7 @@ const styles = makeStyles((theme) => ({
     color: '#FFF',
     zIndex: 2,
     marginTop: '0',
-    minHeight: 300,
+    minHeight: 220,
   },
   table: {
     margin: 'auto',
