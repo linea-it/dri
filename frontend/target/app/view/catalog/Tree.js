@@ -47,7 +47,7 @@ Ext.define('Target.view.catalog.Tree', {
             columns: [
                 {
                     xtype: 'treecolumn',
-                    text: 'Name',
+                    text: 'List Name',
                     flex: 2,
                     sortable: true,
                     dataIndex: 'text',
@@ -77,7 +77,7 @@ Ext.define('Target.view.catalog.Tree', {
                     dataIndex: 'prd_date',
                     width: 150,
                     sortable: true,
-                    format:'Y-m-d H:m:s',
+                    format: 'Y-m-d H:m:s',
                     filter: {
                         type: 'date'
                     }
@@ -97,7 +97,7 @@ Ext.define('Target.view.catalog.Tree', {
                     dataIndex: 'tbl_num_columns',
                     sortable: true,
                     renderer: function (value, metadata, record) {
-                        if ((record.data.leaf) && (value > 0)){
+                        if ((record.data.leaf) && (value > 0)) {
                             return value;
                         }
                     }
@@ -113,24 +113,6 @@ Ext.define('Target.view.catalog.Tree', {
                 }
             },
             tbar: [
-                // Button Starred Catalog
-                {
-                    xtype: 'splitbutton',
-                    tooltip:'Bookmark This Catalog',
-                    iconCls: 'x-fa fa-bookmark',
-                    handler: 'onStarredCatalog',
-                    width: 60,
-                    enableToggle: true,
-                    // disabled: true,
-                    bind: {
-                        pressed: '{selectedCatalog.starred}'
-                    },
-                    menu: [{
-                        text:'Show only bookmarked',
-                        handler: 'filterByStarred'
-                    }]
-                },
-
                 // Add a New catalog
                 {
                     xtype: 'button',
@@ -142,7 +124,7 @@ Ext.define('Target.view.catalog.Tree', {
 
                 // Button Remove Catalog
                 {
-                    tooltip:'Remove Target List',
+                    tooltip: 'Remove Target List',
                     iconCls: 'x-fa fa-trash',
                     ui: 'soft-red',
                     handler: 'onRemoveCatalog',
@@ -150,6 +132,22 @@ Ext.define('Target.view.catalog.Tree', {
                     bind: {
                         disabled: '{!selectedCatalog.editable}'
                     }
+                },
+                // Button Bookmark Catalog
+                {
+                    xtype: 'splitbutton',
+                    tooltip: 'Bookmark This Catalog',
+                    iconCls: 'x-fa fa-bookmark',
+                    handler: 'onStarredCatalog',
+                    width: 60,
+                    enableToggle: true,
+                    bind: {
+                        pressed: '{selectedCatalog.starred}'
+                    },
+                    menu: [{
+                        text: 'Show only bookmarked',
+                        handler: 'filterByStarred'
+                    }]
                 },
                 {
                     xtype: 'textfield',
@@ -211,7 +209,7 @@ Ext.define('Target.view.catalog.Tree', {
 
         // Product Type = 'targets'
         filters.push({
-            property:'group',
+            property: 'group',
             value: type.toLowerCase()
         });
 
@@ -239,12 +237,12 @@ Ext.define('Target.view.catalog.Tree', {
         // So disparar o evento se o catalogo tiver a sua tabela disponivel
         // https://github.com/linea-it/dri/issues/662
         if ((record.get('tableExist') == true) &&
-            (record.get('leaf') == true )) {
+            (record.get('leaf') == true)) {
 
             this.fireEvent('selectcatalog', record, this);
 
         } else {
-            if (record.get('leaf') == true ) {
+            if (record.get('leaf') == true) {
                 // Avisar o usuario que a tabela esta indisponivel.
                 Ext.MessageBox.alert(
                     'Warning',
@@ -339,20 +337,20 @@ Ext.define('Target.view.catalog.Tree', {
 
         tpl = new Ext.XTemplate(
             '<div>',
-                //'<spam><b>{prd_display_name}</b></spam>',
-                '<tpl if=\'description != ""\'>',
-                    '<p><spam><b>Description:</b></spam>{description}</p>',
-                '</tpl>',
-                '<tpl if=\'epr_original_id != ""\'>',
-                    '<p><spam><b>Proccess: </b></spam>{epr_original_id}</p>',
-                '</tpl>',
-                '<tpl if=\'tbl_size != null\'>',
-                    '<p><spam><b>Size: </b></spam>{tbl_size}</p>',
-                '</tpl>',
-                '<tpl if=\'!tableExist\'>',
-                    '</br><spam><b class=color-orange>Warning</b>: ',
-                    'The table for this product is not currently available or does not exist.</spam>',
-                '</tpl>',
+            //'<spam><b>{prd_display_name}</b></spam>',
+            '<tpl if=\'description != ""\'>',
+            '<p><spam><b>Description:</b></spam>{description}</p>',
+            '</tpl>',
+            '<tpl if=\'epr_original_id != ""\'>',
+            '<p><spam><b>Proccess: </b></spam>{epr_original_id}</p>',
+            '</tpl>',
+            '<tpl if=\'tbl_size != null\'>',
+            '<p><spam><b>Size: </b></spam>{tbl_size}</p>',
+            '</tpl>',
+            '<tpl if=\'!tableExist\'>',
+            '</br><spam><b class=color-orange>Warning</b>: ',
+            'The table for this product is not currently available or does not exist.</spam>',
+            '</tpl>',
             '</div>'
         );
 

@@ -128,6 +128,7 @@ urlpatterns = [
     url(r'^dri/api/vizier/', product_views.vizier_cds),
     url(r'^dri/api/send_statistic_email/', common_views.send_statistic_email),
     url(r'^dri/api/available_database/', common_views.available_database),
+    url(r'^dri/api/get_ncsa_signup/', common_views.get_ncsa_signup),
     url(r'^dri/api/teste/', common_views.teste),
 
 

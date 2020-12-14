@@ -50,15 +50,15 @@ Ext.define('common.header.Toolbar', {
         }
     },
 
-    viewItems: function(){
+    viewItems: function () {
         return [
             {
                 xtype: 'component',
                 cls: 'des-portal-logo',
                 bind: {
                     html: '<a href=\"{home}\">' +
-                            '<img border="0" alt="Home" src="{desPortalLogo}" title="{tooltip}">' +
-                            '</a>'
+                        '<img border="0" alt="Home" src="{desPortalLogo}" title="{tooltip}">' +
+                        '</a>'
                 }
             },
             {
@@ -103,10 +103,10 @@ Ext.define('common.header.Toolbar', {
                         text: 'About LIneA',
                         handler: 'about'
                     },
-                    {
-                        text: 'Contact Us',
-                        handler: 'contact'
-                    },
+                    // {
+                    //     text: 'Contact Us',
+                    //     handler: 'contact'
+                    // },
                     {
                         text: 'Tutorials',
                         iconCls: 'x-fa fa-question-circle',
@@ -131,7 +131,7 @@ Ext.define('common.header.Toolbar', {
         ];
     },
 
-    initComponent: function() {
+    initComponent: function () {
         this.items = this.viewItems();
         this.callParent();
     },
