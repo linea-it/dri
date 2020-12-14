@@ -13,8 +13,9 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Avatar from '@material-ui/core/Avatar';
-// import logo from '../../assets/img/linea.png';
-import { getLoggedUser, urlLogin, urlLogout } from '../../Services/api';
+import {
+  getLoggedUser, singUpPath, urlLogin, urlSingup, urlLogout,
+} from '../../Services/api';
 import styles from './styles';
 
 function Header() {
@@ -29,6 +30,9 @@ function Header() {
   });
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const [user, setUser] = useState(undefined);
+  const [pathSingUp, setPathSingUp] = useState(undefined);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -80,14 +84,14 @@ function Header() {
     return (
       <>
         <Button href={urlLogin} color="inherit">Sign in</Button>
-        {/* <Button color="inherit">Sign up</Button> */}
+        {pathSingUp ? <Button href={urlSingup(pathSingUp)} color="inherit">Sign up</Button> : ''}
       </>
     );
   }
 
-  const [user, setUser] = useState(undefined);
   useEffect(() => {
     getLoggedUser().then((result) => setUser(result));
+    singUpPath().then((result) => setPathSingUp(result.NCSA_SIGNUP_LINK));
   }, []);
   useEffect(() => {}, [user]);
 
