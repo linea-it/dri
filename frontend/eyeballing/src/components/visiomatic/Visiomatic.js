@@ -409,6 +409,10 @@ class VisiomaticPanel extends Component {
   render() {
     const { hasInspection } = this.props;
 
+    const toolbar = 64;
+    const footer = 64;
+    const padding = 21;
+
     // Ajuste no Tamanho do container
     return (
       <>
@@ -417,7 +421,7 @@ class VisiomaticPanel extends Component {
           className="visiomatic-container"
           style={{
             width: '100%',
-            height: 'calc(100vh - 150px)',
+            height: window.innerHeight - toolbar - footer - padding,
             // height: '100%',
           }}
         />

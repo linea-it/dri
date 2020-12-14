@@ -58,12 +58,12 @@ const useStyles = makeStyles(theme => ({
   visiomatic: {
     backgroundColor: theme.palette.grey[200],
   },
-  tilelist: {
-    height: '100%',
+  tilelist: props => ({
+    height: props.tileHeight,
     textAlign: 'center',
     minWidth: 300,
     position: 'relative',
-  },
+  }),
   tilesCount: {
     textAlign: 'left',
   },
@@ -133,6 +133,9 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(1),
     },
   },
+  cardVisiomatic: {
+    height: window.innerHeight - 64 - 64 - 21,
+  },
 }));
 
 function Home() {
@@ -148,9 +151,9 @@ function Home() {
   const [menuContrastOpen, setMenuContrastOpen] = useState(false);
   const [contrast, setContrast] = useState('defaultContrast');
   const [counts, setCounts] = useState({
-    true: 0,
-    false: 0,
-    null: 0,
+    total: 0,
+    good: 0,
+    bad: 0,
   });
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [filterInspect, setFilterInspect] = useState('');
@@ -168,9 +171,16 @@ function Home() {
   const [fov, setFov] = useState(2);
   const searchRef = useRef('');
 
+  const header = 64;
+  const toolbar = 64;
+  const footer = 64;
+  const tilesCount = 40;
+  const containerPadding = 32;
 
   const api = new DriApi();
-  const classes = useStyles();
+  const classes = useStyles({
+    tileHeight: window.innerHeight - header - footer - 21,
+  });
 
   useEffect(() => {
     api.getTileInspectionOption().then(res => setHasInspection(res.TILE_VIEWER_INSPECTION_ENABLED));
@@ -201,10 +211,15 @@ function Home() {
         if (hasInspection) {
           // Totais de Tiles boas, ruim e não inspecionadas
           const goodTiles = countBy(res, el => el.isp_value);
-          goodTiles.tiles = res.length;
-          setCounts(goodTiles);
+          goodTiles.total = res.length;
+
+          setCounts({
+            total: goodTiles.total,
+            good: goodTiles.true ? goodTiles.true : 0,
+            bad: goodTiles.false ? goodTiles.false : 0,
+          });
         } else {
-          setCounts({ tiles: res.length });
+          setCounts(prevCounts => ({ ...prevCounts, total: res.length }));
         }
         if (allTiles.length === 0) {
           setAllTiles(res);
@@ -572,12 +587,6 @@ function Home() {
     });
   };
 
-  const header = 64;
-  const toolbar = 64;
-  const footer = 64;
-  const tilesCount = 40;
-  const containerPadding = 32;
-
   return (
     <Router>
       <Header
@@ -672,7 +681,7 @@ function Home() {
                   </Card>
                 </Grid>
                 <Grid item lg={9} xl={10} className={classes.visiomaticContainer}>
-                  <Card className={classes.card}>
+                  <Card className={`${classes.card} ${classes.cardVisiomatic}`}>
                     {currentRelease !== '' ? (
                       <VisiomaticPanel
                         image={
