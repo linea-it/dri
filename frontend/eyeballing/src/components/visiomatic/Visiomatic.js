@@ -3,6 +3,7 @@ import './Viewer.css';
 import { uniqueId } from 'lodash';
 import PropTypes from 'prop-types';
 import ContextMenu from './ContextMenu';
+import ContrastMenu from './ContrastMenu';
 import circle from './circle-outline.svg';
 
 const colorRanges = {
@@ -93,6 +94,9 @@ class VisiomaticPanel extends Component {
       contextMenuUpdateOpen: false,
       contextMenuEvt: null,
       points: [],
+      currentContrast: 'defaultContrast',
+      contrastMenuOpen: false,
+      preventUpdateContrast: false, // This is a flag to prevent the tile contrast from changing when the image changes
     };
   }
 
@@ -211,40 +215,106 @@ class VisiomaticPanel extends Component {
     return lCatalog;
   };
 
-  componentDidMount() {
-    const map = this.libL.map(this.id, { fullscreenControl: true, zoom: 1 });
-
-    this.libL.control.scale.wcs({ pixels: false }).addTo(map);
-    this.libL.control.reticle().addTo(map);
-
-    this.wcsControl = this.libL.control
-      .wcs({
-        coordinates: [{ label: 'RA,Dec', units: 'HMS' }],
-        position: 'topright',
-      })
-      .addTo(map);
-
-    // Add a Reticle to Map
-    this.libL.control.reticle().addTo(map);
-
-    const sidebar = this.libL.control.sidebar().addTo(map);
-
-    // Channel Mixing
-    this.libL.control.iip.channel().addTo(sidebar);
-
-    // Image Preference
-    this.libL.control.iip.image().addTo(sidebar);
-
-    map.on('layeradd', this.onLayerAdd, this);
-    map.on('layerremove', this.onLayerRemove, this);
-
-    if (this.props.hasInspection) {
-      map.on('contextmenu', this.onContextMenuOpen, this);
-      map.on('overlaycatalog', this.overlayCatalog, this);
+  onContrastMenuOpen = () => {
+    if (this.props.currentDataset) {
+      this.setState({
+        contrastMenuOpen: true,
+      });
     }
-    this.map = map;
-    // this.changeImage();
   }
+
+  onContrastMenuClose = () => {
+    this.setState({
+      contrastMenuOpen: false,
+    });
+  }
+
+  onContrastMenuChange = (e, value) => {
+    this.setState({
+      contrastMenuOpen: false,
+      currentContrast: value,
+      preventUpdateContrast: false,
+    });
+  }
+
+  // showContrastWindow = () => {
+  //   this.setState({
+  //     contrastWindowOpen: true,
+  //     colorRanges,
+  //   });
+
+  //   const me = this;
+  //   const currentContrast = me.getCurrentContrast();
+
+  //   // TODO: verificar se o valor de currentContrast esta disponivel na lista de Contrasts disponiveis.
+  //   if (currentContrast !== null) {
+
+  //     this.setState({
+  //       contrastWindowOpen: true,
+  //       colorRanges,
+  //     });
+
+  //     me.setCurrentContrast(currentContrast);
+
+  //   } else {
+  //     return false;
+  //   }
+  // }
+
+changeContrast = () => {
+  const me = this;
+
+  const imageLayer = me.layer;
+
+  const minValues = colorRanges[this.state.currentContrast].minMaxValues.map(v => v[0]);
+  const maxValues = colorRanges[this.state.currentContrast].minMaxValues.map(v => v[1]);
+
+  imageLayer.iipMinValue = minValues;
+  imageLayer.iipMaxValue = maxValues;
+
+  imageLayer.updateMix();
+  imageLayer.redraw();
+}
+
+componentDidMount() {
+  const map = this.libL.map(this.id, {
+    fullscreenControl: true,
+    zoom: 1,
+    enableLineaContrast: true,
+  });
+
+  this.libL.control.scale.wcs({ pixels: false }).addTo(map);
+  this.libL.control.reticle().addTo(map);
+
+  this.wcsControl = this.libL.control
+    .wcs({
+      coordinates: [{ label: 'RA,Dec', units: 'HMS' }],
+      position: 'topright',
+    })
+    .addTo(map);
+
+  // Add a Reticle to Map
+  this.libL.control.reticle().addTo(map);
+
+  const sidebar = this.libL.control.sidebar().addTo(map);
+
+  // Channel Mixing
+  this.libL.control.iip.channel().addTo(sidebar);
+
+  // Image Preference
+  this.libL.control.iip.image().addTo(sidebar);
+
+  map.on('layeradd', this.onLayerAdd, this);
+  map.on('layerremove', this.onLayerRemove, this);
+  map.on('changecontrast', this.onContrastMenuOpen, this);
+
+  if (this.props.hasInspection) {
+    map.on('contextmenu', this.onContextMenuOpen, this);
+    map.on('overlaycatalog', this.overlayCatalog, this);
+  }
+  this.map = map;
+  // this.changeImage();
+}
 
 
   removeImageLayer = () => {
@@ -261,7 +331,7 @@ class VisiomaticPanel extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps.image !== this.props.image) {
       this.changeImage();
     }
@@ -275,6 +345,10 @@ class VisiomaticPanel extends Component {
 
     if (this.props.hasInspection && prevProps.contrast !== this.props.contrast) {
       this.changeImage();
+    }
+
+    if (!this.state.preventUpdateContrast && this.state.currentContrast !== prevState.currentContrast) {
+      this.changeContrast();
     }
   }
 
@@ -358,6 +432,11 @@ class VisiomaticPanel extends Component {
           // ],
         })
         .addTo(this.map);
+
+      this.setState({
+        currentContrast: 'defaultContrast',
+        preventUpdateContrast: true,
+      });
     } else if (this.layer) {
       this.map.removeLayer(this.layer);
     }
@@ -437,6 +516,12 @@ class VisiomaticPanel extends Component {
             reloadData={this.props.reloadData}
           />
         ) : null}
+        <ContrastMenu
+          open={this.state.contrastMenuOpen}
+          currentContrast={this.state.currentContrast}
+          handleChange={this.onContrastMenuChange}
+          handleClose={this.onContrastMenuClose}
+        />
       </>
     );
   }

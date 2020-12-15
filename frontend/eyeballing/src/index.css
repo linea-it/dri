@@ -20,3 +20,7 @@ code {
 .MuiTablePagination-spacer {
   display: none;
 }
+
+.leaflet-control-zoom {
+  filter: none;
+}
