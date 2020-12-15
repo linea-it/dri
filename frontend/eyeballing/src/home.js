@@ -169,6 +169,7 @@ function Home() {
   const [searchEnabled, setSearchEnabled] = useState(false);
   const [visiomaticCenter, setVisiomaticCenter] = useState([]);
   const [fov, setFov] = useState(2);
+  const [selectedLine, setSelectedLine] = useState(null);
   const searchRef = useRef('');
 
   const header = 64;
@@ -418,9 +419,9 @@ function Home() {
   const handleMenuFilterOpen = () => setShowFilterDialog(true);
 
   const handleMenuFilterClose = (value) => {
+    setShowFilterDialog(false);
     if (value !== filterInspect) {
       setFilterInspect(value);
-      setShowFilterDialog(false);
       setTotalCount(0);
       reloadList();
     }
@@ -586,6 +587,35 @@ function Home() {
       visible: false,
     });
   };
+
+  useEffect(() => {
+    const handleKeyUp = (e) => {
+      // 38 (ArrowUp)
+      if (e.keyCode === 38) {
+        const row = selectedLine !== null
+          && selectedLine !== 0 ? selectedLine - 1 : 0;
+
+        setSelectedLine(row);
+      }
+
+      // 40 (ArrowDown)
+      if (e.keyCode === 40) {
+        const row = selectedLine !== null
+          && selectedLine !== datasets.length ? selectedLine + 1 : 0;
+
+        setSelectedLine(row);
+      }
+    };
+
+    window.addEventListener('keyup', handleKeyUp);
+    return () => window.removeEventListener('keyup', handleKeyUp);
+  }, [datasets, selectedLine]);
+
+  useEffect(() => {
+    if (selectedLine !== null) {
+      onSelectDataset(datasets[selectedLine]);
+    }
+  }, [selectedLine]);
 
   return (
     <Router>

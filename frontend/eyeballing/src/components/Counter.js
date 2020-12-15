@@ -33,7 +33,6 @@ export default function Counter(props) {
 
   const { hasInspection } = props;
 
-
   return (
     <div className={classes.root}>
       {hasInspection ? (
@@ -68,7 +67,7 @@ export default function Counter(props) {
             gutterBottom
             noWrap
           >
-            {`${((good * 100) / total).toFixed(2)}%`}
+            {`${Math.round((((good * 100) / total) + Number.EPSILON) * 100) / 100}%`}
           </Typography>
 
           <Typography
@@ -85,7 +84,7 @@ export default function Counter(props) {
             gutterBottom
             noWrap
           >
-            {`${((bad * 100) / total).toFixed(2)}%`}
+            {`${Math.round((((bad * 100) / total) + Number.EPSILON) * 100) / 100}%`}
           </Typography>
         </>
       ) : (
