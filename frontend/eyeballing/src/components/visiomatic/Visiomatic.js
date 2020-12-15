@@ -288,7 +288,16 @@ componentDidMount() {
 
   this.wcsControl = this.libL.control
     .wcs({
-      coordinates: [{ label: 'RA,Dec', units: 'HMS' }],
+      coordinates: [
+        {
+          label: 'RA, Dec (Deg)',
+          units: 'deg',
+        },
+        {
+          label: 'RA,Dec (HMS)',
+          units: 'HMS',
+        },
+      ],
       position: 'topright',
     })
     .addTo(map);
