@@ -39,9 +39,9 @@ class RejectSerializer(serializers.HyperlinkedModelSerializer):
 class CommentsSerializer(serializers.HyperlinkedModelSerializer):
     catalog_id = IntegerField(allow_null=False)
     object_id = CharField(min_length=1, max_length=255, allow_null=False, required=True)
-    owner = serializers.SerializerMethodField()
-    date = serializers.SerializerMethodField()
-    is_owner = serializers.SerializerMethodField()
+    owner = serializers.SerializerMethodField(read_only=True)
+    date = serializers.SerializerMethodField(read_only=True)
+    is_owner = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Comments

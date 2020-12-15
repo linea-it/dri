@@ -7,7 +7,7 @@ import sqlalchemy
 from sqlalchemy import Column, cast, desc
 from sqlalchemy import exc as sa_exc
 from sqlalchemy import func
-from sqlalchemy.sql import and_, or_, select
+from sqlalchemy.sql import and_, or_, select, text
 from sqlalchemy.sql.expression import between, literal_column
 
 from lib.sqlalchemy_wrapper import DBBase
@@ -98,9 +98,9 @@ class CatalogTable(CatalogDB):
                 property = self.ordering[1:].lower()
 
             if asc:
-                stm = stm.order_by(property)
+                stm = stm.order_by(text(property))
             else:
-                stm = stm.order_by(desc(property))
+                stm = stm.order_by(desc(text(property)))
 
         # Paginacao
         if self.limit:
@@ -595,7 +595,6 @@ class TargetObjectsDBHelper(CatalogTable):
         base_filters = and_(*self.do_filter(self.table, filters))
 
         stm = stm.where(and_(base_filters, coordinate_filters, rating_filters, reject_filters))
-        # stm = stm.where(and_(rating_filters, reject_filters))
 
         # Ordenacao
         if self.ordering is not None:
@@ -611,7 +610,7 @@ class TargetObjectsDBHelper(CatalogTable):
             elif property == '_meta_reject':
                 property = catalog_reject.c.reject
             else:
-                property = 'a.' + property
+                property = text('a.' + property)
 
             if asc:
                 stm = stm.order_by(property)

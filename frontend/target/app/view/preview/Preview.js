@@ -73,41 +73,40 @@ Ext.define('Target.view.preview.Preview', {
         dock: 'top',
         items: [
             // Campo de Rating usando Number Field. troquei pelo componente Rating. 
-            // Mas estou deixando o number field comentádo caso seja preciso voltar a usa-lo.
-            // {
-            //     xtype: 'numberfield',
-            //     maxValue: 5,
-            //     minValue: 0,
-            //     width: 100,
-            //     fieldLabel: 'Rating',
-            //     labelWidth: 45,
-            //     bind: {
-            //         value: '{currentRecord._meta_rating}',
-            //         disabled: '{is_empty}'
-            //     }
-            // },            
-            // Workaround to fix bug caused when Rating field is first in toolbar.
-            // TODO: Provavelmente o update para versão 7.0 deve corrigir esse bug e este campo oculto
             {
                 xtype: 'numberfield',
-                hidden: true
-            },
-            {
-                xtype: 'tbtext',
-                html: 'Rating'
-            },
-            {
-                xtype: 'rating',
-                minimum: 0,
-                scale: '120%',
-                selectedStyle: 'color: rgb(96, 169, 23);',
-                style: {
-                    'color': '#777777'
-                },
+                maxValue: 5,
+                minValue: 0,
+                width: 100,
+                fieldLabel: 'Rating',
+                labelWidth: 45,
                 bind: {
                     value: '{currentRecord._meta_rating}',
+                    disabled: '{is_empty}'
                 }
             },
+            // TODO: Provavelmente o update para versão 7.0 deve corrigir esse bug e este campo oculto
+            // Componente Rating causa um erro por não ter o metodo disabled. e atrapalha os demais botões. 
+            // {
+            //     xtype: 'numberfield',
+            //     hidden: true
+            // },
+            // {
+            //     xtype: 'tbtext',
+            //     html: 'Rating'
+            // },
+            // {
+            //     xtype: 'rating',
+            //     minimum: 0,
+            //     scale: '120%',
+            //     selectedStyle: 'color: rgb(96, 169, 23);',
+            //     style: {
+            //         'color': '#777777'
+            //     },
+            //     bind: {
+            //         value: '{currentRecord._meta_rating}',
+            //     }
+            // },
             {
                 xtype: 'checkboxfield',
                 reference: 'btnReject',
@@ -274,8 +273,9 @@ Ext.define('Target.view.preview.Preview', {
             vm = me.getViewModel(),
             refs = me.getReferences(),
             datasets = vm.getStore('datasets'),
-            members = vm.getStore('members'),
-            comments = vm.getStore('comments');
+            members = vm.getStore('members');
+
+        // comments = vm.getStore('comments');
 
         // limpa o datasets e o texto da combo
         datasets.clearData();
@@ -292,8 +292,8 @@ Ext.define('Target.view.preview.Preview', {
         members.removeAll();
         members.clearFilter(true);
 
-        comments.removeAll();
-        comments.clearFilter(true);
+        // comments.removeAll();
+        // comments.clearFilter(true);
 
         // Desabilita totalmente o painel de preview para 
         // evitar ações do usuario sem que tenha um objeto selecionado.
