@@ -828,23 +828,23 @@ L.IIPUtils = {
 
 	// Copy string to clipboard (from http://stackoverflow.com/a/33928558)
 	// Chrome 43+, Firefox 42+, Edge and Safari 10+ supported
-	copyToClipboard: function (text) {
-		if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
-			var textarea = document.createElement('textarea');
-			textarea.textContent = text;
-			textarea.style.position = 'fixed';  // Prevent scrolling to bottom of page in MS Edge.
-			document.body.appendChild(textarea);
-			textarea.select();
-			try {
-				return document.execCommand('copy');  // Security exception may be thrown by some browsers.
-			} catch (ex) {
-				console.warn('Copy to clipboard failed.', ex);
-				return false;
-			} finally {
-				document.body.removeChild(textarea);
-			}
-		}
-	},
+	// copyToClipboard: function (text) {
+	// 	if (document.queryCommandSupported && document.queryCommandSupported('copy')) {
+	// 		var textarea = document.createElement('textarea');
+	// 		textarea.textContent = text;
+	// 		textarea.style.position = 'fixed';  // Prevent scrolling to bottom of page in MS Edge.
+	// 		document.body.appendChild(textarea);
+	// 		textarea.select();
+	// 		try {
+	// 			return document.execCommand('copy');  // Security exception may be thrown by some browsers.
+	// 		} catch (ex) {
+	// 			console.warn('Copy to clipboard failed.', ex);
+	// 			return false;
+	// 		} finally {
+	// 			document.body.removeChild(textarea);
+	// 		}
+	// 	}
+	// },
 
 	// Add a short (<400ms) "flash" animation to an element
 	flashElement: function (elem) {
@@ -3271,9 +3271,9 @@ if (typeof require !== 'undefined') {
 	Native FullScreen JavaScript API
 	-------------
 	Assumes Mozilla naming conventions instead of W3C for now
-	
+
 	source : http://johndyer.name/native-fullscreen-javascript-api-plus-jquery-plugin/
-	
+
 	*/
 
 	var fullScreenApi = {
@@ -6297,21 +6297,21 @@ L.Control.WCS = L.Control.extend({
 			this.panTo(this._wcsinput.value);
 		}, this);
 
-		var clipboardbutton = L.DomUtil.create('div', className + '-clipboard', dialog);
-		clipboardbutton.title = 'Copy to clipboard';
-		L.DomEvent.on(clipboardbutton, 'click', function () {
-			var stateObj = {},
-				url = location.href,
-				wcs = this._map.options.crs,
-				latlng = map.getCenter();
-			L.IIPUtils.flashElement(this._wcsinput);
-			url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
-				L.IIPUtils.latLngToHMSDMS(latlng));
-			url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,
-				wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
-			history.pushState(stateObj, '', url);
-			L.IIPUtils.copyToClipboard(url);
-		}, this);
+		// var clipboardbutton = L.DomUtil.create('div', className + '-clipboard', dialog);
+		// clipboardbutton.title = 'Copy to clipboard';
+		// L.DomEvent.on(clipboardbutton, 'click', function () {
+		// 	var stateObj = {},
+		// 		url = location.href,
+		// 		wcs = this._map.options.crs,
+		// 		latlng = map.getCenter();
+		// 	L.IIPUtils.flashElement(this._wcsinput);
+		// 	url = L.IIPUtils.updateURL(url, this.options.centerQueryKey,
+		// 		L.IIPUtils.latLngToHMSDMS(latlng));
+		// 	url = L.IIPUtils.updateURL(url, this.options.fovQueryKey,
+		// 		wcs.zoomToFov(map, map.getZoom(), latlng).toPrecision(4));
+		// 	history.pushState(stateObj, '', url);
+		// 	L.IIPUtils.copyToClipboard(url);
+		// }, this);
 
 		return this._wcsdialog;
 	},
