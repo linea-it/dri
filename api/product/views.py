@@ -281,8 +281,6 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
 
                 # Se ja tiver o grupo External Catalog adiciona os catalogos do vizier como children
                 if group_name == 'external_catalogs' and external_catalogs_vizier is not None:
-                    from pprint import pprint
-                    # pprint(external_catalogs_vizier.get('children')[0].get('children'))
                     nodeg['children'].append(external_catalogs_vizier.get('children')[0])
 
                 result.get('children').append(nodeg)
