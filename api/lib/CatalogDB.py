@@ -98,9 +98,9 @@ class CatalogTable(CatalogDB):
                 property = self.ordering[1:].lower()
 
             if asc:
-                stm = stm.order_by(text(property))
+                stm = stm.order_by(property)
             else:
-                stm = stm.order_by(desc(text(property)))
+                stm = stm.order_by(desc(property))
 
         # Paginacao
         if self.limit:
@@ -369,7 +369,7 @@ class CatalogObjectsDBHelper(CatalogTable):
 
         base_filters = and_(*self.do_filter(self.table, filters))
 
-        if coordinates_filter:
+        if coordinates_filter is not None:
             stm = stm.where(and_(base_filters, coordinates_filter))
         else:
             stm = stm.where(base_filters)
