@@ -100,7 +100,7 @@ const to404 = () => {
 export const urlLogin = `${host}/dri/api/api-auth/login/?next=/`;
 
 export const urlSingup = (path) => {
-  return `${host}/dri/api/${path}`;
+  return path ? `${host}/dri/api/${path}` : urlLogin;
 };
 
 export const urlLogout = `${host}/dri/api/api-auth/logout/?next=/`;

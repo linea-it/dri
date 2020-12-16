@@ -84,7 +84,7 @@ function Header() {
     return (
       <>
         <Button href={urlLogin} color="inherit">Sign in</Button>
-        {pathSingUp ? <Button href={urlSingup(pathSingUp)} color="inherit">Sign up</Button> : ''}
+        <Button href={urlSingup(pathSingUp)} color="inherit">Sign up</Button>
       </>
     );
   }
