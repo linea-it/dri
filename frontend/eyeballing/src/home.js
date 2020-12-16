@@ -324,7 +324,10 @@ function Home() {
 
   const getDatasetCommentsByType = () => {
     setCommentsWithFeature([]);
-    return api.getDatasetCommentsByType(currentDataset.id, 2).then(res => setCommentsWithFeature(res));
+    if (currentDataset.id) {
+      api.getDatasetCommentsByType(currentDataset.id, 2)
+        .then(res => setCommentsWithFeature(res));
+    }
   };
 
   useEffect(() => {
@@ -517,6 +520,7 @@ function Home() {
     setCurrentRelease(value);
     reloadList();
     reloadAllTiles();
+    setCurrentDataset({});
   };
 
   useEffect(() => {
