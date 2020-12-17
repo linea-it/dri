@@ -14,7 +14,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Avatar from '@material-ui/core/Avatar';
 import {
-  getLoggedUser, singPath, urlLogin, urlSing, urlLogout,
+  getLoggedUser, signPath, urlLogin, urlSign, urlLogout,
 } from '../../Services/api';
 import styles from './styles';
 
@@ -32,7 +32,7 @@ function Header() {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const [user, setUser] = useState(undefined);
-  const [pathSing, setPathSing] = useState(undefined);
+  const [pathSign, setPathSign] = useState(undefined);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -84,14 +84,14 @@ function Header() {
     return (
       <>
         <Button href={urlLogin} color="inherit">Sign in</Button>
-        <Button href={urlSing(pathSing)} color="inherit">Sign up</Button>
+        <Button href={urlSign(pathSign)} color="inherit">Sign up</Button>
       </>
     );
   }
 
   useEffect(() => {
     getLoggedUser().then((result) => setUser(result));
-    singPath().then((result) => setPathSing(result.NCSA_SIGNUP_LINK));
+    signPath().then((result) => setPathSign(result.NCSA_SIGNUP_LINK));
   }, []);
   useEffect(() => {}, [user]);
 

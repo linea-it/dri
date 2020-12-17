@@ -86,7 +86,7 @@ export const sendEmail = (formData) => axios.post('contact/', formData)
   .then((res) => res)
   .catch((err) => err);
 
-export const singPath = () => axios.get('get_ncsa_signup/')
+export const signPath = () => axios.get('get_ncsa_signup/')
   .then((res) => res.data)
   .catch((err) => {
     console.error(err);
@@ -99,7 +99,7 @@ const to404 = () => {
 
 export const urlLogin = `${host}/dri/api/api-auth/login/?next=/`;
 
-export const urlSing = (path) => {
+export const urlSign = (path) => {
   return path ? `${host}/dri/api/${path}` : `${host}/oracle-easy-access`;
 };
 
