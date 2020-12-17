@@ -100,7 +100,7 @@ const to404 = () => {
 export const urlLogin = `${host}/dri/api/api-auth/login/?next=/`;
 
 export const urlSing = (path) => {
-  return path ? `${host}/dri/api/${path}` : urlLogin;
+  return path ? `${host}/dri/api/${path}` : `${host}/oracle-easy-access`;
 };
 
 export const urlLogout = `${host}/dri/api/api-auth/logout/?next=/`;
