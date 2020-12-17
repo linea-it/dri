@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import { useHistory } from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
@@ -50,7 +49,6 @@ function Header(props) {
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [tutorialOpen, setTutorialOpen] = React.useState(false);
-  const history = useHistory();
 
   function handleClick(event) {
     setAnchorEl(event.currentTarget);
@@ -68,7 +66,7 @@ function Header(props) {
   function handleHomeTileViewer() {
     const { protocol } = window.location;
     const { host } = window.location;
-    const location = `${protocol}//${host}/tile_viewer`;
+    const location = `${protocol}//${host}/tile_viewer/`;
 
     window.location.assign(location);
   }
@@ -90,7 +88,15 @@ function Header(props) {
   }
 
   function handleHelp() {
-    history.push('/contact-us/');
+    const { protocol } = window.location;
+    const { host } = window.location;
+    const location = `${protocol}//${host}/contact-us/`;
+
+    console.log('location', location);
+
+    handleClose();
+
+    window.open(location);
   }
 
   return (

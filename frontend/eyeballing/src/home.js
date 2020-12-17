@@ -208,7 +208,7 @@ function Home() {
 
       setCurrentRelease(release);
     });
-    api.getTutorial().then(res => setTutorial(res));
+    api.getTutorial().then(res => setTutorial(res)).catch(() => setTutorial([]));
   }, []);
 
   useEffect(() => {
@@ -276,6 +276,13 @@ function Home() {
         if (datasetTotalCount === 0) {
           setNoResultsFound(true);
         }
+      })
+      .catch(() => {
+        setTotalCount(0);
+        setDatasets([]);
+        datasetLoading.current = false;
+        setLoadingList(false);
+        setNoResultsFound(true);
       });
   };
 
@@ -559,7 +566,7 @@ function Home() {
         // If only one dataset was found, then select it automatically
         if (datasetByPosition.length === 1) {
           setCurrentDataset(datasetByPosition[0]);
-          setFov(0.3);
+          setFov(0.05);
           setVisiomaticCenter(raDec);
         }
       } else {
@@ -710,6 +717,7 @@ function Home() {
   useEffect(() => {
     if (selectedLine !== null) {
       onSelectDataset(datasets[selectedLine]);
+      console.log(`selectedLine: ${selectedLine}`);
     }
   }, [selectedLine]);
 
