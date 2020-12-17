@@ -8,7 +8,6 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import DialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
-import Divider from '@material-ui/core/Divider';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
@@ -21,48 +20,47 @@ const useStyles = makeStyles(theme => ({
   closeIcon: {
     fontSize: '1rem',
   },
+  dialogTitle: {
+    padding: '0px 0 5px',
+  },
+  root: {
+    zIndex: '9999 !important',
+  },
 }));
 
-function ChooseFilterDialog(props) {
-  const { selectedValue } = props;
+function ContrastMenu({
+  open,
+  currentContrast,
+  handleChange,
+  handleClose,
+}) {
   const classes = useStyles();
 
-  function handleClose() {
-    props.handleClose(selectedValue);
-  }
-
-  function handleChange(event, newValue) {
-    props.handleClose(newValue);
-  }
 
   return (
-    <Dialog onClose={handleClose} open={props.open}>
+    <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth className={classes.root}>
       <DialogContent dividers>
-        <DialogTitle>Filter the list of Tiles</DialogTitle>
+        <DialogTitle className={classes.dialogTitle}>Choose Color Ranges</DialogTitle>
         <IconButton aria-label="Close" className={classes.closeButton} onClick={handleClose}>
           <CloseIcon className={classes.closeIcon} />
         </IconButton>
-        <Divider />
-        <RadioGroup value={props.selectedValue} onChange={handleChange}>
+      </DialogContent>
+      <DialogContent>
+        <RadioGroup value={currentContrast} onChange={handleChange}>
           <FormControlLabel
-            value=""
+            value="defaultContrast"
             control={<Radio />}
-            label="All"
+            label="Default Contrast"
           />
           <FormControlLabel
-            value="true"
+            value="mediumContrast"
             control={<Radio />}
-            label="List good tiles"
+            label="Medium Contrast"
           />
           <FormControlLabel
-            value="false"
+            value="highContrast"
             control={<Radio />}
-            label="List bad tiles"
-          />
-          <FormControlLabel
-            value="null"
-            control={<Radio />}
-            label="List of tiles not inspected"
+            label="High Contrast"
           />
         </RadioGroup>
       </DialogContent>
@@ -70,11 +68,11 @@ function ChooseFilterDialog(props) {
   );
 }
 
-
-ChooseFilterDialog.propTypes = {
-  handleClose: PropTypes.func.isRequired,
+ContrastMenu.propTypes = {
   open: PropTypes.bool.isRequired,
-  selectedValue: PropTypes.string.isRequired,
+  currentContrast: PropTypes.string.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleClose: PropTypes.func.isRequired,
 };
 
-export default ChooseFilterDialog;
+export default ContrastMenu;
