@@ -72,7 +72,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 // removeSplash();
 
                 me.loadMyQueries();
-                me.loadExternalTables();
+                // me.loadExternalTables();
 
                 // setTimeout(function(){
                 //     me.downloadCsv('table_id');
@@ -131,10 +131,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         refs.tvwInputTables.collapseAll();
     },
 
-    accExternalCatalog_onCollapse: function () {
-        var refs = this.getReferences();
-        refs.tvwExternalCatalog.collapseAll();
-    },
+    // accExternalCatalog_onCollapse: function () {
+    //     var refs = this.getReferences();
+    //     refs.tvwExternalCatalog.collapseAll();
+    // },
 
     accMyTables_onCollapse: function () {
         var refs = this.getReferences();
@@ -146,9 +146,9 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         refs.tvwOtherTables.collapseAll();
     },
 
-    accExternalCatalog_onExpand: function () {
-        // this.loadExternalTables();
-    },
+    // accExternalCatalog_onExpand: function () {
+    //     // this.loadExternalTables();
+    // },
 
     // evento: ao expandir o item accordion my tables
     accMyTables_onExpand: function () {
@@ -488,16 +488,16 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         }
     },
 
-    tvwExternalCatalog_onContextMenuClick: function (item) {
-        var config = item.config;
-        var table = item.record.get('data_table');
+    // tvwExternalCatalog_onContextMenuClick: function (item) {
+    //     var config = item.config;
+    //     var table = item.record.get('data_table');
 
-        switch (config.itemId) {
-            case 'preview':
-                this.sqlPreview('select * from ' + table, 'grdPreview');
-                break;
-        }
-    },
+    //     switch (config.itemId) {
+    //         case 'preview':
+    //             this.sqlPreview('select * from ' + table, 'grdPreview');
+    //             break;
+    //     }
+    // },
 
     tvwMyTables_onExpanded: function (node) {
         if (node.isRoot() || node.childNodes.length > 0) {
@@ -517,23 +517,23 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
-    tvwExternalCatalog_onExpanded: function (node) {
-        if (node.isRoot() || node.childNodes.length > 0) {
-            return;
-        }
+    // tvwExternalCatalog_onExpanded: function (node) {
+    //     if (node.isRoot() || node.childNodes.length > 0) {
+    //         return;
+    //     }
 
-        this.loadFields({
-            schema: node.get('data_schema'),
-            table: node.get('data_table'),
-            request: function () {
-                node.set('cls', 'x-grid-tree-loading');
-            },
-            response: function (fields) {
-                node.appendChild(fields);
-                node.set('cls', '');
-            }
-        });
-    },
+    //     this.loadFields({
+    //         schema: node.get('data_schema'),
+    //         table: node.get('data_table'),
+    //         request: function () {
+    //             node.set('cls', 'x-grid-tree-loading');
+    //         },
+    //         response: function (fields) {
+    //             node.appendChild(fields);
+    //             node.set('cls', '');
+    //         }
+    //     });
+    // },
 
     tvwInputTables_onContextMenuClick: function (item) {
         var me = this;
@@ -944,45 +944,45 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
     },
 
-    loadExternalTables: function () {
-        var me = this;
-        var refs = me.getReferences();
-        var el = refs.tvwMyTables.getEl();
+    // loadExternalTables: function () {
+    //     var me = this;
+    //     var refs = me.getReferences();
+    //     var el = refs.tvwMyTables.getEl();
 
-        return Api.getTables({
-            cache: true,
-            params: {
-                group: 'external_catalogs',
-            },
-            request: function () {
-                el.mask("Loading tables...", 'x-mask-loading');
-            },
-            response: function (error, tables) {
-                el.unmask();
+    //     return Api.getTables({
+    //         cache: true,
+    //         params: {
+    //             group: 'external_catalogs',
+    //         },
+    //         request: function () {
+    //             el.mask("Loading tables...", 'x-mask-loading');
+    //         },
+    //         response: function (error, tables) {
+    //             el.unmask();
 
-                if (error) {
-                    return;
-                }
+    //             if (error) {
+    //                 return;
+    //             }
 
-                if (!error) {
-                    tables.forEach(function (item) {
-                        item.text = textWithMenu(item.prd_display_name, me, item);
-                        item.data_schema = item.tbl_schema;
-                        item.data_table = item.tbl_name;
-                        item.qtip = 'rows: ' + Ext.util.Format.number(item.ctl_num_objects, '0,000');
-                    });
-                }
+    //             if (!error) {
+    //                 tables.forEach(function (item) {
+    //                     item.text = textWithMenu(item.prd_display_name, me, item);
+    //                     item.data_schema = item.tbl_schema;
+    //                     item.data_table = item.tbl_name;
+    //                     item.qtip = 'rows: ' + Ext.util.Format.number(item.ctl_num_objects, '0,000');
+    //                 });
+    //             }
 
-                // preenche a tree external catalogs com as tabelas
-                refs.tvwExternalCatalog.setStore(Ext.create('Ext.data.TreeStore', {
-                    root: {
-                        children: tables
-                    }
-                }));
-            }
-        });
+    //             // preenche a tree external catalogs com as tabelas
+    //             refs.tvwExternalCatalog.setStore(Ext.create('Ext.data.TreeStore', {
+    //                 root: {
+    //                     children: tables
+    //                 }
+    //             }));
+    //         }
+    //     });
 
-    },
+    // },
 
     loadMyTables: function () {
         var me = this;
