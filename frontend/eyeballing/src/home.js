@@ -717,7 +717,6 @@ function Home() {
   useEffect(() => {
     if (selectedLine !== null) {
       onSelectDataset(datasets[selectedLine]);
-      console.log(`selectedLine: ${selectedLine}`);
     }
   }, [selectedLine]);
 
