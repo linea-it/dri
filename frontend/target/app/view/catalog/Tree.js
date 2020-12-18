@@ -47,7 +47,7 @@ Ext.define('Target.view.catalog.Tree', {
             columns: [
                 {
                     xtype: 'treecolumn',
-                    text: 'Name',
+                    text: 'List Name',
                     flex: 2,
                     sortable: true,
                     dataIndex: 'text',
