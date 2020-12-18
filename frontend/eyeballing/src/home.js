@@ -514,12 +514,13 @@ function Home() {
     let splitRaDec = null;
     let splitByHms = null;
 
+
     // First the split by space, because the string could have a ", ".
     // In this case, the split by comma should have priority
     if (splitBySpace.length === 2) {
       // Force a conversion of each value to a Number
       // and check if it doesn't return a NaN
-      if (Number(splitBySpace[0].trim()) && Number(splitBySpace[1].trim())) {
+      if (!isNaN(Number(splitBySpace[0].trim())) && !isNaN(Number(splitBySpace[1].trim()))) {
         splitRaDec = [
           parseFloat(splitBySpace[0].trim()),
           parseFloat(splitBySpace[1].trim()),
@@ -534,7 +535,7 @@ function Home() {
     if (splitByComma.length === 2) {
       // Force a conversion of each value to a Number
       // and check if it doesn't return a NaN
-      if (Number(splitByComma[0].trim()) && Number(splitByComma[1].trim())) {
+      if (!isNaN(Number(splitByComma[0].trim())) && !isNaN(Number(splitByComma[1].trim()))) {
         splitRaDec = [
           parseFloat(splitByComma[0].trim()),
           parseFloat(splitByComma[1].trim()),
@@ -565,6 +566,8 @@ function Home() {
         setDatasets([]);
         setTotalCount(0);
         setNoResultsFound(true);
+        setLoadingList(false);
+        setCurrentDataset({});
       }
     } else if (splitByHms) {
       // If the search is by Hms, convert each one to degree
@@ -589,6 +592,8 @@ function Home() {
         setDatasets([]);
         setTotalCount(0);
         setNoResultsFound(true);
+        setCurrentDataset({});
+        setLoadingList(false);
       }
     } else {
       // Else includes the tilename. I could check for DES or make a regex for it,
