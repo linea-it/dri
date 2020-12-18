@@ -1,17 +1,17 @@
 {
     "products": [
         {
-            "display_name": "Y6A2 Coadd",
+            "display_name": "DR2",
             "fields": [],
             "releases": [
-                "y6a2_coadd"
+                "dr2"
             ],
-            "table": "Y6A2_COADD_OBJECT_SUMMARY",
+            "table": "DR2_MAIN_RC",
             "schema": "DES_ADMIN",
             "database": "dessci",
             "type": "catalog",
             "class": "coadd_objects",
-            "name": "y6a2_coadd",
+            "name": "dr2",
             "association": [
                 {
                     "ucd": "meta.id;meta.main",
@@ -60,6 +60,6 @@
             ]
         }
     ],
-    "ticket": "GZY650",
+    "ticket": "VDB377",
     "register_username": "gverde"
 }
