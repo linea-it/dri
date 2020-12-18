@@ -150,7 +150,7 @@ Ext.define('Target.view.objects.ObjectsController', {
         }
 
         // Se não tiver seleciona o cutout job mais recente.
-        vm.set('cutoutJob', store.first());
+        // vm.set('cutoutJob', store.first());
 
     },
 
@@ -163,7 +163,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             imgDefault;
 
         // Verifica se existe no job a imagem Stiff nas cores gri. 
-        imgDefault = imagesFormat.getAt(imagesFormat.findExact('name', 'stiff_gri'));
+        imgDefault = imagesFormat.getAt(imagesFormat.findExact('name', 'stiff_irg'));
 
         if ((imgDefault) && (imgDefault !== -1)) {
             // Usa a imagem stiff gri como default.
