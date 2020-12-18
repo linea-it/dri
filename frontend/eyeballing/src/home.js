@@ -304,7 +304,27 @@ function Home() {
     setCounts({});
   };
 
-  const onSelectDataset = dataset => setCurrentDataset(dataset);
+  const onSelectDataset = (dataset, isKeyboard) => {
+    if (dataset) {
+      if (!isKeyboard) {
+        datasets.forEach((row, i) => {
+          if (row.id === dataset.id) {
+            setSelectedLine(i);
+          }
+        });
+      }
+
+      setCurrentDataset(dataset);
+
+      // It is necessary to have a center,
+      // otherwise the visiomatic gets lost in rendering the tile
+      setVisiomaticCenter([
+        dataset.tli_ra,
+        dataset.tli_dec,
+      ]);
+      setFov(2);
+    }
+  };
 
   const handleClickSnackBar = () => setOpenSnackBar(!openSnackBar);
 
@@ -453,10 +473,6 @@ function Home() {
         uraur -= 360;
       }
 
-      // tli_urall < ra
-      // AND tli_udecll < dec
-      // AND tli_uraur > ra
-      // AND tli_udecur > dec
       if (urall < ra && tile.tli_udecll < dec && uraur > ra && tile.tli_udecur > dec) {
         result.push(tile);
         return false;
@@ -542,7 +558,7 @@ function Home() {
         // If only one dataset was found, then select it automatically
         if (datasetByPosition.length === 1) {
           setCurrentDataset(datasetByPosition[0]);
-          setFov(0.25);
+          setFov(0.05);
           setVisiomaticCenter(splitRaDec);
         }
       } else {
@@ -610,11 +626,11 @@ function Home() {
   };
 
   const onChangeRelease = (value) => {
-    setLoadingAllTiles(true);
-    setCurrentRelease(value);
     reloadList();
     reloadAllTiles();
     setCurrentDataset({});
+    setLoadingAllTiles(true);
+    setCurrentRelease(value);
   };
 
   useEffect(() => {
@@ -716,7 +732,7 @@ function Home() {
 
   useEffect(() => {
     if (selectedLine !== null) {
-      onSelectDataset(datasets[selectedLine]);
+      onSelectDataset(datasets[selectedLine], true);
     }
   }, [selectedLine]);
 
