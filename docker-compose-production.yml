@@ -57,7 +57,8 @@ services:
       - ./archive/django_static:/var/www/django_static
       # Diretório de dados da aplicação
       - ./archive:/var/www/data
-      
+      # Google Analytics Script 
+      - ./google-analytics.js:/var/www/ga/google-analytics.js
     depends_on:
       - backend
       - iipserver
