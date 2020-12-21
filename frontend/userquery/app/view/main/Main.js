@@ -437,12 +437,7 @@ Ext.define('UserQuery.view.main.Main', {
                                 defaults: {
                                     margin: '0 0 0 10'
                                 },
-                                items: [{
-                                    xtype: 'button',
-                                    text: 'Check',
-                                    reference: 'btnCheck',
-                                    handler: 'btnCheck_onClick'
-                                },
+                                items: [
                                 {
                                     xtype: 'button',
                                     text: 'Preview',
@@ -486,7 +481,7 @@ Ext.define('UserQuery.view.main.Main', {
                                 //             store: Ext.create('Ext.data.Store')
                                 //         }
                                 //     ]
-                                // },                                
+                                // },
                                 {
                                     title: 'My JOBs',
                                     listeners: {
@@ -498,7 +493,7 @@ Ext.define('UserQuery.view.main.Main', {
                                             reference: 'grdJobs',
                                             store: Ext.create('Ext.data.Store'),
                                             viewConfig: {
-                                                //stripeRows: false, 
+                                                //stripeRows: false,
                                                 getRowClass: function (record) {
                                                     return record.get('row_cls') || 'row-cls';
                                                 }
