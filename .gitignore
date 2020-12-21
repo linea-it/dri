@@ -48,3 +48,5 @@ __pycache__
 /pg_data
 /pg_backup
 
+# Arquivo do google-analytics
+google-analytics.js
