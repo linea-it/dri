@@ -55,3 +55,5 @@ COPY --from=eyeballing /app/build /var/www/eyeballing
 # Add Landing Page React App to image
 COPY --from=landingpage /app/build /var/www/landing_page
 
+# Add Directory where google analytics scripts are located
+COPY ./ga /var/www/ga
