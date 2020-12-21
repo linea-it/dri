@@ -30,7 +30,7 @@ Ext.define('Target.view.preview.Preview', {
             },
             listeners: {
                 objectMenuItemClick: 'onObjectMenuItemClickVisiomatic',
-                imageMenuItemClick : 'onImageMenuItemClickVisiomatic'
+                imageMenuItemClick: 'onImageMenuItemClickVisiomatic'
             }
         }
     ],
@@ -72,6 +72,41 @@ Ext.define('Target.view.preview.Preview', {
         xtype: 'toolbar',
         dock: 'top',
         items: [
+            // Campo de Rating usando Number Field. troquei pelo componente Rating. 
+            {
+                xtype: 'numberfield',
+                maxValue: 5,
+                minValue: 0,
+                width: 100,
+                fieldLabel: 'Rating',
+                labelWidth: 45,
+                bind: {
+                    value: '{currentRecord._meta_rating}',
+                    disabled: '{is_empty}'
+                }
+            },
+            // TODO: Provavelmente o update para versão 7.0 deve corrigir esse bug e este campo oculto
+            // Componente Rating causa um erro por não ter o metodo disabled. e atrapalha os demais botões. 
+            // {
+            //     xtype: 'numberfield',
+            //     hidden: true
+            // },
+            // {
+            //     xtype: 'tbtext',
+            //     html: 'Rating'
+            // },
+            // {
+            //     xtype: 'rating',
+            //     minimum: 0,
+            //     scale: '120%',
+            //     selectedStyle: 'color: rgb(96, 169, 23);',
+            //     style: {
+            //         'color': '#777777'
+            //     },
+            //     bind: {
+            //         value: '{currentRecord._meta_rating}',
+            //     }
+            // },
             {
                 xtype: 'checkboxfield',
                 reference: 'btnReject',
@@ -83,19 +118,15 @@ Ext.define('Target.view.preview.Preview', {
                 }
             },
             {
-                xtype: 'tbtext',
-                html: 'Rating'
-            },
-            {
-                xtype: 'numberfield',
-                maxValue: 5,
-                minValue: 0,
-                width: 50,
+                xtype: 'button',
+                iconCls: 'x-fa fa-commenting',
+                tooltip: 'Comments',
                 bind: {
-                    value: '{currentRecord._meta_rating}',
                     disabled: '{is_empty}'
-                }
+                },
+                handler: 'onClickComment'
             },
+            '-',
             {
                 xtype: 'button',
                 text: 'Explorer',
@@ -130,19 +161,20 @@ Ext.define('Target.view.preview.Preview', {
                     disabled: '{is_empty}'
                 }
             },
-            {
-                xtype: 'button',
-                reference: 'btnComments',
-                iconCls: 'x-fa fa-comments',
-                enableToggle: true,
-                toggleHandler: 'showHideComments',
-                tooltip: 'Show/Hide Comments',
-                pressed: true,
-                hidden: true,
-                bind: {
-                    disabled: '{is_empty}'
-                }
-            },
+            // TODO: Refactoring funções relacionadas ao comentário por posição.
+            // {
+            //     xtype: 'button',
+            //     reference: 'btnComments',
+            //     iconCls: 'x-fa fa-comments',
+            //     enableToggle: true,
+            //     toggleHandler: 'showHideComments',
+            //     tooltip: 'Show/Hide Comments',
+            //     pressed: true,
+            //     hidden: true,
+            //     bind: {
+            //         disabled: '{is_empty}'
+            //     }
+            // },
             {
                 xtype: 'button',
                 reference: 'btnCrop',
@@ -226,6 +258,13 @@ Ext.define('Target.view.preview.Preview', {
 
             // disparar evento before load
             me.fireEvent('changerecord', record, me);
+
+
+            // Habilita o painel de preview. 
+            // TODO: Esta ação lança um erro no console relacionado a um metodo enable missing. 
+            // Erro causado pelo componente ux.rating que não tem esse metodo implementado.
+            // Na atualização para versão ExtJS 7.0 este erro foi corrigido. 
+            me.setDisabled(false);
         }
     },
 
@@ -234,8 +273,9 @@ Ext.define('Target.view.preview.Preview', {
             vm = me.getViewModel(),
             refs = me.getReferences(),
             datasets = vm.getStore('datasets'),
-            members = vm.getStore('members'),
-            comments = vm.getStore('comments');
+            members = vm.getStore('members');
+
+        // comments = vm.getStore('comments');
 
         // limpa o datasets e o texto da combo
         datasets.clearData();
@@ -252,8 +292,12 @@ Ext.define('Target.view.preview.Preview', {
         members.removeAll();
         members.clearFilter(true);
 
-        comments.removeAll();
-        comments.clearFilter(true);
+        // comments.removeAll();
+        // comments.clearFilter(true);
+
+        // Desabilita totalmente o painel de preview para 
+        // evitar ações do usuario sem que tenha um objeto selecionado.
+        me.setDisabled(true);
 
     }
 

@@ -1,17 +1,17 @@
 {
     "products": [
         {
-            "display_name": "Y6A2 Coadd",
+            "display_name": "Y6A1 Coadd",
             "fields": [],
             "releases": [
-                "y6a2_coadd"
+                "y6a1_coadd"
             ],
-            "table": "Y6A2_COADD_OBJECT_SUMMARY",
+            "table": "Y6A1_COADD_OBJECT_SUMMARY",
             "schema": "DES_ADMIN",
             "database": "dessci",
             "type": "catalog",
             "class": "coadd_objects",
-            "name": "y6a2_coadd",
+            "name": "y6a1_coadd",
             "association": [
                 {
                     "ucd": "meta.id;meta.main",

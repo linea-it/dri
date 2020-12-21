@@ -48,7 +48,7 @@ function TutorialDialog({
         </IconButton>
         <Divider />
         <Grid container spacing={3} className={classes.contentWrapper}>
-          {data.map(row => (
+          {data.length > 0 ? data.map(row => (
             <Fragment key={row.id}>
               <Grid item xs={12}>
                 <div className={classes.blockWrapper}>
@@ -69,7 +69,11 @@ function TutorialDialog({
                 <Divider />
               </Grid>
             </Fragment>
-          ))}
+          )) : (
+            <Grid item xs={12}>
+              <Typography variant="button">There is no tutorial registered for this application.</Typography>
+            </Grid>
+          )}
         </Grid>
       </DialogContent>
     </Dialog>

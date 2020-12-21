@@ -57,36 +57,10 @@ Ext.define('Target.view.objects.Panel', {
                     },
                     '->',
                     {
-                        xtype: 'button',
-                        iconCls: 'x-fa fa-floppy-o',
-                        tooltip: 'Save As',
-                        handler: 'onClickSaveAs',
-                        bind: {
-                            disabled: '{!haveFilter}'
-                        }
-                    },
-                    {
-                        iconCls: 'x-fa fa-download',
-                        tooltip: 'Download',
-                        handler: 'onClickDownload',
-                        bind: {
-                            disabled: '{!haveResults}'
-                        }
-                    },
-                    // TODO: Levar o botão de comments do objeto para a barra de tarefas do preview.
-                    {
-                        xtype: 'button',
-                        iconCls: 'x-fa fa-commenting',
-                        tooltip: 'Open Comments',
-                        bind: {
-                            disabled: '{!targetsObjectsGrid.selection}'
-                        },
-                        handler: 'onClickComment'
-                    },
-                    {
                         iconCls: 'x-fa fa-picture-o',
                         tooltip: 'Create Cutout',
-                        handler: 'onClickCreateCutouts'
+                        handler: 'onClickCreateCutouts',
+                        text: 'Cutouts',
                     },
                     {
                         xtype: 'button',
@@ -97,8 +71,9 @@ Ext.define('Target.view.objects.Panel', {
                         toggleHandler: 'switchMosaicGrid',
                         bind: {
                             pressed: '{mosaic_is_visible}'
-                        }
+                        },
                     },
+                    '-',
                     {
                         xtype: 'fieldcontainer',
                         layout: 'hbox',
@@ -111,15 +86,33 @@ Ext.define('Target.view.objects.Panel', {
                                 reference: 'txtFilterSet',
                                 emptyText: 'No filter',
                                 editable: false
-                            }
+                            },
+                            {
+                                xtype: 'button',
+                                iconCls: 'x-fa fa-filter',
+                                tooltip: 'Create and manage filters for the list',
+                                handler: 'onClickFilter'
+                            },
                         ]
                     },
                     {
                         xtype: 'button',
-                        iconCls: 'x-fa fa-filter',
-                        tooltip: 'Filters',
-                        handler: 'onClickFilter'
+                        iconCls: 'x-fa fa-floppy-o',
+                        tooltip: 'Save As',
+                        handler: 'onClickSaveAs',
+                        bind: {
+                            disabled: '{!haveFilter}'
+                        }
                     },
+                    {
+                        iconCls: 'x-fa fa-download',
+                        tooltip: 'Download List and Cutouts',
+                        handler: 'onClickDownload',
+                        bind: {
+                            disabled: '{!haveResults}'
+                        }
+                    },
+                    '-',
                     {
                         xtype: 'button',
                         iconCls: 'x-fa fa-gear',
@@ -219,8 +212,9 @@ Ext.define('Target.view.objects.Panel', {
             split: true,
             listeners: {
                 changeinobject: 'onChangeInObjects',
-                loadobjects: 'onLoadObjects'
-            }
+                loadobjects: 'onLoadObjects',
+                onclickopencomments: 'onClickComment',
+            },
         }
     ],
 

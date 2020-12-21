@@ -1,16 +1,16 @@
+import math
+
 from django.conf import settings
-from lib.CatalogDB import TargetObjectsDBHelper, CatalogObjectsDBHelper
+from django.db.models import Max
+from lib.CatalogDB import CatalogObjectsDBHelper, TargetObjectsDBHelper, CatalogDB
 from product.association import Association
-from product.models import Catalog, ProductContentAssociation
-from product.serializers import AssociationSerializer
+from product.models import Catalog
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from .models import Rating, Reject, Comments
-from .serializers import RatingSerializer, RejectSerializer, CommentsSerializer
-
-import math
+from .models import Comments, Rating, Reject
+from .serializers import CommentsSerializer, RatingSerializer, RejectSerializer
 
 
 class RatingViewSet(viewsets.ModelViewSet):
@@ -62,7 +62,39 @@ class CommentsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         if not self.request.user.pk:
             raise Exception('It is necessary an active login to perform this operation.')
-        serializer.save(owner=self.request.user.pk)
+
+        # TODO: Rever essa solução tentar deixar igual ao comportamento do rating e reject.
+        #     Workaround para corrigir bug reportado na issue https://github.com/linea-it/dri/issues/1282
+        # Por Algum motivo que eu não consegui descobrir, ocorre um erro
+        # ao tenta inserir um registro na tabela comments usando Oracle.
+        # o Oracle reclama que ID não pode ser Null, mas a coluna id é autoincrement,
+        # nas tabelas Rating e Reject é a mesma situação e nelas o erro não acontece.
+        # A solução:
+        #     Verificar se o banco utilizado é o Oracle.
+        #     se for faz uma query para na tabela e depois recupera o ultimo Id
+        #     acrescenta +1 e faz o insert usando este ID.
+
+        # Problemas:
+        #     - Faz uma query all antes do insert, pode causar um problema de performance se a tabela commens ficar muito grande.
+        #     - Pode ocorrer falhar se 2 usuarios fizerem um comment ao mesmo tempo.
+
+        # Verificar se a tabela comments está no Oracle
+        catalog_db = CatalogDB(db='catalog')
+        if catalog_db.get_engine() == "oracle":
+            # Proximo ID
+            comments = Comments.objects.all()
+            next_id = comments.aggregate(Max('id'))['id__max'] + 1 if comments else 1
+
+            # Faz o Insert
+            serializer.save(
+                owner=self.request.user.pk,
+                pk=next_id
+            )
+        else:
+            # Se não for oracle deixa o Django fazer o processo normal de insert.
+            serializer.save(
+                owner=self.request.user.pk,
+            )
 
 
 class TargetViewSet(ViewSet):
@@ -345,7 +377,7 @@ class CatalogObjectsViewSet(ViewSet):
                             if release_set:
                                 release = release_set.release.rls_name
                                 # Se tiver release e ele for o Y3 subtrair 90 graus
-                                areleases = ['y3a1_coadd', 'y6a1_coadd', 'y6a2_coadd', 'dr1', ]
+                                areleases = ['y3a1_coadd', 'y6a1_coadd', 'y6a2_coadd', 'dr1', 'dr2']
                                 if release in areleases:
                                     t_image = 90 - t_image
 

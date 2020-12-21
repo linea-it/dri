@@ -1,8 +1,10 @@
-import cx_Oracle
-from coadd.models import Release, Dataset, Tile, Tag
-from django.conf import settings
 from pprint import pprint
 
+import cx_Oracle
+from django.conf import settings
+import django.utils.timezone as tz
+
+from coadd.models import Dataset, Release, Tag, Tile
 
 # query and database change according with the release to register
 DATADISCOVERY = {
@@ -41,14 +43,37 @@ DATADISCOVERY = {
                 'TILES_COUNT': 'SELECT COUNT(*) AS count FROM proctag t WHERE t.tag=\'Y6A2_COADD\'',
                 'PTIF_PATHS': 'SELECT m.tilename, f.PATH AS archive_path, m.filename, t.created_date FROM proctag t LEFT JOIN miscfile m ON (t.pfw_attempt_id = m.pfw_attempt_id) LEFT JOIN file_archive_info f ON (f.filename = m.filename) WHERE t.tag=\'Y6A2_COADD\' AND m.filetype=\'coadd_ptif\''
             }
-        }             
+        },
+        # Release publico, este release é identico ao Y3A2 nas imagens e tiles.
+        'DR1': {
+            'DATABASE': 'dessci',
+            # Este parametro Indica que o release é uma copia de outro release, vai manter o nome  mas vai registrar os dados do outro.
+            'FAKE_RELEASE': True,
+            'QUERIES': {
+                'TAG': 'SELECT t.tag, MIN(t.created_date) FROM des_admin.y3a2_proctag t WHERE t.tag=\'Y3A2_COADD\' GROUP BY t.tag',
+                'TILES_COUNT': 'SELECT COUNT(*) AS count FROM y3a2_proctag t WHERE t.tag=\'Y3A2_COADD\'',
+                'PTIF_PATHS': 'SELECT m.tilename, f.path AS archive_path, m.filename, t.created_date FROM y3a2_proctag t, y3a2_file_archive_info f, y3a2_miscfile m WHERE t.pfw_attempt_id = m.pfw_attempt_id AND t.tag=\'Y3A2_COADD\' AND f.filename=m.filename AND m.filetype=\'coadd_ptif\''
+            }
+        },
+        # Release publico, este release é identico ao Y6A2 nas imagens e tiles.
+        'DR2': {
+            'DATABASE': 'desoper',
+            # Este parametro Indica que o release é uma copia de outro release, vai manter o nome  mas vai registrar os dados do outro.
+            'FAKE_RELEASE': True,
+            'QUERIES': {
+                'TAG': 'SELECT t.tag, MIN(t.created_date) as created_date FROM proctag t WHERE t.tag=\'Y6A2_COADD\' GROUP BY t.tag',
+                'TILES_COUNT': 'SELECT COUNT(*) AS count FROM proctag t WHERE t.tag=\'Y6A2_COADD\'',
+                'PTIF_PATHS': 'SELECT m.tilename, f.PATH AS archive_path, m.filename, t.created_date FROM proctag t LEFT JOIN miscfile m ON (t.pfw_attempt_id = m.pfw_attempt_id) LEFT JOIN file_archive_info f ON (f.filename = m.filename) WHERE t.tag=\'Y6A2_COADD\' AND m.filetype=\'coadd_ptif\''
+            }
+        },
     }
 }
 
 
-
 class DataDiscovery:
     def __init__(self, options):
+
+        self.image_host = options['image_host']
 
         self.tag = options['tag']
         self.tag_config = DATADISCOVERY.get('RELEASES').get(self.tag)
@@ -66,7 +91,7 @@ class DataDiscovery:
 
         try:
             pprint(dbparams)
-            print ("Connecting to database")
+            print("Connecting to database")
             host, port = dbparams.get('NAME').split(':')
             port, servicename = port.split('/')
 
@@ -80,7 +105,7 @@ class DataDiscovery:
             self.db = cx_Oracle.connect(dbparams.get('USER'), dbparams.get('PASSWORD'), dsn=dsn)
             self.cursor = self.db.cursor()
 
-            print ("Connected")
+            print("Connected")
 
         except Exception as e:
             print(e)
@@ -98,15 +123,15 @@ class DataDiscovery:
                 "tag='Y3A1_COADD'", "tag='Y3A2_COADD'", "tag='Y3A1_COADD_DEEP'"]
 
             for pattern in patterns:
-                print ("--------------------------------------")
+                print("--------------------------------------")
 
                 sql = "SELECT tag, MIN(created_date) as created_date FROM PROD.PROCTAG WHERE %s GROUP BY tag ORDER BY created_date" % pattern
 
-                print ("Finding Tags available: [ %s ]" % sql)
+                print("Finding Tags available: [ %s ]" % sql)
 
                 rows = self.fetchall_dict(sql)
 
-                print ("Tags available: [ %s ]" % len(rows))
+                print("Tags available: [ %s ]" % len(rows))
                 for row in rows:
                     print("Tag Name: %s" % row.get('TAG'))
 
@@ -122,7 +147,7 @@ class DataDiscovery:
         else:
             self.register_tag(self.tag)
 
-        print ("Done!")
+        print("Done!")
 
     def register_tag(self, requested_tag):
 
@@ -139,13 +164,22 @@ class DataDiscovery:
         row = rows[0]
 
         tag = row.get('TAG')
+        real_tag = tag
+        created_date = row.get('CREATED_DATE')
 
         print("Tag: %s  Created Date: %s" % (tag, row.get('CREATED_DATE')))
+
+        if self.tag_config.get('FAKE_RELEASE', False):
+            tag = self.tag
+            print("This is a release based on another, the internal name will be %s but its content will be %s" % (self.tag, real_tag))
+
+        if created_date is None:
+            created_date = tz.localtime()
 
         # Checar se o Release ja existe no DRI se nao existir criar
         rls_display_name = self.generate_display_name(tag)
         rls_name = tag.lower()
-        rls_date = row.get('CREATED_DATE')
+        rls_date = created_date
         rls_version = 1.0
 
         release, created = Release.objects.select_related().get_or_create(
@@ -175,7 +209,7 @@ class DataDiscovery:
 
         print("Field Created?: [ %s ] Name: [ %s ] ID: [ %s ] " % (created, field, field.id))
 
-        tiles = self.get_tiles_by_tag(tag, field)
+        tiles = self.get_tiles_by_tag(real_tag, field)
 
         count_created = 0
         count_updated = 0
@@ -235,7 +269,7 @@ class DataDiscovery:
             print("Tiles Installed [ %s ] Recent Date [ %s ]" % (dri_count, last_date))
 
         if original_count != dri_count:
-            print ('Tiles to be installed [ %s ]' % (original_count - dri_count))
+            print('Tiles to be installed [ %s ]' % (original_count - dri_count))
 
             sql = self.tag_config.get('QUERIES').get('PTIF_PATHS')
 
@@ -249,8 +283,12 @@ class DataDiscovery:
             tiles = self.fetchall_dict(sql)
 
             for tile in tiles:
-                image_src_ptif = "https://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/%s/%s" % (
-                    tile.get('ARCHIVE_PATH'), tile.get('FILENAME'))
+                # src = image_host + visiomatic url and path for images in DES.
+                # Exemple: https://desportal.cosmology.illinois.edu/visiomatic?FIF=data/releases/desarchive/%s/%s
+                # TODO: Melhorar o path para ser independente da estrutura do DES. agora com container os releases
+                # poderiam ser montados direto em /data/releases/y3a1 por exemplo.
+                image_src_ptif = "%s/visiomatic?FIF=data/releases/desarchive/%s/%s" % (self.image_host,
+                                                                                       tile.get('ARCHIVE_PATH'), tile.get('FILENAME'))
 
                 tile.update({
                     'image_src_ptif': image_src_ptif.replace("+", "%2B")
@@ -298,7 +336,6 @@ class DataDiscovery:
         else:
             return None
 
-
             # def assocition_tag_tile(self):
             #         """
             #         Usadado para importar um csv com as tiles que fazem parte do release Y1A1 essa funcao faz a assiciacao da
@@ -341,7 +378,7 @@ class DataDiscovery:
 
 
 if __name__ == '__main__':
-    print ("---------- stand alone -------------")
+    print("---------- stand alone -------------")
 
     DataDiscovery().start()
 

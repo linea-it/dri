@@ -8,8 +8,11 @@ import Typography from '@material-ui/core/Typography';
 import HomeIcon from '@material-ui/icons/Home';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
+import Divider from '@material-ui/core/Divider';
 import MenuIcon from '@material-ui/icons/Menu';
 import HelpIcon from '@material-ui/icons/Help';
+import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
+import LogoutIcon from '@material-ui/icons/ExitToApp';
 import SelectReleases from './SelectReleases';
 import logo from '../assets/img/icon-des.png';
 import { logout } from '../api/Api';
@@ -29,8 +32,12 @@ const styles = theme => ({
   },
   username: {
     marginLeft: theme.spacing(2),
+    marginRight: theme.spacing(2),
   },
   menuButton: {
+    marginRight: theme.spacing(1),
+  },
+  menuIcon: {
     marginRight: theme.spacing(1),
   },
 });
@@ -56,10 +63,10 @@ function Header(props) {
     logout();
   }
 
-  function handleHomeEyeballing() {
+  function handleHomeTileViewer() {
     const { protocol } = window.location;
     const { host } = window.location;
-    const location = `${protocol}//${host}/eyeballing`;
+    const location = `${protocol}//${host}/tile_viewer/`;
 
     window.location.assign(location);
   }
@@ -76,15 +83,27 @@ function Header(props) {
     setAnchorEl(null);
   }
 
-  function handleHelp() {
+  function handleTutorials() {
     setTutorialOpen(true);
+  }
+
+  function handleHelp() {
+    const { protocol } = window.location;
+    const { host } = window.location;
+    const location = `${protocol}//${host}/contact-us/`;
+
+    console.log('location', location);
+
+    handleClose();
+
+    window.open(location);
   }
 
   return (
     <React.Fragment>
       <AppBar position="static">
         <Toolbar>
-          <IconButton color="inherit" onClick={handleHomeEyeballing}>
+          <IconButton color="inherit" onClick={handleHomeTileViewer}>
             <img alt="logo DES" src={logo} />
           </IconButton>
           <Typography className={classes.grow} variant="h6" color="inherit">
@@ -113,15 +132,6 @@ function Header(props) {
           </IconButton>
 
           <IconButton
-            // className={classes.menuButton}
-            onClick={handleHelp}
-            color="inherit"
-            title="Help"
-          >
-            <HelpIcon />
-          </IconButton>
-
-          <IconButton
             className={classes.menuButton}
             onClick={handleClick}
             color="inherit"
@@ -136,8 +146,23 @@ function Header(props) {
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={handleAbout}>About LIneA</MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            <MenuItem onClick={handleAbout}>
+              About LIneA
+            </MenuItem>
+            <MenuItem onClick={handleTutorials}>
+              <HelpIcon className={classes.menuIcon} fontSize="small" />
+              <Typography>Tutorials</Typography>
+            </MenuItem>
+            <MenuItem onClick={handleHelp}>
+              <HelpOutlineIcon className={classes.menuIcon} fontSize="small" />
+              <Typography>Help</Typography>
+            </MenuItem>
+
+            <Divider />
+            <MenuItem onClick={handleLogout}>
+              <LogoutIcon className={classes.menuIcon} fontSize="small" />
+              <Typography>Logout</Typography>
+            </MenuItem>
           </Menu>
         </Toolbar>
       </AppBar>
