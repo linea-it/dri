@@ -1,5 +1,6 @@
 import copy
 import logging
+import traceback
 
 from django.contrib.auth.models import User
 from django.db.models import Case, F, Q, Value, When
@@ -269,6 +270,8 @@ class QueryPreview(viewsets.ViewSet):
             return JsonResponse(response, safe=False)
 
         except Exception as e:
+            trace = traceback.format_exc()
+            print(trace)
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
 
