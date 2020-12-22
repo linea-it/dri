@@ -93,7 +93,7 @@ function Header() {
     getLoggedUser().then((result) => setUser(result));
     signPath().then((result) => setPathSign(result.NCSA_SIGNUP_LINK));
   }, []);
-  useEffect(() => {}, [user]);
+  useEffect(() => { }, [user]);
 
   const menus = [
     {
@@ -138,7 +138,7 @@ function Header() {
         </List>
         <div className={classes.separator} />
         {/* TODO: verificar se o usuario esta logado */}
-        { user ? (user.username ? <UserLogged /> : <UserUnLogged />) : '' }
+        {user ? (user.username ? <UserLogged /> : <UserUnLogged />) : ''}
       </Toolbar>
     </AppBar>
   );

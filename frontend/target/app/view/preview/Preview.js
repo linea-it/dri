@@ -291,6 +291,10 @@ Ext.define('Target.view.preview.Preview', {
         // evitar ações do usuario sem que tenha um objeto selecionado.
         me.setDisabled(true);
 
+        // Desabilita totalmente o painel de preview para 
+        // evitar ações do usuario sem que tenha um objeto selecionado.
+        me.setDisabled(true);
+
     }
 
 });

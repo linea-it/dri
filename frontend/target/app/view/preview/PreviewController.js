@@ -296,7 +296,6 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = me.getViewModel(),
             object = vm.get('currentRecord');
 
-
         view.fireEvent('onclickopencomments', object, view);
     },
 
