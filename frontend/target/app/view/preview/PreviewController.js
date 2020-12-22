@@ -551,10 +551,4 @@ Ext.define('Target.view.preview.PreviewController', {
 
     },
 
-    onEvent: function () {
-        Ext.GlobalEvents.fireEvent('eventregister', 'teste');
-
-    },
-
-
 });
