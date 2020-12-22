@@ -72,7 +72,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 // removeSplash();
 
                 me.loadMyQueries();
-                me.loadExternalTables();
+                // me.loadExternalTables();
 
                 // setTimeout(function(){
                 //     me.downloadCsv('table_id');
@@ -83,7 +83,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         new Ext.dd.DropTarget(refs.sql_sentence.getEl(), {
             ddGroup: 'TreeDD', // mesmo ddGroup definido na treeview
             notifyEnter: function (ddSource, e, data) {
-                // 
+                //
             },
             // notifyOver: function(ddSource, event, data){
             //     // TODO: posicionar cursor na caixa de texto ao arrastar
@@ -131,10 +131,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         refs.tvwInputTables.collapseAll();
     },
 
-    accExternalCatalog_onCollapse: function () {
-        var refs = this.getReferences();
-        refs.tvwExternalCatalog.collapseAll();
-    },
+    // accExternalCatalog_onCollapse: function () {
+    //     var refs = this.getReferences();
+    //     refs.tvwExternalCatalog.collapseAll();
+    // },
 
     accMyTables_onCollapse: function () {
         var refs = this.getReferences();
@@ -146,9 +146,9 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         refs.tvwOtherTables.collapseAll();
     },
 
-    accExternalCatalog_onExpand: function () {
-        // this.loadExternalTables();
-    },
+    // accExternalCatalog_onExpand: function () {
+    //     // this.loadExternalTables();
+    // },
 
     // evento: ao expandir o item accordion my tables
     accMyTables_onExpand: function () {
@@ -298,42 +298,6 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         this.deleteQuery();
     },
 
-    // evento: ao clicar no botão check
-    btnCheck_onClick: function () {
-        var me = this;
-        var refs = me.getReferences();
-        var query = me.getActiveQuery();
-
-        Api.log('check_query');
-        Api.validate({
-            cache: false,
-            params: {
-                id: query.id,
-                sql_sentence: refs.sql_sentence.getValue()
-            },
-            request: function () {
-                me.setLoading(true, 'Check in progress...');
-            },
-            response: function (error, result) {
-                me.setLoading(false);
-                result = result || {};
-
-                if (!error) {
-                    if (result.is_validated) {
-                        Ext.toast('Query validated successfully', null, 't');
-                    } else {
-                        Ext.MessageBox.show({
-                            title: 'Query validated error',
-                            msg: result.error_message.split('[')[0],
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.MessageBox.WARNING
-                        });
-                    }
-                }
-            }
-        });
-    },
-
     // evento: ao clicar no botão de preview
     btnPreview_onClick: function () {
         var refs = this.getReferences();
@@ -366,7 +330,6 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         var sqlExist = Boolean(vm.get('activeQuery.sql_sentence'));
 
         refs.btnSave.setDisabled(!release || !Boolean(data.name && data.sql_sentence));
-        refs.btnCheck.setDisabled(!sqlExist);
         refs.btnPreview.setDisabled(!sqlExist);
         refs.btnStartJob.setDisabled(!sqlExist || !release);
     },
@@ -488,16 +451,16 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         }
     },
 
-    tvwExternalCatalog_onContextMenuClick: function (item) {
-        var config = item.config;
-        var table = item.record.get('data_table');
+    // tvwExternalCatalog_onContextMenuClick: function (item) {
+    //     var config = item.config;
+    //     var table = item.record.get('data_table');
 
-        switch (config.itemId) {
-            case 'preview':
-                this.sqlPreview('select * from ' + table, 'grdPreview');
-                break;
-        }
-    },
+    //     switch (config.itemId) {
+    //         case 'preview':
+    //             this.sqlPreview('select * from ' + table, 'grdPreview');
+    //             break;
+    //     }
+    // },
 
     tvwMyTables_onExpanded: function (node) {
         if (node.isRoot() || node.childNodes.length > 0) {
@@ -517,23 +480,23 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         });
     },
 
-    tvwExternalCatalog_onExpanded: function (node) {
-        if (node.isRoot() || node.childNodes.length > 0) {
-            return;
-        }
+    // tvwExternalCatalog_onExpanded: function (node) {
+    //     if (node.isRoot() || node.childNodes.length > 0) {
+    //         return;
+    //     }
 
-        this.loadFields({
-            schema: node.get('data_schema'),
-            table: node.get('data_table'),
-            request: function () {
-                node.set('cls', 'x-grid-tree-loading');
-            },
-            response: function (fields) {
-                node.appendChild(fields);
-                node.set('cls', '');
-            }
-        });
-    },
+    //     this.loadFields({
+    //         schema: node.get('data_schema'),
+    //         table: node.get('data_table'),
+    //         request: function () {
+    //             node.set('cls', 'x-grid-tree-loading');
+    //         },
+    //         response: function (fields) {
+    //             node.appendChild(fields);
+    //             node.set('cls', '');
+    //         }
+    //     });
+    // },
 
     tvwInputTables_onContextMenuClick: function (item) {
         var me = this;
@@ -842,7 +805,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
         // userquery_download/{table_id}
         // {
         //      columns:[
-        //          {name:name, display:display}    
+        //          {name:name, display:display}
         //      ]
         //}
         dialog.open({ schema: schema, table_name: table_name }, function (columns) {
@@ -944,45 +907,45 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
     },
 
-    loadExternalTables: function () {
-        var me = this;
-        var refs = me.getReferences();
-        var el = refs.tvwMyTables.getEl();
+    // loadExternalTables: function () {
+    //     var me = this;
+    //     var refs = me.getReferences();
+    //     var el = refs.tvwMyTables.getEl();
 
-        return Api.getTables({
-            cache: true,
-            params: {
-                group: 'external_catalogs',
-            },
-            request: function () {
-                el.mask("Loading tables...", 'x-mask-loading');
-            },
-            response: function (error, tables) {
-                el.unmask();
+    //     return Api.getTables({
+    //         cache: true,
+    //         params: {
+    //             group: 'external_catalogs',
+    //         },
+    //         request: function () {
+    //             el.mask("Loading tables...", 'x-mask-loading');
+    //         },
+    //         response: function (error, tables) {
+    //             el.unmask();
 
-                if (error) {
-                    return;
-                }
+    //             if (error) {
+    //                 return;
+    //             }
 
-                if (!error) {
-                    tables.forEach(function (item) {
-                        item.text = textWithMenu(item.prd_display_name, me, item);
-                        item.data_schema = item.tbl_schema;
-                        item.data_table = item.tbl_name;
-                        item.qtip = 'rows: ' + Ext.util.Format.number(item.ctl_num_objects, '0,000');
-                    });
-                }
+    //             if (!error) {
+    //                 tables.forEach(function (item) {
+    //                     item.text = textWithMenu(item.prd_display_name, me, item);
+    //                     item.data_schema = item.tbl_schema;
+    //                     item.data_table = item.tbl_name;
+    //                     item.qtip = 'rows: ' + Ext.util.Format.number(item.ctl_num_objects, '0,000');
+    //                 });
+    //             }
 
-                // preenche a tree external catalogs com as tabelas
-                refs.tvwExternalCatalog.setStore(Ext.create('Ext.data.TreeStore', {
-                    root: {
-                        children: tables
-                    }
-                }));
-            }
-        });
+    //             // preenche a tree external catalogs com as tabelas
+    //             refs.tvwExternalCatalog.setStore(Ext.create('Ext.data.TreeStore', {
+    //                 root: {
+    //                     children: tables
+    //                 }
+    //             }));
+    //         }
+    //     });
 
-    },
+    // },
 
     loadMyTables: function () {
         var me = this;
@@ -1306,7 +1269,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                 //             Ext.toast('Job status changed', null, 't');
                 //         }
                 //     });
-                // }                
+                // }
                 me.pendingJobsLength = me.pendingJobsLength || 0;
                 me.pendingJobs = jobs.filter(function (j) { return j.job_status == 'rn' || j.job_status == 'st'; });
                 me.showDataPreview('grdJobs', jobs, colsMap, selectTab);
@@ -1556,7 +1519,7 @@ var main = Ext.define('UserQuery.view.main.MainController', {
                     group: 'targets'
                 },
                 request: function(){
-                    me.setLoading(true, 'Load release tables...');                
+                    me.setLoading(true, 'Load release tables...');
                 },
                 response: function(error, tables){
                     me.setLoading(false);
@@ -1567,10 +1530,10 @@ var main = Ext.define('UserQuery.view.main.MainController', {
 
         function complete(tables){
             refs.ctnArea.setStyle({opacity:1});
-            
+
             me.clearQuery();
             me.updateActiveQuery(query);
-            
+
             // preenche a tree com as tabelas da release
             tables.forEach(function(item){
                 item.text = item.tbl_name;
@@ -1587,11 +1550,11 @@ var main = Ext.define('UserQuery.view.main.MainController', {
             console.warn('resolver o problema do release tá retornando uma url ao invés de número, ver TODO abaixo');
             Api.getRelease({
                 cache: true,
-                params:{ 
+                params:{
                     id: query.release.split ? query.release.split('/releases/')[1].replace('/', '') : query.release  //TODO: tá retornando uma url, deve ser número, por isso essa gambiarra
                 },
                 request: function(){
-                    me.setLoading(true, 'Loading release data...');                
+                    me.setLoading(true, 'Loading release data...');
                 },
                 response: function(error, release){
                     me.setLoading(false);
@@ -1681,7 +1644,7 @@ function textWithMenuClick(event, el, id, record) {
 //                                 '<tr><td style="font-weight:bold;">ID: </td><td>'+data.id+'</td></tr>'+
 //                                 '<tr><td style="font-weight:bold;">Status: </td><td>'+data.job_status+'</td></tr>'+
 //                                 '<tr><td style="font-weight:bold;">Start: </td><td>'+data.start_date_time+'</td></tr>'+
-//                                 '<tr><td style="font-weight:bold;">End: </td><td>'+data.end_date_time+'</td></tr>'+                                
+//                                 '<tr><td style="font-weight:bold;">End: </td><td>'+data.end_date_time+'</td></tr>'+
 //                                 '<tr><td style="font-weight:bold;white-space:nowrap;">Table Name: </td><td>'+data.table_name+'</td></tr>'+
 //                                 '<tr><td style="font-weight:bold;">Owner: </td><td>'+data.owner+'</td></tr>'+
 //                                 '<tr><td style="font-weight:bold;">Timeout: </td><td>'+data.timeout+'</td></tr>'+

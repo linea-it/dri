@@ -262,6 +262,27 @@ class VizierCDS:
                 "iconCls": "no-icon",
                 "leaf": True,
             }),
+            # GAIA_DR3
+            dict({
+                "id": "vizier_gaia_dr3",
+                "external_catalog": True,
+                "prd_name": "visier_gaia_dr3",
+                "prd_display_name": "GAIA EDR3",
+                "cds_source": "I/350",
+                "cds_fieldnames": ",".join(["Source", "RA_ICRS", "DE_ICRS", "Plx", "e_Plx", "pmRA", "e_pmRA", "pmDE", "e_pmDE", "Gmag", "e_Gmag", "BPmag", "e_BPmag", "RPmag", "e_RPmag", "RVDR2", "e_RVDR2"]),
+                "ctl_num_objects": 0,
+                "description": "Gaia data early release 3 (Gaia EDR3, 2020)",
+                "owner": "Vizier",
+                "pcl_is_system": False,
+                "is_owner": False,
+                "text": "GAIA EDR3",
+                "bookmark": None,
+                "tableExist": True,
+                "editable": False,
+                "markable": False,
+                "iconCls": "no-icon",
+                "leaf": True,
+            }),
             # URAT1
             dict({
                 "id": "vizier_urat1",

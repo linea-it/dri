@@ -25,28 +25,34 @@ const useStyles = makeStyles(theme => ({
 
 export default function Counter(props) {
   const classes = useStyles();
+  const {
+    total,
+    good,
+    bad,
+  } = props.counts;
+
+  const { hasInspection } = props;
 
   return (
     <div className={classes.root}>
-      <Typography
-        variant="subtitle2"
-        gutterBottom
-        className={classes.label}
-        noWrap
-      >
-        Tiles:
-      </Typography>
-      <Typography
-        variant="subtitle2"
-        className={classes.value}
-        gutterBottom
-        noWrap
-      >
-        {props.counts.tiles ? props.counts.tiles : 0}
-      </Typography>
-
-      {props.hasInspection ? (
+      {hasInspection ? (
         <>
+          <Typography
+            variant="subtitle2"
+            gutterBottom
+            className={classes.label}
+            noWrap
+          >
+            Examined:
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            className={classes.value}
+            gutterBottom
+            noWrap
+          >
+            {good + bad}
+          </Typography>
           <Typography
             variant="subtitle2"
             gutterBottom
@@ -61,7 +67,7 @@ export default function Counter(props) {
             gutterBottom
             noWrap
           >
-            {props.counts.true ? props.counts.true : 0}
+            {`${Math.round((((good * 100) / total) + Number.EPSILON) * 100) / 100}%`}
           </Typography>
 
           <Typography
@@ -78,16 +84,18 @@ export default function Counter(props) {
             gutterBottom
             noWrap
           >
-            {props.counts.false ? props.counts.false : 0}
+            {`${Math.round((((bad * 100) / total) + Number.EPSILON) * 100) / 100}%`}
           </Typography>
-
+        </>
+      ) : (
+        <>
           <Typography
             variant="subtitle2"
             gutterBottom
             className={classes.label}
             noWrap
           >
-            Not:
+            Total:
           </Typography>
           <Typography
             variant="subtitle2"
@@ -95,15 +103,18 @@ export default function Counter(props) {
             gutterBottom
             noWrap
           >
-            {props.counts.null ? props.counts.null : 0}
+            {total}
           </Typography>
-
         </>
-      ) : null}
+      )}
     </div>
   );
 }
 Counter.propTypes = {
-  counts: PropTypes.object.isRequired,
+  counts: PropTypes.shape({
+    total: PropTypes.number,
+    good: PropTypes.number,
+    bad: PropTypes.number,
+  }).isRequired,
   hasInspection: PropTypes.bool.isRequired,
 };

@@ -153,8 +153,8 @@ Ext.define('visiomatic.Visiomatic', {
         enableContextMenu: true,
         contextMenuItens: [],
 
-        enableComments: true,
-        showComments: true,
+        enableComments: false,
+        showComments: false,
         // Layers dos comentarios.
         lComments: null,
         ////// buttons //////

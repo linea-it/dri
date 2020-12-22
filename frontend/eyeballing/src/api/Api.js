@@ -176,7 +176,7 @@ class DriApi {
 export default DriApi;
 
 export function toLogin() {
-  window.location.replace(`${api}/api-auth/login/?next=/eyeballing/`);
+  window.location.replace(`${api}/api-auth/login/?next=/tile_viewer/`);
 }
 
 export function logout() {

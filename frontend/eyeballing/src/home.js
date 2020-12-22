@@ -58,12 +58,12 @@ const useStyles = makeStyles(theme => ({
   visiomatic: {
     backgroundColor: theme.palette.grey[200],
   },
-  tilelist: {
-    height: '100%',
+  tilelist: props => ({
+    height: props.tileHeight,
     textAlign: 'center',
     minWidth: 300,
     position: 'relative',
-  },
+  }),
   tilesCount: {
     textAlign: 'left',
   },
@@ -133,6 +133,13 @@ const useStyles = makeStyles(theme => ({
       padding: theme.spacing(1),
     },
   },
+  cardVisiomatic: {
+    height: window.innerHeight - 64 - 64 - 21,
+  },
+  noResults: {
+    fontWeight: 'bold',
+    lineHeight: 2.5,
+  },
 }));
 
 function Home() {
@@ -148,9 +155,9 @@ function Home() {
   const [menuContrastOpen, setMenuContrastOpen] = useState(false);
   const [contrast, setContrast] = useState('defaultContrast');
   const [counts, setCounts] = useState({
-    true: 0,
-    false: 0,
-    null: 0,
+    total: 0,
+    good: 0,
+    bad: 0,
   });
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [filterInspect, setFilterInspect] = useState('');
@@ -166,11 +173,20 @@ function Home() {
   const [searchEnabled, setSearchEnabled] = useState(false);
   const [visiomaticCenter, setVisiomaticCenter] = useState([]);
   const [fov, setFov] = useState(2);
+  const [selectedLine, setSelectedLine] = useState(null);
+  const [noResultsFound, setNoResultsFound] = useState(false);
   const searchRef = useRef('');
 
+  const header = 64;
+  const toolbar = 64;
+  const footer = 64;
+  const tilesCount = 40;
+  const containerPadding = 32;
 
   const api = new DriApi();
-  const classes = useStyles();
+  const classes = useStyles({
+    tileHeight: window.innerHeight - header - footer - 21,
+  });
 
   useEffect(() => {
     api.getTileInspectionOption().then(res => setHasInspection(res.TILE_VIEWER_INSPECTION_ENABLED));
@@ -192,7 +208,7 @@ function Home() {
 
       setCurrentRelease(release);
     });
-    api.getTutorial().then(res => setTutorial(res));
+    api.getTutorial().then(res => setTutorial(res)).catch(() => setTutorial([]));
   }, []);
 
   useEffect(() => {
@@ -201,10 +217,15 @@ function Home() {
         if (hasInspection) {
           // Totais de Tiles boas, ruim e não inspecionadas
           const goodTiles = countBy(res, el => el.isp_value);
-          goodTiles.tiles = res.length;
-          setCounts(goodTiles);
+          goodTiles.total = res.length;
+
+          setCounts({
+            total: goodTiles.total,
+            good: goodTiles.true ? goodTiles.true : 0,
+            bad: goodTiles.false ? goodTiles.false : 0,
+          });
         } else {
-          setCounts({ tiles: res.length });
+          setCounts(prevCounts => ({ ...prevCounts, total: res.length }));
         }
         if (allTiles.length === 0) {
           setAllTiles(res);
@@ -215,6 +236,8 @@ function Home() {
   }, [hasInspection, currentRelease, filterInspect, loadingAllTiles]);
 
   const loadMoreDatasets = () => {
+    setNoResultsFound(false);
+
     if (searchRef.current && searchRef.current.value.split(',').length > 1) {
       return;
     }
@@ -249,6 +272,17 @@ function Home() {
           datasetLoading.current = false;
         }
         setLoadingList(false);
+
+        if (datasetTotalCount === 0) {
+          setNoResultsFound(true);
+        }
+      })
+      .catch(() => {
+        setTotalCount(0);
+        setDatasets([]);
+        datasetLoading.current = false;
+        setLoadingList(false);
+        setNoResultsFound(true);
       });
   };
 
@@ -270,27 +304,27 @@ function Home() {
     setCounts({});
   };
 
-  const onSelectDataset = dataset => setCurrentDataset(dataset);
-
-  useEffect(() => {
-    if (Object.keys(currentDataset).length > 0) {
-      const searchSplit = searchRef.current.value.split(',');
-
-      if (searchSplit.length === 2) {
-        setVisiomaticCenter([
-          searchSplit[0],
-          searchSplit[1],
-        ]);
-        setFov(0.3);
-      } else {
-        setVisiomaticCenter([
-          currentDataset.tli_ra,
-          currentDataset.tli_dec,
-        ]);
-        setFov(2);
+  const onSelectDataset = (dataset, isKeyboard) => {
+    if (dataset) {
+      if (!isKeyboard) {
+        datasets.forEach((row, i) => {
+          if (row.id === dataset.id) {
+            setSelectedLine(i);
+          }
+        });
       }
+
+      setCurrentDataset(dataset);
+
+      // It is necessary to have a center,
+      // otherwise the visiomatic gets lost in rendering the tile
+      setVisiomaticCenter([
+        dataset.tli_ra,
+        dataset.tli_dec,
+      ]);
+      setFov(2);
     }
-  }, [currentDataset]);
+  };
 
   const handleClickSnackBar = () => setOpenSnackBar(!openSnackBar);
 
@@ -308,7 +342,10 @@ function Home() {
 
   const getDatasetCommentsByType = () => {
     setCommentsWithFeature([]);
-    return api.getDatasetCommentsByType(currentDataset.id, 2).then(res => setCommentsWithFeature(res));
+    if (currentDataset.id) {
+      api.getDatasetCommentsByType(currentDataset.id, 2)
+        .then(res => setCommentsWithFeature(res));
+    }
   };
 
   useEffect(() => {
@@ -403,9 +440,9 @@ function Home() {
   const handleMenuFilterOpen = () => setShowFilterDialog(true);
 
   const handleMenuFilterClose = (value) => {
+    setShowFilterDialog(false);
     if (value !== filterInspect) {
       setFilterInspect(value);
-      setShowFilterDialog(false);
       setTotalCount(0);
       reloadList();
     }
@@ -436,10 +473,6 @@ function Home() {
         uraur -= 360;
       }
 
-      // tli_urall < ra
-      // AND tli_udecll < dec
-      // AND tli_uraur > ra
-      // AND tli_udecur > dec
       if (urall < ra && tile.tli_udecll < dec && uraur > ra && tile.tli_udecur > dec) {
         result.push(tile);
         return false;
@@ -449,25 +482,126 @@ function Home() {
     return result;
   };
 
-  const handleInputSearch = () => {
-    const searchSplit = searchRef.current.value.split(',');
+  const sexagesimal2decimal = (sexagesimal) => {
+    let grau = 0;
+    let min = 0;
+    let sec = 0;
 
-    if (searchSplit.length === 2) {
-      const datasetByPosition = filterByRaDec(
-        parseFloat(searchSplit[0]),
-        parseFloat(searchSplit[1]),
-      );
+    const data = sexagesimal.split(':');
+    let sign = 0;
+
+    if (data[0] < 0) {
+      sign = -1;
+      grau = parseFloat(data[0] / 1) * -1;
+    } else {
+      sign = 1;
+      grau = parseFloat(data[0] / 1);
+    }
+
+    min = parseFloat(data[1] / 60.0);
+    sec = parseFloat(data[2] / 3600.0) || 0;
+
+    const dec = ((grau + min + sec) * sign).toFixed(4);
+
+    return dec;
+  };
+
+  const handleInputSearch = () => {
+    setNoResultsFound(false);
+    const { value } = searchRef.current;
+    const splitByComma = value.split(',');
+    const splitBySpace = value.split(' ');
+    let splitRaDec = null;
+    let splitByHms = null;
+
+
+    // First the split by space, because the string could have a ", ".
+    // In this case, the split by comma should have priority
+    if (splitBySpace.length === 2) {
+      // Force a conversion of each value to a Number
+      // and check if it doesn't return a NaN
+      if (!isNaN(Number(splitBySpace[0].trim())) && !isNaN(Number(splitBySpace[1].trim()))) {
+        splitRaDec = [
+          parseFloat(splitBySpace[0].trim()),
+          parseFloat(splitBySpace[1].trim()),
+        ];
+
+      // If it does return a NaN but each value splitted by ":" has three elements
+      } else if (splitBySpace[0].split(':').length === 3 && splitBySpace[1].split(':').length === 3) {
+        splitByHms = [splitBySpace[0].trim(), splitBySpace[1].trim()];
+      }
+    }
+
+    if (splitByComma.length === 2) {
+      // Force a conversion of each value to a Number
+      // and check if it doesn't return a NaN
+      if (!isNaN(Number(splitByComma[0].trim())) && !isNaN(Number(splitByComma[1].trim()))) {
+        splitRaDec = [
+          parseFloat(splitByComma[0].trim()),
+          parseFloat(splitByComma[1].trim()),
+        ];
+
+      // If it does return a NaN but each value splitted by ":" has three elements
+      } else if (splitByComma[0].split(':').length === 3 && splitByComma[1].split(':').length === 3) {
+        splitByHms = [splitByComma[0].trim(), splitByComma[1].trim()];
+      }
+    }
+
+    if (splitRaDec) {
+      const datasetByPosition = filterByRaDec(splitRaDec[0], splitRaDec[1]);
 
       if (datasetByPosition.length > 0) {
         datasetLoading.current = true;
         setDatasets(datasetByPosition);
         setTotalCount(datasetByPosition.length);
         datasetLoading.current = false;
+
+        // If only one dataset was found, then select it automatically
+        if (datasetByPosition.length === 1) {
+          setCurrentDataset(datasetByPosition[0]);
+          setFov(0.05);
+          setVisiomaticCenter(splitRaDec);
+        }
+      } else {
+        setDatasets([]);
+        setTotalCount(0);
+        setNoResultsFound(true);
+        setLoadingList(false);
+        setCurrentDataset({});
+      }
+    } else if (splitByHms) {
+      // If the search is by Hms, convert each one to degree
+      // and apply the same search as the if above
+      const raDec = [sexagesimal2decimal(splitByHms[0]), sexagesimal2decimal(splitByHms[1])];
+
+      const datasetByPosition = filterByRaDec(raDec[0], raDec[1]);
+
+      if (datasetByPosition.length > 0) {
+        datasetLoading.current = true;
+        setDatasets(datasetByPosition);
+        setTotalCount(datasetByPosition.length);
+        datasetLoading.current = false;
+
+        // If only one dataset was found, then select it automatically
+        if (datasetByPosition.length === 1) {
+          setCurrentDataset(datasetByPosition[0]);
+          setFov(0.05);
+          setVisiomaticCenter(raDec);
+        }
+      } else {
+        setDatasets([]);
+        setTotalCount(0);
+        setNoResultsFound(true);
+        setCurrentDataset({});
+        setLoadingList(false);
       }
     } else {
+      // Else includes the tilename. I could check for DES or make a regex for it,
+      // but a more broad approach allows the user to find the tiles with +0209, for example.
       reloadList();
     }
   };
+
 
   const handleDelete = commentId => api.deleteComment(commentId).then(() => {
     handleComment(currentDataset);
@@ -497,10 +631,11 @@ function Home() {
   };
 
   const onChangeRelease = (value) => {
-    setLoadingAllTiles(true);
-    setCurrentRelease(value);
     reloadList();
     reloadAllTiles();
+    setCurrentDataset({});
+    setLoadingAllTiles(true);
+    setCurrentRelease(value);
   };
 
   useEffect(() => {
@@ -511,60 +646,65 @@ function Home() {
     }
   }, [allTiles]);
 
-  const Rows = () => datasets.map(dataset => (
-    <ListItem
-      className={classes.listItem}
-      button
-      key={dataset.id}
-      onClick={() => {
-        onSelectDataset(dataset);
-      }}
-      divider
-      selected={dataset.id === currentDataset.id}
-    >
-      <ListItemText
-        primary={dataset.tli_tilename}
-        secondary={hasInspection ? (
-          <MaterialLink
-            className={dataset.comments > 0 ? classes.datasetWithComment : null}
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              handleComment(dataset);
-            }}
-          >
-            {`${dataset.comments} comments`}
-          </MaterialLink>
-        ) : null}
-      />
-      <ListItemSecondaryAction>
-        {hasInspection ? (
-          <>
-            <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'ok')}>
-              {dataset.isp_value ? (
-                <ThumbUpIcon className={classes.okButton} />
-              ) : (
-                <ThumbUpIcon />
-              )}
+  const Rows = () => {
+    if (datasets.length > 0) {
+      return datasets.map(dataset => (
+        <ListItem
+          className={classes.listItem}
+          button
+          key={dataset.id}
+          onClick={() => {
+            onSelectDataset(dataset);
+          }}
+          divider
+          selected={dataset.id === currentDataset.id}
+        >
+          <ListItemText
+            primary={dataset.tli_tilename}
+            secondary={hasInspection ? (
+              <MaterialLink
+                className={dataset.comments > 0 ? classes.datasetWithComment : null}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  handleComment(dataset);
+                }}
+              >
+                {`${dataset.comments} comments`}
+              </MaterialLink>
+            ) : null}
+          />
+          <ListItemSecondaryAction>
+            {hasInspection ? (
+              <>
+                <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'ok')}>
+                  {dataset.isp_value ? (
+                    <ThumbUpIcon className={classes.okButton} />
+                  ) : (
+                    <ThumbUpIcon />
+                  )}
+                </IconButton>
+                <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'notok')}>
+                  {dataset.isp_value === false ? (
+                    <ThumbDownIcon color="error" />
+                  ) : (
+                    <ThumbDownIcon />
+                  )}
+                </IconButton>
+                <IconButton className={classes.tileButton} onClick={() => handleComment(dataset)}>
+                  <Comment />
+                </IconButton>
+              </>
+            ) : null}
+            <IconButton className={classes.tileButton} onClick={() => handleDownloadClick(dataset)}>
+              <Download />
             </IconButton>
-            <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'notok')}>
-              {dataset.isp_value === false ? (
-                <ThumbDownIcon color="error" />
-              ) : (
-                <ThumbDownIcon />
-              )}
-            </IconButton>
-            <IconButton className={classes.tileButton} onClick={() => handleComment(dataset)}>
-              <Comment />
-            </IconButton>
-          </>
-        ) : null}
-        <IconButton className={classes.tileButton} onClick={() => handleDownloadClick(dataset)}>
-          <Download />
-        </IconButton>
-      </ListItemSecondaryAction>
-    </ListItem>
-  ));
+          </ListItemSecondaryAction>
+        </ListItem>
+      ));
+    }
+    return noResultsFound && <Typography variant="button" className={classes.noResults}>No results were found</Typography>;
+  };
 
   const handleDownloadClose = () => {
     setDownloadInfo({
@@ -572,11 +712,34 @@ function Home() {
     });
   };
 
-  const header = 64;
-  const toolbar = 64;
-  const footer = 64;
-  const tilesCount = 40;
-  const containerPadding = 32;
+  useEffect(() => {
+    const handleKeyUp = (e) => {
+      // 38 (ArrowUp)
+      if (e.keyCode === 38) {
+        const row = selectedLine !== null
+          && selectedLine !== 0 ? selectedLine - 1 : 0;
+
+        setSelectedLine(row);
+      }
+
+      // 40 (ArrowDown)
+      if (e.keyCode === 40) {
+        const row = selectedLine !== null
+          && selectedLine !== datasets.length ? selectedLine + 1 : 0;
+
+        setSelectedLine(row);
+      }
+    };
+
+    window.addEventListener('keyup', handleKeyUp);
+    return () => window.removeEventListener('keyup', handleKeyUp);
+  }, [datasets, selectedLine]);
+
+  useEffect(() => {
+    if (selectedLine !== null) {
+      onSelectDataset(datasets[selectedLine], true);
+    }
+  }, [selectedLine]);
 
   return (
     <Router>
@@ -588,10 +751,10 @@ function Home() {
         currentRelease={currentRelease}
         onChangeRelease={onChangeRelease}
       />
-      <Route exact path="/" render={() => <Redirect to="/eyeballing" />} />
+      <Route exact path="/" render={() => <Redirect to="/tile_viewer" />} />
       <Route
         exact
-        path="/eyeballing/"
+        path="/tile_viewer/"
         render={() => (
           <React.Fragment>
             <div className={classes.content}>
@@ -624,7 +787,7 @@ function Home() {
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="Reporting">
-                            <Link to="/eyeballing/comments/">
+                            <Link to="/tile_viewer/comments/">
                               <IconButton className={classes.menuButton}>
                                 <TableChart className={classes.menuButtonIcon} />
                               </IconButton>
@@ -672,7 +835,7 @@ function Home() {
                   </Card>
                 </Grid>
                 <Grid item lg={9} xl={10} className={classes.visiomaticContainer}>
-                  <Card className={classes.card}>
+                  <Card className={`${classes.card} ${classes.cardVisiomatic}`}>
                     {currentRelease !== '' ? (
                       <VisiomaticPanel
                         image={
@@ -724,13 +887,13 @@ function Home() {
       />
       {hasInspection ? (
         <Route
-          path="/eyeballing/comments/"
+          path="/tile_viewer/comments/"
           render={() => (
             <TileTable
               currentRelease={currentRelease}
               className={classes.card}
               backLink={(
-                <Link to="/eyeballing/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                <Link to="/tile_viewer/" style={{ color: 'inherit', textDecoration: 'none' }}>
                   <IconButton
                     aria-label="Home"
                     aria-controls="home-appbar"

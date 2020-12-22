@@ -14,7 +14,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Avatar from '@material-ui/core/Avatar';
 import {
-  getLoggedUser, singUpPath, urlLogin, urlSingup, urlLogout,
+  getLoggedUser, signPath, urlLogin, urlSign, urlLogout,
 } from '../../Services/api';
 import styles from './styles';
 
@@ -32,7 +32,7 @@ function Header() {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const [user, setUser] = useState(undefined);
-  const [pathSingUp, setPathSingUp] = useState(undefined);
+  const [pathSign, setPathSign] = useState(undefined);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -84,16 +84,16 @@ function Header() {
     return (
       <>
         <Button href={urlLogin} color="inherit">Sign in</Button>
-        {pathSingUp ? <Button href={urlSingup(pathSingUp)} color="inherit">Sign up</Button> : ''}
+        <Button href={urlSign(pathSign)} color="inherit">Sign up</Button>
       </>
     );
   }
 
   useEffect(() => {
     getLoggedUser().then((result) => setUser(result));
-    singUpPath().then((result) => setPathSingUp(result.NCSA_SIGNUP_LINK));
+    signPath().then((result) => setPathSign(result.NCSA_SIGNUP_LINK));
   }, []);
-  useEffect(() => {}, [user]);
+  useEffect(() => { }, [user]);
 
   const menus = [
     {
@@ -138,7 +138,7 @@ function Header() {
         </List>
         <div className={classes.separator} />
         {/* TODO: verificar se o usuario esta logado */}
-        { user ? (user.username ? <UserLogged /> : <UserUnLogged />) : '' }
+        {user ? (user.username ? <UserLogged /> : <UserUnLogged />) : ''}
       </Toolbar>
     </AppBar>
   );

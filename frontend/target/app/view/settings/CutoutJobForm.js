@@ -137,9 +137,10 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     name: 'stiffColors',
                                     reference: 'cbgStiffColor',
                                     items: [
-                                        { boxLabel: 'gri', inputValue: 'gri', checked: true },
-                                        { boxLabel: 'rig', inputValue: 'rig' },
-                                        { boxLabel: 'zgi', inputValue: 'zgi' },
+                                        { boxLabel: 'irg', inputValue: 'irg', checked: true },
+                                        { boxLabel: 'zir', inputValue: 'zir' },
+                                        { boxLabel: 'zig', inputValue: 'zig' },
+                                        { boxLabel: 'Yzi', inputValue: 'yzi' },
                                         {
                                             boxLabel: 'All',
                                             name: 'stiffColorsAll',
@@ -164,9 +165,10 @@ Ext.define('Target.view.settings.CutoutJobForm', {
                                     name: 'luptonColors',
                                     reference: 'cbgLuptonColor',
                                     items: [
-                                        { boxLabel: 'gri', inputValue: 'gri' },
-                                        { boxLabel: 'rig', inputValue: 'rig' },
-                                        { boxLabel: 'zgi', inputValue: 'zgi' },
+                                        { boxLabel: 'irg', inputValue: 'irg' },
+                                        { boxLabel: 'zir', inputValue: 'zir' },
+                                        { boxLabel: 'zig', inputValue: 'zig' },
+                                        { boxLabel: 'Yzi', inputValue: 'yzi' },
                                         {
                                             boxLabel: 'All',
                                             name: 'luptonColorsAll',

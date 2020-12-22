@@ -212,14 +212,13 @@ Ext.define('UserQuery.view.main.Main', {
                                         ]
                                     }]
                                 },
-
                                 // tables of external catalog
                                 {
                                     title: 'External Tables', layout: 'fit', reference: 'accExternalCatalog',
-                                    listeners: {
-                                        expand: 'accExternalCatalog_onExpand',
-                                        collapse: 'accExternalCatalog_onCollapse'
-                                    },
+                                    // listeners: {
+                                    //     expand: 'accExternalCatalog_onExpand',
+                                    //     collapse: 'accExternalCatalog_onCollapse'
+                                    // },
                                     items: [
                                         {
                                             xtype: 'treepanel',
@@ -233,17 +232,16 @@ Ext.define('UserQuery.view.main.Main', {
                                                     ddGroup: 'TreeDD'
                                                 }
                                             },
-                                            contextMenuItems: [
-                                                { text: 'Content', itemId: 'preview', handler: 'tvwExternalCatalog_onContextMenuClick' }
-                                            ],
-                                            listeners: {
-                                                itemcontextmenu: 'treeView_onContextMenu',
-                                                itemexpand: 'tvwExternalCatalog_onExpanded'
-                                            }
+                                            // contextMenuItems: [
+                                            //     { text: 'Content', itemId: 'preview', handler: 'tvwExternalCatalog_onContextMenuClick' }
+                                            // ],
+                                            // listeners: {
+                                            //     itemcontextmenu: 'treeView_onContextMenu',
+                                            //     itemexpand: 'tvwExternalCatalog_onExpanded'
+                                            // }
                                         }
                                     ]
                                 },
-
                                 // tables of user
                                 {
                                     title: 'My Tables',
@@ -437,18 +435,13 @@ Ext.define('UserQuery.view.main.Main', {
                                 defaults: {
                                     margin: '0 0 0 10'
                                 },
-                                items: [{
-                                    xtype: 'button',
-                                    text: 'Check',
-                                    reference: 'btnCheck',
-                                    handler: 'btnCheck_onClick'
-                                },
-                                {
-                                    xtype: 'button',
-                                    text: 'Preview',
-                                    reference: 'btnPreview',
-                                    handler: 'btnPreview_onClick'
-                                }
+                                items: [
+                                    {
+                                        xtype: 'button',
+                                        text: 'Preview',
+                                        reference: 'btnPreview',
+                                        handler: 'btnPreview_onClick'
+                                    }
                                 ]
                             }
                             ]
@@ -486,7 +479,7 @@ Ext.define('UserQuery.view.main.Main', {
                                 //             store: Ext.create('Ext.data.Store')
                                 //         }
                                 //     ]
-                                // },                                
+                                // },
                                 {
                                     title: 'My JOBs',
                                     listeners: {
@@ -498,7 +491,7 @@ Ext.define('UserQuery.view.main.Main', {
                                             reference: 'grdJobs',
                                             store: Ext.create('Ext.data.Store'),
                                             viewConfig: {
-                                                //stripeRows: false, 
+                                                //stripeRows: false,
                                                 getRowClass: function (record) {
                                                     return record.get('row_cls') || 'row-cls';
                                                 }
