@@ -213,36 +213,36 @@ Ext.define('UserQuery.view.main.Main', {
                                     }]
                                 },
 
-                                // // tables of external catalog
-                                // {
-                                //     title: 'External Tables', layout: 'fit', reference: 'accExternalCatalog',
-                                //     listeners: {
-                                //         expand: 'accExternalCatalog_onExpand',
-                                //         collapse: 'accExternalCatalog_onCollapse'
-                                //     },
-                                //     items: [
-                                //         {
-                                //             xtype: 'treepanel',
-                                //             reference: 'tvwExternalCatalog',
-                                //             rootVisible: false,
-                                //             viewConfig: {
-                                //                 plugins: {
-                                //                     ptype: 'treeviewdragdrop',
-                                //                     enableDrag: true,
-                                //                     enableDrop: false,
-                                //                     ddGroup: 'TreeDD'
-                                //                 }
-                                //             },
-                                //             contextMenuItems: [
-                                //                 { text: 'Content', itemId: 'preview', handler: 'tvwExternalCatalog_onContextMenuClick' }
-                                //             ],
-                                //             listeners: {
-                                //                 itemcontextmenu: 'treeView_onContextMenu',
-                                //                 itemexpand: 'tvwExternalCatalog_onExpanded'
-                                //             }
-                                //         }
-                                //     ]
-                                // },
+                                // tables of external catalog
+                                {
+                                    title: 'External Tables', layout: 'fit', reference: 'accExternalCatalog',
+                                    listeners: {
+                                        expand: 'accExternalCatalog_onExpand',
+                                        collapse: 'accExternalCatalog_onCollapse'
+                                    },
+                                    items: [
+                                        {
+                                            xtype: 'treepanel',
+                                            reference: 'tvwExternalCatalog',
+                                            rootVisible: false,
+                                            viewConfig: {
+                                                plugins: {
+                                                    ptype: 'treeviewdragdrop',
+                                                    enableDrag: true,
+                                                    enableDrop: false,
+                                                    ddGroup: 'TreeDD'
+                                                }
+                                            },
+                                            contextMenuItems: [
+                                                { text: 'Content', itemId: 'preview', handler: 'tvwExternalCatalog_onContextMenuClick' }
+                                            ],
+                                            listeners: {
+                                                itemcontextmenu: 'treeView_onContextMenu',
+                                                itemexpand: 'tvwExternalCatalog_onExpanded'
+                                            }
+                                        }
+                                    ]
+                                },
 
                                 // tables of user
                                 {
@@ -513,4 +513,4 @@ Ext.define('UserQuery.view.main.Main', {
             xtype: 'dri-footer'
         }
     ]
-});
+  });
