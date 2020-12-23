@@ -129,8 +129,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   tileButton: {
-    [theme.breakpoints.down('xl')]: {
-      padding: theme.spacing(1),
+    [theme.breakpoints.between('lg', 'xl')]: {
+      padding: 6,
+
     },
   },
   cardVisiomatic: {
@@ -139,6 +140,13 @@ const useStyles = makeStyles(theme => ({
   noResults: {
     fontWeight: 'bold',
     lineHeight: 2.5,
+  },
+  tileIcon: {
+    [theme.breakpoints.between('lg', 'xl')]: {
+      width: '0.9em',
+      height: '0.9em',
+
+    },
   },
 }));
 
@@ -678,25 +686,25 @@ function Home() {
               <>
                 <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'ok')}>
                   {dataset.isp_value ? (
-                    <ThumbUpIcon className={classes.okButton} />
+                    <ThumbUpIcon className={`${classes.okButton} ${classes.tileIcon}`} />
                   ) : (
-                    <ThumbUpIcon />
+                    <ThumbUpIcon className={classes.tileIcon} />
                   )}
                 </IconButton>
                 <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'notok')}>
                   {dataset.isp_value === false ? (
-                    <ThumbDownIcon color="error" />
+                    <ThumbDownIcon className={classes.tileIcon} color="error" />
                   ) : (
-                    <ThumbDownIcon />
+                    <ThumbDownIcon className={classes.tileIcon} />
                   )}
                 </IconButton>
                 <IconButton className={classes.tileButton} onClick={() => handleComment(dataset)}>
-                  <Comment />
+                  <Comment className={classes.tileIcon} />
                 </IconButton>
               </>
             ) : null}
             <IconButton className={classes.tileButton} onClick={() => handleDownloadClick(dataset)}>
-              <Download />
+              <Download className={classes.tileIcon} />
             </IconButton>
           </ListItemSecondaryAction>
         </ListItem>
