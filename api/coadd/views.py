@@ -210,25 +210,24 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
         tileinfo = desapi.tile_by_name(tilename)
 
+        result = {}
+
         for release in tileinfo["releases"]:
             # Compara o release pelo internal name, nas nossas tabelas o release tem _coadd no nome. por isso é necessário fazer um split.
             if release["release"] == rls_name.split("_")[0].lower():
 
-                result = dict({
-                    "tilename": tileinfo["tilename"],
-                    "ra_cent": tileinfo["ra_cent"],
-                    "dec_cent": tileinfo["dec_cent"],
-                    "racmin": tileinfo["racmin"],
-                    "racmax": tileinfo["racmax"],
-                    "deccmin": tileinfo["deccmin"],
-                    "deccmax": tileinfo["deccmax"],
-                    "images": {},
-                    "catalogs": {},
-                })
+                rows = tileinfo["releases"][0]
+
+                for key in rows:
+                    if key != 'release' and key != 'num_objects' and key != 'bands':
+                        result[key] = rows[key]
+                        result['images'] = {}
+                        result['catalogs'] = {}
 
                 for band in release["bands"]:
-                    result["images"][band.lower()] = release["bands"][band]["image"]
-                    result["catalogs"][band.lower()] = release["bands"][band]["catalog"]
+
+                    result["images"][band] = release["bands"][band]["image"]
+                    result["catalogs"][band] = release["bands"][band]["catalog"]
 
                 return Response(result)
 

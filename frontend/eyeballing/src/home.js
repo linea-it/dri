@@ -615,8 +615,7 @@ function Home() {
         setDownloadInfo({
           visible: true,
           tilename: dataset.tli_tilename,
-          images: res.images,
-          catalogs: res.catalogs,
+          files: res,
         });
 
         setBackdropOpen(false);
@@ -874,8 +873,7 @@ function Home() {
                 error={downloadInfo.error}
                 handleClose={handleDownloadClose}
                 tilename={downloadInfo.tilename}
-                images={downloadInfo.images}
-                catalogs={downloadInfo.catalogs}
+                files={downloadInfo.files}
               />
             )}
             <Backdrop open={backdropOpen} className={classes.backdrop}>
