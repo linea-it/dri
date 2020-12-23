@@ -19,24 +19,17 @@ Ext.define('visiomatic.download.FitsController', {
         }
     },
 
-    onChangeLoadFits: function (tilename, catalog) {
+    onChangeLoadFits: function (result) {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
             store = vm.getStore('fitsFiles');
 
-        vm.set('tag', catalog);
-        vm.set('tilename', tilename);
-
         store.filter([
             {
-                property:'tilename',
-                value: tilename
+                property:'result',
+                value: result
             },
-            {
-                property:'tag',
-                value: catalog
-            }
         ]);
     }
 });

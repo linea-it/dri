@@ -91,9 +91,9 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     /**
-     * Carrega a Lista de Cutout Jobs 
+     * Carrega a Lista de Cutout Jobs
      * relacioandas a um produto e com status ok ou seja finalizados.
-     * ordenados pelo mais recente. 
+     * ordenados pelo mais recente.
      * @param  {Number} productId Id do produto/catalogo que está sendo visualizado.
      */
     loadCutoutJobs: function (productId) {
@@ -131,9 +131,9 @@ Ext.define('Target.view.objects.ObjectsController', {
 
     /**
      * Executado toda vez que que a store cutoutJobs for carregada.
-     * Verifica se o painel Mosaic já tem algum job selecioando, 
+     * Verifica se o painel Mosaic já tem algum job selecioando,
      * se não tiver seleciona o job mais recente por default.
-     * @param  {Target.store.CutoutJobs} store Instancia da cutoutJobs 
+     * @param  {Target.store.CutoutJobs} store Instancia da cutoutJobs
      * store que está no viewModel.
      */
     onLoadCutoutJobs: function (store) {
@@ -143,7 +143,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             cutoutJob = vm.get('cutoutJob');
 
         // Toda vez que a store de Jobs for carregada
-        // Verificar se o painel mosaic já tem algum cutout job selecionado. 
+        // Verificar se o painel mosaic já tem algum cutout job selecionado.
         if ((cutoutJob) && (cutoutJob.get('id') > 0)) {
             // Já tem um cutoutJob selecionado não faz nada.
             return
@@ -162,7 +162,7 @@ Ext.define('Target.view.objects.ObjectsController', {
             combo = me.lookup('cmbCutoutImage'),
             imgDefault;
 
-        // Verifica se existe no job a imagem Stiff nas cores gri. 
+        // Verifica se existe no job a imagem Stiff nas cores gri.
         imgDefault = imagesFormat.getAt(imagesFormat.findExact('name', 'stiff_irg'));
 
         if ((imgDefault) && (imgDefault !== -1)) {
@@ -1038,8 +1038,8 @@ Ext.define('Target.view.objects.ObjectsController', {
     },
 
     /**
-     * Apos a Store de cutout ser carregada, 
-     * executa o metodo do painel Mosaic 
+     * Apos a Store de cutout ser carregada,
+     * executa o metodo do painel Mosaic
      * que vai criar a visualiação das imagens.
      */
     onLoadCutouts: function (store) {

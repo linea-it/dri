@@ -58,11 +58,11 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
                 }
             ],
             buttons: [
-                {
-                    xtype: 'label',
-                    text: 'Right click "Save link as" to download files',
-                    flex: 1
-                },
+                // {
+                //     xtype: 'label',
+                //     text: 'Right click "Save link as" to download files',
+                //     flex: 1
+                // },
                 {
                     text: 'Cancel',
                     scope: me,
@@ -77,9 +77,12 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
         this.close();
     },
 
-    loadFits: function (tilename, tag) {
+    loadFits: function (result) {
         var me = this;
-        this.loadFits = tilename;
-        me.fireEvent('changeLoadFits', tilename, tag);
+        // this.loadFits = tilename;
+
+        console.log('result', result)
+
+        me.fireEvent('changeLoadFits', result);
     }
 });
