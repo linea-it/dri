@@ -9,23 +9,8 @@ Ext.define('visiomatic.store.FitsFiles', {
 
     model: 'visiomatic.model.FitsFiles',
 
-    remoteFilter: true,
+    remoteFilter: false,
 
     pageSize: 0,
-
-    proxy: {
-        url: '/dri/api/get_fits_by_tilename'
-    },
-
-    sorters: [
-        {
-            property: 'order',
-            direction: 'ASC'
-        },
-        {
-            property: 'filename',
-            direction: 'ASC'
-        },
-    ]
 
 });

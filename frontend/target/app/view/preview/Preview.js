@@ -187,16 +187,16 @@ Ext.define('Target.view.preview.Preview', {
                 },
                 pressed: true
             },
-            // {
-            //     xtype: 'button',
-            //     reference: 'btnSave',
-            //     iconCls: 'x-fa fa-download',
-            //     handler: 'onSave',
-            //     tooltip: 'Download',
-            //     bind: {
-            //         disabled: '{is_empty}'
-            //     }
-            // },
+            {
+                xtype: 'button',
+                reference: 'btnSave',
+                iconCls: 'x-fa fa-download',
+                handler: 'onSave',
+                tooltip: 'Download',
+                bind: {
+                    disabled: '{is_empty}'
+                }
+            },
             '-',
             {
                 xtype: 'button',

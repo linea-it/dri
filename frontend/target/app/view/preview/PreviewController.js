@@ -296,10 +296,6 @@ Ext.define('Target.view.preview.PreviewController', {
             vm = me.getViewModel(),
             object = vm.get('currentRecord');
 
-<<<<<<< HEAD
-
-=======
->>>>>>> a72304557e08bc0e60496902e83913f6a6de04dd
         view.fireEvent('onclickopencomments', object, view);
     },
 

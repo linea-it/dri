@@ -26,7 +26,10 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
 
     initComponent: function () {
 
+
         var me = this;
+
+        console.log('me')
 
         Ext.apply(this, {
             layout: 'fit',
@@ -38,18 +41,18 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
                         store: '{fitsFiles}'
                     },
                     columns: [
-                        {
-                            text: 'Filename',
-                            dataIndex: 'filename',
-                            flex: 1
-                        },
-                        {
-                            text: 'Filter',
-                            dataIndex: 'filter'
-                        },
+                        // {
+                        //     text: 'Filename',
+                        //     dataIndex: 'filename',
+                        //     flex: 1
+                        // },
+                        // {
+                        //     text: 'Filter',
+                        //     dataIndex: 'filter'
+                        // },
                         {
                             text: 'URL',
-                            dataIndex: 'file_source',
+                            dataIndex: 'url',
                             renderer: function (value, metadata, record) {
                                 return '<a href=' + value + ' target=\'_blank\'><i class="fa fa-download"> </i></a>';
                             }
@@ -77,9 +80,51 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
         this.close();
     },
 
-    loadFits: function (result) {
+    loadFits: function (response) {
         var me = this;
-        // this.loadFits = tilename;
+        this.loadFits = response.tli_tilename;
+
+        var otherFiles = {
+            detection: 'Detection Image',
+            main: 'Main Catalog',
+            magnitude: 'Magnitude Catalog',
+            flux: 'Flux Catalog',
+          };
+
+        var result = []
+
+        if(response.images) {
+            Ext.each(Object.keys(response.images), function(key) {
+
+                if (response.images[key] && response.images[key] !== '') {
+                    result.push({
+                        filename: key.toUpperCase() + '-Band Image',
+                        url: response.images[key]
+                    })
+                }
+            })
+        }
+
+        if(response.catalogs) {
+            Ext.each(Object.keys(response.catalogs), function(key) {
+
+                if (response.catalogs[key] && response.catalogs[key] !== '') {
+                    result.push({
+                        filename: key.toUpperCase() + '-Band Catalog',
+                        url: response.catalogs[key]
+                    })
+                }
+            })
+        }
+        console.log('response', response)
+        Ext.each(Object.keys(otherFiles), function(key) {
+            if(response[key]) {
+                result.push({
+                    filename: otherFiles[key],
+                    url: response[key],
+                })
+            }
+        })
 
         console.log('result', result)
 

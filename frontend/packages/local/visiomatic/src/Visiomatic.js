@@ -1577,8 +1577,7 @@ Ext.define('visiomatic.Visiomatic', {
 
     showDownloadWindow: function () {
         var me = this,
-            currentDataset = me.getCurrentDataset(),
-            tilename;
+            currentDataset = me.getCurrentDataset();
 
         if (currentDataset.get('tli_tilename')) {
 
@@ -1594,7 +1593,13 @@ Ext.define('visiomatic.Visiomatic', {
                     winDownload.loadFits(result);
                     winDownload.show();
                 },
-                failure: function (response) {}
+                failure: function () {
+
+                    var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
+
+                    winDownload.loadFits({ error: 'No download was found for this tile' });
+                    winDownload.show();
+                }
             });
 
             // tilename = currentDataset.get('tli_tilename');
