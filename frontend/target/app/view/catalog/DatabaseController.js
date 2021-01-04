@@ -14,6 +14,14 @@ Ext.define('Target.view.catalog.DatabaseController', {
     winAddCatalog: null,
     winAssociation: null,
 
+    listen: {
+        store: {
+            '#strDatabases': {
+                load: 'onLoadDatabases'
+            },
+        }
+    },
+
     addCatalog: function () {
         var me = this,
             view = me.getView(),
@@ -97,7 +105,7 @@ Ext.define('Target.view.catalog.DatabaseController', {
 
     getAddedCatalog: function (name) {
         var me = this,
-            store = Ext.create('Target.store.Catalogs',{}),
+            store = Ext.create('Target.store.Catalogs', {}),
             catalog;
 
         store.filter({
@@ -126,7 +134,7 @@ Ext.define('Target.view.catalog.DatabaseController', {
             closeAction: 'destroy',
             width: 800,
             height: 620,
-            modal:true,
+            modal: true,
             items: [{
                 xtype: 'targets-association',
                 listeners: {
@@ -174,6 +182,31 @@ Ext.define('Target.view.catalog.DatabaseController', {
 
         } else {
 
+        }
+    },
+
+    /**
+     * Executa toda vez que store databases é carregada.
+     * Se a store tiver algum resultado, seleciona o primeiro resultado 
+     * como default da combobox database. 
+     * Se a store tiver apenas 1 resultado, 
+     * alem de selecionar o valor default desabilita a combobox para edição.
+     * @param {common.store.Databases} store 
+     */
+    onLoadDatabases: function (store) {
+        var me = this,
+            cmbDatabases = me.lookup('cmbDatabases');
+
+        // Seleciona como default o primeiro registro.
+        if (store.count() > 0) {
+            cmbDatabases.select(store.first());
+        }
+
+        // Habilita ou desabilita a edição da combobox.
+        if (store.count() == 1) {
+            cmbDatabases.setReadOnly(true);
+        } else {
+            cmbDatabases.setReadOnly(false);
         }
     }
 

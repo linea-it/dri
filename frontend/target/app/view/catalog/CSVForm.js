@@ -45,19 +45,19 @@ Ext.define('Target.view.catalog.CSVForm', {
 
         // Recuperar do Settigs no backend se a interface de registro pelo
         // banco de dados estara disponivel.
-        try{
+        try {
             me.enableFolder = Settings.PRODUCT_REGISTER_FOLDERS;
         }
-        catch (err){
+        catch (err) {
             console.warn("Setting PRODUCT_REGISTER_FOLDERS not loaded.");
         }
 
         // Recuperar do Settigs no backend se a opcao de deixar a lista publica
         // vai estar ativa
-        try{
+        try {
             me.enablePublic = Settings.PRODUCT_REGISTER_ENABLE_PUBLIC;
         }
-        catch (err){
+        catch (err) {
             console.warn("Setting PRODUCT_REGISTER_ENABLE_PUBLIC not loaded.");
         }
 
@@ -72,13 +72,13 @@ Ext.define('Target.view.catalog.CSVForm', {
                 {
                     xtype: 'textfield',
                     name: 'displayName',
-                    fieldLabel: 'Name',
+                    fieldLabel: 'List Name',
                     minLength: 3,
                     maxLength: 30,
                     allowBlank: false,
                     regex: /^[a-z0-9-_\s]+$/i,
                     regexText: 'Please use only letters and numbers separated ' +
-                                'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
+                        'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
                     // value: 'Teste Import CSV'
                 },
                 {

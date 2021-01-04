@@ -72,7 +72,7 @@ Ext.define('Target.view.preview.Preview', {
         xtype: 'toolbar',
         dock: 'top',
         items: [
-            // Campo de Rating usando Number Field. troquei pelo componente Rating. 
+            // Campo de Rating usando Number Field. troquei pelo componente Rating.
             {
                 xtype: 'numberfield',
                 maxValue: 5,
@@ -86,7 +86,7 @@ Ext.define('Target.view.preview.Preview', {
                 }
             },
             // TODO: Provavelmente o update para versão 7.0 deve corrigir esse bug e este campo oculto
-            // Componente Rating causa um erro por não ter o metodo disabled. e atrapalha os demais botões. 
+            // Componente Rating causa um erro por não ter o metodo disabled. e atrapalha os demais botões.
             // {
             //     xtype: 'numberfield',
             //     hidden: true
@@ -187,24 +187,16 @@ Ext.define('Target.view.preview.Preview', {
                 },
                 pressed: true
             },
-            {
-                xtype: 'button',
-                reference: 'btnSave',
-                iconCls: 'x-fa fa-download',
-                handler: 'onSave',
-                tooltip: 'Download',
-                bind: {
-                    disabled: '{is_empty}'
-                }
-            },
-            {
-                xtype: 'button',
-                reference: 'btnEvent',
-                iconCls: 'x-fa fa-download',
-                handler: 'onEvent',
-                tooltip: 'Event',
-                hidden: true
-            },
+            // {
+            //     xtype: 'button',
+            //     reference: 'btnSave',
+            //     iconCls: 'x-fa fa-download',
+            //     handler: 'onSave',
+            //     tooltip: 'Download',
+            //     bind: {
+            //         disabled: '{is_empty}'
+            //     }
+            // },
             '-',
             {
                 xtype: 'button',
@@ -260,10 +252,10 @@ Ext.define('Target.view.preview.Preview', {
             me.fireEvent('changerecord', record, me);
 
 
-            // Habilita o painel de preview. 
-            // TODO: Esta ação lança um erro no console relacionado a um metodo enable missing. 
+            // Habilita o painel de preview.
+            // TODO: Esta ação lança um erro no console relacionado a um metodo enable missing.
             // Erro causado pelo componente ux.rating que não tem esse metodo implementado.
-            // Na atualização para versão ExtJS 7.0 este erro foi corrigido. 
+            // Na atualização para versão ExtJS 7.0 este erro foi corrigido.
             me.setDisabled(false);
         }
     },
@@ -295,7 +287,7 @@ Ext.define('Target.view.preview.Preview', {
         // comments.removeAll();
         // comments.clearFilter(true);
 
-        // Desabilita totalmente o painel de preview para 
+        // Desabilita totalmente o painel de preview para
         // evitar ações do usuario sem que tenha um objeto selecionado.
         me.setDisabled(true);
 
