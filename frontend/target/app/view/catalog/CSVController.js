@@ -13,12 +13,12 @@ Ext.define('Target.view.catalog.CSVController', {
 
     separator: ',',
     baseProperties: ['ra', 'dec'],
+    allowedFormats: ['csv', 'text/csv', 'application/zip', 'application/gzip'],
 
     addCatalog: function () {
         var me = this,
             view = me.getView(),
             form = view.getForm(),
-            fldInternalName = me.lookupReference('fldInternalName'),
             fldFileUploaded = me.lookupReference('fldFileUploaded'),
             values, data, name, release, isPublic, csvData, file, filesize, filetype;
 
@@ -29,7 +29,6 @@ Ext.define('Target.view.catalog.CSVController', {
             // Criando um internal name
             name = values.displayName.split(' ').join('_');
             name = name.toLowerCase().trim();
-            // fldInternalName.setValue(name);
 
             release = values.release !== '' ? [values.release] : [];
 
@@ -55,20 +54,46 @@ Ext.define('Target.view.catalog.CSVController', {
             // https://www.xspdf.com/help/50965740.html
             file = fldFileUploaded.fileInputEl.dom.files[0];
 
+
+            // Verificar se o usuario Preencheu os 2
+            if ((csvData !== null) && (file !== undefined)) {
+
+                Ext.MessageBox.show({
+                    msg: 'You have filled in the file field and the coordinate field please choose one and try again.',
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
+                return;
+            }
+
+
             if (file !== undefined || (file instanceof File)) {
 
-                console.log("Selecionou arquivo.")
-
                 filesize = file.size / 1024 / 1024; // in MiB
-                console.log("Tamanho do arquivo: %o MB", filesize)
+                // console.log("Tamanho do arquivo: %o MB", filesize)
                 filetype = file.type;
-                console.log("Tipo do arquivo: %o", filetype)
+                // console.log("Tipo do arquivo: %o", filetype)
 
                 // Tamanho maximo de 50Mb
                 if (filesize > 50) {
-                    console.log("Arquivo maior que o tamanho maximo de upload")
+                    Ext.MessageBox.show({
+                        title: 'Very large file',
+                        msg: 'Maximum upload size is 50Mb try to compress the file or divide it into smaller parts.',
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING
+                    });
 
-                    // Mostrar uma mensagem de erro.
+                    return;
+                }
+
+                // Verificar se é um tipo permitido
+                if (!me.allowedFormats.includes(filetype)) {
+                    Ext.MessageBox.show({
+                        title: 'File type not allowed',
+                        msg: 'The file must be CSV-formatted text with a .csv extension or a compressed csv file with a .zip or tar.gz extension.',
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING
+                    });
                     return;
                 }
 
@@ -102,7 +127,7 @@ Ext.define('Target.view.catalog.CSVController', {
 
 
             } else if (csvData !== null) {
-                console.log("Preencheu o campo csv data")
+                // console.log("Preencheu o campo csv data")
 
                 data.mime = 'csv';
                 data.csvData = csvData;
@@ -110,10 +135,14 @@ Ext.define('Target.view.catalog.CSVController', {
 
                 me.importTargetList(data);
 
-            } else {
-                console.log("Não preencheu nenhum dos 2")
-
-                // Mostrar uma mensagem de erro.
+            }
+            else {
+                // console.log("Não preencheu nenhum dos 2")
+                Ext.MessageBox.show({
+                    msg: 'You must select a file to upload or fill in the coordinates manually.',
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
                 return;
             }
         }
@@ -135,7 +164,7 @@ Ext.define('Target.view.catalog.CSVController', {
                 if (data.success) {
 
                     //Fechar a janela de registro
-                    // view.fireEvent('newproduct', data.product);
+                    view.fireEvent('newproduct', data.product);
 
                     view.setLoading(false);
 

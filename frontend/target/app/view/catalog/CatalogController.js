@@ -22,7 +22,7 @@ Ext.define('Target.view.catalog.CatalogController', {
         }
         me.winAddCatalog = Ext.create('Target.view.catalog.RegisterWindow', {
             width: 400,
-            height: 550,
+            height: 600,
             listeners: {
                 scope: me,
                 //close: 'reloadCatalogs',

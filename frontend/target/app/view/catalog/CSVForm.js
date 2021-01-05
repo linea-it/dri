@@ -70,21 +70,6 @@ Ext.define('Target.view.catalog.CSVForm', {
             },
             items: [
                 {
-                    xtype: 'hiddenfield',
-                    name: 'mime',
-                    value: 'csv'
-                },
-                {
-                    xtype: 'hiddenfield',
-                    name: 'type',
-                    value: 'catalog'
-                },
-                {
-                    xtype: 'hiddenfield',
-                    name: 'name',
-                    reference: 'fldInternalName'
-                },
-                {
                     xtype: 'textfield',
                     name: 'displayName',
                     fieldLabel: 'List Name',
@@ -127,6 +112,17 @@ Ext.define('Target.view.catalog.CSVForm', {
                     name: 'isPublic',
                     checked: false,
                     hidden: !me.enablePublic,
+                },
+                {
+                    xtype: 'component',
+                    html: [
+                        '<p>Enter target positions as a CSV-formatted table. ',
+                        'Values can be entered manually ',
+                        'or by uploading a CSV-formatted text file ',
+                        'can also be compressed in the formats .zip or .tar.gz. ',
+                        'The attachment size limit is 50Mb.',
+                        '</p>'
+                    ]
                 },
                 {
                     xtype: 'filefield',
