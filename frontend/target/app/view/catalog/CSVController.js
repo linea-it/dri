@@ -13,19 +13,18 @@ Ext.define('Target.view.catalog.CSVController', {
 
     separator: ',',
     baseProperties: ['ra', 'dec'],
+    allowedFormats: ['csv', 'text/csv', 'application/zip', 'application/gzip'],
 
     addCatalog: function () {
         var me = this,
             view = me.getView(),
             form = view.getForm(),
-            values, data, name, release, isPublic, csvData;
+            fldFileUploaded = me.lookupReference('fldFileUploaded'),
+            values, data, name, release, isPublic, csvData, file, filesize, filetype;
 
         if (form.isValid()) {
 
             values = form.getValues();
-
-            // headers = me.validateCSVDAta(values.csvData);
-            // console.log(headers);
 
             // Criando um internal name
             name = values.displayName.split(' ').join('_');
@@ -35,8 +34,9 @@ Ext.define('Target.view.catalog.CSVController', {
 
             isPublic = values.isPublic === 'on' ? true : false;
 
+            csvData = values.csvData !== '' ? values.csvData : null;
+
             data = {
-                mime: 'csv',
                 type: 'catalog',
                 class: values.classname,
                 name: name,
@@ -44,10 +44,101 @@ Ext.define('Target.view.catalog.CSVController', {
                 releases: release,
                 isPublic: isPublic,
                 description: values.description,
-                csvData: values.csvData
+                base64: false
             };
 
-            me.importTargetList(data);
+
+            // https://www.xspdf.com/help/50965740.html
+            file = fldFileUploaded.fileInputEl.dom.files[0];
+
+
+            // Verificar se o usuario Preencheu os 2
+            if ((csvData !== null) && (file !== undefined)) {
+
+                Ext.MessageBox.show({
+                    msg: 'You have filled in the file field and the coordinate field please choose one and try again.',
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
+                return;
+            }
+
+
+            if (file !== undefined || (file instanceof File)) {
+
+                filesize = file.size / 1024 / 1024; // in MiB
+                filetype = file.type;
+
+
+                // Tamanho maximo de 50Mb
+                if (filesize > 50) {
+                    Ext.MessageBox.show({
+                        title: 'Very large file',
+                        msg: 'Maximum upload size is 50Mb try to compress the file or divide it into smaller parts.',
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING
+                    });
+
+                    return;
+                }
+
+                // Verificar se é um tipo permitido
+                if (!me.allowedFormats.includes(filetype)) {
+                    Ext.MessageBox.show({
+                        title: 'File type not allowed',
+                        msg: 'The file must be CSV-formatted text with a .csv extension or a compressed csv file with a .zip or tar.gz extension.',
+                        buttons: Ext.MessageBox.OK,
+                        icon: Ext.MessageBox.WARNING
+                    });
+                    return;
+                }
+
+                reader = new FileReader();
+
+                reader.onloadend = function (event) {
+                    var binaryString = '',
+                        bytes = new Uint8Array(event.target.result),
+                        length = bytes.byteLength,
+                        i,
+                        base64String;
+
+                    // convert to binary string
+                    for (i = 0; i < length; i++) {
+                        binaryString += String.fromCharCode(bytes[i]);
+                    }
+
+                    // convert to base64
+                    base64String = btoa(binaryString);
+
+
+                    data.mime = filetype;
+                    data.csvData = base64String;
+                    data.base64 = true;
+
+                    me.importTargetList(data);
+
+                };
+
+                reader.readAsArrayBuffer(file);
+
+
+            } else if (csvData !== null) {
+
+                data.mime = 'csv';
+                data.csvData = csvData;
+                data.base64 = false;
+
+                me.importTargetList(data);
+
+            }
+            else {
+                Ext.MessageBox.show({
+                    msg: 'You must select a file to upload or fill in the coordinates manually.',
+                    buttons: Ext.MessageBox.OK,
+                    icon: Ext.MessageBox.WARNING
+                });
+                return;
+            }
         }
     },
 
@@ -61,9 +152,11 @@ Ext.define('Target.view.catalog.CSVController', {
             cors: true,
             method: 'POST',
             url: '/dri/api/import_target_list/',
+            timeout: 3 * 60000,  // 60000 = 1s
             success: function (response) {
                 var data = JSON.parse(response.responseText);
                 if (data.success) {
+
                     //Fechar a janela de registro
                     view.fireEvent('newproduct', data.product);
 
@@ -99,65 +192,6 @@ Ext.define('Target.view.catalog.CSVController', {
             params: Ext.util.JSON.encode(data)
         });
     },
-
-    // validateCSVDAta: function (csvData) {
-    //     // console.log('validateCSVDAta');
-    //
-    //     var me = this,
-    //         lines = csvData.split('\n');
-    //
-    //     // lines nao pode ser 0
-    //     if (lines.length === 0) {
-    //         // TODO marcar o campo como invalido
-    //         return false;
-    //     }
-    //
-    //     // Checar se tem header
-    //     headers = me.getHeaders(lines[0]);
-    //
-    //     // checar se tem pelo menos id, ra, dec
-    //
-    //     for (var i = 0; i < lines.length; i++) {
-    //         var line = lines[i];
-    //
-    //         if (line != '') {
-    //             console.log('line [%o] : %s', i, line);
-    //         }
-    //     }
-    //
-    // },
-    //
-    // getHeaders: function (line) {
-    //     // console.log('getHeaders(%o)', line);
-    //     var me = this,
-    //         hdrs = [],
-    //         bases = [];
-    //
-    //     properties = line.split(me.separator);
-    //
-    //     Ext.each(properties, function (property) {
-    //         console.log(property);
-    //         console.log(parseInt(property));
-    //         a = property;
-    //         // Se a propriedade for uma string ela entra na lista de headers
-    //         if (isNaN(parseInt(a))) {
-    //             // console.log('property: %o e string', property);
-    //             property = property.toLowerCase().trim();
-    //
-    //             hdrs.push(property);
-    //             if (me.baseProperties.indexOf(property)) {
-    //                 bases.push(property);
-    //             }
-    //         }
-    //     }, me);
-    //
-    //     // Verifica se tem as headers obrigatorias.
-    //     if (me.baseProperties.length === bases.length) {
-    //         return hdrs;
-    //     } else {
-    //         return [];
-    //     }
-    // },
 
     onCancelAddCatalog: function () {
         var me = this,

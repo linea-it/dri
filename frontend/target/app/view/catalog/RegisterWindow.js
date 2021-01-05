@@ -17,6 +17,8 @@ Ext.define('Target.view.catalog.RegisterWindow', {
 
     modal: true,
 
+    constrain: true,
+
     closeAction: 'destroy',
 
     layout: 'fit',
@@ -30,10 +32,10 @@ Ext.define('Target.view.catalog.RegisterWindow', {
 
         // Recuperar do Settigs no backend se a interface de registro pelo
         // banco de dados estara disponivel.
-        try{
+        try {
             me.enableRegisterDB = Settings.PRODUCT_REGISTER_DB_INTERFACE;
         }
-        catch (err){
+        catch (err) {
             console.warn("Setting PRODUCT_REGISTER_DB_INTERFACE not loaded.");
         }
 
