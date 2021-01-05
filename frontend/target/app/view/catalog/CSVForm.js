@@ -80,7 +80,6 @@ Ext.define('Target.view.catalog.CSVForm', {
                     regex: /^[a-z0-9-_\s]+$/i,
                     regexText: 'Please use only letters and numbers separated ' +
                         'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
-                    // value: 'Teste Import CSV'
                 },
                 {
                     xtype: 'combobox',
@@ -105,7 +104,6 @@ Ext.define('Target.view.catalog.CSVForm', {
                     bind: {
                         store: '{releases}'
                     }
-                    // value: 'y1_wide_survey'
                 },
                 {
                     xtype: 'checkbox',
@@ -139,7 +137,6 @@ Ext.define('Target.view.catalog.CSVForm', {
                     height: 150,
                     labelAlign: 'top',
                     emptyText: 'ra, dec',
-                    // allowBlank: false
                 },
                 {
                     xtype: 'textareafield',
