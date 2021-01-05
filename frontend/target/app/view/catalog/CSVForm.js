@@ -15,6 +15,7 @@ Ext.define('Target.view.catalog.CSVForm', {
     title: 'Upload',
 
     controller: 'csvform',
+    scrollable: true,
 
     viewModel: {
         stores: {
@@ -116,12 +117,7 @@ Ext.define('Target.view.catalog.CSVForm', {
                 {
                     xtype: 'component',
                     html: [
-                        '<p>Enter target positions as a CSV-formatted table. ',
-                        'Values can be entered manually ',
-                        'or by uploading a CSV-formatted text file ',
-                        'can also be compressed in the formats .zip or .tar.gz. ',
-                        'The attachment size limit is 50Mb.',
-                        '</p>'
+                        '<p>The target positions must be filled in CSV format: manually, in the text area below, or by a file that can be a raw <strong>.csv</strong> or a compressed one in the formats <strong>.zip</strong> or <strong>.tar.gz</strong>.</p>',
                     ]
                 },
                 {
@@ -131,10 +127,16 @@ Ext.define('Target.view.catalog.CSVForm', {
                     name: 'file'
                 },
                 {
+                    xtype: 'component',
+                    html: [
+                        '<em>The attachment size limit is 50Mb.</em><p></p>',
+                    ]
+                },
+                {
                     xtype: 'textareafield',
                     name: 'csvData',
                     fieldLabel: 'Coordinates',
-                    height: 200,
+                    height: 150,
                     labelAlign: 'top',
                     emptyText: 'ra, dec',
                     // allowBlank: false
