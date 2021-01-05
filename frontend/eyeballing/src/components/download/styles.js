@@ -18,7 +18,6 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: 'rgb(248, 249, 252)',
     color: '#34465d',
     padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-    marginBottom: theme.spacing(1),
   },
   dialogContent: {
     padding: theme.spacing(2),

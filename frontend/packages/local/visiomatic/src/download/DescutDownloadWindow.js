@@ -12,8 +12,8 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
     controller: 'fits-files',
 
     title: 'Download',
-    width: 600,
-    height: 400,
+    width: 300,
+    height: 350,
     modal: true,
     autoShow: true,
 
@@ -33,53 +33,70 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
             items: [
                 {
                     xtype: 'gridpanel',
-                    scrollable: true,
+                    hideHeaders: true,
                     bind: {
                         store: '{fitsFiles}'
                     },
+                    listeners: {
+                        select: 'onSelect'
+                    },
+                    emptyText: 'Oops! No download was found for this tile.',
                     columns: [
+                        {
+                            text: 'URL',
+                            dataIndex: 'url',
+                            width: 23,
+                            renderer: function (value, meta) {
+                                meta.tdCls += 'x-cursor-pointer';
+                                return '<i class="fa fa-download"></i>';
+                            }
+                        },
                         {
                             text: 'Filename',
                             dataIndex: 'filename',
-                            flex: 1
-                        },
-                        {
-                            text: 'Filter',
-                            dataIndex: 'filter'
-                        },
-                        {
-                            text: 'URL',
-                            dataIndex: 'file_source',
-                            renderer: function (value, metadata, record) {
-                                return '<a href=' + value + ' target=\'_blank\'><i class="fa fa-download"> </i></a>';
+                            flex: 1,
+                            renderer: function (value, meta) {
+                                meta.tdCls += 'x-cursor-pointer';
+                                return value;
                             }
-                        }
+                        },
                     ]
                 }
             ],
             buttons: [
                 {
-                    xtype: 'label',
-                    text: 'Right click "Save link as" to download files',
-                    flex: 1
-                },
-                {
-                    text: 'Cancel',
+                    text: 'Close',
                     scope: me,
-                    handler: 'onCancel'
+                    handler: 'onClose'
                 }
             ]
         });
         me.callParent(arguments);
     },
 
-    onCancel: function () {
+    onClose: function () {
         this.close();
     },
 
-    loadFits: function (tilename, tag) {
-        var me = this;
-        this.loadFits = tilename;
-        me.fireEvent('changeLoadFits', tilename, tag);
+    loadFits: function (id) {
+        var me = this,
+        vm = me.getViewModel(),
+        store = vm.getStore('fitsFiles');
+
+        vm.set('datsetId', id);
+
+        me.setLoading(true);
+
+        store.addFilter([{
+            property: 'id',
+            value: id
+        }]);
+
+        store.load({
+            scope: me,
+            callback: function () {
+                me.setLoading(false);
+            }
+        })
     }
 });

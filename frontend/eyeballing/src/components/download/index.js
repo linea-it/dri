@@ -6,11 +6,10 @@ import {
   DialogContent,
   IconButton,
   Grid,
-  Table,
-  TableHead,
-  TableBody,
-  TableCell,
-  TableRow,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
   CircularProgress,
   Typography,
 } from '@material-ui/core';
@@ -25,8 +24,7 @@ function DownloadDialog({
   open,
   handleClose,
   tilename,
-  images,
-  catalogs,
+  files,
   error,
 }) {
   const classes = useStyles();
@@ -47,7 +45,7 @@ function DownloadDialog({
     <Dialog
       open={open}
       onClose={handleClose}
-      maxWidth="sm"
+      maxWidth="xs"
       className={classes.zIndex}
       fullWidth
     >
@@ -59,42 +57,20 @@ function DownloadDialog({
         <Grid container spacing={3}>
           <Grid item xs={12}>
             {!error ? (
-              <Table size="small">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Filename</TableCell>
-                    <TableCell>Band</TableCell>
-                    <TableCell>Image</TableCell>
-                    <TableCell>Catalog</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {Object.keys(images).map(key => (
-                    <TableRow key={key}>
-                      <TableCell>
-                        {`${tilename}_${key}.fits.gz`}
-                      </TableCell>
-                      <TableCell>
-                        {key === 'y' ? key.toUpperCase() : key}
-                      </TableCell>
-                      <TableCell>
-                        <IconButton onClick={() => handleItemClick(images[key])}>
-                          {isAuthenticating === images[key]
-                            ? <CircularProgress size={20} />
-                            : <DownloadIcon />}
-                        </IconButton>
-                      </TableCell>
-                      <TableCell>
-                        <IconButton onClick={() => handleItemClick(catalogs[key])}>
-                          {isAuthenticating === catalogs[key]
-                            ? <CircularProgress size={20} />
-                            : <DownloadIcon />}
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <List dense>
+                {files.map(file => (
+                  <ListItem button onClick={() => handleItemClick(file.url)}>
+                    <ListItemIcon>
+                      {isAuthenticating === file.url
+                        ? <CircularProgress size={20} />
+                        : <DownloadIcon />}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={file.filename}
+                    />
+                  </ListItem>
+                ))}
+              </List>
             ) : (
               <Typography>Oops! No download was found for this tile.</Typography>
             )}
@@ -109,27 +85,16 @@ DownloadDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   tilename: PropTypes.string.isRequired,
-  images: PropTypes.shape({
-    g: PropTypes.string,
-    r: PropTypes.string,
-    i: PropTypes.string,
-    z: PropTypes.string,
-    y: PropTypes.string,
-  }),
-  catalogs: PropTypes.shape({
-    g: PropTypes.string,
-    r: PropTypes.string,
-    i: PropTypes.string,
-    z: PropTypes.string,
-    y: PropTypes.string,
-  }),
+  files: PropTypes.arrayOf(PropTypes.shape({
+    filename: PropTypes.string,
+    url: PropTypes.string,
+  })),
   error: PropTypes.bool,
 };
 
 DownloadDialog.defaultProps = {
   error: false,
-  images: null,
-  catalogs: null,
+  files: null,
 };
 
 export default DownloadDialog;

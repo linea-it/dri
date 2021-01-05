@@ -12,5 +12,9 @@ Ext.define('visiomatic.download.FitsModel', {
         fitsFiles: {
             type: 'fits-files'
         }
-    }
+    },
+
+    data: {
+        datasetId: null
+    },
 });

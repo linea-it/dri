@@ -133,16 +133,6 @@ Ext.define('Sky.view.dataset.Dataset', {
                                 disabled: '{is_empty}'
                             },
                         },
-                        // {
-                        //     xtype: 'button',
-                        //     reference: 'btnSave',
-                        //     iconCls: 'x-fa fa-download',
-                        //     handler: 'onSave',
-                        //     tooltip: 'Download',
-                        //     bind: {
-                        //         disabled: '{is_empty}'
-                        //     }
-                        // },
                     ]
                 }
             ]

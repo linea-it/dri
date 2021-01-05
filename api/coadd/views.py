@@ -210,27 +210,107 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
         tileinfo = desapi.tile_by_name(tilename)
 
+        result = {}
+
         for release in tileinfo["releases"]:
             # Compara o release pelo internal name, nas nossas tabelas o release tem _coadd no nome. por isso é necessário fazer um split.
             if release["release"] == rls_name.split("_")[0].lower():
 
-                result = dict({
-                    "tilename": tileinfo["tilename"],
-                    "ra_cent": tileinfo["ra_cent"],
-                    "dec_cent": tileinfo["dec_cent"],
-                    "racmin": tileinfo["racmin"],
-                    "racmax": tileinfo["racmax"],
-                    "deccmin": tileinfo["deccmin"],
-                    "deccmax": tileinfo["deccmax"],
-                    "images": {},
-                    "catalogs": {},
-                })
+                rows = tileinfo["releases"][0]
+
+                for key in rows:
+                    if key != 'release' and key != 'num_objects' and key != 'bands':
+                        result[key] = rows[key]
+                        result['images'] = {}
+                        result['catalogs'] = {}
 
                 for band in release["bands"]:
-                    result["images"][band.lower()] = release["bands"][band]["image"]
-                    result["catalogs"][band.lower()] = release["bands"][band]["catalog"]
+
+                    result["images"][band] = release["bands"][band]["image"]
+                    result["catalogs"][band] = release["bands"][band]["catalog"]
 
                 return Response(result)
+
+    @action(detail=False, methods=['get'])
+    def desaccess_tile_info_by_id(self, request):
+        """Search DESaccess for tilename and return a list of tile files already filtered by the dataset release.
+
+        Args:
+            id (str): URL of the file to be downloaded.
+
+        Returns:
+            list: returns a list with the filename and the url of the tile.
+        """
+
+        datasetId = request.query_params.get('id')
+
+        if datasetId is None:
+            raise Exception('ID paramater is required')
+
+        results = []
+
+        dataset = Dataset.objects.get(id=datasetId)
+
+        # Requested to associate these internal releases
+        # to the DESAccess releases:
+        associated_releases = {
+            'y6a2_coadd': 'y6a1_coadd',
+            'y3a1_coadd': 'y3a2_coadd',
+            'y1_supplemental_dfull': 'y1a1_coadd',
+            'y1_supplemental_d10': 'y1a1_coadd',
+            'y1_supplemental_d04': 'y1a1_coadd',
+            'y1_wide_survey': 'y1a1_coadd',
+        }
+
+        associated_other_files = {
+            'detection': 'Detection Image',
+            'main': 'Main Catalog',
+            'magnitude': 'Magnitude Catalog',
+            'flux': 'Flux Catalog',
+        }
+
+        tilename = dataset.tile.tli_tilename
+        rls_name = dataset.tag.tag_release.rls_name
+
+        # Associate the internal release to the release of DESAccess:
+        if rls_name in associated_releases.keys():
+            rls_name = associated_releases[rls_name]
+
+        desapi = DesAccessApi()
+
+        tileinfo = desapi.tile_by_name(tilename)
+
+        for release in tileinfo["releases"]:
+            # Compara o release pelo internal name, nas nossas tabelas o release tem _coadd no nome. por isso é necessário fazer um split.
+            if release["release"] == rls_name.split("_")[0].lower():
+
+                for band in release["bands"]:
+                    if release["bands"][band]["image"]:
+                        results.append({
+                            'filename': '%s-Band Image' % band,
+                            'url': release["bands"][band]["image"]
+                        })
+
+                for band in release["bands"]:
+                    if release["bands"][band]["catalog"]:
+                        results.append({
+                            'filename': '%s-Band Catalog' % band,
+                            'url': release["bands"][band]["catalog"]
+                        })
+
+                rows = tileinfo["releases"][0]
+
+                for key in rows:
+                    if key != 'release' and key != 'num_objects' and key != 'bands' and rows[key] and associated_other_files[key]:
+                        results.append({
+                            'filename': associated_other_files[key],
+                            'url': rows[key]
+                        })
+
+        return Response(dict({
+            'results': results,
+            'count': len(results),
+        }))
 
     @action(detail=False, methods=['post'])
     def desaccess_get_download_url(self, request):

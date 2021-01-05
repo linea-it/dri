@@ -348,15 +348,6 @@ Ext.define('Sky.view.dataset.DatasetController', {
         visiomatic.initCrop();
     },
 
-    onSave: function () {
-        var me = this,
-            visiomatic = me.lookupReference('visiomatic');
-
-        Ext.GlobalEvents.fireEvent('eventregister', 'SkyViewer - save_fits');
-        visiomatic.showDownloadWindow();
-
-    },
-
     //ao clicar em um item do menu de contexto de objeto do visiomatic
     onObjectMenuItemClickVisiomatic: function (event, feature) {
         var me = this,

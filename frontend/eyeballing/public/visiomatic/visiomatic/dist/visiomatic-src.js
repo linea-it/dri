@@ -6523,3 +6523,64 @@ L.Map.addInitHook(function () {
 L.control.lineacontrast = function (options) {
 	return new L.Control.LineaContrast(options);
 };
+
+
+/**
+ * This control is just a button that triggers the overlaycatalog event that will be used with the
+ * LIneA - DRI integration
+ */
+L.Control.LineaDownload = L.Control.extend({
+	options: {
+		position: 'topleft',
+		title: 'Download',
+		forceSeparateButton: false
+	},
+
+	onAdd: function (map) {
+		var className = 'leaflet-control-linea-download', container;
+
+		if (map.zoomControl && !this.options.forceSeparateButton) {
+			container = map.zoomControl._container;
+		} else {
+			container = L.DomUtil.create('div', 'leaflet-bar');
+		}
+
+		this._createButton(this.options.title, className, container, this.onClickLineaDownload, map);
+
+		return container;
+	},
+
+	_createButton: function (title, className, container, fn, context) {
+		var link = L.DomUtil.create('a', className, container);
+		link.href = '#';
+		link.title = title;
+
+		L.DomEvent
+			.addListener(link, 'click', L.DomEvent.stopPropagation)
+			.addListener(link, 'click', L.DomEvent.preventDefault)
+			.addListener(link, 'click', fn, context);
+
+
+		return link;
+	},
+
+	onClickLineaDownload: function () {
+
+		this.fire('ondownload');
+
+	},
+
+});
+
+L.Map.addInitHook(function () {
+	if (this.options.enableLineaDownload) {
+
+		this.lineadownloadControl = L.control.lineadownload();
+		this.addControl(this.lineadownloadControl);
+	}
+
+});
+
+L.control.lineadownload = function (options) {
+	return new L.Control.LineaDownload(options);
+};

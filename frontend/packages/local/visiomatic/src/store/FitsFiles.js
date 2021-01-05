@@ -14,18 +14,7 @@ Ext.define('visiomatic.store.FitsFiles', {
     pageSize: 0,
 
     proxy: {
-        url: '/dri/api/get_fits_by_tilename'
+        url: '/dri/api/dataset/desaccess_tile_info_by_id/'
     },
-
-    sorters: [
-        {
-            property: 'order',
-            direction: 'ASC'
-        },
-        {
-            property: 'filename',
-            direction: 'ASC'
-        },
-    ]
 
 });

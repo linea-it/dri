@@ -511,4 +511,4 @@ Ext.define('UserQuery.view.main.Main', {
             xtype: 'dri-footer'
         }
     ]
-});
+  });
