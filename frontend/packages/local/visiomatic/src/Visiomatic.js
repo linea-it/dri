@@ -41,6 +41,7 @@ Ext.define('visiomatic.Visiomatic', {
             zoom: 1,
             enableLineaOverlay: true,
             enableLineaContrast: true,
+            enableLineaDownload: true,
         },
 
         prefix: null,
@@ -315,6 +316,7 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('mousemove', me.onMouseMove, me);
         map.on('overlaycatalog', me.showCatalogOverlayWindow, me);
         map.on('changecontrast', me.showContrastWindow, me);
+        map.on('ondownload', me.showDownloadWindow, me);
         map.on('mouseup', me.savePreferences, me);
         map.on('keypress', me.savePreferences, me);
         map.on('contextmenu', me.onContextMenuClick, me);
@@ -1583,32 +1585,12 @@ Ext.define('visiomatic.Visiomatic', {
 
             id = currentDataset.get('id');
 
-            Ext.Ajax.request({
-                url: `${Ext.manifest.apiBaseUrl}/dri/api/dataset/${id}/desaccess_tile_info/`,
-                success: function (response) {
-                    var result = JSON.parse(response.responseText);
+            var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
 
-                    var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
+            winDownload.loadFits(id);
 
-                    winDownload.loadFits(result);
-                    winDownload.show();
-                },
-                failure: function () {
-
-                    var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
-
-                    winDownload.loadFits({ error: 'No download was found for this tile' });
-                    winDownload.show();
-                }
-            });
-
-            // tilename = currentDataset.get('tli_tilename');
-            // tag = currentDataset.get('release_name');
-
-            // var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
-
-            // winDownload.loadFits(id);
-            // winDownload.show();
+            winDownload.setTitle('Download - ' + currentDataset.get('tli_tilename'))
+            winDownload.show();
 
         } else {
 

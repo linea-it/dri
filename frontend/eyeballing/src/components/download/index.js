@@ -41,96 +41,6 @@ function DownloadDialog({
       });
   };
 
-  const renderImages = () => {
-    const images = 'images' in files ? files.images : null;
-    const hasImages = images ? Object.keys(files.images).filter(key => files.images[key] !== '').length !== 0 : null;
-
-    if (hasImages) {
-      return (
-        <>
-          {/* <Typography variant="h6">Images</Typography> */}
-          <List dense>
-            {Object.keys(images).map(key => (
-              <ListItem button onClick={() => handleItemClick(images[key])}>
-                <ListItemIcon>
-                  {isAuthenticating === images[key]
-                    ? <CircularProgress size={20} />
-                    : <DownloadIcon />}
-                </ListItemIcon>
-                <ListItemText
-                  primary={`${key}-Band Image`}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </>
-      );
-    }
-
-    return null;
-  };
-
-  const renderCatalogs = () => {
-    const catalogs = 'catalogs' in files ? files.catalogs : null;
-    const hasCatalogs = catalogs ? Object.keys(files.catalogs).filter(key => files.catalogs[key] !== '').length !== 0 : null;
-
-    if (hasCatalogs) {
-      return (
-        <>
-          {/* <Typography variant="h6">Catalogs</Typography> */}
-          <List dense>
-            {Object.keys(catalogs).map(key => (
-              <ListItem button onClick={() => handleItemClick(catalogs[key])}>
-                <ListItemIcon>
-                  {isAuthenticating === catalogs[key]
-                    ? <CircularProgress size={20} />
-                    : <DownloadIcon />}
-                </ListItemIcon>
-                <ListItemText
-                  primary={`${key}-Band Catalog`}
-                />
-              </ListItem>
-            ))}
-          </List>
-        </>
-      );
-    }
-
-    return null;
-  };
-
-  const renderOtherFiles = () => {
-    const otherFiles = Object.keys(files).filter(key => key !== 'images' && key !== 'catalogs' && files[key] !== '');
-
-    const keyMap = {
-      detection: 'Detection Image',
-      main: 'Main Catalog',
-      magnitude: 'Magnitude Catalog',
-      flux: 'Flux Catalog',
-    };
-
-    if (otherFiles.length > 0) {
-      return (
-        <List dense>
-          {otherFiles.map(key => (
-            <ListItem button onClick={() => handleItemClick(files[key])}>
-              <ListItemIcon>
-                {isAuthenticating === files[key]
-                  ? <CircularProgress size={20} />
-                  : <DownloadIcon />}
-              </ListItemIcon>
-              <ListItemText
-                primary={keyMap[key]}
-              />
-            </ListItem>
-          ))}
-        </List>
-      );
-    }
-
-    return null;
-  };
-
   return (
     <Dialog
       open={open}
@@ -147,17 +57,20 @@ function DownloadDialog({
         <Grid container spacing={3}>
           <Grid item xs={12}>
             {!error ? (
-              <>
-                <Grid item xs={12}>
-                  {renderImages()}
-                </Grid>
-                <Grid item xs={12}>
-                  {renderCatalogs()}
-                </Grid>
-                <Grid item xs={12}>
-                  {renderOtherFiles()}
-                </Grid>
-              </>
+              <List dense>
+                {files.map(file => (
+                  <ListItem button onClick={() => handleItemClick(file.url)}>
+                    <ListItemIcon>
+                      {isAuthenticating === file.url
+                        ? <CircularProgress size={20} />
+                        : <DownloadIcon />}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={file.filename}
+                    />
+                  </ListItem>
+                ))}
+              </List>
             ) : (
               <Typography>Oops! No download was found for this tile.</Typography>
             )}
@@ -172,7 +85,10 @@ DownloadDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   tilename: PropTypes.string.isRequired,
-  files: PropTypes.objectOf(PropTypes.string),
+  files: PropTypes.arrayOf(PropTypes.shape({
+    filename: PropTypes.string,
+    url: PropTypes.string,
+  })),
   error: PropTypes.bool,
 };
 

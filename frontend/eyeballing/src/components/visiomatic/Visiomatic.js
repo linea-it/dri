@@ -63,10 +63,11 @@ class VisiomaticPanel extends Component {
     center: PropTypes.array,
     fov: PropTypes.number,
     contrast: PropTypes.string,
-    currentDataset: PropTypes.number,
+    currentDataset: PropTypes.object,
     points: PropTypes.array,
     reloadData: PropTypes.func,
     hasInspection: PropTypes.bool.isRequired,
+    handleDownloadClick: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -237,6 +238,12 @@ class VisiomaticPanel extends Component {
     });
   }
 
+  onDownloadOpen = () => {
+    if (this.props.currentDataset) {
+      this.props.handleDownloadClick(this.props.currentDataset);
+    }
+  }
+
   // showContrastWindow = () => {
   //   this.setState({
   //     contrastWindowOpen: true,
@@ -281,6 +288,7 @@ componentDidMount() {
     fullscreenControl: true,
     zoom: 1,
     enableLineaContrast: true,
+    enableLineaDownload: true,
   });
 
   this.libL.control.scale.wcs({ pixels: false }).addTo(map);
@@ -316,6 +324,7 @@ componentDidMount() {
   map.on('layeradd', this.onLayerAdd, this);
   map.on('layerremove', this.onLayerRemove, this);
   map.on('changecontrast', this.onContrastMenuOpen, this);
+  map.on('ondownload', this.onDownloadOpen, this);
 
   if (this.props.hasInspection) {
     map.on('contextmenu', this.onContextMenuOpen, this);
@@ -519,7 +528,7 @@ componentDidMount() {
             updateOpen={this.state.contextMenuUpdateOpen}
             event={this.state.contextMenuEvt}
             handleClose={this.onContextMenuClose}
-            currentDataset={this.props.currentDataset}
+            currentDataset={this.props.currentDataset ? this.props.currentDataset.id : null}
             latLngToHMSDMS={this.latLngToHMSDMS}
             getDatasetCommentsByType={this.props.getDatasetCommentsByType}
             reloadData={this.props.reloadData}

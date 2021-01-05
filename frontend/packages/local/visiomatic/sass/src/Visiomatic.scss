@@ -118,3 +118,11 @@
     cursor: -webkit-grabbing;
     cursor: move;
 }
+
+.x-cursor-pointer {
+    cursor: pointer;
+}
+
+.x-cursor-pointer > .x-grid-cell-inner:before {
+    border: none;
+}

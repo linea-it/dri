@@ -1441,6 +1441,15 @@ a.leaflet-control-linea-contrast {
 	background-position: center;**/
 }
 
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.LineaDownload %%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+a.leaflet-control-linea-download {
+	background-image: url(images/icon-download.svg);
+/*background-repeat: no-repeat;
+background-position: center;**/
+}
+
 /* Destaca os icones da barra com fundo transparente */
 .leaflet-control-zoom {
 	filter: invert(1);

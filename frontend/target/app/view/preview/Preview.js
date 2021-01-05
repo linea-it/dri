@@ -189,17 +189,6 @@ Ext.define('Target.view.preview.Preview', {
             },
             {
                 xtype: 'button',
-                reference: 'btnSave',
-                iconCls: 'x-fa fa-download',
-                handler: 'onSave',
-                tooltip: 'Download',
-                bind: {
-                    disabled: '{is_empty}'
-                }
-            },
-            '-',
-            {
-                xtype: 'button',
                 reference: 'btnRadius',
                 iconCls: 'x-fa fa-circle-o',
                 tooltip: 'Show System Radius',

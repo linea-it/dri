@@ -12,8 +12,8 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
     controller: 'fits-files',
 
     title: 'Download',
-    width: 600,
-    height: 400,
+    width: 300,
+    height: 350,
     modal: true,
     autoShow: true,
 
@@ -26,108 +26,77 @@ Ext.define('visiomatic.download.DescutDownloadWindow', {
 
     initComponent: function () {
 
-
         var me = this;
-
-        console.log('me')
 
         Ext.apply(this, {
             layout: 'fit',
             items: [
                 {
                     xtype: 'gridpanel',
-                    scrollable: true,
+                    hideHeaders: true,
                     bind: {
                         store: '{fitsFiles}'
                     },
+                    listeners: {
+                        select: 'onSelect'
+                    },
+                    emptyText: 'Oops! No download was found for this tile.',
                     columns: [
-                        // {
-                        //     text: 'Filename',
-                        //     dataIndex: 'filename',
-                        //     flex: 1
-                        // },
-                        // {
-                        //     text: 'Filter',
-                        //     dataIndex: 'filter'
-                        // },
                         {
                             text: 'URL',
                             dataIndex: 'url',
-                            renderer: function (value, metadata, record) {
-                                return '<a href=' + value + ' target=\'_blank\'><i class="fa fa-download"> </i></a>';
+                            width: 23,
+                            renderer: function (value, meta) {
+                                meta.tdCls += 'x-cursor-pointer';
+                                return '<i class="fa fa-download"></i>';
                             }
-                        }
+                        },
+                        {
+                            text: 'Filename',
+                            dataIndex: 'filename',
+                            flex: 1,
+                            renderer: function (value, meta) {
+                                meta.tdCls += 'x-cursor-pointer';
+                                return value;
+                            }
+                        },
                     ]
                 }
             ],
             buttons: [
-                // {
-                //     xtype: 'label',
-                //     text: 'Right click "Save link as" to download files',
-                //     flex: 1
-                // },
                 {
-                    text: 'Cancel',
+                    text: 'Close',
                     scope: me,
-                    handler: 'onCancel'
+                    handler: 'onClose'
                 }
             ]
         });
         me.callParent(arguments);
     },
 
-    onCancel: function () {
+    onClose: function () {
         this.close();
     },
 
-    loadFits: function (response) {
-        var me = this;
-        this.loadFits = response.tli_tilename;
+    loadFits: function (id) {
+        var me = this,
+        vm = me.getViewModel(),
+        store = vm.getStore('fitsFiles');
 
-        var otherFiles = {
-            detection: 'Detection Image',
-            main: 'Main Catalog',
-            magnitude: 'Magnitude Catalog',
-            flux: 'Flux Catalog',
-          };
+        vm.set('datsetId', id);
 
-        var result = []
+        me.setLoading(true);
 
-        if(response.images) {
-            Ext.each(Object.keys(response.images), function(key) {
+        store.addFilter([{
+            property: 'id',
+            value: id
+        }]);
 
-                if (response.images[key] && response.images[key] !== '') {
-                    result.push({
-                        filename: key.toUpperCase() + '-Band Image',
-                        url: response.images[key]
-                    })
-                }
-            })
-        }
-
-        if(response.catalogs) {
-            Ext.each(Object.keys(response.catalogs), function(key) {
-
-                if (response.catalogs[key] && response.catalogs[key] !== '') {
-                    result.push({
-                        filename: key.toUpperCase() + '-Band Catalog',
-                        url: response.catalogs[key]
-                    })
-                }
-            })
-        }
-        console.log('response', response)
-        Ext.each(Object.keys(otherFiles), function(key) {
-            if(response[key]) {
-                result.push({
-                    filename: otherFiles[key],
-                    url: response[key],
-                })
+        store.load({
+            scope: me,
+            callback: function () {
+                me.setLoading(false);
             }
         })
-
-        console.log('result', result)
-
-        me.fireEvent('changeLoadFits', result);
     }
 });

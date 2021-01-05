@@ -9,8 +9,12 @@ Ext.define('visiomatic.store.FitsFiles', {
 
     model: 'visiomatic.model.FitsFiles',
 
-    remoteFilter: false,
+    remoteFilter: true,
 
     pageSize: 0,
+
+    proxy: {
+        url: '/dri/api/dataset/desaccess_tile_info_by_id/'
+    },
 
 });
