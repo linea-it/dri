@@ -541,13 +541,4 @@ Ext.define('Target.view.preview.PreviewController', {
         }
     },
 
-    onSave: function () {
-        var me = this,
-            visiomatic = me.lookupReference('visiomatic');
-
-        Ext.GlobalEvents.fireEvent('eventregister', 'TargetViewer - save_fits');
-        visiomatic.showDownloadWindow();
-
-    },
-
 });

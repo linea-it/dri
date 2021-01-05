@@ -19,24 +19,45 @@ Ext.define('visiomatic.download.FitsController', {
         }
     },
 
-    onChangeLoadFits: function (tilename, catalog) {
+    onChangeLoadFits: function (result) {
         var me = this,
             view = me.getView(),
             vm = view.getViewModel(),
             store = vm.getStore('fitsFiles');
 
-        vm.set('tag', catalog);
-        vm.set('tilename', tilename);
-
         store.filter([
             {
-                property:'tilename',
-                value: tilename
+                property:'result',
+                value: result
             },
-            {
-                property:'tag',
-                value: catalog
-            }
         ]);
+    },
+
+    onSelect: function (selModel, record) {
+        var me = this,
+        view = me.getView()
+
+        view.setLoading(true);
+
+        url = record.data.url
+
+        Ext.Ajax.request({
+            url: `${Ext.manifest.apiBaseUrl}/dri/api/dataset/desaccess_get_download_url/`,
+            params: {
+                file_url: url
+            },
+            success: function (response) {
+                var result = JSON.parse(response.responseText);
+                window.open(result.download_url, '_blank');
+            },
+            failure: function () {
+                Ext.Msg.alert('Error', 'Sorry, could not authenticate url. Try again later.');
+            },
+            callback: function () {
+                selModel.deselectAll();
+                view.setLoading(false);
+            },
+        });
+
     }
 });

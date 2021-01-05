@@ -41,6 +41,7 @@ Ext.define('visiomatic.Visiomatic', {
             zoom: 1,
             enableLineaOverlay: true,
             enableLineaContrast: true,
+            enableLineaDownload: true,
         },
 
         prefix: null,
@@ -315,6 +316,7 @@ Ext.define('visiomatic.Visiomatic', {
         map.on('mousemove', me.onMouseMove, me);
         map.on('overlaycatalog', me.showCatalogOverlayWindow, me);
         map.on('changecontrast', me.showContrastWindow, me);
+        map.on('ondownload', me.showDownloadWindow, me);
         map.on('mouseup', me.savePreferences, me);
         map.on('keypress', me.savePreferences, me);
         map.on('contextmenu', me.onContextMenuClick, me);
@@ -1577,16 +1579,17 @@ Ext.define('visiomatic.Visiomatic', {
 
     showDownloadWindow: function () {
         var me = this,
-            currentDataset = me.getCurrentDataset(),
-            tilename;
+            currentDataset = me.getCurrentDataset();
 
         if (currentDataset.get('tli_tilename')) {
 
-            tilename = currentDataset.get('tli_tilename');
-            tag = currentDataset.get('release_name');
+            id = currentDataset.get('id');
 
             var winDownload = Ext.create('visiomatic.download.DescutDownloadWindow');
-            winDownload.loadFits(tilename, tag);
+
+            winDownload.loadFits(id);
+
+            winDownload.setTitle('Download - ' + currentDataset.get('tli_tilename'))
             winDownload.show();
 
         } else {

@@ -161,7 +161,7 @@ class DriApi {
 
   getTutorial = () => axios.get('/tutorial/', { params: { app_name: 'tile_inspection' } }).then(res => res.data);
 
-  getDatasetInfo = id => axios.get(`/dataset/${id}/desaccess_tile_info/`).then(res => res.data)
+  getDatasetInfo = id => axios.get('/dataset/desaccess_tile_info_by_id/', { params: { id } }).then(res => res.data)
 
   getTokenizedDatasetUrl = url => axios.post('/dataset/desaccess_get_download_url/', { file_url: url }).then(res => res.data.download_url)
 

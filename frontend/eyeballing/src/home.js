@@ -620,11 +620,19 @@ function Home() {
     setBackdropOpen(true);
     api.getDatasetInfo(dataset.id)
       .then((res) => {
-        setDownloadInfo({
-          visible: true,
-          tilename: dataset.tli_tilename,
-          files: res,
-        });
+        if (res.count !== 0) {
+          setDownloadInfo({
+            visible: true,
+            tilename: dataset.tli_tilename,
+            files: res.results,
+          });
+        } else {
+          setDownloadInfo({
+            visible: true,
+            tilename: dataset.tli_tilename,
+            error: true,
+          });
+        }
 
         setBackdropOpen(false);
       }).catch(() => {
@@ -854,11 +862,12 @@ function Home() {
                         center={visiomaticCenter}
                         fov={fov}
                         contrast={contrast}
-                        currentDataset={currentDataset.id || null}
+                        currentDataset={!isEmpty(currentDataset) ? currentDataset : null}
                         points={commentsWithFeature}
                         getDatasetCommentsByType={getDatasetCommentsByType}
                         reloadData={reloadList}
                         hasInspection={hasInspection}
+                        handleDownloadClick={handleDownloadClick}
                       />
                     ) : null}
                   </Card>
