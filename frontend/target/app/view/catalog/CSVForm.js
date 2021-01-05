@@ -70,6 +70,21 @@ Ext.define('Target.view.catalog.CSVForm', {
             },
             items: [
                 {
+                    xtype: 'hiddenfield',
+                    name: 'mime',
+                    value: 'csv'
+                },
+                {
+                    xtype: 'hiddenfield',
+                    name: 'type',
+                    value: 'catalog'
+                },
+                {
+                    xtype: 'hiddenfield',
+                    name: 'name',
+                    reference: 'fldInternalName'
+                },
+                {
                     xtype: 'textfield',
                     name: 'displayName',
                     fieldLabel: 'List Name',
@@ -114,16 +129,19 @@ Ext.define('Target.view.catalog.CSVForm', {
                     hidden: !me.enablePublic,
                 },
                 {
+                    xtype: 'filefield',
+                    hideLabel: true,
+                    reference: 'fldFileUploaded',
+                    name: 'file'
+                },
+                {
                     xtype: 'textareafield',
                     name: 'csvData',
                     fieldLabel: 'Coordinates',
                     height: 200,
                     labelAlign: 'top',
                     emptyText: 'ra, dec',
-                    allowBlank: false
-                    // value:  '93.96499634,-57.77629852\n' +
-                    //         '94.28079987,-55.13209915\n' +
-                    //         '68.05249786,-61.84970093\n'
+                    // allowBlank: false
                 },
                 {
                     xtype: 'textareafield',

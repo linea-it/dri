@@ -1,40 +1,36 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import base64
+import logging
 import operator
+import shutil
+import tarfile
+import time
+import zipfile
 
 import django_filters
 from common.filters import IsOwnerFilterBackend
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
-from django.http import HttpResponse
-from product.tasks import export_target_by_filter
-from rest_framework import filters
-from rest_framework import mixins
-from rest_framework import viewsets
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
-from rest_framework.authentication import TokenAuthentication
-from rest_framework.decorators import action
+from django.http import HttpResponse, JsonResponse
+from django_filters.rest_framework import DjangoFilterBackend
+from lib.CatalogDB import CatalogDB
+from rest_framework import filters, mixins, viewsets
+from rest_framework.authentication import (BasicAuthentication,
+                                           SessionAuthentication,
+                                           TokenAuthentication)
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from product.importproduct import ImportTargetListCSV
-from django.http import JsonResponse
-
-from lib.CatalogDB import CatalogDB
-from .filters import ProductPermissionFilterBackend
-from .serializers import *
-from .tasks import product_save_as
-from .tasks import import_target_list
+from product.tasks import export_target_by_filter
 
 from .association import Association
-
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from .filters import ProductPermissionFilterBackend
+from .serializers import *
+from .tasks import import_target_list, product_save_as
 from .viziercds import VizierCDS
-from django_filters.rest_framework import DjangoFilterBackend
-
-
-logger = logging.getLogger(__name__)
 
 
 class ProductFilter(django_filters.FilterSet):
@@ -876,22 +872,198 @@ class ImportTargetListViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
 
     def create(self, request):
+        log = logging.getLogger("import_target_csv")
+
+        log.info("--------------------------------------------------")
+        log.info("Requesting CSV import.")
+
         data = request.data
 
-        try:
+        # Diretórios para armazenar os arquivos
+        data_dir = settings.DATA_DIR
+        data_tmp_dir = settings.DATA_TMP_DIR
 
-            product = ImportTargetListCSV().start_import(request.user.pk, data)
+        # Verificar o tipo de upload
+        if data['mime'] == 'csv':
+            log.info("String import in csv format.")
 
-            return JsonResponse(dict({
-                'success': True,
-                'product': product.pk
-            }))
+            try:
+                # Upload csv in string format.
+                product = ImportTargetListCSV().start_import(request.user.pk, data)
 
-        except Exception as e:
-            return JsonResponse(dict({
-                'success': False,
-                'message': str(e)
-            }), status=200)
+                return JsonResponse({'success': True, 'product': product.pk})
+
+            except Exception as e:
+                return JsonResponse(dict({'success': False, 'message': str(e)}), status=200)
+
+        elif data['mime'] == 'text/csv':
+            # Arquivo csv convertido para string base64
+            log.info("Importing a csv file in base64 string.")
+
+            # Fazer o decode do arquivo base64
+            if data['base64']:
+                try:
+                    file_content = base64.b64decode(data['csvData'])
+                    file_content = file_content.decode('utf-8')
+
+                    log.debug(file_content[0:256] + "...")
+
+                    data['csvData'] = file_content
+
+                    product = ImportTargetListCSV().start_import(request.user.pk, data)
+
+                    return JsonResponse({'success': True, 'product': product.pk})
+
+                except Exception as e:
+                    log.error(e)
+                    return JsonResponse(dict({'success': False, 'message': str(e)}), status=200)
+
+        elif data['mime'] == 'application/zip':
+            # Arquivo zip contendo csv convertido para string base64
+            log.info("Importing a zip file in base64 string.")
+
+            # Diretórios e nomes de arquivos temporarios que serão usados.
+            basepath = os.path.join(data_dir, data_tmp_dir)
+            unique_time = str(time.time())
+            temp_dir_name = "target_import_csv_%s" % unique_time
+            filename = "target_import_csv_%s.zip" % unique_time
+            temp_path = os.path.join(basepath, temp_dir_name)
+            temp_filepath = os.path.join(temp_path, filename)
+
+            try:
+                # Decode a string base64
+                file_content = base64.b64decode(data['csvData'])
+
+                # Criar um diretório unico para este import
+                os.mkdir(temp_path)
+                log.info("Created Temp directory: [%s]" % temp_path)
+
+                # Escrever o arquivo zip no diretório tmp
+                log.info("Creating temporary zip: [%s]" % temp_filepath)
+
+                with open(temp_filepath, 'wb') as result:
+                    result.write(file_content)
+
+                log.info("Zip file created!")
+
+                # Extrair o arquivo zip
+                with zipfile.ZipFile(temp_filepath, 'r') as zip_ref:
+                    zip_ref.extractall(temp_path)
+
+                # Excluir o arquivo zip
+                os.remove(temp_filepath)
+                log.info("Removed zip file. [%s]" % temp_filepath)
+
+                # Identificar os arquivos csvs no zip.
+                csv_files = list(filter(lambda x: '.csv' in x, os.listdir(temp_path)))
+                log.debug(csv_files)
+                # Só é permitito 1 csv por zip.
+                if len(csv_files) == 0:
+                    raise Exception("No csv files were found in the zip. make sure you have only one compressed file with the extension .zip")
+                if len(csv_files) > 1:
+                    raise Exception("More than one csv file was found in the zip. make sure you have only one compressed file with the extension .zip")
+
+                # Improtar o csv
+                csv_file = os.path.join(temp_path, csv_files[0])
+
+                # TODO: Será mais eficiente se a função de importação aceitar um arquivo ao inves de receber uma string.
+                with open(csv_file, 'r') as f:
+                    csvData = f.read()
+
+                log.debug(csvData[0:256] + "...")
+
+                data['csvData'] = csvData
+                product = ImportTargetListCSV().start_import(request.user.pk, data)
+
+                # excluir os arquivos temp.
+                shutil.rmtree(temp_path)
+                log.info("Temporary directory has been removed.")
+
+                return JsonResponse({'success': True, 'product': product.pk})
+
+            except Exception as e:
+                log.error(e)
+                # Caso de erro remove o diretório temporario.
+                if os.path.exists(temp_path):
+                    shutil.rmtree(temp_path)
+                    log.info("Temporary directory has been removed.")
+
+                return JsonResponse(dict({'success': False, 'message': str(e)}), status=200)
+
+        elif data['mime'] == 'application/gzip':
+            # Arquivo tar.gz contendo csv convertido para string base64
+            log.info("Importing a tar.gz file in base64 string.")
+
+            # Diretórios e nomes de arquivos temporarios que serão usados.
+            basepath = os.path.join(data_dir, data_tmp_dir)
+            unique_time = str(time.time())
+            temp_dir_name = "target_import_csv_%s" % unique_time
+            filename = "target_import_csv_%s.tar.gz" % unique_time
+            temp_path = os.path.join(basepath, temp_dir_name)
+            temp_filepath = os.path.join(temp_path, filename)
+
+            try:
+                # Decode a string base64
+                file_content = base64.b64decode(data['csvData'])
+
+                # Criar um diretório unico para este import
+                os.mkdir(temp_path)
+                log.info("Created Temp directory: [%s]" % temp_path)
+
+                # Escrever o arquivo tar.gz no diretório tmp
+                log.info("Creating temporary tar.gz: [%s]" % temp_filepath)
+
+                with open(temp_filepath, 'wb') as result:
+                    result.write(file_content)
+
+                log.info("Tar.gz file created!")
+
+                # Extrair o arquivo tar.gz
+                with tarfile.open(temp_filepath, 'r:gz') as tar_ref:
+                    tar_ref.extractall(path=temp_path)
+
+                # Excluir o arquivo tar.gz
+                os.remove(temp_filepath)
+                log.info("Removed tar.gz file. [%s]" % temp_filepath)
+
+                # Identificar os arquivos csvs no zip.
+                csv_files = list(filter(lambda x: '.csv' in x, os.listdir(temp_path)))
+                log.debug(csv_files)
+                # Só é permitito 1 csv por zip.
+                if len(csv_files) == 0:
+                    raise Exception("No csv files were found in the zip. make sure you have only one compressed file with the extension .zip")
+                if len(csv_files) > 1:
+                    raise Exception("More than one csv file was found in the zip. make sure you have only one compressed file with the extension .zip")
+
+                # Improtar o csv
+                csv_file = os.path.join(temp_path, csv_files[0])
+
+                # TODO: Será mais eficiente se a função de importação aceitar um arquivo ao inves de receber uma string.
+                with open(csv_file, 'r') as f:
+                    csvData = f.read()
+
+                log.debug(csvData[0:256] + "...")
+
+                data['csvData'] = csvData
+                product = ImportTargetListCSV().start_import(request.user.pk, data)
+
+                # excluir os arquivos temp.
+                shutil.rmtree(temp_path)
+                log.info("Temporary directory has been removed.")
+
+                return JsonResponse({'success': True, 'product': product.pk})
+
+            except Exception as e:
+                log.error(e)
+                # Caso de erro remove o diretório temporario.
+                if os.path.exists(temp_path):
+                    shutil.rmtree(temp_path)
+                    log.info("Temporary directory has been removed.")
+
+                return JsonResponse(dict({'success': False, 'message': str(e)}), status=200)
+
+        else:
+            return JsonResponse(dict({'success': False, 'message': "File type %s is not supported" % data['mime']}))
 
 
 # ------------------------------------- VisieR CDS Objects ----------------------------------
