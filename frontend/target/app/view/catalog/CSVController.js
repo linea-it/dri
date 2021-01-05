@@ -44,9 +44,6 @@ Ext.define('Target.view.catalog.CSVController', {
                 releases: release,
                 isPublic: isPublic,
                 description: values.description,
-                // mime: 'csv'
-                // csvData: csvData,
-                // fileUploaded: file
                 base64: false
             };
 
@@ -70,9 +67,8 @@ Ext.define('Target.view.catalog.CSVController', {
             if (file !== undefined || (file instanceof File)) {
 
                 filesize = file.size / 1024 / 1024; // in MiB
-                // console.log("Tamanho do arquivo: %o MB", filesize)
                 filetype = file.type;
-                // console.log("Tipo do arquivo: %o", filetype)
+
 
                 // Tamanho maximo de 50Mb
                 if (filesize > 50) {
@@ -127,7 +123,6 @@ Ext.define('Target.view.catalog.CSVController', {
 
 
             } else if (csvData !== null) {
-                // console.log("Preencheu o campo csv data")
 
                 data.mime = 'csv';
                 data.csvData = csvData;
@@ -137,7 +132,6 @@ Ext.define('Target.view.catalog.CSVController', {
 
             }
             else {
-                // console.log("Não preencheu nenhum dos 2")
                 Ext.MessageBox.show({
                     msg: 'You must select a file to upload or fill in the coordinates manually.',
                     buttons: Ext.MessageBox.OK,
