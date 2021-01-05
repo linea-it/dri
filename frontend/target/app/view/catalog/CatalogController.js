@@ -25,7 +25,6 @@ Ext.define('Target.view.catalog.CatalogController', {
             height: 500,
             listeners: {
                 scope: me,
-                //close: 'reloadCatalogs',
                 newproduct: 'onAddedProduct'
 
             }
