@@ -254,7 +254,6 @@ class DatasetViewSet(viewsets.ModelViewSet):
         # Requested to associate these internal releases
         # to the DESAccess releases:
         associated_releases = {
-            'y6a2_coadd': 'y6a1_coadd',
             'y3a1_coadd': 'y3a2_coadd',
             'y1_supplemental_dfull': 'y1a1_coadd',
             'y1_supplemental_d10': 'y1a1_coadd',
@@ -267,6 +266,7 @@ class DatasetViewSet(viewsets.ModelViewSet):
             'main': 'Main Catalog',
             'magnitude': 'Magnitude Catalog',
             'flux': 'Flux Catalog',
+            'tiff_image': 'Color Image (TIFF)'
         }
 
         tilename = dataset.tile.tli_tilename
@@ -298,13 +298,11 @@ class DatasetViewSet(viewsets.ModelViewSet):
                             'url': release["bands"][band]["catalog"]
                         })
 
-                rows = tileinfo["releases"][0]
-
-                for key in rows:
-                    if key != 'release' and key != 'num_objects' and key != 'bands' and rows[key] and associated_other_files[key]:
+                for key in release:
+                    if key != 'release' and key != 'num_objects' and key != 'bands' and release[key] and release[key] != '' and associated_other_files[key]:
                         results.append({
                             'filename': associated_other_files[key],
-                            'url': rows[key]
+                            'url': release[key]
                         })
 
         return Response(dict({
