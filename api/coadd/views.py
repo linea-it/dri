@@ -292,6 +292,13 @@ class DatasetViewSet(viewsets.ModelViewSet):
                         })
 
                 for band in release["bands"]:
+                    if release["bands"][band]["image_nobkg"]:
+                        results.append({
+                            'filename': '%s-Band Image (no background subtraction)' % band,
+                            'url': release["bands"][band]["image_nobkg"]
+                        })
+
+                for band in release["bands"]:
                     if release["bands"][band]["catalog"]:
                         results.append({
                             'filename': '%s-Band Catalog' % band,
