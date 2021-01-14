@@ -54,7 +54,7 @@ function AboutUs() {
                 <Typography variant="subtitle1" className={classes.description}>
                   You can access the DES public data signing up
                   {' '}
-                  <Link color="inherit" className={classes.link} href="https://des.ncsa.illinois.edu/releases/dr1/dr1-access">here</Link>
+                  <Link color="inherit" className={classes.link} href="https://des.ncsa.illinois.edu/releases/dr2/dr2-access">here</Link>
                   {' '}
                   and then accessing the applications in this
                   {' '}
