@@ -281,8 +281,6 @@ class CatalogObjectsViewSet(ViewSet):
         # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
         columns = Association().get_properties_associated(product_id)
 
-        print(columns)
-
         catalog_db = CatalogObjectsDBHelper(
             table=catalog.tbl_name,
             schema=catalog.tbl_schema,
