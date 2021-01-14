@@ -24,6 +24,7 @@ from lib.CatalogDB import CatalogObjectsDBHelper
 
 from product.association import Association
 from product.models import Catalog, Cutout, CutOutJob, Desjob
+from django.db.utils import NotSupportedError
 
 
 class DesCutoutService:
@@ -502,13 +503,13 @@ class DesCutoutService:
                 record = Cutout.objects.create(
                     cjb_cutout_job=job,
                     cjb_des_job=desjob,
-                    ctt_jobid=jobid,
+                    ctt_jobid=str(jobid),
                     ctt_file_name=filename,
                     ctt_file_type=extension,
                     ctt_filter=band,
-                    ctt_object_id=object_id,
-                    ctt_object_ra=cutout['RA'],
-                    ctt_object_dec=cutout['DEC'],
+                    ctt_object_id=str(object_id),
+                    ctt_object_ra=str(cutout['RA']),
+                    ctt_object_dec=str(cutout['DEC']),
                     ctt_img_format=img_format,
                     ctt_file_path=file_path,
                     ctt_file_size=os.path.getsize(os.path.join(file_path, filename)),
@@ -516,7 +517,14 @@ class DesCutoutService:
 
                 records.append(record)
 
-            Cutout.objects.bulk_create(records, ignore_conflicts=True)
+            try:
+                Cutout.objects.bulk_create(records, ignore_conflicts=True)
+
+            except NotSupportedError:
+                self.logger.warning("Bulk creation not supported, records will be created one by one.")
+
+                for record in records:
+                    record.save()
 
             return records
 
