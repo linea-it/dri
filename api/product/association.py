@@ -11,16 +11,12 @@ class Association:
         :return: list(["property1", "property2", ....])
         """
 
-        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
-        serializer = AssociationSerializer(queryset, many=True)
-        associations = serializer.data
         properties = list()
 
-        for associate in associations:
-            properties.append(associate.get('pcn_column_name').lower())
+        queryset = ProductContentAssociation.objects.select_related().filter(pca_product=product_id)
 
-        contents = ProductContent.objects.filter(pcn_product_id=product_id)
-        for pcontent in contents:
+        for associate in queryset:
+            pcontent = associate.pca_product_content
             if pcontent.pcn_ucd is not None and pcontent.pcn_column_name is not None and pcontent.pcn_column_name not in properties:
                 properties.append(pcontent.pcn_column_name.lower())
 
@@ -57,7 +53,6 @@ class Association:
                     associate.get('pcc_ucd'): associate.get('pcn_column_name').lower()
                 })
 
-
         return properties
 
     def get_association_list_by_product_id(self, product_id):
@@ -84,7 +79,6 @@ class Association:
                     "ucd": pcontent.pcn_ucd,
                     "property": pcontent.pcn_column_name.lower()
                 }))
-
 
         # TODO Modelo antigo pode ser removido futuramente.
         # colunas associadas ao produto utilizando o metodo antigo de associacao por classe
