@@ -464,25 +464,6 @@ class TargetObjectsDBHelper(CatalogTable):
         # Cria os Joins
         stm_join = self.table
 
-        # Join com Catalog_Rating
-        stm_join = stm_join.join(catalog_rating,
-                                 and_(
-                                     # Product ID
-                                     catalog_rating.c.catalog_id == self.product.pk,
-                                     # User ID
-                                     catalog_rating.c.owner == self.user.pk,
-                                 ),
-                                 isouter=True)
-
-        stm_join = stm_join.join(catalog_reject,
-                                 and_(
-                                     # Product ID
-                                     catalog_reject.c.catalog_id == self.product.pk,
-                                     # User ID
-                                     catalog_reject.c.owner == self.user.pk,
-                                 ),
-                                 isouter=True)
-
         # # Identificar qual é o banco de dados a query é diferente entre Oracle e Postgresql
         # if self.get_engine() == "oracle":
         #     # Join com Catalog_Rating
