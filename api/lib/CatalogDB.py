@@ -268,69 +268,6 @@ class CatalogTable(CatalogDB):
 
         return conditions
 
-    def get_condition_square(self, lowerleft, upperright, property_ra, property_dec):
-
-        # Tratar RA > 360
-        llra = float(lowerleft[0])
-        lldec = float(lowerleft[1])
-
-        urra = float(upperright[0])
-        urdec = float(upperright[1])
-
-        if llra > 360:
-            llra = llra - 360
-
-        if urra > 360:
-            urra = urra - 360
-
-        # Verificar se o RA 0 esta entre llra e urra
-        if (llra < 0 and urra < 0) or (llra > 0 and urra > 0):
-            # RA 0 nao esta na area da consulta pode se usar o between simples
-
-            # BETWEEN llra and urra
-            raCondition = between(
-                Column(str(property_ra)),
-                literal_column(str(llra)),
-                literal_column(str(urra))
-            )
-
-        else:
-            # Area de interesse passa pelo RA 0 usar 2 between separando ate 0 e depois de 0
-
-            llralt0 = 360 - (llra * -1)
-
-            # Solucao para catalogos com RA 0 - 360
-            raLTZero = between(
-                Column(str(property_ra)),
-                literal_column(str(llralt0)),
-                literal_column("360")
-            )
-
-            raGTZero = between(
-                Column(str(property_ra)),
-                literal_column("0"),
-                literal_column(str(urra))
-            )
-
-            raCondition360 = or_(raLTZero, raGTZero).self_group()
-
-            # Solucao para catalogos com RA -180 a 180
-            raCondition180 = between(
-                Column(str(property_ra)),
-                literal_column(str(llra)),
-                literal_column(str(urra))
-            )
-
-            raCondition = or_(raCondition360, raCondition180).self_group()
-
-        decCondition = between(
-            Column(str(property_dec)),
-            literal_column(str(lldec)),
-            literal_column(str(urdec))
-        )
-
-        return and_(raCondition, decCondition).self_group()
-
     def count(self):
         with self.engine.connect() as con:
 
@@ -360,7 +297,7 @@ class CatalogObjectsDBHelper(CatalogTable):
         for condition in self.filters:
             if condition.get("op") == "coordinates":
 
-                coordinates_filter = self.get_condition_square(
+                coordinates_filter = self.database.get_condition_square(
                     condition.get("lowerleft"),
                     condition.get("upperright"),
                     condition.get("property_ra"),
@@ -546,7 +483,7 @@ class TargetObjectsDBHelper(CatalogTable):
 
                 elif condition.get("column") == 'coordinates':
 
-                    coordinate_filters = self.get_condition_square(
+                    coordinate_filters = self.database.get_condition_square(
                         condition.get("lowerleft"),
                         condition.get("upperright"),
                         condition.get("property_ra"),
