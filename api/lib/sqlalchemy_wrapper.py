@@ -178,7 +178,7 @@ class DBBase:
 
     def get_table_size_bytes(self, table, schema=None):
         """
-            Retorna o tamanho de uma tabela em bytes. 
+            Retorna o tamanho de uma tabela em bytes.
         """
         try:
             sql = self.database.get_raw_sql_size_table_bytes(table, schema=schema)
@@ -196,7 +196,7 @@ class DBBase:
 
     def get_table_columns_count(self, table, schema=None):
         """
-            Retorna a quantidade de colunas de uma tabela. 
+            Retorna a quantidade de colunas de uma tabela.
         """
         try:
             sql = self.database.get_raw_sql_number_columns(table, schema=schema)
@@ -208,8 +208,8 @@ class DBBase:
 
     def get_estimated_rows_count(self, table, schema=None):
         """
-            Retorna a quantidade de rows estimada para a tabela. 
-            Consultando as tabelas adm do SGBD. 
+            Retorna a quantidade de rows estimada para a tabela.
+            Consultando as tabelas adm do SGBD.
             é mas rapida que um count em tabelas grandes, mas pode ser pouco precisa.
         """
         try:
@@ -254,7 +254,7 @@ class DBBase:
 
     def stm_count(self, stm):
         with self.engine.connect() as con:
-            stm_count = stm.with_only_columns([func.count()]).limit(None).offset(None)
+            stm_count = stm.with_only_columns([func.count()]).limit(None).offset(None).order_by(None)
             queryset = con.execute(stm_count)
             result = dict(queryset.fetchone())
             return result.get('count_1')

@@ -9,8 +9,10 @@ from sqlalchemy import exc as sa_exc
 from sqlalchemy import func
 from sqlalchemy.sql import and_, or_, select, text
 from sqlalchemy.sql.expression import between, literal_column
-
 from lib.sqlalchemy_wrapper import DBBase
+
+import pandas as pd
+import numpy as np
 
 
 class CatalogDB(DBBase):
@@ -407,6 +409,7 @@ class TargetObjectsDBHelper(CatalogTable):
                                                     associations=associations)
 
         self.log = logging.getLogger('django')
+        self.logger = logging.getLogger('import_target_csv')
         # Catalogos de Target tem ligacao com o as tabelas Rating e Reject
         # Esse atributo deve vir do Settings
         # Cria as instancias das tabelas de rating e reject
@@ -441,6 +444,40 @@ class TargetObjectsDBHelper(CatalogTable):
 
         self.user = user
 
+    def query(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None):
+        """
+        Executa o statement criado pelo metodo create_stm
+        :param columns:
+        :param filters: Esse Filtros devem estar no formato SqlAlchemy. pode ser usado o FconditionSerializer para converter.
+            list([
+                dict({
+                    column: <nome da coluna>,
+                    op: <operador>
+                    value: <valor>
+                })
+            ])
+        :param ordering:
+        :param limit:
+        :param start:
+        :return: tuple(count, results)
+            count: e o total de registro encontrado pela query, IMPORTANTE esse count desconsidera os limit, ou seja
+            mesmo que seja uma query paginda esse count e sempre o total de registros que satisfazem a query.
+            results: e a queryset os resultados retornados pela query
+            ex: uma query com um filtro que retorne 100 resultados mais o parametro limit esta em 25 resultados, o
+            count vai retornar 100. e o results vai ser uma queryset com 25 registros.
+        """
+        # Cria o Statement para a query
+        rows, count = self.create_stm(
+            columns=columns,
+            filters=filters,
+            ordering=ordering,
+            limit=limit,
+            start=start,
+            url_filters=url_filters
+        )
+
+        return rows, count
+
     def create_stm(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None,
                    prevent_ambiguously=False):
 
@@ -461,99 +498,23 @@ class TargetObjectsDBHelper(CatalogTable):
         catalog_rating = self.catalog_rating.alias('b')
         catalog_reject = self.catalog_reject.alias('c')
 
-        # Cria os Joins
-        stm_join = self.table
+        # rating_reject_association =
 
-        # # Identificar qual é o banco de dados a query é diferente entre Oracle e Postgresql
-        # if self.get_engine() == "oracle":
-        #     # Join com Catalog_Rating
-        #     stm_join = stm_join.join(catalog_rating,
-        #                              and_(
-        #                                  # Product ID
-        #                                  catalog_rating.c.catalog_id == self.product.pk,
-        #                                  # User ID
-        #                                  catalog_rating.c.owner == self.user.pk,
-        #                                  # Object ID
-        #                                  self.get_column_obj(self.table, property_id) == catalog_rating.c.object_id,
-        #                                  # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog rating object_id é string
-        #                                  # 15/09/2020 - este cast para string gerou um bug no Oracle
-        #                                  # cast(self.get_column_obj(self.table, property_id), sqlalchemy.String)  == catalog_rating.c.object_id,
-        #                              ),
-        #                              isouter=True)
+        objects = select(self.table.c).select_from(self.table)
 
-        #     stm_join = stm_join.join(catalog_reject,
-        #                              and_(
-        #                                  # Product ID
-        #                                  catalog_reject.c.catalog_id == self.product.pk,
-        #                                  # User ID
-        #                                  catalog_reject.c.owner == self.user.pk,
-        #                                  # Object Id OR Reject is NULL
-        #                                  or_(self.get_column_obj(self.table, property_id) == catalog_reject.c.object_id,
-        #                                      catalog_reject.c.id.is_(None))
-        #                                  # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog reject object_id é string
-        #                                  # 15/09/2020 - este cast para string gerou um bug no Oracle
-        #                                  #  or_(cast(self.get_column_obj(self.table, property_id), sqlalchemy.String) == catalog_reject.c.object_id,
-        #                                  #      catalog_reject.c.id.is_(None))
-        #                              ),
-        #                              isouter=True)
+        ratings = select(catalog_rating.c).select_from(catalog_rating).group_by(catalog_rating.c.id)
+        ratings_association = and_(catalog_rating.c.owner == self.user.pk, catalog_rating.c.catalog_id == self.product.pk)
 
-        # elif self.get_engine() == "postgresql_psycopg2" or self.get_engine() == "sqlite3":
-        #     # Join com Catalog_Rating
-        #     stm_join = stm_join.join(catalog_rating,
-        #                              and_(
-        #                                  # Product ID
-        #                                  catalog_rating.c.catalog_id == self.product.pk,
-        #                                  # User ID
-        #                                  catalog_rating.c.owner == self.user.pk,
-        #                                  # Object ID
-        #                                  # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog rating object_id é string
-        #                                  cast(self.get_column_obj(self.table, property_id), sqlalchemy.String) == catalog_rating.c.object_id,
-        #                              ),
-        #                              isouter=True)
+        rejects = select(catalog_reject.c).select_from(catalog_reject).group_by(catalog_reject.c.id)
+        rejects_association = and_(catalog_reject.c.owner == self.user.pk, catalog_reject.c.catalog_id == self.product.pk)
 
-        #     stm_join = stm_join.join(catalog_reject,
-        #                              and_(
-        #                                  # Product ID
-        #                                  catalog_reject.c.catalog_id == self.product.pk,
-        #                                  # User ID
-        #                                  catalog_reject.c.owner == self.user.pk,
-        #                                  # Object Id OR Reject is NULL
-        #                                  # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog reject object_id é string
-        #                                  or_(cast(self.get_column_obj(self.table, property_id), sqlalchemy.String) == catalog_reject.c.object_id,
-        #                                      catalog_reject.c.id.is_(None))
-        #                              ),
-        #                              isouter=True)
-        # else:
-        #     raise Exception("Catalog, rating and reject query was not implemented for this database engine.")
+        is_ordering_rating = False
+        is_ordering_reject = False
+        is_filtering_rating = False
+        is_filtering_reject = False
 
-        query_columns = list()
-
-        if len(columns) == 0:
-            # Criar o Statement usando as todas as colunas mais as colunas de rating and reject.
-            for column in self.table.c:
-                query_columns.append(column)
-
-            # Se a Flag Prevent Ambiguos for True nao adicionar essas colunas pois vai gerar erro no banco de dados.
-            if not prevent_ambiguously:
-                query_columns.append(catalog_rating.c.id.label('meta_rating_id'))
-                query_columns.append(catalog_rating.c.rating.label('meta_rating'))
-                query_columns.append(catalog_reject.c.id.label('meta_reject_id'))
-                query_columns.append(catalog_reject.c.reject.label('meta_reject'))
-
-        else:
-            # Usar apenas as colunas selecionadas
-            for column in self.query_columns:
-                if column in list(catalog_rating.c):
-                    query_columns.append(catalog_rating.c[column])
-
-                elif column in list(catalog_reject.c):
-                    query_columns.append(catalog_reject.c[column])
-
-                else:
-                    query_columns.append(column)
-                    # query_columns.append(self.table.c[column])
-
-        stm = select(query_columns).select_from(stm_join)
+        # executa um metodo da DBbase para trazer o count sem levar em conta o limit e o start
+        count = self.stm_count(objects)
 
         # Filtros
         filters = list()
@@ -570,16 +531,18 @@ class TargetObjectsDBHelper(CatalogTable):
                     # Filtro Especial onde a propriedade nao faz parte da tabela original
 
                     if condition.get("column") == '_meta_rating':
+                        is_filtering_rating = True
                         condition.update({"column": "rating"})
                         condition.update({"value": int(condition.get("value"))})
 
                         rating_filters = and_(*self.do_filter(catalog_rating, list([condition])))
 
                     elif condition.get("column") == '_meta_reject':
+                        is_filtering_reject = True
                         reject_filters = or_(catalog_reject.c.reject.is_(None), catalog_reject.c.reject == 0)
 
                         if condition.get("value") in ['True', 'true', '1', 't', 'y', 'yes']:
-                            reject_filters = catalog_reject.c.reject == 1
+                            reject_filters = and_(catalog_reject.c.reject == 'true')
 
                 elif condition.get("column") == 'coordinates':
 
@@ -594,36 +557,222 @@ class TargetObjectsDBHelper(CatalogTable):
 
         base_filters = and_(*self.do_filter(self.table, filters))
 
-        stm = stm.where(and_(base_filters, coordinate_filters, rating_filters, reject_filters))
+        object_filters = and_(base_filters, coordinate_filters)
+
+        asc = True
+        property = ''
 
         # Ordenacao
         if self.ordering is not None:
             asc = True
-            property = self.ordering.lower()
+            ordering = self.ordering.lower()
 
-            if self.ordering[0] == '-':
+            property = ordering[1:] if ordering[0] == '-' else ordering
+
+            if ordering[0] == '-':
                 asc = False
-                property = self.ordering[1:].lower()
 
             if property == '_meta_rating':
-                property = catalog_rating.c.rating
-            elif property == '_meta_reject':
-                property = catalog_reject.c.reject
-            else:
-                property = text('a.' + property)
+                is_ordering_rating = True
 
-            if asc:
-                stm = stm.order_by(property)
-            else:
-                stm = stm.order_by(desc(property))
+            if property == '_meta_reject':
+                is_ordering_reject = True
 
-        # Paginacao
-        if self.limit:
-            stm = stm.limit(literal_column(str(self.limit)))
+        if is_ordering_rating and not is_filtering_reject or is_filtering_rating:
 
-            if self.start:
-                stm = stm.offset(literal_column(str(self.start)))
+            if is_ordering_rating:
+                # Ordenação
+                property = 'rating'
+                property = text('b.' + property)
+                if asc:
+                    ratings = ratings.order_by(property)
+                else:
+                    ratings = ratings.order_by(desc(property))
 
-        self.log.info("Target Query: [ %s ]" % self.statement_to_str(stm))
+            # Paginacao
+            if self.limit:
+                ratings = ratings.limit(literal_column(str(self.limit)))
 
-        return stm
+                if self.start:
+                    ratings = ratings.offset(literal_column(str(self.start)))
+
+            ratings = ratings.where(and_(ratings_association, rating_filters))
+            ratings = self.fetchall_dict(ratings)
+
+            object_ids = [rating['object_id'] for rating in ratings]
+
+            objects_without_ordering = self.fetchall_dict(objects.where(and_(object_filters)))
+            rejects_without_ordering = self.fetchall_dict(rejects.where(and_(rejects_association, reject_filters)))
+
+            rejects_obj_ids = [int(r['object_id']) for r in rejects_without_ordering]
+            ratings_obj_ids = [int(r['object_id']) for r in ratings]
+
+            objects = objects.where(and_(object_filters, self.table.c.meta_id.in_(tuple(object_ids))))
+            rejects = rejects.where(and_(rejects_association, reject_filters, catalog_reject.c.object_id.in_(tuple(object_ids))))
+
+            rejects = self.fetchall_dict(rejects)
+            objects = self.fetchall_dict(objects)
+
+            if not is_filtering_rating:
+                if is_ordering_rating or is_ordering_reject:
+                    if len(ratings) != len(objects_without_ordering):
+                        for obj in objects_without_ordering:
+
+                            if obj['meta_id'] not in ratings_obj_ids:
+
+                                objects.append(obj)
+
+                                ratings.append({
+                                    "id": None,
+                                    "catalog_id": self.product.pk,
+                                    "owner": self.user.pk,
+                                    "object_id": obj['meta_id'],
+                                    "rating": 0
+                                })
+
+                    if len(rejects) != len(objects_without_ordering):
+                        for obj in objects_without_ordering:
+
+                            if obj['meta_id'] not in rejects_obj_ids:
+
+                                if obj['meta_id'] in rejects_obj_ids:
+                                    idx = rejects_obj_ids.index(obj['meta_id'])
+                                    rejects.append(rejects_without_ordering[idx])
+                                else:
+                                    rejects.append({
+                                        "id": None,
+                                        "catalog_id": self.product.pk,
+                                        "owner": self.user.pk,
+                                        "object_id": obj['meta_id'],
+                                        "reject": False
+                                    })
+
+        elif is_ordering_reject and not is_filtering_rating or is_filtering_reject:
+
+            if is_ordering_reject:
+                # Ordenação
+                property = 'reject'
+                if asc:
+                    property = text('c.' + property)
+                    rejects = rejects.order_by(property)
+                else:
+                    rejects = rejects.order_by(desc(property))
+
+            # Paginacao
+            if self.limit:
+                rejects = rejects.limit(literal_column(str(self.limit)))
+
+                if self.start:
+                    rejects = rejects.offset(literal_column(str(self.start)))
+
+            rejects = rejects.where(and_(rejects_association, reject_filters))
+            rejects = self.fetchall_dict(rejects)
+
+            object_ids = [reject['object_id'] for reject in rejects]
+
+            objects_without_ordering = self.fetchall_dict(objects.where(and_(object_filters)))
+            ratings_without_ordering = self.fetchall_dict(ratings.where(and_(ratings_association, rating_filters)))
+
+            ratings_obj_ids = [int(r['object_id']) for r in ratings_without_ordering]
+            rejects_obj_ids = [int(r['object_id']) for r in rejects]
+
+            objects = objects.where(and_(object_filters, self.table.c.meta_id.in_(tuple(object_ids))))
+
+            ratings = ratings.where(and_(ratings_association, rating_filters, catalog_rating.c.object_id.in_(tuple(object_ids))))
+
+            ratings = self.fetchall_dict(ratings)
+
+            objects = self.fetchall_dict(objects)
+
+            if not is_filtering_reject:
+                if is_ordering_rating or is_ordering_reject:
+                    if len(rejects) != len(objects_without_ordering):
+                        for obj in objects_without_ordering:
+
+                            if obj['meta_id'] not in rejects_obj_ids:
+
+                                objects.append(obj)
+
+                                rejects.append({
+                                    "id": None,
+                                    "catalog_id": self.product.pk,
+                                    "owner": self.user.pk,
+                                    "object_id": obj['meta_id'],
+                                    "reject": False
+                                })
+
+                    if len(ratings) != len(objects_without_ordering):
+                        for obj in objects_without_ordering:
+
+                            if obj['meta_id'] not in rejects_obj_ids:
+
+                                if obj['meta_id'] in ratings_obj_ids:
+                                    idx = ratings_obj_ids.index(obj['meta_id'])
+                                    ratings.append(ratings_without_ordering[idx])
+                                else:
+                                    ratings.append({
+                                        "id": None,
+                                        "catalog_id": self.product.pk,
+                                        "owner": self.user.pk,
+                                        "object_id": obj['meta_id'],
+                                        "rating": 0
+                                    })
+
+        else:
+
+            if property != '':
+                # Ordenação
+                if asc:
+                    property = text('a.' + property)
+                    objects = objects.order_by(property)
+                else:
+                    objects = objects.order_by(desc(property))
+
+            # Paginacao
+            if self.limit:
+                rejects = rejects.limit(literal_column(str(self.limit)))
+
+                if self.start:
+                    rejects = rejects.offset(literal_column(str(self.start)))
+
+            ratings = ratings.where(and_(ratings_association, rating_filters))
+            rejects = rejects.where(and_(rejects_association, reject_filters))
+            objects = objects.where(and_(object_filters))
+
+            ratings = self.fetchall_dict(ratings)
+            rejects = self.fetchall_dict(rejects)
+            objects = self.fetchall_dict(objects)
+
+        df_objects = pd.DataFrame().append(objects, ignore_index=False)
+        df_objects['meta_rating_id'] = None
+        df_objects['meta_rating'] = None
+        df_objects['meta_reject_id'] = None
+        df_objects['meta_reject'] = False
+
+        df_ratings = pd.DataFrame().append(ratings, ignore_index=False)
+
+        df_ratings = df_ratings.where(pd.notnull(df_ratings), None)
+
+        df_rejects = pd.DataFrame().append(rejects, ignore_index=False)
+        df_rejects = df_rejects.where(pd.notnull(df_rejects), None)
+
+        for index, row in df_ratings.iterrows():
+            df_objects.loc[df_objects['meta_id'] == int(row['object_id']), 'meta_rating_id'] = row['id']
+            df_objects.loc[df_objects['meta_id'] == int(row['object_id']), 'meta_rating'] = row['rating']
+
+        for index, row in df_rejects.iterrows():
+            df_objects.loc[df_objects['meta_id'] == int(row['object_id']), 'meta_reject_id'] = row['id']
+            df_objects.loc[df_objects['meta_id'] == int(row['object_id']), 'meta_reject'] = row['reject']
+
+        if is_ordering_rating:
+            df_objects = df_objects.sort_values(by=['meta_rating'], ascending=asc)
+
+        if is_ordering_reject:
+            df_objects = df_objects.sort_values(by=['meta_reject'], ascending=asc)
+
+        if not is_ordering_rating and not is_ordering_reject and property != '':
+            df_objects = df_objects.sort_values(by=[property], ascending=asc)
+
+        rows = df_objects.to_dict('records')
+
+        return rows, count
