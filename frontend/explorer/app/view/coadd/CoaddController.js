@@ -164,8 +164,17 @@ Ext.define('Explorer.view.coadd.CoaddController', {
         for (var property in data) {
             var prop = property.toLowerCase();
 
-            // nao incluir as propriedades _meta
-            if (prop.indexOf('_meta_') === -1) {
+            // nao incluir as propriedades _meta e nem a prop id
+            if ((prop.indexOf('_meta_') === -1) && (prop !== 'id')) {
+
+                properties.add([
+                    [property.toLowerCase(), data[property]]
+                ]);
+            }
+
+            // Verificar se a propriedade ID vem do server ou se é criada pela store.
+            // So adiciona a propriedade ID se dado real vindo do server
+            if ((prop === 'id') && data['id'].indexOf('extModel')) {
                 properties.add([
                     [property.toLowerCase(), data[property]]
                 ]);
@@ -387,7 +396,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
 
         tags.each(function (tag) {
             ids.push(tag.get('id'));
-        },this);
+        }, this);
 
         tiles.filter([
             {
@@ -459,7 +468,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             object = vm.get('object_data'),
             spectral = vm.getStore('spectral'),
             mags = ['mag_auto_g', 'mag_auto_r', 'mag_auto_i',
-                    'mag_auto_z', 'mag_auto_y'],
+                'mag_auto_z', 'mag_auto_y'],
             wavelengths = [474, 645.5, 783.5, 926, 1008],
             wavelength, mag_auto, flux, min, max;
 
