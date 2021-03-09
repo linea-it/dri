@@ -435,11 +435,11 @@ class TargetObjectsDBHelper(CatalogTable):
         objects = select(self.table.c).select_from(self.table)
 
         # Rating query and, under, association and filter
-        ratings = select(catalog_rating.c).select_from(catalog_rating).group_by(catalog_rating.c.id)
+        ratings = select(catalog_rating.c).select_from(catalog_rating)
         ratings_association = and_(catalog_rating.c.owner == self.user.pk, catalog_rating.c.catalog_id == self.product.pk)
 
         # Reject query and, under, association and filter
-        rejects = select(catalog_reject.c).select_from(catalog_reject).group_by(catalog_reject.c.id)
+        rejects = select(catalog_reject.c).select_from(catalog_reject)
         rejects_association = and_(catalog_reject.c.owner == self.user.pk, catalog_reject.c.catalog_id == self.product.pk)
 
         # Ordering and filtering flags for Rating and Reject tables:
@@ -450,7 +450,10 @@ class TargetObjectsDBHelper(CatalogTable):
 
         # Execute a DBbase method to count the table
         # without pagination or limit:
-        count = self.stm_count(objects)
+        # count = self.stm_count(objects)
+        count = 0
+
+        self.logger.debug('1')
 
         # Filters
         filters = list()
@@ -458,9 +461,10 @@ class TargetObjectsDBHelper(CatalogTable):
         reject_filters = and_()
         coordinate_filters = and_()
 
+        self.logger.debug("1")
+
         # Check if Targets have special filters:
         if self.filters is not None and len(self.filters) > 0:
-
             # For each filter:
             for condition in self.filters:
 
@@ -503,6 +507,8 @@ class TargetObjectsDBHelper(CatalogTable):
         property = ''
         asc = True
 
+        self.logger.debug("2")
+
         # Ordering
         if self.ordering is not None:
             asc = True
@@ -520,6 +526,8 @@ class TargetObjectsDBHelper(CatalogTable):
 
             if property == '_meta_reject':
                 is_ordering_reject = True
+
+        self.logger.debug("3")
 
         # If is ordering rating
         # and it doesn't have a reject filter
@@ -546,6 +554,12 @@ class TargetObjectsDBHelper(CatalogTable):
             # Add Rating where clause with the filters
             # and associations and run query:
             ratings = ratings.where(and_(ratings_association, rating_filters))
+
+            self.logger.debug("4")
+
+            self.logger.debug('-------------------- IF --------------------')
+            self.logger.debug(ratings)
+
             ratings = self.fetchall_dict(ratings)
 
             # Get objects and rejects without the ordering and associations:
@@ -562,6 +576,9 @@ class TargetObjectsDBHelper(CatalogTable):
 
             # Convert the ratings object ids string into integers:
             ratings_obj_ids = list(map(int, ratings_obj_ids))
+
+            self.logger.debug(rejects)
+            self.logger.debug(objects)
 
             # Run Rejects and Objects queries and get their result:
             rejects = self.fetchall_dict(rejects)
@@ -596,6 +613,8 @@ class TargetObjectsDBHelper(CatalogTable):
                                     "rating": 0
                                 })
 
+                    self.logger.debug("5")
+
                     # If the Ratings length is not equal to the Objects
                     # without the ordering and associations:
                     if len(rejects) != len(objects_without_ordering):
@@ -620,10 +639,15 @@ class TargetObjectsDBHelper(CatalogTable):
                                         "object_id": obj['meta_id'],
                                         "reject": False
                                     })
+
+                    self.logger.debug("6")
+
         # If is ordering reject
         # and it doesn't have a rating filter
         # or if it has a reject filter:
         elif is_ordering_reject and not is_filtering_rating or is_filtering_reject:
+
+            self.logger.debug("7")
 
             # Ordering
             if is_ordering_reject:
@@ -644,6 +668,12 @@ class TargetObjectsDBHelper(CatalogTable):
             # Add Reject where clause with the filters
             # and associations and run query:
             rejects = rejects.where(and_(rejects_association, reject_filters))
+
+            self.logger.debug("8")
+
+            self.logger.debug('-------------------- ELIF --------------------')
+            self.logger.debug(rejects)
+
             rejects = self.fetchall_dict(rejects)
 
             # Get objects and ratings without the ordering and associations:
@@ -661,9 +691,14 @@ class TargetObjectsDBHelper(CatalogTable):
             # Convert the rejects object ids string into integers:
             rejects_obj_ids = list(map(int, rejects_obj_ids))
 
+            self.logger.debug(ratings)
+            self.logger.debug(objects)
+
             # Run Ratings and Objects queries and get their result:
             ratings = self.fetchall_dict(ratings)
             objects = self.fetchall_dict(objects)
+
+            self.logger.debug("9")
 
             # If there's not Reject filter:
             if not is_filtering_reject:
@@ -718,8 +753,12 @@ class TargetObjectsDBHelper(CatalogTable):
                                         "object_id": obj['meta_id'],
                                         "rating": 0
                                     })
+
+            self.logger.debug("10")
         # Else, if it doesn't have rating and reject filter or ordering:
         else:
+
+            self.logger.debug("11")
             # Ordering
             if property != '':
                 if asc:
@@ -735,11 +774,20 @@ class TargetObjectsDBHelper(CatalogTable):
                 if self.start:
                     rejects = rejects.offset(literal_column(str(self.start)))
 
+            self.logger.debug("12")
+
             # Add Ratings, Rejects and Objects where clause with the filters
             # and associations and run queries:
             ratings = ratings.where(and_(ratings_association, rating_filters))
             rejects = rejects.where(and_(rejects_association, reject_filters))
             objects = objects.where(and_(object_filters))
+
+            self.logger.debug("13")
+
+            self.logger.debug('-------------------- ELSE --------------------')
+            self.logger.debug(ratings)
+            self.logger.debug(rejects)
+            self.logger.debug(objects)
 
             ratings = self.fetchall_dict(ratings)
             rejects = self.fetchall_dict(rejects)
@@ -756,6 +804,8 @@ class TargetObjectsDBHelper(CatalogTable):
         df_objects['meta_reject_id'] = None
         df_objects['meta_reject'] = False
 
+        self.logger.debug("14")
+
         # Ratings to dataframe and replacing the "NaN" to "None":
         df_ratings = pd.DataFrame().append(ratings, ignore_index=False)
         df_ratings = df_ratings.where(pd.notnull(df_ratings), None)
@@ -763,6 +813,8 @@ class TargetObjectsDBHelper(CatalogTable):
         # Rejects to dataframe and replacing the "NaN" to "None":
         df_rejects = pd.DataFrame().append(rejects, ignore_index=False)
         df_rejects = df_rejects.where(pd.notnull(df_rejects), None)
+
+        self.logger.debug("15")
 
         # For each rating, insert it into the objects dataframe:
         for index, row in df_ratings.iterrows():
@@ -788,6 +840,8 @@ class TargetObjectsDBHelper(CatalogTable):
             property = property[1] if len(property) == 2 else property[0]
 
             df_objects = df_objects.sort_values(by=[property], ascending=asc)
+
+        self.logger.debug("16")
 
         # Turn the objects dataframe back to a list of dictionaries:
         rows = df_objects.to_dict('records')
