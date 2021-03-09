@@ -592,8 +592,6 @@ class TargetObjectsDBHelper(CatalogTable):
             count vai retornar 100. e o results vai ser uma queryset com 25 registros.
         """
 
-        self.log.debug("------------------- TESTE ----------------")
-
         # Descobrir as colunas a serem usadas
         q_columns = self.parse_columns(columns)
 
@@ -632,7 +630,7 @@ class TargetObjectsDBHelper(CatalogTable):
         coordinate_clauses = and_()
 
         if filters is not None and len(filters) > 0:
-            for condition in self.filters:
+            for condition in filters:
                 if condition.get("column") == 'coordinates':
 
                     coordinate_clauses = self.database.get_condition_square(
@@ -674,11 +672,17 @@ class TargetObjectsDBHelper(CatalogTable):
         count = self.stm_count(stm_base)
         self.log.debug("Total Count: [%s]" % count)
 
+        # Se o resultado da query for 0, retornar um array vazio e o count 0:
+        if count == 0:
+            self.log.info("No result was found!")
+            return [], 0
+
         # Criar o Dataframe da tabela Object
         df_objects = pd.read_sql(
             stm_base,
             con=self.engine,
         )
+
         # Converte a coluna que representa o id do objeto para string.
         # O mesmo é feito nos outros dataframes,
         # é necessario que os tipos sejam iguais para o merge funcionar.
@@ -713,11 +717,11 @@ class TargetObjectsDBHelper(CatalogTable):
         # sendo que aplicar na query ira diminuir a quantidade de registro e agilizar o dataframe.
         base_filters = list()
         coordinate_clauses = and_()
-        rating_condictions = None
-        reject_condictions = None
+        rating_conditions = list()
+        reject_conditions = None
 
         if filters is not None and len(filters) > 0:
-            for condition in self.filters:
+            for condition in filters:
 
                 # Separar o Filtros por rating/reject.
                 # Serao aplicados no dataframe.
@@ -725,17 +729,17 @@ class TargetObjectsDBHelper(CatalogTable):
                     condition.update({"column": "_meta_rating"})
                     condition.update({"value": int(condition.get("value"))})
 
-                    rating_condictions = condition
+                    rating_conditions.append(condition)
 
                 elif condition.get("column") == '_meta_reject':
                     condition.update({"column": "_meta_reject"})
                     if condition.get("value") in ['True', 'true', '1', 't', 'y', 'yes', True]:
                         condition.update({"value": True})
 
-                    reject_condictions = condition
+                    reject_conditions = condition
 
                 # Filtro de coordenada sera aplicado na query
-                if condition.get("column") == 'coordinates':
+                elif condition.get("column") == 'coordinates':
                     coordinate_clauses = self.database.get_condition_square(
                         condition.get("lowerleft"),
                         condition.get("upperright"),
@@ -755,6 +759,12 @@ class TargetObjectsDBHelper(CatalogTable):
             stm_base,
             con=self.engine,
         )
+
+        # Se o resultado da query for 0, retornar um array vazio e o count 0:
+        if df_objects.empty:
+            self.log.info("No result was found!")
+            return [], 0
+
         # Converte a coluna que representa o id do objeto para string.
         # O mesmo é feito nos outros dataframes,
         # é necessario que os tipos sejam iguais para o merge funcionar.
@@ -772,15 +782,39 @@ class TargetObjectsDBHelper(CatalogTable):
         # Cria o Dataframe result fazendo o merge entre os Dataframes
         df_result = self.merge_dataframes(property_id, df_objects, df_rating, df_reject)
 
-        # TODO: Aplicar os filtros Rating/Reject aqui diretamente no dataframe
+        # Realizar filtro(s) na tabela Rating:
+        if len(rating_conditions) > 0:
+            for condition in rating_conditions:
+                if condition['op'] == 'eq':
+                    df_result = df_result[df_result[condition['column']] == condition['value']]
 
-        if rating_condictions is not None:
-            # Criar um metodo que aplique todas as condições possiveis para o filtro >, <, !=, gt, gte, lt, lte
-            pass
+                elif condition['op'] == 'ne':
+                    df_result = df_result[df_result[condition['column']] != condition['value']]
 
-        if reject_condictions is not None:
-            # Criar um metodo que aplique todas as condições possiveis para o filtro >, <, !=, gt, gte, lt, lte
-            pass
+                elif condition['op'] == 'gt':
+                    df_result = df_result[df_result[condition['column']] > condition['value']]
+
+                elif condition['op'] == 'ge':
+                    df_result = df_result[df_result[condition['column']] >= condition['value']]
+
+                elif condition['op'] == 'lt':
+                    df_result = df_result[df_result[condition['column']] < condition['value']]
+
+                elif condition['op'] == 'le':
+                    df_result = df_result[df_result[condition['column']] <= condition['value']]
+
+                else:
+                    pass
+
+        # Realizar filtro na tabela Reject:
+        if reject_conditions:
+            if reject_conditions['op'] == 'eq':
+                df_result = df_result[df_result[reject_conditions['column']] == reject_conditions['value']]
+
+            elif reject_conditions['op'] == 'ne':
+                df_result = df_result[df_result[reject_conditions['column']] != reject_conditions['value']]
+            else:
+                pass
 
         # Total de registros no dataframe depois dos filtros.
         count = df_result.shape[0]
