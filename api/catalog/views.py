@@ -121,6 +121,7 @@ class TargetViewSet(ViewSet):
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(catalog.pk)
 
+        # TODO: essa variavel não será mas necessária o schema sempre vai ser o mesmo.
         # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
         schema_rating_reject = settings.SCHEMA_RATING_REJECT
 
@@ -149,10 +150,6 @@ class TargetViewSet(ViewSet):
                 "_meta_ra": 0,
                 "_meta_dec": 0,
                 "_meta_radius": 0,
-                "_meta_rating_id": None,
-                "_meta_rating": None,
-                "_meta_reject_id": None,
-                "_meta_reject": None,
             })
 
             essential_props = dict({
@@ -203,27 +200,6 @@ class TargetViewSet(ViewSet):
                 })
             except:
                 pass
-
-            row.update({
-                "_meta_rating_id": row.get('meta_rating_id', None)
-            })
-            row.update({
-                "_meta_rating": row.get('meta_rating', None)
-            })
-            row.update({
-                "_meta_reject_id": row.get('meta_reject_id', None)
-            })
-            row.update({
-                "_meta_reject": bool(row.get('meta_reject', None))
-            })
-
-            row.pop("meta_rating_id", None)
-            row.pop("meta_rating", None)
-            row.pop("meta_reject_id", None)
-            row.pop("meta_reject", None)
-
-            # Count de Comentarios por objetos.
-            # TODO: utlizar um join com having count ao inves de uma query para cada linha
 
             try:
                 comments = Comments.objects.filter(
