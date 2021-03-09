@@ -320,7 +320,7 @@ Ext.define('Target.view.catalog.Tree', {
       tpl,
       tooltip;
 
-    const data = {
+    var data = {
       description: record.data.description.replace(/['"]/g, ''),
       epr_original_id: record.data.epr_original_id,
       tbl_size: record.data.tbl_size,
