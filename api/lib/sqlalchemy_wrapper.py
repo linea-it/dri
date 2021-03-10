@@ -44,7 +44,7 @@ class DBBase:
         with self.engine.connect():
             self.metadata = MetaData(self.engine)
 
-        self.log = logging.getLogger('django')
+        self.log = logging.getLogger('catalog_db')
 
     def prepare_connection(self, db_name):
         connection_data = {}
@@ -254,7 +254,7 @@ class DBBase:
 
     def stm_count(self, stm):
         with self.engine.connect() as con:
-            stm_count = stm.with_only_columns([func.count()]).limit(None).offset(None)
+            stm_count = stm.with_only_columns([func.count()]).limit(None).offset(None).order_by(None)
             queryset = con.execute(stm_count)
             result = dict(queryset.fetchone())
             return result.get('count_1')
