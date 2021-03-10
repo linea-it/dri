@@ -211,6 +211,14 @@ LOGGING = {
             'formatter': 'standard',
         },
         # DRI APPS Logs
+        'catalog_db': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'catalog_db.log'),
+            'formatter': 'standard',
+        },        
         'descutoutservice': {
             'level': LOG_LEVEL,
             'class': 'logging.handlers.RotatingFileHandler',
@@ -296,6 +304,11 @@ LOGGING = {
             'propagate': False
         },
         # DRI APPS Logs
+        'catalog_db': {
+            'handlers': ['catalog_db'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
         'descutoutservice': {
             'handlers': ['descutoutservice'],
             'level': LOG_LEVEL,
