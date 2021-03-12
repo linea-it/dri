@@ -342,44 +342,33 @@ def get_ncsa_signup(request):
         return Response(dict({'ncsa_signup': settings.NCSA_SIGNUP_LINK}))
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def teste(request):
-    if request.method == 'GET':
+    if request.method == 'POST':
 
-        # import logging
-        # from datetime import datetime
-        # import shutil
-        # import os
-        # from product.models import CutOutJob, Product
-        # from product.descutoutservice import DesCutoutService
-        # from django.utils.timezone import utc
-        # import pandas as pd
+        # Teste Target Save as
+        # data = request.data
 
-        # log = logging.getLogger('descutoutservice')
+        # user_id = request.user.pk
+        # product_id = data.get("product", None)
+        # name = data.get("name", None)
+        # description = data.get("description")
+        # filter_id = data.get("filter", None)
 
-        # log.debug("------ TESTE DESCUT ------")
+        # from product.saveas import SaveAs
+        # saveas = SaveAs()
 
-        # dc = DesCutoutService()
+        # logger = saveas.logger
 
-        # job = CutOutJob.objects.create(
-        #     cjb_product=Product.objects.get(pk=2),
-        #     owner=request.user,
-        #     cjb_display_name="Teste Cutout",
-        #     cjb_tag="Y6A1",
-        #     cjb_xsize=1,
-        #     cjb_ysize=1,
-        #     cjb_make_fits=True,
-        #     cjb_fits_colors="grizy",
-        #     cjb_make_stiff=True,
-        #     cjb_stiff_colors="gri;rig;zgi",
-        #     cjb_make_lupton=True,
-        #     cjb_lupton_colors="gri;rig;zgi",
-        #     cjb_status="st",
-        #     cjb_label_position="inside",
-        #     cjb_label_properties="meta_id,ra,dec",
-        #     cjb_label_colors="2eadf5",
-        #     cjb_label_font_size="10"
-        # )
-        # job.save()
+        # logger.info("Task product_save_as Started")
+
+        # logger.debug("User: %s" % user_id)
+        # logger.debug("Product: %s" % product_id)
+        # logger.debug("Name: %s" % name)
+        # logger.debug("Filter: %s" % filter_id)
+        # logger.debug("Description: %s" % description)
+
+        # # Criar a tabela
+        # saveas.create_table_by_product_id(user_id, product_id, name, filter_id, description)
 
         return Response(dict({'status': "success"}))

@@ -29,6 +29,9 @@ class DBOracle:
     def get_dialect(self):
         return oracle
 
+    def accept_bulk_insert(self):
+        return False
+
     def get_raw_sql_limit(self, offset, limit):
         return "OFFSET %s ROWS FETCH NEXT %s ROWS ONLY" % (offset, limit)
 
