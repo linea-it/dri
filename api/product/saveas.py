@@ -95,7 +95,6 @@ class SaveAs:
         self.logger.debug(df.head())
 
         # Recupera o Schema necessário para criação da tabela e registro.
-        # schema = product.table.tbl_schema
         schema = catalog_db.get_connection_schema()
 
         self.logger.debug("Schema: %s" % schema)
