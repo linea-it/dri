@@ -24,6 +24,9 @@ class DBPostgresql:
     def get_dialect(self):
         return postgresql
 
+    def accept_bulk_insert(self):
+        return True
+
     def get_raw_sql_limit(self, offset, limit):
         return "OFFSET %s LIMIT %s" % (offset, limit)
 
