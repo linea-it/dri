@@ -1,7 +1,6 @@
 from sqlalchemy.dialects import sqlite
 
 
-
 class DBSqlite:
     def __init__(self, db):
         self.db = db
@@ -16,11 +15,14 @@ class DBSqlite:
     def get_dialect(self):
         return sqlite
 
+    def accept_bulk_insert(self):
+        return False
+
     def get_raw_sql_limit(self, line_number):
         return "LIMIT(%s)" % line_number
 
     def get_table_properties(self, table, schema=None):
-        # TODO: Criar uma query que retorne a lista de colunas e o tipo. 
+        # TODO: Criar uma query que retorne a lista de colunas e o tipo.
         # esta funcao tem esses dados https://www.sqlite.org/pragma.html#pragma_table_info
         raise("Method not implemented 'get_table_properties'")
 

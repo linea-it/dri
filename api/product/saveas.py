@@ -2,17 +2,16 @@ import logging
 import os
 from urllib.parse import urljoin
 
+import pandas as pd
 from common.notify import Notify
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
-from lib.CatalogDB import CatalogDB
-from lib.CatalogDB import TargetObjectsDBHelper
+from lib.CatalogDB import CatalogDB, TargetObjectsDBHelper
 from product_register.ImportProcess import Import
 
 from .association import Association
-from .models import FilterCondition
-from .models import Product
+from .models import FilterCondition, Product
 from .serializers import FConditionSerializer
 
 
@@ -52,6 +51,8 @@ class SaveAs:
                 serializer = FConditionSerializer(row)
                 conditions.append(serializer.data)
 
+        self.logger.debug("Filter Conditions: %s" % conditions)
+
         # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
         schema_rating_reject = settings.SCHEMA_RATING_REJECT
 
@@ -69,36 +70,78 @@ class SaveAs:
             user=user,
         )
 
-        stm = catalog_db.create_stm(
+        # Executa a query e gera um dataset
+        records, count = catalog_db.query(
             filters=conditions,
-            prevent_ambiguously=True
         )
 
-        # Schema onde a tabela sera criada, no NCSA + Oracle a tabela sera criada no user/schema do proprio DRI
-        try:
-            saveas_schema = settings.SCHEMA_SAVE_AS
-        except:
-            saveas_schema = None
+        df = pd.DataFrame(records)
 
-        if saveas_schema is None and product.table.tbl_schema is not None:
-            # Se nao tiver um schema default e o produto estiver salvo em um schema, utilizar o schema do produto
-            saveas_schema = product.table.tbl_schema
+        # Remove as colunas de rating e reject
+        df.drop(['_meta_rating_id', '_meta_rating', '_meta_reject_id', '_meta_reject', ], axis='columns', inplace=True)
+        # Colocar todos os headers para minusculo.
+        df.columns = map(str.lower, df.columns)
+
+        # Recuperar a propriedade que representa a primary key
+        property_id = associations.get("meta.id;meta.main").lower()
+        self.logger.info("Property Id: [%s]" % property_id)
+
+        df = df.set_index(property_id)
+
+        self.logger.debug(df.head())
+
+        # Recupera o Schema necessário para criação da tabela e registro.
+        schema = catalog_db.get_connection_schema()
+
+        self.logger.debug("Schema: %s" % schema)
 
         # Criar a Tabela
-        self.create_table_as(
-            database=product.table.tbl_database,
-            schema=saveas_schema,
-            table=tablename,
-            stm=stm
-        )
+        self.logger.info("Creating the table and importing the data.")
+        self.logger.info("Schema: [%s] Tablename: [%s] Rows: [%s]" % (schema, tablename, df.shape[0]))
+
+        # Verificar se o database aceita inserts multiplos
+        bulk_insert = 'multi' if catalog_db.database.accept_bulk_insert() else None
+        self.logger.info("Bulk Inserts: [%s]" % bulk_insert)
+
+        try:
+            df.to_sql(
+                # None da tabela
+                tablename,
+                # engine da conexão com database.
+                catalog_db.engine,
+                # Schema onde a tabela vai ser criada.
+                schema=schema,
+                # How to behave if the table already exists.
+                if_exists='fail',  # Use 'replace' in development and tests.
+                # Cria a coluna de index do dataframe como uma coluna no DB.
+                index=True,
+                # Nome da coluna que representa o index do DF.
+                index_label=property_id,
+                # Tamanhos das intruções de insert divididos em pedaços.
+                chunksize=1000,
+                # Controls the SQL insertion clause used: None for individual insert and 'multi' for multiple values in single insert.
+                # 'multi' é a oplão mais rapida.
+                method=bulk_insert
+            )
+        except Exception as e:
+            msg = "Failed to create the table and import the data. Error: [%s]" % e
+            self.logger.error(msg)
+            # Verifica se a tabela foi criada
+            if catalog_db.table_exists(tablename, schema):
+                # Drop Table
+                catalog_db.drop_table(tablename, schema)
+
+                self.logger.info("Droped  Table: [%s] Schema: [%s]" % (tablename, schema))
+
+            raise (Exception(msg))
 
         # Registar a tabela como produto
-        self.register_new_table_as_product(user, product, saveas_schema, tablename, name, description)
+        self.register_new_table_as_product(user, product, schema, tablename, name, description)
 
         new_product = Product.objects.get(
             prd_display_name=name,
             table__tbl_name=tablename,
-            table__tbl_schema=saveas_schema,
+            table__tbl_schema=schema,
             table__tbl_database=product.table.tbl_database
         )
 
@@ -204,7 +247,7 @@ class SaveAs:
         if user.email:
             self.logger.info("Sending mail notification.")
             host = settings.BASE_HOST
-            url = urljoin(host, os.path.join("dri/apps/target/#cv", str(new_product.pk)))
+            url = urljoin(host, os.path.join("/target/#cv", str(new_product.pk)))
 
             subject = "Save As Finish"
 
