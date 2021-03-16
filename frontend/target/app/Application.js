@@ -36,11 +36,6 @@ Ext.define('Target.Application', {
             success: function (response) {
                 var data = JSON.parse(response.responseText);
 
-                // Informa o Id o usuario para o GA, para que possa reconher usuarios unicos.
-                window.gtag('config', 'GA_MEASUREMENT_ID', {
-                    'user_id': data.id
-                });
-
                 // Recupera essas Settings do backend
                 Settings.loadSettings([
                     'PRODUCT_REGISTER_DB_INTERFACE',
@@ -49,6 +44,12 @@ Ext.define('Target.Application', {
                     'DESACCESS_API__AVAILABLE_RELEASES',
                     'DESACCESS_API__MAX_OBJECTS'
                 ])
+
+                // Informa o Id o usuario para o GA, para que possa reconher usuarios unicos.
+                window.gtag('config', 'GA_MEASUREMENT_ID', {
+                    'user_id': data.id
+                });
+
             },
             failure: function (response, opts) {
                 var pathname = window.location.pathname;
