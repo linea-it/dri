@@ -342,26 +342,29 @@ class CatalogObjectsDBHelper(CatalogTable):
 
 
 class TargetObjectsDBHelper(CatalogTable):
-    def __init__(self, table, schema=None, database=None, associations=None, schema_rating_reject=None, product=None,
+    def __init__(self, table, schema=None, database=None, associations=None, product=None,
                  user=None):
         super(TargetObjectsDBHelper, self).__init__(database=database, table=table, schema=schema,
                                                     associations=associations)
 
         self.log = logging.getLogger('catalog_db')
-        # Catalogos de Target tem ligacao com o as tabelas Rating e Reject
-        # Esse atributo deve vir do Settings
-        # Cria as instancias das tabelas de rating e reject
-        # TODO: Evitar o uso dessa variavel de ambiente, deve vir da classe DBBase.
-        self.schema_rating_reject = schema_rating_reject
 
+        # Catalogos de Target tem ligacao com o as tabelas Rating e Reject
+
+        # Cria as instancias das tabelas de rating e reject
         # Trata os casos em que a tabela do usuario está em um banco diferente do banco de catalogos da aplicação.
         # so vai funcionar se os bancos forem os mesmos mas com tags diferentes na settings.
         # Exemplo Dessci e catalog, no Oracle ambas são o mesmo banco de dados.
+        self.schema_rating_reject = self.get_connection_schema()
+
         if database is not 'catalog':
             db_catalog = CatalogDB()
 
+            self.schema_rating_reject = db_catalog.get_connection_schema()
+
             self.catalog_rating = db_catalog.get_table_obj('catalog_rating', schema=self.schema_rating_reject)
             self.catalog_reject = db_catalog.get_table_obj('catalog_reject', schema=self.schema_rating_reject)
+
         else:
             self.catalog_rating = self.get_table_obj('catalog_rating', schema=self.schema_rating_reject)
             self.catalog_reject = self.get_table_obj('catalog_reject', schema=self.schema_rating_reject)
@@ -381,193 +384,6 @@ class TargetObjectsDBHelper(CatalogTable):
                             'which is used in the join with rating and reject.')
 
         self.user = user
-
-    # def create_stm(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None,
-    #                prevent_ambiguously=False):
-
-    #     self.set_filters(filters)
-    #     self.set_query_columns(columns)
-    #     self.set_url_filters(url_filters)
-    #     self.limit = limit
-    #     self.start = start
-    #     self.ordering = ordering
-
-    #     # recupera a propriedade associada como id
-    #     property_id = self.associations.get("meta.id;meta.main").lower()
-
-    #     # Adiciona um alias a tabela principal
-    #     self.table = self.table.alias('a')
-
-    #     # Adiciona alias as tabelas rating e reject
-    #     catalog_rating = self.catalog_rating.alias('b')
-    #     catalog_reject = self.catalog_reject.alias('c')
-
-    #     # Cria os Joins
-    #     stm_join = self.table
-
-    #     # Identificar qual é o banco de dados a query é diferente entre Oracle e Postgresql
-    #     if self.get_engine() == "oracle":
-    #         # Join com Catalog_Rating
-    #         stm_join = stm_join.join(catalog_rating,
-    #                                  and_(
-    #                                      # Product ID
-    #                                      catalog_rating.c.catalog_id == self.product.pk,
-    #                                      # User ID
-    #                                      catalog_rating.c.owner == self.user.pk,
-    #                                      # Object ID
-    #                                      self.get_column_obj(self.table, property_id) == catalog_rating.c.object_id,
-    #                                      # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog rating object_id é string
-    #                                      # 15/09/2020 - este cast para string gerou um bug no Oracle
-    #                                      # cast(self.get_column_obj(self.table, property_id), sqlalchemy.String)  == catalog_rating.c.object_id,
-    #                                  ),
-    #                                  isouter=True)
-
-    #         stm_join = stm_join.join(catalog_reject,
-    #                                  and_(
-    #                                      # Product ID
-    #                                      catalog_reject.c.catalog_id == self.product.pk,
-    #                                      # User ID
-    #                                      catalog_reject.c.owner == self.user.pk,
-    #                                      # Object Id OR Reject is NULL
-    #                                      or_(self.get_column_obj(self.table, property_id) == catalog_reject.c.object_id,
-    #                                          catalog_reject.c.id.is_(None))
-    #                                      # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog reject object_id é string
-    #                                      # 15/09/2020 - este cast para string gerou um bug no Oracle
-    #                                      #  or_(cast(self.get_column_obj(self.table, property_id), sqlalchemy.String) == catalog_reject.c.object_id,
-    #                                      #      catalog_reject.c.id.is_(None))
-    #                                  ),
-    #                                  isouter=True)
-
-    #     elif self.get_engine() == "postgresql_psycopg2" or self.get_engine() == "sqlite3":
-    #         # Join com Catalog_Rating
-    #         stm_join = stm_join.join(catalog_rating,
-    #                                  and_(
-    #                                      # Product ID
-    #                                      catalog_rating.c.catalog_id == self.product.pk,
-    #                                      # User ID
-    #                                      catalog_rating.c.owner == self.user.pk,
-    #                                      # Object ID
-    #                                      # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog rating object_id é string
-    #                                      cast(self.get_column_obj(self.table, property_id), sqlalchemy.String) == catalog_rating.c.object_id,
-    #                                  ),
-    #                                  isouter=True)
-
-    #         stm_join = stm_join.join(catalog_reject,
-    #                                  and_(
-    #                                      # Product ID
-    #                                      catalog_reject.c.catalog_id == self.product.pk,
-    #                                      # User ID
-    #                                      catalog_reject.c.owner == self.user.pk,
-    #                                      # Object Id OR Reject is NULL
-    #                                      # Fazer o Cast da coluna objeto id do catalogo para String, por que na catalog reject object_id é string
-    #                                      or_(cast(self.get_column_obj(self.table, property_id), sqlalchemy.String) == catalog_reject.c.object_id,
-    #                                          catalog_reject.c.id.is_(None))
-    #                                  ),
-    #                                  isouter=True)
-    #     else:
-    #         raise Exception("Catalog, rating and reject query was not implemented for this database engine.")
-
-    #     query_columns = list()
-
-    #     if len(columns) == 0:
-    #         # Criar o Statement usando as todas as colunas mais as colunas de rating and reject.
-    #         for column in self.table.c:
-    #             query_columns.append(column)
-
-    #         # Se a Flag Prevent Ambiguos for True nao adicionar essas colunas pois vai gerar erro no banco de dados.
-    #         if not prevent_ambiguously:
-    #             query_columns.append(catalog_rating.c.id.label('meta_rating_id'))
-    #             query_columns.append(catalog_rating.c.rating.label('meta_rating'))
-    #             query_columns.append(catalog_reject.c.id.label('meta_reject_id'))
-    #             query_columns.append(catalog_reject.c.reject.label('meta_reject'))
-
-    #     else:
-    #         # Usar apenas as colunas selecionadas
-    #         for column in self.query_columns:
-    #             if column in list(catalog_rating.c):
-    #                 query_columns.append(catalog_rating.c[column])
-
-    #             elif column in list(catalog_reject.c):
-    #                 query_columns.append(catalog_reject.c[column])
-
-    #             else:
-    #                 query_columns.append(column)
-    #                 # query_columns.append(self.table.c[column])
-
-    #     stm = select(query_columns).select_from(stm_join)
-
-    #     # Filtros
-    #     filters = list()
-    #     rating_filters = and_()
-    #     reject_filters = and_()
-    #     coordinate_filters = and_()
-
-    #     # Targets podem ter filtros especias checar a existencia deles
-    #     if self.filters is not None and len(self.filters) > 0:
-
-    #         for condition in self.filters:
-
-    #             if condition.get("column").find("_meta_") is not -1:
-    #                 # Filtro Especial onde a propriedade nao faz parte da tabela original
-
-    #                 if condition.get("column") == '_meta_rating':
-    #                     condition.update({"column": "rating"})
-    #                     condition.update({"value": int(condition.get("value"))})
-
-    #                     rating_filters = and_(*self.do_filter(catalog_rating, list([condition])))
-
-    #                 elif condition.get("column") == '_meta_reject':
-    #                     reject_filters = or_(catalog_reject.c.reject.is_(None), catalog_reject.c.reject == 0)
-
-    #                     if condition.get("value") in ['True', 'true', '1', 't', 'y', 'yes']:
-    #                         reject_filters = catalog_reject.c.reject == 1
-
-    #             elif condition.get("column") == 'coordinates':
-
-    #                 coordinate_filters = self.database.get_condition_square(
-    #                     condition.get("lowerleft"),
-    #                     condition.get("upperright"),
-    #                     condition.get("property_ra"),
-    #                     condition.get("property_dec"))
-
-    #             else:
-    #                 filters.append(condition)
-
-    #     base_filters = and_(*self.do_filter(self.table, filters))
-
-    #     stm = stm.where(and_(base_filters, coordinate_filters, rating_filters, reject_filters))
-
-    #     # Ordenacao
-    #     if self.ordering is not None:
-    #         asc = True
-    #         property = self.ordering.lower()
-
-    #         if self.ordering[0] == '-':
-    #             asc = False
-    #             property = self.ordering[1:].lower()
-
-    #         if property == '_meta_rating':
-    #             property = catalog_rating.c.rating
-    #         elif property == '_meta_reject':
-    #             property = catalog_reject.c.reject
-    #         else:
-    #             property = text('a.' + property)
-
-    #         if asc:
-    #             stm = stm.order_by(property)
-    #         else:
-    #             stm = stm.order_by(desc(property))
-
-    #     # Paginacao
-    #     if self.limit:
-    #         stm = stm.limit(literal_column(str(self.limit)))
-
-    #         if self.start:
-    #             stm = stm.offset(literal_column(str(self.start)))
-
-    #     self.log.info("Target Query: [ %s ]" % self.statement_to_str(stm))
-
-    #     return stm
 
     def query(self, columns=list(), filters=None, ordering=None, limit=None, start=None, url_filters=None):
         """
@@ -783,6 +599,7 @@ class TargetObjectsDBHelper(CatalogTable):
         df_result = self.merge_dataframes(property_id, df_objects, df_rating, df_reject)
 
         # Realizar filtro(s) na tabela Rating:
+        self.log.debug("Check Rating conditions: [%s]" % rating_conditions)
         if len(rating_conditions) > 0:
             for condition in rating_conditions:
                 if condition['op'] == 'eq':
@@ -807,6 +624,7 @@ class TargetObjectsDBHelper(CatalogTable):
                     pass
 
         # Realizar filtro na tabela Reject:
+        self.log.debug("Check Reject conditions: [%s]" % reject_conditions)
         if reject_conditions:
             if reject_conditions['op'] == 'eq':
                 df_result = df_result[df_result[reject_conditions['column']] == reject_conditions['value']]

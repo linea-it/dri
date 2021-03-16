@@ -53,11 +53,10 @@ class SaveAs:
 
         self.logger.debug("Filter Conditions: %s" % conditions)
 
-        # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
-        schema_rating_reject = settings.SCHEMA_RATING_REJECT
-
         # Recuperar as associacoes para o produto
         associations = Association().get_associations_by_product_id(product.pk)
+
+        self.logger.debug("Associations: %s" % associations)
 
         # Criar o Statement
         catalog_db = TargetObjectsDBHelper(
@@ -65,7 +64,6 @@ class SaveAs:
             schema=product.table.tbl_schema,
             database=product.table.tbl_database,
             associations=associations,
-            schema_rating_reject=schema_rating_reject,
             product=product,
             user=user,
         )
@@ -86,7 +84,13 @@ class SaveAs:
         property_id = associations.get("meta.id;meta.main").lower()
         self.logger.info("Property Id: [%s]" % property_id)
 
-        df = df.set_index(property_id)
+        try:
+            df[property_id] = df[property_id].astype('int64')
+            df = df.set_index(property_id)
+        except Exception as e:
+            self.logger.error(e)
+
+        self.logger.debug(df.dtypes)
 
         self.logger.debug(df.head())
 
