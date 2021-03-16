@@ -128,12 +128,6 @@ PRODUCT_REGISTER_ENABLE_PUBLIC = False
 # nesse caso o usuario só conhece o dessci
 # este campo deveria ser preenchido com o valor dessci.
 TARGET_VIEWER_DATABASES = []
-# Schema onde estão as tabelas rating e reject.
-SCHEMA_RATING_REJECT = None
-# Save As default Schema, Utilizado pela feature Target::Save As caso seja None, o schema utilizado
-# sera o mesmo do produto original mais vai requerer permissao.
-# para o ncsa cada usuario tem um schema utilizar o nome de usuario da conf 'catalog'
-SCHEMA_SAVE_AS = None
 # USER_QUERY:
 # Tempo de execucao de um job no User query.
 USER_QUERY_EXECUTION_TIMEOUT = 300
