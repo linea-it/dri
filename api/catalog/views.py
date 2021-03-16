@@ -121,16 +121,11 @@ class TargetViewSet(ViewSet):
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(catalog.pk)
 
-        # TODO: essa variavel não será mas necessária o schema sempre vai ser o mesmo.
-        # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
-        schema_rating_reject = settings.SCHEMA_RATING_REJECT
-
         catalog_db = TargetObjectsDBHelper(
             table=catalog.tbl_name,
             schema=catalog.tbl_schema,
             database=catalog.tbl_database,
             associations=associations,
-            schema_rating_reject=schema_rating_reject,
             product=catalog,
             user=request.user
         )
