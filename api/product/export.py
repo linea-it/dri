@@ -253,15 +253,11 @@ class Export:
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(product_id=product_id)
 
-        # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
-        schema_rating_reject = settings.SCHEMA_RATING_REJECT
-
         catalog_db = TargetObjectsDBHelper(
             table=table,
             schema=schema,
             database=database,
             associations=associations,
-            schema_rating_reject=schema_rating_reject,
             product=product,
             user=user
         )
