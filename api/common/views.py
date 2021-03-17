@@ -342,9 +342,20 @@ def get_ncsa_signup(request):
         return Response(dict({'ncsa_signup': settings.NCSA_SIGNUP_LINK}))
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def teste(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
+
+        # from product.models import ProductContentAssociation, ProductContent
+
+        # properties = list()
+        # queryset = ProductContentAssociation.objects.select_related().filter(pca_product=47)
+
+        # for associate in queryset:
+        #     pcontent = associate.pca_product_content
+        #     print(pcontent.pcn_ucd)
+        #     if pcontent.pcn_ucd is not None and pcontent.pcn_column_name is not None and pcontent.pcn_column_name not in properties:
+        #         properties.append(pcontent.pcn_column_name.lower())
 
         # Teste Target Save as
         # data = request.data
@@ -371,4 +382,4 @@ def teste(request):
         # # Criar a tabela
         # saveas.create_table_by_product_id(user_id, product_id, name, filter_id, description)
 
-        return Response(dict({'status': "success"}))
+        return Response(dict({'status': "success", "properties": properties}))

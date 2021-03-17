@@ -11,15 +11,19 @@ Ext.define('Explorer.view.main.MainController', {
 
     requires: [
         'Explorer.view.coadd.Coadd',
-        'Explorer.view.system.System'
+        'Explorer.view.system.System',
+        'Explorer.view.star_cluster.StarCluster'
     ],
 
-    routes : {
+    routes: {
         'coadd/:source/:object': {
             action: 'onCoadd'
         },
         'system/:source/:object': {
             action: 'onSystem'
+        },
+        'star_cluster/:source/:object': {
+            action: 'onStarCluster'
         }
     },
 
@@ -67,7 +71,18 @@ Ext.define('Explorer.view.main.MainController', {
     onSystem: function (source, object_id) {
         var newView = Ext.create('Explorer.view.system.System', {
             hideMode: 'offsets',
-            routeId: 'sytem',
+            routeId: 'system',
+            layout: 'fit'
+        });
+
+        this.setActivePanel(newView, source, object_id);
+
+    },
+
+    onStarCluster: function (source, object_id) {
+        var newView = Ext.create('Explorer.view.star_cluster.StarCluster', {
+            hideMode: 'offsets',
+            routeId: 'starcluster',
             layout: 'fit'
         });
 

@@ -1,0 +1,675 @@
+Ext.define('Explorer.view.star_cluster.StarClusterController', {
+    extend: 'Ext.app.ViewController',
+
+    alias: 'controller.star_cluster',
+
+    listen: {
+        component: {
+            'star_cluster': {
+                loadpanel: 'onLoadPanel'
+            },
+            'star_cluster-visiomatic': {
+                changedataset: 'onChangeDataset',
+                changeimage: 'onChangeImage'
+            }
+        },
+        store: {
+            '#datasets': {
+                load: 'onLoadDatasets'
+            }
+        }
+    },
+
+    runner: new Ext.util.TaskRunner(),
+
+    onLoadPanel: function (source, object_id) {
+        this.load(source);
+
+    },
+
+    load: function (source) {
+        var me = this;
+
+        me.loadProduct(source);
+    },
+
+    loadProduct: function (source) {
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            products = vm.getStore('products'),
+            vacProducts = vm.getStore('vacProducts');
+
+        view.setLoading(true);
+
+        products.addFilter({
+            property: 'prd_name',
+            value: source
+        });
+
+        products.load({
+            callback: function () {
+                if (this.count() === 1) {
+                    me.onLoadProduct(this.first());
+
+                    view.setLoading(false);
+                }
+
+            }
+        });
+    },
+
+    onLoadProduct: function (product) {
+        var me = this,
+            vm = me.getViewModel(),
+            detailPanel = me.lookup('detailPanel');
+
+        vm.set('currentProduct', product);
+
+        detailPanel.setTitle(product.get('prd_display_name'));
+
+        // Descobrir a Propriedade Id
+        me.loadAssociations(product);
+
+        // Carregar as propriedades dos star cluster members
+        me.loadMembersContent(product);
+
+    },
+
+    loadAssociations: function (product) {
+        var me = this,
+            view = me.getView(),
+            vm = me.getViewModel(),
+            associations = vm.getStore('associations');
+
+        view.setLoading(true);
+
+        associations.addFilter({
+            property: 'pca_product',
+            value: product.get('id')
+        });
+
+        associations.load({
+            callback: function () {
+                if (this.count() > 0) {
+
+                    this.each(function (item) {
+                        if (item.get('pcc_ucd') === 'meta.id;meta.main') {
+                            vm.set('property_id', item.get('pcn_column_name'));
+                        }
+
+                    }, me);
+
+                    view.setLoading(false);
+
+                    me.loadObject();
+                }
+            }
+        });
+    },
+
+    loadObject: function () {
+        console.log("loadObject()")
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            product = vm.get('currentProduct'),
+            objects = vm.getStore('objects'),
+            object_id = vm.get('object_id'),
+            property_id = vm.get('property_id');
+
+        view.setLoading(true);
+
+        objects.addFilter([
+            {
+                property: 'product',
+                value: product.get('id')
+            },
+            {
+                property: property_id,
+                value: object_id
+            }
+        ]);
+
+        objects.load({
+            callback: function () {
+                console.log("load Object Callback")
+                if (this.count() === 1) {
+                    me.onLoadObject(this.first());
+
+                    view.setLoading(false);
+                }
+            }
+        });
+    },
+
+    onLoadObject: function (object) {
+        console.log("onLoadObject(%o)", object)
+        var me = this,
+            vm = me.getViewModel(),
+            view = me.getView(),
+            propGrid = me.lookupReference('properties-grid'),
+            properties = vm.getStore('properties'),
+            product = vm.get('currentProduct'),
+            datasets = vm.getStore('datasets'),
+            aladin = me.lookupReference('aladin'),
+            data, position;
+
+        view.setLoading(true);
+
+        vm.set('object', object);
+
+        // Setar as propriedades
+        properties.removeAll();
+
+        data = object.data;
+
+        vm.set('object_data', data);
+
+        for (var property in data) {
+            var prop = property.toLowerCase();
+
+            // nao incluir as propriedades _meta
+            if (prop.indexOf('_meta_') === -1) {
+                properties.add([
+                    [property.toLowerCase(), data[property]]
+                ]);
+            }
+        }
+
+        propGrid.setStore(properties);
+
+        // descobrir as tiles do objeto usando as coordenadas do objeto
+        position = String(data._meta_ra) + ',' + String(data._meta_dec);
+
+        datasets.addFilter([{
+            property: 'position',
+            value: position
+        }]);
+
+        vm.set('position', position);
+
+        view.setLoading(false);
+
+        // Descobrir se tem membros
+        // os membros so podem ser plotados depois que o dataset
+        // estiver carregado no visiomatic
+        if (product.get('prl_related') > 0) {
+            me.loadstar_clusterMembers(product, object);
+        }
+
+        // Setar um valor default para o raio utilizado na VacGrid
+        // por default 2 vezes o valor do raio
+        vm.set('vacRadius', 3);
+        // Setar um valor defaul para o filtro em z
+        vm.set('vacZ', 3);
+
+        // Formatar RA, Dec
+        vm.set('display_ra', parseFloat(object.get('_meta_ra')).toFixed(5));
+        vm.set('display_dec', parseFloat(object.get('_meta_dec')).toFixed(5));
+        vm.set('display_radius', parseFloat(object.get('_meta_radius')).toFixed(3));
+    },
+
+    onLoadDatasets: function (store) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic'),
+            cmb = visiomatic.lookupReference('cmbCurrentDataset');
+
+        // Apenas uma tile na coordenada do objeto,
+        if (store.count() == 1) {
+            // setar essa tile no imagepreview
+            me.changeImage(store.first());
+
+            cmb.select(store.first());
+
+            // Desabilitar a combobox Image
+            cmb.setReadOnly(true);
+
+        } else if (store.count() > 1) {
+            me.changeImage(store.first());
+
+            // Seleciona a primeira tile disponivel
+            cmb.select(store.first());
+
+            // Habilitar a combobox Image
+            cmb.setReadOnly(false);
+
+        } else {
+            console.log('Nenhuma tile encontrada para o objeto');
+        }
+    },
+
+    changeImage: function (dataset) {
+        var me = this,
+            visiomatic = me.lookupReference('visiomatic'),
+            url = dataset.get('image_src_ptif');
+
+        if (dataset) {
+
+            visiomatic.setDataset(dataset.get('id'));
+            visiomatic.setCurrentDataset(dataset);
+
+            if (url !== '') {
+                visiomatic.setImage(url);
+
+            } else {
+                visiomatic.removeImageLayer();
+
+            }
+
+        } else {
+            console.log('dataset nao encontrado');
+        }
+    },
+
+    onChangeDataset: function (dataset) {
+        var me = this;
+        me.changeImage(dataset);
+
+        // Depois de Selecionar um dataset carregar o Aladin com a imagem
+        // do mesmo Release do dataset
+        me.loadSurveys(dataset.get('release'))
+
+        // Carregar as Tile Grid que e apresentada no aladin
+        me.loadTags(dataset.get('release'))
+    },
+
+    onChangeImage: function () {
+        // console.log('onChangeImage')
+        var me = this,
+            vm = me.getViewModel(),
+            product = vm.get('currentProduct'),
+            object = vm.get('object'),
+            visiomatic = me.lookupReference('visiomatic'),
+            aladin = me.lookupReference('aladin'),
+            members = vm.getStore('members')
+        fov = 0.3;
+
+        visiomatic.setView(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
+            fov);
+
+        // Desenhar Raio
+        visiomatic.drawRadius(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
+            object.get('_meta_radius'),
+            'arcmin');
+
+        visiomatic.showHideRadius(true);
+
+        me.onLoadstar_clusterMembers(members);
+
+    },
+
+    /**
+     * Carrega a lista de imagens disponiveis para um release.
+     * @param {int} release - Release ID
+     */
+    loadSurveys: function (release) {
+        var me = this,
+            vm = me.getViewModel(),
+            store = vm.getStore('surveys');
+
+        store.addFilter(
+            [
+                {
+                    property: 'srv_project',
+                    value: 'DES'
+                },
+                {
+                    property: 'srv_release',
+                    value: release
+                }
+            ]
+        );
+
+        store.load({
+            callback: function () {
+                me.onLoadSurvey(this);
+            }
+        })
+    },
+
+    onLoadSurvey: function (surveys) {
+        // console.log('onLoadSurvey(%o)', surveys)
+        var me = this,
+            aladin = me.lookupReference('aladin'),
+            position = me.getViewModel().get('position'),
+            data = me.getViewModel().get('object_data');
+
+        // Aladin
+        aladin.goToPosition(position);
+
+        aladin.setFov(180);
+
+        // Aladin Raio
+        aladin.drawRadius(
+            data._meta_ra,
+            data._meta_dec,
+            data._meta_radius,
+            'arcmin'
+        );
+
+    },
+
+
+
+    onSearch: function (value) {
+        var me = this,
+            vm = me.getViewModel(),
+            properties = vm.getStore('properties');
+
+        if (value !== '') {
+            properties.filter([
+                {
+                    property: 'property',
+                    value: value
+                }
+            ]);
+
+        } else {
+            me.onSearchCancel();
+        }
+
+    },
+
+    onSearchCancel: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            properties = vm.getStore('properties');
+
+        properties.clearFilter();
+
+    },
+
+
+    // ---------------------- star_cluster Members ----------------------
+    loadMembersContent: function (product) {
+        var me = this,
+            vm = me.getViewModel(),
+            displayContents = vm.getStore('displayContents'),
+            membersGrid = me.lookupReference('members-grid');
+
+        displayContents.addFilter(
+            {
+                'property': 'pcn_product_id',
+                value: product.get('prl_related')
+            }
+        );
+
+        displayContents.load({
+            callback: function () {
+                if (this.check_ucds()) {
+                    membersGrid.reconfigureGrid(this);
+
+                }
+            }
+        });
+
+    },
+
+    loadstar_clusterMembers: function (product, object) {
+        var me = this,
+            vm = me.getViewModel(),
+            members = vm.getStore('members');
+
+        members.addFilter([
+            {
+                property: 'product',
+                value: product.get('prl_related')
+            },
+            {
+                property: product.get('prl_cross_property'),
+                value: object.get('id')
+            }
+        ]);
+
+        members.load({
+            callback: function () {
+                me.onLoadstar_clusterMembers(this);
+            }
+        });
+    },
+
+    onLoadstar_clusterMembers: function (members) {
+        var me = this,
+            vm = me.getViewModel(),
+            currentProduct = vm.get('currentProduct'),
+            visiomatic = me.lookupReference('visiomatic'),
+            aladin = me.lookupReference('aladin'),
+            lmembers;
+
+        lmembers = visiomatic.overlayCatalog(currentProduct.get('prd_display_name'), members, {
+            weight: 2, //largura da borda em pixel
+            opacity: 0.8, // transparencia da borda
+            fillOpacity: 0.01, // Transparencia nos marcadores.
+            color: '#2db92d', //Stroke color
+            interactive: true,
+            pointType: 'circle', //'circle', 'ellipse', 'triangle', 'square'
+            pointSize: 0.001 // tamanho utilizado para criar os makers em graus
+        });
+
+        visiomatic.showHideLayer(lmembers, true);
+
+        vm.set('overlayMembers', lmembers);
+
+        // Aladin
+        aladin.plotstar_clusterMembers(currentProduct.get('prd_display_name'), members);
+
+        vm.set('have_members', true);
+
+    },
+
+    onSelectstar_clusterMember: function (selModel, member) {
+        this.highlightObject(member);
+
+    },
+
+    highlightObject: function (object, sincGrid) {
+        var me = this,
+            vm = me.getViewModel(),
+            product = vm.get('currentProduct'),
+            lMarkPosition = vm.get('lMarkPosition'),
+            visiomatic = me.lookupReference('visiomatic'),
+            aladin = me.lookupReference('aladin'),
+            fov = visiomatic.getFov(),
+            grid = me.lookup('members-grid'),
+            position;
+
+        visiomatic.setView(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
+            fov,
+            true // Nao mover a crosshair
+        );
+
+        if (lMarkPosition) {
+            visiomatic.showHideLayer(lMarkPosition, false);
+        }
+
+        lMarkPosition = visiomatic.markPosition(
+            object.get('_meta_ra'),
+            object.get('_meta_dec'),
+            'x-fa fa-sort-desc fa-2x');
+
+        vm.set('lMarkPosition', lMarkPosition);
+
+        // Aladin
+        position = String(object.get('_meta_ra')) + ',' + String(object.get('_meta_dec'));
+        aladin.goToPosition(position);
+
+        vm.set('selected_member', object);
+
+        // if (sincGrid) {
+        // index = grid.getStore().find('_meta_id', member.get('_meta_id'));
+        // grid.getView().getRow(index).scrollIntoView();
+        //}
+    },
+
+
+    /**
+     * Retorna os tags que estao associados a um release
+     * Filtra a Store TagsByRelease de acordo com o release
+     */
+    loadTags: function (release) {
+        var me = this,
+            vm = me.getViewModel(),
+            tags = vm.getStore('tags');
+
+        if (release > 0) {
+            tags.addFilter([
+                {
+                    property: 'tag_release',
+                    value: release
+                }
+            ]);
+
+            tags.load({
+                callback: function () {
+                    me.onLoadTags(this);
+                }
+            })
+        }
+    },
+
+    onLoadTags: function (store) {
+        var me = this;
+
+        if (store.count() > 0) {
+            me.loadTiles();
+        }
+    },
+
+    loadTiles: function () {
+        var me = this,
+            vm = me.getViewModel(),
+            tags = vm.getStore('tags'),
+            tiles = vm.getStore('tiles'),
+            ids = [];
+
+        tags.each(function (tag) {
+            ids.push(tag.get('id'));
+        }, this);
+
+        tiles.filter([
+            {
+                property: 'tag',
+                operator: 'in',
+                value: ids
+            }
+        ]);
+    },
+
+    parseRA: function (ra) {
+        if (ra < 0) {
+            return ra + 360;
+        }
+        return ra;
+    },
+
+    onClickSimbad: function () {
+        // console.log('onClickSimbad()');
+        // Criar uma URL para o Servico SIMBAD
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('object_data'),
+            ra = parseFloat(me.parseRA(object._meta_ra)).toFixed(4),
+            dec = parseFloat(object._meta_dec).toFixed(4),
+            radius = 2, // Arcmin
+            url;
+
+        url = Ext.String.format(
+            "http://simbad.u-strasbg.fr/simbad/sim-coo?Coord={0}+{1}&CooFrame=FK5&CooEpoch=2000&Radius={2}&Radius.unit=arcmin&submit=submit+query",
+            ra, dec, radius)
+
+        window.open(url, '_blank')
+
+    },
+
+    onClickNed: function () {
+        // console.log('onClickNed')
+        // Criar uma URL para o Servico NED
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('object_data'),
+            ra = parseFloat(me.parseRA(object._meta_ra)).toFixed(2),
+            dec = parseFloat(object._meta_dec).toFixed(2),
+            radius = 2, // Arcmin
+            url;
+
+        url = Ext.String.format(
+            "https://ned.ipac.caltech.edu/cgi-bin/objsearch?search_type=Near+Position+Search&in_csys=Equatorial&in_equinox=J2000.0&lon={0}d&lat={1}d&radius={2}",
+            ra, dec, radius)
+
+        window.open(url, '_blank')
+    },
+
+    onClickVizier: function () {
+        // console.log('onClickVizier')
+        // Criar uma URL para o Servico VizierCDS
+        var me = this,
+            vm = me.getViewModel(),
+            object = vm.get('object_data'),
+            radius = 2,
+            url; // Arcmin
+
+        url = Ext.String.format(
+            "http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=II/246&-c={0},{1},eq=J2000&-c.rs={2}",
+            me.parseRA(object._meta_ra), object._meta_dec, radius)
+
+        window.open(url, '_blank')
+    },
+
+    onCmdClickPoint: function (record, type, cmdTab) {
+        // console.log('onCmdClickPoint(%o)', record);
+        // Realca o objeto no preview do visiomatic
+        // console.log(record)
+        this.highlightObject(record, true);
+    },
+
+    onActiveCmdTab: function (panel) {
+        // console.log('onActiveCmdTab(%o)', panel);
+        var me = this,
+            vm = me.getViewModel(),
+            clusterMembers = vm.getStore('members'),
+            vacObjects = vm.getStore('vacObjects');
+
+        panel.setMembers(clusterMembers);
+        panel.setVacs(vacObjects);
+        panel.reloadPlots();
+    },
+
+    // ------------------- Spatial Distribution --------------------
+    onActiveSpatialTab: function () {
+        // console.log('onActiveSpatialTab()')
+        var me = this,
+            vm = me.getViewModel(),
+            densityMap = me.lookup("densityMap"),
+            currentProduct = vm.get("currentProduct"),
+            clusterSource = currentProduct.get("id"),
+            clusterId = vm.get("object_id"),
+            currentVacProduct = vm.get("vacCluster")
+        vacSource = currentVacProduct.get("id"),
+            object = vm.get("object"),
+            lon = object.get("_meta_ra"),
+            lat = object.get("_meta_dec"),
+            radius = me.calculateVacRadius(object.get('_meta_radius'));
+
+
+        // https://desportal.cosmology.illinois.edu:8080/dri/api/plugin/galaxy_cluster/?_dc=1522860511754&clusterSource=226&clusterId=79346&vacSource=227&lon=339.967678342688&lat=-43.1382903206538&radius=0.032
+
+        // clusterSource=226
+        // clusterId=79346
+        // vacSource=227
+        // lon=339.967678342688
+        // lat=-43.1382903206538
+        // radius=0.032
+
+        if (vacSource) {
+            densityMap.loadData(clusterSource, clusterId, vacSource, lon, lat, radius);
+        }
+
+    }
+});

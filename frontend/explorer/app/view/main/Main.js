@@ -20,7 +20,8 @@ Ext.define('Explorer.view.main.Main', {
         'common.footer.Footer',
 
         'Explorer.view.coadd.Coadd',
-        'Explorer.view.system.System'
+        'Explorer.view.system.System',
+        'Explorer.view.star_cluster.StarCluster'
     ],
 
     controller: 'main',
