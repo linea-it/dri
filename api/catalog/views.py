@@ -360,7 +360,7 @@ class CatalogObjectsViewSet(ViewSet):
                                 else:
                                     t_image = t_image * -1
                             else:
-                                t_image = t_image * -1
+                                t_image = 90 - t_image
 
                             value = t_image
 
