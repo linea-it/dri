@@ -240,6 +240,11 @@ class CatalogObjectsViewSet(ViewSet):
         if not product_id:
             raise Exception('Product parameter is missing.')
 
+        # Parametro para retornar todas as colunas.
+        all_columns = request.query_params.get('all_columns', True)
+
+        all_columns = False if all_columns in ['false', '0', 'f', 'False', 'no'] else True
+
         # Recuperar no model Catalog pelo id passado na url
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
 
@@ -249,8 +254,10 @@ class CatalogObjectsViewSet(ViewSet):
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(product_id)
 
-        # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
-        columns = Association().get_properties_associated(product_id)
+        columns = list()
+        if not all_columns:
+            # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
+            columns = Association().get_properties_associated(product_id)
 
         catalog_db = CatalogObjectsDBHelper(
             table=catalog.tbl_name,
@@ -346,14 +353,14 @@ class CatalogObjectsViewSet(ViewSet):
                             if release_set:
                                 release = release_set.release.rls_name
                                 # Se tiver release e ele for o Y3 subtrair 90 graus
-                                areleases = ['y3a1_coadd', 'y6a1_coadd', 'y6a2_coadd', 'dr1', 'dr2']
+                                areleases = ['y3a1_coadd', 'y3a2_coadd', 'y6a1_coadd', 'y6a2_coadd', 'dr1', 'dr2']
                                 if release in areleases:
                                     t_image = 90 - t_image
 
                                 else:
                                     t_image = t_image * -1
                             else:
-                                t_image = t_image * -1
+                                t_image = 90 - t_image
 
                             value = t_image
 
