@@ -1,7 +1,7 @@
 {
     "products": [
         {
-            "display_name": "Y6A1 Coadd",
+            "display_name": "Y6A1 Coadd Objects",
             "fields": [],
             "releases": [
                 "y6a1_coadd"
@@ -60,6 +60,6 @@
             ]
         }
     ],
-    "ticket": "GZY650",
+    "ticket": "JEX147",
     "register_username": "gverde"
 }

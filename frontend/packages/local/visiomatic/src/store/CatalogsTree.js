@@ -18,6 +18,13 @@ Ext.define('visiomatic.store.CatalogsTree', {
         api: {
             read: '/dri/api/catalog/get_class_tree_by_group/',
         }
-    }
+    },
+
+    sorters: [
+        {
+            property: 'prd_display_name',
+            direction: 'ASC'
+        },
+    ],
 
 });

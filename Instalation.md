@@ -223,3 +223,9 @@ celery worker --workdir /app --app dri -l info
 
 celery worker --workdir /app --app dri -l info
 ```
+
+Build Manual das imagens docker
+```
+docker build -t linea/dri:backend_$(git describe --always) .
+docker build -t linea/dri:frontend_$(git describe --always) .
+```
