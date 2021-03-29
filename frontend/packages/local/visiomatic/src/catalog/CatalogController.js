@@ -42,8 +42,8 @@ Ext.define('visiomatic.catalog.CatalogController', {
 
 
         baseFilters = [
-           {
-                property:'group',
+            {
+                property: 'group',
                 operator: 'in',
                 value: ['objects_catalog', 'targets', 'value_added_catalogs', 'external_catalogs']
             }
@@ -237,7 +237,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
         })
     },
 
-    loadObjects: function(overlay) {
+    loadObjects: function (overlay) {
         // console.log('loadObjects(%o)', overlay);
         var me = this,
             vm = me.getViewModel(),
@@ -257,6 +257,9 @@ Ext.define('visiomatic.catalog.CatalogController', {
             }, {
                 property: 'coordinates',
                 value: JSON.stringify(box)
+            }, {
+                property: 'all_columns',
+                value: false
             }
         ]);
 
@@ -264,7 +267,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
         // Adicionar os Filtros selecionados pelo usuario
         if (filters !== null) {
 
-            Ext.each(filters, function(condition) {
+            Ext.each(filters, function (condition) {
 
                 conditions.push({
                     property: condition.get('fcd_property_name'),
@@ -345,14 +348,14 @@ Ext.define('visiomatic.catalog.CatalogController', {
             }
 
             layers = visiomatic.overlayCatalog(
-                        overlay.get('name'),
-                        store,
-                        {
-                            color: overlay.get('color'),
-                            objectUrl: overlay.get('objectUrl'),
-                            pointType: overlay.get('pointType'),
-                            pointSize: overlay.get('pointSize')
-                        });
+                overlay.get('name'),
+                store,
+                {
+                    color: overlay.get('color'),
+                    objectUrl: overlay.get('objectUrl'),
+                    pointType: overlay.get('pointType'),
+                    pointSize: overlay.get('pointSize')
+                });
 
             overlay.set('layers', layers);
 
@@ -399,7 +402,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
 
     },
 
-    onClickBtnFilter: function(){
+    onClickBtnFilter: function () {
         var me = this,
             vm = me.getViewModel(),
             tree = me.lookup('CatalogsTree'),
@@ -407,7 +410,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
 
         if ((catalog) && (catalog.get('id') > 0)) {
 
-            me.winFilter = Ext.create('visiomatic.filter.FiltersWindow',{
+            me.winFilter = Ext.create('visiomatic.filter.FiltersWindow', {
                 listeners: {
                     scope: me,
                     applyfilters: 'onApplyFilters',
@@ -420,7 +423,7 @@ Ext.define('visiomatic.catalog.CatalogController', {
         }
     },
 
-    onApplyFilters: function(filters, currentCatalog) {
+    onApplyFilters: function (filters, currentCatalog) {
         var me = this,
             vm = me.getViewModel();
 
