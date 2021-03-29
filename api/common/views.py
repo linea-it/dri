@@ -97,14 +97,16 @@ def contact_us(request):
         subject = "[DRI][%s] %s" % (environment, request.data.get('subject', None))
         message = request.data.get('message', None)
 
-        # Dados Tecnicos
-        current_url = request.data.get('current_url', None)
-        current_user = request.data.get('current_user', None)
+        if user_email is None:
+            try:
+                user_email = request.user.email
+            except:
+                user_email = None
 
         if name is not None and user_email is not None and subject is not None and message is not None:
             try:
                 to_email = settings.EMAIL_HELPDESK
-                from_email = settings.EMAIL_HELPDESK_CONTACT
+                from_email = user_email
 
                 message_header = (
                     "Name: %s\nUsername: %s\nEmail: %s\nMessage:\n" % (name, request.user.username, user_email))
