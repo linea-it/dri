@@ -11,7 +11,7 @@
             "database": "dessci",
             "type": "catalog",
             "class": "coadd_objects",
-            "name": "dr2",
+            "name": "dr2_coadd",
             "association": [
                 {
                     "ucd": "meta.id;meta.main",
@@ -60,6 +60,6 @@
             ]
         }
     ],
-    "ticket": "VDB377",
+    "ticket": "JEX147",
     "register_username": "gverde"
 }

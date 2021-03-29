@@ -324,42 +324,36 @@ class CatalogObjectsViewSet(ViewSet):
                 try:
                     meta_prop = essential_props.get(ucd)
                     if meta_prop:
-                        # print(row.get(associations.get(ucd)))
                         value = row.get(associations.get(ucd))
 
-                        # TODO: Esse Bloco precisa de um refactoring
-                        """
-                            Glauber: 16/08/2017
-                         Essa solucao foi adotada por que cada release esta com um valor diferente para 
-                         o atributo theta_image e nao ficou muito claro uma forma de tratar esses valores 
-                         no banco. solucao rapida por causa de ser vespera de uma reuniao 1/09/2017
-                         
-                         Releases 
+                        # TODO: Esse tratamento do theta image deveria ser uma flag no cadastro do Produto.
+                        """Releases 
                             Y1 - para corrigir as ellipses do Y1 deve multiplicar o valor de theta_image 
                             por -1. para todas as linhas. 
                             
-                            Y3 - a correcao do Y3 e: 90 - theta_image. 
-                            
-                            Glauber: 21/12/2017 - O Release publico DR1 Main deve ser tratado  
-                            igual ao Y3.
-                            
-                            NAO foi testado outros releases por nao estarem registrados as suas tabelas coadd.
+                            Os demais releases a partir do Y3 
+                            Y3 - a correcao do Y3 é: 90 - theta_image. 
                         """
                         if meta_prop == '_meta_theta_image':
                             t_image = float(value)
 
-                            # Descobrir o release do Catalogo
+                            # Decobrir o release do produto
                             release_set = catalog.productrelease_set.first()
                             if release_set:
-                                release = release_set.release.rls_name
-                                # Se tiver release e ele for o Y3 subtrair 90 graus
-                                areleases = ['y3a1_coadd', 'y3a2_coadd', 'y6a1_coadd', 'y6a2_coadd', 'dr1', 'dr2']
-                                if release in areleases:
-                                    t_image = 90 - t_image
+                                # Se o produto estiver associado a um release.
+                                # Verifica se é o release do Y1
+                                areleases = ['y1_wide_survey', 'y1_supplemental_d04', 'y1_supplemental_d10', 'y1_supplemental_dfull']
 
-                                else:
+                                # é usado o internal name do release para fazer a checagem.
+                                if release_set.release.rls_name in areleases:
+                                    # Para releases do Y1 aplica multiplica por -1
                                     t_image = t_image * -1
+                                else:
+                                    # Demais releases utiliza 90 - theta_image
+                                    t_image = 90 - t_image
                             else:
+                                # Produto não está associado a nenhum release
+                                # Usa a correção que atende a maior parte dos catalogos.
                                 t_image = 90 - t_image
 
                             value = t_image
@@ -368,10 +362,9 @@ class CatalogObjectsViewSet(ViewSet):
                             meta_prop: value
                         })
 
-                    # print("%s:%s" % (meta_prop, value))
-
                 except:
                     pass
+
         return Response(dict({
             'count': count,
             'results': rows
