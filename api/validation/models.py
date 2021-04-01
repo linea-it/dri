@@ -48,6 +48,7 @@ class Inspect(models.Model):
     def __str__(self):
         return str(self.isp_value)
 
+
 class Defect(models.Model):
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -69,13 +70,3 @@ class Defect(models.Model):
         null=True, blank=True, default=0, verbose_name='RA')
     dfc_dec = models.FloatField(
         null=True, blank=True, default=0, verbose_name='Dec')
-
-
-class UserEmail(models.Model):
-    email = models.CharField(
-        max_length=40, null=False, blank=False, verbose_name='Email')
-
-    def __str__(self):
-        return str(self.email)
-
-

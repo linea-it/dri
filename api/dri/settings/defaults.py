@@ -42,8 +42,6 @@ ALLOWED_HOSTS = ['*']
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
 
-USE_OAUTH = True
-
 # Application definition
 BASE_APPS = [
     'django.contrib.admin',
@@ -53,14 +51,6 @@ BASE_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-]
-
-AUTH_APPS = [
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.google',
 ]
 
 THIRD_PARTY_APPS = [
@@ -87,10 +77,7 @@ PROJECT_APPS = [
     'activity_statistic',
 ]
 
-if USE_OAUTH:
-    INSTALLED_APPS = BASE_APPS + AUTH_APPS + THIRD_PARTY_APPS + PROJECT_APPS
-else:
-    INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
+INSTALLED_APPS = BASE_APPS + THIRD_PARTY_APPS + PROJECT_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -173,10 +160,6 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
-if USE_OAUTH:
-    AUTHENTICATION_BACKENDS += ('allauth.account.auth_backends.AuthenticationBackend',)
-
-
 REST_FRAMEWORK = {
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -201,23 +184,6 @@ SITE_ID = 1
 
 ACCOUNT_AUTHENTICATED_LOGIN_REDIRECTS = True
 LOGIN_REDIRECT_URL = '/'
-SOCIALACCOUNT_QUERY_EMAIL = True
-SOCIALACCOUNT_ADAPTER = 'validation.adapter.DriAccountAdapter'
-
-SOCIALACCOUNT_PROVIDERS = {
-    'facebook': {
-        'SCOPE': ['email'],
-        'AUTH_PARAMS': {'auth_type': 'reauthenticate'},
-        'METHOD': 'oauth2',
-        'VERIFIED_EMAIL': False
-    },
-    'google': {
-        'SCOPE': ['email'],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
-    }
-}
 
 # CELERY SETTINGS
 CELERY = {
