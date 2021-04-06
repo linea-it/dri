@@ -1,4 +1,4 @@
-from sqlalchemy import Column
+from sqlalchemy import Column, create_engine
 from sqlalchemy.dialects import oracle
 from sqlalchemy.sql import and_, or_
 from sqlalchemy.sql.expression import between, literal_column
@@ -24,6 +24,16 @@ class DBOracle:
         return url
 
     def get_engine(self):
+        return create_engine(
+            self.get_string_connection(),
+            # Fixed: https://ticket.linea.gov.br/ticket/13037 and https://github.com/linea-it/dri/issues/1341
+            # Esta opção coerce_to_decimal=False é necessária para
+            # evitar erro causado por valores Infinity.
+            # https://docs.sqlalchemy.org/en/14/dialects/oracle.html#precision-numerics
+            coerce_to_decimal=False
+        )
+
+    def get_engine_name(self):
         return "oracle"
 
     def get_dialect(self):

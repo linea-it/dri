@@ -35,7 +35,10 @@ class DBBase:
             self.connection_data['PASSWORD'] = credentials[1]
 
         self.database = self.set_database(self.connection_data)
-        self.engine = create_engine(self.database.get_string_connection())
+
+        self.engine = self.database.get_engine()
+
+        # self.engine = create_engine(self.database.get_string_connection(), coerce_to_decimal=False)
         self.inspect = inspect(self.engine)
 
         # Setar o Diaclect especifico deste banco para ser usado com a funcao compile
@@ -115,8 +118,8 @@ class DBBase:
     def get_string_connection(self):
         return self.database.get_string_connection()
 
-    def get_engine(self):
-        return self.database.get_engine()
+    def get_engine_name(self):
+        return self.database.get_engine_name()
 
     def get_connection_data(self):
         return self.connection_data
@@ -561,7 +564,7 @@ class DBBase:
 
         if dcolumn.get('primary_key'):
 
-            if self.database.get_engine() == 'oracle':
+            if self.database.get_engine_name() == 'oracle':
                 if (len(tablename) >= 30):
                     tablename = tablename[:26]
 

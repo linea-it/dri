@@ -1,4 +1,4 @@
-from sqlalchemy import Column
+from sqlalchemy import Column, create_engine
 from sqlalchemy.dialects import postgresql
 from sqlalchemy.sql import and_, or_, text
 from sqlalchemy.sql.expression import between, literal_column
@@ -19,6 +19,11 @@ class DBPostgresql:
         return url
 
     def get_engine(self):
+        return create_engine(
+            self.get_string_connection()
+        )
+
+    def get_engine_name(self):
         return "postgresql_psycopg2"
 
     def get_dialect(self):
