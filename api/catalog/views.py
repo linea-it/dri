@@ -81,7 +81,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
         # Verificar se a tabela comments está no Oracle
         catalog_db = CatalogDB(db='catalog')
-        if catalog_db.get_engine() == "oracle":
+        if catalog_db.get_engine_name() == "oracle":
             # Proximo ID
             comments = Comments.objects.all()
             next_id = comments.aggregate(Max('id'))['id__max'] + 1 if comments else 1
