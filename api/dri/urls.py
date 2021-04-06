@@ -142,6 +142,3 @@ urlpatterns = [
     url(r'^dri/api/api-auth/', include('rest_framework.urls', namespace='rest_framework'),
         {'extra_context': {'providers': providers}}),
 ]
-
-if settings.USE_OAUTH:
-    urlpatterns += (url(r'^accounts/', include('allauth.urls')),)

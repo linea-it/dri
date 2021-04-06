@@ -98,9 +98,3 @@ class DefectViewSet(viewsets.ModelViewSet):
             raise Exception(
                 'It is necessary an active login to perform this operation.')
         serializer.save(owner=self.request.user)
-
-
-class UserEmailViewSet(viewsets.ModelViewSet):
-    queryset = UserEmail.objects.all()
-
-    serializer_class = UserEmailSerializer
