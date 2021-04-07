@@ -1,3 +1,4 @@
+from sqlalchemy import create_engine
 from sqlalchemy.dialects import sqlite
 
 
@@ -10,6 +11,11 @@ class DBSqlite:
         return url
 
     def get_engine(self):
+        return create_engine(
+            self.get_string_connection(),
+        )
+
+    def get_engine_name(self):
         return "sqlite3"
 
     def get_dialect(self):

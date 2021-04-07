@@ -1,3 +1,4 @@
+import logging
 import math
 
 from django.conf import settings
@@ -80,7 +81,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
         # Verificar se a tabela comments está no Oracle
         catalog_db = CatalogDB(db='catalog')
-        if catalog_db.get_engine() == "oracle":
+        if catalog_db.get_engine_name() == "oracle":
             # Proximo ID
             comments = Comments.objects.all()
             next_id = comments.aggregate(Max('id'))['id__max'] + 1 if comments else 1
@@ -212,7 +213,7 @@ class TargetViewSet(ViewSet):
             # FIXED Issue: https://github.com/linea-it/dri/issues/1153
             # Ticket: http://ticket.linea.gov.br/ticket/11761
             for prop in row:
-                if isinstance(row.get(prop, None), float):
+                if isinstance(row.get(prop, None), float) or isinstance(row.get(prop, None), int):
                     # Check if is infity
                     if math.isinf(row.get(prop)):
                         if row.get(prop) > 0:
@@ -235,6 +236,7 @@ class CatalogObjectsViewSet(ViewSet):
         """
         Return a list of objects in catalog.
         """
+
         # Recuperar o parametro product id que e obrigatorio
         product_id = request.query_params.get('product', None)
         if not product_id:
@@ -364,6 +366,16 @@ class CatalogObjectsViewSet(ViewSet):
 
                 except:
                     pass
+            # FIXED Issue: https: // github.com / linea - it / dri / issues / 1153
+            # Ticket: http: // ticket.linea.gov.br / ticket / 11761
+            for prop in row:
+                if isinstance(row.get(prop, None), float) or isinstance(row.get(prop, None), int):
+                    # Check if is infity
+                    if math.isinf(row.get(prop)):
+                        if row.get(prop) > 0:
+                            row.update({prop: "+Infinity"})
+                        elif row.get(prop) < 0:
+                            row.update({prop: "-Infinity"})
 
         return Response(dict({
             'count': count,
