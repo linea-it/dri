@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y --force-yes \
     python-dev build-essential libaio-dev \
     libsasl2-dev libldap2-dev libssl-dev unzip 
 
+# Install Oracle Client
+ADD /oracle /app/oracle
 RUN mkdir /oracle && \
     unzip /app/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip -d /oracle && \
     unzip /app/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /oracle && \
@@ -29,6 +31,7 @@ ADD requirements.txt /app
 
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt
+
 
 ADD . /app/
 
