@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Feature, Flagged, Defect, UserEmail, Inspect
+from .models import Feature, Flagged, Defect, Inspect
 
 
 class FeatureAdmin(admin.ModelAdmin):
@@ -29,14 +29,7 @@ class DefectAdmin(admin.ModelAdmin):
     search_fields = ('id', 'owner',)
 
 
-class UserEmailAdmin(admin.ModelAdmin):
-    list_display = ('id', 'email',)
-    list_display_links = ('id', 'email',)
-    search_fields = ('id', 'email',)
-
-
 admin.site.register(Feature, FeatureAdmin)
 admin.site.register(Flagged, FlaggedAdmin)
 admin.site.register(Inspect, InspectAdmin)
 admin.site.register(Defect, DefectAdmin)
-admin.site.register(UserEmail, UserEmailAdmin)

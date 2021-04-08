@@ -1,11 +1,16 @@
 <!DOCTYPE HTML>
 <html manifest="">
+
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-
     <title>UserQuery</title>
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="/ga/google-analytics.js"></script>
+
+    <link rel="icon" href="favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 
     <!--
     <script type="text/javascript">
@@ -45,94 +50,30 @@
         };
     </script>
     -->
-
-    <!-- splash screen -->
-    <style>
-        .x-treelist-item-icon.fa-frown-o {
-            color:red
+    <!-- Loading -->
+    <script>
+        function hideLoading() {
+            linea_logo.style.display = 'none';
         }
-        .splash {
-            position:absolute;
-            top:0;
-            left:0;
-            right:0;
-            bottom:0;
-            margin:0;
-            background:#ececec;
-            z-index: 1000;
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: monospace;
-            cursor: wait;
-        }
-        .splash svg{
-            -webkit-animation: scaleout 1.0s infinite ease-in-out;
-            animation: scaleout 1.0s infinite ease-in-out
-        }
-        .splash .box{
-            text-align: center;
-            box-shadow: 0 0 20px rgba(103, 103, 103, 0.41);
-            padding: 25px;
-            border-radius: 3px;
-            background: #ececec;
-            margin-top: -100px;
-        }
-        .splash.fade-out svg{
-            -webkit-animation: none;
-            animation: none;
-        }
-        .splash.fade-out{
-            transition: opacity 1s;
-            opacity: 0;
-        }
-        @-webkit-keyframes scaleout {
-            0% {
-                -webkit-transform: scale(0)
-            }
-        
-            100% {
-                -webkit-transform: scale(1);
-                opacity: 0
-            }
-        }        
-        @keyframes scaleout {
-            0% {
-                -webkit-transform: scale(0);
-                transform: scale(0)
-            }
-        
-            100% {
-                -webkit-transform: scale(1);
-                transform: scale(1);
-                opacity: 0
-            }
-        }        
-    </style>
+    </script>
 
     <!-- The line below must be kept intact for Sencha Cmd to build your application -->
-    <script id="microloader" data-app="ec311b0b-1ca2-4f2f-b672-f7e9bf9f9023" type="text/javascript" src="bootstrap.js"></script>
+    <script id="microloader" data-app="ec311b0b-1ca2-4f2f-b672-f7e9bf9f9023" type="text/javascript"
+        src="bootstrap.js"></script>
 
 </head>
-<body>
-    <div class="splash">
-        <div style="text-align:center" class="boxx">
-            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"  width="48" height="48" viewBox="0 0 24 24">
-                <path fill="#000" stroke="#fff" d="m 18.901821,1.6163628 4.716693,8.4021052 -2.984032,0 -4.620434,8.402098 -7.6525792,0 L 4.5110985,12.071252 9.3240602,3.8123683 8.0726894,1.5686194 z" />
-                <path fill="#f92609" d="M 23.691458,11.680374 18.558348,22.455299 6.2388855,22.50378 0.25769384,12.414122 6.283518,1.5968194 l 1.2051633,2.134356 -4.8206606,8.5859306 4.6421165,8.100853 9.7305908,-0.04848 4.47897,-8.835941 z" />
-            </svg>
-            <div>User Query starting...</div>
+
+<body onload="hideLoading()" style="background: #24292E;">
+    <div id='linea_logo'
+        style="position: absolute;top: 50%;left: 50%;width: 522px;height: 500px;margin-top: -250px;margin-left: -261px;">
+        <!-- <img src="resources/linea_logo.jpg" > -->
+        <!-- <img src="resources/linea_logo_transparent.png"> -->
+
+        <div id='loading' style="width: 100%;height: 100;display: flex;justify-content: center;">
+            <i class="fa fa-circle-o-notch fa-spin fa-2x fa-fw margin-bottom" style="color: #DCDCDC;"></i>
         </div>
-        <script>
-            function removeSplash(){
-                var splash = document.querySelector('.splash');
-                splash.className = 'splash fade-out';
-                setTimeout(function(){
-                    splash.parentNode.removeChild(splash);
-                },1000);
-            }
-        </script>
+
     </div>
 </body>
+
 </html>

@@ -3,6 +3,7 @@ import './Viewer.css';
 import { uniqueId } from 'lodash';
 import PropTypes from 'prop-types';
 import ContextMenu from './ContextMenu';
+import ContrastMenu from './ContrastMenu';
 import circle from './circle-outline.svg';
 
 const colorRanges = {
@@ -62,9 +63,11 @@ class VisiomaticPanel extends Component {
     center: PropTypes.array,
     fov: PropTypes.number,
     contrast: PropTypes.string,
-    currentDataset: PropTypes.number,
+    currentDataset: PropTypes.object,
     points: PropTypes.array,
     reloadData: PropTypes.func,
+    hasInspection: PropTypes.bool.isRequired,
+    handleDownloadClick: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -92,6 +95,9 @@ class VisiomaticPanel extends Component {
       contextMenuUpdateOpen: false,
       contextMenuEvt: null,
       points: [],
+      currentContrast: 'defaultContrast',
+      contrastMenuOpen: false,
+      preventUpdateContrast: false, // This is a flag to prevent the tile contrast from changing when the image changes
     };
   }
 
@@ -210,37 +216,123 @@ class VisiomaticPanel extends Component {
     return lCatalog;
   };
 
-  componentDidMount() {
-    const map = this.libL.map(this.id, { fullscreenControl: true, zoom: 1 });
+  onContrastMenuOpen = () => {
+    if (this.props.currentDataset) {
+      this.setState({
+        contrastMenuOpen: true,
+      });
+    }
+  }
 
-    this.libL.control.scale.wcs({ pixels: false }).addTo(map);
-    this.libL.control.reticle().addTo(map);
+  onContrastMenuClose = () => {
+    this.setState({
+      contrastMenuOpen: false,
+    });
+  }
 
-    this.wcsControl = this.libL.control
-      .wcs({
-        coordinates: [{ label: 'RA,Dec', units: 'HMS' }],
-        position: 'topright',
-      })
-      .addTo(map);
+  onContrastMenuChange = (e, value) => {
+    this.setState({
+      contrastMenuOpen: false,
+      currentContrast: value,
+      preventUpdateContrast: false,
+    });
+  }
 
-    // Add a Reticle to Map
-    this.libL.control.reticle().addTo(map);
+  onDownloadOpen = () => {
+    if (this.props.currentDataset) {
+      this.props.handleDownloadClick(this.props.currentDataset);
+    }
+  }
 
-    const sidebar = this.libL.control.sidebar().addTo(map);
+  // showContrastWindow = () => {
+  //   this.setState({
+  //     contrastWindowOpen: true,
+  //     colorRanges,
+  //   });
 
-    // Channel Mixing
-    this.libL.control.iip.channel().addTo(sidebar);
+  //   const me = this;
+  //   const currentContrast = me.getCurrentContrast();
 
-    // Image Preference
-    this.libL.control.iip.image().addTo(sidebar);
+  //   // TODO: verificar se o valor de currentContrast esta disponivel na lista de Contrasts disponiveis.
+  //   if (currentContrast !== null) {
 
-    map.on('layeradd', this.onLayerAdd, this);
-    map.on('layerremove', this.onLayerRemove, this);
+  //     this.setState({
+  //       contrastWindowOpen: true,
+  //       colorRanges,
+  //     });
+
+  //     me.setCurrentContrast(currentContrast);
+
+  //   } else {
+  //     return false;
+  //   }
+  // }
+
+changeContrast = () => {
+  const me = this;
+
+  const imageLayer = me.layer;
+
+  const minValues = colorRanges[this.state.currentContrast].minMaxValues.map(v => v[0]);
+  const maxValues = colorRanges[this.state.currentContrast].minMaxValues.map(v => v[1]);
+
+  imageLayer.iipMinValue = minValues;
+  imageLayer.iipMaxValue = maxValues;
+
+  imageLayer.updateMix();
+  imageLayer.redraw();
+}
+
+componentDidMount() {
+  const map = this.libL.map(this.id, {
+    fullscreenControl: true,
+    zoom: 1,
+    enableLineaContrast: true,
+    enableLineaDownload: true,
+  });
+
+  this.libL.control.scale.wcs({ pixels: false }).addTo(map);
+  this.libL.control.reticle().addTo(map);
+
+  this.wcsControl = this.libL.control
+    .wcs({
+      coordinates: [
+        {
+          label: 'RA, Dec (Deg)',
+          units: 'deg',
+        },
+        {
+          label: 'RA,Dec (HMS)',
+          units: 'HMS',
+        },
+      ],
+      position: 'topright',
+    })
+    .addTo(map);
+
+  // Add a Reticle to Map
+  this.libL.control.reticle().addTo(map);
+
+  const sidebar = this.libL.control.sidebar().addTo(map);
+
+  // Channel Mixing
+  this.libL.control.iip.channel().addTo(sidebar);
+
+  // Image Preference
+  this.libL.control.iip.image().addTo(sidebar);
+
+  map.on('layeradd', this.onLayerAdd, this);
+  map.on('layerremove', this.onLayerRemove, this);
+  map.on('changecontrast', this.onContrastMenuOpen, this);
+  map.on('ondownload', this.onDownloadOpen, this);
+
+  if (this.props.hasInspection) {
     map.on('contextmenu', this.onContextMenuOpen, this);
     map.on('overlaycatalog', this.overlayCatalog, this);
-    this.map = map;
-    // this.changeImage();
   }
+  this.map = map;
+  // this.changeImage();
+}
 
 
   removeImageLayer = () => {
@@ -257,16 +349,24 @@ class VisiomaticPanel extends Component {
     }
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps, prevState) {
     if (prevProps.image !== this.props.image) {
       this.changeImage();
     }
 
-    if (prevProps.points !== this.props.points) {
+    if (this.props.hasInspection && prevProps.points !== this.props.points) {
       this.overlayCatalog();
       if (prevProps.points.length > 0 && this.props.points.length > 0) {
         this.setView();
       }
+    }
+
+    if (this.props.hasInspection && prevProps.contrast !== this.props.contrast) {
+      this.changeImage();
+    }
+
+    if (!this.state.preventUpdateContrast && this.state.currentContrast !== prevState.currentContrast) {
+      this.changeContrast();
     }
   }
 
@@ -317,7 +417,7 @@ class VisiomaticPanel extends Component {
       // TODO: Deve ser removido solucao temporaria
       url = url.replace('http://', 'https://');
 
-      const colorRanges = this.getColorRanges();
+      const currentColorRanges = this.getColorRanges();
 
       this.layer = this.libL.tileLayer
         .iip(url, {
@@ -333,7 +433,7 @@ class VisiomaticPanel extends Component {
           colorSat: 2.0,
           quality: 100,
           channelLabelMatch: '[ugrizY]',
-          minMaxValues: colorRanges.minMaxValues,
+          minMaxValues: currentColorRanges.minMaxValues,
           // minMaxValues: [
           //   // g
           //   [-0.390453905, 1000],
@@ -350,6 +450,11 @@ class VisiomaticPanel extends Component {
           // ],
         })
         .addTo(this.map);
+
+      this.setState({
+        currentContrast: 'defaultContrast',
+        preventUpdateContrast: true,
+      });
     } else if (this.layer) {
       this.map.removeLayer(this.layer);
     }
@@ -375,7 +480,7 @@ class VisiomaticPanel extends Component {
       m = 0;
     }
     const str = `${(h < 10 ? '0' : '') + h.toString()}:${m < 10 ? '0' : ''}${m.toString()
-      }:${sf < 10.0 ? '0' : ''}${sf.toFixed(3)}`;
+    }:${sf < 10.0 ? '0' : ''}${sf.toFixed(3)}`;
 
     const lat = Math.abs(latlng.lat);
 
@@ -399,6 +504,12 @@ class VisiomaticPanel extends Component {
   }
 
   render() {
+    const { hasInspection } = this.props;
+
+    const toolbar = 64;
+    const footer = 64;
+    const padding = 21;
+
     // Ajuste no Tamanho do container
     return (
       <>
@@ -407,19 +518,27 @@ class VisiomaticPanel extends Component {
           className="visiomatic-container"
           style={{
             width: '100%',
-            height: 'calc(100vh - 150px)',
+            height: window.innerHeight - toolbar - footer - padding,
             // height: '100%',
           }}
         />
-        <ContextMenu
-          open={this.state.contextMenuOpen}
-          updateOpen={this.state.contextMenuUpdateOpen}
-          event={this.state.contextMenuEvt}
-          handleClose={this.onContextMenuClose}
-          currentDataset={this.props.currentDataset}
-          latLngToHMSDMS={this.latLngToHMSDMS}
-          getDatasetCommentsByType={this.props.getDatasetCommentsByType}
-          reloadData={this.props.reloadData}
+        {hasInspection ? (
+          <ContextMenu
+            open={this.state.contextMenuOpen}
+            updateOpen={this.state.contextMenuUpdateOpen}
+            event={this.state.contextMenuEvt}
+            handleClose={this.onContextMenuClose}
+            currentDataset={this.props.currentDataset ? this.props.currentDataset.id : null}
+            latLngToHMSDMS={this.latLngToHMSDMS}
+            getDatasetCommentsByType={this.props.getDatasetCommentsByType}
+            reloadData={this.props.reloadData}
+          />
+        ) : null}
+        <ContrastMenu
+          open={this.state.contrastMenuOpen}
+          currentContrast={this.state.currentContrast}
+          handleChange={this.onContrastMenuChange}
+          handleClose={this.onContrastMenuClose}
         />
       </>
     );

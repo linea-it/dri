@@ -1,24 +1,23 @@
 import copy
-
-import django_filters
-from lib.sqlalchemy_wrapper import DBBase
-from rest_framework import filters
-from rest_framework import viewsets
-from rest_framework.decorators import api_view, list_route
-from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-from django_filters.rest_framework import OrderingFilter
-
-from .models import Release, Tag, Tile, Dataset, Survey
-from .serializers import ReleaseSerializer, TagSerializer, TileSerializer, DatasetSerializer, \
-    SurveySerializer, DatasetFootprintSerializer
-from django.conf import settings
 import os
 from urllib.parse import urljoin
 
+import django_filters
 from common.models import Filter
+from django.conf import settings
+from django_filters.rest_framework import DjangoFilterBackend, OrderingFilter
+from lib.sqlalchemy_wrapper import DBBase
+from rest_framework import filters, viewsets
+from rest_framework.decorators import api_view
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
-# Create your views here.
+from .models import Dataset, Release, Survey, Tag, Tile
+from .serializers import (DatasetFootprintSerializer, DatasetSerializer,
+                          ReleaseSerializer, SurveySerializer, TagSerializer,
+                          TileSerializer)
+
+from common.desaccess import DesAccessApi
 
 
 class ReleaseViewSet(viewsets.ModelViewSet):
@@ -66,6 +65,42 @@ class TileViewSet(viewsets.ModelViewSet):
 
     ordering_fields = ('tli_tilename', 'tli_ra', 'tli_dec',)
 
+    @action(detail=True)
+    def desaccess_tile_info(self, request, pk=None):
+        """Search DESaccess for tilename and return a list of tile files.
+
+        Returns:
+            dict: returns a dict with the image and catalog urls.
+        """
+        tile = self.get_object()
+
+        tilename = tile.tli_tilename
+
+        desapi = DesAccessApi()
+        tileinfo = desapi.tile_by_name(tilename)
+
+        return Response(tileinfo)
+
+    @action(detail=False, methods=['post'])
+    def desaccess_get_download_url(self, request):
+        """creates an authenticated url for a file served by DESaccess.
+
+        Args:
+            file_url (str): URL of the file to be downloaded.
+
+        Returns:
+            str: Authenticated URL, note that this url has a time limit to be used. must be generated at the time the download is requested.
+        """
+
+        params = request.data
+        file_url = params['file_url']
+
+        desapi = DesAccessApi()
+
+        download_url = desapi.file_url_to_download(file_url)
+
+        return Response(dict({"download_url": download_url}))
+
 
 class DatasetFilter(django_filters.FilterSet):
     tag__in = django_filters.CharFilter(method='filter_tag__in')
@@ -73,11 +108,10 @@ class DatasetFilter(django_filters.FilterSet):
     position = django_filters.CharFilter(method='filter_position')
     release = django_filters.CharFilter(method='filter_release')
     inspected = django_filters.CharFilter(method='filter_inspected')
-    
 
     class Meta:
         model = Dataset
-        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', 'release',]
+        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', 'release', ]
         order_by = True
 
     def filter_release(self, queryset, name, value):
@@ -145,6 +179,164 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
     ordering = ('tile__tli_tilename',)
 
+    @action(detail=True)
+    def desaccess_tile_info(self, request, pk=None):
+        """Search DESaccess for tilename and return a list of tile files already filtered by the dataset release.
+
+        Returns:
+            dict: returns a dict with the image and catalog urls, both organized by band and with the file url.
+        """
+        dataset = self.get_object()
+
+        # Requested to associate these internal releases
+        # to the DESAccess releases:
+        associated_releases = {
+            'y6a2_coadd': 'y6a1_coadd',
+            'y3a1_coadd': 'y3a2_coadd',
+            'y1_supplemental_dfull': 'y1a1_coadd',
+            'y1_supplemental_d10': 'y1a1_coadd',
+            'y1_supplemental_d04': 'y1a1_coadd',
+            'y1_wide_survey': 'y1a1_coadd',
+        }
+
+        tilename = dataset.tile.tli_tilename
+        rls_name = dataset.tag.tag_release.rls_name
+
+        # Associate the internal release to the release of DESAccess:
+        if rls_name in associated_releases.keys():
+            rls_name = associated_releases[rls_name]
+
+        desapi = DesAccessApi()
+
+        tileinfo = desapi.tile_by_name(tilename)
+
+        result = {}
+
+        for release in tileinfo["releases"]:
+            # Compara o release pelo internal name, nas nossas tabelas o release tem _coadd no nome. por isso é necessário fazer um split.
+            if release["release"] == rls_name.split("_")[0].lower():
+
+                rows = tileinfo["releases"][0]
+
+                for key in rows:
+                    if key != 'release' and key != 'num_objects' and key != 'bands':
+                        result[key] = rows[key]
+                        result['images'] = {}
+                        result['catalogs'] = {}
+
+                for band in release["bands"]:
+
+                    result["images"][band] = release["bands"][band]["image"]
+                    result["catalogs"][band] = release["bands"][band]["catalog"]
+
+                return Response(result)
+
+    @action(detail=False, methods=['get'])
+    def desaccess_tile_info_by_id(self, request):
+        """Search DESaccess for tilename and return a list of tile files already filtered by the dataset release.
+
+        Args:
+            id (str): URL of the file to be downloaded.
+
+        Returns:
+            list: returns a list with the filename and the url of the tile.
+        """
+
+        datasetId = request.query_params.get('id')
+
+        if datasetId is None:
+            raise Exception('ID paramater is required')
+
+        results = []
+
+        dataset = Dataset.objects.get(id=datasetId)
+
+        # Requested to associate these internal releases
+        # to the DESAccess releases:
+        associated_releases = {
+            'y3a1_coadd': 'y3a2_coadd',
+            'y1_supplemental_dfull': 'y1a1_coadd',
+            'y1_supplemental_d10': 'y1a1_coadd',
+            'y1_supplemental_d04': 'y1a1_coadd',
+            'y1_wide_survey': 'y1a1_coadd',
+        }
+
+        associated_other_files = {
+            'detection': 'Detection Image',
+            'main': 'Main Catalog',
+            'magnitude': 'Magnitude Catalog',
+            'flux': 'Flux Catalog',
+            'tiff_image': 'Color Image (TIFF)'
+        }
+
+        tilename = dataset.tile.tli_tilename
+        rls_name = dataset.tag.tag_release.rls_name
+
+        # Associate the internal release to the release of DESAccess:
+        if rls_name in associated_releases.keys():
+            rls_name = associated_releases[rls_name]
+
+        desapi = DesAccessApi()
+
+        tileinfo = desapi.tile_by_name(tilename)
+
+        for release in tileinfo["releases"]:
+            # Compara o release pelo internal name, nas nossas tabelas o release tem _coadd no nome. por isso é necessário fazer um split.
+            if release["release"] == rls_name.split("_")[0].lower():
+
+                for band in release["bands"]:
+                    if release["bands"][band]["image"]:
+                        results.append({
+                            'filename': '%s-Band Image' % band,
+                            'url': release["bands"][band]["image"]
+                        })
+
+                for band in release["bands"]:
+                    if release["bands"][band]["image_nobkg"]:
+                        results.append({
+                            'filename': '%s-Band Image (no background subtraction)' % band,
+                            'url': release["bands"][band]["image_nobkg"]
+                        })
+
+                for band in release["bands"]:
+                    if release["bands"][band]["catalog"]:
+                        results.append({
+                            'filename': '%s-Band Catalog' % band,
+                            'url': release["bands"][band]["catalog"]
+                        })
+
+                for key in release:
+                    if key != 'release' and key != 'num_objects' and key != 'bands' and release[key] and release[key] != '' and associated_other_files[key]:
+                        results.append({
+                            'filename': associated_other_files[key],
+                            'url': release[key]
+                        })
+
+        return Response(dict({
+            'results': results,
+            'count': len(results),
+        }))
+
+    @action(detail=False, methods=['post'])
+    def desaccess_get_download_url(self, request):
+        """creates an authenticated url for a file served by DESaccess.
+
+        Args:
+            file_url (str): URL of the file to be downloaded.
+
+        Returns:
+            str: Authenticated URL, note that this url has a time limit to be used. must be generated at the time the download is requested.
+        """
+
+        params = request.data
+        file_url = params['file_url']
+
+        desapi = DesAccessApi()
+
+        download_url = desapi.file_url_to_download(file_url)
+
+        return Response(dict({"download_url": download_url}))
+
 
 class DatasetFootprintViewSet(viewsets.ModelViewSet):
     queryset = Dataset.objects.select_related().all()
@@ -172,7 +364,7 @@ class SurveyViewSet(viewsets.ModelViewSet):
     ordering_fields = ('srv_filter__lambda_min',)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_fits_by_tilename(request):
     if request.method == 'GET':
 

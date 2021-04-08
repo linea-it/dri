@@ -15,5 +15,12 @@ class Command(BaseCommand):
             help='Name of the release corresponding to the name the DES uses.',
         )
 
+        parser.add_argument(
+            '--image_host',
+            dest='image_host',
+            default='https://desportal.cosmology.illinois.edu',
+            help='Hostname where the iipserver server is. to devs leave the default value to use production images. for production environments inform the domain where the application is installed. with protocol and without / at the end. example: https://desportal.cosmology.illinois.edu',
+        )
+
     def handle(self, *args, **options):
         DataDiscovery(options).start()

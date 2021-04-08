@@ -1,7 +1,7 @@
 import logging
 
 from rest_framework import serializers
-from .models import Feature, Flagged, Inspect, Defect, UserEmail
+from .models import Feature, Flagged, Inspect, Defect
 from coadd.models import Dataset
 from common.models import Filter
 
@@ -63,14 +63,4 @@ class DefectSerializer(serializers.HyperlinkedModelSerializer):
             'dfc_feature',
             'dfc_ra',
             'dfc_dec',
-        )
-
-
-class UserEmailSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = UserEmail
-
-        fields = (
-            'id',
-            'email',
         )

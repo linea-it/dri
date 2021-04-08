@@ -1046,26 +1046,26 @@ iframe.leaflet-control-iip-doc {
 
 .leaflet-control-minimap-toggle-display-bottomright {
 	bottom: 0;
-	right: 0; 
+	right: 0;
 }
 
 .leaflet-control-extramap-toggle-display-topleft{
 	top: 0;
-	left: 0; 
+	left: 0;
 	-webkit-transform: rotate(180deg);
 	transform: rotate(180deg);
 }
 
 .leaflet-control-extramap-toggle-display-bottomleft{
 	bottom: 0;
-	left: 0; 
+	left: 0;
 	-webkit-transform: rotate(90deg);
 	transform: rotate(90deg);
 }
 
 .leaflet-control-extramap-toggle-display-topright{
 	top: 0;
-	right: 0; 
+	right: 0;
 	-webkit-transform: rotate(270deg);
 	transform: rotate(270deg);
 }
@@ -1430,4 +1430,27 @@ a.leaflet-control-linea-overlay-catalog {
     background-image: url(images/icon-make-group.svg);
 	/*background-repeat: no-repeat;
 	background-position: center;**/
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.LineaOverlay %%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+a.leaflet-control-linea-contrast {
+    background-image: url(images/icon-contrast.svg);
+	/*background-repeat: no-repeat;
+	background-position: center;**/
+}
+
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%% Control.LineaDownload %%%%%%%%%%%%%%%%%%%%%%%%%*/
+/*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
+a.leaflet-control-linea-download {
+	background-image: url(images/icon-download.svg);
+/*background-repeat: no-repeat;
+background-position: center;**/
+}
+
+/* Destaca os icones da barra com fundo transparente */
+.leaflet-control-zoom {
+	filter: invert(1);
 }

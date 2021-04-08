@@ -22,10 +22,9 @@ Ext.define('Target.view.catalog.CatalogController', {
         }
         me.winAddCatalog = Ext.create('Target.view.catalog.RegisterWindow', {
             width: 400,
-            height: 550,
+            height: 500,
             listeners: {
                 scope: me,
-                //close: 'reloadCatalogs',
                 newproduct: 'onAddedProduct'
 
             }
@@ -37,11 +36,11 @@ Ext.define('Target.view.catalog.CatalogController', {
 
     reloadCatalogs: function () {
         var me = this,
+            view = me.getView(),
             vm = me.getViewModel(),
             catalogs = vm.getStore('catalogs');
 
         catalogs.load();
-
     },
 
     onAddedProduct: function (product) {
@@ -67,7 +66,7 @@ Ext.define('Target.view.catalog.CatalogController', {
             catalogs = vm.getStore('catalogs'),
             selected = vm.get('selectedCatalog');
 
-        Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - delete_catalog');
+        Ext.GlobalEvents.fireEvent('eventregister', 'TargetViewer - delete_catalog');
 
         if (btn === 'no') {
             return false;
@@ -76,7 +75,7 @@ Ext.define('Target.view.catalog.CatalogController', {
         if (selected.get('id')) {
             view.setLoading(true);
 
-            store.addFilter([{property: 'id', value: selected.get('id')}]);
+            store.addFilter([{ property: 'id', value: selected.get('id') }]);
 
             store.load({
                 callback: function () {
@@ -111,7 +110,7 @@ Ext.define('Target.view.catalog.CatalogController', {
 
             if ((selected.get('bookmark') > 0) && (selected.get('starred') === true)) {
                 // Criar um model setando o Id do model bookmark
-                bookmark = Ext.create('Target.model.Bookmarked',{
+                bookmark = Ext.create('Target.model.Bookmarked', {
                     'id': selected.get('bookmark')
                 });
 
@@ -129,11 +128,11 @@ Ext.define('Target.view.catalog.CatalogController', {
                     }
                 });
 
-                Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - delete_bookmark');
+                Ext.GlobalEvents.fireEvent('eventregister', 'TargetViewer - delete_bookmark');
 
             } else {
                 // Criar um Model sem id, com o id do produto e a flag is_starred true
-                bookmark = Ext.create('Target.model.Bookmarked',{
+                bookmark = Ext.create('Target.model.Bookmarked', {
                     'product': selected.get('id'),
                     'is_starred': true
                 });
@@ -153,7 +152,7 @@ Ext.define('Target.view.catalog.CatalogController', {
                     }
                 });
 
-                Ext.GlobalEvents.fireEvent('eventregister','TargetViewer - add_bookmark');
+                Ext.GlobalEvents.fireEvent('eventregister', 'TargetViewer - add_bookmark');
             }
         }
     },
@@ -163,6 +162,7 @@ Ext.define('Target.view.catalog.CatalogController', {
             vm = me.getViewModel(),
             catalogs = vm.getStore('catalogs'),
             bookmarkeds = catalogs.filters.items.filter(function (ch) { return ch._id === 'bookmark'; });
+
         if (bookmarkeds.length === 0) {
             btn.setText('Show all');
             catalogs.addFilter({

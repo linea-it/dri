@@ -8,6 +8,8 @@ from rest_framework.response import Response
 class VizierCDS:
     def get_available_catalogs(self):
 
+        # radius_unit: 'rs' para arcsec 'rm' para arcmin
+
         return list([
             # 2MASS
             dict({
@@ -29,6 +31,8 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
             # 2MASS 6X
             dict({
@@ -50,6 +54,8 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
             # SDSS Release 9
             dict({
@@ -71,6 +77,8 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
             # SDSS Release 12
             dict({
@@ -92,6 +100,8 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
             # PPMXL
             dict({
@@ -114,6 +124,8 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
             # # Abell clusters
             # dict({
@@ -135,6 +147,8 @@ class VizierCDS:
             #     "markable": False,
             #     "iconCls": "no-icon",
             #     "leaf": True,
+            # "radius_unit": 'rs',
+            # "radius": 1
             # }),
             # # NVSS
             # dict({
@@ -156,6 +170,8 @@ class VizierCDS:
             #     "markable": False,
             #     "iconCls": "no-icon",
             #     "leaf": True,
+            # "radius_unit": 'rs',
+            # "radius": 1
             # }),
             # # FIRST
             # dict({
@@ -177,6 +193,8 @@ class VizierCDS:
             #     "markable": False,
             #     "iconCls": "no-icon",
             #     "leaf": True,
+            # "radius_unit": 'rs',
+            # "radius": 1
             # }),
             # AllWISE
             dict({
@@ -198,6 +216,8 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
             # GALEX_AIS
             dict({
@@ -219,6 +239,8 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
             # GAIA_DR1
             dict({
@@ -240,6 +262,8 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
             # GAIA_DR2
             dict({
@@ -261,6 +285,31 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
+            }),
+            # GAIA_DR3
+            dict({
+                "id": "vizier_gaia_dr3",
+                "external_catalog": True,
+                "prd_name": "visier_gaia_dr3",
+                "prd_display_name": "GAIA EDR3",
+                "cds_source": "I/350",
+                "cds_fieldnames": ",".join(["Source", "RA_ICRS", "DE_ICRS", "Plx", "e_Plx", "pmRA", "e_pmRA", "pmDE", "e_pmDE", "Gmag", "e_Gmag", "BPmag", "e_BPmag", "RPmag", "e_RPmag", "RVDR2", "e_RVDR2"]),
+                "ctl_num_objects": 0,
+                "description": "Gaia data early release 3 (Gaia EDR3, 2020)",
+                "owner": "Vizier",
+                "pcl_is_system": False,
+                "is_owner": False,
+                "text": "GAIA EDR3",
+                "bookmark": None,
+                "tableExist": True,
+                "editable": False,
+                "markable": False,
+                "iconCls": "no-icon",
+                "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
             # URAT1
             dict({
@@ -282,6 +331,8 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
             # PS1
             dict({
@@ -303,6 +354,8 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
             # HSC2
             dict({
@@ -324,8 +377,13 @@ class VizierCDS:
                 "markable": False,
                 "iconCls": "no-icon",
                 "leaf": True,
+                "radius_unit": 'rs',
+                "radius": 1
             }),
         ])
+
+    def get_catalog_by_source(self, source):
+        return next((item for item in self.get_available_catalogs() if item["cds_source"] == source), None)
 
     def get_objects(self, source, fieldnames, coordinates, bounds):
         """
@@ -387,6 +445,14 @@ class VizierCDS:
                 if not l.startswith("#") and not l.startswith("---"):
                     lines.append(l)
 
+            # Recuperar informação do catalogo
+            catalog = self.get_catalog_by_source(source)
+            radius_unit = 'rs'
+            radius = 1
+            if catalog is not None and 'radius' in catalog and 'radius_unit' in catalog:
+                radius = catalog['radius']
+                radius_unit = catalog['radius_unit']
+
             rows = list()
 
             reader = csv.DictReader(lines, fieldnames=fieldnames, delimiter=';')
@@ -398,7 +464,7 @@ class VizierCDS:
 
                 # Cria uma url para acessar o objeto direto no visier.
                 object_url = ("http://vizier.u-strasbg.fr/viz-bin/VizieR-5"
-                              "?-source=%s&-c=%s,%s,eq=J2000&-c.rs=0.01" % (source, ra, dec))
+                              "?-source=%s&-c=%s,%s,eq=J2000&-c.%s=%s" % (source, ra, dec, radius_unit, radius))
 
                 row.update({
                     "_meta_id": meta_id,

@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useRef, useCallback,
+  useState, useEffect, useRef,
 } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Link as MaterialLink } from '@material-ui/core';
@@ -18,7 +18,6 @@ import {
 import ArrowBack from '@material-ui/icons/ArrowBack';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
-import { Virtuoso } from 'react-virtuoso';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
@@ -26,6 +25,10 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import ThumbDownIcon from '@material-ui/icons/ThumbDown';
 import Comment from '@material-ui/icons/Comment';
 import Divider from '@material-ui/core/Divider';
+import Download from '@material-ui/icons/GetApp';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import TileTable from './components/TileTable';
 import SnackBar from './components/SnackBar';
 import ChooseFilterDialog from './components/ChooseFilterDialog';
@@ -36,6 +39,7 @@ import SearchField from './components/SearchField';
 import VisiomaticPanel from './components/visiomatic/Visiomatic';
 import Footer from './components/Footer';
 import Header from './components/Header';
+import DownloadDialog from './components/download';
 import DriApi from './api/Api';
 
 
@@ -54,12 +58,12 @@ const useStyles = makeStyles(theme => ({
   visiomatic: {
     backgroundColor: theme.palette.grey[200],
   },
-  tilelist: {
-    height: '100%',
+  tilelist: props => ({
+    height: props.tileHeight,
     textAlign: 'center',
     minWidth: 300,
     position: 'relative',
-  },
+  }),
   tilesCount: {
     textAlign: 'left',
   },
@@ -86,11 +90,6 @@ const useStyles = makeStyles(theme => ({
   backLinkIcon: {
     borderRadius: 0,
   },
-  // rootDatasetList: {
-  //   width: '100%',
-  //   backgroundColor: theme.palette.background.paper,
-  //   listStyleType: 'none',
-  // },
   okButton: {
     color: theme.typography.successColor,
   },
@@ -109,6 +108,46 @@ const useStyles = makeStyles(theme => ({
   cardActionCounter: {
     padding: '15px 8px 8px 8px',
   },
+  backdrop: {
+    zIndex: 2001, // Because the z-index of the .leaflet-top.leaflet.left is 2000.
+    color: '#fff',
+  },
+  tileListContainer: {
+    [theme.breakpoints.between('sm', 'lg')]: {
+      width: 382,
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
+  },
+  visiomaticContainer: {
+    [theme.breakpoints.between('sm', 'lg')]: {
+      width: 'calc(100% - 382px)',
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%',
+    },
+  },
+  tileButton: {
+    [theme.breakpoints.between('lg', 'xl')]: {
+      padding: 6,
+
+    },
+  },
+  cardVisiomatic: {
+    height: window.innerHeight - 64 - 64 - 21,
+  },
+  noResults: {
+    fontWeight: 'bold',
+    lineHeight: 2.5,
+  },
+  tileIcon: {
+    [theme.breakpoints.between('lg', 'xl')]: {
+      width: '0.9em',
+      height: '0.9em',
+
+    },
+  },
 }));
 
 function Home() {
@@ -117,58 +156,115 @@ function Home() {
   const [currentRelease, setCurrentRelease] = useState('');
   const [datasets, setDatasets] = useState([]);
   const [currentDataset, setCurrentDataset] = useState({});
-  const [loading, setLoading] = useState(true);
+  const [loadingAllTiles, setLoadingAllTiles] = useState(true);
+  const [loadingList, setLoadingList] = useState(true);
   const [showComment, setShowComment] = useState(false);
   const [comments, setComments] = useState([]);
   const [menuContrastOpen, setMenuContrastOpen] = useState(false);
   const [contrast, setContrast] = useState('defaultContrast');
   const [counts, setCounts] = useState({
-    true: 0,
-    false: 0,
-    null: 0,
+    total: 0,
+    good: 0,
+    bad: 0,
   });
   const [showFilterDialog, setShowFilterDialog] = useState(false);
   const [filterInspect, setFilterInspect] = useState('');
-  const [inputSearchValue, setInputSearchValue] = useState('');
   const [openSnackBar, setOpenSnackBar] = useState(false);
   const [totalCount, setTotalCount] = useState(0);
   const [commentsWithFeature, setCommentsWithFeature] = useState([]);
   const datasetLoading = useRef(false);
   const [tutorial, setTutorial] = useState([]);
+  const [downloadInfo, setDownloadInfo] = useState({ visible: false });
+  const [backdropOpen, setBackdropOpen] = useState(false);
+  const [hasInspection, setHasInspection] = useState(false);
+  const [allTiles, setAllTiles] = useState([]);
+  const [searchEnabled, setSearchEnabled] = useState(false);
+  const [visiomaticCenter, setVisiomaticCenter] = useState([]);
+  const [fov, setFov] = useState(2);
+  const [selectedLine, setSelectedLine] = useState(null);
+  const [noResultsFound, setNoResultsFound] = useState(false);
+  const searchRef = useRef('');
 
+  const header = 64;
+  const toolbar = 64;
+  const footer = 64;
+  const tilesCount = 40;
+  const containerPadding = 32;
 
   const api = new DriApi();
-  const classes = useStyles();
-
-  const onChangeRelease = (value) => {
-    setLoading(true);
-    setCurrentRelease(value);
-    setDatasets([]);
-    setCurrentDataset({});
-  };
+  const classes = useStyles({
+    tileHeight: window.innerHeight - header - footer - 21,
+  });
 
   useEffect(() => {
+    api.getTileInspectionOption().then(res => setHasInspection(res.TILE_VIEWER_INSPECTION_ENABLED));
     api.loggedUser().then(res => setUsername(res.username));
     api.allReleases().then((res) => {
       setReleases(res);
-      setCurrentRelease(res.length > 0 ? res[0].id : '');
+
+      // Getting first item of all available releases:
+      let release = res.length > 0 ? res[0].id : '';
+
+      // Filter by releases with the default flag equal to true
+      const releaseDefault = res.filter(row => row.rls_default);
+
+      // If there's any release with the default flag on,
+      // set the first item as the current release.
+      if (releaseDefault.length > 0) {
+        release = releaseDefault[0].id;
+      }
+
+      setCurrentRelease(release);
     });
-    api.getTutorial().then(res => setTutorial(res));
+    api.getTutorial().then(res => setTutorial(res)).catch(() => setTutorial([]));
   }, []);
 
-  const loadMoreDatasets = useCallback((e) => {
+  useEffect(() => {
+    if (loadingAllTiles === true && currentRelease !== '') {
+      api.datasetsByRelease({ release: currentRelease }).then((res) => {
+        if (hasInspection) {
+          // Totais de Tiles boas, ruim e não inspecionadas
+          const goodTiles = countBy(res, el => el.isp_value);
+          goodTiles.total = res.length;
+
+          setCounts({
+            total: goodTiles.total,
+            good: goodTiles.true ? goodTiles.true : 0,
+            bad: goodTiles.false ? goodTiles.false : 0,
+          });
+        } else {
+          setCounts(prevCounts => ({ ...prevCounts, total: res.length }));
+        }
+        if (allTiles.length === 0) {
+          setAllTiles(res);
+        }
+        setLoadingAllTiles(false);
+      });
+    }
+  }, [hasInspection, currentRelease, filterInspect, loadingAllTiles]);
+
+  const loadMoreDatasets = () => {
+    setNoResultsFound(false);
+
+    if (searchRef.current && searchRef.current.value.split(',').length > 1) {
+      return;
+    }
+
+    const offset = datasets.length;
+
+
     const filters = [{
       property: 'inspected',
       value: filterInspect,
     }];
 
-    if (datasetLoading.current) {
-      return;
-    }
-
     datasetLoading.current = true;
     api.datasetsByRelease({
-      release: currentRelease, filters, search: inputSearchValue, offset: e || 0, limit: 20,
+      release: currentRelease,
+      filters,
+      search: searchRef.current && searchRef.current.value,
+      offset,
+      limit: 20,
     })
       .then((data) => {
         const datasetConcat = datasets.concat(data.results);
@@ -183,39 +279,60 @@ function Home() {
         if (data.count > 20) {
           datasetLoading.current = false;
         }
+        setLoadingList(false);
+
+        if (datasetTotalCount === 0) {
+          setNoResultsFound(true);
+        }
+      })
+      .catch(() => {
+        setTotalCount(0);
+        setDatasets([]);
+        datasetLoading.current = false;
+        setLoadingList(false);
+        setNoResultsFound(true);
       });
-  }, [datasets, currentRelease]);
-
-  useEffect(() => {
-    if (loading === true && currentRelease !== '') {
-      api.datasetsByRelease({ release: currentRelease }).then((res) => {
-        // Totais de Tiles boas, ruim e não inspecionadas
-        const goodTiles = countBy(res, el => el.isp_value);
-        goodTiles.tiles = res.length;
-        setCounts(goodTiles);
-        setLoading(false);
-      });
-      datasetLoading.current = false;
-      loadMoreDatasets(0);
-    }
-  }, [currentRelease, filterInspect, loading]);
-
-  useEffect(() => {
-    if (loading === true && currentRelease !== '') loadMoreDatasets(0);
-  }, [totalCount]);
-
-  const loadData = () => {
-    if (currentRelease !== '') {
-      setDatasets([]);
-      // setCurrentDataset({});
-      setCounts({});
-      setTotalCount(0);
-      setLoading(true);
-      datasetLoading.current = false;
-    }
   };
 
-  const onSelectDataset = dataset => setCurrentDataset(dataset);
+  useEffect(() => {
+    if (loadingList && currentRelease !== '') {
+      loadMoreDatasets();
+    }
+  }, [currentRelease, loadingList]);
+
+  const reloadList = () => {
+    setDatasets([]);
+    setTotalCount(0);
+    datasetLoading.current = false;
+    setLoadingList(true);
+  };
+
+  const reloadAllTiles = () => {
+    setLoadingAllTiles(true);
+    setCounts({});
+  };
+
+  const onSelectDataset = (dataset, isKeyboard) => {
+    if (dataset) {
+      if (!isKeyboard) {
+        datasets.forEach((row, i) => {
+          if (row.id === dataset.id) {
+            setSelectedLine(i);
+          }
+        });
+      }
+
+      setCurrentDataset(dataset);
+
+      // It is necessary to have a center,
+      // otherwise the visiomatic gets lost in rendering the tile
+      setVisiomaticCenter([
+        dataset.tli_ra,
+        dataset.tli_dec,
+      ]);
+      setFov(2);
+    }
+  };
 
   const handleClickSnackBar = () => setOpenSnackBar(!openSnackBar);
 
@@ -233,26 +350,31 @@ function Home() {
 
   const getDatasetCommentsByType = () => {
     setCommentsWithFeature([]);
-    return api.getDatasetCommentsByType(currentDataset.id, 2).then(res => setCommentsWithFeature(res));
+    if (currentDataset.id) {
+      api.getDatasetCommentsByType(currentDataset.id, 2)
+        .then(res => setCommentsWithFeature(res));
+    }
   };
 
   useEffect(() => {
-    getDatasetCommentsByType();
-  }, [currentDataset]);
+    if (hasInspection) {
+      getDatasetCommentsByType();
+    }
+  }, [currentDataset, hasInspection]);
 
   const onComment = (dataset, comment) => {
     if (comment.id !== null) {
       // update
       api.updateComment(comment.id, comment.inputValue, null, null).then(() => {
-        loadData();
         handleComment(dataset);
+        reloadList();
       });
     } else {
       const dts_type = comment.dts_type || '0';
       api.createDatasetComment(dataset.id, comment.inputValue, dts_type, null, null).then(() => {
-        loadData();
         if (showComment === true) {
           handleComment(dataset);
+          reloadList();
         }
       });
     }
@@ -300,22 +422,20 @@ function Home() {
     if (dataset.inspected !== null) {
       if (valueRef !== null) {
         api.updateInspectValue(dataset.inspected, valueRef).then(() => {
-          setLoading(true);
           handleClickSnackBar();
         });
       } else {
         api.deleteInspect(dataset.inspected).then(() => {
-          setLoading(true);
           handleClickSnackBar();
         });
       }
     } else {
       api.createinspect(dataset.id, valueRef).then(() => {
-        setLoading(true);
         handleClickSnackBar();
       });
     }
-    loadData();
+    reloadList();
+    reloadAllTiles();
   };
 
   const handleMenuContrastOpen = () => setMenuContrastOpen(true);
@@ -328,101 +448,328 @@ function Home() {
   const handleMenuFilterOpen = () => setShowFilterDialog(true);
 
   const handleMenuFilterClose = (value) => {
-    setFilterInspect(value);
     setShowFilterDialog(false);
-    setTotalCount(0);
-    loadData();
-  };
-
-
-  const handleInputSearch = (value) => {
-    setTotalCount(0);
-    setInputSearchValue(value);
-  };
-
-  const handleDelete = commentId => api.deleteComment(commentId).then(() => {
-    handleComment(currentDataset);
-    loadData();
-  });
-
-  useEffect(() => {
-    loadData();
-  }, [inputSearchValue]);
-
-
-  const Row = (i) => {
-    if (datasets.length > 0 && datasets[i]) {
-      return (
-        <ListItem
-          className={classes.listItem}
-          button
-          key={datasets[i].id}
-          onClick={() => {
-            onSelectDataset(datasets[i]);
-          }}
-          divider
-          selected={datasets[i].id === currentDataset.id}
-        >
-          <ListItemText
-            primary={datasets[i].tli_tilename}
-            secondary={(
-              <MaterialLink
-                className={datasets[i].comments > 0 ? classes.datasetWithComment : null}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  e.preventDefault();
-                  handleComment(datasets[i]);
-                }}
-              >
-                {`${datasets[i].comments} comments`}
-              </MaterialLink>
-            )}
-          />
-
-          <ListItemSecondaryAction>
-            <IconButton onClick={() => qualifyDataset(datasets[i], 'ok')}>
-              {datasets[i].isp_value ? (
-                <ThumbUpIcon className={classes.okButton} />
-              ) : (
-                <ThumbUpIcon />
-              )}
-            </IconButton>
-            <IconButton onClick={() => qualifyDataset(datasets[i], 'notok')}>
-              {datasets[i].isp_value === false ? (
-                <ThumbDownIcon color="error" />
-              ) : (
-                <ThumbDownIcon />
-              )}
-            </IconButton>
-            <IconButton onClick={() => handleComment(datasets[i])}>
-              <Comment />
-            </IconButton>
-          </ListItemSecondaryAction>
-        </ListItem>
-      );
+    if (value !== filterInspect) {
+      setFilterInspect(value);
+      setTotalCount(0);
+      reloadList();
     }
   };
 
-  const header = 64;
-  const toolbar = 64;
-  const footer = 64;
-  const tilesCount = 40;
-  const containerPadding = 32;
+  const filterByRaDec = (ra, dec) => {
+    /**
+     * e necessario converter os cantos da tile em ra para -180 e 180
+     * para que as tiles que ficam perto do 0 nao deem erro.
+     *
+     */
+
+    const result = [];
+
+    allTiles.forEach((tile) => {
+      if (ra > 180) {
+        ra -= 360;
+      }
+
+      let urall = tile.tli_urall;
+      let uraur = tile.tli_uraur;
+
+      if (urall > 180) {
+        urall -= 360;
+      }
+
+      if (uraur > 180) {
+        uraur -= 360;
+      }
+
+      if (urall < ra && tile.tli_udecll < dec && uraur > ra && tile.tli_udecur > dec) {
+        result.push(tile);
+        return false;
+      }
+    });
+
+    return result;
+  };
+
+  const sexagesimal2decimal = (sexagesimal) => {
+    let grau = 0;
+    let min = 0;
+    let sec = 0;
+
+    const data = sexagesimal.split(':');
+    let sign = 0;
+
+    if (data[0] < 0) {
+      sign = -1;
+      grau = parseFloat(data[0] / 1) * -1;
+    } else {
+      sign = 1;
+      grau = parseFloat(data[0] / 1);
+    }
+
+    min = parseFloat(data[1] / 60.0);
+    sec = parseFloat(data[2] / 3600.0) || 0;
+
+    const dec = ((grau + min + sec) * sign).toFixed(4);
+
+    return dec;
+  };
+
+  const handleInputSearch = () => {
+    setNoResultsFound(false);
+    const { value } = searchRef.current;
+    const splitByComma = value.split(',');
+    const splitBySpace = value.split(' ');
+    let splitRaDec = null;
+    let splitByHms = null;
+
+
+    // First the split by space, because the string could have a ", ".
+    // In this case, the split by comma should have priority
+    if (splitBySpace.length === 2) {
+      // Force a conversion of each value to a Number
+      // and check if it doesn't return a NaN
+      if (!isNaN(Number(splitBySpace[0].trim())) && !isNaN(Number(splitBySpace[1].trim()))) {
+        splitRaDec = [
+          parseFloat(splitBySpace[0].trim()),
+          parseFloat(splitBySpace[1].trim()),
+        ];
+
+      // If it does return a NaN but each value splitted by ":" has three elements
+      } else if (splitBySpace[0].split(':').length === 3 && splitBySpace[1].split(':').length === 3) {
+        splitByHms = [splitBySpace[0].trim(), splitBySpace[1].trim()];
+      }
+    }
+
+    if (splitByComma.length === 2) {
+      // Force a conversion of each value to a Number
+      // and check if it doesn't return a NaN
+      if (!isNaN(Number(splitByComma[0].trim())) && !isNaN(Number(splitByComma[1].trim()))) {
+        splitRaDec = [
+          parseFloat(splitByComma[0].trim()),
+          parseFloat(splitByComma[1].trim()),
+        ];
+
+      // If it does return a NaN but each value splitted by ":" has three elements
+      } else if (splitByComma[0].split(':').length === 3 && splitByComma[1].split(':').length === 3) {
+        splitByHms = [splitByComma[0].trim(), splitByComma[1].trim()];
+      }
+    }
+
+    if (splitRaDec) {
+      const datasetByPosition = filterByRaDec(splitRaDec[0], splitRaDec[1]);
+
+      if (datasetByPosition.length > 0) {
+        datasetLoading.current = true;
+        setDatasets(datasetByPosition);
+        setTotalCount(datasetByPosition.length);
+        datasetLoading.current = false;
+
+        // If only one dataset was found, then select it automatically
+        if (datasetByPosition.length === 1) {
+          setCurrentDataset(datasetByPosition[0]);
+          setFov(0.05);
+          setVisiomaticCenter(splitRaDec);
+        }
+      } else {
+        setDatasets([]);
+        setTotalCount(0);
+        setNoResultsFound(true);
+        setLoadingList(false);
+        setCurrentDataset({});
+      }
+    } else if (splitByHms) {
+      // If the search is by Hms, convert each one to degree
+      // and apply the same search as the if above
+      const raDec = [sexagesimal2decimal(splitByHms[0]), sexagesimal2decimal(splitByHms[1])];
+
+      const datasetByPosition = filterByRaDec(raDec[0], raDec[1]);
+
+      if (datasetByPosition.length > 0) {
+        datasetLoading.current = true;
+        setDatasets(datasetByPosition);
+        setTotalCount(datasetByPosition.length);
+        datasetLoading.current = false;
+
+        // If only one dataset was found, then select it automatically
+        if (datasetByPosition.length === 1) {
+          setCurrentDataset(datasetByPosition[0]);
+          setFov(0.05);
+          setVisiomaticCenter(raDec);
+        }
+      } else {
+        setDatasets([]);
+        setTotalCount(0);
+        setNoResultsFound(true);
+        setCurrentDataset({});
+        setLoadingList(false);
+      }
+    } else {
+      // Else includes the tilename. I could check for DES or make a regex for it,
+      // but a more broad approach allows the user to find the tiles with +0209, for example.
+      reloadList();
+    }
+  };
+
+
+  const handleDelete = commentId => api.deleteComment(commentId).then(() => {
+    handleComment(currentDataset);
+    reloadList();
+  });
+
+  const handleDownloadClick = (dataset) => {
+    setBackdropOpen(true);
+    api.getDatasetInfo(dataset.id)
+      .then((res) => {
+        if (res.count !== 0) {
+          setDownloadInfo({
+            visible: true,
+            tilename: dataset.tli_tilename,
+            files: res.results,
+          });
+        } else {
+          setDownloadInfo({
+            visible: true,
+            tilename: dataset.tli_tilename,
+            error: true,
+          });
+        }
+
+        setBackdropOpen(false);
+      }).catch(() => {
+        setDownloadInfo({
+          visible: true,
+          tilename: dataset.tli_tilename,
+          error: true,
+        });
+        setBackdropOpen(false);
+      });
+  };
+
+  const onChangeRelease = (value) => {
+    reloadList();
+    reloadAllTiles();
+    setCurrentDataset({});
+    setLoadingAllTiles(true);
+    setCurrentRelease(value);
+  };
+
+  useEffect(() => {
+    if (allTiles.length > 0) {
+      setSearchEnabled(true);
+    } else {
+      setSearchEnabled(false);
+    }
+  }, [allTiles]);
+
+  const Rows = () => {
+    if (datasets.length > 0) {
+      return datasets.map(dataset => (
+        <ListItem
+          className={classes.listItem}
+          button
+          key={dataset.id}
+          onClick={() => {
+            onSelectDataset(dataset);
+          }}
+          divider
+          selected={dataset.id === currentDataset.id}
+        >
+          <ListItemText
+            primary={dataset.tli_tilename}
+            secondary={hasInspection ? (
+              <MaterialLink
+                className={dataset.comments > 0 ? classes.datasetWithComment : null}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  e.preventDefault();
+                  handleComment(dataset);
+                }}
+              >
+                {`${dataset.comments} comments`}
+              </MaterialLink>
+            ) : null}
+          />
+          <ListItemSecondaryAction>
+            {hasInspection ? (
+              <>
+                <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'ok')}>
+                  {dataset.isp_value ? (
+                    <ThumbUpIcon className={`${classes.okButton} ${classes.tileIcon}`} />
+                  ) : (
+                    <ThumbUpIcon className={classes.tileIcon} />
+                  )}
+                </IconButton>
+                <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'notok')}>
+                  {dataset.isp_value === false ? (
+                    <ThumbDownIcon className={classes.tileIcon} color="error" />
+                  ) : (
+                    <ThumbDownIcon className={classes.tileIcon} />
+                  )}
+                </IconButton>
+                <IconButton className={classes.tileButton} onClick={() => handleComment(dataset)}>
+                  <Comment className={classes.tileIcon} />
+                </IconButton>
+              </>
+            ) : null}
+            <IconButton className={classes.tileButton} onClick={() => handleDownloadClick(dataset)}>
+              <Download className={classes.tileIcon} />
+            </IconButton>
+          </ListItemSecondaryAction>
+        </ListItem>
+      ));
+    }
+    return noResultsFound && <Typography variant="button" className={classes.noResults}>No results were found</Typography>;
+  };
+
+  const handleDownloadClose = () => {
+    setDownloadInfo({
+      visible: false,
+    });
+  };
+
+  useEffect(() => {
+    const handleKeyUp = (e) => {
+      // 38 (ArrowUp)
+      if (e.keyCode === 38) {
+        const row = selectedLine !== null
+          && selectedLine !== 0 ? selectedLine - 1 : 0;
+
+        setSelectedLine(row);
+      }
+
+      // 40 (ArrowDown)
+      if (e.keyCode === 40) {
+        const row = selectedLine !== null
+          && selectedLine !== datasets.length ? selectedLine + 1 : 0;
+
+        setSelectedLine(row);
+      }
+    };
+
+    window.addEventListener('keyup', handleKeyUp);
+    return () => window.removeEventListener('keyup', handleKeyUp);
+  }, [datasets, selectedLine]);
+
+  useEffect(() => {
+    if (selectedLine !== null) {
+      onSelectDataset(datasets[selectedLine], true);
+    }
+  }, [selectedLine]);
 
   return (
     <Router>
       <Header
-        title="Tile Inspection"
+        title="Tile Viewer"
         username={username}
         releases={releases}
         tutorial={tutorial}
         currentRelease={currentRelease}
         onChangeRelease={onChangeRelease}
       />
-      <Route exact path="/" render={() => <Redirect to="/eyeballing" />} />
+      <Route exact path="/" render={() => <Redirect to="/tile_viewer" />} />
       <Route
         exact
-        path="/eyeballing/"
+        path="/tile_viewer/"
         render={() => (
           <React.Fragment>
             <div className={classes.content}>
@@ -433,132 +780,169 @@ function Home() {
                 alignItems="stretch"
                 spacing={2}
               >
-                <Grid item xs={6} sm={4} md={3} lg={3}>
+                <Grid item lg={3} xl={2} className={classes.tileListContainer}>
                   <Card className={classes.tilelist}>
                     <Toolbar className={classes.toolbar}>
-                      <SearchField inputSearchValue={inputSearchValue} handleInputSearch={handleInputSearch} />
+                      <SearchField
+                        searchRef={searchRef}
+                        handleInputSearch={handleInputSearch}
+                        disabled={!searchEnabled}
+                      />
                       <div className={classes.grow} />
-                      <Tooltip title="Filter">
-                        <IconButton onClick={handleMenuFilterOpen} className={classes.menuButton} disabled={inputSearchValue !== ''}>
-                          <FilterListIcon className={classes.menuButtonIcon} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Contrast">
-                        <IconButton onClick={handleMenuContrastOpen} className={classes.menuButton}>
-                          <SettingsIcon className={classes.menuButtonIcon} />
-                        </IconButton>
-                      </Tooltip>
-                      <Tooltip title="Reporting">
-                        <Link to="/eyeballing/comments/">
-                          <IconButton onClick={() => {}} className={classes.menuButton}>
-                            <TableChart className={classes.menuButtonIcon} />
-                          </IconButton>
-                        </Link>
-                      </Tooltip>
+                      {hasInspection ? (
+                        <>
+                          <Tooltip title="Filter">
+                            <IconButton onClick={handleMenuFilterOpen} className={classes.menuButton} disabled={searchRef.current && searchRef.current.value !== ''}>
+                              <FilterListIcon className={classes.menuButtonIcon} />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Contrast">
+                            <IconButton onClick={handleMenuContrastOpen} className={classes.menuButton}>
+                              <SettingsIcon className={classes.menuButtonIcon} />
+                            </IconButton>
+                          </Tooltip>
+                          <Tooltip title="Reporting">
+                            <Link to="/tile_viewer/comments/">
+                              <IconButton className={classes.menuButton}>
+                                <TableChart className={classes.menuButtonIcon} />
+                              </IconButton>
+                            </Link>
+                          </Tooltip>
+                        </>
+                      ) : null}
                     </Toolbar>
-                    <Virtuoso
+                    <div
+                      id="datasetList"
                       style={{
+                        overflowY: 'auto',
                         height: (
                           window.innerHeight
-                        - header
-                        - toolbar
-                        - footer
-                        - tilesCount
-                        - containerPadding
+                          - header
+                          - toolbar
+                          - footer
+                          - tilesCount
+                          - containerPadding
                         ),
                       }}
-                      overscan={20}
-                      initialItemCount={20}
-                      totalCount={totalCount
-                      }
-                      item={Row}
-                      endReached={e => loadMoreDatasets(e)}
-                      footer={() => (
-                        <div style={{ padding: '1rem', textAlign: 'center' }}>
-                          Loading...
-                        </div>
-                      )}
-                    />
-                    <Divider />
-                    {loading ? (
-                      <LinearProgress color="secondary" className={classes.linearProgress} />
-                    ) : (
-                      <CardActions className={classes.cardActionCounter}>
-                        <Counter counts={counts} />
-                      </CardActions>
-                    )}
+                    >
 
+                      <InfiniteScroll
+                        id="datasetList"
+                        dataLength={totalCount}
+                        next={loadMoreDatasets}
+                        hasMore={datasets.length < 10169}
+                        loader={loadingList ? <h4>Loading...</h4> : null}
+                        scrollableTarget="datasetList"
+                      >
+                        {Rows()}
+                      </InfiniteScroll>
+                    </div>
+                    <Divider />
+                    <>
+                      {loadingAllTiles ? (
+                        <LinearProgress color="secondary" className={classes.linearProgress} />
+                      ) : (
+                        <CardActions className={classes.cardActionCounter}>
+                          <Counter hasInspection={hasInspection} counts={counts} />
+                        </CardActions>
+                      )}
+                    </>
                   </Card>
                 </Grid>
-                <Grid item xs={6} sm={8} md={9} lg={9}>
-                  <Card className={classes.card}>
-                    <VisiomaticPanel
-                      image={
-                      !isEmpty(currentDataset)
-                        ? currentDataset.image_src_ptif
-                        : null
-                    }
-                      className={classes.visiomatic}
-                      center={[currentDataset.tli_ra, currentDataset.tli_dec]}
-                      fov={2}
-                      contrast={contrast}
-                      currentDataset={currentDataset.id || null}
-                      points={commentsWithFeature}
-                      getDatasetCommentsByType={getDatasetCommentsByType}
-                      reloadData={loadData}
-                    />
+                <Grid item lg={9} xl={10} className={classes.visiomaticContainer}>
+                  <Card className={`${classes.card} ${classes.cardVisiomatic}`}>
+                    {currentRelease !== '' ? (
+                      <VisiomaticPanel
+                        image={
+                          !isEmpty(currentDataset)
+                            ? currentDataset.image_src_ptif
+                            : null
+                        }
+                        className={classes.visiomatic}
+                        center={visiomaticCenter}
+                        fov={fov}
+                        contrast={contrast}
+                        currentDataset={!isEmpty(currentDataset) ? currentDataset : null}
+                        points={commentsWithFeature}
+                        getDatasetCommentsByType={getDatasetCommentsByType}
+                        reloadData={reloadList}
+                        hasInspection={hasInspection}
+                        handleDownloadClick={handleDownloadClick}
+                      />
+                    ) : null}
                   </Card>
                 </Grid>
               </Grid>
-              <CommentDialog
-                open={showComment}
-                dataset={currentDataset}
-                comments={comments}
-                handleClose={() => setShowComment(false)}
-                handleSubmit={onComment}
-                handleDelete={handleDelete}
-              />
+              {hasInspection ? (
+                <CommentDialog
+                  open={showComment}
+                  dataset={currentDataset}
+                  comments={comments}
+                  handleClose={() => setShowComment(false)}
+                  handleSubmit={onComment}
+                  handleDelete={handleDelete}
+                />
+              ) : null}
             </div>
-            <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={handleClickSnackBar} />
+            {downloadInfo.visible && (
+              <DownloadDialog
+                open={downloadInfo.visible}
+                error={downloadInfo.error}
+                handleClose={handleDownloadClose}
+                tilename={downloadInfo.tilename}
+                files={downloadInfo.files}
+              />
+            )}
+            <Backdrop open={backdropOpen} className={classes.backdrop}>
+              <CircularProgress color="inherit" />
+            </Backdrop>
+            {hasInspection ? <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={handleClickSnackBar} /> : null}
           </React.Fragment>
         )}
       />
-      <Route
-        path="/eyeballing/comments/"
-        render={() => (
-          <TileTable
-            currentRelease={currentRelease}
-            className={classes.card}
-            backLink={(
-              <Link to="/eyeballing/" style={{ color: 'inherit', textDecoration: 'none' }}>
-                <IconButton
-                  aria-label="Home"
-                  aria-controls="home-appbar"
-                  aria-haspopup="true"
-                  color="inherit"
-                  className={classes.backLinkIcon}
-                >
-                  <ArrowBack />
-                  <Typography variant="button" display="block">
-                    Back
-                  </Typography>
-                </IconButton>
-              </Link>
+      {hasInspection ? (
+        <Route
+          path="/tile_viewer/comments/"
+          render={() => (
+            <TileTable
+              currentRelease={currentRelease}
+              className={classes.card}
+              backLink={(
+                <Link to="/tile_viewer/" style={{ color: 'inherit', textDecoration: 'none' }}>
+                  <IconButton
+                    aria-label="Home"
+                    aria-controls="home-appbar"
+                    aria-haspopup="true"
+                    color="inherit"
+                    className={classes.backLinkIcon}
+                  >
+                    <ArrowBack />
+                    <Typography variant="button" display="block">
+                      Back
+                    </Typography>
+                  </IconButton>
+                </Link>
+              )}
+            />
           )}
-          />
-        )}
-      />
+        />
+      ) : null}
       <Footer />
-      <ChooseContrast
-        selectedValue={contrast}
-        open={menuContrastOpen}
-        handleClose={handleMenuContrastClose}
-      />
-      <ChooseFilterDialog
-        open={showFilterDialog}
-        selectedValue={filterInspect}
-        handleClose={handleMenuFilterClose}
-      />
+
+      {hasInspection ? (
+        <>
+          <ChooseContrast
+            selectedValue={contrast}
+            open={menuContrastOpen}
+            handleClose={handleMenuContrastClose}
+          />
+          <ChooseFilterDialog
+            open={showFilterDialog}
+            selectedValue={filterInspect}
+            handleClose={handleMenuFilterClose}
+          />
+        </>
+      ) : null}
 
     </Router>
   );

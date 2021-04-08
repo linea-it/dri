@@ -15,6 +15,7 @@ Ext.define('Target.view.catalog.CSVForm', {
     title: 'Upload',
 
     controller: 'csvform',
+    scrollable: true,
 
     viewModel: {
         stores: {
@@ -45,19 +46,19 @@ Ext.define('Target.view.catalog.CSVForm', {
 
         // Recuperar do Settigs no backend se a interface de registro pelo
         // banco de dados estara disponivel.
-        try{
+        try {
             me.enableFolder = Settings.PRODUCT_REGISTER_FOLDERS;
         }
-        catch (err){
+        catch (err) {
             console.warn("Setting PRODUCT_REGISTER_FOLDERS not loaded.");
         }
 
         // Recuperar do Settigs no backend se a opcao de deixar a lista publica
         // vai estar ativa
-        try{
+        try {
             me.enablePublic = Settings.PRODUCT_REGISTER_ENABLE_PUBLIC;
         }
-        catch (err){
+        catch (err) {
             console.warn("Setting PRODUCT_REGISTER_ENABLE_PUBLIC not loaded.");
         }
 
@@ -72,14 +73,13 @@ Ext.define('Target.view.catalog.CSVForm', {
                 {
                     xtype: 'textfield',
                     name: 'displayName',
-                    fieldLabel: 'Name',
+                    fieldLabel: 'List Name',
                     minLength: 3,
                     maxLength: 30,
                     allowBlank: false,
                     regex: /^[a-z0-9-_\s]+$/i,
                     regexText: 'Please use only letters and numbers separated ' +
-                                'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
-                    // value: 'Teste Import CSV'
+                        'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
                 },
                 {
                     xtype: 'combobox',
@@ -104,7 +104,6 @@ Ext.define('Target.view.catalog.CSVForm', {
                     bind: {
                         store: '{releases}'
                     }
-                    // value: 'y1_wide_survey'
                 },
                 {
                     xtype: 'checkbox',
@@ -114,16 +113,30 @@ Ext.define('Target.view.catalog.CSVForm', {
                     hidden: !me.enablePublic,
                 },
                 {
+                    xtype: 'component',
+                    html: [
+                        '<p>The target positions must be filled in CSV format: manually, in the text area below, or by a file that can be a raw <strong>.csv</strong> or a compressed one in the formats <strong>.zip</strong> or <strong>.tar.gz</strong>.</p>',
+                    ]
+                },
+                {
+                    xtype: 'filefield',
+                    hideLabel: true,
+                    reference: 'fldFileUploaded',
+                    name: 'file'
+                },
+                {
+                    xtype: 'component',
+                    html: [
+                        '<em>The attachment size limit is 50Mb.</em><p></p>',
+                    ]
+                },
+                {
                     xtype: 'textareafield',
                     name: 'csvData',
                     fieldLabel: 'Coordinates',
-                    height: 200,
+                    height: 150,
                     labelAlign: 'top',
                     emptyText: 'ra, dec',
-                    allowBlank: false
-                    // value:  '93.96499634,-57.77629852\n' +
-                    //         '94.28079987,-55.13209915\n' +
-                    //         '68.05249786,-61.84970093\n'
                 },
                 {
                     xtype: 'textareafield',

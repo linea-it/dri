@@ -1,0 +1,65 @@
+{
+  "products": [
+    {
+      "display_name": "Y5A1 Coadd Objects",
+      "fields": [],
+      "releases": [
+        "y5a1_coadd"
+      ],
+      "table": "y5a1_coadd_object_summary",
+      "schema": "prod",
+      "database": "dessci",
+      "type": "catalog",
+      "class": "coadd_objects",
+      "name": "y5a1_coadd",
+      "association": [
+        {
+          "ucd": "meta.id;meta.main",
+          "property": "coadd_object_id"
+        },
+        {
+          "ucd": "pos.eq.ra;meta.main",
+          "property": "ra"
+        },
+        {
+          "ucd": "pos.eq.dec;meta.main",
+          "property": "dec"
+        },
+        {
+          "ucd": "phys.size.smajAxis;instr.det;meta.main",
+          "property": "a_image"
+        },
+        {
+          "ucd": "phys.size.sminAxis;instr.det;meta.main",
+          "property": "b_image"
+        },
+        {
+          "ucd": "pos.posAng;instr.det;meta.main",
+          "property": "theta_j2000"
+        },
+        {
+          "ucd": "phot.mag;meta.main;em.opt.g",
+          "property": "mag_auto_g"
+        },
+        {
+          "ucd": "phot.mag;meta.main;em.opt.r",
+          "property": "mag_auto_r"
+        },
+        {
+          "ucd": "phot.mag;meta.main;em.opt.i",
+          "property": "mag_auto_i"
+        },
+        {
+          "ucd": "phot.mag;meta.main;em.opt.z",
+          "property": "mag_auto_z"
+        },
+        {
+          "ucd": "phot.mag;meta.main;em.opt.Y",
+          "property": "mag_auto_y"
+        }
+      ]
+    }
+  ],
+  "ticket": "JEX147",
+  "register_username": "gverde"
+}

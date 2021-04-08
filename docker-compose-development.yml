@@ -94,26 +94,35 @@ services:
     depends_on:
       - sky
 
-  # eyeballing:
-  #   build: ./frontend/eyeballing
-  #   volumes:
-  #     - ./frontend/eyeballing/:/app
-  #   working_dir: /app
-  #   command: yarn start
+  eyeballing:
+    image: node:10-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend/eyeballing:/app
+    stdin_open: true
+    command: yarn start 
 
+  landingpage:
+    image: node:10-alpine
+    working_dir: /app
+    volumes:
+      - ./frontend/landing_page:/app
+    stdin_open: true
+    command: yarn start
+    
   nginx:
     build: ./frontend
     ports:
       - 80:8080
     volumes:
-      # Diretório onde o backend manipula arquivos, e que deve ficar acessivel ao servidor web.
-      - ./archive:/var/www/data
+      # Arquivo de Configuração do Nginx
+      - ./frontend/nginx-proxy-develop.conf:/etc/nginx/conf.d/default.conf:ro
       # Diretório de arquivos estaticos do Django. 
       - ./archive/static:/var/www/django_static
-      # Arquivo de configuração do Ngnix para este ambiente.
-      - ./frontend/nginx-proxy-develop.conf:/etc/nginx/conf.d/default.conf
       # Diretório de logs do servidor web. 
-      # - ./log/nginx:/var/log
+      - ./log/nginx:/var/log/nginx      
+      # Diretório onde o backend manipula arquivos, e que deve ficar acessivel ao servidor web.
+      - ./archive:/var/www/data
     depends_on:
       - backend
       # - iipserver

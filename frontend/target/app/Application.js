@@ -36,31 +36,24 @@ Ext.define('Target.Application', {
             success: function (response) {
                 var data = JSON.parse(response.responseText);
 
-                // Identificar o usuario no Google Analitics
-                if (window.ga) ga('set', 'userId', data.id);
-
+                // Informa o Id o usuario para o GA, para que possa reconher usuarios unicos.
+                window.gtag('config', 'GA_MEASUREMENT_ID', {
+                    'user_id': data.id
+                });
 
                 // Recupera essas Settings do backend
                 Settings.loadSettings([
                     'PRODUCT_REGISTER_DB_INTERFACE',
                     'PRODUCT_REGISTER_FOLDERS',
                     'PRODUCT_REGISTER_ENABLE_PUBLIC',
-                    'DES_CUTOUT_SERVICE__AVAILABLE_RELEASES',
-                    'DES_CUTOUT_SERVICE__MAX_OBJECTS'
+                    'DESACCESS_API__AVAILABLE_RELEASES',
+                    'DESACCESS_API__MAX_OBJECTS'
                 ])
             },
             failure: function (response, opts) {
-                var protocol = window.location.protocol,
-                    pathname = window.location.pathname,
-                    hostname = window.location.hostname,
-                    location;
-
-                location = Ext.String.format(
-                    '{0}//{1}/dri/api/api-auth/login/?next={2}',
-                    protocol, hostname, pathname);
-
+                var pathname = window.location.pathname;
+                location = Ext.String.format('/dri/api/api-auth/login/?next={0}', pathname);
                 window.location.assign(location);
-
             }
         });
 

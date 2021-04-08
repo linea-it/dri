@@ -25,79 +25,96 @@ const useStyles = makeStyles(theme => ({
 
 export default function Counter(props) {
   const classes = useStyles();
+  const {
+    total,
+    good,
+    bad,
+  } = props.counts;
+
+  const { hasInspection } = props;
 
   return (
     <div className={classes.root}>
-      <Typography
-        variant="subtitle2"
-        gutterBottom
-        className={classes.label}
-        noWrap
-      >
-        Tiles:
-      </Typography>
-      <Typography
-        variant="subtitle2"
-        className={classes.value}
-        gutterBottom
-        noWrap
-      >
-        {props.counts.tiles ? props.counts.tiles : 0}
-      </Typography>
+      {hasInspection ? (
+        <>
+          <Typography
+            variant="subtitle2"
+            gutterBottom
+            className={classes.label}
+            noWrap
+          >
+            Examined:
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            className={classes.value}
+            gutterBottom
+            noWrap
+          >
+            {good + bad}
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            gutterBottom
+            className={classes.label}
+            noWrap
+          >
+            Good:
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            className={`${classes.value}  ${classes.goodColor}`}
+            gutterBottom
+            noWrap
+          >
+            {`${Math.round((((good * 100) / total) + Number.EPSILON) * 100) / 100}%`}
+          </Typography>
 
-      <Typography
-        variant="subtitle2"
-        gutterBottom
-        className={classes.label}
-        noWrap
-      >
-        Good:
-      </Typography>
-      <Typography
-        variant="subtitle2"
-        className={`${classes.value}  ${classes.goodColor}`}
-        gutterBottom
-        noWrap
-      >
-        {props.counts.true ? props.counts.true : 0}
-      </Typography>
-
-      <Typography
-        variant="subtitle2"
-        gutterBottom
-        className={classes.label}
-        noWrap
-      >
-        Bad:
-      </Typography>
-      <Typography
-        variant="subtitle2"
-        className={`${classes.value}  ${classes.badColor}`}
-        gutterBottom
-        noWrap
-      >
-        {props.counts.false ? props.counts.false : 0}
-      </Typography>
-
-      <Typography
-        variant="subtitle2"
-        gutterBottom
-        className={classes.label}
-        noWrap
-      >
-        Not:
-      </Typography>
-      <Typography
-        variant="subtitle2"
-        className={classes.value}
-        gutterBottom
-        noWrap
-      >
-        {props.counts.null ? props.counts.null : 0}
-      </Typography>
+          <Typography
+            variant="subtitle2"
+            gutterBottom
+            className={classes.label}
+            noWrap
+          >
+            Bad:
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            className={`${classes.value}  ${classes.badColor}`}
+            gutterBottom
+            noWrap
+          >
+            {`${Math.round((((bad * 100) / total) + Number.EPSILON) * 100) / 100}%`}
+          </Typography>
+        </>
+      ) : (
+        <>
+          <Typography
+            variant="subtitle2"
+            gutterBottom
+            className={classes.label}
+            noWrap
+          >
+            Total:
+          </Typography>
+          <Typography
+            variant="subtitle2"
+            className={classes.value}
+            gutterBottom
+            noWrap
+          >
+            {total}
+          </Typography>
+        </>
+      )}
     </div>
   );
 }
 Counter.propTypes = {
-  counts: PropTypes.object.isRequired,
+  counts: PropTypes.shape({
+    total: PropTypes.number,
+    good: PropTypes.number,
+    bad: PropTypes.number,
+  }).isRequired,
+  hasInspection: PropTypes.bool.isRequired,
 };

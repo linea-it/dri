@@ -1,16 +1,17 @@
+import logging
+import math
+
 from django.conf import settings
-from lib.CatalogDB import TargetObjectsDBHelper, CatalogObjectsDBHelper
+from django.db.models import Max
+from lib.CatalogDB import CatalogObjectsDBHelper, TargetObjectsDBHelper, CatalogDB
 from product.association import Association
-from product.models import Catalog, ProductContentAssociation
-from product.serializers import AssociationSerializer
+from product.models import Catalog
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 
-from .models import Rating, Reject, Comments
-from .serializers import RatingSerializer, RejectSerializer, CommentsSerializer
-
-import math
+from .models import Comments, Rating, Reject
+from .serializers import CommentsSerializer, RatingSerializer, RejectSerializer
 
 
 class RatingViewSet(viewsets.ModelViewSet):
@@ -62,7 +63,39 @@ class CommentsViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         if not self.request.user.pk:
             raise Exception('It is necessary an active login to perform this operation.')
-        serializer.save(owner=self.request.user.pk)
+
+        # TODO: Rever essa solução tentar deixar igual ao comportamento do rating e reject.
+        #     Workaround para corrigir bug reportado na issue https://github.com/linea-it/dri/issues/1282
+        # Por Algum motivo que eu não consegui descobrir, ocorre um erro
+        # ao tenta inserir um registro na tabela comments usando Oracle.
+        # o Oracle reclama que ID não pode ser Null, mas a coluna id é autoincrement,
+        # nas tabelas Rating e Reject é a mesma situação e nelas o erro não acontece.
+        # A solução:
+        #     Verificar se o banco utilizado é o Oracle.
+        #     se for faz uma query para na tabela e depois recupera o ultimo Id
+        #     acrescenta +1 e faz o insert usando este ID.
+
+        # Problemas:
+        #     - Faz uma query all antes do insert, pode causar um problema de performance se a tabela commens ficar muito grande.
+        #     - Pode ocorrer falhar se 2 usuarios fizerem um comment ao mesmo tempo.
+
+        # Verificar se a tabela comments está no Oracle
+        catalog_db = CatalogDB(db='catalog')
+        if catalog_db.get_engine_name() == "oracle":
+            # Proximo ID
+            comments = Comments.objects.all()
+            next_id = comments.aggregate(Max('id'))['id__max'] + 1 if comments else 1
+
+            # Faz o Insert
+            serializer.save(
+                owner=self.request.user.pk,
+                pk=next_id
+            )
+        else:
+            # Se não for oracle deixa o Django fazer o processo normal de insert.
+            serializer.save(
+                owner=self.request.user.pk,
+            )
 
 
 class TargetViewSet(ViewSet):
@@ -89,15 +122,11 @@ class TargetViewSet(ViewSet):
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(catalog.pk)
 
-        # Recuperar no Settigs em qual schema do database estao as tabelas de rating e reject
-        schema_rating_reject = settings.SCHEMA_RATING_REJECT
-
         catalog_db = TargetObjectsDBHelper(
             table=catalog.tbl_name,
             schema=catalog.tbl_schema,
             database=catalog.tbl_database,
             associations=associations,
-            schema_rating_reject=schema_rating_reject,
             product=catalog,
             user=request.user
         )
@@ -117,10 +146,6 @@ class TargetViewSet(ViewSet):
                 "_meta_ra": 0,
                 "_meta_dec": 0,
                 "_meta_radius": 0,
-                "_meta_rating_id": None,
-                "_meta_rating": None,
-                "_meta_reject_id": None,
-                "_meta_reject": None,
             })
 
             essential_props = dict({
@@ -172,27 +197,6 @@ class TargetViewSet(ViewSet):
             except:
                 pass
 
-            row.update({
-                "_meta_rating_id": row.get('meta_rating_id', None)
-            })
-            row.update({
-                "_meta_rating": row.get('meta_rating', None)
-            })
-            row.update({
-                "_meta_reject_id": row.get('meta_reject_id', None)
-            })
-            row.update({
-                "_meta_reject": bool(row.get('meta_reject', None))
-            })
-
-            row.pop("meta_rating_id", None)
-            row.pop("meta_rating", None)
-            row.pop("meta_reject_id", None)
-            row.pop("meta_reject", None)
-
-            # Count de Comentarios por objetos.
-            # TODO: utlizar um join com having count ao inves de uma query para cada linha
-
             try:
                 comments = Comments.objects.filter(
                     catalog_id=catalog.pk, object_id=row.get("_meta_id"))
@@ -209,7 +213,7 @@ class TargetViewSet(ViewSet):
             # FIXED Issue: https://github.com/linea-it/dri/issues/1153
             # Ticket: http://ticket.linea.gov.br/ticket/11761
             for prop in row:
-                if isinstance(row.get(prop, None), float):
+                if isinstance(row.get(prop, None), float) or isinstance(row.get(prop, None), int):
                     # Check if is infity
                     if math.isinf(row.get(prop)):
                         if row.get(prop) > 0:
@@ -232,10 +236,16 @@ class CatalogObjectsViewSet(ViewSet):
         """
         Return a list of objects in catalog.
         """
+
         # Recuperar o parametro product id que e obrigatorio
         product_id = request.query_params.get('product', None)
         if not product_id:
             raise Exception('Product parameter is missing.')
+
+        # Parametro para retornar todas as colunas.
+        all_columns = request.query_params.get('all_columns', True)
+
+        all_columns = False if all_columns in ['false', '0', 'f', 'False', 'no'] else True
 
         # Recuperar no model Catalog pelo id passado na url
         catalog = Catalog.objects.select_related().get(product_ptr_id=product_id)
@@ -246,10 +256,10 @@ class CatalogObjectsViewSet(ViewSet):
         # colunas associadas ao produto
         associations = Association().get_associations_by_product_id(product_id)
 
-        # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
-        columns = Association().get_properties_associated(product_id)
-
-        print(columns)
+        columns = list()
+        if not all_columns:
+            # Criar uma lista de colunas baseda nas associacoes isso para limitar a query de nao usar *
+            columns = Association().get_properties_associated(product_id)
 
         catalog_db = CatalogObjectsDBHelper(
             table=catalog.tbl_name,
@@ -316,43 +326,37 @@ class CatalogObjectsViewSet(ViewSet):
                 try:
                     meta_prop = essential_props.get(ucd)
                     if meta_prop:
-                        # print(row.get(associations.get(ucd)))
                         value = row.get(associations.get(ucd))
 
-                        # TODO: Esse Bloco precisa de um refactoring
-                        """
-                            Glauber: 16/08/2017
-                         Essa solucao foi adotada por que cada release esta com um valor diferente para 
-                         o atributo theta_image e nao ficou muito claro uma forma de tratar esses valores 
-                         no banco. solucao rapida por causa de ser vespera de uma reuniao 1/09/2017
-                         
-                         Releases 
+                        # TODO: Esse tratamento do theta image deveria ser uma flag no cadastro do Produto.
+                        """Releases 
                             Y1 - para corrigir as ellipses do Y1 deve multiplicar o valor de theta_image 
                             por -1. para todas as linhas. 
                             
-                            Y3 - a correcao do Y3 e: 90 - theta_image. 
-                            
-                            Glauber: 21/12/2017 - O Release publico DR1 Main deve ser tratado  
-                            igual ao Y3.
-                            
-                            NAO foi testado outros releases por nao estarem registrados as suas tabelas coadd.
+                            Os demais releases a partir do Y3 
+                            Y3 - a correcao do Y3 é: 90 - theta_image. 
                         """
                         if meta_prop == '_meta_theta_image':
                             t_image = float(value)
 
-                            # Descobrir o release do Catalogo
+                            # Decobrir o release do produto
                             release_set = catalog.productrelease_set.first()
                             if release_set:
-                                release = release_set.release.rls_name
-                                # Se tiver release e ele for o Y3 subtrair 90 graus
-                                areleases = ['y3a1_coadd', 'y6a1_coadd', 'y6a2_coadd', 'dr1', ]
-                                if release in areleases:
-                                    t_image = 90 - t_image
+                                # Se o produto estiver associado a um release.
+                                # Verifica se é o release do Y1
+                                areleases = ['y1_wide_survey', 'y1_supplemental_d04', 'y1_supplemental_d10', 'y1_supplemental_dfull']
 
-                                else:
+                                # é usado o internal name do release para fazer a checagem.
+                                if release_set.release.rls_name in areleases:
+                                    # Para releases do Y1 aplica multiplica por -1
                                     t_image = t_image * -1
+                                else:
+                                    # Demais releases utiliza 90 - theta_image
+                                    t_image = 90 - t_image
                             else:
-                                t_image = t_image * -1
+                                # Produto não está associado a nenhum release
+                                # Usa a correção que atende a maior parte dos catalogos.
+                                t_image = 90 - t_image
 
                             value = t_image
 
@@ -360,10 +364,19 @@ class CatalogObjectsViewSet(ViewSet):
                             meta_prop: value
                         })
 
-                    # print("%s:%s" % (meta_prop, value))
-
                 except:
                     pass
+            # FIXED Issue: https: // github.com / linea - it / dri / issues / 1153
+            # Ticket: http: // ticket.linea.gov.br / ticket / 11761
+            for prop in row:
+                if isinstance(row.get(prop, None), float) or isinstance(row.get(prop, None), int):
+                    # Check if is infity
+                    if math.isinf(row.get(prop)):
+                        if row.get(prop) > 0:
+                            row.update({prop: "+Infinity"})
+                        elif row.get(prop) < 0:
+                            row.update({prop: "-Infinity"})
+
         return Response(dict({
             'count': count,
             'results': rows

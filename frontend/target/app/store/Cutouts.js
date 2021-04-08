@@ -18,27 +18,19 @@ Ext.define('Target.store.Cutouts', {
     },
 
 
-    getImageSourceByObjectId: function (meta_id, fileFormat, timestamp) {
+    getImageSourceByObjectId: function (meta_id) {
         var me = this,
             record;
 
-        if (!fileFormat) {
-            fileFormat = 'png';
-        }
-
-        me.each(function(r){
-
+        me.each(function (r) {
             if (parseInt(r.get('ctt_object_id')) === parseInt(meta_id)) {
-
-                if (r.get('ctt_file_type').toLowerCase() === fileFormat.toLowerCase()) {
-                    record = r;
-                    return false;
-                }
+                record = r;
+                return false;
             }
         }, me);
 
-       if ((record) && (record.get('ctt_file_source') !== null) && (record.get('ctt_file_source') !== '')) {
-           return record.getImageSource(timestamp);
+        if ((record) && (record.get('ctt_file_source') !== null) && (record.get('ctt_file_source') !== '')) {
+            return record.get('ctt_file_source');
 
         } else {
             return null;

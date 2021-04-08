@@ -49,12 +49,12 @@ Ext.define('Sky.view.dataset.Dataset', {
                     split: true,
                     listeners: {
                         objectMenuItemClick: 'onObjectMenuItemClickVisiomatic',
-                        imageMenuItemClick : 'onImageMenuItemClickVisiomatic'
+                        imageMenuItemClick: 'onImageMenuItemClickVisiomatic'
                     }
                     // bind: {
                     // showCrosshair: '{BtnCrosshair.pressed}'
                     // }
-                },{
+                }, {
                     xtype: 'sky-compare',
                     reference: 'compare',
                     region: 'east',
@@ -69,7 +69,7 @@ Ext.define('Sky.view.dataset.Dataset', {
                 {
                     xtype: 'toolbar',
                     dock: 'top',
-                    items:[
+                    items: [
                         {
                             xtype: 'button',
                             tooltip: 'Switch between Visiomatic / Aladdin.',
@@ -132,16 +132,6 @@ Ext.define('Sky.view.dataset.Dataset', {
                             bind: {
                                 disabled: '{is_empty}'
                             },
-                        },
-                        {
-                            xtype: 'button',
-                            reference: 'btnSave',
-                            iconCls: 'x-fa fa-download',
-                            handler: 'onSave',
-                            tooltip: 'Download',
-                            bind: {
-                                disabled: '{is_empty}'
-                            }
                         },
                     ]
                 }
@@ -281,16 +271,16 @@ Ext.define('Sky.view.dataset.Dataset', {
         if (store.count() > 0) {
             store.each(function (dataset) {
                 //if (dataset.get('id') != currentDataset.get('id')) {
-                    item = {
-                        xtype: 'menucheckitem',
-                        text: dataset.get('release_display_name') + ' - ' + dataset.get('tag_display_name'),
-                        group: 'compareDatasets',
-                        dataset: dataset,
-                        scope: me,
-                        checkHandler: me.compareImages
-                    };
+                item = {
+                    xtype: 'menucheckitem',
+                    text: dataset.get('release_display_name') + ' - ' + dataset.get('tag_display_name'),
+                    group: 'compareDatasets',
+                    dataset: dataset,
+                    scope: me,
+                    checkHandler: me.compareImages
+                };
 
-                    items.push(item);
+                items.push(item);
                 //}
             });
 

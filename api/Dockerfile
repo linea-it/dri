@@ -1,8 +1,6 @@
 FROM python:3.6.4
 ENV PYTHONUNBUFFERED 1
-RUN mkdir /app
-RUN mkdir /app/db
-RUN mkdir /app/log
+RUN mkdir /app /archive /archive/tmp /log
 WORKDIR /app
 
 # TODO: Rever esse error
@@ -13,15 +11,13 @@ RUN apt-get update && apt-get install -y --force-yes \
     python-dev build-essential libaio-dev \
     libsasl2-dev libldap2-dev libssl-dev unzip 
 
+RUN mkdir /oracle && \
+    unzip /app/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip -d /oracle && \
+    unzip /app/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /oracle && \
+    mv /oracle/instantclient_12_2 /oracle/instantclient && \
+    ln -s /oracle/instantclient/libclntsh.so.12.2 /oracle/instantclient/libclntsh.so && \
+    ln -s /oracle/instantclient/libocci.so.12.2 /oracle/instantclient/libocci.so
 
-# Install Oracle Client
-RUN mkdir /oracle
-ADD /oracle /app/oracle
-RUN unzip /app/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip -d /oracle
-RUN unzip /app/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /oracle
-RUN mv /oracle/instantclient_12_2 /oracle/instantclient
-RUN ln -s /oracle/instantclient/libclntsh.so.12.2 /oracle/instantclient/libclntsh.so
-RUN ln -s /oracle/instantclient/libocci.so.12.2 /oracle/instantclient/libocci.so
 ENV ORACLE_HOME=/oracle/instantclient
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME
 ENV OCI_HOME=/oracle/instantclient
@@ -36,4 +32,4 @@ RUN pip install --upgrade pip \
 
 ADD . /app/
 
-ENTRYPOINT ./entrypoint.sh
+# ENTRYPOINT ./entrypoint.sh 

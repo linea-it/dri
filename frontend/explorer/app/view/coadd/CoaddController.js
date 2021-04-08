@@ -164,8 +164,17 @@ Ext.define('Explorer.view.coadd.CoaddController', {
         for (var property in data) {
             var prop = property.toLowerCase();
 
-            // nao incluir as propriedades _meta
-            if (prop.indexOf('_meta_') === -1) {
+            // nao incluir as propriedades _meta e nem a prop id
+            if ((prop.indexOf('_meta_') === -1) && (prop !== 'id')) {
+
+                properties.add([
+                    [property.toLowerCase(), data[property]]
+                ]);
+            }
+
+            // Verificar se a propriedade ID vem do server ou se é criada pela store.
+            // So adiciona a propriedade ID se dado real vindo do server
+            if ((prop === 'id') && data['id'].indexOf('extModel')) {
                 properties.add([
                     [property.toLowerCase(), data[property]]
                 ]);
@@ -387,7 +396,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
 
         tags.each(function (tag) {
             ids.push(tag.get('id'));
-        },this);
+        }, this);
 
         tiles.filter([
             {
@@ -406,8 +415,8 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             object = vm.get('object_data'),
             ra = parseFloat(object._meta_ra).toFixed(4),
             dec = parseFloat(object._meta_dec).toFixed(4),
-            radius = .1,
-            url; // Arcmin
+            radius = 0.02, // Parametro Radius em Arcmin (0.02 = 1 Arcsec)
+            url;
 
         url = Ext.String.format(
             "http://simbad.u-strasbg.fr/simbad/sim-coo?Coord={0}+{1}&CooFrame=FK5&CooEpoch=2000&Radius={2}&Radius.unit=arcmin&submit=submit+query",
@@ -423,10 +432,10 @@ Ext.define('Explorer.view.coadd.CoaddController', {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('object_data'),
-            radius = .1,
+            radius = 0.02, // Parametro Radius em Arcmin (0.02 = 1 Arcsec)
             ra = parseFloat(object._meta_ra).toFixed(4),
             dec = parseFloat(object._meta_dec).toFixed(4),
-            url; // Arcmin
+            url;
 
         url = Ext.String.format(
             "https://ned.ipac.caltech.edu/cgi-bin/objsearch?search_type=Near+Position+Search&in_csys=Equatorial&in_equinox=J2000.0&lon={0}d&lat={1}d&radius={2}",
@@ -441,11 +450,11 @@ Ext.define('Explorer.view.coadd.CoaddController', {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('object_data'),
-            radius = .01,
-            url; // Arcmin
+            radius = 1, // Arcsec
+            url;
 
         url = Ext.String.format(
-            "http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=II/246&-c={0},{1},eq=J2000&-c.rs={2}",
+            "http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-c={0},{1},eq=J2000&-c.rs={2}",
             object._meta_ra, object._meta_dec, radius)
 
         window.open(url, '_blank')
@@ -459,7 +468,7 @@ Ext.define('Explorer.view.coadd.CoaddController', {
             object = vm.get('object_data'),
             spectral = vm.getStore('spectral'),
             mags = ['mag_auto_g', 'mag_auto_r', 'mag_auto_i',
-                    'mag_auto_z', 'mag_auto_y'],
+                'mag_auto_z', 'mag_auto_y'],
             wavelengths = [474, 645.5, 783.5, 926, 1008],
             wavelength, mag_auto, flux, min, max;
 

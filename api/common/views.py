@@ -4,7 +4,7 @@ from smtplib import SMTPException
 
 from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.contrib.auth.models import User
@@ -17,10 +17,10 @@ from rest_framework import status
 import django_filters
 from rest_framework import filters
 from rest_framework.authtoken.models import Token
-from django.conf import settings
 import requests
 from urllib.parse import urljoin
 from django_filters.rest_framework import DjangoFilterBackend
+
 
 class FilterViewSet(viewsets.ModelViewSet):
     """
@@ -74,7 +74,7 @@ class UsersInSameGroupViewSet(viewsets.ModelViewSet):
 
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def contact_us(request):
     """
         API Endpoint to send a email to helpdesk
@@ -97,14 +97,16 @@ def contact_us(request):
         subject = "[DRI][%s] %s" % (environment, request.data.get('subject', None))
         message = request.data.get('message', None)
 
-        # Dados Tecnicos
-        current_url = request.data.get('current_url', None)
-        current_user = request.data.get('current_user', None)
+        if user_email is None:
+            try:
+                user_email = request.user.email
+            except:
+                user_email = None
 
         if name is not None and user_email is not None and subject is not None and message is not None:
             try:
                 to_email = settings.EMAIL_HELPDESK
-                from_email = settings.EMAIL_HELPDESK_CONTACT
+                from_email = user_email
 
                 message_header = (
                     "Name: %s\nUsername: %s\nEmail: %s\nMessage:\n" % (name, request.user.username, user_email))
@@ -145,7 +147,7 @@ def get_providers():
             result = []
             for provider in registry.get_list():
                 if (isinstance(provider, OAuth2Provider)
-                    or isinstance(provider, OAuthProvider)):
+                        or isinstance(provider, OAuthProvider)):
                     try:
                         app = SocialApp.objects.get(provider=provider.id,
                                                     sites=site)
@@ -220,7 +222,6 @@ def get_setting(request):
                 orinal_name = name
                 if name.find("__") > -1:
                     arr = name.split("__")
-                    print(arr)
                     key = arr[0]
                     name = arr[1].replace('__', '')
 
@@ -282,8 +283,7 @@ def galaxy_cluster(request):
             raise Exception("The PLUGIN_GALAXY_CLUSTER_HOST variable is not configured in settings.")
 
         params = "density_map?clusterSource=%s&clusterId=%s&vacSource=%s&lon=%s&lat=%s&radius=%s" % (
-        clusterSource, clusterId, vacSource, lon, lat, radius)
-
+            clusterSource, clusterId, vacSource, lon, lat, radius)
 
         url = urljoin(host, params)
 
@@ -304,51 +304,73 @@ def galaxy_cluster(request):
 @api_view(['GET'])
 def available_database(request):
     """
-        Retorna os databases configurados como sendo DBs de Catalogo. 
-        não inclui o database administrativo. 
+        Retorna os databases configurados como sendo DBs de Catalogo.
+        não inclui o database administrativo.
     """
     if request.method == 'GET':
         dbs = list([])
 
-        # TODO: é provavel que ao adicionar mais bancos de dados, o target viewer de 
+        # TODO: é provavel que ao adicionar mais bancos de dados, o target viewer de
         # problema com as tabelas de rating e reject
         for db in settings.DATABASES:
-            if db is not 'default':
+            if db is not 'default' and db in settings.TARGET_VIEWER_DATABASES:
                 try:
                     dbs.append(dict({
                         'name': db,
-                        'display_name':settings.DATABASES[db]['DISPLAY_NAME']
+                        'display_name': settings.DATABASES[db]['DISPLAY_NAME']
                     }))
                 except:
                     dbs.append(dict({
                         'name': db,
-                        'display_name':db
+                        'display_name': db
                     }))
 
         return Response(dict({'results': dbs, 'count': len(dbs)}))
 
+
 @api_view(['GET'])
-def teste(request):
+@permission_classes([AllowAny])
+def get_ncsa_signup(request):
+    """Returns the URL of the NCSA registration page. 
+    this url is stored in the settings.NCSA_SIGNUP_LINK has a default value of None, 
+    but for the public NCSA environment the value is a complete url 
+    like this: 'https://des.ncsa.illinois.edu/easyweb/signup/'
+
+
+    Returns:
+        dict: A dictionary with the ncsa_signup attribute with the url string or None.
+    """
     if request.method == 'GET':
-        # from product.models import CutOutJob
-        # from product.tasks import start_des_cutout_job_by_id, check_jobs_running
-        #
-        # cutoutjob = CutOutJob.objects.get(pk=78)
-        # print(cutoutjob.pk)
+        return Response(dict({'ncsa_signup': settings.NCSA_SIGNUP_LINK}))
 
 
-        # Testar submissao
-        # cutoutjob.cjb_status = 'st'
-        # cutoutjob.save()
-        # start_des_cutout_job_by_id(78)
+@api_view(['POST'])
+def teste(request):
+    if request.method == 'POST':
 
-        # Testar Check Status
-        # cutoutjob.cjb_status = 'rn'
-        # cutoutjob.save()
-        # check_jobs_running()
+        # Teste Target Save as
+        # data = request.data
 
-        # from product.garbagecolector import GarbageColectorProduct
-        #
-        # GarbageColectorProduct().purge_products_expiration_time()
+        # user_id = request.user.pk
+        # product_id = data.get("product", None)
+        # name = data.get("name", None)
+        # description = data.get("description")
+        # filter_id = data.get("filter", None)
+
+        # from product.saveas import SaveAs
+        # saveas = SaveAs()
+
+        # logger = saveas.logger
+
+        # logger.info("Task product_save_as Started")
+
+        # logger.debug("User: %s" % user_id)
+        # logger.debug("Product: %s" % product_id)
+        # logger.debug("Name: %s" % name)
+        # logger.debug("Filter: %s" % filter_id)
+        # logger.debug("Description: %s" % description)
+
+        # # Criar a tabela
+        # saveas.create_table_by_product_id(user_id, product_id, name, filter_id, description)
 
         return Response(dict({'status': "success"}))

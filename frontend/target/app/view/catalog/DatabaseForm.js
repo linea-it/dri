@@ -35,6 +35,7 @@ Ext.define('Target.view.catalog.DatabaseForm', {
             },
             databases: {
                 type: 'databases',
+                storeId: 'strDatabases',
                 autoLoad: true
             }
         }
@@ -50,19 +51,19 @@ Ext.define('Target.view.catalog.DatabaseForm', {
 
         // Recuperar do Settigs no backend se a interface de registro pelo
         // banco de dados estara disponivel.
-        try{
+        try {
             me.enableFolder = Settings.PRODUCT_REGISTER_FOLDERS;
         }
-        catch (err){
+        catch (err) {
             console.warn("Setting PRODUCT_REGISTER_FOLDERS not loaded.");
         }
 
         // Recuperar do Settigs no backend se a opcao de deixar a lista publica
         // vai estar ativa
-        try{
+        try {
             me.enablePublic = Settings.PRODUCT_REGISTER_ENABLE_PUBLIC;
         }
-        catch (err){
+        catch (err) {
             console.warn("Setting PRODUCT_REGISTER_ENABLE_PUBLIC not loaded.");
         }
 
@@ -77,11 +78,11 @@ Ext.define('Target.view.catalog.DatabaseForm', {
                 {
                     xtype: 'textfield',
                     name: 'displayName',
-                    fieldLabel: 'Name',
+                    fieldLabel: 'List Name',
                     maxLength: 30,
                     regex: /^[a-z0-9-_\s]+$/i,
                     regexText: 'Please use only letters and numbers separated ' +
-                                'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
+                        'by spaces \' \', minus sign \'-\' or underscore \'_\'.'
                     // value: 'Registro de tabela Dessci'
                 },
                 {
@@ -107,18 +108,18 @@ Ext.define('Target.view.catalog.DatabaseForm', {
                     bind: {
                         store: '{releases}'
                     }
-                    // value: 'y1_wide_survey'
                 },
                 {
                     xtype: 'combobox',
                     name: 'database',
                     fieldLabel: 'Database',
                     displayField: 'display_name',
+                    reference: 'cmbDatabases',
                     valueField: 'name',
                     bind: {
                         store: '{databases}'
                     }
-                },                
+                },
                 {
                     xtype: 'textfield',
                     name: 'tablename',

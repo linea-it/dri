@@ -1,4 +1,7 @@
+from sqlalchemy import Column, create_engine
 from sqlalchemy.dialects import postgresql
+from sqlalchemy.sql import and_, or_, text
+from sqlalchemy.sql.expression import between, literal_column
 
 
 class DBPostgresql:
@@ -16,10 +19,18 @@ class DBPostgresql:
         return url
 
     def get_engine(self):
+        return create_engine(
+            self.get_string_connection()
+        )
+
+    def get_engine_name(self):
         return "postgresql_psycopg2"
 
     def get_dialect(self):
         return postgresql
+
+    def accept_bulk_insert(self):
+        return True
 
     def get_raw_sql_limit(self, offset, limit):
         return "OFFSET %s LIMIT %s" % (offset, limit)
@@ -72,3 +83,26 @@ class DBPostgresql:
 
     def get_schema_name(self, schema):
         return schema
+
+    def get_condition_square(self, lowerleft, upperright, property_ra, property_dec):
+
+        raul = float(lowerleft[0])
+        decul = float(upperright[1])
+        ul = "{%s, %s}" % (raul, decul)
+
+        raur = float(upperright[0])
+        decur = float(upperright[1])
+        ur = "{%s, %s}" % (raur, decur)
+
+        ralr = float(upperright[0])
+        declr = float(lowerleft[1])
+        lr = "{%s, %s}" % (ralr, declr)
+
+        rall = float(lowerleft[0])
+        decll = float(lowerleft[1])
+        ll = "{%s, %s}" % (rall, decll)
+
+        # ul, ur, lr, ll
+        stm = "q3c_poly_query(ra, dec, '{ %s, %s, %s, %s}')" % (ul, ur, lr, ll)
+
+        return and_(text(stm)).self_group()

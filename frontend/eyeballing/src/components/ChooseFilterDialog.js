@@ -12,69 +12,69 @@ import Divider from '@material-ui/core/Divider';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles(theme => ({
-    closeButton: {
-      position: 'absolute',
-      right: theme.spacing(1),
-      top: theme.spacing(1),
-      color: theme.palette.grey[500],
-    },
-    closeIcon: {
-        fontSize: '1rem',
-    },
+  closeButton: {
+    position: 'absolute',
+    right: theme.spacing(1),
+    top: theme.spacing(1),
+    color: theme.palette.grey[500],
+  },
+  closeIcon: {
+    fontSize: '1rem',
+  },
 }));
 
 function ChooseFilterDialog(props) {
-    const { selectedValue } = props;
-    const classes = useStyles();
+  const { selectedValue } = props;
+  const classes = useStyles();
 
-    function handleClose() {
-        props.handleClose(selectedValue);
-    }
+  function handleClose() {
+    props.handleClose(selectedValue);
+  }
 
-    function handleChange(event, newValue) {
-        props.handleClose(newValue);
-    }
+  function handleChange(event, newValue) {
+    props.handleClose(newValue);
+  }
 
-    return (
-        <Dialog onClose={handleClose} open={props.open}>
-            <DialogContent dividers>
-                <DialogTitle>Filter the list of Tiles</DialogTitle>
-                <IconButton aria-label="Close" className={classes.closeButton} onClick={handleClose}>
-                    <CloseIcon className={classes.closeIcon} />
-                </IconButton>
-                <Divider />
-                <RadioGroup value={props.selectedValue} onChange={handleChange}>
-                    <FormControlLabel
-                        value={''}
-                        control={<Radio />}
-                        label={'All'}
-                    />                
-                    <FormControlLabel
-                        value={'true'}
-                        control={<Radio />}
-                        label={'List good tiles'}
-                    />
-                    <FormControlLabel
-                        value={'false'}
-                        control={<Radio />}
-                        label={'List bad tiles'}
-                    />
-                    <FormControlLabel
-                        value={'null'}
-                        control={<Radio />}
-                        label={'List of tiles not inspected'}
-                    />
-                </RadioGroup>
-            </DialogContent>
-        </Dialog>
-    );
+  return (
+    <Dialog onClose={handleClose} open={props.open}>
+      <DialogContent dividers>
+        <DialogTitle>Filter the list of Tiles</DialogTitle>
+        <IconButton aria-label="Close" className={classes.closeButton} onClick={handleClose}>
+          <CloseIcon className={classes.closeIcon} />
+        </IconButton>
+        <Divider />
+        <RadioGroup value={props.selectedValue} onChange={handleChange}>
+          <FormControlLabel
+            value=""
+            control={<Radio />}
+            label="All"
+          />
+          <FormControlLabel
+            value="true"
+            control={<Radio />}
+            label="List good tiles"
+          />
+          <FormControlLabel
+            value="false"
+            control={<Radio />}
+            label="List bad tiles"
+          />
+          <FormControlLabel
+            value="null"
+            control={<Radio />}
+            label="List of tiles not inspected"
+          />
+        </RadioGroup>
+      </DialogContent>
+    </Dialog>
+  );
 }
 
 
 ChooseFilterDialog.propTypes = {
-    handleClose: PropTypes.func.isRequired,
-    open: PropTypes.bool.isRequired,
-    selectedValue: PropTypes.string.isRequired,
+  handleClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  selectedValue: PropTypes.string.isRequired,
 };
 
 export default ChooseFilterDialog;

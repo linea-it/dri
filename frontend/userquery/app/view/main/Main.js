@@ -14,7 +14,8 @@ Ext.define('UserQuery.view.main.Main', {
         'common.header.Toolbar',
         'common.footer.Footer',
 
-        'codemirror.Codemirror'
+        'codemirror.Codemirror',
+        'common.statistics.Events',
     ],
 
     controller: 'main',
@@ -139,24 +140,24 @@ Ext.define('UserQuery.view.main.Main', {
                         padding: '6',
                         items: [
                             {
-                                xtype:'container',
-                                layout:'hbox',
+                                xtype: 'container',
+                                layout: 'hbox',
                                 width: '100%',
-                                items:[
+                                items: [
                                     {
-                                        xtype:'label',
-                                        html:'<div style="padding-top:2px;">Release: </div>'
+                                        xtype: 'label',
+                                        html: '<div style="padding-top:2px;">Release: </div>'
                                     },
                                     {
                                         xtype: 'combobox',  // or use Ext.create('class') instead of lazy instantiation
                                         reference: 'cmbReleases',
-                                        flex:1,
+                                        flex: 1,
                                         displayField: 'release_display_name',
                                         editable: false,
                                         queryMode: 'local',
                                         valueField: 'release_id',
                                         emptyText: 'Select Release',
-                                        listeners:{
+                                        listeners: {
                                             select: 'cmbReleases_onSelect'
                                         }
                                     }
@@ -181,12 +182,12 @@ Ext.define('UserQuery.view.main.Main', {
                                 titleCollapse: true,
                                 animate: true
                             },
-                            items:[
+                            items: [
                                 // tables of release
                                 {
                                     title: 'Input Tables',
                                     layout: 'fit',
-                                    listeners:{
+                                    listeners: {
                                         collapse: 'accInputTable_onCollapse'
                                     },
                                     items: [{
@@ -196,7 +197,7 @@ Ext.define('UserQuery.view.main.Main', {
                                         listeners: {
                                             itemexpand: 'tvwInputTables_onExpanded',
                                             itemcontextmenu: 'treeView_onContextMenu',
-                                            custom_itemcontextmenu: 'treeView_onContextMenu'               
+                                            custom_itemcontextmenu: 'treeView_onContextMenu'
                                         },
                                         viewConfig: {
                                             plugins: {
@@ -207,22 +208,22 @@ Ext.define('UserQuery.view.main.Main', {
                                             }
                                         },
                                         contextMenuItems: [
-                                            {text: 'Content', itemId:'preview', handler:'tvwInputTables_onContextMenuClick'}
+                                            { text: 'Content', itemId: 'preview', handler: 'tvwInputTables_onContextMenuClick' }
                                         ]
                                     }]
                                 },
-
                                 // tables of external catalog
-                                {title: 'External Tables', layout:'fit', reference:'accExternalCatalog',
-                                    listeners:{
-                                        expand: 'accExternalCatalog_onExpand',
-                                        collapse: 'accExternalCatalog_onCollapse'
-                                    },
-                                    items:[
+                                {
+                                    title: 'External Tables', layout: 'fit', reference: 'accExternalCatalog',
+                                    // listeners: {
+                                    //     expand: 'accExternalCatalog_onExpand',
+                                    //     collapse: 'accExternalCatalog_onCollapse'
+                                    // },
+                                    items: [
                                         {
                                             xtype: 'treepanel',
                                             reference: 'tvwExternalCatalog',
-                                            rootVisible:false,
+                                            rootVisible: false,
                                             viewConfig: {
                                                 plugins: {
                                                     ptype: 'treeviewdragdrop',
@@ -231,23 +232,22 @@ Ext.define('UserQuery.view.main.Main', {
                                                     ddGroup: 'TreeDD'
                                                 }
                                             },
-                                            contextMenuItems: [
-                                                {text: 'Content', itemId:'preview', handler:'tvwExternalCatalog_onContextMenuClick'}
-                                            ],
-                                            listeners:{
-                                                itemcontextmenu: 'treeView_onContextMenu',
-                                                itemexpand: 'tvwExternalCatalog_onExpanded'
-                                            }
+                                            // contextMenuItems: [
+                                            //     { text: 'Content', itemId: 'preview', handler: 'tvwExternalCatalog_onContextMenuClick' }
+                                            // ],
+                                            // listeners: {
+                                            //     itemcontextmenu: 'treeView_onContextMenu',
+                                            //     itemexpand: 'tvwExternalCatalog_onExpanded'
+                                            // }
                                         }
                                     ]
                                 },
-
                                 // tables of user
                                 {
                                     title: 'My Tables',
                                     layout: 'fit',
                                     reference: 'accMyTables',
-                                    listeners:{
+                                    listeners: {
                                         expand: 'accMyTables_onExpand',
                                         collapse: 'accMyTables_onCollapse'
                                     },
@@ -264,19 +264,20 @@ Ext.define('UserQuery.view.main.Main', {
                                             }
                                         },
                                         contextMenuItems: [
-                                            {text: 'Rename',  itemId:'rename',  handler:'tvwMyTables_onContextMenuClick'},
-                                            {text: 'Content', itemId:'preview', handler:'tvwMyTables_onContextMenuClick'},
-                                            {text: 'Download',itemId:'download', handler:'tvwMyTables_onContextMenuClick'},
+                                            { text: 'Rename', itemId: 'rename', handler: 'tvwMyTables_onContextMenuClick' },
+                                            { text: 'Content', itemId: 'preview', handler: 'tvwMyTables_onContextMenuClick' },
+                                            { text: 'Download', itemId: 'download', handler: 'tvwMyTables_onContextMenuClick' },
                                             '-',
-                                            {text: 'Delete',  itemId:'delete',  handler:'tvwMyTables_onContextMenuClick'},
+                                            { text: 'Delete', itemId: 'delete', handler: 'tvwMyTables_onContextMenuClick' },
                                             '-',
-                                            {text: 'View',  itemId:'target',  handler:'tvwMyTables_onContextMenuClick',
-                                                config_item: function(item, record){ 
+                                            {
+                                                text: 'View', itemId: 'target', handler: 'tvwMyTables_onContextMenuClick',
+                                                config_item: function (item, record) {
                                                     item.disabled = record.product_id ? false : true;
                                                 }
                                             }
                                         ],
-                                        listeners:{
+                                        listeners: {
                                             itemcontextmenu: 'treeView_onContextMenu',
                                             itemexpand: 'tvwMyTables_onExpanded'
                                         }
@@ -284,17 +285,18 @@ Ext.define('UserQuery.view.main.Main', {
                                 },
 
                                 // outers tables
-                                {title: 'Shared Tables', layout:'fit', reference:'accOtherTables',
-                                    listeners:{
+                                {
+                                    title: 'Shared Tables', layout: 'fit', reference: 'accOtherTables',
+                                    listeners: {
                                         expand: 'accOtherTables_onExpand',
                                         collapse: 'accOtherTables_onCollapse'
                                     },
-                                    items:[
+                                    items: [
                                         {
                                             xtype: 'treepanel',
                                             reference: 'tvwOtherTables',
-                                            rootVisible:false,
-                                            listeners:{
+                                            rootVisible: false,
+                                            listeners: {
                                                 itemexpand: 'tvwOtherTables_onExpanded',
                                                 itemcontextmenu: 'treeView_onContextMenu'
                                             },
@@ -307,7 +309,7 @@ Ext.define('UserQuery.view.main.Main', {
                                                 }
                                             },
                                             contextMenuItems: [
-                                                {text: 'Content', itemId:'preview', handler:'tvwOtherTables_onContextMenuClick'}
+                                                { text: 'Content', itemId: 'preview', handler: 'tvwOtherTables_onContextMenuClick' }
                                             ]
 
                                         }
@@ -326,7 +328,7 @@ Ext.define('UserQuery.view.main.Main', {
                                 titleCollapse: true,
                                 animate: true
                             },
-                            items:[
+                            items: [
                                 // queries of user
                                 {
                                     title: 'My Queries',
@@ -342,11 +344,11 @@ Ext.define('UserQuery.view.main.Main', {
                                             itemcontextmenu: 'treeView_onContextMenu'
                                         },
                                         contextMenuItems: [
-                                            {text: 'Rename',  itemId:'rename',  handler:'tvwMyQueries_onContextMenuClick'},
-                                            {text: 'Delete',  itemId:'delete',  handler:'tvwMyQueries_onContextMenuClick'}
+                                            { text: 'Rename', itemId: 'rename', handler: 'tvwMyQueries_onContextMenuClick' },
+                                            { text: 'Delete', itemId: 'delete', handler: 'tvwMyQueries_onContextMenuClick' }
                                         ]
                                     }],
-                                    listeners:{
+                                    listeners: {
                                         expand: 'accMyQueries_onExpand'
                                     }
                                 },
@@ -356,7 +358,7 @@ Ext.define('UserQuery.view.main.Main', {
                                     title: 'Sample Queries',
                                     layout: 'fit',
                                     reference: 'accSampleQueries',
-                                    listeners:{
+                                    listeners: {
                                         expand: 'accSampleQueries_onExpand'
                                     },
                                     items: [{
@@ -395,58 +397,53 @@ Ext.define('UserQuery.view.main.Main', {
                                 }
                             },
                             items: [{
-                                    xtype: 'textfield',
-                                    fieldLabel: 'Name* ',
-                                    name: 'name',
-                                    reference: 'name',
-                                    width: '100%'
+                                xtype: 'textfield',
+                                fieldLabel: 'Name* ',
+                                name: 'name',
+                                reference: 'name',
+                                width: '100%'
+                            },
+                            {
+                                xtype: 'textfield',
+                                fieldLabel: 'Description',
+                                name: 'description',
+                                width: '100%'
+                            },
+                            {
+                                xtype: 'codemirror',
+                                fieldLabel: 'SQL Sentence* ',
+                                name: 'sql_sentence',
+                                reference: 'sql_sentence',
+                                width: '100%',
+                                flex: 1
+                            },
+                            // {
+                            //     xtype: 'textareafield',
+                            //     fieldLabel: 'SQL Sentence* ',
+                            //     name: 'sql_sentence',
+                            //     reference: 'sql_sentence',
+                            //     width: '100%',
+                            //     flex: 1
+                            // },
+                            {
+                                xtype: 'container',
+                                width: '100%',
+                                layout: {
+                                    type: 'hbox',
+                                    pack: 'end'
                                 },
-                                {
-                                    xtype: 'textfield',
-                                    fieldLabel: 'Description',
-                                    name: 'description',
-                                    width: '100%'
+                                defaults: {
+                                    margin: '0 0 0 10'
                                 },
-                                {
-                                    xtype: 'codemirror',
-                                    fieldLabel: 'SQL Sentence* ',
-                                    name: 'sql_sentence',
-                                    reference: 'sql_sentence',
-                                    width: '100%',
-                                    flex: 1
-                                },
-                                // {
-                                //     xtype: 'textareafield',
-                                //     fieldLabel: 'SQL Sentence* ',
-                                //     name: 'sql_sentence',
-                                //     reference: 'sql_sentence',
-                                //     width: '100%',
-                                //     flex: 1
-                                // },
-                                {
-                                    xtype: 'container',
-                                    width: '100%',
-                                    layout: {
-                                        type: 'hbox',
-                                        pack: 'end'
-                                    },
-                                    defaults: {
-                                        margin: '0 0 0 10'
-                                    },
-                                    items: [{
-                                            xtype: 'button',
-                                            text: 'Check',
-                                            reference: 'btnCheck',
-                                            handler: 'btnCheck_onClick'
-                                        },
-                                        {
-                                            xtype: 'button',
-                                            text: 'Preview',
-                                            reference: 'btnPreview',
-                                            handler: 'btnPreview_onClick'
-                                        }
-                                    ]
-                                }
+                                items: [
+                                    {
+                                        xtype: 'button',
+                                        text: 'Preview',
+                                        reference: 'btnPreview',
+                                        handler: 'btnPreview_onClick'
+                                    }
+                                ]
+                            }
                             ]
                         },
 
@@ -459,13 +456,13 @@ Ext.define('UserQuery.view.main.Main', {
                             height: 200,
                             fullScreen: 'fit',
                             cls: 'preview-tabs',
-                            defaults:{
+                            defaults: {
                                 layout: 'fit',
                             },
-                            items:[
+                            items: [
                                 {
                                     title: 'Table Content',
-                                    items:[
+                                    items: [
                                         {
                                             xtype: 'grid',
                                             reference: 'grdPreview',
@@ -482,22 +479,22 @@ Ext.define('UserQuery.view.main.Main', {
                                 //             store: Ext.create('Ext.data.Store')
                                 //         }
                                 //     ]
-                                // },                                
+                                // },
                                 {
                                     title: 'My JOBs',
-                                    listeners:{
+                                    listeners: {
                                         activate: 'tabMyJobs_onActivate'
                                     },
-                                    items:[
+                                    items: [
                                         {
                                             xtype: 'grid',
                                             reference: 'grdJobs',
                                             store: Ext.create('Ext.data.Store'),
-                                            viewConfig: { 
-                                                //stripeRows: false, 
-                                                getRowClass: function(record) { 
-                                                    return record.get('row_cls') || 'row-cls'; 
-                                                } 
+                                            viewConfig: {
+                                                //stripeRows: false,
+                                                getRowClass: function (record) {
+                                                    return record.get('row_cls') || 'row-cls';
+                                                }
                                             }
                                         }
                                     ]
@@ -514,4 +511,4 @@ Ext.define('UserQuery.view.main.Main', {
             xtype: 'dri-footer'
         }
     ]
-});
+  });

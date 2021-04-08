@@ -43,7 +43,10 @@ __pycache__
 /api/db
 *.coverage
 .env
+
 # Diretórios do Postgresql
 /pg_data
 /pg_backup
 
+# Arquivo do google-analytics
+google-analytics.js

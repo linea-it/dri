@@ -1,26 +1,25 @@
-import logging
 import copy
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import viewsets
-from rest_framework import permissions, filters
-from rest_framework.authentication import TokenAuthentication, SessionAuthentication, BasicAuthentication
+import logging
+import traceback
 
-from django.db.models import Q, Case, Value, When, F
-from django.http import HttpResponse
-from django.http import JsonResponse
 from django.contrib.auth.models import User
+from django.db.models import Case, F, Q, Value, When
+from django.http import HttpResponse, JsonResponse
+from lib.sqlalchemy_wrapper import DBBase
+from product.export import Export
+from rest_framework import filters, permissions, status, viewsets
+from rest_framework.authentication import (BasicAuthentication,
+                                           SessionAuthentication,
+                                           TokenAuthentication)
+from rest_framework.response import Response
 
+from .db import RawQueryValidator
 from .models import *
 from .permissions import IsOwnerOrPublic
 from .serializers import *
-from .tasks import create_table, export_table
-from .db import RawQueryValidator
 from .target_viewer import TargetViewer
+from .tasks import create_table, export_table
 
-from product.export import Export
-
-from lib.sqlalchemy_wrapper import DBBase
 
 class QueryViewSet(viewsets.ModelViewSet):
     queryset = Query.objects.filter()
@@ -117,37 +116,36 @@ class TableViewSet(viewsets.ModelViewSet):
                 raise Exception("release_id parameters must exist")
 
             table_name = self._set_internal_table_name(display_name, self.request.user.pk)
-
             # query validate and sentence row count
-            rqv = RawQueryValidator(raw_sql=sql_sentence, use_count=True, maxrows=settings.USER_QUERY_MAX_ROWS+5)
+            rqv = RawQueryValidator(raw_sql=sql_sentence, use_count=True, maxrows=5)
             if rqv.table_exists(table_name, None):
                 raise Exception("Table exists - choose a different name")
 
             if not rqv.is_query_validated():
                 raise Exception("Invalid query: %s" % rqv.validation_error_message())
 
-            if rqv.get_sql_count()>settings.USER_QUERY_MAX_ROWS:
+            if rqv.get_sql_count() > settings.USER_QUERY_MAX_ROWS:
                 raise Exception("The query exceeded the limit of %s rows" % settings.USER_QUERY_MAX_ROWS)
 
             # insert row in userquery_job table
             table_userquery_job = Job(display_name=display_name,
-                    owner=self.request.user,
-                    sql_sentence=sql_sentence,
-                    timeout=settings.USER_QUERY_EXECUTION_TIMEOUT,
-                    query_name=query_name)
+                                      owner=self.request.user,
+                                      sql_sentence=sql_sentence,
+                                      timeout=settings.USER_QUERY_EXECUTION_TIMEOUT,
+                                      query_name=query_name)
             table_userquery_job.save()
 
             # start celery job
-            create_table.delay(job_id=table_userquery_job.id, 
-                               user_id=request.user.pk, 
-                               table_name=table_name, 
+            create_table.delay(job_id=table_userquery_job.id,
+                               user_id=request.user.pk,
+                               table_name=table_name,
                                table_display_name=display_name,
-                               release_id=release_id, 
-                               release_name=release_name, 
+                               release_id=release_id,
+                               release_name=release_name,
                                associate_target_viewer=associate_target_viewer)
 
             return HttpResponse(status=200)
-        
+
         except Exception as e:
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
@@ -230,12 +228,12 @@ class QueryValidate(viewsets.ModelViewSet):
             data = request.data
             sql_sentence = data.get("sql_sentence", None)
 
-            rqv = RawQueryValidator(raw_sql=sql_sentence, use_count=True, maxrows=settings.USER_QUERY_MAX_ROWS+5)
+            rqv = RawQueryValidator(raw_sql=sql_sentence, use_count=True, maxrows=settings.USER_QUERY_MAX_ROWS + 5)
 
             if not rqv.is_query_validated():
                 raise Exception("Invalid query: %s" % rqv.validation_error_message())
 
-            if rqv.get_sql_count()>settings.USER_QUERY_MAX_ROWS:
+            if rqv.get_sql_count() > settings.USER_QUERY_MAX_ROWS:
                 raise Exception("The query exceeded the limit of %s rows" % settings.USER_QUERY_MAX_ROWS)
 
             return JsonResponse(rqv.get_json_response())
@@ -272,6 +270,8 @@ class QueryPreview(viewsets.ViewSet):
             return JsonResponse(response, safe=False)
 
         except Exception as e:
+            trace = traceback.format_exc()
+            print(trace)
             print(str(e))
             return JsonResponse({'message': str(e)}, status=400)
 
@@ -342,7 +342,7 @@ class TableDownload(viewsets.ModelViewSet):
             _table_id = data.get("table_id", None)
 
             # how to get an array depends on how it is sent
-            _columns = request.POST.getlist("columns", None) 
+            _columns = request.POST.getlist("columns", None)
             if not _columns:
                 _columns = data.get("columns", None)
 
@@ -357,7 +357,7 @@ class TableDownload(viewsets.ModelViewSet):
             export_table.delay(table_id=_table_id, user_id=request.user.pk, columns=_columns)
 
             return HttpResponse(status=200)
-            #return JsonResponse({'columns': _columns}, status=200)
+            # return JsonResponse({'columns': _columns}, status=200)
 
         except Exception as e:
             print(str(e))
@@ -365,4 +365,3 @@ class TableDownload(viewsets.ModelViewSet):
 
     def _is_user_authorized(self, q):
         return q.owner == self.request.user or q.is_public
-
