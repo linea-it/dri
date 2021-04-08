@@ -44,7 +44,7 @@ Ext.define('Explorer.view.coadd.Coadd', {
                         pack: 'start',
                         align: 'stretch'
                     },
-                    items:[
+                    items: [
                         // Superior Esquerdo
                         {
                             xtype: 'coadd-form',
@@ -61,11 +61,11 @@ Ext.define('Explorer.view.coadd.Coadd', {
                                     text: 'NED',
                                     handler: 'onClickNed'
                                 },
-                                // {
-                                //     xtype: 'button',
-                                //     text: 'VizieR',
-                                //     handler: 'onClickVizier'
-                                // }
+                                {
+                                    xtype: 'button',
+                                    text: 'VizieR',
+                                    handler: 'onClickVizier'
+                                }
                             ]
                         },
                         // Inferior Esquerdo
@@ -95,7 +95,7 @@ Ext.define('Explorer.view.coadd.Coadd', {
                         {
                             xtype: 'panel',
                             // title: 'Superior',
-                            flex:1,
+                            flex: 1,
                             //height: 500,
                             layout: {
                                 type: 'hbox',
