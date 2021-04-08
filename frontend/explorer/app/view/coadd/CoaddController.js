@@ -450,11 +450,11 @@ Ext.define('Explorer.view.coadd.CoaddController', {
         var me = this,
             vm = me.getViewModel(),
             object = vm.get('object_data'),
-            radius = .01,
-            url; // Arcmin
+            radius = 1, // Arcsec
+            url;
 
         url = Ext.String.format(
-            "http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-source=II/246&-c={0},{1},eq=J2000&-c.rs={2}",
+            "http://vizier.u-strasbg.fr/viz-bin/VizieR-5?-c={0},{1},eq=J2000&-c.rs={2}",
             object._meta_ra, object._meta_dec, radius)
 
         window.open(url, '_blank')
