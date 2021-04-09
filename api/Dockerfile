@@ -2,8 +2,6 @@ FROM python:3.6.4
 ENV PYTHONUNBUFFERED 1
 RUN mkdir /app /archive /archive/tmp /log
 WORKDIR /app
-# Install Oracle Client
-ADD /oracle /app/oracle
 
 # TODO: Rever esse error
 # Fix W: Failed to fetch http://deb.debian.org/debian/dists/jessie-updates/InRelease  Unable to find expected entry 'main/binary-amd64/Packages' in Release file (Wrong sources.list entry or malformed file)
@@ -13,6 +11,8 @@ RUN apt-get update && apt-get install -y --force-yes \
     python-dev build-essential libaio-dev \
     libsasl2-dev libldap2-dev libssl-dev unzip 
 
+# Install Oracle Client
+ADD /oracle /app/oracle
 RUN mkdir /oracle && \
     unzip /app/oracle/instantclient-basic-linux.x64-12.2.0.1.0.zip -d /oracle && \
     unzip /app/oracle/instantclient-sdk-linux.x64-12.2.0.1.0.zip -d /oracle && \

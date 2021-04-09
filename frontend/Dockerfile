@@ -57,3 +57,6 @@ COPY --from=landingpage /app/build /var/www/landing_page
 
 # Add Directory where google analytics scripts are located
 COPY ./ga /var/www/ga
+
+# Add Directory with images (logo, favicon, etc...)
+COPY ./images /var/www/images
