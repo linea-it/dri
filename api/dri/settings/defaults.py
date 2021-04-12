@@ -200,7 +200,8 @@ CELERY = {
 
 # Lista as Variaveis que vao ser exportadas para os templates do Django. https://pypi.python.org/pypi/django-settings-export
 SETTINGS_EXPORT = [
-    'NCSA_SIGNUP_LINK'
+    'NCSA_SIGNUP_LINK',
+    'AUTH_SHIB_ENABLED'
 ]
 
 # Variaveis a seguir Devem ser sobreescritas pelo local_vars.py
