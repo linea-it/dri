@@ -60,6 +60,7 @@ THIRD_PARTY_APPS = [
     'django_filters',
     'url_filter',
     'django_celery_results',
+    'shibboleth',
 ]
 
 PROJECT_APPS = [
@@ -86,6 +87,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'shibboleth.middleware.ShibbolethRemoteUserMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'current_user.CurrentUserMiddleware',
@@ -105,6 +107,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django_settings_export.settings_export',
+                'shibboleth.context_processors.login_link',
             ],
         },
     },
@@ -271,9 +274,27 @@ if AUTH_LDAP_ENABLED:
         AUTH_LDAP_USER_SEARCH_DN,
         ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
     )
-# Including LDAP authentication:
-if AUTH_LDAP_ENABLED:
+
+    # Including LDAP authentication:
     AUTHENTICATION_BACKENDS += ('django_auth_ldap.backend.LDAPBackend',)
+
+# Shibboleth Authentication
+AUTH_SHIB_ENABLED = False
+if AUTH_SHIB_ENABLED:
+
+    LOGIN_URL = 'https://your_domain.edu/Shibboleth.sso/Login'
+
+    # https://github.com/Brown-University-Library/django-shibboleth-remoteuser
+    SHIBBOLETH_ATTRIBUTE_MAP = {
+        "eppn": (True, "username"),
+        "cn": (True, "first_name"),
+        "sn": (True, "last_name"),
+        "mail": (True, "email"),
+    }
+
+    # Including Shibboleth authentication:
+    AUTHENTICATION_BACKENDS += ('shibboleth.backends.ShibbolethRemoteUserBackend', )
+
 
 # Email Notification configs
 # Dados de configuração do servidor de email que será usado para envio das notificações.
