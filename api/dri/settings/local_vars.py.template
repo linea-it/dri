@@ -96,8 +96,6 @@ if AUTH_LDAP_ENABLED:
 AUTH_SHIB_ENABLED = False
 if AUTH_SHIB_ENABLED:
 
-    LOGIN_URL = 'https://your_domain.edu/Shibboleth.sso/Login'
-
     # https://github.com/Brown-University-Library/django-shibboleth-remoteuser
     SHIBBOLETH_ATTRIBUTE_MAP = {
         "eppn": (True, "username"),
@@ -107,7 +105,11 @@ if AUTH_SHIB_ENABLED:
     }
 
     # Including Shibboleth authentication:
-    AUTHENTICATION_BACKENDS += ('shibboleth.backends.ShibbolethRemoteUserBackend', )
+    AUTHENTICATION_BACKENDS += (
+        'shibboleth.backends.ShibbolethRemoteUserBackend', )
+
+    SHIB_LOGIN_GOOGLE_URL = None
+    SHIB_LOGIN_FACEBOOK_URL = None
 
 
 # Email Notification configs
