@@ -92,6 +92,25 @@ if AUTH_LDAP_ENABLED:
 if AUTH_LDAP_ENABLED:
     AUTHENTICATION_BACKENDS += ('django_auth_ldap.backend.LDAPBackend',)
 
+# Shibboleth Authentication
+AUTH_SHIB_ENABLED = False
+if AUTH_SHIB_ENABLED:
+
+    # https://github.com/Brown-University-Library/django-shibboleth-remoteuser
+    SHIBBOLETH_ATTRIBUTE_MAP = {
+        "eppn": (True, "username"),
+        "cn": (True, "first_name"),
+        "sn": (True, "last_name"),
+        "mail": (True, "email"),
+    }
+
+    # Including Shibboleth authentication:
+    AUTHENTICATION_BACKENDS += (
+        'shibboleth.backends.ShibbolethRemoteUserBackend', )
+
+    SHIB_LOGIN_GOOGLE_URL = None
+    SHIB_LOGIN_FACEBOOK_URL = None
+
 
 # Email Notification configs
 # Dados de configuração do servidor de email que será usado para envio das notificações.

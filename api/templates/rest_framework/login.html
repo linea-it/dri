@@ -68,11 +68,25 @@
               </div>
               {% endif %}
 
+              {% if settings.AUTH_SHIB_ENABLED %}
+              {% if settings.SHIB_LOGIN_GOOGLE_URL %}
+              <div style="padding-top:5px;">
+                <a href="{{ settings.SHIB_LOGIN_GOOGLE_URL }}" class="btn btn-info btn-block">Login with Google</a>
+              </div>
+              {% endif %}
+
+              {% if settings.SHIB_LOGIN_GOOGLE_URL %}
+              <div style="padding-top:5px;">
+                <a href="{{ settings.SHIB_LOGIN_FACEBOOK_URL }}" class="btn btn-info btn-block">Login with Facebook</a>
+              </div>
+              {% endif %}
+              {% endif %}
+
               <!--Exibir todas as variaveis de settings diponiveis para os templates.              -->
               <!--Essas variaveis estao no settings na sessao SETTINGS_EXPORT-->
-              <!--{% for key, value in settings.items %}-->
-              <!--{{ key }}: {{ value }}-->
-              <!--{% endfor %}-->
+              <!-- {% for key, value in settings.items %} -->
+              <!-- {{ key }}: {{ value }} -->
+              <!-- {% endfor %} -->
             </form>
           </div>
         </div><!-- /.row-fluid -->
