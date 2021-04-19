@@ -86,6 +86,13 @@ export const sendEmail = (formData) => axios.post('contact/', formData)
   .then((res) => res)
   .catch((err) => err);
 
+export const signRoute = () => axios.get('get_setting/', { params: { name: 'SIGN_UP_ROUTE' } })
+  .then((res) => res.data)
+  .catch((err) => {
+    console.error(err);
+    return err;
+  });
+
 export const signPath = () => axios.get('get_ncsa_signup/')
   .then((res) => res.data)
   .catch((err) => {
@@ -99,8 +106,16 @@ const to404 = () => {
 
 export const urlLogin = `${host}/dri/api/api-auth/login/?next=/`;
 
-export const urlSign = (path) => {
-  return path ? `${host}/dri/api/${path}` : `${host}/oracle-easy-access`;
-};
+// export const urlSign = (path) => {
+//   return path ? `${host}/dri/api/${path}` : `${host}/oracle-easy-access`;
+// };
+
+export const urlSign = () => axios.get('get_setting/', { params: { name: 'SIGN_UP_ROUTE' } })
+  .then((res) => res.data)
+  .catch((err) => {
+    console.error(err);
+    return err;
+  });
+
 
 export const urlLogout = `${host}/dri/api/api-auth/logout/?next=/`;

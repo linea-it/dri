@@ -341,6 +341,21 @@ TARGET_VIEWER_DATABASES = []
 USER_QUERY_EXECUTION_TIMEOUT = 300
 # Limite de linhas de uma query
 USER_QUERY_MAX_ROWS = 100000
+# TILE VIEWER/TILE INSPECTION (antigo eyeballing):
+# Esta config muda o comportamento da ferramenta Tile Viewer.
+# Quando Ligada habilita as funcionalidades de validação e inspeção das tiles
+# Comentários, avaliações (Good, Bad), avaiação por posição e relatórios.
+# Quando Desligada a ferramente se torna Tile Viewer, ficam só as
+# funcões de navegação entre tiles, visualização e download.
+# True: para Tile Inspection (essa opção deve estar ligada somente no ambiente da colaboração NCSA.)
+# False: para Tile Viewer (essa é a opção default)
+TILE_VIEWER_INSPECTION_ENABLED = False
+# Landing Page
+# Define a pagina de SignUp que sera utilizada pela landingpage
+# utilize 'linea-sign-up' para a pagina de registro do linea
+# utilize 'oracle-easy-access' para a pagina de registro do NCSA
+# o default é 'oracle-easy-access' para manter a compatibilidade com os ambientes mas antigos instalados no NCSA.
+SIGN_UP_ROUTE = 'oracle-easy-access'
 
 # DES ACCESS API
 # Usada para o Cutout de targets e Download das imagens de Tiles.
