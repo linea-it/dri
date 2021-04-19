@@ -51,6 +51,7 @@ class CommentDatasetSerializer(serializers.ModelSerializer):
     dts_date = serializers.SerializerMethodField()
     is_owner = serializers.SerializerMethodField()
     tilename = serializers.SerializerMethodField()
+    release_name = serializers.SerializerMethodField()
     isp_value = serializers.SerializerMethodField()
 
     class Meta:
@@ -67,6 +68,7 @@ class CommentDatasetSerializer(serializers.ModelSerializer):
             'owner',
             'is_owner',
             'tilename',
+            'release_name',
             'isp_value'
         )
 
@@ -95,5 +97,11 @@ class CommentDatasetSerializer(serializers.ModelSerializer):
     def get_isp_value(self, obj):
         try:
             return obj.dts_dataset.inspected.isp_value
+        except:
+            return None
+
+    def get_release_name(self, obj):
+        try:
+            return obj.dts_dataset.tag.tag_release.rls_display_name
         except:
             return None

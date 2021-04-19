@@ -76,13 +76,14 @@ function CircularIndeterminate() {
 }
 
 function convertToCSV(objArray) {
-  let str = '';
+  let str = `tilename,release,inspected,username,datetime,comment,ra,dec\r\n`;
 
   for (let i = 0; i < objArray.length; i++) {
     let line = '';
     for (const index in objArray[i]) {
       if (line !== '') line += ',';
       line += objArray[i][index];
+      line.trim();
     }
     str += `${line}\r\n`;
   }
@@ -127,8 +128,8 @@ function TileTable({ backLink, currentRelease }) {
         status === true ? (
           <ThumbUpIcon className={classes.okButton} />
         ) : (
-          <ThumbDownIcon color="error" />
-        )
+            <ThumbDownIcon color="error" />
+          )
       );
     }
     return '-';
@@ -172,11 +173,14 @@ function TileTable({ backLink, currentRelease }) {
 
     if (comments && comments.length > 0) {
       setDownloadData(comments.map(comment => ({
-        dts_dataset__tile__tli_tilename: comment.tilename,
-        dts_dataset__inspected__isp_value: comment.isp_value,
-        owner__username: comment.owner,
-        dts_date: comment.dts_date,
-        dts_comment: comment.dts_comment,
+        tilename: comment.tilename,
+        release: comment.release_name,
+        inspected: comment.isp_value,
+        username: comment.owner,
+        datetime: comment.dts_date,
+        comment: comment.dts_comment,
+        ra: comment.dts_ra,
+        dec: comment.dts_dec,
       })));
     } else {
       setDownloadData([]);
@@ -195,9 +199,9 @@ function TileTable({ backLink, currentRelease }) {
     if (downloadData && downloadData.length > 0) {
       let dataStr = '';
       if (format === 'json') {
-        dataStr = `data:text/json;charset=utf-8, ${encodeURIComponent(JSON.stringify(downloadData))}`;
+        dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(downloadData))}`;
       } else if (format === 'csv') {
-        dataStr = `data:text/csv;charset=utf-8, ${convertToCSV(downloadData)}`;
+        dataStr = `data:text/csv;charset=utf-8,${convertToCSV(downloadData)}`;
       }
 
       const downloadTag = document.getElementById('downloadDialogLink');

@@ -50,9 +50,14 @@ class DriApi {
     const res = await axios.get('/logged/get_logged/');
     const user = await res.data;
 
-    window.gtag('config', 'GA_MEASUREMENT_ID', {
-      user_id: user.id,
-    });
+    try {
+      window.gtag('config', 'GA_MEASUREMENT_ID', {
+        user_id: user.id,
+      });
+    }
+    catch (err) {
+      console.log('google analitics not loaded.')
+    }
 
     return user;
   };
