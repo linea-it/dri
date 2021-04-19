@@ -22,6 +22,9 @@ class Release(models.Model):
     rls_default = models.BooleanField(
         default=False, verbose_name='Default',
         help_text='Mark this release as Default so that the interfaces can select this release previously.')
+    rls_disabled = models.BooleanField(
+        default=False, verbose_name='Disabled',
+        help_text='Mark this release as Disabled so that the interfaces cant select this release.')
 
     def __str__(self):
         return self.rls_display_name
