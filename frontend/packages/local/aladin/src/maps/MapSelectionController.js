@@ -46,7 +46,7 @@ Ext.define('aladin.maps.MapSelectionController', {
         ]);
 
         store.load({
-            callback: function() {
+            callback: function () {
                 cmb_type.reset();
                 store_types.removeAll();
                 cmb_class.reset();
@@ -54,7 +54,7 @@ Ext.define('aladin.maps.MapSelectionController', {
                 cmb_filter.reset();
                 store_filters.removeAll();
 
-                store.each(function(record){
+                store.each(function (record) {
                     if (
                         store_types.findRecord(
                             'pgr_group', record.get('pgr_group')) == null
@@ -85,10 +85,10 @@ Ext.define('aladin.maps.MapSelectionController', {
         cmb_filter.reset();
         store_filters.removeAll();
 
-        store.each(function(record) {
+        store.each(function (record) {
             if (
                 record.get('pgr_group') == map_model.get('pgr_group') &&
-                    store_classes.findRecord('prd_class', record.get('prd_class')) == null
+                store_classes.findRecord('prd_class', record.get('prd_class')) == null
             ) {
                 store_classes.add(record);
             }
@@ -108,10 +108,10 @@ Ext.define('aladin.maps.MapSelectionController', {
         cmb_filter.reset();
         store_filters.removeAll();
 
-        store.each(function(record) {
+        store.each(function (record) {
             if (
                 record.get('pgr_group') == map_model.get('pgr_group') &&
-                    record.get('prd_class') == map_model.get('prd_class')
+                record.get('prd_class') == map_model.get('prd_class')
             ) {
                 store_filters.add(record);
             }
@@ -136,15 +136,14 @@ Ext.define('aladin.maps.MapSelectionController', {
         ]);
 
         aladin_images_store.load({
-            callback: function() {
+            callback: function () {
 
                 if (aladin_images_store.getCount() != 1) {
                     Ext.MessageBox.alert(
                         'Warning',
                         aladin_images_store.getCount().toString() + ' images found for same map!');
                 }
-                else
-                {
+                else {
                     // retrieve the first non-map layer to restore
                     aladin_last_nonmap_survey = vm.get('aladin_last_nonmap_survey');
 
@@ -154,11 +153,12 @@ Ext.define('aladin.maps.MapSelectionController', {
 
                     var img_url = aladin_images_store.getAt(0).get('img_url');
 
+                    console.log(map_model)
                     // default survey object
                     survey = {
                         'id': 'map_' + map_model.get('id').toString(),
                         'url': img_url,
-                        'name': map_model.get('pcl_display_name'),
+                        'name': map_model.get('prd_display_name'),
                         'filter': map_model.get('prd_filter'),
                         'maxOrder': 3,
                         'frame': 'equatorial',
@@ -170,11 +170,11 @@ Ext.define('aladin.maps.MapSelectionController', {
                     // retrieving maxOrder value from properties file
                     aladin.readProperties(
                         img_url,
-                        function(properties) {
+                        function (properties) {
                             survey['maxOrder'] = properties["maxOrder"];
                             me.setMapSurvey(survey);
                         },
-                        function(error) {
+                        function (error) {
                             console.log('aladin.readProperties() error: %o', error);
                             me.setMapSurvey(survey);
                         }
@@ -211,8 +211,7 @@ Ext.define('aladin.maps.MapSelectionController', {
         if (vm.get('map_selected')) {
             aladin_survey = vm.get('aladin_last_map_survey');
         }
-        else
-        {
+        else {
             aladin_survey = vm.get('aladin_last_nonmap_survey');
         }
 
