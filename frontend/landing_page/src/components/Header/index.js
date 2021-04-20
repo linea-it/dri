@@ -33,6 +33,7 @@ function Header() {
 
   const [user, setUser] = useState(undefined);
   const [pathSign, setPathSign] = useState(undefined);
+  const [routeSign, setRouteSign] = useState(undefined);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -84,7 +85,7 @@ function Header() {
     return (
       <>
         <Button href={urlLogin} color="inherit">Sign in</Button>
-        <Button href={urlSign(pathSign)} color="inherit">Sign up</Button>
+        <Button href={routeSign} color="inherit">Sign up</Button>
       </>
     );
   }
@@ -92,6 +93,7 @@ function Header() {
   useEffect(() => {
     getLoggedUser().then((result) => setUser(result));
     signPath().then((result) => setPathSign(result.NCSA_SIGNUP_LINK));
+    urlSign().then((result) => setRouteSign(result.SIGN_UP_ROUTE));
   }, []);
   useEffect(() => { }, [user]);
 
