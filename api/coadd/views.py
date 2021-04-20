@@ -25,7 +25,7 @@ class ReleaseViewSet(viewsets.ModelViewSet):
     API endpoint that allows releases to be viewed or edited
     """
 
-    queryset = Release.objects.all()
+    queryset = Release.objects.filter(rls_disabled=False)
 
     serializer_class = ReleaseSerializer
 

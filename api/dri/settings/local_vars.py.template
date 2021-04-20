@@ -161,6 +161,12 @@ USER_QUERY_MAX_ROWS = 100000
 # True: para Tile Inspection (essa opção deve estar ligada somente no ambiente da colaboração NCSA.)
 # False: para Tile Viewer (essa é a opção default) 
 TILE_VIEWER_INSPECTION_ENABLED=False
+# Landing Page
+# Define a pagina de SignUp que sera utilizada pela landingpage
+# utilize 'linea-sign-up' para a pagina de registro do linea
+# utilize 'oracle-easy-access' para a pagina de registro do NCSA
+# o default é 'oracle-easy-access' para manter a compatibilidade com os ambientes mas antigos instalados no NCSA.
+SIGN_UP_ROUTE = 'oracle-easy-access'
 
 # DES ACCESS API
 # Usada para o Cutout de targets e Download das imagens de Tiles.

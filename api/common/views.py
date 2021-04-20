@@ -170,7 +170,7 @@ def get_token(request):
 
 
 @api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def get_setting(request):
     if request.method == 'GET':
 
@@ -186,7 +186,8 @@ def get_setting(request):
             'INSTALLED_APPS',
             'REST_FRAMEWORK',
             'SOCIALACCOUNT_PROVIDERS',
-            'CELERY_BROKER_URL'
+            'CELERY_BROKER_URL',
+            'DESACCESS_API'
         ])
 
         name = request.GET.get("name", None)
