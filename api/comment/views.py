@@ -75,14 +75,14 @@ class CommentDatasetViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Comment by Dataset to be viewed or edited
     """
-    queryset = Dataset.objects.all()
+    queryset = Dataset.objects.select_related().all()
     serializer_class = CommentDatasetSerializer
 
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
 
     filter_class = CommentDatasetFilter
 
-    ordering_fields = ('dts_date', 'dts_dataset__tile__tli_tilename', 'dts_dataset__inspected__isp_value', 'owner__username', 'dts_comment' )
+    ordering_fields = ('dts_date', 'dts_dataset__tile__tli_tilename', 'dts_dataset__inspected__isp_value', 'owner__username', 'dts_comment')
 
     search_fields = ('dts_comment', 'dts_dataset__tile__tli_tilename', 'owner__username',)
 
