@@ -23,8 +23,9 @@ class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
             'rls_doc_url',
             'rls_description',
             'rls_default',
+            'rls_disabled',
             'tags_count',
-            'tiles_count'
+            'tiles_count',
         )
 
     def get_tiles_count(self, obj):
@@ -186,6 +187,7 @@ class DatasetSerializer(serializers.ModelSerializer):
             return obj.inspected.owner.username
         except:
             return None
+
     def get_comments(self, obj):
         try:
             return obj.comments.count()
