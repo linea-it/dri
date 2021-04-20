@@ -19,7 +19,7 @@ function SignUp() {
             <Link color="inherit" href="/">
               Home
             </Link>
-            <Typography color="textPrimary">Oracle/Easy access</Typography>
+            <Typography color="textPrimary">Sign Up</Typography>
           </Breadcrumbs>
           <>
             <div className={classes.notfound}>
