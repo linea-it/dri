@@ -76,12 +76,12 @@ function CircularIndeterminate() {
 }
 
 function convertToCSV(objArray) {
-  let str = `tilename,release,inspected,username,datetime,comment,ra,dec\r\n`;
+  let str = `tilename;release;inspected;username;datetime;comment;ra;dec\r\n`;
 
   for (let i = 0; i < objArray.length; i++) {
     let line = '';
     for (const index in objArray[i]) {
-      if (line !== '') line += ',';
+      if (line !== '') line += ';';
       line += objArray[i][index];
       line.trim();
     }
