@@ -308,6 +308,14 @@ LOGGING = {
             'filename': os.path.join('/log', 'userquery.log'),
             'formatter': 'standard',
         },
+        'shibboleth': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'shibboleth.log'),
+            'formatter': 'standard',
+        },        
     },
     'loggers': {
         'django': {
@@ -371,5 +379,10 @@ LOGGING = {
             'level': LOG_LEVEL,
             'propagate': True,
         },
+        'shibboleth': {
+            'handlers': ['shibboleth'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },        
     }
 }

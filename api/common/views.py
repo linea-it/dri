@@ -345,33 +345,41 @@ def get_ncsa_signup(request):
         return Response(dict({'ncsa_signup': settings.NCSA_SIGNUP_LINK}))
 
 
-@api_view(['POST'])
+@api_view(['GET'])
 def teste(request):
-    if request.method == 'POST':
+    if request.method == 'GET':
 
-        # Teste Target Save as
-        # data = request.data
+        """Função temporaria que vai atualizar 
+        todos os cadastros de usuario para criar um profile"""
+        from django.contrib.auth.models import User
+        from common.models import Profile
+        import logging
 
-        # user_id = request.user.pk
-        # product_id = data.get("product", None)
-        # name = data.get("name", None)
-        # description = data.get("description")
-        # filter_id = data.get("filter", None)
+        log = logging.getLogger('django')
 
-        # from product.saveas import SaveAs
-        # saveas = SaveAs()
+        log.info("------------------ Update all User profile -----------------")
 
-        # logger = saveas.logger
+        users = User.objects.all()
 
-        # logger.info("Task product_save_as Started")
+        for user in users:
+            log.info("User : %s" % user)
 
-        # logger.debug("User: %s" % user_id)
-        # logger.debug("Product: %s" % product_id)
-        # logger.debug("Name: %s" % name)
-        # logger.debug("Filter: %s" % filter_id)
-        # logger.debug("Description: %s" % description)
+            profile, created = Profile.objects.get_or_create(user=user)
+            log.info("Profile is created: %s" % created)
 
-        # # Criar a tabela
-        # saveas.create_table_by_product_id(user_id, product_id, name, filter_id, description)
+            if created is True or profile.display_name is None:
+                try:
+                    group_shib = user.groups.get(name='Shibboleth')
+                    profile.display_name = user.email.split('@')[0]
+                    log.info("Usuario é do grupo shibboleth usando email como display name")
+                except Exception as e:
+                    log.info("Usuario normal usando username como display name")
+                    profile.display_name = user.username
+
+                profile.save()
+            else:
+                log.info("Usuario já tem display name")
+
+            log.info("-------------------")
 
         return Response(dict({'status': "success"}))
