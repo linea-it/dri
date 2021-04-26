@@ -33,7 +33,8 @@ Ext.define('common.header.Toolbar', {
             home: '',
             desPortalLogo: 'resources/des-portal-logo.png',
             tooltip: 'Home',
-            username: ''
+            username: '',
+            display_name: '',
         },
         stores: {
             tutorials: {
@@ -77,7 +78,7 @@ Ext.define('common.header.Toolbar', {
                 scale: 'medium',
                 itemId: 'btnusername',
                 bind: {
-                    text: '{username}'
+                    text: '{display_name}'
                 }
             },
             {

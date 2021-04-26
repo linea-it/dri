@@ -198,7 +198,7 @@ function Home() {
 
   useEffect(() => {
     api.getTileInspectionOption().then(res => setHasInspection(res.TILE_VIEWER_INSPECTION_ENABLED));
-    api.loggedUser().then(res => setUsername(res.username));
+    api.loggedUser().then(res => setUsername(res.display_name));
     api.allReleases().then((res) => {
       setReleases(res);
 
@@ -534,7 +534,7 @@ function Home() {
           parseFloat(splitBySpace[1].trim()),
         ];
 
-      // If it does return a NaN but each value splitted by ":" has three elements
+        // If it does return a NaN but each value splitted by ":" has three elements
       } else if (splitBySpace[0].split(':').length === 3 && splitBySpace[1].split(':').length === 3) {
         splitByHms = [splitBySpace[0].trim(), splitBySpace[1].trim()];
       }
@@ -549,7 +549,7 @@ function Home() {
           parseFloat(splitByComma[1].trim()),
         ];
 
-      // If it does return a NaN but each value splitted by ":" has three elements
+        // If it does return a NaN but each value splitted by ":" has three elements
       } else if (splitByComma[0].split(':').length === 3 && splitByComma[1].split(':').length === 3) {
         splitByHms = [splitByComma[0].trim(), splitByComma[1].trim()];
       }
@@ -696,15 +696,15 @@ function Home() {
                   {dataset.isp_value ? (
                     <ThumbUpIcon className={`${classes.okButton} ${classes.tileIcon}`} />
                   ) : (
-                    <ThumbUpIcon className={classes.tileIcon} />
-                  )}
+                      <ThumbUpIcon className={classes.tileIcon} />
+                    )}
                 </IconButton>
                 <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'notok')}>
                   {dataset.isp_value === false ? (
                     <ThumbDownIcon className={classes.tileIcon} color="error" />
                   ) : (
-                    <ThumbDownIcon className={classes.tileIcon} />
-                  )}
+                      <ThumbDownIcon className={classes.tileIcon} />
+                    )}
                 </IconButton>
                 <IconButton className={classes.tileButton} onClick={() => handleComment(dataset)}>
                   <Comment className={classes.tileIcon} />
@@ -842,10 +842,10 @@ function Home() {
                       {loadingAllTiles ? (
                         <LinearProgress color="secondary" className={classes.linearProgress} />
                       ) : (
-                        <CardActions className={classes.cardActionCounter}>
-                          <Counter hasInspection={hasInspection} counts={counts} />
-                        </CardActions>
-                      )}
+                          <CardActions className={classes.cardActionCounter}>
+                            <Counter hasInspection={hasInspection} counts={counts} />
+                          </CardActions>
+                        )}
                     </>
                   </Card>
                 </Grid>

@@ -121,8 +121,8 @@ Ext.define('common.ToolbarController', {
             newLocation;
 
         newLocation = Ext.String.format(
-                    '{0}//{1}/{2}',
-                    protocol, host, help_url);
+            '{0}//{1}/{2}',
+            protocol, host, help_url);
 
         window.open(newLocation);
     },
@@ -136,6 +136,7 @@ Ext.define('common.ToolbarController', {
             success: function (response) {
                 var data = JSON.parse(response.responseText);
                 vm.set('username', data.username);
+                vm.set('display_name', data.display_name);
                 window.dri_username = data.username;
             }
         });
