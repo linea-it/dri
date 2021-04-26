@@ -109,8 +109,6 @@ if AUTH_SHIB_ENABLED:
         'shibboleth.backends.ShibbolethRemoteUserBackend', )
 
     SHIB_LOGIN_GOOGLE_URL = None
-    SHIB_LOGIN_FACEBOOK_URL = None
-
 
 # Email Notification configs
 # Dados de configuração do servidor de email que será usado para envio das notificações.

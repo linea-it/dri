@@ -203,7 +203,6 @@ SETTINGS_EXPORT = [
     'NCSA_SIGNUP_LINK',
     'AUTH_SHIB_ENABLED',
     'SHIB_LOGIN_GOOGLE_URL',
-    'SHIB_LOGIN_FACEBOOK_URL',
 ]
 
 # Variaveis a seguir Devem ser sobreescritas pelo local_vars.py
@@ -284,7 +283,6 @@ if AUTH_LDAP_ENABLED:
 # Shibboleth Authentication
 AUTH_SHIB_ENABLED = False
 SHIB_LOGIN_GOOGLE_URL = None
-SHIB_LOGIN_FACEBOOK_URL = None
 if AUTH_SHIB_ENABLED:
 
     # https://github.com/Brown-University-Library/django-shibboleth-remoteuser
@@ -299,7 +297,6 @@ if AUTH_SHIB_ENABLED:
     AUTHENTICATION_BACKENDS += ('shibboleth.backends.ShibbolethRemoteUserBackend', )
 
     SHIB_LOGIN_GOOGLE_URL = None
-    SHIB_LOGIN_FACEBOOK_URL = None
 
 # Email Notification configs
 # Dados de configuração do servidor de email que será usado para envio das notificações.
