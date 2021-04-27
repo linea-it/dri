@@ -82,6 +82,15 @@ const styles = makeStyles((theme) => ({
     },
     maxWidth: 80,
   },
+  brFlag: {
+    margin: '-66px 0px 0px 85px',
+    position: 'relative',
+    float: 'right',
+    [theme.breakpoints.up('sm')]: {
+      maxWidth: 80,
+    },
+    maxWidth: 80,
+  },
   titleWrapper: {
     [theme.breakpoints.up('sm')]: {
       margin: `${theme.spacing(8)}px 0 ${theme.spacing(2)}px`,
