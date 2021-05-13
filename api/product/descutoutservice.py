@@ -302,7 +302,12 @@ class DesCutoutService:
                     desjob.save()
 
                 except Exception as e:
-                    self.on_error(id, e)
+                    desjob.djb_status = "failure"
+                    desjob.djb_message = e
+                    desjob.djb_start_time = datetime.utcnow().replace(tzinfo=utc)
+                    desjob.djb_finish_time = datetime.utcnow().replace(tzinfo=utc)
+                    desjob.save()
+                    # self.on_error(id, e)
 
             # Verifica se todos os Desjobs tiverem acabado de executar muda o status.
             desjobs = job.desjob_set.filter(djb_status=None)
@@ -330,11 +335,21 @@ class DesCutoutService:
         job.cjb_status = "dw"
         job.save()
 
-        for desjob in job.desjob_set.filter(djb_status="success"):
-            self.download_by_jobid(job.id, desjob.djb_jobid)
+        # Se tiver ao menos um job que falhou ou nenhum job com sucesso então o processo falhou.
+        desjob_exception = list()
+        for desjob in job.desjob_set.filter(djb_status="failure"):
+            # Concatenar as mensagens de erro
+            desjob_exception.append(desjob.djb_message)
 
-        # Depois de baixar todos os desjobs finalizar o CutoutJob
-        self.on_success(id)
+        if len(desjob_exception) != 0:
+            self.on_error(id, ', '.join(desjob_exception))
+
+        else:
+            for desjob in job.desjob_set.filter(djb_status="success"):
+                self.download_by_jobid(job.id, desjob.djb_jobid)
+
+            # Depois de baixar todos os desjobs finalizar o CutoutJob
+            self.on_success(id)
 
     def download_by_jobid(self, id, jobid):
         """Performs the download of the results of a DES Job.
@@ -725,12 +740,19 @@ class DesCutoutService:
         # Recupera o Model CutoutJob pelo id
         job = self.get_cutoutjobs_by_id(id)
 
+        # Abortar todos os desjob
+        for desjob in job.desjob_set.all():
+            if desjob.djb_status is None:
+                desjob.djb_status = 'aborted'
+                desjob.save()
+
         # Alterar o status do Job
         job.cjb_status = "er"
         # Alterar a data de termino
         job.cjb_finish_time = datetime.utcnow().replace(tzinfo=utc)
         # Alterar o campo de erro
-        job.cjb_error = "{} ERROR: [{}]".format(str(trace), error)
+        job.cjb_error = error
+        job.cjb_traceback = str(trace)
         job.save()
 
         # Notificacao por email de Inicio do Job
@@ -797,6 +819,7 @@ class CutoutJobNotify:
             execution_time_humanized = humanize.naturaldelta(timedelta(seconds=seconds))
 
             context = dict({
+                "host": settings.BASE_HOST,
                 "username": cutoutjob.owner.username,
                 "target_display_name": cutoutjob.cjb_product.prd_display_name,
                 "cutoutjob_display_name": cutoutjob.cjb_display_name,
@@ -809,7 +832,8 @@ class CutoutJobNotify:
                 "start": str(start.strftime("%Y-%m-%d %H:%M")),
                 "finish": str(finish.strftime("%Y-%m-%d %H:%M")),
                 "execution_time": execution_time,
-                "execution_time_humanized": execution_time_humanized
+                "execution_time_humanized": execution_time_humanized,
+                "job_id": cutoutjob.id,
             })
 
             return render_to_string("cutout_notification_finish.html", context)
@@ -820,9 +844,11 @@ class CutoutJobNotify:
     def generate_start_email(self, cutoutjob):
         try:
             context = dict({
+                "host": settings.BASE_HOST,
                 "username": cutoutjob.owner.username,
                 "target_display_name": cutoutjob.cjb_product.prd_display_name,
                 "cutoutjob_display_name": cutoutjob.cjb_display_name,
+                "job_id": cutoutjob.id,
             })
 
             return render_to_string("cutout_notification_start.html", context)
@@ -839,10 +865,13 @@ class CutoutJobNotify:
             execution_time_humanized = humanize.naturaldelta(timedelta(seconds=seconds))
 
             context = dict({
+                "host": settings.BASE_HOST,
                 "username": cutoutjob.owner.username,
                 "target_display_name": cutoutjob.cjb_product.prd_display_name,
                 "cutoutjob_display_name": cutoutjob.cjb_display_name,
-                "execution_time_humanized": execution_time_humanized
+                "execution_time_humanized": execution_time_humanized,
+                "job_id": cutoutjob.id,
+                "cutoutjob_error": cutoutjob.cjb_error,
             })
 
             return render_to_string("cutout_notification_error.html", context)

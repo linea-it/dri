@@ -344,6 +344,9 @@ class CutOutJob(models.Model):
     cjb_error = models.TextField(
         verbose_name='Error Message', null=True, blank=True)
 
+    cjb_traceback = models.TextField(
+        verbose_name='Error Traceback', null=True, blank=True)
+
     def __str__(self):
         return str(self.cjb_display_name)
 
@@ -380,7 +383,7 @@ class Cutout(models.Model):
     cjb_des_job = models.ForeignKey(
         Desjob, on_delete=models.CASCADE, verbose_name='Des Job', default=None)
     ctt_object_id = models.CharField(
-        max_length=5, verbose_name='Object ID', null=True, blank=True,
+        max_length=255, verbose_name='Object ID', null=True, blank=True,
         help_text='The association is used to know which column will be considered as id.')
     ctt_object_ra = models.CharField(
         max_length=10, verbose_name='RA', null=True, blank=True,

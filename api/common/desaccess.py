@@ -166,8 +166,9 @@ class DesAccessApi:
             elif job["job_status"] == "failure":
                 # Neste caso o Job falhou na execução do lado do Descut, retorna erro e finaliza o job.
 
-                self.logger.error("DES Job Finished with Descut Error: %s" % job["job_status_message"])
-                raise Exception(job["job_status_message"])
+                msg = "DES Job Finished with Descut Error: %s" % job["job_status_message"]
+                self.logger.error(msg)
+                raise Exception(msg)
 
             else:
                 # Job ainda não terminou com sucesso e nem falhou pode estar rodando ainda,
