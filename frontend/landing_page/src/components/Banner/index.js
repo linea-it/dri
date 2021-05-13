@@ -36,8 +36,6 @@ function Banner() {
     }
   }, []);
 
-  useEffect(() => { }, [isBr]);
-
 
   return (
     <>
