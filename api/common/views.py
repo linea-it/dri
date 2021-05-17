@@ -349,37 +349,4 @@ def get_ncsa_signup(request):
 def teste(request):
     if request.method == 'GET':
 
-        """Função temporaria que vai atualizar 
-        todos os cadastros de usuario para criar um profile"""
-        from django.contrib.auth.models import User
-        from common.models import Profile
-        import logging
-
-        log = logging.getLogger('django')
-
-        log.info("------------------ Update all User profile -----------------")
-
-        users = User.objects.all()
-
-        for user in users:
-            log.info("User : %s" % user)
-
-            profile, created = Profile.objects.get_or_create(user=user)
-            log.info("Profile is created: %s" % created)
-
-            if created is True or profile.display_name is None:
-                try:
-                    group_shib = user.groups.get(name='Shibboleth')
-                    profile.display_name = user.email.split('@')[0]
-                    log.info("Usuario é do grupo shibboleth usando email como display name")
-                except Exception as e:
-                    log.info("Usuario normal usando username como display name")
-                    profile.display_name = user.username
-
-                profile.save()
-            else:
-                log.info("Usuario já tem display name")
-
-            log.info("-------------------")
-
         return Response(dict({'status': "success"}))

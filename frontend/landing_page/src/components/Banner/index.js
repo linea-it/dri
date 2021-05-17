@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import { YouTube, Twitter, GitHub } from '@material-ui/icons';
@@ -25,6 +25,18 @@ function Banner() {
     window.open(uri, '_blank');
   };
 
+  const [isBr, setIsBr] = useState(false);
+
+  useEffect(() => {
+    // Verifica se o site está hospedado no dominio do linea.
+    if (window.location.hostname === 'scienceserver.linea.gov.br') {
+      setIsBr(true)
+    } else {
+      setIsBr(false)
+    }
+  }, []);
+
+
   return (
     <>
       <div className={classes.root}>
@@ -47,13 +59,10 @@ function Banner() {
                   </td>
                 </tr>
                 <tr>
-                  {/* <td>
-                  </td> */}
                   <td className={classes.positionTitle}>
                     <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
-                    <h1 className={classes.subtitle}>
-                      DES Data Release
-                    </h1>
+                    <h1 className={classes.subtitle}>DES Data Release</h1>
+                    {isBr ? (<img src={`${process.env.PUBLIC_URL}/img/bandeira_brasil.jpg`} alt="Brasil" className={classes.brFlag} />) : ''}
                   </td>
                 </tr>
               </tbody>

@@ -32,6 +32,10 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_display_name(self, obj):
         try:
-            return obj.profile.display_name
+            display_name = obj.profile.display_name
+            if display_name is not None:
+                return display_name
+            else:
+                return obj.username
         except:
             return obj.username

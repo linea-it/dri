@@ -21,13 +21,12 @@
                 <td>
                   <header style="background-color: #003466; max-height: 60px;">
                     <a style="color: #e1e1e1; display: flex; justify-content: space-between; align-items: center; max-width: 90%; margin: 0 auto; text-decoration: none"
-                      href="https://desportal.cosmology.illinois.edu/" title="LIneA Science Server" rel="home">
+                      href="{{host}}" title="LIneA Science Server" rel="home">
 
                       <h1 style="font-family: Bitter, Georgia, serif; font-size: 16px; font-weight: bold">
                         LIneA Science Server</h1>
 
-                      <img style="height: 30px"
-                        src="http://dri-dev.linea.gov.br/wp-content/uploads/2017/07/des-logo-rev-lg_170x170.png">
+                      <img style="height: 30px" src="{{host}}/linea-dark.svg">
                     </a>
                   </header>
                 </td>
@@ -89,7 +88,7 @@
                                       src="https://ci4.googleusercontent.com/proxy/AQp8FbvR3DQXFwJP0TSE3szOaVgmzr3Rc-45Zm0pwXp6zpht00eKRMGmRq2ksIX4tTpF2t4W41KakVnSIQhMUm35dnbMup3SwnZOQki0tw=s0-d-e1-ft#https://travis-ci.org/images/mailer/stopwatch-success.png"
                                       class="CToWUd" width="20" height="20">
                                   </div>
-                                  <span style="vertical-align:middle">{{ execution_time_humanized }}</span>
+                                  <span style="vertical-align:middle">{{execution_time_humanized}}</span>
                                 </td>
                               </tr>
                               <!-- Informacoes -->
@@ -100,50 +99,54 @@
                                     <tbody>
                                       <tr>
                                         <td>Input Target Catalog:</td>
-                                        <td>{{ target_display_name }}</td>
+                                        <td>{{target_display_name}}</td>
                                       </tr>
                                       <tr>
                                         <td>Name:</td>
-                                        <td>{{ cutoutjob_display_name }}</td>
+                                        <td>{{cutoutjob_display_name}}</td>
+                                      </tr>
+                                      <tr>
+                                        <td>Job Id:</td>
+                                        <td>{{job_id}}</td>
                                       </tr>
                                       <tr>
                                         <td>Number of objects:</td>
-                                        <td>{{ n_objects }}</td>
+                                        <td>{{n_objects}}</td>
                                       </tr>
                                       <tr>
                                         <td>Files:</td>
-                                        <td>{{ n_files }}</td>
+                                        <td>{{n_files}}</td>
                                       </tr>
                                       <!-- Sum File Size -->
                                       {% if files_size %}
                                       <tr>
                                         <td>Size:</td>
-                                        <td>{{ files_size }}</td>
+                                        <td>{{files_size}}</td>
                                       </tr>
                                       {% endif %}
                                       <!-- Release Tag -->
                                       {% if cutoutjob_tag %}
                                       <tr>
                                         <td>Release TAG:</td>
-                                        <td>{{ cutoutjob_tag }}</td>
+                                        <td>{{cutoutjob_tag}}</td>
                                       </tr>
                                       {% endif %}
                                       <!-- Images Size -->
                                       <tr>
                                         <td>Cutout Size:</td>
-                                        <td>{{ cutoutjob_xsize }} x {{ cutoutjob_ysize }} Arcsec</td>
+                                        <td>{{cutoutjob_xsize}} x {{cutoutjob_ysize}} Arcsec</td>
                                       </tr>
                                       <tr>
                                         <td>Start:</td>
-                                        <td>{{ start }}</td>
+                                        <td>{{start}}</td>
                                       </tr>
                                       <tr>
                                         <td>End:</td>
-                                        <td>{{ finish }}</td>
+                                        <td>{{finish}}</td>
                                       </tr>
                                       <tr>
                                         <td>Execution Time:</td>
-                                        <td>{{ execution_time }}</td>
+                                        <td>{{execution_time}}</td>
                                       </tr>
                                     </tbody>
                                   </table>

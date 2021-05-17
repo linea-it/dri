@@ -1,86 +1,95 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <body>
-<table border="0" align="center" width="680" valign="top" cellspacing="0" cellpadding="0" align="center"
-       style="background-color: #f0f0f0">
-    <tbody>
-    <tr>
-        <!-- Margin Right -->
-        <td width="40"></td>
-        <!-- Center -->
-        <td width="600">
-            <table border="0" width="600" cellpadding="0" cellspacing="0" align="center">
-                <tbody>
-                <!-- Margin Top -->
-                <tr>
-                    <td height="30"></td>
-                </tr>
-                <!-- Header -->
-                <tr style="background-color: #fafafa">
-                    <td>
-                        <header style="background-color: #003466; max-height: 60px;">
-                            <a style="color: #e1e1e1; display: flex; justify-content: space-between; align-items: center; max-width: 90%; margin: 0 auto; text-decoration: none"
-                               href="https://desportal.cosmology.illinois.edu/" title="LIneA Science Server" rel="home">
-
-                                <h1 style="font-family: Bitter, Georgia, serif; font-size: 16px; font-weight: bold">
-                                    LIneA Science Server</h1>
-
-                                <img style="height: 30px"
-                                     src="http://dri-dev.linea.gov.br/wp-content/uploads/2017/07/des-logo-rev-lg_170x170.png">
-                            </a>
-                        </header>
-                    </td>
-                </tr>
-                <!-- Padding -->
-                <tr>
-                    <td height="20" style="background-color: #FFF"></td>
-                </tr>
-                <!-- Content -->
-                <tr>
-                    <td style="background-color: #FFF">
-                        <!-- Aqui ja entra o que vai ser substituido no template -->
-                        <table border="0" width="600" cellpadding="0" cellspacing="0" align="center" valign="top">
-                            <tbody>
-                            <!-- Nome do Usuario -->
+    <table border="0" align="center" width="680" valign="top" cellspacing="0" cellpadding="0" align="center"
+        style="background-color: #f0f0f0">
+        <tbody>
+            <tr>
+                <!-- Margin Right -->
+                <td width="40"></td>
+                <!-- Center -->
+                <td width="600">
+                    <table border="0" width="600" cellpadding="0" cellspacing="0" align="center">
+                        <tbody>
+                            <!-- Margin Top -->
                             <tr>
-                                <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
-                                    Dear {{username}},
+                                <td height="30"></td>
+                            </tr>
+                            <!-- Header -->
+                            <tr style="background-color: #fafafa">
+                                <td>
+                                    <header style="background-color: #003466; max-height: 60px;">
+                                        <a style="color: #e1e1e1; display: flex; justify-content: space-between; align-items: center; max-width: 90%; margin: 0 auto; text-decoration: none"
+                                            href="{{host}}" title="LIneA Science Server" rel="home">
+
+                                            <h1
+                                                style="font-family: Bitter, Georgia, serif; font-size: 16px; font-weight: bold">
+                                                LIneA Science Server</h1>
+
+                                            <img style="height: 30px" src="{{host}}/linea-dark.svg">
+                                        </a>
+                                    </header>
                                 </td>
                             </tr>
+                            <!-- Padding -->
                             <tr>
-                                <td style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
-                                    creation <spam style="font-weight: bold;">{{ cutoutjob_display_name }}</spam> mosaics for target <spam style="font-weight: bold;">{{ target_display_name }}</spam> is in progress.
+                                <td height="20" style="background-color: #FFF"></td>
+                            </tr>
+                            <!-- Content -->
+                            <tr>
+                                <td style="background-color: #FFF">
+                                    <!-- Aqui ja entra o que vai ser substituido no template -->
+                                    <table border="0" width="600" cellpadding="0" cellspacing="0" align="center"
+                                        valign="top">
+                                        <tbody>
+                                            <!-- Nome do Usuario -->
+                                            <tr>
+                                                <td
+                                                    style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                                    Dear {{username}},
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td
+                                                    style="font-family:arial,Arial,sans-serif;font-size:16px;line-height:18px;letter-spacing:0px;color:#777;text-decoration:none; padding-left: 10px;">
+                                                    creation <spam style="font-weight: bold;">{{cutoutjob_display_name}}
+                                                    </spam>
+                                                    job id <spam style="font-weight: bold;">{{job_id}}</spam>
+                                                    mosaics for target
+                                                    <spam style="font-weight: bold;">{{target_display_name}}</spam> is
+                                                    in progress.
+                                                </td>
+                                            </tr>
+                                            <!-- Quebra de Linha -->
+                                            <tr>
+                                                <td height="20"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
                                 </td>
                             </tr>
-                            <!-- Quebra de Linha -->
+                            <!-- Footer -->
                             <tr>
-                                <td height="20"></td>
+                                <td height="30"
+                                    style="background-color: #003466;color:#FFF;font-size:13px;line-height:15px;font-family:arial,Arial,sans-serif;letter-spacing:0px;text-decoration:none"
+                                    align="center">
+                                    Powered by LIneA | Dark Energy Survey | NCSA
+                                </td>
                             </tr>
-                            </tbody>
-                        </table>
-
-                    </td>
-                </tr>
-                <!-- Footer -->
-                <tr>
-                    <td height="30"
-                        style="background-color: #003466;color:#FFF;font-size:13px;line-height:15px;font-family:arial,Arial,sans-serif;letter-spacing:0px;text-decoration:none"
-                        align="center">
-                        Powered by LIneA | Dark Energy Survey | NCSA
-                    </td>
-                </tr>
-                <!-- Margin botton -->
-                <tr>
-                    <td height="30"></td>
-                </tr>
-                </tbody>
-            </table>
-        </td>
-        <!-- Margin Left -->
-        <td width="40"></td>
-    </tr>
-    </tbody>
-</table>
+                            <!-- Margin botton -->
+                            <tr>
+                                <td height="30"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+                <!-- Margin Left -->
+                <td width="40"></td>
+            </tr>
+        </tbody>
+    </table>
 </body>
-</html>
 
+</html>
