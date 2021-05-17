@@ -24,6 +24,6 @@ uwsgi \
   --static-map /django_static/admin/=/app/dri/static/admin \
   --buffer-size=32768
   --processes=4 \
-  --threads=2 
+  --threads=2
 
 
