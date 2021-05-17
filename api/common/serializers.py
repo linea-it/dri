@@ -18,10 +18,20 @@ class FilterSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+
+    display_name = serializers.SerializerMethodField()
+
     class Meta:
         model = User
 
         fields = (
             'id',
             'username',
+            'display_name'
         )
+
+    def get_display_name(self, obj):
+        try:
+            return obj.profile.display_name
+        except:
+            return obj.username

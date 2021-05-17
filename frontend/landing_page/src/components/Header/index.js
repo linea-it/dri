@@ -50,9 +50,9 @@ function Header() {
       <>
         <Button color="inherit" onClick={handleClick}>
           <Avatar className={classes.avatar}>
-            {user.username.substr(0, 1) || ''}
+            {user.display_name.substr(0, 1) || ''}
           </Avatar>
-          {user.username || ''}
+          {user.display_name || ''}
         </Button>
         <Popover
           id="simple-popover"
@@ -140,7 +140,7 @@ function Header() {
         </List>
         <div className={classes.separator} />
         {/* TODO: verificar se o usuario esta logado */}
-        {user ? (user.username ? <UserLogged /> : <UserUnLogged />) : ''}
+        {user ? (user.display_name ? <UserLogged /> : <UserUnLogged />) : ''}
       </Toolbar>
     </AppBar>
   );

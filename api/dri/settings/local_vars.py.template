@@ -109,8 +109,6 @@ if AUTH_SHIB_ENABLED:
         'shibboleth.backends.ShibbolethRemoteUserBackend', )
 
     SHIB_LOGIN_GOOGLE_URL = None
-    SHIB_LOGIN_FACEBOOK_URL = None
-
 
 # Email Notification configs
 # Dados de configuração do servidor de email que será usado para envio das notificações.
@@ -310,6 +308,14 @@ LOGGING = {
             'filename': os.path.join('/log', 'userquery.log'),
             'formatter': 'standard',
         },
+        'shibboleth': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'shibboleth.log'),
+            'formatter': 'standard',
+        },        
     },
     'loggers': {
         'django': {
@@ -373,5 +379,10 @@ LOGGING = {
             'level': LOG_LEVEL,
             'propagate': True,
         },
+        'shibboleth': {
+            'handlers': ['shibboleth'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },        
     }
 }
