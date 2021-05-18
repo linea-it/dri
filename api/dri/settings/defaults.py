@@ -65,6 +65,7 @@ THIRD_PARTY_APPS = [
 
 PROJECT_APPS = [
     'common',
+    'notify',
     'coadd',
     'comment',
     'product_classifier',
