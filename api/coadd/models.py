@@ -1,12 +1,14 @@
 import logging
 
+from django.contrib.auth.models import Group, User
 from django.db import models
+from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
 
-# Create your models here.
 class Release(models.Model):
+
     rls_name = models.CharField(
         max_length=60, verbose_name='Internal Name')
     rls_display_name = models.CharField(
@@ -26,8 +28,27 @@ class Release(models.Model):
         default=False, verbose_name='Disabled',
         help_text='Mark this release as Disabled so that the interfaces cant select this release.')
 
+    rls_is_public = models.BooleanField(
+        default=False, verbose_name='Is Public',
+        help_text='Mark the release as public so that it is available to all users. uncheck it to make it available only to groups that have permission.')
+
     def __str__(self):
         return self.rls_display_name
+
+
+class ReleaseGroupPermission(models.Model):
+    rgp_release = models.ForeignKey(
+        Release,
+        related_name='release_group_permission',
+        on_delete=models.CASCADE,
+        verbose_name='Release'
+    )
+
+    rgp_user_group = models.ForeignKey(
+        Group,
+        on_delete=models.CASCADE,
+        verbose_name='User Group'
+    )
 
 
 class Tile(models.Model):
@@ -165,3 +186,42 @@ class Survey(models.Model):
 
     def __str__(self):
         return str(self.srv_display_name)
+
+
+def get_user_releases(self):
+    """Esta função é adicionada ao model User,
+    ela retorna os ids de todos os releases que o usuario tem permisão de acessar. 
+
+    1 - Se o usuario é um staff do admin, retorna todos os releases HABILITADOS (rls_disabled=False)
+
+    2 - Para os demais usuarios, retorna todos os releases publicos (rls_is_public=True) e OU filtra pelos grupos dos usuarios, 
+    esses grupos devem estar associados aos releases no model ReleaseGroupPermission. 
+
+    Returns:
+        [list]: Lista de ids dos releases que o usuario pode ter acesso. 
+    """
+
+    releases = list()
+    # Se for um usuario Admin do django retorna todos os releases Habilitados.
+    if self.is_staff:
+        releases = Release.objects.filter(rls_disabled=False)
+    else:
+        # IDs dos grupos que o usuario faz parte
+        a_groups = []
+        for group in self.groups.all():
+            a_groups.append(group.pk)
+
+        # Todos os Releases Publicos + os Releases relacionados aos grupos que o usuario pertence.
+        releases = Release.objects.filter(
+            Q(rls_disabled=False) & Q(
+                Q(rls_is_public=True) | Q(release_group_permission__rgp_user_group__in=a_groups))
+        )
+
+    ids = list()
+    for release in releases:
+        ids.append(release.pk)
+
+    return ids
+
+
+User.add_to_class('get_user_releases', get_user_releases)

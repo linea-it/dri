@@ -349,4 +349,6 @@ def get_ncsa_signup(request):
 def teste(request):
     if request.method == 'GET':
 
-        return Response(dict({'status': "success"}))
+        releases = request.user.get_user_releases()
+
+        return Response(dict({'status': "success", "releases": releases}))
