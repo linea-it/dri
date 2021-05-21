@@ -1,19 +1,33 @@
+<style>
+  body.container {
+    background-image: url('https://www.linea.gov.br/wp-content/uploads/2021/05/background.jpg');
+    background-repeat: round;
+    width: 100% !important;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+  }
+</style>
+
 {% extends "rest_framework/login_base.html" %}
 {% block title %}Science Server{% endblock %}
 
 {% block body %}
 
 <body class="container">
-  <div class="container-fluid" style="margin-top: 30px">
+  <div>
     <div class="row-fluid">
-      <div class="well" style="width: 320px; margin-left: auto; margin-right: auto">
+      <div class="well">
         <div class="row-fluid">
           <div>
             {% block branding %}
-            <h3 style="margin: 0 0 20px;">Science Server</h3>
+            <div class="logo">
+              <img src="https://www.linea.gov.br/wp-content/uploads/2020/04/10_LIN_logo_tr-02_square.png" alt="LIneA Logo" />
+            </div>
+            <h3>Science Server</h3>
             {% endblock %}
-
-            <br />
           </div>
         </div><!-- /row fluid -->
 
