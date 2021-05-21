@@ -46,10 +46,7 @@ class ReleaseViewSet(viewsets.ModelViewSet):
             perm_releases = self.request.user.get_user_releases()
 
             # Todos os Releases Publicos + os Releases relacionados aos grupos que o usuario pertence.
-            queryset = Release.objects.filter(
-                Q(rls_disabled=False) & Q(
-                    Q(rls_is_public=True) | Q(release_group_permission__rgp_user_group__in=perm_releases))
-            )
+            queryset = Release.objects.filter(pk__in=perm_releases)
 
             return queryset
 
