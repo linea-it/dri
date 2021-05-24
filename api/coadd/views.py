@@ -18,6 +18,7 @@ from .serializers import (DatasetFootprintSerializer, DatasetSerializer,
                           TileSerializer)
 
 from common.desaccess import DesAccessApi
+from django.db.models import Q
 
 
 class ReleaseViewSet(viewsets.ModelViewSet):
@@ -25,7 +26,7 @@ class ReleaseViewSet(viewsets.ModelViewSet):
     API endpoint that allows releases to be viewed or edited
     """
 
-    queryset = Release.objects.filter(rls_disabled=False)
+    # queryset = Release.objects.filter(rls_disabled=False)
 
     serializer_class = ReleaseSerializer
 
@@ -34,6 +35,20 @@ class ReleaseViewSet(viewsets.ModelViewSet):
     filter_fields = ('id', 'rls_name', 'rls_display_name',)
 
     ordering_fields = '__all__'
+
+    def get_queryset(self):
+
+        # Se o usuario for admin do Django retorna todos os releases Habilitados
+        if self.request.user.is_staff:
+            return Release.objects.filter(rls_disabled=False)
+        else:
+            # Retorna os IDs de todos os releases que o usuario tem permissão de acessar.
+            perm_releases = self.request.user.get_user_releases()
+
+            # Todos os Releases Publicos + os Releases relacionados aos grupos que o usuario pertence.
+            queryset = Release.objects.filter(pk__in=perm_releases)
+
+            return queryset
 
 
 class TagViewSet(viewsets.ModelViewSet):
@@ -165,7 +180,7 @@ class DatasetFilter(django_filters.FilterSet):
 
 
 class DatasetViewSet(viewsets.ModelViewSet):
-    queryset = Dataset.objects.select_related().all().prefetch_related('comments').prefetch_related('inspected')
+    # queryset = Dataset.objects.select_related().all().prefetch_related('comments').prefetch_related('inspected')
 
     serializer_class = DatasetSerializer
 
@@ -178,6 +193,16 @@ class DatasetViewSet(viewsets.ModelViewSet):
     ordering_fields = ('tile__tli_tilename', 'date')
 
     ordering = ('tile__tli_tilename',)
+
+    def get_queryset(self):
+
+        # Recuperar os releases que o usuario tem acesso
+        releases = self.request.user.get_user_releases()
+
+        # Filtra a tabela de datasets pelo id dos releases que o usuario tem acesso.
+        queryset = Dataset.objects.select_related().all().prefetch_related('comments').prefetch_related('inspected').filter(tag__tag_release__pk__in=releases)
+
+        return queryset
 
     @action(detail=True)
     def desaccess_tile_info(self, request, pk=None):
