@@ -37,7 +37,7 @@ router = routers.DefaultRouter()
 router.register(r'logged', common_views.LoggedUserViewSet, basename='logged')
 router.register(r'users_same_group', common_views.UsersInSameGroupViewSet, basename='users_same_group')
 
-router.register(r'releases', coadd_views.ReleaseViewSet)
+router.register(r'releases', coadd_views.ReleaseViewSet, basename='releases')
 router.register(r'tags', coadd_views.TagViewSet)
 router.register(r'tiles', coadd_views.TileViewSet)
 router.register(r'dataset', coadd_views.DatasetViewSet, basename='dataset')
