@@ -363,6 +363,7 @@ class Import():
                     "prd_description": data.get('description', None),
                     "prd_date": date,
                     "prd_is_public": data.get('is_public', False),
+                    "prd_is_permanent": data.get('is_permanent', False),
                     "tbl_rows": int(tbl_rows),
                     "tbl_num_columns": int(tbl_num_columns),
                     "tbl_size": int(tbl_size),
@@ -658,25 +659,45 @@ class Import():
 
         # Data do produto caso o produto tenha processo a data do produto = data de start do processo
         date = None
+        process_id = None
         if self.process is not None:
             date = self.process.epr_start_date
+            process_id = self.process.epr_original_id
+
+        # Cria um internal name e display name para ficar no formato
+        # release_nome_process_band
+        internal_name = data.get('name').replace(' ', '_').lower()
+        display_name = data.get('display_name')
+
+        if data.get('version', None) is not None:
+            if process_id is not None:
+                internal_name = internal_name.replace(data.get('version'), process_id)
+                display_name = display_name.replace(data.get('version'), process_id)
+            else:
+                internal_name = internal_name.replace('_%s' % data.get('version'), '')
+                display_name = display_name.replace(data.get('version'), '')
+
+        if map_filter is not None:
+            internal_name += '_%s' % map_filter.filter
+            display_name += ' ' + map_filter.filter
 
         product, created = Map.objects.update_or_create(
             prd_owner=self.owner,
-            prd_name=data.get('name').replace(' ', '_').lower(),
+            prd_name=internal_name,
             tbl_schema=tbl_schema,
             tbl_name=tbl_name,
             prd_filter=map_filter,
             defaults={
                 "prd_process_id": self.process,
                 "prd_class": cls,
-                "prd_display_name": data.get('display_name'),
+                "prd_display_name": display_name,
                 "prd_user_display_name": data.get('user_display_name'),
                 "prd_product_id": data.get('product_id', None),
                 "prd_version": data.get('version', None),
                 "prd_description": data.get('description', None),
                 "prd_date": date,
                 "prd_is_public": data.get('is_public', True),
+                "prd_is_permanent": data.get('is_permanent', True),
                 "mpa_nside": self.check_nside(data.get('nside')),
                 "mpa_ordering": self.check_ordering(data.get('ordering')),
                 "tbl_rows": tbl_rows,
@@ -691,6 +712,13 @@ class Import():
             if 'releases' in data and len(data.get('releases')) > 0:
                 self.product_release(product, data.get('releases'))
                 add_release = False
+
+                # Alterar o nome adicionando o prefixo do release.
+                release_display_name = product.releases.first().rls_display_name
+                product.prd_name = '%s_%s' % (release_display_name.lower(), product.prd_name)
+                product.prd_display_name = '%s %s' % (release_display_name, product.prd_display_name)
+                product.save()
+                product.refresh_from_db()
 
             # Registrar O produto a seus respectivos Tags
             if 'fields' in data:
@@ -744,26 +772,52 @@ class Import():
         self.logger.debug(data)
         if 'download_url' in data and 'filename' in data:
             try:
-                relative_map_path = os.path.join(settings.DATA_DIR, "maps")
-                base_path = os.path.join(relative_map_path, product.prd_class.pcl_name)
-                if not os.path.exists(base_path):
-                    os.mkdir(base_path)
-                    sleep(1)
 
-                map_path = os.path.join(base_path, str(product.id))
+                # O diretório deve ser maps/release/class/band/
+
+                # Diretório de mapas
+                relative_map_path = os.path.join(settings.DATA_DIR, "maps")
+                # Diretório do release
+                release_display_name = product.releases.first().rls_display_name.lower()
+                base_path = os.path.join(relative_map_path, release_display_name)
+
+                # Diretório da classe do mapa
+                base_path = os.path.join(base_path, product.prd_class.pcl_name)
+
+                # Diretório da banda do mapa
+                map_path = os.path.join(base_path, product.prd_filter.filter)
+
+                # raise Exception("Parou aqui!")
+
                 if not os.path.exists(map_path):
-                    os.mkdir(map_path)
+                    os.makedirs(map_path)
                     sleep(1)
+                    self.logger.debug("Creted path: %s" % map_path)
+
+                self.logger.debug("Filepath: %s" % map_path)
 
                 aladin_path_zip = self.download_aladin_image(data.get('download_url'), data.get('filename'), map_path)
 
                 with zipfile.ZipFile(aladin_path_zip, "r") as zip_ref:
                     zip_ref.extractall(map_path)
 
-                self.logger.debug("Filepath: %s" % map_path)
+                # Remove o arquivo zip
+                if os.path.exists(aladin_path_zip):
+                    os.remove(aladin_path_zip)
+                    self.logger.info("Deleted zip file: %s" % aladin_path_zip)
+
+                # Rename path to aladin
+                new_path = os.path.join(map_path, "aladin")
+                extrated_path = aladin_path_zip.replace('.zip', '')
+                # self.logger.debug("Old Path: %s" % extrated_path)
+                os.rename(extrated_path, new_path)
+
+                self.logger.debug("New Path: %s" % new_path)
+
+                # raise Exception("Parou aqui!")
 
                 host = settings.BASE_HOST
-                result_dir = os.path.join(relative_map_path, aladin_path_zip.replace('.zip', ''))
+                result_dir = os.path.join(relative_map_path, new_path)
 
                 result_sorce = result_dir.replace(settings.DATA_DIR, settings.DATA_SOURCE)
 
@@ -773,6 +827,8 @@ class Import():
                     product=product, defaults={
                         'img_url': map_final_url,
                     })
+
+                self.logger.debug("Aladin Image URL: %s" % map_final_url)
             except Exception as e:
                 self.logger.error(e)
                 raise Exception(e)
@@ -851,6 +907,7 @@ class Import():
                 "prd_description": data.get('description', None),
                 "prd_date": date,
                 "prd_is_public": data.get('is_public', True),
+                "prd_is_permanent": data.get('is_permanent', True),
                 "msk_filter": filter,
                 "tbl_rows": tbl_rows,
                 "tbl_num_columns": tbl_num_columns,
