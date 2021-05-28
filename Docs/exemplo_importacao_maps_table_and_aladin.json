@@ -1,0 +1,65 @@
+{
+	"process": {
+		"process_end_date": "2019-10-22 11:12:13",
+		"process_name": "Systematic Maps",
+		"fields": ["Y6A1_COADD"],
+		"process_description": null,
+		"process_id": "5705",
+		"products": [{
+			"pg_table_info": {
+				"table_size_in_bytes": 1313914880,
+				"number_of_columns": 4,
+				"number_of_rows": 25174128,
+				"table": "systematic_maps.y6a1_coadd_4096_airmass_wmean_y_5705"
+			},
+			"nside": "4096",
+			"oracle_table": "e_5705_16581",
+			"class_name": "Airmass Wmean",
+			"file_name": null,
+			"selected_name": null,
+			"product_type": "Systematic Maps",
+			"process_id": 5705,
+			"releases": ["Y6A1_COADD"],
+			"number_columns": null,
+			"table": "e_5705_16581",
+			"number_objects": null,
+			"map_filter": "Y",
+			"association": [],
+			"product_id": 16581,
+			"number_tiles": null,
+			"pipeline": "Systematic Maps",
+			"display_name": "Airmass Wmean 13",
+			"job_id": "734276",
+			"ordering": "nest",
+			"name": "Airmass Wmean 13",
+			"type_name": "Systematic Maps",
+			"namespace": null,
+			"ora_table_info": {
+				"n_imported_rows": 25174128,
+				"table_size_in_bytes": 998244352,
+				"oracle_table_name": "brportal.e_5705_16581",
+				"n_imported_columns": 4
+			},
+			"class": "systematic_maps_airmass_wmean",
+			"version": "13",
+			"mask_filter": null,
+			"fields": ["Y6A1_COADD"],
+			"release": "Y6A1_COADD",
+			"type": "map",
+			"file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a1_coadd_4096_airmass_wmean_y_5705.csv",
+			"columns": "pixel,signal,ra,dec",
+			"schema": "brportal",
+            "database": "dessci",
+            "is_permanent": true,
+            "aladin": {
+                "download_url": "ftp://srvdatatransfer.linea.gov.br/production/y6a2_i_o_4096_t_32768_frac_EQU.zip", 
+                "filename": "y6a2_i_o_4096_t_32768_frac_EQU.zip"
+            }
+		}],
+		"process_comment": null,
+		"process_start_date": "2019-10-22 11:12:13",
+		"owner_username": "adriano.pieres"
+	},
+	"ticket": "VDB377",
+	"register_username": "adriano.pieres"
+}

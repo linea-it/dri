@@ -24,6 +24,7 @@ class ReleaseSerializer(serializers.HyperlinkedModelSerializer):
             'rls_description',
             'rls_default',
             'rls_disabled',
+            'rls_is_public',
             'tags_count',
             'tiles_count',
         )

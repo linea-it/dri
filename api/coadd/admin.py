@@ -1,16 +1,20 @@
 from django.contrib import admin
 
-from .models import Release, Tile, Tag, Dataset, Survey
+from .models import Release, ReleaseGroupPermission, Tile, Tag, Dataset, Survey
 
 
 class ReleaseAdmin(admin.ModelAdmin):
     list_display = ('id', 'rls_name', 'rls_display_name', 'rls_version',
                     'rls_date', 'rls_description', 'rls_doc_url',
-                    'rls_default', 'rls_disabled')
+                    'rls_default', 'rls_disabled', 'rls_is_public')
     list_display_links = ('id', 'rls_name', 'rls_display_name', 'rls_version',
                           'rls_date', 'rls_description', 'rls_doc_url',
                           'rls_default',)
-    search_fields = ('id', 'rls_name', 'rls_display_name',)
+    search_fields = ('id', 'rls_name', 'rls_display_name', )
+
+
+class ReleaseGroupPermissionAdmin(admin.ModelAdmin):
+    list_display = ('id', 'rgp_release', 'rgp_user_group', )
 
 
 class TileAdmin(admin.ModelAdmin):
@@ -51,6 +55,7 @@ class SurveyAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Release, ReleaseAdmin)
+admin.site.register(ReleaseGroupPermission, ReleaseGroupPermissionAdmin)
 admin.site.register(Tile, TileAdmin)
 admin.site.register(Tag, TagAdmin)
 admin.site.register(Dataset, DatasetAdmin)

@@ -46,7 +46,7 @@ class CatalogAdmin(admin.ModelAdmin):
 
 class MapAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'prd_name', 'prd_display_name', 'prd_class', 'mpa_nside', 'mpa_ordering',
+        'id', 'prd_name', 'prd_display_name', 'prd_class', 'mpa_nside', 'mpa_ordering', 'prd_filter', 'prd_is_public', 'prd_is_permanent'
     )
     list_display_links = ('id', 'prd_name')
     search_fields = ('prd_name',)
