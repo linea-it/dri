@@ -1,18 +1,18 @@
 /*
 Copyright:    (C) 2014-2016 Emmanuel Bertin - IAP/CNRS/UPMC,
-                            Chiara Marmo - IDES/Paris-Sud,
-                            Ruven Pillay - C2RMF/CNRS
+														Chiara Marmo - IDES/Paris-Sud,
+														Ruven Pillay - C2RMF/CNRS
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are
 permitted provided that the following conditions are met:
 
-   1. Redistributions of source code must retain the above copyright notice, this list of
-      conditions and the following disclaimer.
+	 1. Redistributions of source code must retain the above copyright notice, this list of
+			conditions and the following disclaimer.
 
-   2. Redistributions in binary form must reproduce the above copyright notice, this list
-      of conditions and the following disclaimer in the documentation and/or other materials
-      provided with the distribution.
+	 2. Redistributions in binary form must reproduce the above copyright notice, this list
+			of conditions and the following disclaimer in the documentation and/or other materials
+			provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -2800,12 +2800,12 @@ All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are
 permitted provided that the following conditions are met:
 
-   1. Redistributions of source code must retain the above copyright notice, this list of
-      conditions and the following disclaimer.
+	 1. Redistributions of source code must retain the above copyright notice, this list of
+			conditions and the following disclaimer.
 
-   2. Redistributions in binary form must reproduce the above copyright notice, this list
-      of conditions and the following disclaimer in the documentation and/or other materials
-      provided with the distribution.
+	 2. Redistributions in binary form must reproduce the above copyright notice, this list
+			of conditions and the following disclaimer in the documentation and/or other materials
+			provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -3153,12 +3153,12 @@ All rights reserved.
 Redistribution and use in source and binary forms, with or without modification, are
 permitted provided that the following conditions are met:
 
-   1. Redistributions of source code must retain the above copyright notice, this list of
-      conditions and the following disclaimer.
+	 1. Redistributions of source code must retain the above copyright notice, this list of
+			conditions and the following disclaimer.
 
-   2. Redistributions in binary form must reproduce the above copyright notice, this list
-      of conditions and the following disclaimer in the documentation and/or other materials
-      provided with the distribution.
+	 2. Redistributions in binary form must reproduce the above copyright notice, this list
+			of conditions and the following disclaimer in the documentation and/or other materials
+			provided with the distribution.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
 EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -3490,19 +3490,19 @@ L.Control.IIP = L.Control.extend({
 	},
 
 	/**
-  * Get currently active base layer on the map
-  * @return {Object} l where l.name - layer name on the control,
-  * l.layer is L.TileLayer, l.overlay is overlay layer.
-  */
+	* Get currently active base layer on the map
+	* @return {Object} l where l.name - layer name on the control,
+	* l.layer is L.TileLayer, l.overlay is overlay layer.
+	*/
 	getActiveBaseLayer: function () {
 		return this._activeBaseLayer;
 	},
 
 	/**
-  * Get currently active overlay layers on the map
-  * @return {{layerId: l}} where layerId is <code>L.stamp(l.layer)</code>
-  * and l @see #getActiveBaseLayer jsdoc.
-  */
+	* Get currently active overlay layers on the map
+	* @return {{layerId: l}} where layerId is <code>L.stamp(l.layer)</code>
+	* and l @see #getActiveBaseLayer jsdoc.
+	*/
 
 	_findActiveBaseLayer: function () {
 		var layers = this._layers;
@@ -6529,7 +6529,7 @@ L.control.lineacontrast = function (options) {
  * This control is just a button that triggers the overlaycatalog event that will be used with the
  * LIneA - DRI integration
  */
- L.Control.LineaDownload = L.Control.extend({
+L.Control.LineaDownload = L.Control.extend({
 	options: {
 		position: 'topleft',
 		title: 'Download',

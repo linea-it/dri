@@ -125,6 +125,7 @@ urlpatterns = [
     url(r'^dri/api/', include(router.urls)),
     url(r'^dri/api/contact/', common_views.contact_us),
     url(r'^dri/api/get_fits_by_tilename', coadd_views.get_fits_by_tilename),
+    url(r'^dri/api/install_delve_release', coadd_views.install_delve_release),
     url(r'^dri/api/vizier/', product_views.vizier_cds),
     url(r'^dri/api/send_statistic_email/', common_views.send_statistic_email),
     url(r'^dri/api/available_database/', common_views.available_database),

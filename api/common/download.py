@@ -5,17 +5,19 @@ from math import log
 import requests
 import shutil
 
+
 class Download():
     def __init__(self):
         # Get an instance of a logger
         self.logger = logging.getLogger("downloads")
 
-    def download_file_from_url(self, url, dir, filename, ignore_errors=False):
+    def download_file_from_url(self, url, dir, filename, ignore_errors=False, auth=None):
         """
         Esta funcao faz o download de um arquivo
         :param url: url completa de qual arquivo deve ser baixado
         :param dir: path completo onde o arquivo devera se salvo
         :param filename: nome do arquivo apos baixado
+        :param auth: tupla (user, password)
         :return: file_path: file path completo do arquivo salvo
         """
         self.logger.info("Downloading %s " % filename)
@@ -30,7 +32,7 @@ class Download():
             try:
 
                 #urllib.request.urlretrieve(url, file_path)
-                r = requests.get(url, stream=True, verify=False)
+                r = requests.get(url, stream=True, verify=False, auth=auth)
                 if r.status_code == 200:
                     with open(file_path, 'wb') as f:
                         r.raw.decode_content = True

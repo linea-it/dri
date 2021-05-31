@@ -488,6 +488,14 @@ LOGGING = {
             'filename': os.path.join('/log', 'userquery.log'),
             'formatter': 'standard',
         },
+        'delve_install_release': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'delve_install_release.log'),
+            'formatter': 'standard',
+        },
     },
     'loggers': {
         'django': {
@@ -548,6 +556,11 @@ LOGGING = {
         },
         'userquery': {
             'handlers': ['userquery'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'delve_install_release': {
+            'handlers': ['delve_install_release'],
             'level': LOG_LEVEL,
             'propagate': True,
         },
