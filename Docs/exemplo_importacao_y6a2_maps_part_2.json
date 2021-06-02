@@ -1,0 +1,2013 @@
+{
+  "process": {
+    "process_end_date": "2020-11-16 19:20:04",
+    "process_name": "Systematic Maps",
+    "fields": [
+      "Y6A2_COADD"
+    ],
+    "process_description": null,
+    "process_id": "6304",
+    "products": [
+      {
+        "class_name": "Skysigma Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18541",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Skysigma Max 6",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917512192,
+          "number_of_columns": 2,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_max_z_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_max",
+        "version": "6",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_max_z_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18541",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Skysigma Max 6",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18541",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_SKYSIGMA_MAX_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_SKYSIGMA_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18541
+      },
+      {
+        "class_name": "FGCM GRY Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18542",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "FGCM GRY Min 1",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917340160,
+          "number_of_columns": 2,
+          "number_of_rows": 25307439,
+          "table": "systematic_maps.y6a2_coadd_4096_fgcm_gry_min_g_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fgcm_gry_min",
+        "version": "1",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fgcm_gry_min_g_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18542",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "FGCM GRY Min 1",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307439,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18542",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_FGCM_GRY_MIN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_FGCM_GRY_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18542
+      },
+      {
+        "class_name": "Skysigma Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18543",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Skysigma Max 7",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 916914176,
+          "number_of_columns": 2,
+          "number_of_rows": 25295522,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_max_y_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_max",
+        "version": "7",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_max_y_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18543",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Skysigma Max 7",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295522,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18543",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_SKYSIGMA_MAX_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_SKYSIGMA_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18543
+      },
+      {
+        "class_name": "Fgcm Gry Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18545",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fgcm Gry Wmean 1",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917340160,
+          "number_of_columns": 2,
+          "number_of_rows": 25307439,
+          "table": "systematic_maps.y6a2_coadd_4096_fgcm_gry_wmean_g_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fgcm_gry_wmean",
+        "version": "1",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fgcm_gry_wmean_g_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18545",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fgcm Gry Wmean 1",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307439,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18545",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_FGCM_GRY_WMEAN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_FGCM_GRY_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18545
+      },
+      {
+        "class_name": "Fgcm Gry Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18546",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fgcm Gry Wmean 2",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917512192,
+          "number_of_columns": 2,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_fgcm_gry_wmean_z_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fgcm_gry_wmean",
+        "version": "2",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fgcm_gry_wmean_z_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18546",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fgcm Gry Wmean 2",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18546",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_FGCM_GRY_WMEAN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_FGCM_GRY_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18546
+      },
+      {
+        "class_name": "SkySigma Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18547",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "SkySigma Min 6",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917536768,
+          "number_of_columns": 2,
+          "number_of_rows": 25312879,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_min_r_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_min",
+        "version": "6",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_min_r_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18547",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "SkySigma Min 6",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312879,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18547",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_SKYSIGMA_MIN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_SKYSIGMA_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18547
+      },
+      {
+        "class_name": "Skysigma Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18549",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Skysigma Max 8",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917536768,
+          "number_of_columns": 2,
+          "number_of_rows": 25312694,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_max_i_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_max",
+        "version": "8",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_max_i_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18549",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Skysigma Max 8",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312694,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18549",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_SKYSIGMA_MAX_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_SKYSIGMA_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18549
+      },
+      {
+        "class_name": "Skybrite Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18550",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Skybrite Wmean 6",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917340160,
+          "number_of_columns": 2,
+          "number_of_rows": 25307439,
+          "table": "systematic_maps.y6a2_coadd_4096_skybrite_wmean_g_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skybrite_wmean",
+        "version": "6",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skybrite_wmean_g_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18550",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Skybrite Wmean 6",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307439,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18550",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_SKYBRITE_WMEAN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_SKYBRITE_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18550
+      },
+      {
+        "class_name": "SkySigma Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18551",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "SkySigma Min 7",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917340160,
+          "number_of_columns": 2,
+          "number_of_rows": 25307439,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_min_g_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_min",
+        "version": "7",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_min_g_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18551",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "SkySigma Min 7",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307439,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18551",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_SKYSIGMA_MIN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_SKYSIGMA_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18551
+      },
+      {
+        "class_name": "FGCM GRY Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18552",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "FGCM GRY Min 2",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917536768,
+          "number_of_columns": 2,
+          "number_of_rows": 25312879,
+          "table": "systematic_maps.y6a2_coadd_4096_fgcm_gry_min_r_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fgcm_gry_min",
+        "version": "2",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fgcm_gry_min_r_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18552",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "FGCM GRY Min 2",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312879,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18552",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_FGCM_GRY_MIN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_FGCM_GRY_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18552
+      },
+      {
+        "class_name": "FGCM GRY Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18555",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "FGCM GRY Min 3",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917512192,
+          "number_of_columns": 2,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_fgcm_gry_min_z_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fgcm_gry_min",
+        "version": "3",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fgcm_gry_min_z_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18555",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "FGCM GRY Min 3",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18555",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_FGCM_GRY_MIN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_FGCM_GRY_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18555
+      },
+      {
+        "class_name": "SkySigma Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18556",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "SkySigma Min 8",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 916914176,
+          "number_of_columns": 2,
+          "number_of_rows": 25295522,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_min_y_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_min",
+        "version": "8",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_min_y_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18556",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "SkySigma Min 8",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295522,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18556",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_SKYSIGMA_MIN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_SKYSIGMA_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18556
+      },
+      {
+        "class_name": "Skybrite Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18557",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Skybrite Wmean 7",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917536768,
+          "number_of_columns": 2,
+          "number_of_rows": 25312694,
+          "table": "systematic_maps.y6a2_coadd_4096_skybrite_wmean_i_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skybrite_wmean",
+        "version": "7",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skybrite_wmean_i_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18557",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Skybrite Wmean 7",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312694,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18557",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_SKYBRITE_WMEAN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_SKYBRITE_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18557
+      },
+      {
+        "class_name": "Fgcm Gry Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18558",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fgcm Gry Wmean 3",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917536768,
+          "number_of_columns": 2,
+          "number_of_rows": 25312879,
+          "table": "systematic_maps.y6a2_coadd_4096_fgcm_gry_wmean_r_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fgcm_gry_wmean",
+        "version": "3",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fgcm_gry_wmean_r_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18558",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fgcm Gry Wmean 3",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312879,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18558",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_FGCM_GRY_WMEAN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_FGCM_GRY_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18558
+      },
+      {
+        "class_name": "Sigma MagZero Qsum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18562",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Sigma MagZero Qsum 6",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 917340160,
+          "number_of_columns": 2,
+          "number_of_rows": 25307439,
+          "table": "systematic_maps.y6a2_coadd_4096_sigma_mag_zero_qsum_g_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_sigma_mag_zero_qsum",
+        "version": "6",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_sigma_mag_zero_qsum_g_6304.csv",
+        "columns": "pixel,signal",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18562",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Sigma MagZero Qsum 6",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307439,
+          "table_size_in_bytes": 486539264,
+          "oracle_table_name": "brportal.e_6304_18562",
+          "n_imported_columns": 2
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_SIGMA_MAG_ZERO_QSUM_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_SIGMA_MAG_ZERO_QSUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18562
+      },
+      {
+        "class_name": "Sigma MagZero Qsum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18563",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Sigma MagZero Qsum 7",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312694,
+          "table": "systematic_maps.y6a2_coadd_4096_sigma_mag_zero_qsum_i_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_sigma_mag_zero_qsum",
+        "version": "7",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_sigma_mag_zero_qsum_i_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18563",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Sigma MagZero Qsum 7",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312694,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18563",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_SIGMA_MAG_ZERO_QSUM_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_SIGMA_MAG_ZERO_QSUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18563
+      },
+      {
+        "class_name": "SkySigma Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18565",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "SkySigma Wmean 6",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307439,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_wmean_g_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_wmean",
+        "version": "6",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_wmean_g_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18565",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "SkySigma Wmean 6",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307439,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18565",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_SKYSIGMA_WMEAN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_SKYSIGMA_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18565
+      },
+      {
+        "class_name": "Skybrite Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18566",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Skybrite Wmean 8",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295522,
+          "table": "systematic_maps.y6a2_coadd_4096_skybrite_wmean_y_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skybrite_wmean",
+        "version": "8",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skybrite_wmean_y_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18566",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Skybrite Wmean 8",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295522,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18566",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_SKYBRITE_WMEAN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_SKYBRITE_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18566
+      },
+      {
+        "class_name": "FGCM GRY Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18567",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "FGCM GRY Min 4",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295522,
+          "table": "systematic_maps.y6a2_coadd_4096_fgcm_gry_min_y_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fgcm_gry_min",
+        "version": "4",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fgcm_gry_min_y_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18567",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "FGCM GRY Min 4",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295522,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18567",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_FGCM_GRY_MIN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_FGCM_GRY_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18567
+      },
+      {
+        "class_name": "Fgcm Gry Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18568",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fgcm Gry Wmean 4",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295522,
+          "table": "systematic_maps.y6a2_coadd_4096_fgcm_gry_wmean_y_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fgcm_gry_wmean",
+        "version": "4",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fgcm_gry_wmean_y_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18568",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fgcm Gry Wmean 4",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295522,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18568",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_FGCM_GRY_WMEAN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_FGCM_GRY_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18568
+      },
+      {
+        "class_name": "Sigma MagZero Qsum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18569",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Sigma MagZero Qsum 8",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312879,
+          "table": "systematic_maps.y6a2_coadd_4096_sigma_mag_zero_qsum_r_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_sigma_mag_zero_qsum",
+        "version": "8",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_sigma_mag_zero_qsum_r_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18569",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Sigma MagZero Qsum 8",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312879,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18569",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_SIGMA_MAG_ZERO_QSUM_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_SIGMA_MAG_ZERO_QSUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18569
+      },
+      {
+        "class_name": "SkySigma Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18573",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "SkySigma Wmean 7",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312694,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_wmean_i_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_wmean",
+        "version": "7",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_wmean_i_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18573",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "SkySigma Wmean 7",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312694,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18573",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_SKYSIGMA_WMEAN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_SKYSIGMA_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18573
+      },
+      {
+        "class_name": "Skybrite Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18574",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Skybrite Wmean 9",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_skybrite_wmean_z_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skybrite_wmean",
+        "version": "9",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skybrite_wmean_z_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18574",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Skybrite Wmean 9",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18574",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_SKYBRITE_WMEAN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_SKYBRITE_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18574
+      },
+      {
+        "class_name": "Sigma MagZero Qsum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18576",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Sigma MagZero Qsum 9",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295522,
+          "table": "systematic_maps.y6a2_coadd_4096_sigma_mag_zero_qsum_y_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_sigma_mag_zero_qsum",
+        "version": "9",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_sigma_mag_zero_qsum_y_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18576",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Sigma MagZero Qsum 9",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295522,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18576",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_SIGMA_MAG_ZERO_QSUM_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_SIGMA_MAG_ZERO_QSUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18576
+      },
+      {
+        "class_name": "FGCM GRY Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18581",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "FGCM GRY Min 5",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312694,
+          "table": "systematic_maps.y6a2_coadd_4096_fgcm_gry_min_i_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fgcm_gry_min",
+        "version": "5",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fgcm_gry_min_i_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18581",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "FGCM GRY Min 5",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312694,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18581",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_FGCM_GRY_MIN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_FGCM_GRY_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18581
+      },
+      {
+        "class_name": "Skybrite Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18582",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Skybrite Wmean 10",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312879,
+          "table": "systematic_maps.y6a2_coadd_4096_skybrite_wmean_r_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skybrite_wmean",
+        "version": "10",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skybrite_wmean_r_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18582",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Skybrite Wmean 10",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312879,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18582",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_SKYBRITE_WMEAN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_SKYBRITE_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18582
+      },
+      {
+        "class_name": "SkySigma Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18583",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "SkySigma Min 9",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_min_z_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_min",
+        "version": "9",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_min_z_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18583",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "SkySigma Min 9",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18583",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_SKYSIGMA_MIN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_SKYSIGMA_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18583
+      },
+      {
+        "class_name": "Skysigma Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18585",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Skysigma Max 9",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307439,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_max_g_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_max",
+        "version": "9",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_max_g_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18585",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Skysigma Max 9",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307439,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18585",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_SKYSIGMA_MAX_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_SKYSIGMA_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18585
+      },
+      {
+        "class_name": "SkySigma Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18587",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "SkySigma Wmean 8",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_wmean_z_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_wmean",
+        "version": "8",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_wmean_z_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18587",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "SkySigma Wmean 8",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18587",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_SKYSIGMA_WMEAN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_SKYSIGMA_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18587
+      },
+      {
+        "class_name": "Sigma MagZero Qsum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18589",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Sigma MagZero Qsum 10",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_sigma_mag_zero_qsum_z_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_sigma_mag_zero_qsum",
+        "version": "10",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_sigma_mag_zero_qsum_z_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18589",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Sigma MagZero Qsum 10",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18589",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_SIGMA_MAG_ZERO_QSUM_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_SIGMA_MAG_ZERO_QSUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18589
+      },
+      {
+        "class_name": "Skysigma Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18590",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Skysigma Max 10",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312879,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_max_r_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_max",
+        "version": "10",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_max_r_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18590",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Skysigma Max 10",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312879,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18590",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_SKYSIGMA_MAX_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_SKYSIGMA_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18590
+      },
+      {
+        "class_name": "Fgcm Gry Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18591",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fgcm Gry Wmean 5",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312694,
+          "table": "systematic_maps.y6a2_coadd_4096_fgcm_gry_wmean_i_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fgcm_gry_wmean",
+        "version": "5",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fgcm_gry_wmean_i_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18591",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fgcm Gry Wmean 5",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312694,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18591",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_FGCM_GRY_WMEAN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_FGCM_GRY_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18591
+      },
+      {
+        "class_name": "SkySigma Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18592",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "SkySigma Min 10",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312694,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_min_i_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_min",
+        "version": "10",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_min_i_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18592",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "SkySigma Min 10",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312694,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18592",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_SKYSIGMA_MIN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_SKYSIGMA_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18592
+      },
+      {
+        "class_name": "SkySigma Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18593",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "SkySigma Wmean 9",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312879,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_wmean_r_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_wmean",
+        "version": "9",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_wmean_r_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18593",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "SkySigma Wmean 9",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312879,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18593",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_SKYSIGMA_WMEAN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_SKYSIGMA_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18593
+      },
+      {
+        "class_name": "SkySigma Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6304_18594",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "SkySigma Wmean 10",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295522,
+          "table": "systematic_maps.y6a2_coadd_4096_skysigma_wmean_y_6304"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_skysigma_wmean",
+        "version": "10",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_skysigma_wmean_y_6304.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6304_18594",
+        "selected_name": null,
+        "process_id": 6304,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "986106",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "SkySigma Wmean 10",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295522,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6304_18594",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_SKYSIGMA_WMEAN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_SKYSIGMA_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18594
+      }
+    ],
+    "process_comment": null,
+    "process_start_date": "2020-11-16 19:20:04",
+    "owner_username": "adriano.pieres"
+  },
+  "ticket": "JEX147",
+  "register_username": "gverde"
+}

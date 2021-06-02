@@ -6,7 +6,7 @@ from .models import Release, ReleaseGroupPermission, Tile, Tag, Dataset, Survey
 class ReleaseAdmin(admin.ModelAdmin):
     list_display = ('id', 'rls_name', 'rls_display_name', 'rls_version',
                     'rls_date', 'rls_description', 'rls_doc_url',
-                    'rls_default', 'rls_disabled', 'rls_is_public')
+                    'rls_default', 'rls_disabled', 'rls_is_public', 'rls_tile_grid_enabled')
     list_display_links = ('id', 'rls_name', 'rls_display_name', 'rls_version',
                           'rls_date', 'rls_description', 'rls_doc_url',
                           'rls_default',)

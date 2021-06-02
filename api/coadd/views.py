@@ -483,73 +483,129 @@ def get_fits_by_tilename(request):
 
 @ api_view(['GET'])
 def install_delve_release(request):
+    """Este endpoint Registra o Release Delve NGC55 
+
+    Args:
+        request ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
     if request.method == 'GET':
 
         import logging
         from django.utils import timezone
         import humanize
         from common.download import Download
+        from coadd.models import Release, Tag, Tile, Dataset
 
-        log = logging.getLogger('delve_install_release')
+        import requests
 
-        # tilenames = list(['DES0000-3540', 'DES0000-3623', 'DES0000-3706', 'DES0001-3457', 'DES0002-3332'])
+        log = logging.getLogger('django')
+
+        release, created = Release.objects.get_or_create(
+            rls_name="ngc55_delve",
+            defaults={
+                "rls_display_name": "NGC55 Delve",
+                "rls_default": False,
+                "rls_disabled": False,
+                "rls_is_public": False
+            }
+        )
+        log.info('Release [%s] Created [%s]' % (release.rls_name, created))
+
+        tag, created = Tag.objects.get_or_create(
+            tag_release=release,
+            tag_name="decade_all",
+            defaults={
+                "tag_display_name": "All"
+            })
+
+        log.info('Tag [%s] Created [%s]' % (tag.tag_name, created))
+
+        # tilenames = list(['DES0000-3540', 'DES0010-3832'])
 
         tilenames = list(['DES0000-3540', 'DES0000-3623', 'DES0000-3706', 'DES0001-3457', 'DES0002-3332', 'DES0002-3415', 'DES0002-3914', 'DES0002-3957', 'DES0002-4040', 'DES0002-4123', 'DES0002-4206', 'DES0002-4249', 'DES0002-4331', 'DES0002-4414', 'DES0003-3706', 'DES0003-3749', 'DES0003-3832', 'DES0004-3457', 'DES0004-3540', 'DES0004-3623', 'DES0005-3415', 'DES0006-3332', 'DES0006-3832', 'DES0006-3914', 'DES0006-3957', 'DES0006-4040', 'DES0006-4123', 'DES0006-4206', 'DES0006-4249', 'DES0006-4331', 'DES0006-4414', 'DES0007-3623', 'DES0007-3706', 'DES0007-3749', 'DES0008-3415', 'DES0008-3457', 'DES0008-3540', 'DES0009-3332', 'DES0010-3706', 'DES0010-3749', 'DES0010-3832', 'DES0010-3914', 'DES0010-3957', 'DES0010-4040', 'DES0010-4123', 'DES0010-4206', 'DES0010-4249', 'DES0010-4331', 'DES0010-4414', 'DES0011-3457', 'DES0011-3540', 'DES0011-3623', 'DES0012-3332', 'DES0012-3415', 'DES0013-3914', 'DES0013-3957', 'DES0013-4040', 'DES0013-4123', 'DES0014-3623', 'DES0014-3706', 'DES0014-3749', 'DES0014-3832', 'DES0014-4206', 'DES0014-4249', 'DES0014-4331', 'DES0014-4414', 'DES0015-3415', 'DES0015-3457', 'DES0015-3540', 'DES0017-3749', 'DES0017-3832', 'DES0017-3914', 'DES0017-3957', 'DES0017-4040', 'DES0017-4123', 'DES0017-4206', 'DES0018-3457', 'DES0018-3540', 'DES0018-3623', 'DES0018-3706', 'DES0018-4249', 'DES0018-4331', 'DES0018-4414', 'DES0019-3415', 'DES0021-3623', 'DES0021-3706', 'DES0021-3749', 'DES0021-3832', 'DES0021-3914', 'DES0021-3957', 'DES0021-4040', 'DES0021-4123', 'DES0021-4206', 'DES0022-3415', 'DES0022-3457', 'DES0022-3540', 'DES0022-4249', 'DES0022-4331', 'DES0022-4414', 'DES0025-3457', 'DES0025-3540', 'DES0025-3623', 'DES0025-3706', 'DES0025-3749', 'DES0025-3832', 'DES0025-3914', 'DES0025-3957', 'DES0025-4040', 'DES0025-4123', 'DES0025-4206', 'DES0025-4249', 'DES0026-4331', 'DES0026-4414', 'DES0028-3623', 'DES0028-3706', 'DES0028-3749', 'DES0028-3832', 'DES0028-3914', 'DES0028-3957', 'DES0028-4040', 'DES0029-3457', 'DES0029-3540', 'DES0029-4123', 'DES0029-4206', 'DES0029-4249', 'DES0030-4331', 'DES0030-4414', 'DES0032-3540', 'DES0032-3623', 'DES0032-3706', 'DES0032-3749', 'DES0032-3832', 'DES0032-3914', 'DES0032-3957', 'DES0032-4040', 'DES0033-4123', 'DES0033-4206', 'DES0033-4249', 'DES0034-4331', 'DES0034-4414', 'DES0035-3706', 'DES0035-3749', 'DES0035-3832', 'DES0036-3540', 'DES0036-3623', 'DES0036-3914', 'DES0036-3957', 'DES0036-4040', 'DES0036-4123', 'DES0037-4206', 'DES0037-4249', 'DES0038-4331', 'DES0039-3623', 'DES0039-3706', 'DES0039-3749', 'DES0039-3832', 'DES0039-3914', 'DES0040-3957', 'DES0040-4040', 'DES0040-4123', 'DES0043-3749', 'DES0043-3832', 'DES0043-3914', 'DES0043-3957', 'DES2343-4040', 'DES2347-3957', 'DES2347-4040', 'DES2347-4123', 'DES2348-3832', 'DES2348-3914', 'DES2350-4206', 'DES2351-3914', 'DES2351-3957', 'DES2351-4040', 'DES2351-4123', 'DES2352-3706', 'DES2352-3749', 'DES2352-3832', 'DES2353-3623', 'DES2354-4123', 'DES2354-4206', 'DES2354-4249', 'DES2354-4331', 'DES2355-3832', 'DES2355-3914', 'DES2355-3957', 'DES2355-4040', 'DES2356-3623', 'DES2356-3706', 'DES2356-3749', 'DES2357-3457', 'DES2357-3540', 'DES2358-3415', 'DES2358-4040', 'DES2358-4123', 'DES2358-4206', 'DES2358-4249', 'DES2358-4331', 'DES2359-3749', 'DES2359-3832', 'DES2359-3914', 'DES2359-3957', ])
 
-        username = 'decade'
-        password = 'decaFil3s'
-
-        data_path = settings.DATA_DIR
-        images_path = 'images/decade'
-
-        # Fazer o Download dos arquivos PTIF
-
-        tiles = list()
         for tilename in tilenames:
-            log.info("--------- [%s] ---------" % tilename)
 
-            ptif = '%s_r5230p01.ptif' % (tilename)
-            # delve files URL
-            file_url = 'https://decade.ncsa.illinois.edu/deca_archive/DEC/multiepoch/DECADE/r5230/%s/p01/qa/%s' % (tilename, ptif)
+            tile = Tile.objects.get(tli_tilename=tilename)
 
-            log.info("URL: [%s]" % file_url)
+            host = settings.BASE_HOST
+            # host = "https://desportal2.cosmology.illinois.edu"
 
-            dest = os.path.join(data_path, images_path, tilename)
-            log.info("Directory: [%s]" % dest)
+            pftif_url = None
+            archive_path = None
 
-            tile = dict({
-                'tilename': tilename,
-                'url': file_url,
-                'filename': ptif
-            })
-            tiles.append(tile)
-            # if not os.path.exists(dest):
-            #     os.mkdir(dest)
-            #     log.info("A directory has been created for Tile!")
+            # Verifica se a URL existe
+            ps = ['p01', 'p02', 'p03', 'p04']
+            for p in ps:
+                # Tenta uma das urls
+                url = "%s/visiomatic?FIF=data/releases/deca_archive/DEC/multiepoch/DECADE/r5230/%s/%s/qa/%s_r5230%s.ptif" % (host, tilename, p, tilename, p)
 
-            # log.info("Directory: [%s]" % dest)
+                response = requests.head(url)
+                if response.status_code == 400:
+                    pftif_url = url
+                    archive_path = "/deca_archive/DEC/multiepoch/DECADE/r5230/%s/%s/" % (tilename, p)
+                    break
 
-            # filepath = os.path.join(dest, ptif)
-            # if not os.path.exists(filepath):
-            #     log.info("Downloading Ptif file.")
+            if pftif_url is None:
+                log.warning("[%s] Imagem não encontrada." % (tilename))
 
-            #     try:
-            #         t0 = timezone.now()
+            dataset, created = Dataset.objects.update_or_create(
+                tag=tag,
+                tile=tile,
+                defaults={
+                    "archive_path": archive_path,
+                    "image_src_ptif": pftif_url
+                }
+            )
 
-            #         d_file_path = Download().download_file_from_url(url=file_url, dir=dest, filename=ptif, auth=(username, password))
+            log.info("Dataset [%s] Created [%s]" % (tilename, created))
 
-            #         size = os.path.getsize(d_file_path)
-            #         hsize = Download().bytes2human(size)
-            #         log.info("Size: %s" % hsize)
+        log.info("Install Release Done")
 
-            #         t1 = timezone.now()
-            #         tdelta = t0 - t1
+        return Response(dict({'success': True}))
 
-            #         log.info("Download Time: %s " % humanize.naturaldelta(tdelta.total_seconds(), minimum_unit="microseconds"))
-            #     except Exception as e:
-            #         log.error(e)
+# @ api_view(['GET'])
+# def install_delve_release(request):
+#     if request.method == 'GET':
 
-            # else:
-            #     log.info("Skipping the download because the ptif already exists!")
+#         import logging
+#         from django.utils import timezone
+#         import humanize
+#         from common.download import Download
+#         from coadd.models import Release, Tag, Tile, Dataset
 
-        return Response(dict({'tiles': tiles}))
+#         import requests
+
+#         log = logging.getLogger('delve_install_release')
+
+#         release = Release.objects.get(rls_name="ngc55_delve")
+
+#         drelease = dict({
+#             "rls_name": str(release.rls_name),
+#             "rls_display_name": str(release.rls_display_name),
+#             "rls_default": release.rls_default,
+#             "rls_disabled": release.rls_disabled,
+#             "rls_is_public": release.rls_is_public,
+#         })
+
+#         tag = Tag.objects.get(tag_name="decade_all")
+#         dtag = dict({
+#             "tag_name": tag.tag_name,
+#             "tag_display_name": tag.tag_display_name,
+
+#         })
+#         ddatasets = dict({})
+#         datasets = Dataset.objects.filter(tag=tag)
+#         for dataset in datasets:
+#             ddatasets[dataset.tile.tli_tilename] = dict({
+#                 'ptif_url': dataset.image_src_ptif,
+#                 'archive_path': dataset.archive_path,
+#             })
+
+#         return Response(dict({
+#             'release': drelease,
+#             'tag': dtag,
+#             'datasets': ddatasets}))

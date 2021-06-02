@@ -1,0 +1,4863 @@
+{
+  "process": {
+    "process_end_date": "2020-11-14 08:02:11",
+    "process_name": "Systematic Maps",
+    "fields": [
+      "Y6A2_COADD"
+    ],
+    "process_description": null,
+    "process_id": "6301",
+    "products": [
+      {
+        "class_name": "ExpTime Sum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18368",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "ExpTime Sum 17",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_exptime_sum_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_exptime_sum",
+        "version": "17",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_exptime_sum_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18368",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "ExpTime Sum 17",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18368",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_EXPTIME_SUM_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_EXPTIME_SUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18368
+      },
+      {
+        "class_name": "Teff Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18369",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Wmean 11",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_wmean_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_wmean",
+        "version": "11",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_wmean_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18369",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Wmean 11",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18369",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_T_EFF_WMEAN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_T_EFF_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18369
+      },
+      {
+        "class_name": "NImages",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18370",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "NImages 17",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_n_images_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_n_images",
+        "version": "17",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_n_images_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18370",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "NImages 17",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18370",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_N_IMAGES_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_N_IMAGES_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18370
+      },
+      {
+        "class_name": "ExpTime Sum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18371",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "ExpTime Sum 18",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_exptime_sum_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_exptime_sum",
+        "version": "18",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_exptime_sum_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18371",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "ExpTime Sum 18",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18371",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_EXPTIME_SUM_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_EXPTIME_SUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18371
+      },
+      {
+        "class_name": "Mag Limit",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18372",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Mag Limit 17",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_maglim_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "mangle_maps_mag_limit",
+        "version": "17",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_maglim_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18372",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Mag Limit 17",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18372",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_maglim_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_maglim_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18372
+      },
+      {
+        "class_name": "NImages",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18373",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "NImages 18",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_n_images_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_n_images",
+        "version": "18",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_n_images_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18373",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "NImages 18",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18373",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_N_IMAGES_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_N_IMAGES_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18373
+      },
+      {
+        "class_name": "Teff Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18374",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Max 11",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_max_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_max",
+        "version": "11",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_max_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18374",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Max 11",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18374",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_T_EFF_MAX_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_T_EFF_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18374
+      },
+      {
+        "class_name": "Fwhm Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18375",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Max 6",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_max_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_max",
+        "version": "6",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_max_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18375",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Max 6",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18375",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_FWHM_MAX_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_FWHM_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18375
+      },
+      {
+        "class_name": "Fwhm Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18376",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Wmean 6",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_wmean_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_wmean",
+        "version": "6",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_wmean_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18376",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Wmean 6",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18376",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_FWHM_WMEAN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_FWHM_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18376
+      },
+      {
+        "class_name": "Fwhm Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18377",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Min 6",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_min_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_min",
+        "version": "6",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_min_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18377",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Min 6",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18377",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_FWHM_MIN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_FWHM_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18377
+      },
+      {
+        "class_name": "Fwhm Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18378",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Max 7",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_max_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_max",
+        "version": "7",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_max_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18378",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Max 7",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18378",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_FWHM_MAX_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_FWHM_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18378
+      },
+      {
+        "class_name": "Mag Limit",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18379",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Mag Limit 18",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_maglim_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "mangle_maps_mag_limit",
+        "version": "18",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_maglim_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18379",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Mag Limit 18",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18379",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_maglim_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_maglim_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18379
+      },
+      {
+        "class_name": "Fwhm Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18380",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Min 7",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_min_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_min",
+        "version": "7",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_min_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18380",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Min 7",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18380",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_FWHM_MIN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_FWHM_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18380
+      },
+      {
+        "class_name": "Airmass Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18381",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Max 11",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_max_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_max",
+        "version": "11",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_max_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18381",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Max 11",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18381",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_AIRMASS_MAX_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_AIRMASS_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18381
+      },
+      {
+        "class_name": "Fracdet",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18382",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fracdet 17",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1308139520,
+          "number_of_columns": 4,
+          "number_of_rows": 25063440,
+          "table": "systematic_maps.y6a2_coadd_4096_frac_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "mangle_maps_area_fraction",
+        "version": "17",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_frac_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18382",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fracdet 17",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25063440,
+          "table_size_in_bytes": 998244352,
+          "oracle_table_name": "brportal.e_6301_18382",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_frac_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_frac_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18382
+      },
+      {
+        "class_name": "Fwhm Fluxrad Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18383",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Wmean 6",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_wmean_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_wmean",
+        "version": "6",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_wmean_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18383",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Wmean 6",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18383",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_FWHM_FLUXRAD_WMEAN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_FWHM_FLUXRAD_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18383
+      },
+      {
+        "class_name": "Fwhm Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18384",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Max 8",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_max_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_max",
+        "version": "8",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_max_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18384",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Max 8",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18384",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_FWHM_MAX_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_FWHM_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18384
+      },
+      {
+        "class_name": "Fracdet",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18385",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fracdet 18",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1317330944,
+          "number_of_columns": 4,
+          "number_of_rows": 25239588,
+          "table": "systematic_maps.y6a2_coadd_4096_frac_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "mangle_maps_area_fraction",
+        "version": "18",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_frac_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18385",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fracdet 18",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25239588,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18385",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_frac_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_frac_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18385
+      },
+      {
+        "class_name": "Fwhm Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18386",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Wmean 7",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_wmean_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_wmean",
+        "version": "7",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_wmean_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18386",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Wmean 7",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18386",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_FWHM_WMEAN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_FWHM_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18386
+      },
+      {
+        "class_name": "Fwhm Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18387",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Max 9",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_max_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_max",
+        "version": "9",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_max_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18387",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Max 9",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18387",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_FWHM_MAX_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_FWHM_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18387
+      },
+      {
+        "class_name": "ExpTime Sum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18388",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "ExpTime Sum 19",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_exptime_sum_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_exptime_sum",
+        "version": "19",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_exptime_sum_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18388",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "ExpTime Sum 19",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18388",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_EXPTIME_SUM_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_EXPTIME_SUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18388
+      },
+      {
+        "class_name": "Teff Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18389",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Wmean 12",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_wmean_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_wmean",
+        "version": "12",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_wmean_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18389",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Wmean 12",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18389",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_T_EFF_WMEAN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_T_EFF_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18389
+      },
+      {
+        "class_name": "Teff ExpTime Sum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18390",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff ExpTime Sum 11",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_exptime_sum_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_exptime_sum",
+        "version": "11",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_exptime_sum_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18390",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff ExpTime Sum 11",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18390",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_T_EFF_EXPTIME_SUM_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_T_EFF_EXPTIME_SUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18390
+      },
+      {
+        "class_name": "Teff ExpTime Sum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18391",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff ExpTime Sum 12",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_exptime_sum_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_exptime_sum",
+        "version": "12",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_exptime_sum_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18391",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff ExpTime Sum 12",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18391",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_T_EFF_EXPTIME_SUM_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_T_EFF_EXPTIME_SUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18391
+      },
+      {
+        "class_name": "Fwhm Fluxrad Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18392",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Min 6",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_min_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_min",
+        "version": "6",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_min_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18392",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Min 6",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18392",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_FWHM_FLUXRAD_MIN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_FWHM_FLUXRAD_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18392
+      },
+      {
+        "class_name": "Teff ExpTime Sum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18393",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff ExpTime Sum 13",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_exptime_sum_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_exptime_sum",
+        "version": "13",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_exptime_sum_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18393",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff ExpTime Sum 13",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18393",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_T_EFF_EXPTIME_SUM_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_T_EFF_EXPTIME_SUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18393
+      },
+      {
+        "class_name": "Airmass Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18394",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Min 11",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_min_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_min",
+        "version": "11",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_min_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18394",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Min 11",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18394",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_AIRMASS_MIN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_AIRMASS_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18394
+      },
+      {
+        "class_name": "Fwhm Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18395",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Wmean 8",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_wmean_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_wmean",
+        "version": "8",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_wmean_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18395",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Wmean 8",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18395",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_FWHM_WMEAN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_FWHM_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18395
+      },
+      {
+        "class_name": "Airmass Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18396",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Max 12",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_max_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_max",
+        "version": "12",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_max_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18396",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Max 12",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18396",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_AIRMASS_MAX_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_AIRMASS_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18396
+      },
+      {
+        "class_name": "Teff Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18397",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Min 11",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_min_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_min",
+        "version": "11",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_min_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18397",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Min 11",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18397",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_T_EFF_MIN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_T_EFF_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18397
+      },
+      {
+        "class_name": "Fwhm Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18398",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Wmean 9",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_wmean_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_wmean",
+        "version": "9",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_wmean_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18398",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Wmean 9",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18398",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_FWHM_WMEAN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_FWHM_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18398
+      },
+      {
+        "class_name": "Teff Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18399",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Max 12",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_max_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_max",
+        "version": "12",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_max_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18399",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Max 12",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18399",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_T_EFF_MAX_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_T_EFF_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18399
+      },
+      {
+        "class_name": "Fwhm Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18400",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Min 8",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_min_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_min",
+        "version": "8",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_min_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18400",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Min 8",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18400",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_FWHM_MIN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_FWHM_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18400
+      },
+      {
+        "class_name": "Fwhm Fluxrad Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18401",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Min 7",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_min_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_min",
+        "version": "7",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_min_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18401",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Min 7",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18401",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_FWHM_FLUXRAD_MIN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_FWHM_FLUXRAD_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18401
+      },
+      {
+        "class_name": "Fwhm Fluxrad Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18402",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Max 6",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_max_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_max",
+        "version": "6",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_max_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18402",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Max 6",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18402",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_FWHM_FLUXRAD_MAX_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_FWHM_FLUXRAD_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18402
+      },
+      {
+        "class_name": "Teff Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18403",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Wmean 13",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_wmean_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_wmean",
+        "version": "13",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_wmean_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18403",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Wmean 13",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18403",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_T_EFF_WMEAN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_T_EFF_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18403
+      },
+      {
+        "class_name": "Mag Limit",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18404",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Mag Limit 19",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_maglim_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "mangle_maps_mag_limit",
+        "version": "19",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_maglim_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18404",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Mag Limit 19",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18404",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_maglim_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_maglim_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18404
+      },
+      {
+        "class_name": "Airmass Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18405",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Max 13",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_max_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_max",
+        "version": "13",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_max_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18405",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Max 13",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18405",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_AIRMASS_MAX_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_AIRMASS_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18405
+      },
+      {
+        "class_name": "Teff ExpTime Sum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18406",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff ExpTime Sum 14",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_exptime_sum_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_exptime_sum",
+        "version": "14",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_exptime_sum_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18406",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff ExpTime Sum 14",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18406",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_T_EFF_EXPTIME_SUM_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_T_EFF_EXPTIME_SUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18406
+      },
+      {
+        "class_name": "Teff Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18407",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Min 12",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_min_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_min",
+        "version": "12",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_min_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18407",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Min 12",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18407",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_T_EFF_MIN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_T_EFF_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18407
+      },
+      {
+        "class_name": "Fwhm Fluxrad Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18408",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Wmean 7",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_wmean_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_wmean",
+        "version": "7",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_wmean_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18408",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Wmean 7",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18408",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_FWHM_FLUXRAD_WMEAN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_FWHM_FLUXRAD_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18408
+      },
+      {
+        "class_name": "Airmass Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18409",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Min 12",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_min_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_min",
+        "version": "12",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_min_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18409",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Min 12",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18409",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_AIRMASS_MIN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_AIRMASS_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18409
+      },
+      {
+        "class_name": "Fwhm Fluxrad Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18410",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Wmean 8",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_wmean_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_wmean",
+        "version": "8",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_wmean_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18410",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Wmean 8",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18410",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_FWHM_FLUXRAD_WMEAN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_FWHM_FLUXRAD_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18410
+      },
+      {
+        "class_name": "Airmass Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18411",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Max 14",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_max_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_max",
+        "version": "14",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_max_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18411",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Max 14",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18411",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_AIRMASS_MAX_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_AIRMASS_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18411
+      },
+      {
+        "class_name": "Fracdet",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18412",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fracdet 19",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1316167680,
+          "number_of_columns": 4,
+          "number_of_rows": 25217334,
+          "table": "systematic_maps.y6a2_coadd_4096_frac_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "mangle_maps_area_fraction",
+        "version": "19",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_frac_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18412",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fracdet 19",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25217334,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18412",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_frac_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_frac_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18412
+      },
+      {
+        "class_name": "ExpTime Sum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18413",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "ExpTime Sum 20",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_exptime_sum_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_exptime_sum",
+        "version": "20",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_exptime_sum_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18413",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "ExpTime Sum 20",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18413",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_EXPTIME_SUM_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_EXPTIME_SUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18413
+      },
+      {
+        "class_name": "Fwhm Fluxrad Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18414",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Max 7",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_max_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_max",
+        "version": "7",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_max_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18414",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Max 7",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18414",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_FWHM_FLUXRAD_MAX_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_FWHM_FLUXRAD_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18414
+      },
+      {
+        "class_name": "Fwhm Fluxrad Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18415",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Wmean 9",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_wmean_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_wmean",
+        "version": "9",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_wmean_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18415",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Wmean 9",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18415",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_FWHM_FLUXRAD_WMEAN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_FWHM_FLUXRAD_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18415
+      },
+      {
+        "class_name": "Teff Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18416",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Min 13",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_min_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_min",
+        "version": "13",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_min_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18416",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Min 13",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18416",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_T_EFF_MIN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_T_EFF_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18416
+      },
+      {
+        "class_name": "Airmass Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18417",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Min 13",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_min_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_min",
+        "version": "13",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_min_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18417",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Min 13",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18417",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_AIRMASS_MIN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_AIRMASS_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18417
+      },
+      {
+        "class_name": "Airmass Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18418",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Wmean 11",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_wmean_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_wmean",
+        "version": "11",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_wmean_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18418",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Wmean 11",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18418",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_AIRMASS_WMEAN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_AIRMASS_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18418
+      },
+      {
+        "class_name": "ExpTime Sum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18419",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "ExpTime Sum 21",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_exptime_sum_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_exptime_sum",
+        "version": "21",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_exptime_sum_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18419",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "ExpTime Sum 21",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18419",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_EXPTIME_SUM_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_EXPTIME_SUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18419
+      },
+      {
+        "class_name": "Airmass Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18420",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Wmean 12",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_wmean_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_wmean",
+        "version": "12",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_wmean_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18420",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Wmean 12",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18420",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_AIRMASS_WMEAN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_AIRMASS_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18420
+      },
+      {
+        "class_name": "Fracdet",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18421",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fracdet 20",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1317093376,
+          "number_of_columns": 4,
+          "number_of_rows": 25235007,
+          "table": "systematic_maps.y6a2_coadd_4096_frac_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "mangle_maps_area_fraction",
+        "version": "20",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_frac_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18421",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fracdet 20",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25235007,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18421",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_frac_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_frac_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18421
+      },
+      {
+        "class_name": "Teff Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18422",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Wmean 14",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_wmean_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_wmean",
+        "version": "14",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_wmean_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18422",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Wmean 14",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18422",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_T_EFF_WMEAN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_T_EFF_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18422
+      },
+      {
+        "class_name": "Fracdet",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18423",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fracdet 21",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1313431552,
+          "number_of_columns": 4,
+          "number_of_rows": 25164819,
+          "table": "systematic_maps.y6a2_coadd_4096_frac_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "mangle_maps_area_fraction",
+        "version": "21",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_frac_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18423",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fracdet 21",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25164819,
+          "table_size_in_bytes": 998244352,
+          "oracle_table_name": "brportal.e_6301_18423",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_frac_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_frac_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18423
+      },
+      {
+        "class_name": "Airmass Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18424",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Wmean 13",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_wmean_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_wmean",
+        "version": "13",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_wmean_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18424",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Wmean 13",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18424",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_AIRMASS_WMEAN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_AIRMASS_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18424
+      },
+      {
+        "class_name": "Fwhm Fluxrad Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18425",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Min 8",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_min_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_min",
+        "version": "8",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_min_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18425",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Min 8",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18425",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_FWHM_FLUXRAD_MIN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_FWHM_FLUXRAD_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18425
+      },
+      {
+        "class_name": "Teff Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18426",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Max 13",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_max_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_max",
+        "version": "13",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_max_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18426",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Max 13",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18426",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_T_EFF_MAX_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_T_EFF_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18426
+      },
+      {
+        "class_name": "Mag Limit",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18427",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Mag Limit 20",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_maglim_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "mangle_maps_mag_limit",
+        "version": "20",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_maglim_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18427",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Mag Limit 20",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18427",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_maglim_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_maglim_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18427
+      },
+      {
+        "class_name": "Airmass Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18428",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Min 14",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_min_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_min",
+        "version": "14",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_min_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18428",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Min 14",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18428",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_AIRMASS_MIN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_AIRMASS_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18428
+      },
+      {
+        "class_name": "NImages",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18429",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "NImages 19",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_n_images_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_n_images",
+        "version": "19",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_n_images_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18429",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "NImages 19",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18429",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_N_IMAGES_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_N_IMAGES_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18429
+      },
+      {
+        "class_name": "Fwhm Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18430",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Wmean 10",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_wmean_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_wmean",
+        "version": "10",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_wmean_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18430",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Wmean 10",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18430",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_FWHM_WMEAN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_FWHM_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18430
+      },
+      {
+        "class_name": "Teff Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18431",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Max 14",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_max_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_max",
+        "version": "14",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_max_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18431",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Max 14",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18431",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_T_EFF_MAX_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_T_EFF_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18431
+      },
+      {
+        "class_name": "Fwhm Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18432",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Min 9",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_min_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_min",
+        "version": "9",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_min_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18432",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Min 9",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18432",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_FWHM_MIN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_FWHM_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18432
+      },
+      {
+        "class_name": "Fwhm Fluxrad Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18433",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Min 9",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_min_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_min",
+        "version": "9",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_min_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18433",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Min 9",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18433",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_FWHM_FLUXRAD_MIN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_FWHM_FLUXRAD_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18433
+      },
+      {
+        "class_name": "NImages",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18434",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "NImages 20",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_n_images_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_n_images",
+        "version": "20",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_n_images_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18434",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "NImages 20",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18434",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_N_IMAGES_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_N_IMAGES_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18434
+      },
+      {
+        "class_name": "Mag Limit",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18435",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Mag Limit 21",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_maglim_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "mangle_maps_mag_limit",
+        "version": "21",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_maglim_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18435",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Mag Limit 21",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18435",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_maglim_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_maglim_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18435
+      },
+      {
+        "class_name": "Airmass Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18436",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Wmean 14",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_wmean_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_wmean",
+        "version": "14",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_wmean_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18436",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Wmean 14",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18436",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_AIRMASS_WMEAN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_AIRMASS_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18436
+      },
+      {
+        "class_name": "Teff Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18437",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Wmean 15",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_wmean_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_wmean",
+        "version": "15",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_wmean_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18437",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Wmean 15",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18437",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_T_EFF_WMEAN_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_T_EFF_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18437
+      },
+      {
+        "class_name": "Fwhm Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18438",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Max 10",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_max_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_max",
+        "version": "10",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_max_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18438",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Max 10",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18438",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_FWHM_MAX_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_FWHM_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18438
+      },
+      {
+        "class_name": "Airmass Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18439",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Max 15",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_max_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_max",
+        "version": "15",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_max_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18439",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Max 15",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18439",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_AIRMASS_MAX_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_AIRMASS_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18439
+      },
+      {
+        "class_name": "Fwhm Fluxrad Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18440",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Max 8",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_max_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_max",
+        "version": "8",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_max_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18440",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Max 8",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18440",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_FWHM_FLUXRAD_MAX_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_FWHM_FLUXRAD_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18440
+      },
+      {
+        "class_name": "Teff Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18441",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Min 14",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_min_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_min",
+        "version": "14",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_min_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18441",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Min 14",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18441",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_T_EFF_MIN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_T_EFF_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18441
+      },
+      {
+        "class_name": "NImages",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18442",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "NImages 21",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_n_images_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_n_images",
+        "version": "21",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_n_images_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18442",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "NImages 21",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18442",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_N_IMAGES_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_N_IMAGES_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18442
+      },
+      {
+        "class_name": "Fwhm Fluxrad Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18443",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Min 10",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_min_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_min",
+        "version": "10",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_min_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18443",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Min 10",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18443",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_FWHM_FLUXRAD_MIN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_FWHM_FLUXRAD_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18443
+      },
+      {
+        "class_name": "Fwhm Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18444",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Min 10",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_min_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_min",
+        "version": "10",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_min_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18444",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Min 10",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18444",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_FWHM_MIN_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_FWHM_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18444
+      },
+      {
+        "class_name": "Teff Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18445",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Max 15",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_max_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_max",
+        "version": "15",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_max_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18445",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Max 15",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18445",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_T_EFF_MAX_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_T_EFF_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18445
+      },
+      {
+        "class_name": "Fwhm Fluxrad Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18446",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Max 9",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_max_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_max",
+        "version": "9",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_max_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18446",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Max 9",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18446",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_FWHM_FLUXRAD_MAX_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_FWHM_FLUXRAD_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18446
+      },
+      {
+        "class_name": "Teff ExpTime Sum",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18447",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff ExpTime Sum 15",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321123840,
+          "number_of_columns": 4,
+          "number_of_rows": 25312208,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_exptime_sum_z_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_exptime_sum",
+        "version": "15",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_exptime_sum_z_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18447",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "z",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff ExpTime Sum 15",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312208,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18447",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_z_o_4096_t_32768_T_EFF_EXPTIME_SUM_EQU.zip",
+          "filename": "y6a2_z_o_4096_t_32768_T_EFF_EXPTIME_SUM_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18447
+      },
+      {
+        "class_name": "Fwhm Fluxrad Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18448",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Wmean 10",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320247296,
+          "number_of_columns": 4,
+          "number_of_rows": 25295523,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_wmean_y_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_wmean",
+        "version": "10",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_wmean_y_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18448",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "Y",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Wmean 10",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25295523,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18448",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_Y_o_4096_t_32768_FWHM_FLUXRAD_WMEAN_EQU.zip",
+          "filename": "y6a2_Y_o_4096_t_32768_FWHM_FLUXRAD_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18448
+      },
+      {
+        "class_name": "Teff Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18449",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Teff Min 15",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321148416,
+          "number_of_columns": 4,
+          "number_of_rows": 25312693,
+          "table": "systematic_maps.y6a2_coadd_4096_t_eff_min_i_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_t_eff_min",
+        "version": "15",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_t_eff_min_i_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18449",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "i",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Teff Min 15",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312693,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18449",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_i_o_4096_t_32768_T_EFF_MIN_EQU.zip",
+          "filename": "y6a2_i_o_4096_t_32768_T_EFF_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18449
+      },
+      {
+        "class_name": "Fwhm Fluxrad Max",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18450",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Fwhm Fluxrad Max 10",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1321156608,
+          "number_of_columns": 4,
+          "number_of_rows": 25312878,
+          "table": "systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_max_r_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_fwhm_fluxrad_max",
+        "version": "10",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_fwhm_fluxrad_max_r_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18450",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "r",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Fwhm Fluxrad Max 10",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25312878,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18450",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_r_o_4096_t_32768_FWHM_FLUXRAD_MAX_EQU.zip",
+          "filename": "y6a2_r_o_4096_t_32768_FWHM_FLUXRAD_MAX_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18450
+      },
+      {
+        "class_name": "Airmass Wmean",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18451",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Wmean 15",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_wmean_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_wmean",
+        "version": "15",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_wmean_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18451",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Wmean 15",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18451",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_AIRMASS_WMEAN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_AIRMASS_WMEAN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18451
+      },
+      {
+        "class_name": "Airmass Min",
+        "file_name": null,
+        "is_public": true,
+        "table": "e_6301_18452",
+        "is_permanent": true,
+        "number_tiles": null,
+        "display_name": "Airmass Min 15",
+        "nside": "4096",
+        "ordering": "nest",
+        "pg_table_info": {
+          "table_size_in_bytes": 1320869888,
+          "number_of_columns": 4,
+          "number_of_rows": 25307438,
+          "table": "systematic_maps.y6a2_coadd_4096_airmass_min_g_6301"
+        },
+        "type_name": "Systematic Maps",
+        "namespace": null,
+        "class": "systematic_maps_airmass_min",
+        "version": "15",
+        "type": "map",
+        "file_path": "/archive/staging/DES/tmp/exports/systematic_maps.y6a2_coadd_4096_airmass_min_g_6301.csv",
+        "columns": "pixel,signal,ra,dec",
+        "schema": "brportal",
+        "releases": [
+          "Y6A2_COADD"
+        ],
+        "oracle_table": "e_6301_18452",
+        "selected_name": null,
+        "process_id": 6301,
+        "number_columns": null,
+        "additional_attributes": null,
+        "number_objects": null,
+        "map_filter": "g",
+        "association": [],
+        "job_id": "985904",
+        "pipeline": "Systematic Maps",
+        "product_type": "Systematic Maps",
+        "name": "Airmass Min 15",
+        "database": "dessci",
+        "fields": [
+          "Y6A2_COADD"
+        ],
+        "ora_table_info": {
+          "n_imported_rows": 25307438,
+          "table_size_in_bytes": 1006632960,
+          "oracle_table_name": "brportal.e_6301_18452",
+          "n_imported_columns": 4
+        },
+        "aladin": {
+          "download_url": "ftp://srvdatatransfer.linea.gov.br/singulani/y6a2_g_o_4096_t_32768_AIRMASS_MIN_EQU.zip",
+          "filename": "y6a2_g_o_4096_t_32768_AIRMASS_MIN_EQU.zip"
+        },
+        "mask_filter": null,
+        "release": "Y6A2_COADD",
+        "product_id": 18452
+      }
+    ],
+    "process_comment": null,
+    "process_start_date": "2020-11-14 08:02:11",
+    "owner_username": "adriano.pieres"
+  },
+  "ticket": "JEX147",
+  "register_username": "gverde"
+}

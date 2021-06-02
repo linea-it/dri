@@ -32,6 +32,10 @@ class Release(models.Model):
         default=False, verbose_name='Is Public',
         help_text='Mark the release as public so that it is available to all users. uncheck it to make it available only to groups that have permission.')
 
+    rls_tile_grid_enabled = models.BooleanField(
+        default=False, verbose_name='Tile Grid Enabled',
+        help_text='Defines if aladin tile grid function will be active or not by default. util for releases that dont use the default DES area.')
+
     def __str__(self):
         return self.rls_display_name
 
