@@ -245,6 +245,16 @@
 .MuiFormControl-root .btn.btn-google:active {
   background: #1669F2;
 }
+
+.terms-and-info {
+  margin: 0 8px;
+  max-width: 450px;
+  text-align: justify;
+}
+.terms-and-info a,
+.terms-and-info a:hover {
+  color: #095ce0;
+}
 </style>
 
 {% extends "rest_framework/login_base.html" %}
@@ -362,6 +372,22 @@
               <!-- {{ key }}: {{ value }} -->
               <!-- {% endfor %} -->
             </form>
+          </div>
+          <div class="terms-and-info">
+            <p>
+              In case you have any problem authenticating or registering, please
+              <strong
+                ><a href="mailto:helpdesk@linea.gov.br" target="_blank">contact our helpdesk</a></strong
+              >.
+            </p>
+            <p>
+              You must read, agree with, and accept all of the
+              <strong
+                ><a href="https://identity.linea.gov.br/terms.html" target="_blank"
+                  >terms and conditions</a
+                ></strong
+              >.
+            </p>
           </div>
       </div>
       <!--/.well-->
