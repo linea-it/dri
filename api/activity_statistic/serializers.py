@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Activity
 
+
 class ActivityStatisticSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField()
 
@@ -14,4 +15,7 @@ class ActivityStatisticSerializer(serializers.ModelSerializer):
         )
 
     def get_owner(self, obj):
-        return obj.owner.username
+        try:
+            return obj.owner.username
+        except:
+            return None
