@@ -265,7 +265,7 @@ def send_statistic_email(request):
 
         except Exception as e:
 
-            return Response(dict({'status': "failure", "Exception": e}))
+            return Response(dict({'status': "failure", "Exception": str(e)}))
 
 
 @api_view(['GET'])

@@ -7,12 +7,18 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from smtplib import SMTPException
 from common.notify import Notify
+import logging
+
 
 class ActivityReports:
     def __init__(self):
         pass
 
     def unique_visits_by_date(self, year, month, day):
+
+        log = logging.getLogger('django')
+        log.debug("Unique Visits by date %s/%s/%s." % (year, month, day))
+
         users = list()
         uniqueVisits = list()
 
@@ -29,7 +35,6 @@ class ActivityReports:
                 # Recuperar a visita
                 visit = self.get_or_create_unique_visit(activity)
 
-
         # Recuperar os usuarios que visitaram neste dia + o total de visitas dele no mes
         visits_count = Visit.objects.filter(
             date__year=year,
@@ -38,18 +43,28 @@ class ActivityReports:
             owner__pk__in=users).order_by('-date')
 
         for a in visits_count:
+            try:
 
-            # Recupera as visitas unicas por neste mes por cada usuario.
-            visits_month = self.get_visits_in_month_by_user(user=a.owner, year=year, month=month)
+                # Recupera as visitas unicas por neste mes por cada usuario.
+                visits_month = self.get_visits_in_month_by_user(user=a.owner, year=year, month=month)
 
-            all_visits = self.get_all_visits_by_user(user=a.owner)
+                all_visits = self.get_all_visits_by_user(user=a.owner)
 
-            uniqueVisits.append(dict({
-                "user": a.owner.username,
-                "last_activity": a.date.strftime('%d-%m-%Y %H:%M'),
-                "visits_in_month": visits_month,
-                "all_visits": all_visits
-            }))
+                try:
+                    display_name = a.owner.profile.display_name
+                    if display_name is None:
+                        display_name = a.owner.username
+                except:
+                    display_name = a.owner.username
+
+                uniqueVisits.append(dict({
+                    "user": display_name,
+                    "last_activity": a.date.strftime('%d-%m-%Y %H:%M'),
+                    "visits_in_month": visits_month,
+                    "all_visits": all_visits
+                }))
+            except:
+                log.warning("Skiped visit missing data.")
 
         return uniqueVisits
 
@@ -70,21 +85,29 @@ class ActivityReports:
         all_visits = Visit.objects.filter().order_by('-date')
 
         for visit in all_visits:
-            if visit.owner.username not in users:
+            try:
+                if visit.owner.username not in users:
 
-                users.append(visit.owner.username)
+                    users.append(visit.owner.username)
 
-                all_visits = self.get_all_visits_by_user(user=visit.owner)
+                    all_visits = self.get_all_visits_by_user(user=visit.owner)
 
-                result.append(dict({
-                    "user": visit.owner.username,
-                    "last_activity": visit.date.strftime('%d-%m-%Y %H:%M'),
-                    "all_visits": all_visits
-                }))
+                    try:
+                        display_name = visit.owner.profile.display_name
+                        if display_name is None:
+                            display_name = visit.owner.username
+                    except:
+                        display_name = visit.owner.username
+
+                    result.append(dict({
+                        "user": display_name,
+                        "last_activity": visit.date.strftime('%d-%m-%Y %H:%M'),
+                        "all_visits": all_visits
+                    }))
+            except:
+                pass
 
         return result
-
-
 
     def get_visits_in_month_by_user(self, user, year, month):
         """
@@ -101,7 +124,6 @@ class ActivityReports:
             date__month=month,
             owner=user).count()
 
-
     def get_all_visits_by_user(self, user):
         """
             Retorna o total de visitas de um usuario
@@ -111,7 +133,6 @@ class ActivityReports:
 
         return Visit.objects.filter(
             owner=user).count()
-
 
     def get_all_visits_consolidate_by_month(self):
         """
@@ -137,7 +158,6 @@ class ActivityReports:
             }))
 
         return consolidates
-
 
     def get_or_create_unique_visit(self, activity):
         """
@@ -167,8 +187,11 @@ class ActivityReports:
             # usuario no mesmo dia.
             raise e
 
-
     def report_email_unique_visits(self, report_date):
+
+        log = logging.getLogger('django')
+
+        log.info("Generating daily access e-mail.")
         try:
             from_email = settings.EMAIL_NOTIFICATION
         except:
@@ -190,7 +213,9 @@ class ActivityReports:
 
         # subject
         subject = (
-            "NCSA Status %s - %s - %s" % (report_date.year, report_date.month, report_date.day))
+            "Status %s-%s-%s" % (report_date.year, report_date.month, report_date.day))
+
+        log.info("Retrieving unique accesses by date.")
 
         # Recuperar as visitas unicas do dia.
         visits = self.unique_visits_by_date(
@@ -199,22 +224,24 @@ class ActivityReports:
             day=report_date.day
         )
 
+        log.info("Retrieving all unique accesses.")
+        all_visits = self.get_all_distinct_visits()
 
         sum_visits = 0
-        all_visits = self.get_all_distinct_visits()
         sum_users = len(all_visits)
 
         for a in all_visits:
             sum_visits = sum_visits + a.get('all_visits')
 
-
+        log.info("Retrieving Visits consolidate by month.")
         consolidate_by_month = self.get_all_visits_consolidate_by_month()
 
         if len(visits) == 0:
             visits = False
 
-
+        log.info("Rendering email template.")
         body = render_to_string("unique_hits_on_day.html", {
+            "host": settings.BASE_HOST,
             "today": report_date.strftime('%d/%m/%Y'),
             "visits": visits,
             "consolidate": consolidate_by_month,
@@ -222,6 +249,8 @@ class ActivityReports:
             "sum_visits": sum_visits,
             "sum_users": sum_users
         })
+
+        log.info("Sending Daily Statistics e-mail.")
 
         Notify().send_email(
             subject=subject,
