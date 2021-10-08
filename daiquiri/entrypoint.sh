@@ -24,7 +24,7 @@ celery worker --workdir /daiquiri_app --app daiquiri -l info --beat &> /log/cele
 # Para producao usar uWSGI para servir o app e ter compatibilidade com Shibboleth
 # https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html
 uwsgi \
-  --socket 0.0.0.0:8001 \
+  --socket 0.0.0.0:8000 \
   --wsgi-file /daiquiri_app/config/wsgi.py \
   --py-autoreload 1 \
   --static-map /daiquiri_static/=/daiquiri_app/static_root \
