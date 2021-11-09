@@ -348,7 +348,4 @@ def get_ncsa_signup(request):
 @api_view(['GET'])
 def teste(request):
     if request.method == 'GET':
-
-        releases = request.user.get_user_releases()
-
-        return Response(dict({'status': "success", "releases": releases}))
+        return Response(dict({'status': "success"}))

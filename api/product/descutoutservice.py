@@ -27,6 +27,10 @@ from product.models import Catalog, Cutout, CutOutJob, Desjob
 from django.db.utils import NotSupportedError
 
 
+from coadd.models import Dataset
+from coadd.serializers import DatasetFootprintSerializer
+
+
 class DesCutoutService:
     """This Allows the execution of a Cutout job using the DESaccess API.
     has methods for submitting, monitoring, downloading and registering jobs and their results.
@@ -594,6 +598,57 @@ class DesCutoutService:
 
         return count
 
+    def get_dr2_datasets(self):
+        """Retorna todos os datasets do release DR2. 
+        Importante Se não houver cadastrada uma Tag com internal name 'dr2' retorna None.
+
+        Returns:
+            array: Lista dos datasets do release DR2
+        """
+
+        queryset = Dataset.objects.select_related().filter(tag__tag_name='dr2')
+        datasets = DatasetFootprintSerializer(queryset, many=True).data
+
+        if len(datasets) > 0:
+            return datasets
+        else:
+            return None
+
+    def is_inside_tile(self, datasets, ra, dec):
+        """Verifica se uma determinada posição está dentro dos limites de alguma tile. 
+
+        Args:
+            datasets (list): Lista de datasets no formato DatasetFootprintSerializer
+            ra (float): RA da Posição a ser checada
+            dec (float): Dec da posição a ser checada
+
+        Returns:
+            bool: Retorna True se a posição estiver dentro de umas das tiles. 
+        """
+
+        if (ra > 180):
+            ra = (ra - 360)
+
+        for row in datasets:
+
+            urall = row[16]
+            uraur = row[18]
+            udecll = row[17]
+            udecur = row[19]
+
+            if (urall > 180):
+                urall = urall - 360
+
+            if (uraur > 180):
+                uraur = uraur - 360
+
+            if ((ra > urall) & (ra < uraur) & (dec > udecll) & (dec < udecur)):
+                return True
+            else:
+                continue
+
+        return False
+
     def get_catalog_objects(self, product_id, limit=None, offset=None):
         """Executes a query in the catalog and returns an array of objects already using association for the id, ra and dec columns.
 
@@ -639,6 +694,9 @@ class DesCutoutService:
             start=offset
         )
 
+        # Recupera os datasets do release DR2 para verificar se as posições estão dentro de alguma tile.
+        datasets = self.get_dr2_datasets()
+
         # Para cada linha alterar os nomes de colunas utilizando as informações de associação.
         # O resultado é um array records onde cada record tem sempre os mesmos atributos (meta_id, meta_ra, meta_dec)
         # independente dos nomes originais das colunas.
@@ -651,7 +709,16 @@ class DesCutoutService:
                 "meta_ra": float("{:.6f}".format(ra)),
                 "meta_dec": float("{:.6f}".format(dec))
             })
-            records.append(record)
+
+            if datasets is not None:
+                # Verifica se a posição está dentro do footprint (em alguma tile) do release DR2
+                # Se não estiver dentro de alguma tile  a posição é ignorada para evitar errors no DESaccess.
+                if self.is_inside_tile(datasets, ra, dec):
+                    records.append(record)
+            else:
+                # Caso não tenha nenhum dataset, não executa o test e essa validação fica pelo lado do DESaccess.
+                # Só deve acontecer isso no caso de não exisistir uma tag com o tag_name='dr2'
+                records.append(record)
 
         del rows
 
