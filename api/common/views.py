@@ -31,9 +31,16 @@ class FilterViewSet(viewsets.ModelViewSet):
 
     serializer_class = FilterSerializer
 
-    filter_fields = ('project', 'filter',)
+    filter_fields = (
+        "project",
+        "filter",
+    )
 
-    ordering_fields = ('lambda_min', 'lambda_max', 'lambda_mean',)
+    ordering_fields = (
+        "lambda_min",
+        "lambda_max",
+        "lambda_mean",
+    )
 
 
 class LoggedUserViewSet(viewsets.ModelViewSet):
@@ -55,7 +62,7 @@ class LoggedUserViewSet(viewsets.ModelViewSet):
 
 class UsersSameGroupFilterBackend(filters.BaseFilterBackend):
     """
-        Retornar os Usuarios que estao no mesmo User Group que o usuario logado.
+    Retornar os Usuarios que estao no mesmo User Group que o usuario logado.
     """
 
     def filter_queryset(self, request, queryset, view):
@@ -67,13 +74,14 @@ class UsersInSameGroupViewSet(viewsets.ModelViewSet):
     """
     Retorna a lista de usuarios do mesmo grupo
     """
+
     queryset = User.objects.filter()
     model = User
     serializer_class = UserSerializer
     filter_backends = (DjangoFilterBackend, UsersSameGroupFilterBackend)
 
 
-@api_view(['POST'])
+@api_view(["POST"])
 @permission_classes([AllowAny])
 def contact_us(request):
     """
@@ -84,18 +92,20 @@ def contact_us(request):
     Returns:
 
     """
-    if request.method == 'POST':
+    if request.method == "POST":
 
         try:
             environment = settings.ENVIRONMENT_NAME
         except:
-            raise Exception("The ENVIRONMENT_NAME variable is not configured in settings.")
+            raise Exception(
+                "The ENVIRONMENT_NAME variable is not configured in settings."
+            )
 
         # Dados da Mensagem
-        name = request.data.get('name', None)
-        user_email = request.data.get('from', None)
-        subject = "[DRI][%s] %s" % (environment, request.data.get('subject', None))
-        message = request.data.get('message', None)
+        name = request.data.get("name", None)
+        user_email = request.data.get("from", None)
+        subject = "[DRI][%s] %s" % (environment, request.data.get("subject", None))
+        message = request.data.get("message", None)
 
         if user_email is None:
             try:
@@ -103,13 +113,21 @@ def contact_us(request):
             except:
                 user_email = None
 
-        if name is not None and user_email is not None and subject is not None and message is not None:
+        if (
+            name is not None
+            and user_email is not None
+            and subject is not None
+            and message is not None
+        ):
             try:
                 to_email = settings.EMAIL_HELPDESK
                 from_email = user_email
 
-                message_header = (
-                    "Name: %s\nUsername: %s\nEmail: %s\nMessage:\n" % (name, request.user.username, user_email))
+                message_header = "Name: %s\nUsername: %s\nEmail: %s\nMessage:\n" % (
+                    name,
+                    request.user.username,
+                    user_email,
+                )
 
                 body = message_header + message
 
@@ -146,55 +164,80 @@ def get_providers():
             site = Site.objects.get_current()
             result = []
             for provider in registry.get_list():
-                if (isinstance(provider, OAuth2Provider)
-                        or isinstance(provider, OAuthProvider)):
+                if isinstance(provider, OAuth2Provider) or isinstance(
+                    provider, OAuthProvider
+                ):
                     try:
-                        app = SocialApp.objects.get(provider=provider.id,
-                                                    sites=site)
+                        app = SocialApp.objects.get(provider=provider.id, sites=site)
                         result.append(str(app.provider))
                     except SocialApp.DoesNotExist:
-                        app2 = ''
+                        app2 = ""
             return str(result)
     except:
         pass
 
 
-@api_view(['GET'])
+# @api_view(["GET", "POST"])
+@api_view(["POST"])
 def get_token(request):
-    if request.method == 'GET':
+    # if request.method == "GET":
+    #     # TODO: Este metodo Aparentemente não é utilizado
+    #     # Recomendado que seja removido já o acesso aos tokens deveriam ser feitos somente pelo
+    #     # endpoint obtain-auth-token
+    #     try:
+    #         token = Token.objects.get(user=request.user)
+    #     except:
+    #         token = Token.objects.create(user=request.user)
+    #     return Response(dict({"token": token.key}))
+    if request.method == "POST":
+        """_Cria um novo token para o usuario logado.
+
+            Este metodo é utilizado pela interface API Token no menu de usuario dos apps
+            Sempre que este metodo for executado um novo token sera criado,
+            Caso o usuario já possua um token ele será removido e um novo será criado.
+
+        Returns:
+            dict: {token: str}
+        """
         try:
             token = Token.objects.get(user=request.user)
+            token.delete()
+            token = Token.objects.create(user=request.user)
         except:
             token = Token.objects.create(user=request.user)
-        return Response(dict({'token': token.key}))
+        return Response(dict({"token": token.key}))
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def get_setting(request):
-    if request.method == 'GET':
+    if request.method == "GET":
 
-        not_available = list([
-            'DATABASES',
-            'BASE_PROJECT',
-            'LOGGING',
-            'AUTHENTICATION_BACKENDS',
-            'AUTH_PASSWORD_VALIDATORS',
-            'DATABASE_ROUTERS',
-            'ALLOWED_HOSTS',
-            'SECRET_KEY',
-            'INSTALLED_APPS',
-            'REST_FRAMEWORK',
-            'SOCIALACCOUNT_PROVIDERS',
-            'CELERY_BROKER_URL',
-            'DESACCESS_API'
-        ])
+        not_available = list(
+            [
+                "DATABASES",
+                "BASE_PROJECT",
+                "LOGGING",
+                "AUTHENTICATION_BACKENDS",
+                "AUTH_PASSWORD_VALIDATORS",
+                "DATABASE_ROUTERS",
+                "ALLOWED_HOSTS",
+                "SECRET_KEY",
+                "INSTALLED_APPS",
+                "REST_FRAMEWORK",
+                "SOCIALACCOUNT_PROVIDERS",
+                "CELERY_BROKER_URL",
+                "DESACCESS_API",
+            ]
+        )
 
         name = request.GET.get("name", None)
         names = request.GET.get("names", None)
 
         if name is None and names is None:
-            raise Exception("is necessary the name parameter with the identifier of the variable in the settings")
+            raise Exception(
+                "is necessary the name parameter with the identifier of the variable in the settings"
+            )
 
         if name is not None:
 
@@ -209,13 +252,17 @@ def get_setting(request):
                     data[name] = value
 
                 except:
-                    return Response(dict({"msg": "this variable \"%s\" not found" % name}), status=500)
+                    return Response(
+                        dict({"msg": 'this variable "%s" not found' % name}), status=500
+                    )
 
             else:
-                return Response(dict({"msg": "this variable \"%s\" not available" % name}), status=500)
+                return Response(
+                    dict({"msg": 'this variable "%s" not available' % name}), status=500
+                )
 
         elif name is None and names is not None:
-            names = names.split(',')
+            names = names.split(",")
             data = {}
             key = None
 
@@ -224,7 +271,7 @@ def get_setting(request):
                 if name.find("__") > -1:
                     arr = name.split("__")
                     key = arr[0]
-                    name = arr[1].replace('__', '')
+                    name = arr[1].replace("__", "")
 
                 # Somente permitir variaveis que nao contenham dados sensiveis como senha por exemplo
                 if name not in not_available:
@@ -239,15 +286,21 @@ def get_setting(request):
                         data[orinal_name] = value
 
                     except:
-                        return Response(dict({"msg": "this variable \"%s\" not found" % orinal_name}), status=500)
+                        return Response(
+                            dict({"msg": 'this variable "%s" not found' % orinal_name}),
+                            status=500,
+                        )
 
                 else:
-                    return Response(dict({"msg": "this variable \"%s\" not available" % orinal_name}), status=500)
+                    return Response(
+                        dict({"msg": 'this variable "%s" not available' % orinal_name}),
+                        status=500,
+                    )
 
         return Response(data)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def send_statistic_email(request):
     """
     Este metodo e usado para enviar o email de estatistica a qualquer momento.
@@ -255,22 +308,22 @@ def send_statistic_email(request):
     :param request:
     :return:
     """
-    if request.method == 'GET':
+    if request.method == "GET":
         from activity_statistic.reports import ActivityReports
         import datetime
 
         try:
             ActivityReports().report_email_unique_visits(datetime.date.today())
-            return Response(dict({'status': "success"}))
+            return Response(dict({"status": "success"}))
 
         except Exception as e:
 
-            return Response(dict({'status': "failure", "Exception": str(e)}))
+            return Response(dict({"status": "failure", "Exception": str(e)}))
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def galaxy_cluster(request):
-    if request.method == 'GET':
+    if request.method == "GET":
         clusterSource = request.GET.get("clusterSource", None)
         clusterId = request.GET.get("clusterId", None)
         vacSource = request.GET.get("vacSource", None)
@@ -281,10 +334,14 @@ def galaxy_cluster(request):
         try:
             host = settings.PLUGIN_GALAXY_CLUSTER_HOST
         except:
-            raise Exception("The PLUGIN_GALAXY_CLUSTER_HOST variable is not configured in settings.")
+            raise Exception(
+                "The PLUGIN_GALAXY_CLUSTER_HOST variable is not configured in settings."
+            )
 
-        params = "density_map?clusterSource=%s&clusterId=%s&vacSource=%s&lon=%s&lat=%s&radius=%s" % (
-            clusterSource, clusterId, vacSource, lon, lat, radius)
+        params = (
+            "density_map?clusterSource=%s&clusterId=%s&vacSource=%s&lon=%s&lat=%s&radius=%s"
+            % (clusterSource, clusterId, vacSource, lon, lat, radius)
+        )
 
         url = urljoin(host, params)
 
@@ -302,50 +359,51 @@ def galaxy_cluster(request):
                 return Response(dict({"success": False}))
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def available_database(request):
     """
-        Retorna os databases configurados como sendo DBs de Catalogo.
-        não inclui o database administrativo.
+    Retorna os databases configurados como sendo DBs de Catalogo.
+    não inclui o database administrativo.
     """
-    if request.method == 'GET':
+    if request.method == "GET":
         dbs = list([])
 
         # TODO: é provavel que ao adicionar mais bancos de dados, o target viewer de
         # problema com as tabelas de rating e reject
         for db in settings.DATABASES:
-            if db is not 'default' and db in settings.TARGET_VIEWER_DATABASES:
+            if db is not "default" and db in settings.TARGET_VIEWER_DATABASES:
                 try:
-                    dbs.append(dict({
-                        'name': db,
-                        'display_name': settings.DATABASES[db]['DISPLAY_NAME']
-                    }))
+                    dbs.append(
+                        dict(
+                            {
+                                "name": db,
+                                "display_name": settings.DATABASES[db]["DISPLAY_NAME"],
+                            }
+                        )
+                    )
                 except:
-                    dbs.append(dict({
-                        'name': db,
-                        'display_name': db
-                    }))
+                    dbs.append(dict({"name": db, "display_name": db}))
 
-        return Response(dict({'results': dbs, 'count': len(dbs)}))
+        return Response(dict({"results": dbs, "count": len(dbs)}))
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 @permission_classes([AllowAny])
 def get_ncsa_signup(request):
-    """Returns the URL of the NCSA registration page. 
-    this url is stored in the settings.NCSA_SIGNUP_LINK has a default value of None, 
-    but for the public NCSA environment the value is a complete url 
+    """Returns the URL of the NCSA registration page.
+    this url is stored in the settings.NCSA_SIGNUP_LINK has a default value of None,
+    but for the public NCSA environment the value is a complete url
     like this: 'https://des.ncsa.illinois.edu/easyweb/signup/'
 
 
     Returns:
         dict: A dictionary with the ncsa_signup attribute with the url string or None.
     """
-    if request.method == 'GET':
-        return Response(dict({'ncsa_signup': settings.NCSA_SIGNUP_LINK}))
+    if request.method == "GET":
+        return Response(dict({"ncsa_signup": settings.NCSA_SIGNUP_LINK}))
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def teste(request):
-    if request.method == 'GET':
-        return Response(dict({'status': "success"}))
+    if request.method == "GET":
+        return Response(dict({"status": "success"}))

@@ -12,7 +12,8 @@ Ext.define('common.header.Toolbar', {
         'common.data.proxy.Django',
         'common.ToolbarController',
         'common.contact.Contact',
-        'common.help.Tutorials'
+        'common.help.Tutorials',
+        'common.account.ApiToken'
     ],
 
     xtype: 'dri-header',
@@ -101,25 +102,27 @@ Ext.define('common.header.Toolbar', {
                 arrowVisible: false,
                 menu: [
                     {
-                        text: 'About LIneA',
-                        handler: 'about'
+                        text: 'API Token',
+                        // iconCls: 'x-fa fa-user',
+                        reference: 'headerapitoken',
+                        handler: 'onClickApiToken'
                     },
-                    // {
-                    //     text: 'Contact Us',
-                    //     handler: 'contact'
-                    // },
                     {
                         text: 'Tutorials',
-                        iconCls: 'x-fa fa-question-circle',
+                        // iconCls: 'x-fa fa-question-circle',
                         reference: 'headermenututorials',
                         disabled: true,
                         handler: 'tutorials'
                     },
                     {
-                        text: 'Help',
-                        iconCls: 'x-fa fa-question',
+                        text: 'Helpdesk',
+                        // iconCls: 'x-fa fa-question',
                         reference: 'headermenuhelp',
                         handler: 'onClickHelp'
+                    },
+                    {
+                        text: 'About LIneA',
+                        handler: 'about'
                     },
                     '-',
                     {

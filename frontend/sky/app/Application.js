@@ -31,10 +31,13 @@ Ext.define('Sky.Application', {
             success: function (response) {
                 var data = JSON.parse(response.responseText);
 
-                // Informa o Id o usuario para o GA, para que possa reconher usuarios unicos.
-                window.gtag('config', 'GA_MEASUREMENT_ID', {
-                    'user_id': data.id
-                });
+                try {
+                    // Informa o Id o usuario para o GA, para que possa reconher usuarios unicos.
+                    window.gtag('config', 'GA_MEASUREMENT_ID', {
+                        'user_id': data.id
+                    });
+                }
+                catch (e) { }
             },
             failure: function (response, opts) {
                 var pathname = window.location.pathname;
