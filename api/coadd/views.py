@@ -13,15 +13,20 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .models import Dataset, Release, Survey, Tag, Tile
-from .serializers import (DatasetFootprintSerializer, DatasetSerializer,
-                          ReleaseSerializer, SurveySerializer, TagSerializer,
-                          TileSerializer)
+from .serializers import (
+    DatasetFootprintSerializer,
+    DatasetSerializer,
+    ReleaseSerializer,
+    SurveySerializer,
+    TagSerializer,
+    TileSerializer,
+)
 
 from common.desaccess import DesAccessApi
 from django.db.models import Q
 
 
-class ReleaseViewSet(viewsets.ModelViewSet):
+class ReleaseViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows releases to be viewed or edited
     """
@@ -30,11 +35,18 @@ class ReleaseViewSet(viewsets.ModelViewSet):
 
     serializer_class = ReleaseSerializer
 
-    search_fields = ('rls_name', 'rls_display_name',)
+    search_fields = (
+        "rls_name",
+        "rls_display_name",
+    )
 
-    filter_fields = ('id', 'rls_name', 'rls_display_name',)
+    filter_fields = (
+        "id",
+        "rls_name",
+        "rls_display_name",
+    )
 
-    ordering_fields = '__all__'
+    ordering_fields = "__all__"
 
     def get_queryset(self):
 
@@ -51,7 +63,7 @@ class ReleaseViewSet(viewsets.ModelViewSet):
             return queryset
 
 
-class TagViewSet(viewsets.ModelViewSet):
+class TagViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows tags to be viewed or edited
     """
@@ -60,12 +72,18 @@ class TagViewSet(viewsets.ModelViewSet):
 
     serializer_class = TagSerializer
 
-    filter_fields = ('id', 'tag_release', 'tag_name', 'tag_display_name', 'tag_status',)
+    filter_fields = (
+        "id",
+        "tag_release",
+        "tag_name",
+        "tag_display_name",
+        "tag_status",
+    )
 
-    ordering_fields = '__all__'
+    ordering_fields = "__all__"
 
 
-class TileViewSet(viewsets.ModelViewSet):
+class TileViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows tile to be viewed or edited
     """
@@ -74,11 +92,22 @@ class TileViewSet(viewsets.ModelViewSet):
 
     serializer_class = TileSerializer
 
-    filter_fields = ('id', 'tli_tilename', 'tag', 'tli_project', 'tli_ra', 'tli_dec',)
+    filter_fields = (
+        "id",
+        "tli_tilename",
+        "tag",
+        "tli_project",
+        "tli_ra",
+        "tli_dec",
+    )
 
-    search_fields = ('tli_tilename',)
+    search_fields = ("tli_tilename",)
 
-    ordering_fields = ('tli_tilename', 'tli_ra', 'tli_dec',)
+    ordering_fields = (
+        "tli_tilename",
+        "tli_ra",
+        "tli_dec",
+    )
 
     @action(detail=True)
     def desaccess_tile_info(self, request, pk=None):
@@ -96,7 +125,7 @@ class TileViewSet(viewsets.ModelViewSet):
 
         return Response(tileinfo)
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def desaccess_get_download_url(self, request):
         """creates an authenticated url for a file served by DESaccess.
 
@@ -108,7 +137,7 @@ class TileViewSet(viewsets.ModelViewSet):
         """
 
         params = request.data
-        file_url = params['file_url']
+        file_url = params["file_url"]
 
         desapi = DesAccessApi()
 
@@ -118,30 +147,40 @@ class TileViewSet(viewsets.ModelViewSet):
 
 
 class DatasetFilter(django_filters.FilterSet):
-    tag__in = django_filters.CharFilter(method='filter_tag__in')
-    tli_tilename = django_filters.CharFilter(field_name='tile__tli_tilename', label='Tilename')
-    position = django_filters.CharFilter(method='filter_position')
-    release = django_filters.CharFilter(method='filter_release')
-    inspected = django_filters.CharFilter(method='filter_inspected')
+    tag__in = django_filters.CharFilter(method="filter_tag__in")
+    tli_tilename = django_filters.CharFilter(
+        field_name="tile__tli_tilename", label="Tilename"
+    )
+    position = django_filters.CharFilter(method="filter_position")
+    release = django_filters.CharFilter(method="filter_release")
+    inspected = django_filters.CharFilter(method="filter_inspected")
 
     class Meta:
         model = Dataset
-        fields = ['id', 'tag', 'tile', 'tag__in', 'tli_tilename', 'release', ]
+        fields = [
+            "id",
+            "tag",
+            "tile",
+            "tag__in",
+            "tli_tilename",
+            "release",
+        ]
         order_by = True
 
     def filter_release(self, queryset, name, value):
         return queryset.filter(tag__tag_release__id=int(value))
 
     def filter_tag__in(self, queryset, name, value):
-        return queryset.filter(tag__in=value.split(','))
+        return queryset.filter(tag__in=value.split(","))
 
     def filter_position(self, queryset, name, value):
-        radec = value.split(',')
+        radec = value.split(",")
 
         if len(radec) != 2:
             raise Exception(
-                'Invalid format to coordinate. the two values must be separated by \',\'.'
-                'example 317.8463,1.4111 or 317.8463,-1.4111')
+                "Invalid format to coordinate. the two values must be separated by ','."
+                "example 317.8463,1.4111 or 317.8463,-1.4111"
+            )
 
         ra = float(radec[0].strip())
         dec = float(radec[1].strip())
@@ -149,50 +188,61 @@ class DatasetFilter(django_filters.FilterSet):
         # Normalizar o ra para -180 e 180 usar as colunas auxiliares urall_180 e uraur_180 para evitar problema
         # com objetos de ra entre 0 e 1
         if ra > 180:
-            ra = (ra - 360)
+            ra = ra - 360
 
         q = queryset.filter(
             tile__tli_urall_180__lt=ra,
             tile__tli_udecll__lt=dec,
             tile__tli_uraur_180__gt=ra,
-            tile__tli_udecur__gt=dec
+            tile__tli_udecur__gt=dec,
         )
 
         return q
 
     def filter_inspected(self, queryset, name, value):
         """
-            Filtra os datasets se eles foram inspecionados ou nao. relacionando com o model validation.Inspect
-            os valores possiveis sao:
-            True - Inspecionado e avaliado como Bom
-            False - Inspecionado e avaliado como Ruin
-            None -  Nao Inspecionado.
+        Filtra os datasets se eles foram inspecionados ou nao. relacionando com o model validation.Inspect
+        os valores possiveis sao:
+        True - Inspecionado e avaliado como Bom
+        False - Inspecionado e avaliado como Ruin
+        None -  Nao Inspecionado.
 
-            o value da requisicao sempre sera string. esse valor
+        o value da requisicao sempre sera string. esse valor
         """
         valid = {
-            'true': True, 'True': True, 't': True, '1': True,
-            'false': False, 'False': False, 'f': False, '0': False,
-            'null': None, 'None': None, 'none': None,
+            "true": True,
+            "True": True,
+            "t": True,
+            "1": True,
+            "false": False,
+            "False": False,
+            "f": False,
+            "0": False,
+            "null": None,
+            "None": None,
+            "none": None,
         }
         if value in valid:
             return queryset.filter(inspected__isp_value=valid[value])
 
 
-class DatasetViewSet(viewsets.ModelViewSet):
-    # queryset = Dataset.objects.select_related().all().prefetch_related('comments').prefetch_related('inspected')
+class DatasetViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = DatasetSerializer
 
-    filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
+    filter_backends = (
+        DjangoFilterBackend,
+        filters.OrderingFilter,
+        filters.SearchFilter,
+    )
 
     filter_class = DatasetFilter
 
-    search_fields = ('tile__tli_tilename',)
+    search_fields = ("tile__tli_tilename",)
 
-    ordering_fields = ('tile__tli_tilename', 'date')
+    ordering_fields = ("tile__tli_tilename", "date")
 
-    ordering = ('tile__tli_tilename',)
+    ordering = ("tile__tli_tilename",)
 
     def get_queryset(self):
 
@@ -200,7 +250,13 @@ class DatasetViewSet(viewsets.ModelViewSet):
         releases = self.request.user.get_user_releases()
 
         # Filtra a tabela de datasets pelo id dos releases que o usuario tem acesso.
-        queryset = Dataset.objects.select_related().all().prefetch_related('comments').prefetch_related('inspected').filter(tag__tag_release__pk__in=releases)
+        queryset = (
+            Dataset.objects.select_related()
+            .all()
+            .prefetch_related("comments")
+            .prefetch_related("inspected")
+            .filter(tag__tag_release__pk__in=releases)
+        )
 
         return queryset
 
@@ -216,12 +272,12 @@ class DatasetViewSet(viewsets.ModelViewSet):
         # Requested to associate these internal releases
         # to the DESAccess releases:
         associated_releases = {
-            'y6a2_coadd': 'y6a1_coadd',
-            'y3a1_coadd': 'y3a2_coadd',
-            'y1_supplemental_dfull': 'y1a1_coadd',
-            'y1_supplemental_d10': 'y1a1_coadd',
-            'y1_supplemental_d04': 'y1a1_coadd',
-            'y1_wide_survey': 'y1a1_coadd',
+            "y6a2_coadd": "y6a1_coadd",
+            "y3a1_coadd": "y3a2_coadd",
+            "y1_supplemental_dfull": "y1a1_coadd",
+            "y1_supplemental_d10": "y1a1_coadd",
+            "y1_supplemental_d04": "y1a1_coadd",
+            "y1_wide_survey": "y1a1_coadd",
         }
 
         tilename = dataset.tile.tli_tilename
@@ -244,10 +300,10 @@ class DatasetViewSet(viewsets.ModelViewSet):
                 rows = tileinfo["releases"][0]
 
                 for key in rows:
-                    if key != 'release' and key != 'num_objects' and key != 'bands':
+                    if key != "release" and key != "num_objects" and key != "bands":
                         result[key] = rows[key]
-                        result['images'] = {}
-                        result['catalogs'] = {}
+                        result["images"] = {}
+                        result["catalogs"] = {}
 
                 for band in release["bands"]:
 
@@ -256,7 +312,7 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
                 return Response(result)
 
-    @action(detail=False, methods=['get'])
+    @action(detail=False, methods=["get"])
     def desaccess_tile_info_by_id(self, request):
         """Search DESaccess for tilename and return a list of tile files already filtered by the dataset release.
 
@@ -267,10 +323,10 @@ class DatasetViewSet(viewsets.ModelViewSet):
             list: returns a list with the filename and the url of the tile.
         """
 
-        datasetId = request.query_params.get('id')
+        datasetId = request.query_params.get("id")
 
         if datasetId is None:
-            raise Exception('ID paramater is required')
+            raise Exception("ID paramater is required")
 
         results = []
 
@@ -279,19 +335,19 @@ class DatasetViewSet(viewsets.ModelViewSet):
         # Requested to associate these internal releases
         # to the DESAccess releases:
         associated_releases = {
-            'y3a1_coadd': 'y3a2_coadd',
-            'y1_supplemental_dfull': 'y1a1_coadd',
-            'y1_supplemental_d10': 'y1a1_coadd',
-            'y1_supplemental_d04': 'y1a1_coadd',
-            'y1_wide_survey': 'y1a1_coadd',
+            "y3a1_coadd": "y3a2_coadd",
+            "y1_supplemental_dfull": "y1a1_coadd",
+            "y1_supplemental_d10": "y1a1_coadd",
+            "y1_supplemental_d04": "y1a1_coadd",
+            "y1_wide_survey": "y1a1_coadd",
         }
 
         associated_other_files = {
-            'detection': 'Detection Image',
-            'main': 'Main Catalog',
-            'magnitude': 'Magnitude Catalog',
-            'flux': 'Flux Catalog',
-            'tiff_image': 'Color Image (TIFF)'
+            "detection": "Detection Image",
+            "main": "Main Catalog",
+            "magnitude": "Magnitude Catalog",
+            "flux": "Flux Catalog",
+            "tiff_image": "Color Image (TIFF)",
         }
 
         tilename = dataset.tile.tli_tilename
@@ -311,38 +367,58 @@ class DatasetViewSet(viewsets.ModelViewSet):
 
                 for band in release["bands"]:
                     if release["bands"][band]["image"]:
-                        results.append({
-                            'filename': '%s-Band Image' % band,
-                            'url': release["bands"][band]["image"]
-                        })
+                        results.append(
+                            {
+                                "filename": "%s-Band Image" % band,
+                                "url": release["bands"][band]["image"],
+                            }
+                        )
 
                 for band in release["bands"]:
                     if release["bands"][band]["image_nobkg"]:
-                        results.append({
-                            'filename': '%s-Band Image (no background subtraction)' % band,
-                            'url': release["bands"][band]["image_nobkg"]
-                        })
+                        results.append(
+                            {
+                                "filename": "%s-Band Image (no background subtraction)"
+                                % band,
+                                "url": release["bands"][band]["image_nobkg"],
+                            }
+                        )
 
                 for band in release["bands"]:
                     if release["bands"][band]["catalog"]:
-                        results.append({
-                            'filename': '%s-Band Catalog' % band,
-                            'url': release["bands"][band]["catalog"]
-                        })
+                        results.append(
+                            {
+                                "filename": "%s-Band Catalog" % band,
+                                "url": release["bands"][band]["catalog"],
+                            }
+                        )
 
                 for key in release:
-                    if key != 'release' and key != 'num_objects' and key != 'bands' and release[key] and release[key] != '' and associated_other_files[key]:
-                        results.append({
-                            'filename': associated_other_files[key],
-                            'url': release[key]
-                        })
+                    if (
+                        key != "release"
+                        and key != "num_objects"
+                        and key != "bands"
+                        and release[key]
+                        and release[key] != ""
+                        and associated_other_files[key]
+                    ):
+                        results.append(
+                            {
+                                "filename": associated_other_files[key],
+                                "url": release[key],
+                            }
+                        )
 
-        return Response(dict({
-            'results': results,
-            'count': len(results),
-        }))
+        return Response(
+            dict(
+                {
+                    "results": results,
+                    "count": len(results),
+                }
+            )
+        )
 
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=["post"])
     def desaccess_get_download_url(self, request):
         """creates an authenticated url for a file served by DESaccess.
 
@@ -354,7 +430,7 @@ class DatasetViewSet(viewsets.ModelViewSet):
         """
 
         params = request.data
-        file_url = params['file_url']
+        file_url = params["file_url"]
 
         desapi = DesAccessApi()
 
@@ -372,7 +448,7 @@ class DatasetFootprintViewSet(viewsets.ModelViewSet):
 
     filter_class = DatasetFilter
 
-    ordering_fields = ('id', 'tag')
+    ordering_fields = ("id", "tag")
 
 
 class SurveyViewSet(viewsets.ModelViewSet):
@@ -384,23 +460,27 @@ class SurveyViewSet(viewsets.ModelViewSet):
 
     serializer_class = SurveySerializer
 
-    filter_fields = ('id', 'srv_release', 'srv_project',)
+    filter_fields = (
+        "id",
+        "srv_release",
+        "srv_project",
+    )
 
-    ordering_fields = ('srv_filter__lambda_min',)
+    ordering_fields = ("srv_filter__lambda_min",)
 
 
-@ api_view(['GET'])
+@api_view(["GET"])
 def get_fits_by_tilename(request):
-    if request.method == 'GET':
+    if request.method == "GET":
 
-        tag = request.query_params.get('tag', None).lower()
-        tilename = request.query_params.get('tilename', None).upper()
+        tag = request.query_params.get("tag", None).lower()
+        tilename = request.query_params.get("tilename", None).upper()
 
         # http://desportal2.cosmology.illinois.edu/data/releases/y3a2_coadd/tiles/DES0334-2332/DES0334-2332_r2682p01_g.fits.fz
 
         data_path = settings.DATA_DIR
 
-        relative_path = os.path.join('releases', tag, 'tiles', tilename)
+        relative_path = os.path.join("releases", tag, "tiles", tilename)
 
         tile_path = os.path.join(data_path, relative_path)
 
@@ -411,15 +491,15 @@ def get_fits_by_tilename(request):
         result = list()
 
         ordered_filters = dict({})
-        filters = Filter.objects.all().order_by('lambda_min')
+        filters = Filter.objects.all().order_by("lambda_min")
         order = 0
         for f in filters:
             ordered_filters[f.filter] = order
             order += 1
 
-        ordered_filters['det'] = order
+        ordered_filters["det"] = order
         order += 1
-        ordered_filters['irg'] = order
+        ordered_filters["irg"] = order
 
         for filename in files:
 
@@ -431,30 +511,34 @@ def get_fits_by_tilename(request):
             ord = None
 
             # Se for um arquivo de imagem descobrir o filtro
-            if extension == '.fz':
-                parts = filename.split('_')
-                flr = parts[2].strip('_')
-                flr = flr.split('.')[0]
+            if extension == ".fz":
+                parts = filename.split("_")
+                flr = parts[2].strip("_")
+                flr = flr.split(".")[0]
                 try:
                     ord = ordered_filters[flr]
                 except:
                     pass
 
-            if extension == '.tiff':
-                parts = filename.split('_')
-                flr = parts[2].strip('_')
-                flr = flr.split('.')[0]
+            if extension == ".tiff":
+                parts = filename.split("_")
+                flr = parts[2].strip("_")
+                flr = flr.split(".")[0]
                 try:
                     ord = ordered_filters[flr]
                 except:
                     pass
 
-            result.append(dict({
-                'filename': filename,
-                'file_source': file_source,
-                'filter': flr,
-                'order': ord
-            }))
+            result.append(
+                dict(
+                    {
+                        "filename": filename,
+                        "file_source": file_source,
+                        "filter": flr,
+                        "order": ord,
+                    }
+                )
+            )
 
         # sql = (
         #     "SELECT m.filename, m.filetype, m.band, f.path FROM proctag t, file_archive_info f, miscfile m WHERE t.pfw_attempt_id = m.pfw_attempt_id AND t.tag='" + catalog + "' AND f.filename=m.filename AND m.filetype NOT IN ('coadd_head_scamp', 'mangle_molys', 'mangle_polygons', 'mangle_csv_ccdgon', 'mangle_csv_cobjmoly', 'mangle_csv_molyccd', 'mangle_csv_molyccd', 'mangle_csv_molygon', 'coadd_psfex_model', 'coadd_qa_scamp', 'coadd_xml_scamp', 'coadd_xml_psfex', 'coadd_det_psfex_model') AND m.tilename = '" + tilename + "' ORDER BY m.filetype, m.filename")
@@ -478,4 +562,4 @@ def get_fits_by_tilename(request):
         #     if tile[2] != None:
         #         result.append(copy.copy(fits_file))
 
-        return Response(dict({'results': result}))
+        return Response(dict({"results": result}))

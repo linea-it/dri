@@ -4,137 +4,295 @@ from .models import *
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('id', 'prd_process_id', 'prd_name',
-                    'prd_display_name', 'prd_owner', 'prd_product_id', 'prd_date',
-                    'prd_class', 'prd_filter', 'prd_is_public', 'prd_is_permanent',)
-    list_display_links = ('id', 'prd_process_id', 'prd_name',)
-    search_fields = ('prd_process_id', 'prd_name', 'prd_display_name', 'prd_product_id',)
+    list_display = (
+        "id",
+        "prd_process_id",
+        "prd_name",
+        "prd_display_name",
+        "prd_owner",
+        "prd_product_id",
+        "prd_date",
+        "prd_class",
+        "prd_filter",
+        "prd_is_public",
+        "prd_is_permanent",
+    )
+    list_display_links = (
+        "id",
+        "prd_process_id",
+        "prd_name",
+    )
+    search_fields = (
+        "prd_process_id",
+        "prd_name",
+        "prd_display_name",
+        "prd_product_id",
+    )
 
 
 class ProductReleaseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product', 'release',)
-    list_display_links = ('id', 'product', 'release',)
-    search_fields = ('product', 'release',)
+    list_display = (
+        "id",
+        "product",
+        "release",
+    )
+    list_display_links = (
+        "id",
+        "product",
+        "release",
+    )
+    search_fields = (
+        "product",
+        "release",
+    )
 
 
 class ProductTagAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product', 'tag',)
-    list_display_links = ('id', 'product', 'tag',)
-    search_fields = ('product', 'tag',)
+    list_display = (
+        "id",
+        "product",
+        "tag",
+    )
+    list_display_links = (
+        "id",
+        "product",
+        "tag",
+    )
+    search_fields = (
+        "product",
+        "tag",
+    )
 
 
 class FileAdmin(admin.ModelAdmin):
-    list_display = ('id', 'prd_name', 'prd_display_name',
-                    'prd_class', 'fli_base_path', 'fli_name',)
-    list_display_links = ('id', 'prd_name', 'prd_display_name', 'prd_class',)
-    search_fields = ('fli_name',)
+    list_display = (
+        "id",
+        "prd_name",
+        "prd_display_name",
+        "prd_class",
+        "fli_base_path",
+        "fli_name",
+    )
+    list_display_links = (
+        "id",
+        "prd_name",
+        "prd_display_name",
+        "prd_class",
+    )
+    search_fields = ("fli_name",)
 
 
 class TableAdmin(admin.ModelAdmin):
-    list_display = ('id', 'prd_name', 'prd_display_name',
-                    'prd_class', 'tbl_database', 'tbl_schema', 'tbl_name',)
-    list_display_links = ('id', 'prd_name', 'prd_display_name',
-                          'prd_class', 'tbl_schema', 'tbl_name',)
-    search_fields = ('tbl_schema', 'tbl_name',)
+    list_display = (
+        "id",
+        "prd_name",
+        "prd_display_name",
+        "prd_class",
+        "tbl_database",
+        "tbl_schema",
+        "tbl_name",
+    )
+    list_display_links = (
+        "id",
+        "prd_name",
+        "prd_display_name",
+        "prd_class",
+        "tbl_schema",
+        "tbl_name",
+    )
+    search_fields = (
+        "tbl_schema",
+        "tbl_name",
+    )
 
 
 class CatalogAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'prd_name', 'prd_display_name', 'prd_class', 'ctl_num_objects',
+        "id",
+        "prd_name",
+        "prd_display_name",
+        "prd_class",
+        "ctl_num_objects",
+        "prd_owner",
     )
 
 
 class MapAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'prd_name', 'prd_display_name', 'prd_class', 'mpa_nside', 'mpa_ordering', 'prd_filter', 'prd_is_public', 'prd_is_permanent'
+        "id",
+        "prd_name",
+        "prd_display_name",
+        "prd_class",
+        "mpa_nside",
+        "mpa_ordering",
+        "prd_filter",
+        "prd_is_public",
+        "prd_is_permanent",
     )
-    list_display_links = ('id', 'prd_name')
-    search_fields = ('prd_name',)
+    list_display_links = ("id", "prd_name")
+    search_fields = ("prd_name",)
 
 
 class CutOutJobAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'cjb_product', 'cjb_display_name', 'cjb_status', 'cjb_tag', 'owner',
+        "id",
+        "cjb_product",
+        "cjb_display_name",
+        "cjb_status",
+        "cjb_tag",
+        "owner",
     )
-    list_display_links = ('id',)
-    search_fields = ('cjb_display_name',)
+    list_display_links = ("id",)
+    search_fields = ("cjb_display_name",)
 
 
 class DesjobAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'djb_cutout_job', 'djb_jobid', 'djb_status', 'djb_start_time', 'djb_finish_time', 'djb_message',
+        "id",
+        "djb_cutout_job",
+        "djb_jobid",
+        "djb_status",
+        "djb_start_time",
+        "djb_finish_time",
+        "djb_message",
     )
-    list_display_links = ('id',)
-    search_fields = ('djb_jobid',)
+    list_display_links = ("id",)
+    search_fields = ("djb_jobid",)
 
 
 class CutoutAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'cjb_cutout_job', 'ctt_object_id', 'ctt_object_ra', 'ctt_object_dec', 'ctt_img_format', 'ctt_filter',
-        'ctt_file_name', 'ctt_file_path', 'ctt_file_type', 'ctt_file_size', )
-    list_display_links = ('id',)
-    search_fields = ('id',)
+        "id",
+        "cjb_cutout_job",
+        "ctt_object_id",
+        "ctt_object_ra",
+        "ctt_object_dec",
+        "ctt_img_format",
+        "ctt_filter",
+        "ctt_file_name",
+        "ctt_file_path",
+        "ctt_file_type",
+        "ctt_file_size",
+    )
+    list_display_links = ("id",)
+    search_fields = ("id",)
 
 
 class MaskAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'prd_name', 'prd_display_name', 'prd_class', 'msk_filter',
+        "id",
+        "prd_name",
+        "prd_display_name",
+        "prd_class",
+        "msk_filter",
     )
-    list_display_links = ('id', 'prd_name')
-    search_fields = ('prd_name',)
+    list_display_links = ("id", "prd_name")
+    search_fields = ("prd_name",)
 
 
 class ProductContentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'pcn_product_id', 'pcn_column_name', 'pcn_ucd')
-    list_display_links = ('pcn_column_name',)
-    search_fields = ('pcn_column_name',)
+    list_display = ("id", "pcn_product_id", "pcn_column_name", "pcn_ucd")
+    list_display_links = ("pcn_column_name",)
+    search_fields = ("pcn_column_name",)
 
 
 class ProductContentAssociationAdmin(admin.ModelAdmin):
-    list_display = ('id', 'pca_product', 'pca_class_content', 'pca_product_content',)
-    search_fields = ('pca_product__prd_display_name', 'pca_product__prd_name')
+    list_display = (
+        "id",
+        "pca_product",
+        "pca_class_content",
+        "pca_product_content",
+    )
+    search_fields = ("pca_product__prd_display_name", "pca_product__prd_name")
 
 
 class ProductContentSettingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'pcs_content', 'pcs_setting', 'pcs_is_visible', 'pcs_order')
+    list_display = ("id", "pcs_content", "pcs_setting", "pcs_is_visible", "pcs_order")
 
 
 class ProductSettingAdmin(admin.ModelAdmin):
     list_display = (
-        'id', 'cst_product', 'owner', 'cst_display_name', 'cst_description', 'cst_is_public', 'cst_is_editable',)
-    search_fields = ('cst_product__prd_display_name', 'cst_display_name', 'cst_description',)
+        "id",
+        "cst_product",
+        "owner",
+        "cst_display_name",
+        "cst_description",
+        "cst_is_public",
+        "cst_is_editable",
+    )
+    search_fields = (
+        "cst_product__prd_display_name",
+        "cst_display_name",
+        "cst_description",
+    )
 
 
 class CurrentSettingAdmin(admin.ModelAdmin):
-    list_display = ('id', 'cst_product', 'cst_setting', 'owner',)
+    list_display = (
+        "id",
+        "cst_product",
+        "cst_setting",
+        "owner",
+    )
 
 
 class WorkgroupAdmin(admin.ModelAdmin):
-    list_display = ('id', 'wgp_workgroup', 'owner',)
+    list_display = (
+        "id",
+        "wgp_workgroup",
+        "owner",
+    )
 
 
 class WorkgroupUserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'wgu_workgroup', 'wgu_user',)
+    list_display = (
+        "id",
+        "wgu_workgroup",
+        "wgu_user",
+    )
 
 
 class PermissionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'prm_product', 'prm_user', 'prm_workgroup',)
+    list_display = (
+        "id",
+        "prm_product",
+        "prm_user",
+        "prm_workgroup",
+    )
 
 
 class ProductRelatedAdmin(admin.ModelAdmin):
-    list_display = ('id', 'prl_product', 'prl_related', 'prl_relation_type', 'prl_cross_identification',)
+    list_display = (
+        "id",
+        "prl_product",
+        "prl_related",
+        "prl_relation_type",
+        "prl_cross_identification",
+    )
 
 
 class FiltersetdAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product', 'owner', 'fst_name',)
+    list_display = (
+        "id",
+        "product",
+        "owner",
+        "fst_name",
+    )
 
 
 class FilterConditionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'filterset', 'fcd_property', 'fcd_property_name', 'fcd_operation', 'fcd_value')
+    list_display = (
+        "id",
+        "filterset",
+        "fcd_property",
+        "fcd_property_name",
+        "fcd_operation",
+        "fcd_value",
+    )
 
 
 class BookmarkedAdmin(admin.ModelAdmin):
-    list_display = ('id', 'product', 'owner', 'is_starred')
+    list_display = ("id", "product", "owner", "is_starred")
 
 
 admin.site.register(Product, ProductAdmin)

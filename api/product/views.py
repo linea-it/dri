@@ -131,6 +131,11 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
     API endpoint that allows product to be viewed or edited
     """
 
+    authentication_classes = (
+        SessionAuthentication,
+        TokenAuthentication,
+    )
+
     queryset = Catalog.objects.select_related().all()
 
     serializer_class = CatalogSerializer
@@ -993,7 +998,6 @@ class ImportTargetListViewSet(viewsets.ModelViewSet):
 
     authentication_classes = (
         SessionAuthentication,
-        BasicAuthentication,
         TokenAuthentication,
     )
 
