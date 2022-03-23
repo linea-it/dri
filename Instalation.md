@@ -12,6 +12,7 @@ git clone https://github.com/linea-it/dri.git dri
 ```
 cd dri
 cp docker-compose-development.yml docker-compose.yml
+cp daiquiri/.env.sample daiquiri/.env
 docker-compose build
 ```
 
@@ -104,12 +105,7 @@ docker exec -it $(docker ps -q -f name=dri_database) psql -h localhost -U postgr
 
 ```
 
-## Setup Daiquiri
-
-Copy the environment sample file:
-```
-cp daiquiri/.env.sample daiquiri/.env
-```
+## Database Daiquiri
 
 Create the Django administration database:
 ```

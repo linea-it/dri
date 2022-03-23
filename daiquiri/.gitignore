@@ -6,7 +6,6 @@ __pycache__/
 *.swp
 .DS_Store
 
-/config/settings/local.py
 /download
 /upload
 /log
