@@ -12,6 +12,7 @@ git clone https://github.com/linea-it/dri.git dri
 ```
 cd dri
 cp docker-compose-development.yml docker-compose.yml
+cp daiquiri/.env.sample daiquiri/.env
 docker-compose build
 ```
 
@@ -102,6 +103,18 @@ docker exec -it $(docker ps -q -f name=dri_database) psql -h localhost -U postgr
 
 docker exec -it $(docker ps -q -f name=dri_database) psql -h localhost -U postgres -d postgres -c "ALTER SCHEMA dri_catalog OWNER TO postgres;"
 
+```
+
+## Database Daiquiri
+
+Create the Django administration database:
+```
+docker-compose exec database psql -h localhost -U postgres -d postgres -c "CREATE DATABASE daiquiri_app;"
+```
+
+Create the "data" (to store catalogs, users' jobs results, metadata) database:
+```
+docker-compose exec database psql -h localhost -U postgres -d postgres -c "CREATE DATABASE daiquiri_data;"
 ```
 
 ## Setup Backend

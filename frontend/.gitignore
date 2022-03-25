@@ -8,3 +8,4 @@ bootstrap.jsonp
 /LOCAL*
 node_modules
 package-lock.json
+userquery/bootstrap.jsonp
