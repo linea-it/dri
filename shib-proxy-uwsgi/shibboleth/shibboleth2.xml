@@ -1,0 +1,135 @@
+<SPConfig xmlns="urn:mace:shibboleth:2.0:native:sp:config"
+    xmlns:conf="urn:mace:shibboleth:2.0:native:sp:config"
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+    logger="syslog.logger" clockSkew="180">
+
+    <OutOfProcess tranLogFormat="%u|%s|%IDP|%i|%ac|%t|%attr|%n|%b|%E|%S|%SS|%L|%UA|%a" />
+
+    <!--
+    By default, in-memory StorageService, ReplayCache, ArtifactMap, and SessionCache
+    are used. See example-shibboleth2.xml for samples of explicitly configuring them.
+    -->
+
+                         <!--homeURL="http://localhost/users"-->
+    <!-- The ApplicationDefaults element is where most of Shibboleth's SAML bits are defined. -->
+    <ApplicationDefaults entityID="http://localhost/shibboleth"
+                        homeURL="http://localhost/"
+			REMOTE_USER="Shib-eduPerson-eduPersonPrincipalName eppn">
+
+        <!-- Extracts support information for IdP from its metadata. -->
+
+        <Sessions lifetime="28800" timeout="3600" relayState="ss:mem"
+                  checkAddress="false" handlerSSL="true" cookieProps="https">
+
+            <!--<SSO discoveryProtocol="SAMLDS" discoveryURL="http://localhost">
+              SAML2
+            </SSO>-->
+            <SSO entityID="https://satosa.linea.gov.br/linea_saml/proxy">
+              SAML2
+            </SSO>
+	    <!--<Logout asynchronous="false" postArtifact="true">SAML2 Local</Logout>-->
+	    <Logout asynchronous="false">SAML2 Local</Logout>
+
+            <!-- Extension service that generates "approximate" metadata based on SP configuration. -->
+            <Handler type="MetadataGenerator" Location="/Metadata" signing="false">
+                <md:ContactPerson contactType="support">
+			<md:GivenName>Valter</md:GivenName>
+			<md:SurName>Junior</md:SurName>
+			<md:EmailAddress>suporte@linea.gov.br</md:EmailAddress>
+                </md:ContactPerson>
+
+                <!-- Requested Attributes for InCommon SPs
+                <md:AttributeConsumingService index="1"
+                    xmlns:md="urn:oasis:names:tc:SAML:2.0:metadata"
+                    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
+		    <md:ServiceName xml:lang="en">scienceserver-dev.linea.gov.br</md:ServiceName>
+                  <md:RequestedAttribute isRequired="true"
+                      NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+                      Name="urn:oid:1.3.6.1.4.1.5923.1.1.1.6"
+                      FriendlyName="eduPersonPrincipalName"/>
+                  <md:RequestedAttribute
+                      NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri"
+                      Name="urn:oid:2.16.840.1.113730.3.1.241"
+                      FriendlyName="displayName"/>
+                </md:AttributeConsumingService>
+                <mdattr:EntityAttributes
+                        xmlns:mdattr="urn:oasis:names:tc:SAML:metadata:attribute"
+                        xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">
+                        <saml:Attribute
+                                Name="http://macedir.org/entity-category"
+                                NameFormat="urn:oasis:names:tc:SAML:2.0:attrname-format:uri">
+                        <saml:AttributeValue>http://refeds.org/category/research-and-scholarship</saml:AttributeValue>
+                        </saml:Attribute>
+                </mdattr:EntityAttributes> -->
+
+            </Handler>
+
+            <!-- Status reporting service. -->
+            <Handler type="Status" Location="/Status" acl="127.0.0.1 ::1"/>
+
+            <!-- Session diagnostic service. -->
+            <Handler type="Session" Location="/Session" showAttributeValues="false"/>
+
+            <!-- JSON feed of discovery information. -->
+            <Handler type="DiscoveryFeed" Location="/DiscoFeed"/>
+        </Sessions>
+
+        <!--
+        Allows overriding of error template information/filenames. You can
+        also add your own attributes with values that can be plugged into the
+        templates, e.g., helpLocation below.
+        -->
+	<Errors supportContact="helpdesk@linea.gov.br"
+            helpLocation="/about.html"
+            styleSheet="/shibboleth-sp/main.css"/>
+        <!--MetadataProvider type="XML" path="/var/cache/shibboleth/linea-google.xml"/>
+        <MetadataProvider type="XML" path="/var/cache/shibboleth/linea-github.xml"/>
+        <MetadataProvider type="XML" path="/var/cache/shibboleth/linea-facebook.xml"/>
+
+	<MetadataProvider type="XML" validate="true"
+		url="https://satosa.linea.gov.br/linea_saml/proxy"
+		backingFilePath="/var/cache/shibboleth/idp-linea.xml"
+	       	maxRefreshDelay="7200"/-->
+        <MetadataProvider type="XML" validate="true"
+                url="http://200.143.212.5/dados/metadata/linea-google.xml"
+                backingFilePath="/var/cache/shibboleth/linea-google.xml"
+                maxRefreshDelay="7200"/>
+        <MetadataProvider type="XML" validate="true"
+                url="http://200.143.212.5/dados/metadata/linea-facebook.xml"
+                backingFilePath="/var/cache/shibboleth/linea-facebook.xml"
+                maxRefreshDelay="7200"/>
+        <MetadataProvider type="XML" validate="true"
+                url="http://200.143.212.5/dados/metadata/linea-github.xml"
+                backingFilePath="/var/cache/shibboleth/linea-github.xml"
+                maxRefreshDelay="7200"/>
+        <MetadataProvider type="XML" validate="true"
+                url="http://200.143.212.5/dados/metadata/linea-saml.xml"
+                backingFilePath="/var/cache/shibboleth/linea-saml.xml"
+                maxRefreshDelay="7200"/>
+
+	<!-- Map to extract attributes from SAML assertions. -->
+         <AttributeExtractor type="XML"
+                            validate="true"
+                            reloadChanges="false"
+                            path="attribute-map.xml"/>
+
+        <!-- Default filtering policy for recognized attributes, lets other data pass. -->
+        <AttributeFilter type="XML" validate="true" path="attribute-policy.xml"/>
+
+        <!-- Simple file-based resolvers for separate signing/encryption keys. -->
+       <CredentialResolver type="File" use="signing"
+            key="sp-key.pem" certificate="sp-cert.pem"/>
+        <CredentialResolver type="File" use="encrypt"
+            key="sp-key.pem" certificate="sp-cert.pem"/>
+
+    </ApplicationDefaults>
+
+    <!-- Policies that determine how to process and authenticate runtime messages. -->
+    <SecurityPolicyProvider type="XML" validate="true" path="security-policy.xml"/>
+
+    <!-- Low-level configuration about protocols and bindings available for use. -->
+    <ProtocolProvider type="XML" validate="true" reloadChanges="false" path="protocols.xml"/>
+
+</SPConfig>
