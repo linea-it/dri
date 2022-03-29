@@ -24,7 +24,7 @@ services:
       - ./api:/app
       # Diretório onde o backend pode manipular arquivos.
       - ./archive:/archive
-      # Diretório de logs do backend.      
+      # Diretório de logs do backend.
       - ./log/backend:/log
       # Arquivo de configuração local
       - ./local_vars.py:/app/dri/settings/local_vars.py:ro
@@ -110,6 +110,25 @@ services:
     stdin_open: true
     command: yarn start
 
+  daiquiri:
+    build: ./daiquiri
+    working_dir: /daiquiri_app
+    command: ./entrypoint.sh
+    env_file:
+      - ./daiquiri/.env
+    volumes:
+      - ./daiquiri:/daiquiri_app
+      # Diretório de arquivos estaticos do Django deve ser compartilhado com o Ngnix.
+      - /archive/daiquiri_static:/daiquiri_app/static_root
+      - /archive/files:/daiquiri_app/files
+      - /archive/download:/daiquiri_app/download
+      - /archive/upload:/daiquiri_app/upload
+      # Diretório de logs do Daiquiri
+      - ./log/daiquiri:/log
+    depends_on:
+      - database
+      - rabbit
+
   nginx:
     build: ./frontend
     ports:
@@ -125,3 +144,4 @@ services:
       - backend
       # - iipserver
       - sky
+      - daiquiri

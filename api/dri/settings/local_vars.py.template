@@ -49,7 +49,7 @@ DATABASES = {
 }
 
 # Exemplo utilizando Sqlite3 para desenvolvimento
-#DATABASES = {
+# DATABASES = {
 #    'default': {
 #        'ENGINE': 'django.db.backends.sqlite3',
 #        'NAME': os.path.join(DATA_DIR, 'dri.db'),
@@ -58,7 +58,7 @@ DATABASES = {
 #        'ENGINE': 'django.db.backends.sqlite3',
 #        'NAME': os.path.join(DATA_DIR, 'catalog.db'),
 #    },
-#}
+# }
 
 
 # Autenticação no NCSA
@@ -94,6 +94,7 @@ if AUTH_LDAP_ENABLED:
 
 # Shibboleth Authentication
 AUTH_SHIB_ENABLED = False
+AUTH_SHIB_URL = 'http://localhost/Shibboleth.sso/Login?target=http://localhost/dri/api/shib/?next=/&entityID=https://satosa.linea.gov.br/linea_saml/proxy'
 if AUTH_SHIB_ENABLED:
 
     # https://github.com/Brown-University-Library/django-shibboleth-remoteuser
@@ -109,8 +110,17 @@ if AUTH_SHIB_ENABLED:
         'shibboleth.backends.ShibbolethRemoteUserBackend', )
 
     # Exemplo: 
-    # SHIB_LOGIN_GOOGLE_URL = 'https://your_domain.edu/Shibboleth.sso/Login'
+    # SHIB_LOGIN_GOOGLE_URL = "http://localhost/Shibboleth.sso/Login?target=http://localhost/dri/api/shib/?next=/&entityID=https://satosa.linea.gov.br/linea/proxy/aHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29t"
     SHIB_LOGIN_GOOGLE_URL = None
+    
+
+# Lista as Variaveis que vao ser exportadas para os templates do Django. https://pypi.python.org/pypi/django-settings-export
+SETTINGS_EXPORT = [
+    'NCSA_SIGNUP_LINK',
+    'AUTH_SHIB_ENABLED',
+    'AUTH_SHIB_URL',
+    'SHIB_LOGIN_GOOGLE_URL',
+]
 
 # Email Notification configs
 # Dados de configuração do servidor de email que será usado para envio das notificações.
@@ -153,14 +163,14 @@ USER_QUERY_EXECUTION_TIMEOUT = 300
 # Limite de linhas de uma query
 USER_QUERY_MAX_ROWS = 100000
 # TILE VIEWER/TILE INSPECTION (antigo eyeballing):
-# Esta config muda o comportamento da ferramenta Tile Viewer. 
-# Quando Ligada habilita as funcionalidades de validação e inspeção das tiles 
+# Esta config muda o comportamento da ferramenta Tile Viewer.
+# Quando Ligada habilita as funcionalidades de validação e inspeção das tiles
 # Comentários, avaliações (Good, Bad), avaiação por posição e relatórios.
-# Quando Desligada a ferramente se torna Tile Viewer, ficam só as 
+# Quando Desligada a ferramente se torna Tile Viewer, ficam só as
 # funcões de navegação entre tiles, visualização e download.
 # True: para Tile Inspection (essa opção deve estar ligada somente no ambiente da colaboração NCSA.)
-# False: para Tile Viewer (essa é a opção default) 
-TILE_VIEWER_INSPECTION_ENABLED=False
+# False: para Tile Viewer (essa é a opção default)
+TILE_VIEWER_INSPECTION_ENABLED = False
 # Landing Page
 # Define a pagina de SignUp que sera utilizada pela landingpage
 # utilize 'linea-sign-up' para a pagina de registro do linea
