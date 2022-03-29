@@ -195,6 +195,11 @@
   min-width: 400px;
 }
 
+
+.MuiFormControl-root .btn.btn-institute {
+  background: #00b9f2;
+}
+
 .MuiFormControl-root .btn.btn-signup {
   background-color: #00b9f2;
 }
@@ -338,6 +343,14 @@
               </div>
 
               {% if settings.AUTH_SHIB_ENABLED %}
+
+              {% if settings.AUTH_SHIB_URL is not None%}
+                <div class="MuiFormControl-root">
+                  <a href="{{ settings.AUTH_SHIB_URL }}" class="btn btn-institute">
+                    <span>Login with Institution</span>
+                  </a>
+                </div>
+              {% endif %}
               {% if settings.SHIB_LOGIN_GOOGLE_URL is not None and settings.SHIB_LOGIN_GOOGLE_URL is not False %}
               <div class="MuiFormControl-root">
                 <a href="{{ settings.SHIB_LOGIN_GOOGLE_URL }}" class="btn btn-google">

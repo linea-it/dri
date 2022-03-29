@@ -1,5 +1,22 @@
 version: '2'
 services:
+  gidlab:
+    image: gidlab/shib-proxy_uwsgi:1.0.0
+    env_file:
+      - .env
+    volumes:
+      - ${APACHE_VOL}/shib.conf:/etc/apache2/sites-available/000-default.conf
+      # - $PWD/ssl:/etc/apache2/certs
+      - ${SHIB_VOL}/shibboleth2.xml:/etc/shibboleth/shibboleth2.xml:ro
+      - ${SHIB_VOL}/attribute-map.xml:/etc/shibboleth/attribute-map.xml:ro
+      - ${SHIB_VOL}/attribute-policy.xml:/etc/shibboleth/attribute-policy.xml:ro
+      # - ${SHIB_VOL}/sp-key.pem:/etc/shibboleth/sp-key.pem:ro
+      # - ${SHIB_VOL}/sp-cert.pem:/etc/shibboleth/sp-cert.pem:ro
+      - ${SHIB_VOL}/metadata/linea-google.xml:/var/cache/shibboleth/linea-google.xml:ro
+      - ${SHIB_VOL}/metadata/linea-github.xml:/var/cache/shibboleth/linea-github.xml:ro
+      - ${SHIB_VOL}/metadata/linea-facebook.xml:/var/cache/shibboleth/linea-facebook.xml:ro
+      - ./log/shibboleth/apache2/:/var/log/apache2/
+      - ./log/shibboleth/:/var/log/shibboleth/
 
   backend:
     build: ./api
@@ -79,4 +96,5 @@ services:
       - backend
       - iipserver
       - rabbit
+      - gidlab
       - daiquiri

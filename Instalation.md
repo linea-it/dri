@@ -131,6 +131,11 @@ docker-compose up backend
 
 Now that the backend is on, it is necessary to load the initial data and create an admin user.
 
+## Shibboleth
+```bash
+cp .env-shib .env
+```
+
 ### Create default Super User in django
 
 ```
