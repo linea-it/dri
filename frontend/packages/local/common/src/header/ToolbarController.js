@@ -140,6 +140,19 @@ Ext.define('common.ToolbarController', {
                 window.dri_username = data.username;
             }
         });
-    }
+    },
+
+    onClickApiToken: function () {
+        var me = this,
+            vm = me.getViewModel();
+
+        if (me.winapitoken) {
+            me.winapitoken = null;
+        }
+
+        me.winapitoken = Ext.create('common.account.ApiToken', {});
+
+        me.winapitoken.show();
+    },
 
 });

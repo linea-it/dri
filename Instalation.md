@@ -6,6 +6,10 @@ Clone the repository to your directory.
 git clone https://github.com/linea-it/dri.git dri
 
 ```
+### Create directories
+```
+mkdir archive log log/backend log/nginx
+```
 
 ### Build Containers
 
@@ -21,8 +25,9 @@ docker-compose build
 In directory dri/dri/settings there are configuration files for each environment.
 The development environment is set by default (development.py file is set)
 
-```
-cp api/dri/settings/local_vars.py.template api/dri/settings/local_vars.py
+``` 
+cp api/dri/settings/local_vars.py.template local_vars.py
+
 ```
 
 The structure of this part of the project is:

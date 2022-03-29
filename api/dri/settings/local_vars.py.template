@@ -64,9 +64,9 @@ DATABASES = {
 # Autenticação no NCSA
 # Esta configuracao e usada somente pela classe de authenticacao usando login do NCSA
 # deve ser preenchida com o nome da configuracao de database do NCSA OU None para nao usar a authenticacao no ncsa
-NCSA_AUTHENTICATION_DB = "None"
+NCSA_AUTHENTICATION_DB = None
 # Nome da tabela onde ficam os dados do usuario com schema se tiver ex: DES_USER para colaboracao e DES_ADMIN.DES_USER para DR1 publico ou None para desabilitar
-NCSA_AUTHENTICATION_USERS_TABLE = "None"
+NCSA_AUTHENTICATION_USERS_TABLE = None
 # Habilita ou desabilita o link de signup no form de login.
 # None desabilita e String com Url para o form de login para habilitar.
 # Default None, para NCSA public usar 'https://des.ncsa.illinois.edu/easyweb/signup/'
@@ -109,7 +109,10 @@ if AUTH_SHIB_ENABLED:
     AUTHENTICATION_BACKENDS += (
         'shibboleth.backends.ShibbolethRemoteUserBackend', )
 
-    SHIB_LOGIN_GOOGLE_URL = "http://localhost/Shibboleth.sso/Login?target=http://localhost/dri/api/shib/?next=/&entityID=https://satosa.linea.gov.br/linea/proxy/aHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29t"
+    # Exemplo: 
+    # SHIB_LOGIN_GOOGLE_URL = "http://localhost/Shibboleth.sso/Login?target=http://localhost/dri/api/shib/?next=/&entityID=https://satosa.linea.gov.br/linea/proxy/aHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29t"
+    SHIB_LOGIN_GOOGLE_URL = None
+    
 
 # Lista as Variaveis que vao ser exportadas para os templates do Django. https://pypi.python.org/pypi/django-settings-export
 SETTINGS_EXPORT = [
@@ -325,6 +328,14 @@ LOGGING = {
             'filename': os.path.join('/log', 'shibboleth.log'),
             'formatter': 'standard',
         },
+        'delve_install_release': {
+            'level': LOG_LEVEL,
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1024 * 1024 * 5,  # 5 MB
+            'backupCount': 5,
+            'filename': os.path.join('/log', 'delve_install_release.log'),
+            'formatter': 'standard',
+        },
     },
     'loggers': {
         'django': {
@@ -390,6 +401,11 @@ LOGGING = {
         },
         'shibboleth': {
             'handlers': ['shibboleth'],
+            'level': LOG_LEVEL,
+            'propagate': True,
+        },
+        'delve_install_release': {
+            'handlers': ['delve_install_release'],
             'level': LOG_LEVEL,
             'propagate': True,
         },

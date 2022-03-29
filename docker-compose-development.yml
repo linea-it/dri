@@ -26,6 +26,8 @@ services:
       - ./archive:/archive
       # Diretório de logs do backend.
       - ./log/backend:/log
+      # Arquivo de configuração local
+      - ./local_vars.py:/app/dri/settings/local_vars.py:ro
       # Diretório com dados iniciais a serem importados. necessário so na instalação.
       #- ./database_subset:/app/common/fixtures
     depends_on:
@@ -33,11 +35,11 @@ services:
       - database
 
   rabbit:
-      image: rabbitmq:3-management
-      hostname: rabbit_dri
-      environment:
-          - RABBITMQ_DEFAULT_USER=dri
-          - RABBITMQ_DEFAULT_PASS=adminadmin
+    image: rabbitmq:3-management
+    hostname: rabbit_dri
+    environment:
+      - RABBITMQ_DEFAULT_USER=dri
+      - RABBITMQ_DEFAULT_PASS=adminadmin
 
   # Servidor de imagens PTIFFs
   # iipserver:
@@ -55,9 +57,9 @@ services:
   #     - ./log/iipserver:/log
   #     - ./archive/images:/images
 
-# Frontend apps ExtJS with Sencha CMD app Watch
-# OBS: o container sky deve estar ligado para que os demais apps funcionem.
-# ele é responsavel por servir os diretórios de package e outras dependencias.
+  # Frontend apps ExtJS with Sencha CMD app Watch
+  # OBS: o container sky deve estar ligado para que os demais apps funcionem.
+  # ele é responsavel por servir os diretórios de package e outras dependencias.
   sky:
     image: linea/sencha_cmd:6.5.3.6
     volumes:
@@ -134,7 +136,7 @@ services:
     volumes:
       # Arquivo de Configuração do Nginx
       - ./frontend/nginx-proxy-develop.conf:/etc/nginx/conf.d/default.conf:ro
-      # Diretório de logs do servidor web.
+      # Diretório de logs do servidor web. 
       - ./log/nginx:/var/log/nginx
       # Diretório onde o backend manipula arquivos, e que deve ficar acessivel ao servidor web.
       - ./archive:/var/www/data
@@ -143,4 +145,3 @@ services:
       # - iipserver
       - sky
       - daiquiri
-
