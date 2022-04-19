@@ -48,7 +48,7 @@ function AboutUs() {
                   {' '}
                   <Link color="inherit" className={classes.link} href="https://deslabs.ncsa.illinois.edu/desaccess/login">https://deslabs.ncsa.illinois.edu/desaccess/login</Link>
                   {' '}
-                  and click the "Forgot your password?" link to receive an email with instructions how to reset their own password.
+                  and click the "Forgot your password?" link to receive an email with instructions how to reset your password.
                 </Typography>
 
                 <Typography variant="subtitle1" className={classes.subTitle}>
