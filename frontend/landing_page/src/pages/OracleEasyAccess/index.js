@@ -38,13 +38,17 @@ function AboutUs() {
                 </Typography>
 
                 <Typography variant="subtitle1" className={classes.description}>
-                  This application allows you to access DES data. You can sign in using your Oracle/Easyaccess credentials
+                  This application allows you to access DES data.
                   {' '}
                   <br />
-                  (see user/password in the .desservices.ini file in your home folder). In case you have any problem or if you need to reset your password,
+                  You can sign in using your DES database credentials.
                   {' '}
-                  <Link color="inherit" className={classes.link} href="https://des.ncsa.illinois.edu/help">click here</Link>
-                  .
+                  <br />
+                  In case you have any problem or if you need to reset your password, visit
+                  {' '}
+                  <Link color="inherit" className={classes.link} href="https://deslabs.ncsa.illinois.edu/desaccess/login">https://deslabs.ncsa.illinois.edu/desaccess/login</Link>
+                  {' '}
+                  and click the "Forgot your password?" link to receive an email with instructions how to reset their own password.
                 </Typography>
 
                 <Typography variant="subtitle1" className={classes.subTitle}>

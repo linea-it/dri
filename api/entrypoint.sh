@@ -22,7 +22,7 @@ uwsgi \
   --py-autoreload 1 \
   --static-map /django_static/rest_framework/=/app/dri/static/rest_framework \
   --static-map /django_static/admin/=/app/dri/static/admin \
-  --buffer-size=32768
+  --buffer-size=32768 \
   --processes=4 \
   --threads=2 
 
