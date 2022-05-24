@@ -1169,9 +1169,9 @@ Ext.define('visiomatic.Visiomatic', {
         })
             .bindPopup(me.createOverlayPopup)
 
-            // .on('dblclick', function () {
-            //     alert('TODO: OPEN IN EXPLORER!');
-            // })
+            .on('dblclick', function () {
+                // alert('TODO: OPEN IN EXPLORER!');
+            })
 
             // chama a função de exibição do menu de contexto quando click em cima de um comentário, círculo, etc.
             .on('contextmenu', me.onContextMenuClick, me);
