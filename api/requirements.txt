@@ -28,7 +28,7 @@ iniconfig==1.1.1
 kombu==4.6.11
 Markdown==3.3.3
 model-mommy==2.0.0
-numpy==1.19.4
+numpy==1.22.0
 oauthlib==3.0.1
 packaging==20.4
 pandas==1.1.4
