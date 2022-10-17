@@ -63,7 +63,7 @@ Ext.define('Target.view.wizard.Wizard', {
             title: 'Permission',
             iconCls: 'x-fa fa-lock',
             disabled: true
-        }
+        },
     ],
 
     setProduct: function (product) {
@@ -88,8 +88,8 @@ Ext.define('Target.view.wizard.Wizard', {
 
     enableTabsByPermission: function () {
         var me = this,
-        vm = me.getViewModel(),
-        currentCatalog = vm.get('currentCatalog');
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog');
 
         // Configuracoes habilitadas se o usuario for o proprietario do catalogo
         if ((currentCatalog.get('id') > 0) && (currentCatalog.get('is_owner'))) {

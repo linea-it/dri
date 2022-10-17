@@ -55,6 +55,11 @@ Ext.define('Target.view.objects.Panel', {
                         cls: 'tb-text-target-title'
 
                     },
+                    {
+                        iconCls: 'x-fa fa-pencil',
+                        tooltip: 'Rename Target List',
+                        handler: 'onClickRenameTargetList',
+                    },
                     '->',
                     {
                         iconCls: 'x-fa fa-picture-o',
