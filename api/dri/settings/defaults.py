@@ -301,15 +301,15 @@ EMAIL_HOST = ""
 EMAIL_PORT = ""
 EMAIL_HOST_USER = ""
 EMAIL_HOST_PASSWORD = ""
-EMAIL_USE_TLS = True
+EMAIL_USE_TLS = False
 # Email utilizado para enviar as notificacoes do science server
 EMAIL_NOTIFICATION = "noreply@desportal.cosmology.illinois.edu"
 # Lista de email que receberão uma copia de todas as notificacoes
 EMAIL_NOTIFICATION_COPY_TO = list([])
 # Email para o helpdesk LIneA
-EMAIL_HELPDESK = "helpdesk@linea.gov.br"
+EMAIL_HELPDESK = "helpdesk@linea.org.br"
 # Email de contato do LIneA
-EMAIL_HELPDESK_CONTACT = "contato-dri@linea.gov.br"
+EMAIL_HELPDESK_CONTACT = "contato-dri@linea.org.br"
 # Email que recebera as notificacoes e relatorios gerados pelo science server
 EMAIL_ADMIN = ""
 # Enables or disables sending daily email access statistics.
@@ -483,6 +483,14 @@ LOGGING = {
             "filename": os.path.join("/log", "userquery.log"),
             "formatter": "standard",
         },
+        "send_email": {
+            "level": LOG_LEVEL,
+            "class": "logging.handlers.RotatingFileHandler",
+            "maxBytes": 1024 * 1024 * 5,  # 5 MB
+            "backupCount": 5,
+            "filename": os.path.join("/log", "send_email.log"),
+            "formatter": "standard",
+        },
     },
     "loggers": {
         "django": {"handlers": ["default"], "level": LOG_LEVEL, "propagate": True},
@@ -540,6 +548,11 @@ LOGGING = {
         "userquery": {
             "handlers": ["userquery"],
             "level": LOG_LEVEL,
+            "propagate": True,
+        },
+        "send_email": {
+            "handlers": ["send_email"],
+            "level": "DEBUG",
             "propagate": True,
         },
     },
