@@ -483,6 +483,14 @@ LOGGING = {
             "filename": os.path.join("/log", "userquery.log"),
             "formatter": "standard",
         },
+        "send_email": {
+            "level": LOG_LEVEL,
+            "class": "logging.handlers.RotatingFileHandler",
+            "maxBytes": 1024 * 1024 * 5,  # 5 MB
+            "backupCount": 5,
+            "filename": os.path.join("/log", "send_email.log"),
+            "formatter": "standard",
+        },
     },
     "loggers": {
         "django": {"handlers": ["default"], "level": LOG_LEVEL, "propagate": True},
@@ -540,6 +548,11 @@ LOGGING = {
         "userquery": {
             "handlers": ["userquery"],
             "level": LOG_LEVEL,
+            "propagate": True,
+        },
+        "send_email": {
+            "handlers": ["send_email"],
+            "level": "DEBUG",
             "propagate": True,
         },
     },
