@@ -119,10 +119,11 @@ services:
     volumes:
       - ./daiquiri:/daiquiri_app
       # Diretório de arquivos estaticos do Django deve ser compartilhado com o Ngnix.
-      - /archive/daiquiri_static:/daiquiri_app/static_root
-      - /archive/files:/daiquiri_app/files
-      - /archive/download:/daiquiri_app/download
-      - /archive/upload:/daiquiri_app/upload
+      # TODO: os arquivos staticos devem ser servidos pelo servidor web que serve o django. 
+      - ./archive/daiquiri/static:/daiquiri_app/static_root
+      - ./archive/daiquiri/files:/daiquiri_app/files
+      - ./archive/daiquiri/download:/daiquiri_app/download
+      - ./archive/daiquiri/upload:/daiquiri_app/upload
       # Diretório de logs do Daiquiri
       - ./log/daiquiri:/log
     depends_on:
