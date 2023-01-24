@@ -1169,9 +1169,7 @@ Ext.define('visiomatic.Visiomatic', {
         })
             .bindPopup(me.createOverlayPopup)
 
-            .on('dblclick', function () {
-                alert('TODO: OPEN IN EXPLORER!');
-            })
+            .on('dblclick', me.onDblClickOverlay, me)
 
             // chama a função de exibição do menu de contexto quando click em cima de um comentário, círculo, etc.
             .on('contextmenu', me.onContextMenuClick, me);
@@ -1309,9 +1307,21 @@ Ext.define('visiomatic.Visiomatic', {
         return popup;
     },
 
-    onDblClickOverlay: function () {
-        console.log('onDblClickOverlay(%o)', arguments);
+    onDblClickOverlay: function (event) {
+        console.log('onDblClickOverlay(%o)', event);
 
+        // var me = this,
+        //     originalEvent = event.originalEvent;
+
+        // // Don't propogate the event to the document
+        // if (originalEvent.stopPropagation) {
+        //     originalEvent.stopPropagation();   // W3C model
+        // } else {
+        //     originalEvent.cancelBubble = true; // IE model
+        // }
+        // if (me.cancelBuble) return
+        // me.cancelBuble = true
+        // setTimeout(() => { me.cancelBuble = false }, 100)
     },
 
     showHideLayer: function (layer, state) {

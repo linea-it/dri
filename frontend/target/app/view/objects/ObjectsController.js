@@ -1132,4 +1132,41 @@ Ext.define('Target.view.objects.ObjectsController', {
         me.loadCutoutJobs(product.get('id'));
     },
 
+    onClickRenameTargetList: function () {
+        // Rename Target List
+        var me = this,
+            vm = me.getViewModel(),
+            currentCatalog = vm.get('currentCatalog'),
+            store = vm.getStore('catalogs');
+
+        Ext.MessageBox.prompt(
+            'Rename Target List',
+            'Please enter the new name:',
+            function (btn, text) {
+                if (btn == 'ok') {
+                    currentCatalog.set('prd_display_name', text)
+                    currentCatalog.save({
+                        success: function () {
+                            Ext.toast({
+                                html: 'Successfully Changed Record".',
+                                closable: false,
+                                align: 't',
+                                slideInDuration: 400
+                            });
+                        },
+                        failure: function (record, operation) {
+                            var error = Ext.decode(operation.error.response.responseText)
+                            Ext.MessageBox.alert('Failed to rename the list', error.prd_display_name[0]);
+                        },
+                        callback: function () {
+                            store.load()
+                        }
+                    })
+                } else {
+                    this.close()
+                }
+            },
+            this);
+    },
+
 });
