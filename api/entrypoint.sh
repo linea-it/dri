@@ -1,29 +1,13 @@
 #!/bin/bash
-python3 manage.py migrate
 
-python3 manage.py migrate catalog --database=catalog
+# if any of the commands in your code fails for any reason, the entire script fails
+set -o errexit
+# fail exit if one of your pipe command fails
+set -o pipefail
+# exits if any of your variables is not set
+set -o nounset
 
-python manage.py collectstatic --clear --noinput --verbosity 0
+# TODO: Adicionar função para testar a conexcão com banco de de dados. 
+# No momento a unica função do entrypoint é executar o comando passado como parametro.
 
-
-# Start Celery Workers
-celery worker --workdir /app --app dri -l info &> /log/celery.log  &
-
-# Start Celery Beat
-celery worker --workdir /app --app dri -l info --beat &> /log/celery_beat.log  &
-
-# python3 manage.py runserver 0.0.0.0:8000
-
-# Para producao usar uWSGI para servir o app e ter compatibilidade com Shibboleth
-# https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html
-uwsgi \
-  --socket 0.0.0.0:8000 \
-  --wsgi-file /app/dri/wsgi.py \
-  --py-autoreload 1 \
-  --static-map /django_static/rest_framework/=/app/dri/static/rest_framework \
-  --static-map /django_static/admin/=/app/dri/static/admin \
-  --buffer-size=32768 \
-  --processes=4 \
-  --threads=2 
-
-
+exec "$@"
