@@ -195,7 +195,7 @@ DESACCESS_API = {
     # Lista dos Releases disponiveis no serviço do descut. OBS: está lista de releases é utilizada pela interface no formulário de submissão.
     'AVAILABLE_RELEASES': ['Y6A1', 'Y3A2', 'Y1A1', 'SVA1'],
     # Max de cutouts que o Descut aceita por job. default is 20000
-    'MAX_OBJECTS': 20000
+    'MAX_OBJECTS': 1000
 }
 
 # Others app config:

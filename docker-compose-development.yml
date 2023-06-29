@@ -17,7 +17,8 @@ services:
 
   backend:
     build: ./api
-    command: ./entrypoint.sh
+    user: "1000:1000"
+    command: /start.sh
     environment:
       - CELERY_BROKER=amqp://dri:adminadmin@rabbit:5672
     volumes:
