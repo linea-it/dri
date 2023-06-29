@@ -8,7 +8,7 @@ import Help from '../pages/Help';
 import Tutorials from '../pages/Tutorials';
 import Contact from '../pages/Contact';
 import OracleEasyAccess from '../pages/OracleEasyAccess';
-import LineaSignUp from '../pages/LineaSignUp'
+import LineaSignUp from '../pages/LineaSignUp';
 import Notfound from '../pages/NotFound';
 
 function Router() {

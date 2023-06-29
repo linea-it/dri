@@ -6,9 +6,9 @@ import {
 } from '@material-ui/core';
 import { Alert, AlertTitle } from '@material-ui/lab';
 import EmailIcon from '@material-ui/icons/Email';
+import ReCAPTCHA from 'react-google-recaptcha';
 import styles from './styles';
 import { sendEmail } from '../../Services/api';
-import ReCAPTCHA from 'react-google-recaptcha'
 
 function Contact() {
   const classes = styles();
@@ -18,7 +18,7 @@ function Contact() {
   const recaptchaKey = process.env.REACT_APP_RECAPTCHA_SITE_KEY;
 
   const [open, setOpen] = useState('');
-  const [submitEnabled, setSubmitEnabled] = useState(recaptchaKey ? false : true);
+  const [submitEnabled, setSubmitEnabled] = useState(!recaptchaKey);
 
   const handleClose = () => {
     setOpen('');
@@ -26,7 +26,7 @@ function Contact() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if(submitEnabled) {
+    if (submitEnabled) {
       const formData = {
         name: formRef.current.name.value,
         subject: formRef.current.subject.value,
@@ -47,11 +47,11 @@ function Contact() {
     }
   };
 
-  const onRecaptchaChange = humanKey => {
-    if(humanKey) {
+  const onRecaptchaChange = (humanKey) => {
+    if (humanKey) {
       setSubmitEnabled(true);
     }
-  }
+  };
 
   return (
     <div className={classes.initContainer}>
