@@ -140,7 +140,18 @@ class Dataset(models.Model):
         null=True, blank=True, verbose_name='Created Date')
 
     archive_path = models.TextField(
-        null=True, blank=True, verbose_name='Archive Path', help_text='Original file path')
+        null=True, 
+        blank=True, 
+        verbose_name='Archive Path', 
+        help_text='Base file path without root folder.')
+
+    ncsa_original_path = models.TextField(
+        null=True, 
+        blank=True, 
+        default=None,
+        verbose_name='NCSA Original Path', 
+        help_text='NCSA Original file path'
+    )
 
     image_src_thumbnails = models.URLField(
         null=True, blank=True, verbose_name='Thumbnails PNG', default=None,
@@ -152,7 +163,13 @@ class Dataset(models.Model):
         null=True, blank=True, verbose_name='Visiomatic PTIF', default=None,
         help_text=('Full URL for visiomatic ptif image, including the host and directory. '
                    'Use the release name and tilename to create the path. '
-                   'Example: http://{host}/visiomatic?FIF=data/releases/{release_name}/images/visiomatic/{tilename}.ptif')
+                   'Example: http://{host}/visiomatic?FIF=data/releases/{archive_path}/<image_path>/{tilename}.ptif')
+    )
+
+    ncsa_src_ptif = models.URLField(
+        null=True, blank=True, verbose_name='Thumbnails PNG', default=None,
+        help_text=('Full URL to image in NCSA. '
+                   'Example: http://{host}/visiomatic?FIF=data/releases/{archive_path}/<image_path>/{tilename}.ptif')
     )
 
     def __str__(self):
