@@ -119,7 +119,7 @@ export const urlSign = () => axios.get('get_setting/', { params: { name: 'SIGN_U
 
 
 export const envName = () => axios.get('get_setting/', { params: { name: 'ENVIRONMENT_NAME' } })
-  .then((res) => res.data)
+  .then((res) => res.data['ENVIRONMENT_NAME'])
   .catch((err) => {
     console.error(err);
     return err;

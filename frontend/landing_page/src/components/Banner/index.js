@@ -36,7 +36,10 @@ function Banner() {
     } else {
       setIsBr(false);
     }
-    envName().then((result) => setEnviromentName(result.ENVIRONMENT_NAME));
+    envName().then((result) => {
+      console.log(result)
+      setEnviromentName(result)
+    })
   }, []);
 
 
@@ -65,8 +68,7 @@ function Banner() {
                   <td className={classes.positionTitle}>
                     <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
                     <h1 className={classes.subtitle}>
-                      DES Data Release
-                      {enviromentName && { enviromentName }}
+                      DES Data Release {enviromentName !== undefined && enviromentName}
                     </h1>
                     {isBr ? (<img src={`${process.env.PUBLIC_URL}/img/bandeira_brasil.jpg`} alt="Brasil" className={classes.brFlag} />) : ''}
                   </td>
