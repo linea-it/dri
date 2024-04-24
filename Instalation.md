@@ -1,14 +1,16 @@
 # Instalation
 
-Clone the repository to your directory.
-Create directories
-Create docker compose
+Clone the repository to your directory. 
+
+Inside project folder dri:
+- Create directories (archive log log/backend log/nginx)
+- Copy docker-compose.yml from docker-compose-development.yml
 
 ```bash
 git clone https://github.com/linea-it/dri.git dri
 && cd dri
 && mkdir archive log log/backend log/nginx
-&& cp docker compose-development.yml docker compose.yml
+&& cp docker-compose-development.yml docker-compose.yml
 ```
 
 ## Setup Frontend development enviroment
