@@ -129,5 +129,7 @@ services:
       - ./archive:/var/www/data
     depends_on:
       - backend
-      # - iipserver
       - sky
+      - landingpage
+      - eyeballing
+      # - iipserver
