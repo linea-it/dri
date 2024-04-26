@@ -7,9 +7,9 @@ Inside project folder dri:
 - Copy docker-compose.yml from docker-compose-development.yml
 
 ```bash
-git clone https://github.com/linea-it/dri.git dri
-&& cd dri
-&& mkdir archive log log/backend log/nginx
+git clone https://github.com/linea-it/dri.git dri \
+&& cd dri \
+&& mkdir archive log log/backend log/nginx \
 && cp docker-compose-development.yml docker-compose.yml
 ```
 
