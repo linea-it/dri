@@ -1,17 +1,22 @@
-version: '2'
+volumes:
+  postgres-data:
+
 services:
 
   database:
     image: linea/postgresql_q3c:latest
     environment:
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=postgres
-    expose:
+    ports:
       # Deixa a porta do banco de dados acessivel para ferramentas externas como o dbeaver por exemplo.
-      - 5432
+      - 5432:5432
     volumes:
-      - ./pg_data:/var/lib/postgresql/data
-      - ./pg_backups:/pg_backups
+      # Init Database Script
+      - ./postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro      
+      # Persistent Volume
+      - postgres-data:/var/lib/postgresql/data
       # databse_subset é util para colocar arquivos a serem importados dentro do banco de dados.
       - ./database_subset:/data
 
@@ -86,14 +91,14 @@ services:
     depends_on:
       - sky
 
-  userquery:
-    image: linea/sencha_cmd:6.5.3.6
-    volumes:
-      - ./frontend/:/code
-    working_dir: /code/userquery
-    command: app watch
-    depends_on:
-      - sky
+  # userquery:
+  #   image: linea/sencha_cmd:6.5.3.6
+  #   volumes:
+  #     - ./frontend/:/code
+  #   working_dir: /code/userquery
+  #   command: app watch
+  #   depends_on:
+  #     - sky
 
   eyeballing:
     image: node:10-alpine
@@ -111,25 +116,6 @@ services:
     stdin_open: true
     command: yarn start
 
-  daiquiri:
-    build: ./daiquiri
-    working_dir: /daiquiri_app
-    command: ./entrypoint.sh
-    env_file:
-      - ./daiquiri/.env
-    volumes:
-      - ./daiquiri:/daiquiri_app
-      # Diretório de arquivos estaticos do Django deve ser compartilhado com o Ngnix.
-      - /archive/daiquiri_static:/daiquiri_app/static_root
-      - /archive/files:/daiquiri_app/files
-      - /archive/download:/daiquiri_app/download
-      - /archive/upload:/daiquiri_app/upload
-      # Diretório de logs do Daiquiri
-      - ./log/daiquiri:/log
-    depends_on:
-      - database
-      - rabbit
-
   nginx:
     build: ./frontend
     ports:
@@ -145,4 +131,3 @@ services:
       - backend
       # - iipserver
       - sky
-      - daiquiri

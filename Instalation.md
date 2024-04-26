@@ -36,29 +36,6 @@ starts the database container
 docker compose up database
 ```
 
-it is necessary to create 2 schemas, one for the administrative tables and the other for catalog tables.
-in the catalog schema are the tables created by the users.
-
-Creates the administrative schema, in this example it is called dri_admin
-
-```bash
-docker compose run database psql -h localhost -U postgres -d postgres -c "CREATE SCHEMA dri_admin;"
-```
-
-Changes the permission for the schema, considering that the user is postgres.
-```bash
-docker compose run database psql -h localhost -U postgres -d postgres -c "ALTER SCHEMA dri_admin OWNER TO postgres;"
-```
-
-Same thing for the dri_catalog schema
-```bash
-docker compose run database psql -h localhost -U postgres -d postgres -c "CREATE SCHEMA dri_catalog;"
-```
-
-```bash
-docker compose run database psql -h localhost -U postgres -d postgres -c "ALTER SCHEMA dri_catalog OWNER TO postgres;"
-```
-
 ### Setup Backend
 
 In directory dri/dri/settings there are configuration files for each environment.
@@ -80,20 +57,20 @@ docker compose up backend
 
 Now that the backend is on, it is necessary to load the initial data and create an admin user.
 
-### Create default Super User in django
-
-With the backend running, open another terminal and run the command create super user
-
-```bash
-docker compose run backend python manage.py createsuperuser
-```
-
 ### Load Initial Data
 
 For admin database
 
 ```bash
 docker compose run backend python manage.py loaddata initial_data.json
+```
+
+### Create default Super User in django
+
+With the backend running, open another terminal and run the command create super user
+
+```bash
+docker compose run backend python manage.py createsuperuser
 ```
 
 ### Catalog database using SSH Tunel.
