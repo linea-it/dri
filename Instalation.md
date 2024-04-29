@@ -59,20 +59,22 @@ docker compose up backend
 
 Now that the backend is on, it is necessary to load the initial data and create an admin user.
 
-### Load Initial Data
-
-For admin database
-
-```bash
-docker compose run backend python manage.py loaddata initial_data.json
-```
-
 ### Create default Super User in django
 
 With the backend running, open another terminal and run the command create super user
 
 ```bash
 docker compose run backend python manage.py createsuperuser
+```
+
+### Load Initial Data
+
+This command will populate the database with
+- DR2 public release data (list of images and datasets)
+- Some example target lists (associated with user id 1)
+
+```bash
+docker compose run backend python manage.py loaddata initial_data.json
 ```
 
 ### Catalog database using SSH Tunel.
