@@ -66,6 +66,8 @@ Ext.define('Target.view.objects.Panel', {
                         tooltip: 'Create Cutout',
                         handler: 'onClickCreateCutouts',
                         text: 'Cutouts',
+                        disabled: true,
+                        hidden: true
                     },
                     {
                         xtype: 'button',
@@ -77,8 +79,10 @@ Ext.define('Target.view.objects.Panel', {
                         bind: {
                             pressed: '{mosaic_is_visible}'
                         },
+                        disabled: true,
+                        hidden: true
                     },
-                    '-',
+                    // '-',
                     {
                         xtype: 'fieldcontainer',
                         layout: 'hbox',
