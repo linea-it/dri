@@ -129,19 +129,6 @@ Ext.define('Target.view.preview.Preview', {
             '-',
             {
                 xtype: 'button',
-                text: 'Explorer',
-                tooltip: 'See more information about this object in Explorer app',
-                ui: 'soft-blue',
-                iconCls: 'x-fa fa-info-circle',
-                handler: 'onExplorer',
-                reference: 'BtnExplorer',
-                bind: {
-                    disabled: '{is_empty}'
-                }
-            },
-            '-',
-            {
-                xtype: 'button',
                 iconCls: 'x-fa fa-arrows',
                 tooltip: 'Center',
                 handler: 'onCenterTarget',
@@ -197,7 +184,8 @@ Ext.define('Target.view.preview.Preview', {
                 pressed: true,
                 hidden: true,
                 bind: {
-                    disabled: '{is_empty}'
+                    disabled: '{is_empty}',
+                    hidden: '{!is_system}',
                 }
             },
             {
@@ -210,9 +198,24 @@ Ext.define('Target.view.preview.Preview', {
                 pressed: true,
                 hidden: true,
                 bind: {
-                    disabled: '{is_empty}'
+                    disabled: '{is_empty}',
+                    hidden: '{!is_system}',
                 }
-            }
+            },
+            '-',            
+            {
+                xtype: 'button',
+                text: 'Explorer',
+                tooltip: 'See more information about this object in Explorer app',
+                ui: 'soft-blue',
+                iconCls: 'x-fa fa-info-circle',
+                handler: 'onExplorer',
+                reference: 'BtnExplorer',
+                bind: {
+                    disabled: '{is_empty}',
+                    hidden: '{!is_system}',
+                }
+            },            
         ]
     }],
 
