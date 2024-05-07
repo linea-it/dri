@@ -46,7 +46,7 @@ Ext.define('common.ToolbarController', {
     },
 
     about: function () {
-        window.open('http://www.linea.gov.br');
+        window.open('https://linea.org.br');
     },
 
     onAfterRender: function () {
