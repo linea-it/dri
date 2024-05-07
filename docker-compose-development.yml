@@ -79,7 +79,7 @@ services:
       - 3001:3000
 
   database:
-    image: ./compose/local/postgres
+    build: ./compose/local/postgres
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
