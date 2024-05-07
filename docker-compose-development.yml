@@ -3,23 +3,6 @@ volumes:
 
 services:
 
-  database:
-    image: linea/postgresql_q3c:latest
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=postgres
-    ports:
-      # Deixa a porta do banco de dados acessivel para ferramentas externas como o dbeaver por exemplo.
-      - 5432:5432
-    volumes:
-      # Init Database Script
-      - ./postgres/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro      
-      # Persistent Volume
-      - postgres-data:/var/lib/postgresql/data
-      # databse_subset é util para colocar arquivos a serem importados dentro do banco de dados.
-      - ./database_subset:/data
-
   backend:
     build: ./api
     user: "1000:1000"
@@ -46,22 +29,6 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=dri
       - RABBITMQ_DEFAULT_PASS=adminadmin
-
-  # Servidor de imagens PTIFFs
-  # iipserver:
-  #   image: linea/iipserver:latest
-  #   environment:
-  #     - LOGFILE=/log/iipsrv.log
-  #     - VERBOSITY=10
-  #     - FILESYSTEM_PREFIX=/images/
-  #     - MAX_IMAGE_CACHE_SIZE=10
-  #     - MAX_CVT=3000
-  #     - JPEG_QUALITY=90
-  #     - CORS=*
-  #   command: ./start_fcgi.sh
-  #   volumes:
-  #     - ./log/iipserver:/log
-  #     - ./archive/images:/images
 
   # Frontend apps ExtJS with Sencha CMD app Watch
   # OBS: o container sky deve estar ligado para que os demais apps funcionem.
@@ -91,15 +58,6 @@ services:
     depends_on:
       - sky
 
-  # userquery:
-  #   image: linea/sencha_cmd:6.5.3.6
-  #   volumes:
-  #     - ./frontend/:/code
-  #   working_dir: /code/userquery
-  #   command: app watch
-  #   depends_on:
-  #     - sky
-
   eyeballing:
     image: node:10-alpine
     working_dir: /app
@@ -107,6 +65,8 @@ services:
       - ./frontend/eyeballing:/app
     stdin_open: true
     command: yarn start
+    ports:
+      - 3000:3000
 
   landingpage:
     image: node:10-alpine
@@ -115,6 +75,23 @@ services:
       - ./frontend/landing_page:/app
     stdin_open: true
     command: yarn start
+    ports:
+      - 3001:3000
+
+  database:
+    image: ./compose/local/postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    ports:
+      # Deixa a porta do banco de dados acessivel para ferramentas externas como o dbeaver por exemplo.
+      - 5432:5432
+    volumes:
+      # Init Database Script
+      - ./compose/local/postgres/sql:/docker-entrypoint-initdb.d:ro      
+      # Persistent Volume
+      - postgres-data:/var/lib/postgresql/data
 
   nginx:
     build: ./frontend
