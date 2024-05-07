@@ -56,7 +56,7 @@ function Header(props) {
 
   function handleAbout() {
     handleClose();
-    window.open('http://www.linea.gov.br');
+    window.open('https://www.linea.org.br');
   }
   function handleLogout() {
     handleClose();

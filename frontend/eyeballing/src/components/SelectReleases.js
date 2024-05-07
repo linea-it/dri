@@ -69,6 +69,7 @@ function SelectReleases(props) {
             icon: classes.inputIcon,
           }}
           displayEmpty
+          readOnly
         >
           <MenuItem value="" disabled>
             Choose a Release
