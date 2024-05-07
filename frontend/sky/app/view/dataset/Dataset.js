@@ -94,7 +94,9 @@ Ext.define('Sky.view.dataset.Dataset', {
                             bind: {
                                 disabled: '{disablecompare}'
                             },
-                            menu: []
+                            menu: [],
+                            // Disables the compare function Issue: #1261 - https://github.com/linea-it/dri/issues/1261
+                            hidden: true
                         },
                         // {
                         //     xtype: 'button',
