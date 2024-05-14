@@ -62,15 +62,15 @@ Ext.define('Target.view.catalog.Tree', {
             type: 'string',
           },
         },
-        {
-          text: 'Release',
-          flex: 1,
-          dataIndex: 'release_display_name',
-          sortable: true,
-          filter: {
-            type: 'string',
-          },
-        },
+        // {
+        //   text: 'Release',
+        //   flex: 1,
+        //   dataIndex: 'release_display_name',
+        //   sortable: true,
+        //   filter: {
+        //     type: 'string',
+        //   },
+        // },
         {
           xtype: 'datecolumn',
           text: 'Date',
