@@ -111,7 +111,9 @@ Ext.define('Target.view.objects.Panel', {
                         handler: 'onClickSaveAs',
                         bind: {
                             disabled: '{!haveFilter}'
-                        }
+                        },
+                        // Disabled Save As Issue: https://github.com/linea-it/dri/issues/1477
+                        hidden: true
                     },
                     {
                         iconCls: 'x-fa fa-download',
