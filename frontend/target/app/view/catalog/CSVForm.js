@@ -103,7 +103,9 @@ Ext.define('Target.view.catalog.CSVForm', {
                     valueField: 'rls_name',
                     bind: {
                         store: '{releases}'
-                    }
+                    },
+                    // Disabled in Issue: https://github.com/linea-it/dri/issues/1482
+                    hidden: true
                 },
                 {
                     xtype: 'checkbox',
