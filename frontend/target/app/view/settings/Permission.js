@@ -33,10 +33,14 @@ Ext.define('Target.view.settings.Permission', {
                     // region: 'north',
                     height: 80,
                     bodyPadding: 10,
+                    // html: [
+                    //     'You can choose which users or workgroups can access this list.' +
+                    //     '</br>' + 'The list can be public or private in this case only the users selected or who are part of a group can access it.' +
+                    //     '</br>' + 'You can create workgroups.'
+                    // ]
                     html: [
-                        'You can choose which users or workgroups can access this list.' +
-                        '</br>' + 'The list can be public or private in this case only the users selected or who are part of a group can access it.' +
-                        '</br>' + 'You can create workgroups.'
+                        'You can choose which users can access this list.' +
+                        '</br>' + 'The list can be public or private in this case only the users selected can access it.'
                     ]
                 },
                 {
@@ -46,6 +50,7 @@ Ext.define('Target.view.settings.Permission', {
                         type: 'vbox',
                         align: 'stretch'
                     },
+                    bodyPadding: 10,
                     items: [
                         {
                             xtype: 'checkbox',
@@ -100,6 +105,7 @@ Ext.define('Target.view.settings.Permission', {
                                 {
                                     xtype: 'grid',
                                     title: 'Workgroups',
+                                    hidden: true,
                                     reference: 'permissionWorkgroupsGrid',
                                     flex: 1,
                                     split: true,
