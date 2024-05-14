@@ -55,7 +55,9 @@ Ext.define('Target.view.wizard.Wizard', {
             id: 'card-4',
             xtype: 'targets-system-members',
             title: 'System Members',
-            iconCls: 'x-fa fa-dot-circle-o'
+            iconCls: 'x-fa fa-dot-circle-o',
+            // Disabled System Members Settings Issue: https://github.com/linea-it/dri/issues/1474
+            hidden: true
         },
         {
             id: 'card-5',
