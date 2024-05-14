@@ -72,19 +72,21 @@ Ext.define('Target.view.preview.Preview', {
         xtype: 'toolbar',
         dock: 'top',
         items: [
+            // Disabled Rating, Reject, Comments Issue: https://github.com/linea-it/dri/issues/1486
             // Campo de Rating usando Number Field. troquei pelo componente Rating.
-            {
-                xtype: 'numberfield',
-                maxValue: 5,
-                minValue: 0,
-                width: 100,
-                fieldLabel: 'Rating',
-                labelWidth: 45,
-                bind: {
-                    value: '{currentRecord._meta_rating}',
-                    disabled: '{is_empty}'
-                }
-            },
+            // {
+            //     xtype: 'numberfield',
+            //     maxValue: 5,
+            //     minValue: 0,
+            //     width: 100,
+            //     fieldLabel: 'Rating',
+            //     labelWidth: 45,
+            //     bind: {
+            //         value: '{currentRecord._meta_rating}',
+            //         disabled: '{is_empty}'
+            //     }
+            // },
+
             // TODO: Provavelmente o update para versão 7.0 deve corrigir esse bug e este campo oculto
             // Componente Rating causa um erro por não ter o metodo disabled. e atrapalha os demais botões.
             // {
@@ -107,26 +109,30 @@ Ext.define('Target.view.preview.Preview', {
             //         value: '{currentRecord._meta_rating}',
             //     }
             // },
-            {
-                xtype: 'checkboxfield',
-                reference: 'btnReject',
-                hideLabel: true,
-                boxLabel: 'Reject',
-                bind: {
-                    value: '{currentRecord._meta_reject}',
-                    disabled: '{is_empty}'
-                }
-            },
-            {
-                xtype: 'button',
-                iconCls: 'x-fa fa-commenting',
-                tooltip: 'Comments',
-                bind: {
-                    disabled: '{is_empty}'
-                },
-                handler: 'onClickComment'
-            },
-            '-',
+
+            // Disabled Rating, Reject, Comments Issue: https://github.com/linea-it/dri/issues/1486
+            // {
+            //     xtype: 'checkboxfield',
+            //     reference: 'btnReject',
+            //     hideLabel: true,
+            //     boxLabel: 'Reject',
+            //     bind: {
+            //         value: '{currentRecord._meta_reject}',
+            //         disabled: '{is_empty}'
+            //     }
+            // },
+
+            // Disabled Rating, Reject, Comments Issue: https://github.com/linea-it/dri/issues/1486
+            // {
+            //     xtype: 'button',
+            //     iconCls: 'x-fa fa-commenting',
+            //     tooltip: 'Comments',
+            //     bind: {
+            //         disabled: '{is_empty}'
+            //     },
+            //     handler: 'onClickComment'
+            // },
+            // '-',
             {
                 xtype: 'button',
                 iconCls: 'x-fa fa-arrows',
@@ -202,7 +208,7 @@ Ext.define('Target.view.preview.Preview', {
                     hidden: '{!is_system}',
                 }
             },
-            '-',            
+            '-',
             {
                 xtype: 'button',
                 text: 'Explorer',
@@ -215,7 +221,7 @@ Ext.define('Target.view.preview.Preview', {
                     disabled: '{is_empty}',
                     hidden: '{!is_system}',
                 }
-            },            
+            },
         ]
     }],
 

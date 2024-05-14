@@ -6,7 +6,7 @@ Ext.define('Target.view.objects.Grid', {
 
     xtype: 'targets-objects-grid',
 
-    requires:[
+    requires: [
         'Ext.ux.CheckColumn',
         'Ext.grid.column.Number',
         'Ext.grid.column.Widget',
@@ -35,8 +35,8 @@ Ext.define('Target.view.objects.Grid', {
             syncRowHeight: true,
             columns: [
                 Ext.create('Ext.grid.RowNumberer'),
-                {text: '',  dataIndex: '', width: 50},
-                {text: '',  dataIndex: '', flex: true}
+                { text: '', dataIndex: '', width: 50 },
+                { text: '', dataIndex: '', flex: true }
             ],
             viewConfig: {
                 stripeRows: true,
@@ -130,79 +130,80 @@ Ext.define('Target.view.objects.Grid', {
                     columns.push(column);
                 }
 
-            },this);
+            }, this);
 
+            // Disabled Rating, Reject, Comments Issue: https://github.com/linea-it/dri/issues/1486
             // Coluna Rating
-            if ((me.getColumnRating()) && (flag === true)) {
+            // if ((me.getColumnRating()) && (flag === true)) {
 
-                columns.push({
-                    xtype: 'widgetcolumn',
-                    width: 90,
-                    sortable: true,
-                    text: 'Rating',
-                    dataIndex: '_meta_rating',
-                    tooltip: 'Rating',
-                    widget: {
-                        xtype: 'rating',
-                        minimum: 0,
-                        // overStyle: 'color: orange;'
-                        scale: '115%',
-                        selectedStyle: 'color: rgb(96, 169, 23);',
-                        style: {
-                            'color': '#777777'
-                        }
-                        // listeners: {
-                        // change: function (picker, value, oldvalue) {
-                        //     console.log('picker ', value);
-                        // console.log('oldvalue ', oldvalue);
-                        // var record = picker.getWidgetRecord();
-                        // me.fireEvent('changerating', record, value, oldvalue);
-                        // }
-                        // }
-                    }
-                });
-            }
+            //     columns.push({
+            //         xtype: 'widgetcolumn',
+            //         width: 90,
+            //         sortable: true,
+            //         text: 'Rating',
+            //         dataIndex: '_meta_rating',
+            //         tooltip: 'Rating',
+            //         widget: {
+            //             xtype: 'rating',
+            //             minimum: 0,
+            //             // overStyle: 'color: orange;'
+            //             scale: '115%',
+            //             selectedStyle: 'color: rgb(96, 169, 23);',
+            //             style: {
+            //                 'color': '#777777'
+            //             }
+            //             // listeners: {
+            //             // change: function (picker, value, oldvalue) {
+            //             //     console.log('picker ', value);
+            //             // console.log('oldvalue ', oldvalue);
+            //             // var record = picker.getWidgetRecord();
+            //             // me.fireEvent('changerating', record, value, oldvalue);
+            //             // }
+            //             // }
+            //         }
+            //     });
+            // }
             // Coluna Reject
-            if ((me.getColumnAccept()) && (flag === true)) {
-                columns.push({
-                    xtype: 'checkcolumn',
-                    text: 'Reject',
-                    dataIndex: '_meta_reject',
-                    tooltip: 'Reject',
-                    sortable: true,
-                    width: 80
-                });
-            }
+            // if ((me.getColumnAccept()) && (flag === true)) {
+            //     columns.push({
+            //         xtype: 'checkcolumn',
+            //         text: 'Reject',
+            //         dataIndex: '_meta_reject',
+            //         tooltip: 'Reject',
+            //         sortable: true,
+            //         width: 80
+            //     });
+            // }
             // Coluna Comments
-            if ((me.getColumnComments()) && (flag === true)) {
-                columns.push({
-                    text: 'Comments',
-                    dataIndex: '_meta_comments',
-                    tooltip: 'Comments',
-                    align: 'center',
-                    flex: 1,
-                    sortable: false,
-                    minWidth: 80,
-                    renderer: function (value, metadata, record) {
-                        var newValue = '';
-                        if (value > 0) {
-                            if (value == 1) {
-                                //newValue = '<img src="resources/comment.png" title="Comment">';
-                                newValue = '<i class="fa fa-comment-o"> </i>';
-                            } else {
-                                //newValue = '<spam class="x-fa fa-comments-o"> </span>';
-                                newValue = '<i class="fa fa-comments-o"></i>';
+            // if ((me.getColumnComments()) && (flag === true)) {
+            //     columns.push({
+            //         text: 'Comments',
+            //         dataIndex: '_meta_comments',
+            //         tooltip: 'Comments',
+            //         align: 'center',
+            //         flex: 1,
+            //         sortable: false,
+            //         minWidth: 80,
+            //         renderer: function (value, metadata, record) {
+            //             var newValue = '';
+            //             if (value > 0) {
+            //                 if (value == 1) {
+            //                     //newValue = '<img src="resources/comment.png" title="Comment">';
+            //                     newValue = '<i class="fa fa-comment-o"> </i>';
+            //                 } else {
+            //                     //newValue = '<spam class="x-fa fa-comments-o"> </span>';
+            //                     newValue = '<i class="fa fa-comments-o"></i>';
 
-                            }
-                        }
-                        return newValue;
-                    }
-                });
-            }
+            //                 }
+            //             }
+            //             return newValue;
+            //         }
+            //     });
+            // }
 
         } else {
 
-            columns.push({text: 'Placeholder',  dataIndex: '', hidden: true});
+            columns.push({ text: 'Placeholder', dataIndex: '', hidden: true });
         }
 
         // // Ultima coluna tamanho variavel
@@ -248,18 +249,18 @@ Ext.define('Target.view.objects.Grid', {
             '<div>',
             '<p><spam><b>{display_name}</b></spam></p>',
             '<tpl if=\'column_name != ""\'>',
-                '<p><spam>Name:</spam> {column_name}</p>',
+            '<p><spam>Name:</spam> {column_name}</p>',
             '</tpl>',
             '<tpl if=\'unit != ""\'>',
-                '<p><spam>Unit:</spam> {unit}</p>',
+            '<p><spam>Unit:</spam> {unit}</p>',
             '</tpl>',
 
             '<tpl if=\'ucd != ""\'>',
-                '<p><spam>ucd:</spam> {ucd}</p>',
+            '<p><spam>ucd:</spam> {ucd}</p>',
             '</tpl>',
 
             '<tpl if=\'reference != ""\'>',
-                '<p><spam>Reference:</spam> {reference}</p>',
+            '<p><spam>Reference:</spam> {reference}</p>',
             '</tpl>',
 
             '</div>'
@@ -272,7 +273,7 @@ Ext.define('Target.view.objects.Grid', {
         var precision = 3,
             aValue, decimal;
 
-        if (typeof(value) === 'number') {
+        if (typeof (value) === 'number') {
 
             if (value > 10000) {
                 // Se for maior que 10000 e tiver um float usar notacao exponencial
@@ -286,7 +287,7 @@ Ext.define('Target.view.objects.Grid', {
                     decimal = aValue[1];
                     // se tiver mais casas decimais
                     if (decimal.length > precision) {
-                        value =  value.toFixed(precision);
+                        value = value.toFixed(precision);
 
                     }
                 }
