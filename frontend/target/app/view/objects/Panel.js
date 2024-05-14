@@ -121,7 +121,9 @@ Ext.define('Target.view.objects.Panel', {
                         handler: 'onClickDownload',
                         bind: {
                             disabled: '{!haveResults}'
-                        }
+                        },
+                        // Disabled Issue: https://github.com/linea-it/dri/issues/1476
+                        hidden: true
                     },
                     '-',
                     {
