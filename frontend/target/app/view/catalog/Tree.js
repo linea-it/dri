@@ -57,10 +57,10 @@ Ext.define('Target.view.catalog.Tree', {
           text: 'Owner',
           flex: 1,
           dataIndex: 'owner',
-          sortable: true,
-          filter: {
-            type: 'string',
-          },
+          sortable: true
+          // filter: {
+          //   type: 'string',
+          // },
         },
         // {
         //   text: 'Release',
@@ -77,10 +77,10 @@ Ext.define('Target.view.catalog.Tree', {
           dataIndex: 'prd_date',
           width: 150,
           sortable: true,
-          format: 'Y-m-d H:m:s',
-          filter: {
-            type: 'date',
-          },
+          format: 'Y-m-d H:m:s'
+          // filter: {
+          //   type: 'date',
+          // },
         },
         {
           text: 'Rows',
