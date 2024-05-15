@@ -1,6 +1,6 @@
 import logging
 import math
-
+import numpy as np
 from django.conf import settings
 from django.db.models import Max
 from lib.CatalogDB import CatalogObjectsDBHelper, TargetObjectsDBHelper, CatalogDB
@@ -221,6 +221,11 @@ class TargetViewSet(ViewSet):
                         elif row.get(prop) < 0:
                             row.update({prop: "-Infinity"})
 
+                    # Fixed in Issue: https://github.com/linea-it/dri/issues/1489
+                    # Check if is NaN
+                    if math.isnan(float(row.get(prop))):
+                        row.update({prop: "nan"})
+
         return Response(dict({
             'count': count,
             'results': rows
@@ -376,6 +381,12 @@ class CatalogObjectsViewSet(ViewSet):
                             row.update({prop: "+Infinity"})
                         elif row.get(prop) < 0:
                             row.update({prop: "-Infinity"})
+
+                    # Fixed in Issue: https://github.com/linea-it/dri/issues/1489
+                    # Check if is NaN
+                    if math.isnan(float(row.get(prop))):
+                        row.update({prop: "nan"})
+
 
         return Response(dict({
             'count': count,
