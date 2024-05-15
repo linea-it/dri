@@ -5,6 +5,7 @@ from django.contrib.auth.models import Group
 
 from shibboleth.middleware import ShibbolethRemoteUserMiddleware
 
+from common.linea_ldap import get_ldap_username_by_email
 
 class ShibbolethMiddleware(ShibbolethRemoteUserMiddleware):
 
@@ -23,14 +24,35 @@ class ShibbolethMiddleware(ShibbolethRemoteUserMiddleware):
 
         # Guardar o email do usuario
         user.email = shib_meta['email']
-        # log.info("Updated user email")
-        # Adiciona um display name para o usuario
-        if user.profile.display_name is None or user.profile.display_name == user.username:
-            user.profile.display_name = user.email.split('@')[0]
-            user.profile.save()
-            log.info("Added user profile display name")
-
         user.save()
+
+        try:
+            log.error("Retriving username from ldap.") 
+            username = get_ldap_username_by_email(email=user.email)
+            log.error(f"LDAP username: {username}")
+
+
+            # NAO funcionou alterar o username. 
+            # até cria o usuario corretamente, mas ao fazer logout e login novamente
+            # Duplica o usuario e o segundo fica com username do eppn
+            # user.username = username
+            # user.save()
+            # log.info("Changed username.")            
+
+            user.profile.display_name = username
+            user.profile.save()
+            log.info("Changed display name.")            
+
+        except Exception as e:
+            log.error("Failed on retrive username from ldap. Error: %s" % e) 
+        
+        # # Adiciona um display name para o usuario
+        # if user.profile.display_name is None or user.profile.display_name == user.username:
+        #     user.profile.display_name = user.email.split('@')[0]
+        #     user.profile.save()
+        #     log.info("Added user profile display name")
+
+
 
         # Adicionar o usuario ao grupo Shibboleth
         try:
