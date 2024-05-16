@@ -13,6 +13,14 @@ git clone https://github.com/linea-it/dri.git dri \
 && cp docker-compose-development.yml docker-compose.yml
 ```
 
+Check your linux user id with: 
+
+```bash
+echo $UID
+```
+and update it in the `docker-compose.yml` file if necessary (if it is not the usual 1000). 
+
+
 ## Setup Frontend development enviroment
 
 DRI have multiple frontend apps, some of them developed with Sencha EXTjs and others with ReactJS.
@@ -38,6 +46,8 @@ starts the database container
 docker compose up database
 ```
 
+When finished, it will print the message: `database-1  | LOG:  database system is ready to accept connections`. Press `Ctrl+C` to stop before going to the next step. 
+
 ### Setup Backend
 
 In directory dri/dri/settings there are configuration files for each environment.
@@ -57,7 +67,7 @@ Django takes care of this part, there is no need to do anything, the commands ar
 docker compose up backend
 ```
 
-Now that the backend is on, it is necessary to load the initial data and create an admin user.
+Now that the backend is on (it should display a message like this: `backend-1  | spawned uWSGI worker 4 (pid: 56, cores: 2)`), it is necessary to load the initial data and create an admin user. Press `Ctrl+C` to stop before going to the next step.  
 
 ### Create default Super User in django
 
@@ -82,11 +92,11 @@ docker compose run backend python manage.py loaddata initial_data.json
 ```bash
 ssh -f <linea_user>@login.linea.org.br -L <local_port>:desdb4.linea.org.br:5432 -N
 ```
-Neste comando substitua <linea_user> pelo seu usuario de acesso a srvlogin e <local_port> por uma porta disponivel na sua maquina por ex: 3307.
+In this command, replace <linea_user> for your username used to access srvlogin and <local_port> for an available port on your machine, for instance: 3307. 
 
-É necessário sempre executar esse comando antes de ligar o ambiente.
+It is always necessary to execute this command before turning the environment on. 
 
-Neste caso a settings ficaria 
+In this case, the settings would be:  
     'catalog': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'prod_gavo',
@@ -159,7 +169,7 @@ Descobrir o IP do container rabbit
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -q -f name=rabbit)
 ```
 
-Acessar a interface do rabbit, utilizar o user e pass declarado no docker compose, RABBITMQ_DEFAULT_USER e RABBITMQ_DEFAULT_PASS
+Access the rabbit interface, use the user and pass declared in docker compose, RABBITMQ_DEFAULT_USER and RABBITMQ_DEFAULT_PASS
 
 ```bash
 http://<ip_rabbit>:15672
