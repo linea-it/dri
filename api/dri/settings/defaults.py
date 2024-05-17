@@ -295,6 +295,12 @@ if AUTH_SHIB_ENABLED:
 
     SHIB_LOGIN_GOOGLE_URL = None
 
+    # COmanage Autorization
+    COMANAGE_SERVER_URL = os.environ.get("COMANAGE_SERVER_URL", "https://register.linea.org.br")
+    COMANAGE_USER = os.environ["COMANAGE_USER"]
+    COMANAGE_PASSWORD = os.environ["COMANAGE_PASSWORD"]
+
+
 # Email Notification configs
 # Dados de configuração do servidor de email que será usado para envio das notificações.
 EMAIL_HOST = ""

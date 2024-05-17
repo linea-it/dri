@@ -113,6 +113,12 @@ if AUTH_SHIB_ENABLED:
     # SHIB_LOGIN_GOOGLE_URL = "http://localhost/Shibboleth.sso/Login?target=http://localhost/dri/api/shib/?next=/&entityID=https://satosa.linea.gov.br/linea/proxy/aHR0cHM6Ly9hY2NvdW50cy5nb29nbGUuY29t"
     SHIB_LOGIN_GOOGLE_URL = None
     
+# COmanage Autorization
+COMANAGE_SERVER_URL = "https://register.linea.org.br"
+COMANAGE_USER = ""
+COMANAGE_PASSWORD = ""
+COMANAGE_COID = 2
+
 
 # Lista as Variaveis que vao ser exportadas para os templates do Django. https://pypi.python.org/pypi/django-settings-export
 SETTINGS_EXPORT = [
