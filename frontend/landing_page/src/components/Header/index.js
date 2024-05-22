@@ -84,7 +84,7 @@ function Header() {
     return (
       <>
         <Button href={urlLogin} color="inherit">Sign in</Button>
-        <Button href={routeSign} color="inherit">Sign up</Button>
+        <Button href={'https://linea.org.br/servicos/9-registro-de-participantes/'} color="inherit" target="_blank">Sign up</Button>
       </>
     );
   }
