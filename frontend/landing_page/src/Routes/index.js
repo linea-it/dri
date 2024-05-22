@@ -7,8 +7,6 @@ import AboutUs from '../pages/AboutUs';
 import Help from '../pages/Help';
 import Tutorials from '../pages/Tutorials';
 import Contact from '../pages/Contact';
-import OracleEasyAccess from '../pages/OracleEasyAccess';
-import LineaSignUp from '../pages/LineaSignUp';
 import Notfound from '../pages/NotFound';
 
 function Router() {
@@ -21,8 +19,6 @@ function Router() {
         <Route path="/help" component={Help} />
         <Route path="/tutorials" component={Tutorials} />
         <Route path="/contact-us" component={Contact} />
-        <Route path="/oracle-easy-access" component={OracleEasyAccess} />
-        <Route path="/linea-sign-up" component={LineaSignUp} />
         <Route component={Notfound} />
       </Switch>
       <Footer />
