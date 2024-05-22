@@ -22,7 +22,7 @@ function Footer() {
           <Typography color="inherit">
             <span className={classes.poweredBy}>Powered by</span>
             <a
-              href="http://www.linea.gov.br/"
+              href="http://www.linea.org.br/"
               target="blank"
               className={classes.logoLink}
             >
