@@ -308,7 +308,7 @@ class Import():
 
         # Data do produto caso o produto tenha processo a data do produto = data de start do processo
         date = None
-        if self.process is not None:
+        if self.process != None:
             date = self.process.epr_start_date
         else:
             date = datetime.now()
@@ -317,7 +317,7 @@ class Import():
 
         # Verificar se o process id do produto e igual ao proccess id do external_proccess
         # TODO esta etapa deve ser substituida com a implementacao de import inputs ou provenance
-        if self.process is not None and self.process.epr_original_id != str(data.get("process_id")):
+        if self.process != None and self.process.epr_original_id != str(data.get("process_id")):
             self.logger.info("Product associated with Process")
 
             # Se for diferente cria um novo external proccess para ser associado ao producto.
@@ -449,7 +449,7 @@ class Import():
 
         if 'association' in data:
             for p in data.get("association"):
-                if ('property' in p and p.get('property') is not None) and ('ucd' in p and p.get('ucd') is not None):
+                if ('property' in p and p.get('property') != None) and ('ucd' in p and p.get('ucd') != None):
                     meta.append(p)
 
         else:
@@ -502,7 +502,7 @@ class Import():
                     pass
 
                 # Guardar o UCD que foi enviado mesmo que ele nao pertenca a uma classe
-                if p.get('ucd') is not '':
+                if p.get('ucd') != '':
                     pc.pcn_ucd = p.get('ucd')
                     pc.save()
 
@@ -660,7 +660,7 @@ class Import():
         # Data do produto caso o produto tenha processo a data do produto = data de start do processo
         date = None
         process_id = None
-        if self.process is not None:
+        if self.process != None:
             date = self.process.epr_start_date
             process_id = self.process.epr_original_id
 
@@ -669,15 +669,15 @@ class Import():
         internal_name = data.get('name').replace(' ', '_').lower()
         display_name = data.get('display_name')
 
-        if data.get('version', None) is not None:
-            if process_id is not None:
+        if data.get('version', None) != None:
+            if process_id != None:
                 internal_name = internal_name.replace(data.get('version'), process_id)
                 display_name = display_name.replace(data.get('version'), process_id)
             else:
                 internal_name = internal_name.replace('_%s' % data.get('version'), '')
                 display_name = display_name.replace(data.get('version'), '')
 
-        if map_filter is not None:
+        if map_filter != None:
             internal_name += '_%s' % map_filter.filter
             display_name += ' ' + map_filter.filter
 
@@ -890,7 +890,7 @@ class Import():
 
         # Data do produto caso o produto tenha processo a data do produto = data de start do processo
         date = None
-        if self.process is not None:
+        if self.process != None:
             date = self.process.epr_start_date
 
         product, created = Mask.objects.update_or_create(

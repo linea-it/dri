@@ -133,7 +133,7 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
 
         # Recuperar as condicoes a serem aplicadas como filtros
         conditions = list()
-        if filter_id is not None and filter_id is not "":
+        if filter_id != None and filter_id != "":
             queryset = FilterCondition.objects.filter(filterset=int(filter_id))
 
             for row in queryset:

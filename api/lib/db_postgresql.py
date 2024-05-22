@@ -68,7 +68,7 @@ class DBPostgresql:
 
     def get_create_auto_increment_column(self, table, column_name, schema=None):
         table_name = table
-        if schema is not None and schema is not "":
+        if schema != None and schema != "":
             table_name = "%s.%s" % (schema, table)
 
         sql = list()
