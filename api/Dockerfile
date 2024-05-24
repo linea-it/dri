@@ -1,5 +1,5 @@
 # FROM python:3.6.4
-FROM python:3.7.17-slim
+FROM python:3.8.18-slim
 
 # If this is set to a non-empty string, Python won’t try
 # to write .pyc files on the import of source modules

@@ -302,7 +302,7 @@ class DBBase:
             else:
                 op = '__%s__' % op
 
-            if op is not None:
+            if op != None:
                 f.append(getattr(column, op)(value))
             else:
                 f.append(clause)
@@ -311,7 +311,7 @@ class DBBase:
 
     def create_columns_sql_format(self, table, columns):
         t_columns = table
-        if columns is not None:
+        if columns != None:
             t_columns = list()
             for col in columns:
                 t_columns.append(self.get_column_obj(table, col))
@@ -340,7 +340,7 @@ class DBBase:
         """
         tablename = table
 
-        if schema is not None and schema is not "":
+        if schema != None and schema != "":
             tablename = "%s.%s" % (schema, table)
 
         with self.engine.connect() as con:
@@ -351,7 +351,7 @@ class DBBase:
     def create_table_raw_sql(self, table, sql, schema=None, timeout=None):
         table_name = table
 
-        if schema is not None and schema is not "":
+        if schema != None and schema != "":
             table_name = "%s.%s" % (schema, table)
 
         sql_create_table = text('CREATE TABLE %s AS %s' % (table_name, sql))
@@ -430,7 +430,7 @@ class DBBase:
 
     @compiles(DropTable)
     def _drop_table(element, compiler, **kw):
-        _schema = "%s." % element.schema if element.schema is not None and element.schema is not '' else ''
+        _schema = "%s." % element.schema if element.schema != None and element.schema != '' else ''
         return "DROP TABLE %s%s" % (_schema, element.table)
 
     def drop_table(self, table, schema=None):
@@ -459,7 +459,7 @@ class DBBase:
         Use this method to Drop a table in the database.
         """
         table_name = table
-        if schema is not None and schema is not "":
+        if schema != None and schema != "":
             table_name = "%s.%s" % (schema, table)
 
         sequence_name = "%s_seq" % table_name

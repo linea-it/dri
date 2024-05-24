@@ -513,7 +513,7 @@ class ProductContentViewSet(viewsets.ModelViewSet):
             if qdisplay_name is not None:
                 if (
                     content.get("display_name").lower().find(qdisplay_name.lower())
-                    is not -1
+                    != -1
                 ):
                     contents.append(content)
             else:

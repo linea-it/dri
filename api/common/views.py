@@ -114,10 +114,10 @@ def contact_us(request):
                 user_email = None
 
         if (
-            name is not None
-            and user_email is not None
-            and subject is not None
-            and message is not None
+            name != None
+            and user_email != None
+            and subject != None
+            and message != None
         ):
             try:
                 to_email = settings.EMAIL_HELPDESK
@@ -239,7 +239,7 @@ def get_setting(request):
                 "is necessary the name parameter with the identifier of the variable in the settings"
             )
 
-        if name is not None:
+        if name != None:
 
             data = {}
 
@@ -261,7 +261,7 @@ def get_setting(request):
                     dict({"msg": 'this variable "%s" not available' % name}), status=500
                 )
 
-        elif name is None and names is not None:
+        elif name is None and names != None:
             names = names.split(",")
             data = {}
             key = None
@@ -371,7 +371,7 @@ def available_database(request):
         # TODO: é provavel que ao adicionar mais bancos de dados, o target viewer de
         # problema com as tabelas de rating e reject
         for db in settings.DATABASES:
-            if db is not "default" and db in settings.TARGET_VIEWER_DATABASES:
+            if db != "default" and db in settings.TARGET_VIEWER_DATABASES:
                 try:
                     dbs.append(
                         dict(

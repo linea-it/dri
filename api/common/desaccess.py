@@ -1,6 +1,5 @@
 
 import logging
-from tarfile import filemode
 
 import requests
 from django.conf import settings

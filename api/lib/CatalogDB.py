@@ -19,7 +19,7 @@ from lib.sqlalchemy_wrapper import DBBase
 
 class CatalogDB(DBBase):
     def __init__(self, db='catalog'):
-        if db is None or db == "":
+        if db == None or db == "":
             db = 'catalog'
 
         super(CatalogDB, self).__init__(db)
@@ -31,7 +31,7 @@ class CatalogTable(CatalogDB):
 
         # TODO Rever esta parte do Schema.
         self.schema = schema
-        if schema is None or schema is "":
+        if schema == None or schema == "":
             self.schema = None
 
         # columns = lista de instancias SqlAlchemy::Column() com todas as colunas da tabela
@@ -87,13 +87,13 @@ class CatalogTable(CatalogDB):
         # Para esta query mais generica nao permitir filtros por condicoes especias "_meta_*"
         filters = list()
         for condition in self.filters:
-            if condition.get("column").find("_meta_") is -1:
+            if condition.get("column").find("_meta_") == -1:
                 filters.append(condition)
 
         stm = stm.where(and_(*self.do_filter(self.table, filters)))
 
         # Ordenacao
-        if self.ordering is not None:
+        if self.ordering != None:
             asc = True
             property = self.ordering.lower()
 
@@ -165,7 +165,7 @@ class CatalogTable(CatalogDB):
 
     def set_filters(self, filters):
         # Seta os filtros a serem aplicados no create_stm
-        if filters is not None and len(filters) > 0:
+        if filters != None and len(filters) > 0:
 
             for condition in filters:
                 column = condition.get("column").lower().strip()
@@ -174,7 +174,7 @@ class CatalogTable(CatalogDB):
                 if column in self.column_names:
                     self.filters.append(condition)
 
-                elif column.find("_meta_") is not -1:
+                elif column.find("_meta_") != -1:
                     self.filters.append(condition)
 
     def set_url_filters(self, url_filters):
@@ -186,7 +186,7 @@ class CatalogTable(CatalogDB):
 
         conditions = list()
 
-        if url_filters is not None and len(url_filters) > 0:
+        if url_filters != None and len(url_filters) > 0:
 
             square_condition = dict({
                 "lon": None,
@@ -207,7 +207,7 @@ class CatalogTable(CatalogDB):
                 column = param.lower().strip()
                 op = "eq"
 
-                if param.find("__") is not -1:
+                if param.find("__") != -1:
                     column, op = param.split('__')
 
                     # Tratar os operadores
@@ -217,7 +217,7 @@ class CatalogTable(CatalogDB):
                         op = 'le'
 
                 # Se as propriedade esta na lista de colunas ou se e um filtro especial iniciado por _meta_
-                if column in self.column_names or param.find("_meta_") is not -1:
+                if column in self.column_names or param.find("_meta_") != -1:
                     conditions.append(dict({
                         "column": column,
                         "op": op,
@@ -247,8 +247,8 @@ class CatalogTable(CatalogDB):
                     square_condition[column] = url_filters.get(param)
 
             # Verificar se foi criado um filtro por tipo quadrado.
-            if square_condition['lon'] is not None or square_condition['lat'] is not None or square_condition[
-                    'radius'] is not None:
+            if square_condition['lon'] != None or square_condition['lat'] != None or square_condition[
+                    'radius'] != None:
                 # criar as variaveis lowerleft e upperright
 
                 lon = float(square_condition['lon'])
@@ -310,13 +310,13 @@ class CatalogObjectsDBHelper(CatalogTable):
 
         base_filters = and_(*self.do_filter(self.table, filters))
 
-        if coordinates_filter is not None:
+        if coordinates_filter != None:
             stm = stm.where(and_(base_filters, coordinates_filter))
         else:
             stm = stm.where(base_filters)
 
         # Ordenacao
-        if self.ordering is not None:
+        if self.ordering != None:
             asc = True
             property = self.ordering.lower()
 
@@ -357,7 +357,7 @@ class TargetObjectsDBHelper(CatalogTable):
         # Exemplo Dessci e catalog, no Oracle ambas são o mesmo banco de dados.
         self.schema_rating_reject = self.get_connection_schema()
 
-        if database is not 'catalog':
+        if database != 'catalog':
             db_catalog = CatalogDB()
 
             self.schema_rating_reject = db_catalog.get_connection_schema()
@@ -445,7 +445,7 @@ class TargetObjectsDBHelper(CatalogTable):
         base_filters = list()
         coordinate_clauses = and_()
 
-        if filters is not None and len(filters) > 0:
+        if filters != None and len(filters) > 0:
             for condition in filters:
                 if condition.get("column") == 'coordinates':
 
@@ -462,7 +462,7 @@ class TargetObjectsDBHelper(CatalogTable):
         stm_base = stm_base.where(and_(clauses, coordinate_clauses))
 
         # Ordenação
-        if ordering is not None:
+        if ordering != None:
             asc = True
             property = ordering.lower()
 
@@ -536,7 +536,7 @@ class TargetObjectsDBHelper(CatalogTable):
         rating_conditions = list()
         reject_conditions = None
 
-        if filters is not None and len(filters) > 0:
+        if filters != None and len(filters) > 0:
             for condition in filters:
 
                 # Separar o Filtros por rating/reject.
@@ -639,7 +639,7 @@ class TargetObjectsDBHelper(CatalogTable):
         self.log.debug("Total Count: [%s]" % count)
 
         # Ordenação
-        if ordering is not None:
+        if ordering != None:
             asc = True
             property = ordering.lower()
 
@@ -732,19 +732,19 @@ class TargetObjectsDBHelper(CatalogTable):
     def has_special_filter(self, filters):
         # Verifica se algum filtro especial será usado.
         # exemplo: _meta_rating, _meta_reject ou coordinates
-        if filters is not None and len(filters) > 0:
+        if filters != None and len(filters) > 0:
             for condition in filters:
                 # Verificar na lista de filtros se tem algum filtro especial
-                if condition.get("column").find("_meta_") is not -1 or condition.get("column") == 'coordinates':
+                if condition.get("column").find("_meta_") != -1 or condition.get("column") == 'coordinates':
                     return True
 
         return False
 
     def has_special_ordering(self, ordering):
 
-        if ordering is not None:
+        if ordering != None:
             property = ordering.lower()
-            if property.find("_meta_") is not -1:
+            if property.find("_meta_") != -1:
                 return True
 
         return False
