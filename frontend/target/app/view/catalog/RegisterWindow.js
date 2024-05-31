@@ -44,16 +44,19 @@ Ext.define('Target.view.catalog.RegisterWindow', {
                 {
                     xtype: 'tabpanel',
                     items: [
-                        {
-                            xtype: 'targets-catalog-csv-form',
-                            listeners: {
-                                scope: me,
-                                newproduct: function (product) {
-                                    me.fireEvent('newproduct', product);
-                                    me.close();
-                                }
-                            }
-                        },
+                        // Disabled in issue https://github.com/linea-it/dri/issues/1488
+                        // Upload agora será feito por outros meios, o registro será feito
+                        // somente por banco de dados, lib ou api. 
+                        // {
+                        //     xtype: 'targets-catalog-csv-form',
+                        //     listeners: {
+                        //         scope: me,
+                        //         newproduct: function (product) {
+                        //             me.fireEvent('newproduct', product);
+                        //             me.close();
+                        //         }
+                        //     }
+                        // },
                         {
                             xtype: 'targets-catalog-database-form',
                             listeners: {
