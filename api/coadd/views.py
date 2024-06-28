@@ -40,7 +40,7 @@ class ReleaseViewSet(viewsets.ReadOnlyModelViewSet):
         "rls_display_name",
     )
 
-    filter_fields = (
+    filterset_fields = (
         "id",
         "rls_name",
         "rls_display_name",
@@ -72,7 +72,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = TagSerializer
 
-    filter_fields = (
+    filterset_fields = (
         "id",
         "tag_release",
         "tag_name",
@@ -92,7 +92,7 @@ class TileViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = TileSerializer
 
-    filter_fields = (
+    filterset_fields = (
         "id",
         "tli_tilename",
         "tag",
@@ -236,7 +236,7 @@ class DatasetViewSet(viewsets.ReadOnlyModelViewSet):
         filters.SearchFilter,
     )
 
-    filter_class = DatasetFilter
+    filterset_class = DatasetFilter
 
     search_fields = ("tile__tli_tilename",)
 
@@ -446,7 +446,7 @@ class DatasetFootprintViewSet(viewsets.ModelViewSet):
 
     filter_backends = (DjangoFilterBackend,)
 
-    filter_class = DatasetFilter
+    filterset_class = DatasetFilter
 
     ordering_fields = ("id", "tag")
 
@@ -460,7 +460,7 @@ class SurveyViewSet(viewsets.ModelViewSet):
 
     serializer_class = SurveySerializer
 
-    filter_fields = (
+    filterset_fields = (
         "id",
         "srv_release",
         "srv_project",
