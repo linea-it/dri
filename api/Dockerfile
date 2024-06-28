@@ -91,7 +91,9 @@ COPY --chmod=0775 ./start.sh /start.sh
 COPY --chmod=0775 ./start_celery_worker.sh /start_celery_worker.sh
 COPY --chmod=0775 ./start_celery_beat.sh /start_celery_beat.sh
 
+USER $USERNAME
+
 # Install Oh My Zsh
-# RUN sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)" --unattended
+RUN sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)" --unattended
 
 ENTRYPOINT ["/entrypoint.sh"]

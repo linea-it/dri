@@ -41,16 +41,15 @@ class ActivityStatisticsAPITestCase(APITestCase):
         self.assertEqual(response.status_code, 200)
 
         # return new statistics list
-        response = self.client.get('/dri/api/statistics/')
+        response = self.client.get('/dri/api/statistics/1/')
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data), 2)
-        self.assertEqual(response.data[0]['event'], newEvent)
+        self.assertEqual(response.data['event'], newEvent)
 
         # delete statistics
         response = self.client.delete('/dri/api/statistics/1/')
         self.assertEqual(response.status_code, 204)
 
-        # return new statistics list - (return 0 userqueries)
+        # return new statistics list
         response = self.client.get('/dri/api/statistics/')
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.data), 1)
