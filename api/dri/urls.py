@@ -184,5 +184,4 @@ urlpatterns = [
         include("rest_framework.urls", namespace="rest_framework"),
         {"extra_context": {"providers": providers}},
     ),
-    url(r"^dri/api/shib/", include("shibboleth.urls", namespace="shibboleth")),
 ]

@@ -4,12 +4,10 @@ celery==4.4.7
 cx-Oracle==8.1.0
 Django==3.2
 Django==3.2
-django-auth-ldap==4.8.0
 django-celery-results==1.2.1
 django-cors-headers==4.4.0
 django-filter==23.5
 django-settings-export==1.2.1
-django-shibboleth-remoteuser==0.12
 django-url-filter==0.3.15
 djangorestframework==3.15.1
 humanize==3.1.0
