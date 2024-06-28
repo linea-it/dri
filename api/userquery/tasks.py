@@ -1,6 +1,5 @@
 from __future__ import absolute_import, unicode_literals
-from celery import shared_task, task, app
-from celery import chord
+from celery import shared_task
 
 from django.contrib.auth.models import User
 from .models import Table
@@ -11,7 +10,7 @@ from product.export import Export
 
 export = Export()
 
-@task(bind=True)
+@shared_task(bind=True)
 def create_table(self, job_id, user_id, table_name, table_display_name, release_id, release_name, associate_target_viewer, schema=None):
     # instance, not create table in database
     create_table_as = CreateTableAs(
@@ -33,7 +32,7 @@ def create_table(self, job_id, user_id, table_name, table_display_name, release_
     # start teble creation process
     create_table_as.do_all()
 
-@task(name="export_table", bind=True)
+@shared_task(bind=True)
 def export_table(self, table_id, user_id, columns=None, job_id=None):
     """
     Este metodo vai exportar uma tabela para o formato csv
@@ -86,7 +85,7 @@ def export_table(self, table_id, user_id, columns=None, job_id=None):
 
         # export_notify_user_failure(user, product)
 
-@task(name="export_create_zip")
+@shared_task()
 def export_create_zip(self, user_id, product_name, export_dir):
     """
     Cria um arquivo zip com todos os arquivos gerados pelo export.

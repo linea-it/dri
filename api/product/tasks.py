@@ -4,9 +4,9 @@ import os
 import shutil
 from smtplib import SMTPException
 
-from celery import chord, shared_task, task
-from celery.decorators import periodic_task
-from celery.task.schedules import crontab
+from celery import shared_task
+# from celery.decorators import periodic_task
+# from celery.task.schedules import crontab
 from django.conf import settings
 from django.contrib.auth.models import User
 
@@ -24,75 +24,74 @@ export = Export()
 importtargetlistcsv = ImportTargetListCSV()
 
 
-@periodic_task(
-    # Tempo de delay para a task check_jobs em minutos
-    run_every=(crontab(minute='*/%s' % 1)),
-    name="start_des_cutout_job",
-    ignore_result=True
-)
-def start_des_cutout_job():
-    """
-        Recupera todos os Cutoutjob com status start. 
-        instancia a Classe DesCutoutService,
-        executa o methodo start_job_by_id.
-        esse metodo vai enviar o job para o servico do des.
-    """
-    # Para cada job com status Start executa o metodo de submissão
-    for job in CutOutJob.objects.filter(cjb_status="st"):
-        descutout.start_job_by_id(job.pk)
+# @periodic_task(
+#     # Tempo de delay para a task check_jobs em minutos
+#     run_every=(crontab(minute='*/%s' % 1)),
+#     name="start_des_cutout_job",
+#     ignore_result=True
+# )
+# def start_des_cutout_job():
+#     """
+#         Recupera todos os Cutoutjob com status start. 
+#         instancia a Classe DesCutoutService,
+#         executa o methodo start_job_by_id.
+#         esse metodo vai enviar o job para o servico do des.
+#     """
+#     # Para cada job com status Start executa o metodo de submissão
+#     for job in CutOutJob.objects.filter(cjb_status="st"):
+#         descutout.start_job_by_id(job.pk)
 
 
-@periodic_task(
-    # run_every=(crontab(minute='*/1')),
-    # Tempo de delay para a task check_jobs em minutos
-    run_every=(crontab(minute='*/%s' % 1)),
-    # run_every=10.0,
-    name="check_jobs_running",
-    ignore_result=True
-)
-def check_jobs_running():
-    """
-        Recupera todos os cutoutjobs com status Running
-        e verifica no servico DESaccess o status do job
-        e os marca com status
-    """
-    # Pegar todos os CutoutJobs com status running
-    jobs = CutOutJob.objects.filter(cjb_status="rn")
-    # Faz um for para cara job
-    for job in jobs:
-        descutout.check_job_by_id(job.pk)
+# @periodic_task(
+#     # run_every=(crontab(minute='*/1')),
+#     # Tempo de delay para a task check_jobs em minutos
+#     run_every=(crontab(minute='*/%s' % 1)),
+#     # run_every=10.0,
+#     name="check_jobs_running",
+#     ignore_result=True
+# )
+# def check_jobs_running():
+#     """
+#         Recupera todos os cutoutjobs com status Running
+#         e verifica no servico DESaccess o status do job
+#         e os marca com status
+#     """
+#     # Pegar todos os CutoutJobs com status running
+#     jobs = CutOutJob.objects.filter(cjb_status="rn")
+#     # Faz um for para cara job
+#     for job in jobs:
+#         descutout.check_job_by_id(job.pk)
 
 
-@periodic_task(
-    # Tempo de delay para a task check_jobs em minutos
-    run_every=(crontab(minute='*/%s' % 1)),
-    name="download_cutoutjob",
-    ignore_result=True
-)
-def download_cutoutjob():
-    """Recupera todos os cutoutjobs com status before download. 
-    executa o metodo download_by_id. este metodo vai fazer o download dos resultados. 
-    e finalizar o job.
-    """
-    # Para cada job com status Before Download executa o metodo de
-    for job in CutOutJob.objects.filter(cjb_status="bd"):
-        descutout.download_by_id(job.pk)
+# @periodic_task(
+#     # Tempo de delay para a task check_jobs em minutos
+#     run_every=(crontab(minute='*/%s' % 1)),
+#     name="download_cutoutjob",
+#     ignore_result=True
+# )
+# def download_cutoutjob():
+#     """Recupera todos os cutoutjobs com status before download. 
+#     executa o metodo download_by_id. este metodo vai fazer o download dos resultados. 
+#     e finalizar o job.
+#     """
+#     # Para cada job com status Before Download executa o metodo de
+#     for job in CutOutJob.objects.filter(cjb_status="bd"):
+#         descutout.download_by_id(job.pk)
 
+# @shared_task()
+# def purge_cutoutjob_dir(cutoutjob_id):
+#     """Remove um diretório de cutout job do armazenamento local. 
+#     esta task é disparada toda vez que um model CutouJob é deletado. usando signal.
 
-@task(name="purge_cutoutjob_dir")
-def purge_cutoutjob_dir(cutoutjob_id):
-    """Remove um diretório de cutout job do armazenamento local. 
-    esta task é disparada toda vez que um model CutouJob é deletado. usando signal.
-
-    Args:
-        cutoutjob_id (int): CutoutJob model primary key
-    """
-    descutout.purge_cutoutjob_dir(cutoutjob_id)
+#     Args:
+#         cutoutjob_id (int): CutoutJob model primary key
+#     """
+#     descutout.purge_cutoutjob_dir(cutoutjob_id)
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Export Product Tasks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%#
 
-@task(name="export_target_by_filter")
+@shared_task()
 def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cutoutjob_id=None):
     """
     Este metodo vai exportar um produto do tipo Target,
@@ -212,9 +211,7 @@ def export_target_by_filter(product_id, filetypes, user_id, filter_id=None, cuto
 
         # export_notify_user_failure(user, product)
 
-
-@task(name="export_target_to_csv")
-@shared_task
+@shared_task()
 def export_target_to_csv(product_id, database, schema, table, conditions, export_dir, user_id):
     """
         gera o arquivo csv do produto.
@@ -236,8 +233,7 @@ def export_target_to_csv(product_id, database, schema, table, conditions, export
     logger.info("Finished Task target_to_csv")
 
 
-@task(name="export_target_to_fits")
-@shared_task
+@shared_task()
 def export_target_to_fits(product_id, database, schema, table, conditions, export_dir, user_id):
     """
         gera o arquivo fits do produto.
@@ -270,12 +266,11 @@ def export_target_to_fits(product_id, database, schema, table, conditions, expor
     logger.info("Finished Task target_to_fits")
 
 
-@task(name="export_cutoutjob")
-@shared_task
+@shared_task()
 def export_cutoutjob(cutoutjob_id, export_dir):
     """
         Essa task cria um arquivo zip com as imagens de um cutoutjob.
-     """
+    """
     logger = export.logger
 
     logger.info("Starting Task export_cutoutjob")
@@ -293,8 +288,7 @@ def export_cutoutjob(cutoutjob_id, export_dir):
     logger.info("Finished Task export_cutoutjob")
 
 
-@task(name="export_create_zip")
-@shared_task
+@shared_task()
 def export_create_zip(self, user_id, product_name, export_dir):
     """
     Cria um arquivo zip com todos os arquivos gerados pelo export.
@@ -305,8 +299,7 @@ def export_create_zip(self, user_id, product_name, export_dir):
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Product Save As Tasks %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
-@task(name="product_save_as")
-@shared_task
+@shared_task()
 def product_save_as(user_id, product_id, name, filter_id=None, description=None):
     logger = saveas.logger
 
@@ -323,8 +316,7 @@ def product_save_as(user_id, product_id, name, filter_id=None, description=None)
 
 
 # %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Product Import Target List CSV %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% #
-@task(name="import_target_list")
-@shared_task
+@shared_task()
 def import_target_list(user_id, data):
 
     if data.get('mime') == 'csv':
