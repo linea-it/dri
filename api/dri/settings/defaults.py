@@ -12,9 +12,6 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 
 import os
 
-import ldap
-from django_auth_ldap.config import LDAPSearch
-
 # Paths e URLs da aplicação NÃO devem ser altarados!.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -60,7 +57,6 @@ THIRD_PARTY_APPS = [
     "django_filters",
     "url_filter",
     "django_celery_results",
-    "shibboleth",
 ]
 
 PROJECT_APPS = [
@@ -73,7 +69,6 @@ PROJECT_APPS = [
     "validation",
     "catalog",
     "interfaces",
-    "userquery",
     "aladin",
     "activity_statistic",
 ]
@@ -87,8 +82,6 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    # 'shibboleth.middleware.ShibbolethRemoteUserMiddleware',
-    "common.shibboleth.ShibbolethMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "current_user.CurrentUserMiddleware",
@@ -118,6 +111,8 @@ WSGI_APPLICATION = "dri.wsgi.application"
 DATABASE_ROUTERS = ["catalog.router.CatalogRouter"]
 
 APPEND_SLASH = False
+
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Password validation
 # https://docs.djangoproject.com/en/1.9/ref/settings/#auth-password-validators
@@ -258,49 +253,6 @@ NCSA_AUTHENTICATION_USERS_TABLE = "None"
 # Default None, para NCSA public usar 'https://des.ncsa.illinois.edu/easyweb/signup/'
 NCSA_SIGNUP_LINK = None
 
-# LDAP Authentication
-# Responsible for turn on and off the LDAP authentication:
-AUTH_LDAP_ENABLED = False
-if AUTH_LDAP_ENABLED:
-    # The address of the LDAP server:
-    AUTH_LDAP_SERVER_URI = "ldap://HOST:PORT"
-    # The password of the LDAP server (leave empty if anonymous requests are available):
-    AUTH_LDAP_BIND_PASSWORD = ""
-    # The distinguishable name, used to identify entries:
-    AUTH_LDAP_BIND_DN = "cn=admin,dc=example,dc=com"
-    # The distinguishable name for searching users, used to identify entries:
-    AUTH_LDAP_USER_SEARCH_DN = "ou=people,dc=example,dc=com"
-    AUTH_LDAP_USER_SEARCH = LDAPSearch(
-        AUTH_LDAP_USER_SEARCH_DN, ldap.SCOPE_SUBTREE, "(uid=%(user)s)"
-    )
-
-    # Including LDAP authentication:
-    AUTHENTICATION_BACKENDS += ("django_auth_ldap.backend.LDAPBackend",)
-
-# Shibboleth Authentication
-AUTH_SHIB_ENABLED = False
-SHIB_LOGIN_GOOGLE_URL = None
-if AUTH_SHIB_ENABLED:
-
-    # https://github.com/Brown-University-Library/django-shibboleth-remoteuser
-    SHIBBOLETH_ATTRIBUTE_MAP = {
-        "eppn": (True, "username"),
-        "cn": (True, "first_name"),
-        "sn": (True, "last_name"),
-        "mail": (True, "email"),
-    }
-
-    # Including Shibboleth authentication:
-    AUTHENTICATION_BACKENDS += ("shibboleth.backends.ShibbolethRemoteUserBackend",)
-
-    SHIB_LOGIN_GOOGLE_URL = None
-
-    # COmanage Autorization
-    COMANAGE_SERVER_URL = os.environ.get("COMANAGE_SERVER_URL", "https://register.linea.org.br")
-    COMANAGE_USER = os.environ["COMANAGE_USER"]
-    COMANAGE_PASSWORD = os.environ["COMANAGE_PASSWORD"]
-
-
 # Email Notification configs
 # Dados de configuração do servidor de email que será usado para envio das notificações.
 EMAIL_HOST = ""
@@ -336,11 +288,7 @@ PRODUCT_REGISTER_ENABLE_PUBLIC = False
 # nesse caso o usuario só conhece o dessci
 # este campo deveria ser preenchido com o valor dessci.
 TARGET_VIEWER_DATABASES = []
-# USER_QUERY:
-# Tempo de execucao de um job no User query.
-USER_QUERY_EXECUTION_TIMEOUT = 300
-# Limite de linhas de uma query
-USER_QUERY_MAX_ROWS = 100000
+
 # TILE VIEWER/TILE INSPECTION (antigo eyeballing):
 # Esta config muda o comportamento da ferramenta Tile Viewer.
 # Quando Ligada habilita as funcionalidades de validação e inspeção das tiles
@@ -383,6 +331,21 @@ PRODUCT_EXPIRATION_TIME = None
 # Plugin Galaxy Cluster para o Explorer #TODO: Este plugin não existe mais!!!.
 # Url para acessar o container com o plugin do galaxy cluster
 PLUGIN_GALAXY_CLUSTER_HOST = "http://localhost:8000"
+
+# COmanage Autorization
+COMANAGE_SERVER_URL = os.environ.get("COMANAGE_SERVER_URL", "https://register.linea.org.br")
+COMANAGE_USER = os.environ.get("COMANAGE_USER")
+COMANAGE_PASSWORD = os.environ.get("COMANAGE_PASSWORD")
+COMANAGE_COID = os.environ.get("COMANAGE_COID", 2)
+
+# DJANGO SAML2 Authentication
+AUTH_SAML2_ENABLED = os.environ.get("AUTH_SAML2_ENABLED", False)
+AUTH_SAML2_LOGIN_URL_CAFE = None
+AUTH_SAML2_LOGIN_URL_CILOGON = None
+
+if AUTH_SAML2_ENABLED == True:
+    pass
+
 
 # Logs
 LOGGING = {

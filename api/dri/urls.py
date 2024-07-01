@@ -30,8 +30,6 @@ from product_register import views as product_register_views
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 from validation import views as validation_views
-from userquery import views as userquery_views
-
 
 router = routers.DefaultRouter()
 
@@ -73,17 +71,17 @@ router.register(r"cutouts", product_views.CutoutViewSet)
 router.register(r"mask", product_views.MaskViewSet)
 router.register(r"productrelated", product_views.ProductRelatedViewSet)
 router.register(r"productcontent", product_views.ProductContentViewSet)
-router.register(r"productassociation", product_views.ProductContentAssociationViewSet)
-router.register(r"association", product_views.ProductAssociationViewSet)
+router.register(r"productassociation", product_views.ProductContentAssociationViewSet, basename="product_content_association")
+router.register(r"association", product_views.ProductAssociationViewSet, basename="product_association")
 router.register(r"AllProducts", product_views.AllProductViewSet, basename="allproducts")
 router.register(r"productsetting", product_views.ProductSettingViewSet)
 router.register(r"currentsetting", product_views.CurrentSettingViewSet)
 router.register(r"contentsetting", product_views.ProductContentSettingViewSet)
-router.register(r"product_permission_user", product_views.PermissionUserViewSet)
+router.register(r"product_permission_user", product_views.PermissionUserViewSet, basename="product_permission_user")
 router.register(
-    r"product_permission_workgroup_user", product_views.PermissionWorkgroupUserViewSet
+    r"product_permission_workgroup_user", product_views.PermissionWorkgroupUserViewSet, basename="product_permission_workgroup"
 )
-router.register(r"product_permission", product_views.PermissionViewSet)
+router.register(r"product_permission", product_views.PermissionViewSet, basename="product_permission")
 router.register(r"workgroup", product_views.WorkgroupViewSet)
 router.register(r"workgroup_users", product_views.WorkgroupUserViewSet)
 router.register(r"filterset", product_views.FiltersetViewSet)
@@ -131,30 +129,7 @@ router.register(
 
 # Comment API
 router.register(r"comment/position", comment_views.PositionViewSet)
-router.register(r"comment/dataset", comment_views.CommentDatasetViewSet)
-
-# UserQuery API
-router.register(r"userquery_query", userquery_views.QueryViewSet)
-router.register(r"userquery_sample", userquery_views.SampleViewSet)
-router.register(r"userquery_job", userquery_views.JobViewSet)
-router.register(r"userquery_table", userquery_views.TableViewSet)
-router.register(
-    r"userquery_validate", userquery_views.QueryValidate, basename="validate_query"
-)
-router.register(
-    r"userquery_preview", userquery_views.QueryPreview, basename="preview_query"
-)
-router.register(
-    r"userquery_property", userquery_views.TableProperties, basename="table"
-)
-router.register(
-    r"userquery_target",
-    userquery_views.TargetViewerRegister,
-    basename="target_viewer_register",
-)
-router.register(
-    r"userquery_download", userquery_views.TableDownload, basename="table_download"
-)
+router.register(r"comment/dataset", comment_views.CommentDatasetViewSet, basename="dataset_comment")
 
 # Aladin API
 router.register(r"aladin/image", aladin_views.ImageViewSet)
@@ -184,5 +159,4 @@ urlpatterns = [
         include("rest_framework.urls", namespace="rest_framework"),
         {"extra_context": {"providers": providers}},
     ),
-    url(r"^dri/api/shib/", include("shibboleth.urls", namespace="shibboleth")),
 ]

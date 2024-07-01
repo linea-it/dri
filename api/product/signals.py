@@ -1,18 +1,7 @@
 from django.db.models.signals import post_save, post_delete, pre_delete
 from django.dispatch import receiver
 from product.models import CutOutJob, Product
-from product.tasks import purge_cutoutjob_dir
 from lib.sqlalchemy_wrapper import DBBase
-
-
-@receiver(post_delete, sender=CutOutJob)
-def purge_cutout_job_dir(sender, instance, using, **kwargs):
-    """
-    Toda Vez que um CutoutJob for deletado deve remover o diretorio com as imagens
-
-    """
-    purge_cutoutjob_dir.delay(instance.pk)
-
 
 @receiver(pre_delete, sender=Product)
 def drop_product_table(sender, instance, using, **kwargs):

@@ -49,7 +49,7 @@ class PositionViewSet(viewsets.ModelViewSet):
 
     serializer_class = PositionSerializer
     filter_backends = (DjangoFilterBackend,)
-    filter_class = PositionFilter
+    filterset_class = PositionFilter
 
     def perform_create(self, serializer):
         # Adiconar usuario logado
@@ -80,7 +80,7 @@ class CommentDatasetViewSet(viewsets.ModelViewSet):
 
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
 
-    filter_class = CommentDatasetFilter
+    filterset_class = CommentDatasetFilter
 
     ordering_fields = ('dts_date', 'dts_dataset__tile__tli_tilename', 'dts_dataset__inspected__isp_value', 'owner__username', 'dts_comment')
 

@@ -1,5 +1,11 @@
-# FROM python:3.6.4
-FROM python:3.8.18-slim
+ARG BUILD_ENVIRONMENT=local
+
+FROM python:3.9-slim as base
+
+ARG BUILD_ENVIRONMENT
+ARG USERNAME=dri
+ARG USER_UID=1000
+ARG USER_GID=1000
 
 # If this is set to a non-empty string, Python won’t try
 # to write .pyc files on the import of source modules
@@ -14,8 +20,18 @@ ENV PYTHONUNBUFFERED=1
 # RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://archive.debian.org/debian/ jessie main\ndeb http://security.debian.org jessie/updates main\ndeb-src http://security.debian.org jessie/updates main" > /etc/apt/sources.list
 
 RUN apt-get update && apt-get install -y  \
-    python3-dev build-essential libaio-dev \
-    libsasl2-dev libldap2-dev libssl-dev unzip 
+    build-essential \
+    python3-dev \ 
+    python3-setuptools \
+    libaio-dev \
+    libsasl2-dev \
+    libldap2-dev \
+    libssl-dev \
+    unzip \
+    git \
+    zsh \
+    wget \
+    vim
 
 # Install Oracle Client
 ADD /oracle /tmp/oracle
@@ -32,21 +48,31 @@ RUN mkdir /oracle \
     && export OCI_INCLUDE_DIR=/oracle/instantclient/sdk/include \
     && rm -rf /tmp/oracle
 
-# ENV ORACLE_HOME=/oracle/instantclient
-# ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_HOME
-# ENV OCI_HOME=/oracle/instantclient
-# ENV OCI_LIB_DIR=/oracle/instantclient
-# ENV OCI_INCLUDE_DIR=/oracle/instantclient/sdk/include
-
-
 # Install python packages
-COPY requirements.txt /tmp/pip-tmp/
-RUN pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
+COPY ./requirements /tmp/pip-tmp/
+RUN pip install --upgrade pip setuptools wheel \
+    && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/$BUILD_ENVIRONMENT.txt \
     && rm -rf /tmp/pip-tmp
 
-ARG USERNAME=dri
-ARG USER_UID=1000
-ARG USER_GID=$USER_UID
+FROM base as dri-local
+# Install Github CLI
+# https://github.com/cli/cli/blob/trunk/docs/install_linux.md
+RUN mkdir -p -m 755 /etc/apt/keyrings && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+    && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+    && apt update \
+    && apt install gh -y
+
+# Install ACT
+# https://lindevs.com/install-act-on-ubuntu
+RUN wget -qO act.tar.gz https://github.com/nektos/act/releases/latest/download/act_Linux_x86_64.tar.gz \
+    && tar xf act.tar.gz -C /usr/local/bin act \
+    && act --version \
+    && rm -rf act.tar.gz
+
+FROM base as dri-production
+
+FROM dri-$BUILD_ENVIRONMENT
 
 # add user so we can run things as non-root
 # https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user
@@ -56,8 +82,6 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && chown -R $USER_UID:$USER_GID /app /app/django_static /archive /archive/tmp /log /log/backend /log/nginx \
     && export PYTHONPATH=/app:$PYTHONPATH
 
-# ENV PYTHONPATH="/app:$PYTHONPATH"
-
 WORKDIR /app
 
 ADD . /app
@@ -66,5 +90,10 @@ COPY --chmod=0775 ./entrypoint.sh /entrypoint.sh
 COPY --chmod=0775 ./start.sh /start.sh
 COPY --chmod=0775 ./start_celery_worker.sh /start_celery_worker.sh
 COPY --chmod=0775 ./start_celery_beat.sh /start_celery_beat.sh
+
+USER $USERNAME
+
+# Install Oh My Zsh
+RUN sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)" --unattended
 
 ENTRYPOINT ["/entrypoint.sh"]
