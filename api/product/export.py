@@ -4,21 +4,18 @@ import os
 import shutil
 import time
 import zipfile
-from smtplib import SMTPException
 from urllib.parse import urljoin
 from django.contrib.auth.models import User
 import humanize
 from astropy.table import Table as asTable
 from django.conf import settings
 from django.contrib.auth.models import User
-from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from lib.CatalogDB import TargetObjectsDBHelper, CatalogTable
 from product.association import Association
 from common.notify import Notify
 from .models import Product
 
-from userquery.models import Table
 
 
 class Export:

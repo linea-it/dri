@@ -69,7 +69,6 @@ PROJECT_APPS = [
     "validation",
     "catalog",
     "interfaces",
-    "userquery",
     "aladin",
     "activity_statistic",
 ]
@@ -289,11 +288,7 @@ PRODUCT_REGISTER_ENABLE_PUBLIC = False
 # nesse caso o usuario só conhece o dessci
 # este campo deveria ser preenchido com o valor dessci.
 TARGET_VIEWER_DATABASES = []
-# USER_QUERY:
-# Tempo de execucao de um job no User query.
-USER_QUERY_EXECUTION_TIMEOUT = 300
-# Limite de linhas de uma query
-USER_QUERY_MAX_ROWS = 100000
+
 # TILE VIEWER/TILE INSPECTION (antigo eyeballing):
 # Esta config muda o comportamento da ferramenta Tile Viewer.
 # Quando Ligada habilita as funcionalidades de validação e inspeção das tiles

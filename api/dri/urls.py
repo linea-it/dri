@@ -30,8 +30,6 @@ from product_register import views as product_register_views
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 from validation import views as validation_views
-from userquery import views as userquery_views
-
 
 router = routers.DefaultRouter()
 
@@ -132,29 +130,6 @@ router.register(
 # Comment API
 router.register(r"comment/position", comment_views.PositionViewSet)
 router.register(r"comment/dataset", comment_views.CommentDatasetViewSet, basename="dataset_comment")
-
-# UserQuery API
-router.register(r"userquery_query", userquery_views.QueryViewSet, basename="userquery_query")
-router.register(r"userquery_sample", userquery_views.SampleViewSet, basename="userquery_sample_query")
-router.register(r"userquery_job", userquery_views.JobViewSet, basename="userquery_job")
-router.register(r"userquery_table", userquery_views.TableViewSet, basename="userquery_table")
-router.register(
-    r"userquery_validate", userquery_views.QueryValidate, basename="userquery_validate_query"
-)
-router.register(
-    r"userquery_preview", userquery_views.QueryPreview, basename="userquery_preview_query"
-)
-router.register(
-    r"userquery_property", userquery_views.TableProperties, basename="userquery_table_properties"
-)
-router.register(
-    r"userquery_target",
-    userquery_views.TargetViewerRegister,
-    basename="userquery_target_viewer_register",
-)
-router.register(
-    r"userquery_download", userquery_views.TableDownload, basename="userquery_table_download"
-)
 
 # Aladin API
 router.register(r"aladin/image", aladin_views.ImageViewSet)
