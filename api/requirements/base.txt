@@ -1,5 +1,5 @@
 amqp==5.1.1
-astropy==5.1.1
+astropy==5.3.3
 celery==5.2.7
 cx-Oracle==8.1.0
 Django==3.2.25
