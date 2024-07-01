@@ -2,7 +2,7 @@ amqp==5.1.1
 astropy==5.1.1
 celery==5.2.7
 cx-Oracle==8.1.0
-Django==3.2.18
+Django==3.2.25
 django-celery-results==2.5.1
 django-cors-headers==4.4.0
 django-filter==23.5
