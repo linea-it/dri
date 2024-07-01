@@ -11,11 +11,18 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
+import environ
+import saml2
+import saml2.saml
 
 # Paths e URLs da aplicação NÃO devem ser altarados!.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+env = environ.Env()
+env.read_env(str(os.path.join(BASE_DIR, ".env")))
+
 # Diretorio de intalacao do projeto dentro do container.
 BASE_PROJECT = "/app"
 
@@ -30,10 +37,8 @@ DATA_SOURCE = "/data"
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "n25!pd%vs_s_@9^8=cudeuvc1&tfw0er+u#rhn(ex9t4@ml728"
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-LOG_LEVEL = "DEBUG"
+DEBUG = env.bool("DEBUG", False)
 
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_CREDENTIALS = True
@@ -181,9 +186,7 @@ CELERY = {
     "CELERY_IMPORTS": (
         "product.tasks",
         "common.tasks",
-        "common.tasks",
         "activity_statistic.tasks",
-        "userquery.tasks",
     ),
     "CELERY_RESULT_BACKEND": "django-db",
     "CELERY_TASK_SERIALIZER": "json",
@@ -282,6 +285,7 @@ PRODUCT_REGISTER_DB_INTERFACE = True
 PRODUCT_REGISTER_FOLDERS = True
 # Habilita ou Desabilita a opção de registrar um produto como publico, pela interface.
 PRODUCT_REGISTER_ENABLE_PUBLIC = False
+
 # Target Viewer Rating, Reject Schema Feature
 # Lista de databases que o Target viewer pode acessar, deve ser o mesmo onde as tabelas rating e reject foram criada.
 # As vezes é necessário ter o mesmo banco de dados com 2 configurações, como acontece com o catalog e dessci no NCSA.
@@ -338,191 +342,150 @@ COMANAGE_USER = os.environ.get("COMANAGE_USER")
 COMANAGE_PASSWORD = os.environ.get("COMANAGE_PASSWORD")
 COMANAGE_COID = os.environ.get("COMANAGE_COID", 2)
 
-# DJANGO SAML2 Authentication
-AUTH_SAML2_ENABLED = os.environ.get("AUTH_SAML2_ENABLED", False)
+AUTH_SAML2_ENABLED = env.bool("AUTH_SAML2_ENABLED", False)
 AUTH_SAML2_LOGIN_URL_CAFE = None
 AUTH_SAML2_LOGIN_URL_CILOGON = None
 
 if AUTH_SAML2_ENABLED == True:
-    pass
+
+    # DOMAIN Exemplo: scienceserver-dev.linea.org.br
+    # declarado no local_vars.py
+    # DOMAIN = env.get("DOMAIN")
+
+    # FQDN Exemplo:https://scienceserver-dev.linea.org.br
+    FQDN = BASE_HOST
+
+    # FQDN = "https://" + DOMAIN
+    CERT_DIR = "certificates"
+
+    # Including SAML2 Backend Authentication
+    # AUTHENTICATION_BACKENDS += ("djangosaml2.backends.Saml2Backend", )
+    # Custom Saml2 Backend for LIneA
+    AUTHENTICATION_BACKENDS += ("linea.saml2.LineaSaml2Backend",)
+    # Including SAML2 Middleware
+    MIDDLEWARE += ("djangosaml2.middleware.SamlSessionMiddleware",)
+
+    # configurações relativas ao session cookie
+    SAML_SESSION_COOKIE_NAME = "saml_session"
+    SESSION_COOKIE_SECURE = True
+
+    # Qualquer view que requer um usuário autenticado deve redirecionar o navegador para esta url
+    # LOGIN_URL = "/saml2/login/"
+    LOGIN_URL = "/login/"
+    AUTH_SAML2_LOGIN_URL_CAFE = os.environ.get("AUTH_SAML2_LOGIN_URL_CAFE")
+    AUTH_SAML2_LOGIN_URL_CILOGON = os.environ.get("AUTH_SAML2_LOGIN_URL_CILOGON")
+
+    # Encerra a sessão quando o usuário fecha o navegador
+    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+    # Tipo de binding utilizado
+    SAML_DEFAULT_BINDING = saml2.BINDING_HTTP_POST
+    SAML_IGNORE_LOGOUT_ERRORS = True
+
+    # Serviço de descoberta da cafeexpresso
+    # SAML2_DISCO_URL = 'https://ds.cafeexpresso.rnp.br/WAYF.php'
+
+    # Cria usuário Django a partir da asserção SAML caso o mesmo não exista
+    SAML_CREATE_UNKNOWN_USER = True
+
+    # https://djangosaml2.readthedocs.io/contents/security.html#content-security-policy
+    SAML_CSP_HANDLER = ""
+
+    # URL para redirecionamento após a autenticação
+    LOGIN_REDIRECT_URL = "/"
+
+    SAML_ATTRIBUTE_MAPPING = {
+        "eduPersonPrincipalName": ("username",),
+        "givenName": ("first_name",),
+        "sn": ("last_name",),
+        "email": ("email",),
+    }
+
+    SAML_CONFIG = {
+        # Biblioteca usada para assinatura e criptografia
+        "xmlsec_binary": "/usr/bin/xmlsec1",
+        "entityid": FQDN + "/saml2/metadata/",
+        # Diretório contendo os esquemas de mapeamento de atributo
+        "attribute_map_dir": os.path.join(BASE_DIR, "attribute-maps"),
+        "description": "SP User Query",
+        "service": {
+            "sp": {
+                "name": "SP User Query",
+                "ui_info": {
+                    "display_name": {"text": "SP User Query", "lang": "en"},
+                    "description": {"text": "SP User Query", "lang": "en"},
+                    "information_url": {"text": FQDN, "lang": "en"},
+                    "privacy_statement_url": {"text": FQDN, "lang": "en"},
+                },
+                "name_id_format": [
+                    "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent",
+                    "urn:oasis:names:tc:SAML:2.0:nameid-format:transient",
+                ],
+                # Indica os endpoints dos serviços fornecidos
+                "endpoints": {
+                    "assertion_consumer_service": [
+                        (FQDN + "/saml2/acs/", saml2.BINDING_HTTP_POST),
+                    ],
+                    "single_logout_service": [
+                        (FQDN + "/saml2/ls/", saml2.BINDING_HTTP_REDIRECT),
+                        (FQDN + "/saml2/ls/post", saml2.BINDING_HTTP_POST),
+                    ],
+                },
+                # Algoritmos utilizados
+                #'signing_algorithm':  saml2.xmldsig.SIG_RSA_SHA256,
+                #'digest_algorithm':  saml2.xmldsig.DIGEST_SHA256,
+                "force_authn": False,
+                "name_id_format_allow_create": False,
+                # Indica que as respostas de autenticação para este SP devem ser assinadas
+                "want_response_signed": True,
+                # Indica se as solicitações de autenticação enviadas por este SP devem ser assinadas
+                "authn_requests_signed": True,
+                # Indica se este SP deseja que o IdP envie as asserções assinadas
+                "want_assertions_signed": False,
+                "only_use_keys_in_metadata": True,
+                "allow_unsolicited": False,
+            },
+        },
+        # Indica onde os metadados podem ser encontrados
+        "metadata": {
+            "local": [
+                os.path.join(BASE_DIR, "metadatas", "satosa-prod-cafe.xml"),
+                os.path.join(BASE_DIR, "metadatas", "satosa-prod-cilogon.xml"),
+            ],
+        },
+        # Configurado como 1 para fornecer informações de debug
+        "debug": 1,
+        # Signature
+        "key_file": os.path.join(BASE_DIR, CERT_DIR, "mykey.pem"),  # private part
+        "cert_file": os.path.join(BASE_DIR, CERT_DIR, "mycert.pem"),  # public part
+        # Encriptation
+        "encryption_keypairs": [
+            {
+                "key_file": os.path.join(
+                    BASE_DIR, CERT_DIR, "mykey.pem"
+                ),  # private part
+                "cert_file": os.path.join(
+                    BASE_DIR, CERT_DIR, "mycert.pem"
+                ),  # public part
+            }
+        ],
+        "contact_person": [
+            {
+                "given_name": "GIdLab",
+                "sur_name": "Equipe",
+                "company": "RNP",
+                "email_address": "gidlab@rnp.br",
+                "contact_type": "technical",
+            },
+        ],
+        # Descreve a organização responsável pelo serviço
+        "organization": {
+            "name": [("GIdLab", "pt-br")],
+            "display_name": [("GIdLab", "pt-br")],
+            "url": [("http://gidlab.rnp.br", "pt-br")],
+        },
+    }
 
 
-# Logs
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": True,
-    "formatters": {
-        "standard": {"format": "%(asctime)s [%(levelname)s] %(message)s"},
-    },
-    "handlers": {
-        "default": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join("/log", "django.log"),
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "formatter": "standard",
-        },
-        "db_handler": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": os.path.join("/log", "django_db.log"),
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "formatter": "standard",
-        },
-        # DRI APPS Logs
-        "catalog_db": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "filename": os.path.join("/log", "catalog_db.log"),
-            "formatter": "standard",
-        },
-        "descutoutservice": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "filename": os.path.join("/log", "cutout.log"),
-            "formatter": "standard",
-        },
-        "downloads": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "filename": os.path.join("/log", "downloads.log"),
-            "formatter": "standard",
-        },
-        "import_process": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "filename": os.path.join("/log", "import_process.log"),
-            "formatter": "standard",
-        },
-        "product_export": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "filename": os.path.join("/log", "product_export.log"),
-            "formatter": "standard",
-        },
-        "import_target_csv": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "filename": os.path.join("/log", "import_target_csv.log"),
-            "formatter": "standard",
-        },
-        "product_saveas": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "filename": os.path.join("/log", "product_saveas.log"),
-            "formatter": "standard",
-        },
-        "ncsa_authentication": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "filename": os.path.join("/log", "ncsa_authentication.log"),
-            "formatter": "standard",
-        },
-        "garbage_colector": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "filename": os.path.join("/log", "garbage_colector.log"),
-            "formatter": "standard",
-        },
-        "userquery": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "filename": os.path.join("/log", "userquery.log"),
-            "formatter": "standard",
-        },
-        "send_email": {
-            "level": LOG_LEVEL,
-            "class": "logging.handlers.RotatingFileHandler",
-            "maxBytes": 1024 * 1024 * 5,  # 5 MB
-            "backupCount": 5,
-            "filename": os.path.join("/log", "send_email.log"),
-            "formatter": "standard",
-        },
-    },
-    "loggers": {
-        "django": {"handlers": ["default"], "level": LOG_LEVEL, "propagate": True},
-        "django.db.backends": {
-            "handlers": ["db_handler"],
-            "level": LOG_LEVEL,
-            "propagate": False,
-        },
-        # DRI APPS Logs
-        "catalog_db": {
-            "handlers": ["catalog_db"],
-            "level": LOG_LEVEL,
-            "propagate": True,
-        },
-        "descutoutservice": {
-            "handlers": ["descutoutservice"],
-            "level": LOG_LEVEL,
-            "propagate": True,
-        },
-        "downloads": {
-            "handlers": ["downloads"],
-            "level": LOG_LEVEL,
-            "propagate": True,
-        },
-        "import_process": {
-            "handlers": ["import_process"],
-            "level": LOG_LEVEL,
-            "propagate": True,
-        },
-        "product_export": {
-            "handlers": ["product_export"],
-            "level": LOG_LEVEL,
-            "propagate": True,
-        },
-        "import_target_csv": {
-            "handlers": ["import_target_csv"],
-            "level": LOG_LEVEL,
-            "propagate": True,
-        },
-        "product_saveas": {
-            "handlers": ["product_saveas"],
-            "level": LOG_LEVEL,
-            "propagate": True,
-        },
-        "ncsa_authentication": {
-            "handlers": ["ncsa_authentication"],
-            "level": LOG_LEVEL,
-            "propagate": True,
-        },
-        "garbage_colector": {
-            "handlers": ["garbage_colector"],
-            "level": LOG_LEVEL,
-            "propagate": True,
-        },
-        "userquery": {
-            "handlers": ["userquery"],
-            "level": LOG_LEVEL,
-            "propagate": True,
-        },
-        "send_email": {
-            "handlers": ["send_email"],
-            "level": "DEBUG",
-            "propagate": True,
-        },
-    },
-}
+
+
