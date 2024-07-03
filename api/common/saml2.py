@@ -8,7 +8,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.models import Group
 from django.core.exceptions import ImproperlyConfigured, MultipleObjectsReturned
 from djangosaml2.backends import Saml2Backend
-from linea.comanage import Comanage
+from common.comanage import Comanage
 
 logger = logging.getLogger("djangosaml2")
 

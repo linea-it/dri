@@ -20,7 +20,8 @@ from coadd import views as coadd_views
 from comment import views as comment_views
 from common import views as common_views
 from django.conf import settings
-from django.conf.urls import url, include
+from django.conf.urls import url, include 
+from django.urls import path
 from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
 from interfaces import views as interfaces_views
@@ -30,6 +31,8 @@ from product_register import views as product_register_views
 from rest_framework import routers
 from rest_framework.authtoken.views import obtain_auth_token
 from validation import views as validation_views
+
+
 
 router = routers.DefaultRouter()
 
@@ -159,4 +162,6 @@ urlpatterns = [
         include("rest_framework.urls", namespace="rest_framework"),
         {"extra_context": {"providers": providers}},
     ),
+    # Auth SAML2
+    path("saml2/", include("djangosaml2.urls")),
 ]

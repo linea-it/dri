@@ -24,11 +24,6 @@ WORKDIR /code/explorer
 RUN /opt/Sencha/sencha app build production
 RUN cp -r /code/packages/local/visiomatic/src/visiomatic/dist /code/build/production/Explorer/packages/local/visiomatic/src/visiomatic/
 
-# # Build Userquery
-# COPY ./userquery /code/userquery
-# WORKDIR /code/userquery
-# RUN /opt/Sencha/sencha app build production
-
 # Build ReactJS Apps
 FROM node:10-alpine as eyeballing
 WORKDIR /app

@@ -9,7 +9,7 @@ Inside project folder dri:
 ```bash
 git clone https://github.com/linea-it/dri.git dri \
 && cd dri \
-&& mkdir archive log log/backend log/nginx \
+&& mkdir archive log log/backend log/nginx log/iipserver \
 && cp docker-compose-development.yml docker-compose.yml
 ```
 

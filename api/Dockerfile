@@ -27,6 +27,7 @@ RUN apt-get update && apt-get install -y  \
     libsasl2-dev \
     libldap2-dev \
     libssl-dev \
+    xmlsec1 \
     unzip \
     git \
     zsh \
@@ -78,18 +79,21 @@ FROM dri-$BUILD_ENVIRONMENT
 # https://code.visualstudio.com/remote/advancedcontainers/add-nonroot-user
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
+    && useradd --uid 50017 --gid $USER_GID -m app.deployer \
     && mkdir /app /app/django_static /archive /archive/tmp /log /log/backend /log/nginx \
     && chown -R $USER_UID:$USER_GID /app /app/django_static /archive /archive/tmp /log /log/backend /log/nginx \
+    && chmod -R 755 /app \
     && export PYTHONPATH=/app:$PYTHONPATH
 
 WORKDIR /app
 
-ADD . /app
+COPY . /app
 
 COPY --chmod=0775 ./entrypoint.sh /entrypoint.sh
 COPY --chmod=0775 ./start.sh /start.sh
 COPY --chmod=0775 ./start_celery_worker.sh /start_celery_worker.sh
 COPY --chmod=0775 ./start_celery_beat.sh /start_celery_beat.sh
+
 
 USER $USERNAME
 

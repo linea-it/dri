@@ -11,17 +11,19 @@ https://docs.djangoproject.com/en/1.9/ref/settings/
 """
 
 import os
-import environ
 import saml2
 import saml2.saml
+import environ
 
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False),
+    AUTH_SAML2_ENABLED=(bool, False)
+)
 # Paths e URLs da aplicação NÃO devem ser altarados!.
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
-env = environ.Env()
-env.read_env(str(os.path.join(BASE_DIR, ".env")))
 
 # Diretorio de intalacao do projeto dentro do container.
 BASE_PROJECT = "/app"
@@ -38,7 +40,7 @@ DATA_SOURCE = "/data"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "n25!pd%vs_s_@9^8=cudeuvc1&tfw0er+u#rhn(ex9t4@ml728"
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env.bool("DEBUG", False)
+DEBUG = env("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_CREDENTIALS = True
@@ -194,13 +196,6 @@ CELERY = {
     "CELERY_ACCEPT_CONTENT": ["json"],
 }
 
-# Lista as Variaveis que vao ser exportadas para os templates do Django. https://pypi.python.org/pypi/django-settings-export
-SETTINGS_EXPORT = [
-    "NCSA_SIGNUP_LINK",
-    "AUTH_SHIB_ENABLED",
-    "SHIB_LOGIN_GOOGLE_URL",
-]
-
 # Variaveis a seguir Devem ser sobreescritas pelo local_vars.py
 
 # Identification of the environment
@@ -208,7 +203,8 @@ ENVIRONMENT_NAME = "Development"
 
 # Está Variavel é usada para montar algumas urls dinamicamente DEVE ser sobreescrita pelo local_vars.py
 # Deve contar o protoloco e hostname onde a aplicação está instalada ex: BASE_HOST = "http://localhost"
-BASE_HOST = "http://localhost"
+BASE_HOST = os.environ.get("BASE_HOST", "http://localhost")
+DOMAIN = os.environ.get("DOMAIN", "localhost")
 
 # Database
 # Esta variavel deve ser preechida no local_vars.py deve conter obrigatóriamente
@@ -342,7 +338,7 @@ COMANAGE_USER = os.environ.get("COMANAGE_USER")
 COMANAGE_PASSWORD = os.environ.get("COMANAGE_PASSWORD")
 COMANAGE_COID = os.environ.get("COMANAGE_COID", 2)
 
-AUTH_SAML2_ENABLED = env.bool("AUTH_SAML2_ENABLED", False)
+AUTH_SAML2_ENABLED = env("AUTH_SAML2_ENABLED")
 AUTH_SAML2_LOGIN_URL_CAFE = None
 AUTH_SAML2_LOGIN_URL_CILOGON = None
 
@@ -361,7 +357,7 @@ if AUTH_SAML2_ENABLED == True:
     # Including SAML2 Backend Authentication
     # AUTHENTICATION_BACKENDS += ("djangosaml2.backends.Saml2Backend", )
     # Custom Saml2 Backend for LIneA
-    AUTHENTICATION_BACKENDS += ("linea.saml2.LineaSaml2Backend",)
+    AUTHENTICATION_BACKENDS += ("common.saml2.LineaSaml2Backend",)
     # Including SAML2 Middleware
     MIDDLEWARE += ("djangosaml2.middleware.SamlSessionMiddleware",)
 
@@ -371,9 +367,9 @@ if AUTH_SAML2_ENABLED == True:
 
     # Qualquer view que requer um usuário autenticado deve redirecionar o navegador para esta url
     # LOGIN_URL = "/saml2/login/"
-    LOGIN_URL = "/login/"
-    AUTH_SAML2_LOGIN_URL_CAFE = os.environ.get("AUTH_SAML2_LOGIN_URL_CAFE")
-    AUTH_SAML2_LOGIN_URL_CILOGON = os.environ.get("AUTH_SAML2_LOGIN_URL_CILOGON")
+    LOGIN_URL = "dri/api/api-auth/login"
+    AUTH_SAML2_LOGIN_URL_CAFE = os.environ.get("AUTH_SAML2_LOGIN_URL_CAFE", "https://scienceserver-dev.linea.org.br/saml2/login/?idp=https://satosa.linea.org.br/linea_saml/proxy")
+    AUTH_SAML2_LOGIN_URL_CILOGON = os.environ.get("AUTH_SAML2_LOGIN_URL_CILOGON", "https://scienceserver-dev.linea.org.br/saml2/login/?idp=https://satosa.linea.org.br/linea/proxy/aHR0cHM6Ly9jaWxvZ29uLm9yZw==")
 
     # Encerra a sessão quando o usuário fecha o navegador
     SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -407,13 +403,13 @@ if AUTH_SAML2_ENABLED == True:
         "entityid": FQDN + "/saml2/metadata/",
         # Diretório contendo os esquemas de mapeamento de atributo
         "attribute_map_dir": os.path.join(BASE_DIR, "attribute-maps"),
-        "description": "SP User Query",
+        "description": "SP Science Server",
         "service": {
             "sp": {
-                "name": "SP User Query",
+                "name": "SP Science Server",
                 "ui_info": {
-                    "display_name": {"text": "SP User Query", "lang": "en"},
-                    "description": {"text": "SP User Query", "lang": "en"},
+                    "display_name": {"text": "SP Science Server", "lang": "en"},
+                    "description": {"text": "SP Science Server", "lang": "en"},
                     "information_url": {"text": FQDN, "lang": "en"},
                     "privacy_statement_url": {"text": FQDN, "lang": "en"},
                 },
@@ -471,21 +467,27 @@ if AUTH_SAML2_ENABLED == True:
         ],
         "contact_person": [
             {
-                "given_name": "GIdLab",
-                "sur_name": "Equipe",
-                "company": "RNP",
-                "email_address": "gidlab@rnp.br",
+                "given_name": "Service",
+                "sur_name": "Desk",
+                "company": "LIneA",
+                "email_address": "helpdesk@linea.org.br",
                 "contact_type": "technical",
             },
         ],
         # Descreve a organização responsável pelo serviço
         "organization": {
-            "name": [("GIdLab", "pt-br")],
-            "display_name": [("GIdLab", "pt-br")],
-            "url": [("http://gidlab.rnp.br", "pt-br")],
+            "name": [("LIneA", "pt-br")],
+            "display_name": [("LIneA", "pt-br")],
+            "url": [("https://www.linea.org.br", "pt-br")],
         },
     }
 
 
+
+# Lista as Variaveis que vao ser exportadas para os templates do Django. https://pypi.python.org/pypi/django-settings-export
+SETTINGS_EXPORT = [
+    "AUTH_SAML2_LOGIN_URL_CAFE",
+    "AUTH_SAML2_LOGIN_URL_CILOGON",
+]
 
 
