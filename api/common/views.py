@@ -2,25 +2,21 @@
 from requests import Response
 from smtplib import SMTPException
 
-from rest_framework.views import APIView
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.permissions import AllowAny
 from rest_framework import viewsets
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from .models import Filter
 from .serializers import FilterSerializer, UserSerializer
 from django.core.mail import send_mail
-from django.http import HttpResponse
 from django.conf import settings
 from rest_framework import status
-import django_filters
 from rest_framework import filters
 from rest_framework.authtoken.models import Token
 import requests
 from urllib.parse import urljoin
 from django_filters.rest_framework import DjangoFilterBackend
-
 
 class FilterViewSet(viewsets.ModelViewSet):
     """

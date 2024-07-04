@@ -1,257 +1,3 @@
-<style>
-  body.container {
-    background-image: url('/images/background.jpg');
-    background-repeat: round;
-    width: 100% !important;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-  }
-
-  .logo {
-    max-width: 150px;
-  }
-
-  .logo img {
-    max-width: 100%;
-    height: auto;
-    width: 100%;
-  }
-
-  .card {
-    background-color: #fff;
-    padding: 16px;
-    border-radius: 2px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2),0px 1px 1px 0px rgba(0,0,0,0.14),0px 1px 3px 0px rgba(0,0,0,0.12);
-  }
-
-
-  .card form {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .card-header {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    margin-bottom: 12px;
-  }
-
-  .card-header h3 {
-    margin: 6px 0 10px;
-    color: #283661;
-    font-weight: bold;
-    font-size: 28px;
-    font-family: Roboto, sans-serif;
-  }
-
-  .card .MuiFormControl-root {
-    border: 0;
-    display: inline-flex;
-    padding: 0;
-    position: relative;
-    min-width: 0;
-    flex-direction: column;
-    vertical-align: top;
-    margin: 6px;
-  }
-
-  .card .MuiInputLabel-root {
-    color: #666;
-    padding: 0;
-    font-size: 16px;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: 0.00938em;
-
-    z-index: 1;
-    transform: translate(14px, -6px) scale(0.75);
-    pointer-events: none;
-
-    transition: color 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms,transform 200ms cubic-bezier(0.0, 0, 0.2, 1) 0ms;
-
-    top: 0;
-    left: 0;
-    position: absolute;
-  }
-
-  .card .MuiInputBase-root {
-    color: #fff;
-    cursor: text;
-    display: inline-flex;
-    position: relative;
-    font-size: 1rem;
-    border-radius: 4px;
-    box-sizing: border-box;
-    align-items: center;
-    font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-    font-weight: 400;
-    line-height: 1.1876em;
-    letter-spacing: 0.00938em;
-  }
-
-  /*label[data-shrink="false"] + .MuiInputBase-root input::placeholder {
-    opacity: 0 !important;
-  }*/
-
-  .card .MuiInputBase-root input {
-    font-size: 16px;
-    color: #000;
-    width: 100%;
-    border: 0;
-    min-height: 2em;
-    margin: 0;
-    display: block;
-    padding: 10px 14px;
-    min-width: 0;
-    background: none;
-    box-sizing: content-box;
-    animation-name: mui-auto-fill-cancel;
-    letter-spacing: inherit;
-    animation-duration: 10ms;
-    -webkit-tap-highlight-color: transparent;
-
-    opacity: 0.5;
-    transition: opacity 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-
-
-    outline: none;
-  }
-
-  .MuiOutlinedInput-notchedOutline {
-    top: -5px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: 0;
-    padding: 0 12px;
-    overflow: hidden;
-    position: absolute;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: inherit;
-    pointer-events: none;
-
-    border-color: #666;
-    border-width: 2px;
-  }
-
-  .MuiOutlinedInput-notchedOutline legend {
-    width: auto;
-    height: 11px;
-    display: block;
-    padding: 0;
-    font-size: 0.75em;
-    max-width: 0.01px;
-    text-align: left;
-    transition: max-width 100ms cubic-bezier(0.0, 0, 0.2, 1) 50ms;
-    visibility: hidden;
-    max-width: 1000px;
-
-   }
-
-  .MuiOutlinedInput-notchedOutline legend > span {
-    display: inline-block;
-    padding-left: 5px;
-    padding-right: 5px;
-    font-size: 14px;
-   }
-
-   .MuiFormControl-root .btn {
-      width: 100%;
-      padding: 8px 16px;
-      font-size: 14px;
-      box-sizing: border-box;
-      transition: background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
-      font-family: "Roboto", sans-serif;
-      font-weight: 700;
-      line-height: 1.75;
-      border-radius: 4px;
-      letter-spacing: 0.02857em;
-      text-transform: uppercase;
-      background-color: #283661;
-      color: #fff;
-   }
-
-   .MuiFormControl-root .btn:hover,
-   .MuiFormControl-root .btn:active,
-   .MuiFormControl-root .btn:focus {
-     color: #fff;
-   }
-
-   .well.well-small.text-error {
-    max-width: 386px;
-    margin: 8px;
-    margin: auto;
-}
-
-.form-container {
-  min-width: 400px;
-}
-
-
-.MuiFormControl-root .btn.btn-institute {
-  background: #00b9f2;
-}
-
-.MuiFormControl-root .btn.btn-signup {
-  background-color: #00b9f2;
-}
-
-.MuiFormControl-root .btn.btn-google svg {
-  margin-right: 24px;
-}
-
-@media screen and (max-width: 480px) {
-  .form-container {
-    min-width: auto;
-  }
-}
-
-.MuiFormControl-root .btn.btn-google {
-  background-color: #4285f4;
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
-  position: relative;
-}
-
-.MuiFormControl-root .btn.btn-google .google-icon-wrapper {
-  position: absolute;
-  margin-top: 1px;
-  margin-left: 1px;
-  width: 38px;
-  height: 38px;
-  border-radius: 2px;
-  background-color: #fff;
-  left: 0;
-  top: 0;
-}
-
-.MuiFormControl-root .btn.btn-google .google-icon-wrapper .google-icon {
-  position: absolute;
-  margin-top: 11px;
-  margin-left: 11px;
-  width: 18px;
-  height: 18px;
-  left: 0;
-  top: 0;
-}
-
-.MuiFormControl-root .btn.btn-google:hover {
-  box-shadow: 0 0 6px #4285f4;
-}
-.MuiFormControl-root .btn.btn-google:active {
-  background: #1669F2;
-}
-</style>
-
 {% extends "rest_framework/login_base.html" %}
 {% block title %}Science Server{% endblock %}
 
@@ -259,126 +5,47 @@
 {% block body %}
 
 <body class="container">
-  <div>
-    <div class="row-fluid">
-      <div class="card">
-        <div class="card-header">
-          {% block branding %}
-          <div class="logo">
-            <img src="/images/linea-logo.png" alt="LIneA Logo" />
-          </div>
-          <h3>Science Server</h3>
-          {% endblock %}
-        </div>
+  <div class="home">
 
-          <div class="form-container">
-            <form action="{% url 'rest_framework:login' %}" role="form" method="post">
-              {% csrf_token %}
-              <input type="hidden" name="next" value="{{ next }}" />
-
-                <div id="div_id_username" class="MuiFormControl-root {% if form.username.errors %}error{% endif %}">
-                  <label class="MuiInputLabel-root" for="id_username">Username</label>
-                  <div class="MuiInputBase-root">
-                    <input
-                      type="text"
-                      name="username"
-                      maxlength="100"
-                      autocapitalize="off"
-                      autocorrect="off"
-                      class="MuiInputBase-input"
-                      id="id_username"
-                      required
-                      {% if form.username.value %}
-                      value="{{ form.username.value }}"
-                      {% endif %}
-                    />
-                    <fieldset aria-hidden="true" class="MuiOutlinedInput-notchedOutline">
-                      <legend class="jss185">
-                        <span>Username</span>
-                      </legend>
-                    </fieldset>
-                  </div>
-                  {% if form.username.errors %}
-                  <p class="text-error">
-                    {{ form.username.errors|striptags }}
-                  </p>
-                  {% endif %}
-                </div>
-
-                <div id="div_id_password" class="MuiFormControl-root {% if form.password.errors %}error{% endif %}">
-                  <label class="MuiInputLabel-root" for="id_password">Password</label>
-                  <div class="MuiInputBase-root">
-                    <input
-                      type="password"
-                      name="password"
-                      maxlength="100"
-                      autocapitalize="off"
-                      autocorrect="off"
-                      class="MuiInputBase-input"
-                      id="id_password"
-                      required
-                    />
-                    <fieldset aria-hidden="true" class="MuiOutlinedInput-notchedOutline">
-                      <legend class="jss185">
-                        <span>Password</span>
-                      </legend>
-                    </fieldset>
-                  </div>
-                  {% if form.password.errors %}
-                  <p class="text-error">
-                    {{ form.password.errors|striptags }}
-                  </p>
-                  {% endif %}
-                </div>
-
-              {% if form.non_field_errors %}
-              {% for error in form.non_field_errors %}
-              <div class="well well-small text-error" style="border: none">{{ error }}</div>
-              {% endfor %}
-              {% endif %}
-
-              <div class="MuiFormControl-root">
-                <input type="submit" name="submit" value="Log in" class="btn"
-                  id="submit-id-submit">
-              </div>
-
-              {% if settings.AUTH_SHIB_ENABLED %}
-
-              {% if settings.AUTH_SHIB_URL is not None%}
-                <div class="MuiFormControl-root">
-                  <a href="{{ settings.AUTH_SHIB_URL }}" class="btn btn-institute">
-                    <span>Login with Institution</span>
+    <div class="container" style="background-color: #fdfdfd; padding-top: 64px;">
+      <div class="row justify-content-center">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+          <div class="panel-group">
+            <div class="panel panel-default" style="padding: 24px;">
+              <div class="panel-body">
+                <div class="media">
+                  <a href="https://linea.org.br/">
+                    <img class="media-object" src="https://identity.linea.org.br/eds/images/linea-logo.png" alt="..."
+                      width="128px" class="img-responsive" style="margin:0 auto;">
                   </a>
                 </div>
-              {% endif %}
-              {% if settings.SHIB_LOGIN_GOOGLE_URL is not None and settings.SHIB_LOGIN_GOOGLE_URL is not False %}
-              <div class="MuiFormControl-root">
-                <a href="{{ settings.SHIB_LOGIN_GOOGLE_URL }}" class="btn btn-google">
-                  <div class="google-icon-wrapper">
-                    <img class="google-icon" src="/images/google_logo.svg"/>
-                  </div>
-                  <span>Login with Google</span>
-                </a>
+                <h4 class="card-title" style="text-align: center;">Associação Laboratório
+                  Interinstitucional de
+                  e-Astronomia</h4>
+                <div>
+                  <a href="{{ settings.AUTH_SAML2_LOGIN_URL_CAFE }}&next={{request.GET.next}}"
+                    class="btn btn-primary btn-block btn-lg" style="margin-top: 32px; margin-bottom: 16px;">Login
+                    with
+                    CAFE</a>
+                  <a href="{{ settings.AUTH_SAML2_LOGIN_URL_CILOGON }}&next={{request.GET.next}}"
+                    class="btn btn-primary btn-block btn-lg" style="margin-bottom: 16px;">Login with
+                    CILogon</a>
+                </div>
+                <p> </p>
+                <p class="card-text" style="font-size: 12px">In case you have any problem authenticating
+                  or registering,
+                  please <a href="mailto:helpdesk@linea.org.br">contact our helpdesk.</a></p>
+                <p class="card-text" style="font-size: 12px">You must read, agree with, and accept all
+                  of the <a href="https://identity.linea.org.br/terms.html"> terms
+                    and conditions.</a></p>
               </div>
-              {% endif %}
-              {% endif %}
-
-              {% if settings.NCSA_SIGNUP_LINK %}
-              <div class="MuiFormControl-root">
-                <a href="{{ settings.NCSA_SIGNUP_LINK }}" class="btn btn-signup">Sign Up</a>
-              </div>
-              {% endif %}
-
-              <!--Exibir todas as variaveis de settings diponiveis para os templates.              -->
-              <!--Essas variaveis estao no settings na sessao SETTINGS_EXPORT-->
-              <!-- {% for key, value in settings.items %} -->
-              <!-- {{ key }}: {{ value }} -->
-              <!-- {% endfor %} -->
-            </form>
+            </div>
           </div>
+        </div>
+        <div class="col-md-3"></div>
       </div>
-      <!--/.well-->
-    </div><!-- /.row-fluid -->
-  </div><!-- /.container-fluid -->
+    </div>
+  </div>
 </body>
 {% endblock %}
