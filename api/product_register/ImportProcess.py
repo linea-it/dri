@@ -335,11 +335,11 @@ class Import():
 
                 add_release = True
                 # Associar um Release ao Processo
-                if 'releases' in data and len(data.get('releases')) > 0:
+                if 'releases' in data and len(data.get('releases', [])) > 0:
                     self.process_release(product_process, data.get('releases'))
                     add_release = False
 
-                if 'fields' in data and len(data.get('fields')) > 0:
+                if 'fields' in data and len(data.get('fields', [])) > 0:
                     self.process_tags(product_process, data.get('fields'), add_release)
 
         else:
@@ -350,7 +350,7 @@ class Import():
 
             product, created = Catalog.objects.update_or_create(
                 prd_owner=self.owner,
-                prd_name=data.get('name').replace(' ', '_').lower(),
+                prd_name=data.get('name').replace(' ', '_').replace(".", "_").lower(),
                 tbl_database=data.get('database', None),
                 tbl_schema=data.get('schema', None),
                 tbl_name=data.get('table'),

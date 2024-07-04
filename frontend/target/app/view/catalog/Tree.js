@@ -204,7 +204,10 @@ Ext.define('Target.view.catalog.Tree', {
       property: 'group',
       value: type.toLowerCase(),
     });
-
+    // filters.push({
+    //   property: 'group__in',
+    //   value: 'targets,mydb'
+    // });
     // Guardar os filtros usados no load dos catologos
     baseFilters = Ext.clone(filters);
     me.setBsfilters(baseFilters);

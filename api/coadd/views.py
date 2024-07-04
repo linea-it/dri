@@ -40,7 +40,7 @@ class ReleaseViewSet(viewsets.ReadOnlyModelViewSet):
         "rls_display_name",
     )
 
-    filterset_fields = (
+    filter_fields = (
         "id",
         "rls_name",
         "rls_display_name",
@@ -72,7 +72,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = TagSerializer
 
-    filterset_fields = (
+    filter_fields = (
         "id",
         "tag_release",
         "tag_name",
@@ -92,7 +92,7 @@ class TileViewSet(viewsets.ReadOnlyModelViewSet):
 
     serializer_class = TileSerializer
 
-    filterset_fields = (
+    filter_fields = (
         "id",
         "tli_tilename",
         "tag",
@@ -460,7 +460,7 @@ class SurveyViewSet(viewsets.ModelViewSet):
 
     serializer_class = SurveySerializer
 
-    filterset_fields = (
+    filter_fields = (
         "id",
         "srv_release",
         "srv_project",

@@ -18,25 +18,26 @@ def drop_product_table(sender, instance, using, **kwargs):
             "This product is permanent and can not be removed, to remove change the value of the is_permanent flag to false.")
 
     else:
-
         # Se o produto nao tiver nome de tabela nao faz nada.
         if not instance.table.tbl_name:
             return
 
-        try:
-            # So permitir deletar tabelas no banco de catalogo.
-            db = DBBase('catalog')
+        # So permitir deletar tabelas no banco de catalogo.
+        if instance.table.tbl_database == 'catalog':
+            try:
+                # So permitir deletar tabelas no banco de catalogo.
+                db = DBBase('catalog')
 
-            # Checar se a tabela existe e so tentar fazer o drop se existir
-            if (db.table_exists(instance.table.tbl_name,
-                                schema=instance.table.tbl_schema)):
-                db.drop_table(
-                    instance.table.tbl_name,
-                    schema=instance.table.tbl_schema)
+                # Checar se a tabela existe e so tentar fazer o drop se existir
+                if (db.table_exists(instance.table.tbl_name,
+                                    schema=instance.table.tbl_schema)):
+                    db.drop_table(
+                        instance.table.tbl_name,
+                        schema=instance.table.tbl_schema)
 
-        except Exception as e:
-            # Tenta dropar a tabela se nao conseguir nao faz nada.
-            pass
+            except Exception as e:
+                # Tenta dropar a tabela se nao conseguir nao faz nada.
+                pass
 
 
 # post_save.connect(start_des_cutout_job, sender=CutOutJob)

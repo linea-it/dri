@@ -15,7 +15,7 @@ from .models import Product
 
 
 class ImportTargetListCSV:
-    def __init__(self):
+    def __init__(self, database="catalog"):
         # Get an instance of a logger
         self.logger = logging.getLogger("import_target_csv")
 
@@ -23,7 +23,7 @@ class ImportTargetListCSV:
 
         self.require_properties = list(["ra", "dec"])
 
-        self.database = "catalog"
+        self.database = database
 
         self.schema = None
 
@@ -326,9 +326,8 @@ class ImportTargetListCSV:
 
         return associations
 
-    def register_new_table_as_product(self, user, internal_name, display_name, database, schema, tablename,
-                                      product_class,
-                                      releases=None, description=None):
+    def register_new_table_as_product(self, 
+        user, internal_name, display_name, database, schema, tablename, product_class, releases=None, description=None, is_public=False,is_permanent=False):
 
         self.logger.info("Register the new table as a product")
 
@@ -350,7 +349,9 @@ class ImportTargetListCSV:
             "association": associations,
             "type": "catalog",
             "class": product_class.pcl_name,
-            "description": description
+            "description": description,
+            "is_public": is_public,
+            "is_permanent": is_permanent
         }])
 
         self.logger.debug("Data: %s" % data)

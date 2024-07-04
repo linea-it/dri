@@ -373,7 +373,7 @@ class ProductContentViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductContentSerializer
 
-    filterset_fields = (
+    filter_fields = (
         "id",
         "pcn_product_id",
         "pcn_column_name",
@@ -562,7 +562,7 @@ class ProductContentAssociationViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductContentAssociationSerializer
 
-    filterset_fields = ("id", "pca_product", "pca_class_content", "pca_product_content")
+    filter_fields = ("id", "pca_product", "pca_class_content", "pca_product_content")
 
     ordering_fields = ("id",)
 
@@ -576,7 +576,7 @@ class ProductAssociationViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductAssociationSerializer
 
-    filterset_fields = (
+    filter_fields = (
         "id",
         "pca_product",
         "pca_class_content",
@@ -637,7 +637,7 @@ class MaskViewSet(viewsets.ModelViewSet):
 
     serializer_class = MaskSerializer
 
-    filterset_fields = ("prd_name", "prd_display_name", "prd_class")
+    filter_fields = ("prd_name", "prd_display_name", "prd_class")
 
     search_fields = ("prd_name", "prd_display_name", "prd_class")
 
@@ -680,7 +680,7 @@ class ProductSettingViewSet(viewsets.ModelViewSet):
 
     filter_backends = (DjangoFilterBackend, ProductSettingBackend)
 
-    filterset_fields = (
+    filter_fields = (
         "id",
         "cst_product",
         "cst_display_name",
@@ -711,7 +711,7 @@ class CurrentSettingViewSet(viewsets.ModelViewSet):
 
     filter_backends = (DjangoFilterBackend, IsOwnerFilterBackend)
 
-    filterset_fields = (
+    filter_fields = (
         "id",
         "cst_product",
         "cst_setting",
@@ -738,7 +738,7 @@ class ProductContentSettingViewSet(viewsets.ModelViewSet):
 
     serializer_class = ProductContentSettingSerializer
 
-    filterset_fields = (
+    filter_fields = (
         "id",
         "pcs_content",
         "pcs_setting",
@@ -757,7 +757,7 @@ class CutoutJobViewSet(viewsets.ModelViewSet):
 
     serializer_class = CutoutJobSerializer
 
-    filterset_fields = ("id", "cjb_product", "cjb_display_name", "cjb_status")
+    filter_fields = ("id", "cjb_product", "cjb_display_name", "cjb_status")
 
     ordering_fields = ("id", "cjb_finish_time")
 
@@ -777,7 +777,7 @@ class CutoutViewSet(viewsets.ModelViewSet):
 
     serializer_class = CutoutSerializer
 
-    filterset_fields = (
+    filter_fields = (
         "id",
         "cjb_cutout_job",
         "ctt_object_id",
@@ -795,7 +795,7 @@ class PermissionUserViewSet(viewsets.ModelViewSet):
 
     serializer_class = PermissionUserSerializer
 
-    filterset_fields = ("prm_product",)
+    filter_fields = ("prm_product",)
 
     ordering_fields = ("prm_user__username",)
 
@@ -841,7 +841,7 @@ class PermissionViewSet(viewsets.ModelViewSet):
 
     serializer_class = PermissionSerializer
 
-    filterset_fields = ("prm_product", "prm_user", "prm_workgroup")
+    filter_fields = ("prm_product", "prm_user", "prm_workgroup")
 
 
 class WorkgroupViewSet(viewsets.ModelViewSet):
@@ -867,7 +867,7 @@ class WorkgroupUserViewSet(viewsets.ModelViewSet):
 
     serializer_class = WorkgroupUserSerializer
 
-    filterset_fields = ("wgu_workgroup",)
+    filter_fields = ("wgu_workgroup",)
 
 
 # ---------------------------------- Filtros ----------------------------------
@@ -878,7 +878,7 @@ class FiltersetViewSet(viewsets.ModelViewSet):
 
     serializer_class = FiltersetSerializer
 
-    filterset_fields = ("id", "product", "owner", "fst_name")
+    filter_fields = ("id", "product", "owner", "fst_name")
 
     filter_backends = (DjangoFilterBackend, IsOwnerFilterBackend)
 
@@ -898,7 +898,7 @@ class FilterConditionViewSet(viewsets.ModelViewSet):
 
     serializer_class = FilterConditionSerializer
 
-    filterset_fields = ("id", "filterset", "fcd_property", "fcd_operation", "fcd_value")
+    filter_fields = ("id", "filterset", "fcd_property", "fcd_operation", "fcd_value")
 
 
 # ---------------------------------- Bookmark ----------------------------------
@@ -911,7 +911,7 @@ class BookmarkedViewSet(viewsets.ModelViewSet):
 
     serializer_class = BookmarkedSerializer
 
-    filterset_fields = ("id", "product", "owner", "is_starred")
+    filter_fields = ("id", "product", "owner", "is_starred")
 
     def perform_create(self, serializer):
         # Adiconar usuario logado
