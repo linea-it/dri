@@ -219,7 +219,10 @@ class DBBase:
             sql = self.database.get_raw_sql_table_rows(table, schema=schema)
             with self.engine.connect() as con:
                 queryset = con.execute(sql)
-            return queryset.fetchone()[0]
+                count = int(queryset.fetchone()[0])
+                if count < 0:
+                    return 0
+                return count
         except:
             return 0
 

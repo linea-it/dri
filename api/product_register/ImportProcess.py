@@ -289,8 +289,9 @@ class Import():
 
             # Recuperar a quantidade de linhas da tabela
             tbl_rows = self.db.get_estimated_rows_count(data.get('table'), schema=data.get('schema', None))
+            self.logger.info("Estimated table rows: %s" % tbl_rows)
             # A o count estimado for 0, faz o count convencional.
-            if tbl_rows == 0:
+            if tbl_rows <= 0:
                 self.logger.info("It was not possible to use the line estimate.")
                 self.logger.info("Number of table rows using count.")
                 tbl_rows = self.db.get_count(data.get('table'), schema=data.get('schema', None))
