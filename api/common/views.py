@@ -398,72 +398,7 @@ def get_ncsa_signup(request):
     if request.method == "GET":
         return Response(dict({"ncsa_signup": settings.NCSA_SIGNUP_LINK}))
 
-
 @api_view(["GET"])
 def teste(request):
     if request.method == "GET":
-        from lib.CatalogDB import CatalogDB
-        import logging
-        from product_register.ImportProcess import Import
-        from product.models import Catalog
-        log = logging.getLogger("catalog_db")
-        log.info("----------------- TESTE -------------------")
-        db = CatalogDB(db="mydb")
-        log.info(db)
-
-        # Get mydb schema
-        user = request.user
-        mydb_schema = user.profile.get_mydb_schema()
-        log.info(f"Mydb: {mydb_schema}")
-        # Check if schema exists
-        log.info(db.schema_exists(schema=mydb_schema))
-        # List all tables in schema
-        tables_in_schema = db.get_table_names(schema=mydb_schema)
-        log.info(tables_in_schema)
-
-        # TODO: Necessário exportar o product classifier fixture
-
-        # Check if tables are registered as products
-        for tbl_name in tables_in_schema:
-            try:
-                catalog = Catalog.objects.get(
-                    prd_owner=user,
-                    tbl_database="mydb",
-                    tbl_schema=mydb_schema,
-                    tbl_name=tbl_name
-                    )
-                log.info(f"Table {catalog} is registered as product")
-            except Catalog.DoesNotExist:
-                log.info(f"Table {tbl_name} is not registered as")
-
-                data = list([{
-                    "process_id": None,
-                    "name": f"{mydb_schema}_{tbl_name}",
-                    "display_name": f"{mydb_schema}.{tbl_name}",
-                    "database": "mydb",
-                    "schema": mydb_schema,
-                    "table": tbl_name,
-                    "filter": None,
-                    # "releases": None,
-                    # "fields": None,
-                    # "association": associations,
-                    "type": "catalog",
-                    "class": "mydb",
-                    "description": None,
-                    "is_public": False,
-                    "is_permanent": False
-                }])
-
-                import_product = Import()
-
-                import_product.user = user
-                import_product.owner = user
-                import_product.site = None
-                import_product.process = None
-
-                new_product = import_product.import_products(data)
-
-                log.info(f"New product {new_product} created")
-
-        # ImportTargetListCSV().register_new_table_as_product
         return Response(dict({"status": "success"}))

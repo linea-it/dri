@@ -34,6 +34,12 @@ from .serializers import *
 from .tasks import import_target_list, product_save_as
 from .viziercds import VizierCDS
 
+from lib.CatalogDB import CatalogDB
+import logging
+from product_register.ImportProcess import Import
+from product.models import Catalog
+
+
 
 class ProductFilter(django_filters.FilterSet):
     group = django_filters.CharFilter(method="filter_group")
@@ -166,6 +172,7 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
         necessario o parametro group que  o internal name da tabela Group
         ex: catalog/get_class_tree_by_group/group='targets'
         """
+
         group = request.query_params.get("group", None)
         groupin = request.query_params.get("group__in", None)
         if not group and not groupin:
@@ -177,6 +184,15 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
         groups = None
         if groupin is not None:
             groups = groupin.split(",")
+
+
+        # Antes de iniciar a query, registra as tabelas do MYDB do usuario como catalogos de target.
+        try:
+            self.registry_mydb_tables(request.user)
+        except Exception as e:
+            return Response(
+                {"success": False, "msg": e}
+            )
 
         # Usando Filter_Queryset e aplicado os filtros listados no filterbackend
         queryset = self.filter_queryset(self.get_queryset())
@@ -209,6 +225,10 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
         for row in queryset:
             # Internal name da classe
             class_name = str(row.prd_class.pcl_name)
+
+            # Não exibe catalogos que não pertencem ao mydb do usuario.
+            if class_name == "mydb" and row.prd_owner != request.user:
+                continue
 
             # Verifica se ja existe um no para essa classe
             # se nao existir cria um no e adiciona ao dict classes
@@ -363,6 +383,77 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
 
         return external_catalogs
 
+
+    def registry_mydb_tables(self, user):
+        log = logging.getLogger("import_process")
+        log.info("----------------- Registry Mydb Tables -------------------")
+        log.info("Querying all tables in the user's Mydb.")
+        try:
+            db = CatalogDB(db="mydb")
+            # Get mydb schema
+            mydb_schema = user.profile.get_mydb_schema()
+            log.info(f"User's Mydb: {mydb_schema}")
+            # Check if schema exists
+            log.info(db.schema_exists(schema=mydb_schema))
+            # List all tables in schema
+            tables_in_schema = db.get_table_names(schema=mydb_schema)
+            log.info(f"User's Tables: {len(tables_in_schema)}")
+            log.debug(tables_in_schema)
+
+            # TODO: Necessário exportar o product classifier fixture
+
+            # Check if tables are registered as products
+            for tbl_name in tables_in_schema:
+                try:
+                    catalog = Catalog.objects.get(
+                        prd_owner=user,
+                        tbl_database="mydb",
+                        tbl_schema=mydb_schema,
+                        tbl_name=tbl_name
+                    )
+                    log.info(f"Table {catalog} is already registered as product id {catalog.id}")
+                    continue
+                except Catalog.DoesNotExist:
+                    log.info(f"Table {tbl_name} is not registered as")
+
+                    data = list([{
+                        "process_id": None,
+                        "name": f"{mydb_schema}_{tbl_name}",
+                        "display_name": f"{mydb_schema}.{tbl_name}",
+                        "database": "mydb",
+                        "schema": mydb_schema,
+                        "table": tbl_name,
+                        "filter": None,
+                        # "releases": None,
+                        # "fields": None,
+                        # "association": associations,
+                        "type": "catalog",
+                        "class": "mydb",
+                        "description": None,
+                        "is_public": False,
+                        "is_permanent": False
+                    }])
+
+                    import_product = Import()
+
+                    import_product.user = user
+                    import_product.owner = user
+                    import_product.site = None
+                    import_product.process = None
+
+                    new_product = import_product.import_products(data)
+
+                    log.info(f"New product {new_product.id} - {new_product} created")
+
+            log.info("Checking if all registered tables still exist in user's mydb.")
+            catalogs = Catalog.objects.filter(prd_owner=user, tbl_database="mydb")
+            for catalog in catalogs:
+                if catalog.tbl_name not in tables_in_schema:
+                    log.info(f"Table {catalog.tbl_name} is not in user's mydb anymore")
+                    catalog.delete()
+                    log.info(f"Catalog {catalog.id} - {catalog} deleted")
+        except Exception as e:
+            log.error(f"Error registering tables in user's mydb: {e}")
 
 class ProductContentViewSet(viewsets.ModelViewSet):
     """
