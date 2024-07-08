@@ -37,8 +37,8 @@ Ext.define('Target.view.settings.Columns', {
                 {
                     xtype: 'panel',
                     height: 60,
-                    bodyPadding: 5,
-                    items:[{
+                    bodyPadding: 10,
+                    items: [{
                         xtype: 'fieldcontainer',
                         layout: 'hbox',
                         fieldLabel: 'Choose or create a Setting',
@@ -91,61 +91,15 @@ Ext.define('Target.view.settings.Columns', {
                         type: 'hbox',
                         align: 'stretch'
                     },
+                    bodyPadding: 10,
                     bind: {
                         disabled: '{!cmbSetting.selection}'
                     },
                     items: [
                         {
-                            xtype: 'grid',
-                            reference: 'grid1',
-                            flex: 1,
-                            multiSelect: true,
-                            margin: '0 5 0 0',
-                            bind: {
-                                store: '{availableContents}'
-                            },
-                            selType: 'checkboxmodel',
-                            viewConfig: {
-                                plugins: {
-                                    ptype: 'gridviewdragdrop',
-                                    containerScroll: true,
-                                    ddGroup: 'columns'
-                                    // dragGroup: 'dd-grid-to-grid-group2',
-                                    // dropGroup: 'dd-grid-to-grid-group2'
-                                },
-                                listeners: {
-                                    drop: 'onDropGrid1'
-                                }
-                            },
-                            columns: [
-                                {
-                                    text: 'Available Properties',
-                                    dataIndex: 'display_name',
-                                    flex: 1,
-                                    renderer: function (value, meta, record) {
-                                        if ((record.get('unit') !== null)  && (record.get('unit') !== '')) {
-                                            return value + ' (' + record.get('unit') + ')' ;
-                                        } else {
-                                            return value;
-                                        }
-                                    }
-                                }
-                            ],
-                            tbar: [
-                                {
-                                    xtype: 'common-searchfield',
-                                    minSearch: 1,
-                                    listeners: {
-                                        'search': 'onSearch',
-                                        'cancel': 'onSearchCancel'
-                                    },
-                                    flex: 1
-                                }
-                            ]
-                        },
-                        {
                             xtype: 'gridpanel',
                             reference: 'grid2',
+                            margin: '0 5 0 0',
                             flex: 1,
                             scrollable: true,
                             split: true,
@@ -158,8 +112,8 @@ Ext.define('Target.view.settings.Columns', {
                                     dataIndex: 'display_name',
                                     flex: 1,
                                     renderer: function (value, meta, record) {
-                                        if ((record.get('unit') !== null)  && (record.get('unit') !== '')) {
-                                            return value + ' (' + record.get('unit') + ')' ;
+                                        if ((record.get('unit') !== null) && (record.get('unit') !== '')) {
+                                            return value + ' (' + record.get('unit') + ')';
                                         } else {
                                             return value;
                                         }
@@ -187,6 +141,54 @@ Ext.define('Target.view.settings.Columns', {
                                     listeners: {
                                         'search': 'onSearchDisplayed',
                                         'cancel': 'onSearchCancelDisplayed'
+                                    },
+                                    flex: 1
+                                }
+                            ]
+                        },
+                        {
+                            xtype: 'grid',
+                            reference: 'grid1',
+                            flex: 1,
+                            split: true,
+                            multiSelect: true,
+                            bind: {
+                                store: '{availableContents}'
+                            },
+                            selType: 'checkboxmodel',
+                            viewConfig: {
+                                plugins: {
+                                    ptype: 'gridviewdragdrop',
+                                    containerScroll: true,
+                                    ddGroup: 'columns'
+                                    // dragGroup: 'dd-grid-to-grid-group2',
+                                    // dropGroup: 'dd-grid-to-grid-group2'
+                                },
+                                listeners: {
+                                    drop: 'onDropGrid1'
+                                }
+                            },
+                            columns: [
+                                {
+                                    text: 'Available Properties',
+                                    dataIndex: 'display_name',
+                                    flex: 1,
+                                    renderer: function (value, meta, record) {
+                                        if ((record.get('unit') !== null) && (record.get('unit') !== '')) {
+                                            return value + ' (' + record.get('unit') + ')';
+                                        } else {
+                                            return value;
+                                        }
+                                    }
+                                }
+                            ],
+                            tbar: [
+                                {
+                                    xtype: 'common-searchfield',
+                                    minSearch: 1,
+                                    listeners: {
+                                        'search': 'onSearch',
+                                        'cancel': 'onSearchCancel'
                                     },
                                     flex: 1
                                 }

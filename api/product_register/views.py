@@ -19,7 +19,7 @@ class SiteViewSet(viewsets.ModelViewSet):
 
     search_fields = ('sti_user', 'sti_name', 'sti_url',)
 
-    filterset_fields = ('id', 'sti_user', 'sti_name')
+    filter_fields = ('id', 'sti_user', 'sti_name')
 
     ordering_fields = ('id',)
 
@@ -42,7 +42,7 @@ class ExternalProcessViewSet(viewsets.ModelViewSet):
 
     search_fields = ('epr_name', 'epr_username', 'epr_readme', 'epr_comment', 'epr_original_id')
 
-    filterset_fields = ('id', 'epr_name', 'epr_original_id')
+    filter_fields = ('id', 'epr_name', 'epr_original_id')
 
     ordering_fields = ('id', 'epr_original_id', 'epr_site')
 
@@ -59,7 +59,7 @@ class AuthorizationViewSet(viewsets.ModelViewSet):
 
     search_fields = ('ath_ticket',)
 
-    filterset_fields = ('ath_ticket',)
+    filter_fields = ('ath_ticket',)
 
     ordering_fields = ('id',)
 

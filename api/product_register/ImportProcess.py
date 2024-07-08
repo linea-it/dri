@@ -20,7 +20,7 @@ from common.models import Filter
 from lib.CatalogDB import CatalogDB
 from product.models import (Catalog, Map, Mask, ProductContent,
                             ProductContentAssociation, ProductRelated,
-                            ProductRelease, ProductTag)
+                            ProductRelease, ProductTag, ProductSetting, ProductContentSetting, CurrentSetting)
 from product_classifier.models import ProductClass, ProductClassContent
 from product_register.models import ProcessRelease
 
@@ -335,11 +335,11 @@ class Import():
 
                 add_release = True
                 # Associar um Release ao Processo
-                if 'releases' in data and len(data.get('releases')) > 0:
+                if 'releases' in data and len(data.get('releases', [])) > 0:
                     self.process_release(product_process, data.get('releases'))
                     add_release = False
 
-                if 'fields' in data and len(data.get('fields')) > 0:
+                if 'fields' in data and len(data.get('fields', [])) > 0:
                     self.process_tags(product_process, data.get('fields'), add_release)
 
         else:
@@ -350,7 +350,7 @@ class Import():
 
             product, created = Catalog.objects.update_or_create(
                 prd_owner=self.owner,
-                prd_name=data.get('name').replace(' ', '_').lower(),
+                prd_name=data.get('name').replace(' ', '_').replace(".", "_").lower(),
                 tbl_database=data.get('database', None),
                 tbl_schema=data.get('schema', None),
                 tbl_name=data.get('table'),
@@ -430,16 +430,43 @@ class Import():
         if not created:
             # Apaga todas as colunas do catalogo para inserir novamente.
             ProductContent.objects.filter(pcn_product_id=catalog).delete()
+            # Apaga todas as configurações de exibição das colunas para este catalogo.
+            ProductSetting.objects.filter(cst_product=catalog).delete()
+            CurrentSetting.objects.filter(cst_product=catalog).delete()
+
+        # Cria uma condiguração de exibição default para o catalogo
+        # E adiciona essa configuração como default para o usuario dono do catalogo.
+        prd_setting = ProductSetting.objects.create(
+            cst_product=catalog,
+            owner=catalog.prd_owner,
+            cst_display_name = "Default",
+            cst_is_editable = False,
+            cst_is_public = True
+            )
+        CurrentSetting.objects.create(
+            cst_product=catalog,
+            cst_setting=prd_setting,
+            owner=catalog.prd_owner
+        )
 
         # Recuperar as colunas do catalogo.
         columns = self.db.get_table_columns(catalog.tbl_name, catalog.tbl_schema)
 
+        # Registra cada coluna da tabela.
         if columns and len(columns) > 0:
-            for column in columns:
+            for order, column in enumerate(columns):
+                
                 content = ProductContent.objects.create(
                     pcn_product_id=catalog,
                     pcn_column_name=column.strip()
                 )
+
+                ProductContentSetting.objects.create(
+                    pcs_content=content,
+                    pcs_setting=prd_setting,
+                    pcs_is_visible=True,
+                    pcs_order=order)
+
 
         self.product_content_association(catalog, data, created)
 

@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.conf import settings
 
 
 class Filter(models.Model):
@@ -41,6 +42,8 @@ class Profile(models.Model):
     def __str__(self):
         return str(self.user.username)
 
+    def get_mydb_schema(self):
+        return f"{settings.USER_SCHEMA_PREFIX}{self.user.username}"
 
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):

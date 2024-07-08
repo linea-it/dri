@@ -27,7 +27,7 @@ class FilterViewSet(viewsets.ModelViewSet):
 
     serializer_class = FilterSerializer
 
-    filterset_fields = (
+    filter_fields = (
         "project",
         "filter",
     )
@@ -397,7 +397,6 @@ def get_ncsa_signup(request):
     """
     if request.method == "GET":
         return Response(dict({"ncsa_signup": settings.NCSA_SIGNUP_LINK}))
-
 
 @api_view(["GET"])
 def teste(request):

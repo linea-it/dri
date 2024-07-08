@@ -15,7 +15,7 @@ class ApplicationViewSet(viewsets.ModelViewSet):
 
     search_fields = ('app_name')
 
-    filterset_fields = ('id', 'app_name')
+    filter_fields = ('id', 'app_name')
 
     ordering_fields = ('id', 'app_name', 'app_order')
 

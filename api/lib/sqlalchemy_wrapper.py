@@ -14,7 +14,7 @@ from sqlalchemy.schema import Sequence
 from sqlalchemy.sql import and_, select, text
 from sqlalchemy.sql.expression import (ClauseElement, Executable, between,
                                        literal_column)
-
+from sqlalchemy import inspect
 from lib.db_oracle import DBOracle
 from lib.db_postgresql import DBPostgresql
 from lib.db_sqlite import DBSqlite
@@ -223,6 +223,9 @@ class DBBase:
         except:
             return 0
 
+    def schema_exists(self, schema: str) -> bool:
+        return self.engine.dialect.has_schema(self.engine, schema=schema)
+
     def table_exists(self, table, schema=None):
         table = self.database.get_table_name(table)
         if schema:
@@ -233,6 +236,12 @@ class DBBase:
             warnings.simplefilter("ignore", category=sa_exc.SAWarning)
 
             return self.engine.has_table(table, schema)
+
+    def get_table_names(self, schema: str) -> list:
+        # Create an Inspector object
+        inspector = inspect(self.engine)
+        # Get a list of table names in the specified schema
+        return inspector.get_table_names(schema=schema)
 
     def get_table_obj(self, table, schema=None):
         return Table(table, self.metadata, autoload=True, schema=schema)

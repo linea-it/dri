@@ -22,7 +22,7 @@ class RatingViewSet(viewsets.ModelViewSet):
 
     serializer_class = RatingSerializer
 
-    filterset_fields = ('id', 'catalog_id', 'owner', 'object_id', 'rating')
+    filter_fields = ('id', 'catalog_id', 'owner', 'object_id', 'rating')
 
     ordering_fields = ('id',)
 
@@ -38,7 +38,7 @@ class RejectViewSet(viewsets.ModelViewSet):
 
     serializer_class = RejectSerializer
 
-    filterset_fields = ('id', 'catalog_id', 'owner', 'object_id', 'reject')
+    filter_fields = ('id', 'catalog_id', 'owner', 'object_id', 'reject')
 
     ordering_fields = ('id',)
 
@@ -56,7 +56,7 @@ class CommentsViewSet(viewsets.ModelViewSet):
 
     serializer_class = CommentsSerializer
 
-    filterset_fields = ('id', 'catalog_id', 'owner', 'object_id', 'comments')
+    filter_fields = ('id', 'catalog_id', 'owner', 'object_id', 'comments')
 
     ordering_fields = ('id', 'date')
 

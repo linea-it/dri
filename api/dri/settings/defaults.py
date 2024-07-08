@@ -241,6 +241,9 @@ DATABASES = {}
 #     },
 # }
 
+# LIneA MYDB 
+USER_SCHEMA_PREFIX="mydb_"
+
 # Autenticação no NCSA
 # Esta configuracao e usada somente pela classe de authenticacao usando login do NCSA
 # deve ser preenchida com o nome da configuracao de database do NCSA OU None para nao usar a authenticacao no ncsa
