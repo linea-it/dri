@@ -405,14 +405,17 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             # Check if tables are registered as products
             for tbl_name in tables_in_schema:
                 try:
+                    log.info(f"Check if Table {tbl_name} is already registered as product")
                     catalog = Catalog.objects.get(
                         prd_owner=user,
                         tbl_database="mydb",
                         tbl_schema=mydb_schema,
                         tbl_name=tbl_name
                     )
-                    log.info(f"Table {catalog} is already registered as product id {catalog.id}")
-                    continue
+                    log.debug(catalog)
+                    if catalog:
+                        log.info(f"Table {catalog} is already registered as product id {catalog.id}")
+                        continue
                 except Catalog.DoesNotExist:
                     log.info(f"Table {tbl_name} is not registered as")
 
