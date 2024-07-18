@@ -23,4 +23,5 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
-        DataDiscovery(options).start()
+        pass
+        # DataDiscovery(options).start()
