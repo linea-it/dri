@@ -402,3 +402,19 @@ def get_ncsa_signup(request):
 def teste(request):
     if request.method == "GET":
         return Response(dict({"status": "success"}))
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def healthcheck(request):
+    """
+    A view function that performs a health check.
+
+    Parameters:
+    - request: The HTTP request object.
+
+    Returns:
+    - A Response object with a JSON payload containing the status of the health check.
+    """
+    if request.method == "GET":
+        return Response(dict({"status": "success"}))

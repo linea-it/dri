@@ -32,14 +32,19 @@ services:
       - rabbit
     env_file:
       - .env
-
+    healthcheck:
+      test: curl --fail http://127.0.0.1:8001/dri/api/healthcheck/ || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
 
   rabbit:
-      image: rabbitmq:3-management
-      hostname: rabbit_dri
-      environment:
-          - RABBITMQ_DEFAULT_USER=dri
-          - RABBITMQ_DEFAULT_PASS=adminadmin
+    image: rabbitmq:3-management
+    hostname: rabbit_dri
+    environment:
+      - RABBITMQ_DEFAULT_USER=dri
+      - RABBITMQ_DEFAULT_PASS=adminadmin
 
   iipserver:
     image: linea/iipserver:latest
