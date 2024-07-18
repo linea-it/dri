@@ -1,6 +1,6 @@
 ARG BUILD_ENVIRONMENT=local
 
-FROM python:3.9-slim as base
+FROM python:3.9-slim AS base
 
 ARG BUILD_ENVIRONMENT
 ARG USERNAME=dri
@@ -32,6 +32,7 @@ RUN apt-get update && apt-get install -y  \
     git \
     zsh \
     wget \
+    curl \
     vim
 
 # Install Oracle Client
@@ -55,7 +56,7 @@ RUN pip install --upgrade pip setuptools wheel \
     && pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/$BUILD_ENVIRONMENT.txt \
     && rm -rf /tmp/pip-tmp
 
-FROM base as dri-local
+FROM base AS dri-local
 # Install Github CLI
 # https://github.com/cli/cli/blob/trunk/docs/install_linux.md
 RUN mkdir -p -m 755 /etc/apt/keyrings && wget -qO- https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
@@ -71,7 +72,7 @@ RUN wget -qO act.tar.gz https://github.com/nektos/act/releases/latest/download/a
     && act --version \
     && rm -rf act.tar.gz
 
-FROM base as dri-production
+FROM base AS dri-production
 
 FROM dri-$BUILD_ENVIRONMENT
 
@@ -99,5 +100,7 @@ USER $USERNAME
 
 # Install Oh My Zsh
 RUN sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)" --unattended
+
+EXPOSE 8000
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -1,80 +1,90 @@
-version: '2'
 services:
-  gidlab:
-    image: gidlab/shib-proxy_uwsgi:1.0.0
-    env_file:
-      - .env
-    volumes:
-      - ${APACHE_VOL}/shib.conf:/etc/apache2/sites-available/000-default.conf
-      # - $PWD/ssl:/etc/apache2/certs
-      - ${SHIB_VOL}/shibboleth2.xml:/etc/shibboleth/shibboleth2.xml:ro
-      - ${SHIB_VOL}/attribute-map.xml:/etc/shibboleth/attribute-map.xml:ro
-      - ${SHIB_VOL}/attribute-policy.xml:/etc/shibboleth/attribute-policy.xml:ro
-      # - ${SHIB_VOL}/sp-key.pem:/etc/shibboleth/sp-key.pem:ro
-      # - ${SHIB_VOL}/sp-cert.pem:/etc/shibboleth/sp-cert.pem:ro
-      - ${SHIB_VOL}/metadata/linea-google.xml:/var/cache/shibboleth/linea-google.xml:ro
-      - ${SHIB_VOL}/metadata/linea-github.xml:/var/cache/shibboleth/linea-github.xml:ro
-      - ${SHIB_VOL}/metadata/linea-facebook.xml:/var/cache/shibboleth/linea-facebook.xml:ro
-      - ./log/shibboleth/apache2/:/var/log/apache2/
-      - ./log/shibboleth/:/var/log/shibboleth/
-
   backend:
-    build: ./api
-    command: ./entrypoint.sh
+    image: linea/dri:backend_12bb6006
+    #image: linea/dri:backend_e86eac76
+    user: "50017:10000"
+    group_add:
+      - "1000"
+      - "39215"
+      - "10006"
+    command: /start.sh
     environment:
-      - NCSA=true
+      - DEBUG=True
+      - LOG_LEVEL=DEBUG
       - CELERY_BROKER=amqp://dri:adminadmin@rabbit:5672
+      # Auth SAML2
+      - BASE_HOST=https://scienceserver-dev.linea.org.br
+      - DOMAIN=scienceserver-dev.linea.org.br
+      - AUTH_SAML2_ENABLED=True
+      - AUTH_SAML2_LOGIN_URL_CAFE=https://scienceserver-dev.linea.org.br/saml2/login/?idp=https://satosa.linea.org.br/linea_saml/proxy
+      - AUTH_SAML2_LOGIN_URL_CILOGON=https://scienceserver-dev.linea.org.br/saml2/login/?idp=https://satosa.linea.org.br/linea/proxy/aHR0cHM6Ly9jaWxvZ29uLm9yZw==
     volumes:
-      - ./api:/app
-      - ./archive:/archive
-      - ./log/backend:/log
+      # Diretório onde o backend pode manipular arquivos.
+      - /archive/data_srvapps/scienceserver-dev./archive
+      # Diretório de logs do backend.
+      - ./log:/log
+      # Arquivo de configuração do backend, com as variaveis e acessos ao banco de dados.
+      - ./local_vars.py:/app/dri/settings/local_vars.py
+      # Django SAML
+      - ./certificates:/app/dri/certificates
+      - ./metadatas:/app/dri/metadatas
     depends_on:
-      - rabbit
-    env_file:
-      - .env
-
+      rabbit:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://127.0.0.1:8001/dri/api/healthcheck/ || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
 
   rabbit:
-      image: rabbitmq:3-management
-      hostname: rabbit_dri
-      environment:
-          - RABBITMQ_DEFAULT_USER=dri
-          - RABBITMQ_DEFAULT_PASS=adminadmin
+    image: rabbitmq:3-management
+    hostname: rabbit_dri
+    environment:
+      - RABBITMQ_DEFAULT_USER=dri
+      - RABBITMQ_DEFAULT_PASS=adminadmin
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
 
   iipserver:
-    image: linea/iipserver:latest
+    image: linea/iipserver:astro_00ffe09
+    restart: always
     environment:
-      - LOGFILE=/log/iipsrv.log
-      - VERBOSITY=10
-      - FILESYSTEM_PREFIX=/images/
+      - FILESYSTEM_PREFIX=/
       - MAX_IMAGE_CACHE_SIZE=10
       - MAX_CVT=3000
       - JPEG_QUALITY=90
-      - CORS=*
     command: ./start_fcgi.sh
     volumes:
-      - ./log/iipserver:/log
-      - ./archive/images:/images
+      # Diretorio de logs do iipserver
+      - ./log:/var/log
+      # Imagens Ptifs/Visiomatic:
+      - /lustre/t1/public/des/dr2/primary/images/coadd/:/data/releases/dr2/coadd
 
-  nginx:
-    build: ./frontend
+  frontend:
+    image: linea/dri:frontend_9bbcd1f6
+    #image: linea/dri:frontend_f7e0f6b9
     ports:
-      - 80:8080
-      - 443:4443
+      - 8000:8080
     volumes:
-      # Arquivo de Configuração do Nginx
-      - ./frontend/nginx-proxy.conf:/etc/nginx/conf.d/default.conf
-      # Certbot SSL
-      - ./archive/certbot/conf:/etc/letsencrypt
-      - ./archive/certbot/www:/var/www/certbot
-      # Diretorio de Logs
-      - ./log/nginx:/var/log/nginx
-      # Diretório de dados da aplicação
-      - ./archive:/var/www/data
-      # Google Analytics Script
+      # Diretório onde o backend manipula arquivos, e que deve ficar acessivel ao servidor web.
+      - /archive/data_srvapps/scienceserver-dev./var/www/data
+      # Arquivo de configuração do Ngnix para este ambiente.
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      # Google Analytics
       - ./google-analytics.js:/var/www/ga/google-analytics.js
+      # Diretório onde estão as imagens HIPS/Aladin para os releases. Geradas no LIneA ( Em validacao 18/07/2024 )
+      - /lustre/t1/public/des/dr2/secondary/images/coadd/hips_rgb:/var/www/data/releases/dr2/
+      # Diretório onde estão os Mapas, imagens aladin
+      - /archive/data_srvapps/scienceserver-dev.maps:/var/www/data/maps:ro
+      # Diretório de logs do servidor web.
+      - ./log:/var/log/nginx
     depends_on:
-      - backend
-      - iipserver
-      - rabbit
-      - gidlab
+      backend:
+        condition: service_healthy
+      iipserver:
+        condition: service_started

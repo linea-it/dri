@@ -18,6 +18,7 @@ python manage.py collectstatic --clear --noinput --verbosity 0
 # https://uwsgi-docs.readthedocs.io/en/latest/WSGIquickstart.html
 uwsgi \
   --socket 0.0.0.0:8000 \
+  --http-socket 0.0.0.0:8001 \
   --wsgi-file /app/dri/wsgi.py \
   --py-autoreload 1 \
   --static-map /django_static/rest_framework/=/app/dri/static/rest_framework \
