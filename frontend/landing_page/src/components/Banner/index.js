@@ -48,38 +48,30 @@ function Banner() {
       <div className={classes.root}>
         <Grid
           container
-          direction="row"
-          justify="space-between"
-          alignItems="flex-start"
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
           spacing={1}
           className={classes.container}
         >
           <Grid item xs={12} className={classes.titleWrapper}>
-            <table className={classes.table}>
-              <tbody>
-                <tr>
-                  <td colSpan={2} style={{ textAlign: '-webkit-center' }}>
-                    <h1 className={classes.title}>
-                      LIneA Science Server
-                    </h1>
-                  </td>
-                </tr>
-                <tr>
-                  <td className={classes.positionTitle}>
-                    <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
-                    <h1 className={classes.subtitle}>
-                      DES Data Release {enviromentName !== undefined && enviromentName}
-                    </h1>
-                    {isBr ? (<img src={`${process.env.PUBLIC_URL}/img/bandeira_brasil.jpg`} alt="Brasil" className={classes.brFlag} />) : ''}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div className={classes.titleContainer}>
+              <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
+              <h1 className={classes.title}>
+                DES Science Server
+              </h1>
+            </div>
+            <h2 className={classes.subtitle}>
+              Data Release 2 {enviromentName !== undefined && enviromentName}
+            </h2>
+            {isBr && (
+              <img src={`${process.env.PUBLIC_URL}/img/bandeira_brasil.jpg`} alt="Brasil" className={classes.brFlag} />
+            )}
           </Grid>
           <div className={classes.floarRight}>
             <div className={classes.separatorToolBar} />
             <IconButton
-              onClick={() => { handlerClick('Youtube'); }}
+              onClick={() => { handlerClick('YouTube'); }}
               color="inherit"
               aria-label="YouTube"
               component="span"

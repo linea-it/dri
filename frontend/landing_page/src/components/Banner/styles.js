@@ -46,13 +46,11 @@ const styles = makeStyles((theme) => ({
     fontFamily: 'Oxanium',
     // textTransform: 'uppercase',
     fontWeight: 100,
-    marginTop: -30,
     fontSize: 28,
+    marginLeft: theme.spacing(2),
     [theme.breakpoints.up('sm')]: {
       fontSize: 60,
-      marginTop: -38,
     },
-    width: 'max-content',
     textShadow: 'black 0.1em 0.1em 0.2em',
   },
   subtitle: {
@@ -69,32 +67,22 @@ const styles = makeStyles((theme) => ({
     paddingTop: 8,
     textShadow: 'black 0.1em 0.1em 0.2em',
   },
-  positionTitle: {
-    textAlign: '-webkit-center',
-
+  titleWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: `${theme.spacing(8)}px 0 ${theme.spacing(2)}px`,
+  },
+  titleContainer: {
+    display: 'flex',
+    alignItems: 'center',
   },
   driLogo: {
-    margin: '-33px 0px 0px 85px',
-    position: 'relative',
-    float: 'left',
-    [theme.breakpoints.up('sm')]: {
-      maxWidth: 80,
-    },
     maxWidth: 80,
   },
   brFlag: {
-    margin: '-66px 0px 0px 85px',
-    position: 'relative',
-    float: 'right',
-    [theme.breakpoints.up('sm')]: {
-      maxWidth: 80,
-    },
     maxWidth: 80,
-  },
-  titleWrapper: {
-    [theme.breakpoints.up('sm')]: {
-      margin: `${theme.spacing(8)}px 0 ${theme.spacing(2)}px`,
-    },
+    marginTop: theme.spacing(1),
   },
   descriptionWrapper: {
     margin: 'auto',

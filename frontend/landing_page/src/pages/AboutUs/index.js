@@ -102,7 +102,7 @@ function AboutUs() {
                 <span> to quickly examine and validate coadded images, only available for members of the collaboration.</span>
               </li>
             </ul>
-            <p><span>For more information see the tutorials.</span></p>
+            <p><span>For more information see the <a href="https://docs.linea.org.br" target="_blank">documentation</a> and <a href="https://scienceserver-dev.linea.org.br/tutorials" target="_blank">video tutorials</a>.</span></p>
             <p><strong><em>Credits</em></strong></p>
             <p><span>We would like to thank the contribution of the following people and organizations</span></p>
             <ul>
