@@ -355,19 +355,19 @@ class TargetObjectsDBHelper(CatalogTable):
         # Trata os casos em que a tabela do usuario está em um banco diferente do banco de catalogos da aplicação.
         # so vai funcionar se os bancos forem os mesmos mas com tags diferentes na settings.
         # Exemplo Dessci e catalog, no Oracle ambas são o mesmo banco de dados.
-        self.schema_rating_reject = self.get_connection_schema()
+        # self.schema_rating_reject = self.get_connection_schema()
 
-        if database != 'catalog':
-            db_catalog = CatalogDB()
+        # if database != 'catalog':
+        #     db_catalog = CatalogDB()
 
-            self.schema_rating_reject = db_catalog.get_connection_schema()
+        #     self.schema_rating_reject = db_catalog.get_connection_schema()
 
-            self.catalog_rating = db_catalog.get_table_obj('catalog_rating', schema=self.schema_rating_reject)
-            self.catalog_reject = db_catalog.get_table_obj('catalog_reject', schema=self.schema_rating_reject)
+        #     self.catalog_rating = db_catalog.get_table_obj('catalog_rating', schema=self.schema_rating_reject)
+        #     self.catalog_reject = db_catalog.get_table_obj('catalog_reject', schema=self.schema_rating_reject)
 
-        else:
-            self.catalog_rating = self.get_table_obj('catalog_rating', schema=self.schema_rating_reject)
-            self.catalog_reject = self.get_table_obj('catalog_reject', schema=self.schema_rating_reject)
+        # else:
+        #     self.catalog_rating = self.get_table_obj('catalog_rating', schema=self.schema_rating_reject)
+        #     self.catalog_reject = self.get_table_obj('catalog_reject', schema=self.schema_rating_reject)
 
         # Para o as querys de Target e necessario ter a instancia do product para fazer os join com Rating e Reject
         if product is None:
@@ -750,55 +750,67 @@ class TargetObjectsDBHelper(CatalogTable):
         return False
 
     def get_ratings(self, product_id, owner_id):
+        # db_catalog = CatalogDB(db='catalog')
 
-        tbl_rating = self.catalog_rating
-        # Filtrar a tabela por prodruto e por owner
-        # Isso vai trazer todos os registros de ratings referentes a tabela object
-        # independente de paginação ou filtros
-        stm_rating = select([tbl_rating.c.id, tbl_rating.c.object_id, tbl_rating.c.rating, ]).where(and_(
-            tbl_rating.c.catalog_id == product_id,
-            tbl_rating.c.owner == owner_id
-        ))
+        # schema_rating_reject = db_catalog.get_connection_schema()
 
-        self.log.info("Rating Query: [ %s ]" % self.statement_to_str(stm_rating))
+        # tbl_rating = db_catalog.get_table_obj('catalog_rating', schema=schema_rating_reject)
 
-        # Criar o Dataframe da tabela Rating
-        df_rating = pd.read_sql(
-            stm_rating,
-            con=self.engine,
-        )
-        df_rating = df_rating.rename(columns={"id": "_meta_rating_id", "rating": "_meta_rating"})
-        df_rating['object_id'] = df_rating['object_id'].astype('string')
+        # # Filtrar a tabela por prodruto e por owner
+        # # Isso vai trazer todos os registros de ratings referentes a tabela object
+        # # independente de paginação ou filtros
+        # stm_rating = select([tbl_rating.c.id, tbl_rating.c.object_id, tbl_rating.c.rating, ]).where(and_(
+        #     tbl_rating.c.catalog_id == product_id,
+        #     tbl_rating.c.owner == owner_id
+        # ))
 
-        self.log.debug(df_rating.head())
+        # self.log.info("Rating Query: [ %s ]" % self.statement_to_str(stm_rating))
 
-        self.log.debug("Count Df Ratings: [%s]" % df_rating.shape[0])
+        # # Criar o Dataframe da tabela Rating
+        # df_rating = pd.read_sql(
+        #     stm_rating,
+        #     con=self.engine,
+        # )
+        # df_rating = df_rating.rename(columns={"id": "_meta_rating_id", "rating": "_meta_rating"})
+        # df_rating['object_id'] = df_rating['object_id'].astype('string')
 
+        # self.log.debug(df_rating.head())
+
+        # self.log.debug("Count Df Ratings: [%s]" % df_rating.shape[0])
+
+        self.log.info("Return empty Rating Dataframe.")
+        df_rating = pd.DataFrame(columns=['_meta_rating_id', 'catalog_id', 'owner', 'object_id', '_meta_rating'])
         return df_rating
 
     def get_rejects(self, product_id, owner_id):
 
-        tbl_reject = self.catalog_reject
-        # Filtrar a tabela por prodruto e por owner
-        # Isso vai trazer todos os registros de reject referentes a tabela object
-        # independente de paginação ou filtros
-        stm_reject = select([tbl_reject.c.id, tbl_reject.c.object_id, tbl_reject.c.reject]).where(and_(
-            tbl_reject.c.catalog_id == product_id,
-            tbl_reject.c.owner == owner_id
-        ))
+        # db_catalog = CatalogDB()
+        # schema_rating_reject = db_catalog.get_connection_schema()
+        # tbl_reject = db_catalog.get_table_obj('catalog_reject', schema=schema_rating_reject)
 
-        self.log.info("Reject Query: [ %s ]" % self.statement_to_str(stm_reject))
+        # # Filtrar a tabela por prodruto e por owner
+        # # Isso vai trazer todos os registros de reject referentes a tabela object
+        # # independente de paginação ou filtros
+        # stm_reject = select([tbl_reject.c.id, tbl_reject.c.object_id, tbl_reject.c.reject]).where(and_(
+        #     tbl_reject.c.catalog_id == product_id,
+        #     tbl_reject.c.owner == owner_id
+        # ))
 
-        # Criar o Dataframe da tabela Reject
-        df_reject = pd.read_sql(
-            stm_reject,
-            con=self.engine,
-        )
-        df_reject = df_reject.rename(columns={"id": "_meta_reject_id", "reject": "_meta_reject"})
-        df_reject['object_id'] = df_reject['object_id'].astype('string')
+        # self.log.info("Reject Query: [ %s ]" % self.statement_to_str(stm_reject))
 
-        self.log.debug(df_reject.head())
+        # # Criar o Dataframe da tabela Reject
+        # df_reject = pd.read_sql(
+        #     stm_reject,
+        #     con=self.engine,
+        # )
+        # df_reject = df_reject.rename(columns={"id": "_meta_reject_id", "reject": "_meta_reject"})
+        # df_reject['object_id'] = df_reject['object_id'].astype('string')
 
-        self.log.debug("Count Df Rejects: [%s]" % df_reject.shape[0])
+        # self.log.debug(df_reject.head())
+
+        # self.log.debug("Count Df Rejects: [%s]" % df_reject.shape[0])
+
+        self.log.info("Return empty Reject Dataframe.")
+        df_reject = pd.DataFrame(columns=['_meta_reject_id', 'catalog_id', 'owner', 'object_id', '_meta_reject'])
 
         return df_reject

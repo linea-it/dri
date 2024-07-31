@@ -394,7 +394,8 @@ class CatalogViewSet(viewsets.ModelViewSet, mixins.UpdateModelMixin):
             mydb_schema = user.profile.get_mydb_schema()
             log.info(f"User's Mydb: {mydb_schema}")
             # Check if schema exists
-            log.info(db.schema_exists(schema=mydb_schema))
+            schema_exists = db.schema_exists(schema=mydb_schema)
+            log.info(f"Schema exists: {schema_exists}")
             # List all tables in schema
             tables_in_schema = db.get_table_names(schema=mydb_schema)
             log.info(f"User's Tables: {len(tables_in_schema)}")
