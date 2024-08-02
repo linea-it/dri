@@ -64,7 +64,9 @@ Ext.define('Target.view.wizard.Wizard', {
             xtype: 'targets-permission',
             title: 'Permission',
             iconCls: 'x-fa fa-lock',
-            disabled: true
+            disabled: true,
+            // Disabled Permissions Settings Issue: https://github.com/linea-it/dri/issues/1541
+            hidden: true
         },
     ],
 
