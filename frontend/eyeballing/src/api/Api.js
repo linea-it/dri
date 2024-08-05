@@ -166,11 +166,11 @@ class DriApi {
 
   getTutorial = () => axios.get('/tutorial/', { params: { app_name: 'tile_inspection' } }).then(res => res.data);
 
-  getDatasetInfo = id => axios.get('/dataset/desaccess_tile_info_by_id/', { params: { id } }).then(res => res.data)
+  getDatasetInfo = id => axios.get('/dataset/available_files_by_id/', { params: { id } }).then(res => res.data)
 
-  getTokenizedDatasetUrl = url => axios.post('/dataset/desaccess_get_download_url/', { file_url: url }).then(res => res.data.download_url)
+  getTokenizedDatasetUrl = url => axios.post('/dataset/get_download_url/', { file_url: url }).then(res => res.data.download_url)
 
-  getTileInfo = id => axios.get(`/tiles/${id}/desaccess_tile_info/`).then(res => res.data)
+  getTileInfo = id => axios.get(`/tiles/${id}/available_files/`).then(res => res.data)
 
   getTokenizedTileUrl = url => axios.post('/tiles/desaccess_get_download_url/', { file_url: url }).then(res => res.data.download_url)
 
