@@ -1,1 +1,1 @@
-FROM linea/postgresql_q3c:latest
+FROM postgres:14.10-alpine

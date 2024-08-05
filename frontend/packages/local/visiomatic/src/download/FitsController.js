@@ -27,7 +27,7 @@ Ext.define('visiomatic.download.FitsController', {
 
         store.filter([
             {
-                property:'result',
+                property: 'result',
                 value: result
             },
         ]);
@@ -35,14 +35,14 @@ Ext.define('visiomatic.download.FitsController', {
 
     onSelect: function (selModel, record) {
         var me = this,
-        view = me.getView()
+            view = me.getView()
 
         view.setLoading(true);
 
         url = record.data.url
 
         Ext.Ajax.request({
-            url: `${Ext.manifest.apiBaseUrl}/dri/api/dataset/desaccess_get_download_url/`,
+            url: `${Ext.manifest.apiBaseUrl}/dri/api/dataset/get_download_url/`,
             params: {
                 file_url: url
             },

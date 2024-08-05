@@ -11,6 +11,7 @@ from rest_framework import filters, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from pathlib import Path
 
 from .models import Dataset, Release, Survey, Tag, Tile
 from .serializers import (
@@ -260,154 +261,87 @@ class DatasetViewSet(viewsets.ReadOnlyModelViewSet):
 
         return queryset
 
-    @action(detail=True)
-    def desaccess_tile_info(self, request, pk=None):
-        """Search DESaccess for tilename and return a list of tile files already filtered by the dataset release.
-
-        Returns:
-            dict: returns a dict with the image and catalog urls, both organized by band and with the file url.
+    def get_available_files(self, dataset):
         """
-        dataset = self.get_object()
-
-        # Requested to associate these internal releases
-        # to the DESAccess releases:
-        associated_releases = {
-            "y6a2_coadd": "y6a1_coadd",
-            "y3a1_coadd": "y3a2_coadd",
-            "y1_supplemental_dfull": "y1a1_coadd",
-            "y1_supplemental_d10": "y1a1_coadd",
-            "y1_supplemental_d04": "y1a1_coadd",
-            "y1_wide_survey": "y1a1_coadd",
-        }
-
-        tilename = dataset.tile.tli_tilename
-        rls_name = dataset.tag.tag_release.rls_name
-
-        # Associate the internal release to the release of DESAccess:
-        if rls_name in associated_releases.keys():
-            rls_name = associated_releases[rls_name]
-
-        desapi = DesAccessApi()
-
-        tileinfo = desapi.tile_by_name(tilename)
-
-        result = {}
-
-        for release in tileinfo["releases"]:
-            # Compara o release pelo internal name, nas nossas tabelas o release tem _coadd no nome. por isso é necessário fazer um split.
-            if release["release"] == rls_name.split("_")[0].lower():
-
-                rows = tileinfo["releases"][0]
-
-                for key in rows:
-                    if key != "release" and key != "num_objects" and key != "bands":
-                        result[key] = rows[key]
-                        result["images"] = {}
-                        result["catalogs"] = {}
-
-                for band in release["bands"]:
-
-                    result["images"][band] = release["bands"][band]["image"]
-                    result["catalogs"][band] = release["bands"][band]["catalog"]
-
-                return Response(result)
-
-    @action(detail=False, methods=["get"])
-    def desaccess_tile_info_by_id(self, request):
-        """Search DESaccess for tilename and return a list of tile files already filtered by the dataset release.
+        Retrieves a list of available files for a given dataset.
 
         Args:
-            id (str): URL of the file to be downloaded.
+            dataset (str): The dataset for which to retrieve the available files.
 
         Returns:
-            list: returns a list with the filename and the url of the tile.
+            list: A list of dictionaries containing the filename and URL of each available file.
         """
+        # Exemplo URL: https://scienceserver-dev.linea.org.br/data/releases/dr2/coadd/DES2354-4414/DES2354-4414_r4907p01_g.fits.fz
 
+        results = []
+        data_path = Path(settings.DATA_DIR)
+        release_path = data_path.joinpath(f'releases')
+        tile_path = release_path.joinpath(dataset.archive_path)
+
+        if not tile_path.exists():
+            return results
+
+        for file_path in tile_path.iterdir():
+
+            relative_path = str(file_path.relative_to(data_path)).strip("/")
+            url = Path(settings.DATA_SOURCE).joinpath(relative_path)
+
+            results.append(
+                {
+                    "filename": file_path.name,
+                    "url": str(url),
+                }
+            )
+
+        return results
+
+    @action(detail=False, methods=["get"])
+    def available_files_by_id(self, request):
+        """
+        Retrieve the available files for a dataset based on its ID.
+
+        Parameters:
+        - request: The HTTP request object.
+
+        Returns:
+        - A Response object containing a dictionary with the following keys:
+            - "results": A list of available files for the dataset.
+            - "count": The number of available files.
+
+        Raises:
+        - Exception: If the 'id' parameter is missing in the request query parameters.
+        """
         datasetId = request.query_params.get("id")
 
         if datasetId is None:
             raise Exception("ID paramater is required")
 
-        results = []
-
         dataset = Dataset.objects.get(id=datasetId)
+        results = self.get_available_files(dataset)
+        return Response(
+            dict(
+                {
+                    "results": results,
+                    "count": len(results),
+                }
+            )
+        )
 
-        # Requested to associate these internal releases
-        # to the DESAccess releases:
-        associated_releases = {
-            "y3a1_coadd": "y3a2_coadd",
-            "y1_supplemental_dfull": "y1a1_coadd",
-            "y1_supplemental_d10": "y1a1_coadd",
-            "y1_supplemental_d04": "y1a1_coadd",
-            "y1_wide_survey": "y1a1_coadd",
-        }
-
-        associated_other_files = {
-            "detection": "Detection Image",
-            "main": "Main Catalog",
-            "magnitude": "Magnitude Catalog",
-            "flux": "Flux Catalog",
-            "tiff_image": "Color Image (TIFF)",
-        }
-
-        tilename = dataset.tile.tli_tilename
-        rls_name = dataset.tag.tag_release.rls_name
-
-        # Associate the internal release to the release of DESAccess:
-        if rls_name in associated_releases.keys():
-            rls_name = associated_releases[rls_name]
-
-        desapi = DesAccessApi()
-
-        tileinfo = desapi.tile_by_name(tilename)
-
-        for release in tileinfo["releases"]:
-            # Compara o release pelo internal name, nas nossas tabelas o release tem _coadd no nome. por isso é necessário fazer um split.
-            if release["release"] == rls_name.split("_")[0].lower():
-
-                for band in release["bands"]:
-                    if release["bands"][band]["image"]:
-                        results.append(
-                            {
-                                "filename": "%s-Band Image" % band,
-                                "url": release["bands"][band]["image"],
-                            }
-                        )
-
-                for band in release["bands"]:
-                    if release["bands"][band]["image_nobkg"]:
-                        results.append(
-                            {
-                                "filename": "%s-Band Image (no background subtraction)"
-                                % band,
-                                "url": release["bands"][band]["image_nobkg"],
-                            }
-                        )
-
-                for band in release["bands"]:
-                    if release["bands"][band]["catalog"]:
-                        results.append(
-                            {
-                                "filename": "%s-Band Catalog" % band,
-                                "url": release["bands"][band]["catalog"],
-                            }
-                        )
-
-                for key in release:
-                    if (
-                        key != "release"
-                        and key != "num_objects"
-                        and key != "bands"
-                        and release[key]
-                        and release[key] != ""
-                        and associated_other_files[key]
-                    ):
-                        results.append(
-                            {
-                                "filename": associated_other_files[key],
-                                "url": release[key],
-                            }
-                        )
+    @action(detail=True)
+    def available_files(self, request, pk=None):
+        """
+        Retrieve the available files for a dataset.
+        Parameters:
+        - request: The HTTP request object.
+        - pk: The primary key of the dataset.
+        Returns:
+        - A Response object containing a dictionary with the following keys:
+            - "results": The list of available files.
+            - "count": The number of available files.
+        """
+        dataset = self.get_object()
+            
+        results = self.get_available_files(dataset)
 
         return Response(
             dict(
@@ -419,24 +353,14 @@ class DatasetViewSet(viewsets.ReadOnlyModelViewSet):
         )
 
     @action(detail=False, methods=["post"])
-    def desaccess_get_download_url(self, request):
-        """creates an authenticated url for a file served by DESaccess.
-
-        Args:
-            file_url (str): URL of the file to be downloaded.
-
-        Returns:
-            str: Authenticated URL, note that this url has a time limit to be used. must be generated at the time the download is requested.
-        """
-
+    def get_download_url(self, request):
+        # Este metodo não faz nada alem de retornar a URL que foi passada como parametro.
+        # Existe apenas para manter compatibilidade com o front-end que espera que o metodo exista.
+        # Herança da epoca que utilizavamos o DESAccess para download de arquivos.
         params = request.data
         file_url = params["file_url"]
 
-        desapi = DesAccessApi()
-
-        download_url = desapi.file_url_to_download(file_url)
-
-        return Response(dict({"download_url": download_url}))
+        return Response(dict({"download_url": file_url}))
 
 
 class DatasetFootprintViewSet(viewsets.ModelViewSet):

@@ -1,6 +1,6 @@
 # DRI - DES Science Server
 
-## Instalação de ambiente de Testing
+## Instalação de ambiente Local
 <https://github.com/linea-it/dri/blob/master/Instalation.md>
 
 ## Documentation for Sencha Extjs Framework 
