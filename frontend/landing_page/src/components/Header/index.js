@@ -125,7 +125,6 @@ function Header() {
   return (
     <AppBar position="static" className={classes.appbar}>
       <Toolbar>
-        <img src={`${process.env.PUBLIC_URL}/img/linea-dark-invert.png`} alt="LIneA" className={classes.logoLIneA} />
         <List className={classes.menuList}>
           {menus.map((menu, index) => (
             <ListItem key={index}>

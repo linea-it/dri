@@ -3,7 +3,7 @@ import React from 'react';
 import {
   Grid, Container, Typography, Breadcrumbs, Link, IconButton,
 } from '@material-ui/core';
-import { YouTube, Twitter, GitHub } from '@material-ui/icons';
+import { YouTube, Twitter, GitHub, Instagram } from '@material-ui/icons';
 import styles from './styles';
 
 function AboutUs() {
@@ -11,16 +11,19 @@ function AboutUs() {
     let uri = '';
     switch (socialMedia) {
       case 'YouTube':
-        uri = 'https://www.youtube.com/user/lineamcti';
+        uri = 'https://www.youtube.com/@linea_org';
         break;
       case 'Twitter':
-        uri = 'https://twitter.com/LIneA_mcti';
+        uri = 'https://x.com/linea_org';
+        break;
+      case 'Instagram':
+        uri = 'https://www.instagram.com/linea_org/';
         break;
       case 'GitHub':
         uri = 'https://github.com/linea-it/dri';
         break;
       default:
-        uri = 'https://www.youtube.com/user/lineamcti';
+        uri = 'https://www.youtube.com/@linea_org';
     }
     window.open(uri, '_blank');
   };
@@ -53,7 +56,7 @@ function AboutUs() {
               <>
                 <IconButton
                   className={classes.icon}
-                  onClick={() => { handlerClick('Youtube'); }}
+                  onClick={() => { handlerClick('YouTube'); }}
                   color="inherit"
                   aria-label="YouTube"
                   component="span"
@@ -68,6 +71,15 @@ function AboutUs() {
                   component="span"
                 >
                   <Twitter />
+                </IconButton>
+                <IconButton
+                  className={classes.icon}
+                  onClick={() => { handlerClick('Instagram'); }}
+                  color="inherit"
+                  aria-label="Instagram"
+                  component="span"
+                >
+                  <Instagram />
                 </IconButton>
                 <IconButton
                   className={classes.icon}
