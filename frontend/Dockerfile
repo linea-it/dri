@@ -1,5 +1,5 @@
 # Build Sencha ExtJS Apps
-FROM linea/sencha_cmd:6.5.3.6 as sencha_apps
+FROM linea/sencha_cmd:6.5.3.6 AS sencha_apps
 
 COPY ./ext /code/ext
 COPY ./.sencha /code/.sencha
@@ -25,13 +25,13 @@ RUN /opt/Sencha/sencha app build production
 RUN cp -r /code/packages/local/visiomatic/src/visiomatic/dist /code/build/production/Explorer/packages/local/visiomatic/src/visiomatic/
 
 # Build ReactJS Apps
-FROM node:10-alpine as eyeballing
+FROM node:10-alpine AS eyeballing
 WORKDIR /app
 COPY ./eyeballing .
 RUN yarn -v && yarn 
 RUN yarn run build
 
-FROM node:10-alpine as landingpage
+FROM node:10-alpine AS landingpage
 WORKDIR /app
 COPY ./landing_page .
 RUN yarn -v && yarn 
