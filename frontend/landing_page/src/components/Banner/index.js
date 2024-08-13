@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import { YouTube, Twitter, GitHub } from '@material-ui/icons';
+import { YouTube, Twitter, GitHub, Instagram } from '@material-ui/icons';
 import styles from './styles';
 import { envName } from '../../Services/api';
 
@@ -12,16 +12,19 @@ function Banner() {
     let uri = '';
     switch (socialMedia) {
       case 'YouTube':
-        uri = 'https://www.youtube.com/user/lineamcti';
+        uri = 'https://www.youtube.com/@linea_org';
         break;
       case 'Twitter':
-        uri = 'https://twitter.com/LIneA_mcti';
+        uri = 'https://x.com/linea_org';
+        break;
+      case 'Instagram':
+        uri = 'https://www.instagram.com/linea_org/';
         break;
       case 'GitHub':
         uri = 'https://github.com/linea-it/dri';
         break;
       default:
-        uri = 'https://www.youtube.com/user/lineamcti';
+        uri = 'https://www.youtube.com/@linea_org';
     }
     window.open(uri, '_blank');
   };
@@ -48,38 +51,30 @@ function Banner() {
       <div className={classes.root}>
         <Grid
           container
-          direction="row"
-          justify="space-between"
-          alignItems="flex-start"
+          direction="column"
+          justifyContent="center"
+          alignItems="center"
           spacing={1}
           className={classes.container}
         >
           <Grid item xs={12} className={classes.titleWrapper}>
-            <table className={classes.table}>
-              <tbody>
-                <tr>
-                  <td colSpan={2} style={{ textAlign: '-webkit-center' }}>
-                    <h1 className={classes.title}>
-                      LIneA Science Server
-                    </h1>
-                  </td>
-                </tr>
-                <tr>
-                  <td className={classes.positionTitle}>
-                    <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
-                    <h1 className={classes.subtitle}>
-                      DES Data Release {enviromentName !== undefined && enviromentName}
-                    </h1>
-                    {isBr ? (<img src={`${process.env.PUBLIC_URL}/img/bandeira_brasil.jpg`} alt="Brasil" className={classes.brFlag} />) : ''}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div className={classes.titleContainer}>
+              <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
+              <h1 className={classes.title}>
+                DES Science Server
+              </h1>
+            </div>
+            <h2 className={classes.subtitle}>
+              Data Release 2 {enviromentName !== undefined && enviromentName}
+            </h2>
+            {isBr && (
+              <img src={`${process.env.PUBLIC_URL}/img/bandeira_brasil.jpg`} alt="Brasil" className={classes.brFlag} />
+            )}
           </Grid>
           <div className={classes.floarRight}>
             <div className={classes.separatorToolBar} />
             <IconButton
-              onClick={() => { handlerClick('Youtube'); }}
+              onClick={() => { handlerClick('YouTube'); }}
               color="inherit"
               aria-label="YouTube"
               component="span"
@@ -93,6 +88,14 @@ function Banner() {
               component="span"
             >
               <Twitter />
+            </IconButton>
+            <IconButton
+              onClick={() => { handlerClick('Instagram'); }}
+              color="inherit"
+              aria-label="Instagram"
+              component="span"
+            >
+              <Instagram />
             </IconButton>
             <IconButton
               onClick={() => { handlerClick('GitHub'); }}

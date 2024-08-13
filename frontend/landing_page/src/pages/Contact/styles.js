@@ -1,9 +1,9 @@
 import { makeStyles } from '@material-ui/core/styles';
 
-const styles = makeStyles(() => ({
-  initContainer: {
-    paddingTop: 20,
-    paddingBottom: '40vh'
+const styles = makeStyles((theme) => ({
+  initContainer: theme.initContainer,
+  textFields: {
+    marginBottom: theme.spacing(4),
   },
   grid: {
     margin: 'auto',

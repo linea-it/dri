@@ -23,17 +23,7 @@ function Contact() {
               <Typography variant='h4' align='center' color='textPrimary'>
                 Contact
               </Typography>
-              <p>
-                <span>
-                  If you have any problems related to the usage of the applications,
-                  <Link href='/tutorials' variant='body2'>
-                    &nbsp;click here&nbsp;
-                  </Link>
-                  <br />
-                  <p>To get in touch with technical support you can send an email to: helpdesk at linea dot org dot br</p>
-                  We stand ready to assist you with any inquiries, ideas, or remarks you may have.
-                </span>
-              </p>
+                  <p>To get in touch with technical support, send an email to: helpdesk at linea dot org dot br</p>
             </CardContent>
           </Card>
         </Grid>
