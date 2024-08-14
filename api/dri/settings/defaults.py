@@ -447,10 +447,16 @@ if AUTH_SAML2_ENABLED == True:
         },
         # Indica onde os metadados podem ser encontrados
         "metadata": {
-            "local": [
-                os.path.join(BASE_DIR, "metadatas", "satosa-prod-cafe.xml"),
-                os.path.join(BASE_DIR, "metadatas", "satosa-prod-cilogon.xml"),
-            ],
+            "remote": [
+                {
+                    "url": "https://identity.linea.org.br/metadata/satosa-prod-frontend-cilogon.xml",
+                    "cert": None,
+                },
+                {
+                    "url": "https://identity.linea.org.br/metadata/satosa-prod-frontend-cafe.xml",
+                    "cert": None,
+                },
+            ]
         },
         # Configurado como 1 para fornecer informações de debug
         "debug": 1,
