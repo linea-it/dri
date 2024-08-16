@@ -61,7 +61,7 @@ function Banner() {
             <div className={classes.titleContainer}>
               <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
               <h1 className={classes.title}>
-                DES Science Server
+                LIneA Science Server
               </h1>
             </div>
             <h2 className={classes.subtitle}>
