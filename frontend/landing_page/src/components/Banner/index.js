@@ -1,33 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import Grid from '@material-ui/core/Grid';
-import IconButton from '@material-ui/core/IconButton';
-import { YouTube, Twitter, GitHub, Instagram } from '@material-ui/icons';
 import styles from './styles';
 import { envName } from '../../Services/api';
 
 function Banner() {
   const classes = styles();
-
-  const handlerClick = (socialMedia) => {
-    let uri = '';
-    switch (socialMedia) {
-      case 'YouTube':
-        uri = 'https://www.youtube.com/@linea_org';
-        break;
-      case 'Twitter':
-        uri = 'https://x.com/linea_org';
-        break;
-      case 'Instagram':
-        uri = 'https://www.instagram.com/linea_org/';
-        break;
-      case 'GitHub':
-        uri = 'https://github.com/linea-it/dri';
-        break;
-      default:
-        uri = 'https://www.youtube.com/@linea_org';
-    }
-    window.open(uri, '_blank');
-  };
 
   const [isBr, setIsBr] = useState(false);
   const [enviromentName, setEnviromentName] = useState(undefined);
@@ -71,41 +48,6 @@ function Banner() {
               <img src={`${process.env.PUBLIC_URL}/img/bandeira_brasil.jpg`} alt="Brasil" className={classes.brFlag} />
             )}
           </Grid>
-          <div className={classes.floarRight}>
-            <div className={classes.separatorToolBar} />
-            <IconButton
-              onClick={() => { handlerClick('YouTube'); }}
-              color="inherit"
-              aria-label="YouTube"
-              component="span"
-            >
-              <YouTube />
-            </IconButton>
-            <IconButton
-              onClick={() => { handlerClick('Twitter'); }}
-              color="inherit"
-              aria-label="Twitter"
-              component="span"
-            >
-              <Twitter />
-            </IconButton>
-            <IconButton
-              onClick={() => { handlerClick('Instagram'); }}
-              color="inherit"
-              aria-label="Instagram"
-              component="span"
-            >
-              <Instagram />
-            </IconButton>
-            <IconButton
-              onClick={() => { handlerClick('GitHub'); }}
-              color="inherit"
-              aria-label="GitHub"
-              component="span"
-            >
-              <GitHub />
-            </IconButton>
-          </div>
         </Grid>
       </div>
     </>
