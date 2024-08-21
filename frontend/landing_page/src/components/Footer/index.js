@@ -24,11 +24,13 @@ const Footer = () => {
 
           <Grid item xs={12} md={5}>
             <Box className={classes.logoContainer}>
-              <img
-                src="/images/linea-logo.png"
-                alt="LIneA logo"
-                className={classes.logo}
-              />
+              <a href="https://www.linea.org.br/" target="_blank">
+                <img
+                  src="/images/linea-logo.png"
+                  alt="LIneA logo"
+                  className={classes.logo}
+                />
+              </a>
               <Typography variant="h6" className={classes.title}>
                 Associação Laboratório<br />Interinstitucional de<br />e-Astronomia LIneA
               </Typography>
