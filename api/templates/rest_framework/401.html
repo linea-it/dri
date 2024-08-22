@@ -1,0 +1,124 @@
+{% extends "rest_framework/login_base.html" %}
+{% block title %}Unauthorized Access{% endblock %}
+
+{% block body %}
+
+<body style="
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url('https://identity.linea.org.br/eds/images/background.jpg');
+    background-repeat: round;
+    background-attachment: fixed;
+    font-family: 'Roboto', sans-serif;
+">
+    <div style="
+        background-color: #fff;
+        padding: 16px;
+        margin: 32px;
+        border-radius: 20px;
+        width: 738px;
+        height: 380px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 
+                    0px 1px 1px 0px rgba(0, 0, 0, 0.14), 
+                    0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+    ">
+        <div style="
+            display: flex;
+            flex-wrap: nowrap;
+            margin: 0;
+            align-items: center;
+        ">
+            <div style="
+                flex: 0 0 auto;
+                width: 50%;
+                text-align: center;
+            ">
+                <div style="
+                    font-size: 10rem;
+                    margin: 3rem 0 0;
+                    color: #283661;
+                ">
+                    401
+                </div>
+                <div style="
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: flex-start;
+                    align-items: center;
+                    margin-bottom: 12px;
+                ">
+                    <h3 style="
+                        margin-bottom: 0;
+                        margin-top: 3rem;
+                        font-weight: bold;
+                        color: #283661;
+                    ">
+                        NOT AUTHORIZED
+                    </h3>
+                </div>
+            </div>
+
+            <div style="
+                flex: 0 0 auto;
+                width: 50%;
+                font-size: 20px;
+            ">
+                <p style="
+                    margin-top: 0;
+                    margin: 0 8px 2rem 4rem;
+                    max-width: 100%;
+                    text-align: justify;
+                ">
+                    If you have signed in with the wrong account, please
+                    <a href="/dri/api/api-auth/login/" style="
+                        color: #095ce0;
+                        text-decoration: none;
+                    ">
+                        sign out and connect with another login.
+                    </a>
+                </p>
+                <p style="
+                    margin: 0 8px 2rem 4rem;
+                    max-width: 100%;
+                    text-align: justify;
+                ">
+                    If you are a new user, please, register here:
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLSdpPhOpFnb4zS-DwMEgYG-n6RWoBWpxKfRvzUnIr_v5ZSYmaA/viewform"
+                        target="_blank" style="
+                        color: #095ce0;
+                        text-decoration: none;
+                    ">Eng</a>
+                    or
+                    <a href="https://docs.google.com/forms/d/e/1FAIpQLScQuUTV7Wc-C10gWNcznorbW5mOQlGkFAXUikd0R7JzsdgSfQ/viewform"
+                        target="_blank" style="
+                        color: #095ce0;
+                        text-decoration: none;
+                    ">Pt-Br</a>.
+                </p>
+                <p style="
+                    margin: 0 8px 2rem 4rem;
+                    max-width: 100%;
+                    text-align: justify;
+                ">
+                    All registrations must be approved and the deadline is up to 24 hours.
+                </p>
+                <p style="
+                    margin: 0 8px 0 4rem;
+                    max-width: 100%;
+                    text-align: justify;
+                ">
+                    If you have any other problem, please
+                    <a href="mailto:helpdesk@linea.org.br" target="_blank" style="
+                        color: #095ce0;
+                        text-decoration: none;
+                    ">contact our helpdesk</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}
