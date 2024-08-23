@@ -84,16 +84,16 @@ const Footer = () => {
               <IconButton href="https://www.linkedin.com/company/linea-astronomia" target="_blank" className={`${classes.socialIcon} ${classes.linkedinHover}`}>
                 <LinkedInIcon />
               </IconButton>
-              <IconButton href="https://x.com/linea_astronomia" target="_blank" className={`${classes.socialIcon}`}>
+              <IconButton href="https://x.com/linea_org" target="_blank" className={`${classes.socialIcon}`}>
                 <XIcon />
               </IconButton>
-              <IconButton href="https://www.instagram.com/linea_astronomia" target="_blank" className={`${classes.socialIcon} ${classes.instagramHover}`}>
+              <IconButton href="https://www.instagram.com/linea_org/" target="_blank" className={`${classes.socialIcon} ${classes.instagramHover}`}>
                 <InstagramIcon />
               </IconButton>
-              <IconButton href="https://www.youtube.com/channel/UCxzO8x_cjv2wlfpEoP4zNXA" target="_blank" className={`${classes.socialIcon} ${classes.youtubeHover}`}>
+              <IconButton href="https://www.youtube.com/@linea_org" target="_blank" className={`${classes.socialIcon} ${classes.youtubeHover}`}>
                 <YouTubeIcon />
               </IconButton>
-              <IconButton href="https://www.facebook.com/linea.astronomia" target="_blank" className={`${classes.socialIcon} ${classes.facebookHover}`}>
+              <IconButton href="https://www.facebook.com/linea.org" target="_blank" className={`${classes.socialIcon} ${classes.facebookHover}`}>
                 <FacebookIcon />
               </IconButton>
             </Box>
