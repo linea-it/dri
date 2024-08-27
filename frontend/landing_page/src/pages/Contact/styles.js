@@ -8,6 +8,7 @@ const styles = makeStyles((theme) => ({
   grid: {
     margin: 'auto',
     marginTop: 20,
+    paddingBottom: '72px',
   },
 }));
 

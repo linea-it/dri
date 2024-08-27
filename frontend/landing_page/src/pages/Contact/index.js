@@ -8,6 +8,12 @@ import styles from './styles';
 
 function Contact() {
   const classes = styles();
+  
+  const user = 'helpdesk';
+  const domain = 'linea.org.br';
+  
+  const email = `${user}@${domain}`;
+  
   return (
     <Box className={classes.initContainer}>
       <Container maxWidth='lg'>
@@ -23,7 +29,7 @@ function Contact() {
               <Typography variant='h4' align='center' color='textPrimary'>
                 Contact
               </Typography>
-                  <p>To get in touch with technical support, send an email to: helpdesk at linea dot org dot br</p>
+              <p>To get in touch with technical support, send an email to: <a href={`mailto:${email}`}>{email}</a></p>
             </CardContent>
           </Card>
         </Grid>
