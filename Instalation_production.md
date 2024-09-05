@@ -3,20 +3,17 @@
 
 ```bash
 git clone https://github.com/linea-it/dri.git dri_temp \
-&& mkdir -p scienceserver scienceserver/data scienceserver/data/tmp scienceserver/log scienceserver/certificates \
-&& cp dri_temp/docker-compose-production.yml scienceserver/docker-compose.yml \
-&& cp dri_temp/frontend/nginx-proxy.conf scienceserver/ \
-&& cp dri_temp/api/dri/settings/local_vars.py.template  scienceserver/local_vars.py \
-&& cp scienceserver-dev/google-analytics.js scienceserver/
+&& cp -r dri_temp/compose/production/ scienceserver \
 && rm -rf dri_temp \
 && cd scienceserver/ \
-
+&& mkdir -p data data/tmp log certificates \
+&& mv env_template .env \
 ```
-
 
 Generate SAML2 Certificates
 ```bash
-openssl genrsa -out mykey.key 2048 \
+cd certificates \
+&& openssl genrsa -out mykey.key 2048 \
 && openssl req -new -key mykey.key -out mycert.csr \
 && openssl x509 -req -days 365 -in mycert.csr -signkey mykey.key -out mycert.crt \
 && cp mykey.key mykey.pem \

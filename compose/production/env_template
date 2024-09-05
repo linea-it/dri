@@ -1,5 +1,5 @@
 # Docker image tag
-IMAGE_TAG
+IMAGE_TAG=673a96a4
 
 DEBUG=False
 LOG_LEVEL=INFO
