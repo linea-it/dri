@@ -1,0 +1,76 @@
+services:
+  backend:
+    image: linea/dri:backend_${IMAGE_TAG:-latest}
+    user: "50017:10000"
+    group_add:
+      - "1000"
+      - "39215"
+      - "10006"
+    command: /start.sh
+    env_file:
+      - .env
+    volumes:
+      # Diretório onde o backend pode manipular arquivos.
+      - ./data:/archive
+      # Diretório de logs do backend.
+      - ./log:/log
+      # Arquivo de configuração do backend, com as variaveis e acessos ao banco de dados.
+      - ./local_vars.py:/app/dri/settings/local_vars.py
+      # Django SAML
+      - ./certificates:/app/dri/certificates
+    depends_on:
+      rabbit:
+        condition: service_healthy
+    healthcheck:
+      test: curl --fail http://127.0.0.1:8001/dri/api/healthcheck/ || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 3
+      start_period: 30s
+
+  frontend:
+    image: linea/dri:frontend_${IMAGE_TAG:-latest}
+    ports:
+      - 8001:8080
+    volumes:
+      # Diretório onde o backend manipula arquivos, e que deve ficar acessivel ao servidor web.
+      - ./data:/var/www/data
+      # Arquivo de configuração do Ngnix para este ambiente.
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      # Google Analytics
+      - ./google-analytics.js:/var/www/ga/google-analytics.js
+      # Diretório de logs do servidor web.
+      - ./log:/var/log/nginx
+      # Arquivos por tiles Release DR2
+      - /lustre/t1/public/des/dr2/primary/images/coadd/:/var/www/data/releases/dr2/coadd
+    depends_on:
+      backend:
+        condition: service_healthy
+      iipserver:
+        condition: service_started
+
+  rabbit:
+    image: rabbitmq:3-management
+    hostname: rabbit_dri
+    env_file:
+      - .env
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 30s
+      retries: 3
+
+  iipserver:
+    image: linea/iipserver:astro_00ffe09
+    restart: always
+    environment:
+      - FILESYSTEM_PREFIX=/
+      - MAX_IMAGE_CACHE_SIZE=10
+      - MAX_CVT=3000
+      - JPEG_QUALITY=90
+    command: ./start_fcgi.sh
+    volumes:
+      # Diretorio de logs do iipserver
+      - ./log:/var/log
+      # Imagens Ptifs/Visiomatic:
+      - /lustre/t1/public/des/dr2/primary/images/coadd/:/data/releases/dr2/coadd
