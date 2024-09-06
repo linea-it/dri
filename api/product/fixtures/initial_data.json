@@ -1,1 +1,2332 @@
-[{"model": "product.product", "pk": 1, "fields": {"prd_owner": 1, "prd_process_id": null, "prd_class": 2, "prd_name": "galaxy_cluster_sample", "prd_display_name": "Galaxy Cluster Sample", "prd_user_display_name": null, "prd_product_id": null, "prd_version": null, "prd_description": null, "prd_filter": null, "prd_date": "2024-04-29T14:30:51.833Z", "prd_is_public": true, "prd_is_permanent": true}}, {"model": "product.product", "pk": 2, "fields": {"prd_owner": 1, "prd_process_id": null, "prd_class": 100, "prd_name": "cluster_members_sample", "prd_display_name": "Cluster Members Sample", "prd_user_display_name": null, "prd_product_id": null, "prd_version": null, "prd_description": null, "prd_filter": null, "prd_date": "2024-04-29T14:44:22.081Z", "prd_is_public": true, "prd_is_permanent": true}}, {"model": "product.product", "pk": 3, "fields": {"prd_owner": 1, "prd_process_id": null, "prd_class": 1, "prd_name": "bright_stars_g_band", "prd_display_name": "Bright Stars g band", "prd_user_display_name": null, "prd_product_id": null, "prd_version": null, "prd_description": null, "prd_filter": null, "prd_date": "2024-04-29T16:21:35.740Z", "prd_is_public": true, "prd_is_permanent": true}}, {"model": "product.product", "pk": 4, "fields": {"prd_owner": 1, "prd_process_id": null, "prd_class": 1, "prd_name": "bright_galaxies_i_band", "prd_display_name": "Bright Galaxies i band", "prd_user_display_name": null, "prd_product_id": null, "prd_version": null, "prd_description": null, "prd_filter": null, "prd_date": "2024-04-29T16:24:30.177Z", "prd_is_public": true, "prd_is_permanent": true}}, {"model": "product.product", "pk": 7, "fields": {"prd_owner": 1, "prd_process_id": null, "prd_class": 6, "prd_name": "variablility_final_sample", "prd_display_name": "Variablility Final Sample", "prd_user_display_name": null, "prd_product_id": null, "prd_version": null, "prd_description": null, "prd_filter": null, "prd_date": "2024-04-29T18:10:04.645Z", "prd_is_public": true, "prd_is_permanent": true}}, {"model": "product.product", "pk": 8, "fields": {"prd_owner": 1, "prd_process_id": null, "prd_class": 6, "prd_name": "strong_lensing_cand", "prd_display_name": "Strong Lensing cand", "prd_user_display_name": null, "prd_product_id": null, "prd_version": null, "prd_description": null, "prd_filter": null, "prd_date": "2024-05-02T18:23:32.677Z", "prd_is_public": true, "prd_is_permanent": true}}, {"model": "product.product", "pk": 9, "fields": {"prd_owner": 1, "prd_process_id": null, "prd_class": 162, "prd_name": "dr2_frac_detection_g", "prd_display_name": "DR2 frac detection g", "prd_user_display_name": null, "prd_product_id": null, "prd_version": null, "prd_description": null, "prd_filter": 2, "prd_date": "2024-08-05T16:12:13.939Z", "prd_is_public": true, "prd_is_permanent": true}}, {"model": "product.product", "pk": 10, "fields": {"prd_owner": 1, "prd_process_id": null, "prd_class": 162, "prd_name": "dr2_frac_detection_r", "prd_display_name": "DR2 frac detection r", "prd_user_display_name": null, "prd_product_id": null, "prd_version": null, "prd_description": null, "prd_filter": 3, "prd_date": "2024-08-08T15:50:03.611Z", "prd_is_public": true, "prd_is_permanent": true}}, {"model": "product.product", "pk": 11, "fields": {"prd_owner": 1, "prd_process_id": null, "prd_class": 162, "prd_name": "dr2_frac_detection_i", "prd_display_name": "DR2 frac detection i", "prd_user_display_name": null, "prd_product_id": null, "prd_version": null, "prd_description": null, "prd_filter": 4, "prd_date": "2024-08-08T15:50:42.130Z", "prd_is_public": true, "prd_is_permanent": true}}, {"model": "product.product", "pk": 12, "fields": {"prd_owner": 1, "prd_process_id": null, "prd_class": 162, "prd_name": "dr2_frac_detection_z", "prd_display_name": "DR2 frac detection z", "prd_user_display_name": null, "prd_product_id": null, "prd_version": null, "prd_description": null, "prd_filter": 5, "prd_date": "2024-08-08T15:51:18.040Z", "prd_is_public": true, "prd_is_permanent": true}}, {"model": "product.product", "pk": 13, "fields": {"prd_owner": 1, "prd_process_id": null, "prd_class": 162, "prd_name": "dr2_frac_detection_y", "prd_display_name": "DR2 frac detection Y", "prd_user_display_name": null, "prd_product_id": null, "prd_version": null, "prd_description": null, "prd_filter": 6, "prd_date": "2024-08-08T15:51:55.727Z", "prd_is_public": true, "prd_is_permanent": true}}, {"model": "product.productrelease", "pk": 1, "fields": {"product": 1, "release": 25}}, {"model": "product.productrelease", "pk": 2, "fields": {"product": 2, "release": 25}}, {"model": "product.productrelease", "pk": 3, "fields": {"product": 2, "release": 25}}, {"model": "product.productrelease", "pk": 4, "fields": {"product": 3, "release": 25}}, {"model": "product.productrelease", "pk": 5, "fields": {"product": 3, "release": 25}}, {"model": "product.productrelease", "pk": 6, "fields": {"product": 4, "release": 25}}, {"model": "product.productrelease", "pk": 7, "fields": {"product": 9, "release": 25}}, {"model": "product.productrelease", "pk": 8, "fields": {"product": 10, "release": 25}}, {"model": "product.productrelease", "pk": 9, "fields": {"product": 11, "release": 25}}, {"model": "product.productrelease", "pk": 10, "fields": {"product": 12, "release": 25}}, {"model": "product.productrelease", "pk": 11, "fields": {"product": 13, "release": 25}}, {"model": "product.table", "pk": 1, "fields": {"tbl_database": "catalog", "tbl_schema": "dri_catalog", "tbl_name": "galaxy_clusters_sample", "tbl_rows": 200, "tbl_num_columns": 111, "tbl_size": 180224}}, {"model": "product.table", "pk": 2, "fields": {"tbl_database": "catalog", "tbl_schema": "dri_catalog", "tbl_name": "cluster_members_sample", "tbl_rows": 22508, "tbl_num_columns": 33, "tbl_size": 5955584}}, {"model": "product.table", "pk": 3, "fields": {"tbl_database": "catalog", "tbl_schema": "dri_catalog", "tbl_name": "bright_stars_g_band", "tbl_rows": 1000, "tbl_num_columns": 7, "tbl_size": 147456}}, {"model": "product.table", "pk": 4, "fields": {"tbl_database": "catalog", "tbl_schema": "dri_catalog", "tbl_name": "bright_galaxies_i_band", "tbl_rows": 1000, "tbl_num_columns": 7, "tbl_size": 147456}}, {"model": "product.table", "pk": 7, "fields": {"tbl_database": "catalog", "tbl_schema": "dri_catalog", "tbl_name": "variablility_final_sample", "tbl_rows": 59, "tbl_num_columns": 9, "tbl_size": 32768}}, {"model": "product.table", "pk": 8, "fields": {"tbl_database": "", "tbl_schema": "dri_catalog", "tbl_name": "strong_lensing_cand", "tbl_rows": 1192, "tbl_num_columns": 8, "tbl_size": 278528}}, {"model": "product.table", "pk": 9, "fields": {"tbl_database": null, "tbl_schema": null, "tbl_name": "not_exist", "tbl_rows": null, "tbl_num_columns": null, "tbl_size": null}}, {"model": "product.table", "pk": 10, "fields": {"tbl_database": null, "tbl_schema": null, "tbl_name": "not_exist", "tbl_rows": null, "tbl_num_columns": null, "tbl_size": null}}, {"model": "product.table", "pk": 11, "fields": {"tbl_database": null, "tbl_schema": null, "tbl_name": "not_exist", "tbl_rows": null, "tbl_num_columns": null, "tbl_size": null}}, {"model": "product.table", "pk": 12, "fields": {"tbl_database": null, "tbl_schema": null, "tbl_name": "not_exist", "tbl_rows": null, "tbl_num_columns": null, "tbl_size": null}}, {"model": "product.table", "pk": 13, "fields": {"tbl_database": null, "tbl_schema": null, "tbl_name": "not_exist", "tbl_rows": null, "tbl_num_columns": null, "tbl_size": null}}, {"model": "product.catalog", "pk": 1, "fields": {"ctl_num_objects": 200}}, {"model": "product.catalog", "pk": 2, "fields": {"ctl_num_objects": 22508}}, {"model": "product.catalog", "pk": 3, "fields": {"ctl_num_objects": 1000}}, {"model": "product.catalog", "pk": 4, "fields": {"ctl_num_objects": 1000}}, {"model": "product.catalog", "pk": 7, "fields": {"ctl_num_objects": 59}}, {"model": "product.catalog", "pk": 8, "fields": {"ctl_num_objects": 1192}}, {"model": "product.map", "pk": 9, "fields": {"mpa_nside": 4096, "mpa_ordering": "nest"}}, {"model": "product.map", "pk": 10, "fields": {"mpa_nside": 4096, "mpa_ordering": "nest"}}, {"model": "product.map", "pk": 11, "fields": {"mpa_nside": 4096, "mpa_ordering": "nest"}}, {"model": "product.map", "pk": 12, "fields": {"mpa_nside": 4096, "mpa_ordering": "nest"}}, {"model": "product.map", "pk": 13, "fields": {"mpa_nside": 4096, "mpa_ordering": "nest"}}, {"model": "product.productcontent", "pk": 1, "fields": {"pcn_product_id": 1, "pcn_column_name": "seqnr", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 2, "fields": {"pcn_product_id": 1, "pcn_column_name": "detection_tile", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 3, "fields": {"pcn_product_id": 1, "pcn_column_name": "iz_init", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 4, "fields": {"pcn_product_id": 1, "pcn_column_name": "iz_final", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 5, "fields": {"pcn_product_id": 1, "pcn_column_name": "peak_id_tile_iz", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 6, "fields": {"pcn_product_id": 1, "pcn_column_name": "id_in_tile", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 7, "fields": {"pcn_product_id": 1, "pcn_column_name": "ra", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 8, "fields": {"pcn_product_id": 1, "pcn_column_name": "dec", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 9, "fields": {"pcn_product_id": 1, "pcn_column_name": "zp", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 10, "fields": {"pcn_product_id": 1, "pcn_column_name": "zp_median", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 11, "fields": {"pcn_product_id": 1, "pcn_column_name": "z_init", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 12, "fields": {"pcn_product_id": 1, "pcn_column_name": "zmin_cl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 13, "fields": {"pcn_product_id": 1, "pcn_column_name": "zmax_cl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 14, "fields": {"pcn_product_id": 1, "pcn_column_name": "zmin_95_cl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 15, "fields": {"pcn_product_id": 1, "pcn_column_name": "zmax_95_cl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 16, "fields": {"pcn_product_id": 1, "pcn_column_name": "mstar_cl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 17, "fields": {"pcn_product_id": 1, "pcn_column_name": "xpeak", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 18, "fields": {"pcn_product_id": 1, "pcn_column_name": "ypeak", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 19, "fields": {"pcn_product_id": 1, "pcn_column_name": "radius_iso_mpc", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 20, "fields": {"pcn_product_id": 1, "pcn_column_name": "radius__saddle_mpc", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 21, "fields": {"pcn_product_id": 1, "pcn_column_name": "maxwave", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 22, "fields": {"pcn_product_id": 1, "pcn_column_name": "flux_wave", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 23, "fields": {"pcn_product_id": 1, "pcn_column_name": "flag_merge", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 24, "fields": {"pcn_product_id": 1, "pcn_column_name": "sigma_dz_init", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 25, "fields": {"pcn_product_id": 1, "pcn_column_name": "sigma_dz_eff", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 26, "fields": {"pcn_product_id": 1, "pcn_column_name": "flag_zp", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 27, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngal_for_zp", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 28, "fields": {"pcn_product_id": 1, "pcn_column_name": "flag_iz", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 29, "fields": {"pcn_product_id": 1, "pcn_column_name": "global_nbkg_zm", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 30, "fields": {"pcn_product_id": 1, "pcn_column_name": "global_lbkg_zm", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 31, "fields": {"pcn_product_id": 1, "pcn_column_name": "sig_nbkg_zm", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 32, "fields": {"pcn_product_id": 1, "pcn_column_name": "sig_lbkg_zm", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 33, "fields": {"pcn_product_id": 1, "pcn_column_name": "local_nbkg_zm", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 34, "fields": {"pcn_product_id": 1, "pcn_column_name": "local_lbkg_zm", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 35, "fields": {"pcn_product_id": 1, "pcn_column_name": "area_local_bkg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 36, "fields": {"pcn_product_id": 1, "pcn_column_name": "masked_frac_1mpc", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 37, "fields": {"pcn_product_id": 1, "pcn_column_name": "masked_frac_05mpc", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 38, "fields": {"pcn_product_id": 1, "pcn_column_name": "masked_frac_03mpc", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 39, "fields": {"pcn_product_id": 1, "pcn_column_name": "snr", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 40, "fields": {"pcn_product_id": 1, "pcn_column_name": "snr_lgals", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 41, "fields": {"pcn_product_id": 1, "pcn_column_name": "contrast_ngals", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 42, "fields": {"pcn_product_id": 1, "pcn_column_name": "contrast_lgals", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 43, "fields": {"pcn_product_id": 1, "pcn_column_name": "dmag_core", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 44, "fields": {"pcn_product_id": 1, "pcn_column_name": "dmag_bcg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 45, "fields": {"pcn_product_id": 1, "pcn_column_name": "dist_bcg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 46, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals_test", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 47, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals_cen", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 48, "fields": {"pcn_product_id": 1, "pcn_column_name": "lgals_cen", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 49, "fields": {"pcn_product_id": 1, "pcn_column_name": "local_nbkg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 50, "fields": {"pcn_product_id": 1, "pcn_column_name": "local_lbkg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 51, "fields": {"pcn_product_id": 1, "pcn_column_name": "global_nbkg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 52, "fields": {"pcn_product_id": 1, "pcn_column_name": "global_lbkg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 53, "fields": {"pcn_product_id": 1, "pcn_column_name": "sig_nbkg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 54, "fields": {"pcn_product_id": 1, "pcn_column_name": "sig_lbkg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 55, "fields": {"pcn_product_id": 1, "pcn_column_name": "out_of_cyl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 56, "fields": {"pcn_product_id": 1, "pcn_column_name": "cyl_nsl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 57, "fields": {"pcn_product_id": 1, "pcn_column_name": "parent_cyl_nsl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 58, "fields": {"pcn_product_id": 1, "pcn_column_name": "zmin_cyl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 59, "fields": {"pcn_product_id": 1, "pcn_column_name": "zmax_cyl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 60, "fields": {"pcn_product_id": 1, "pcn_column_name": "iz_min_cyl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 61, "fields": {"pcn_product_id": 1, "pcn_column_name": "iz_max_cyl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 62, "fields": {"pcn_product_id": 1, "pcn_column_name": "contrast_cyl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 63, "fields": {"pcn_product_id": 1, "pcn_column_name": "nmax_cyl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 64, "fields": {"pcn_product_id": 1, "pcn_column_name": "flag_duplicate", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 65, "fields": {"pcn_product_id": 1, "pcn_column_name": "king_rc", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 66, "fields": {"pcn_product_id": 1, "pcn_column_name": "king_d0", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 67, "fields": {"pcn_product_id": 1, "pcn_column_name": "king_chi2", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 68, "fields": {"pcn_product_id": 1, "pcn_column_name": "radius_mpc", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 69, "fields": {"pcn_product_id": 1, "pcn_column_name": "radius_mpc_cor", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 70, "fields": {"pcn_product_id": 1, "pcn_column_name": "radius_amin", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 71, "fields": {"pcn_product_id": 1, "pcn_column_name": "radius_max_contrast", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 72, "fields": {"pcn_product_id": 1, "pcn_column_name": "radius_500kpc_amin", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 73, "fields": {"pcn_product_id": 1, "pcn_column_name": "radius_1mpc_amin", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 74, "fields": {"pcn_product_id": 1, "pcn_column_name": "nmem", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 75, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 76, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals_cor", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 77, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals_r300", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 78, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals_r500", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 79, "fields": {"pcn_product_id": 1, "pcn_column_name": "lgals", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 80, "fields": {"pcn_product_id": 1, "pcn_column_name": "lgals_r300", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 81, "fields": {"pcn_product_id": 1, "pcn_column_name": "lgals_r500", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 82, "fields": {"pcn_product_id": 1, "pcn_column_name": "e_ngals", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 83, "fields": {"pcn_product_id": 1, "pcn_column_name": "e_ngals_r300", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 84, "fields": {"pcn_product_id": 1, "pcn_column_name": "e_ngals_r500", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 85, "fields": {"pcn_product_id": 1, "pcn_column_name": "e_lgals", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 86, "fields": {"pcn_product_id": 1, "pcn_column_name": "e_lgals_r300", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 87, "fields": {"pcn_product_id": 1, "pcn_column_name": "e_lgals_r500", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 88, "fields": {"pcn_product_id": 1, "pcn_column_name": "ra_bcg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 89, "fields": {"pcn_product_id": 1, "pcn_column_name": "dec_bcg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 90, "fields": {"pcn_product_id": 1, "pcn_column_name": "rank", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 91, "fields": {"pcn_product_id": 1, "pcn_column_name": "id", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 92, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals_500_rs", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 93, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals_model", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 94, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals_300_rs", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 95, "fields": {"pcn_product_id": 1, "pcn_column_name": "zs_max", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 96, "fields": {"pcn_product_id": 1, "pcn_column_name": "king_nfit", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 97, "fields": {"pcn_product_id": 1, "pcn_column_name": "zp_bcg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 98, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals_model_fit", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 99, "fields": {"pcn_product_id": 1, "pcn_column_name": "zs", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 100, "fields": {"pcn_product_id": 1, "pcn_column_name": "radius_saddle_mpc", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 101, "fields": {"pcn_product_id": 1, "pcn_column_name": "rs_slope", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 102, "fields": {"pcn_product_id": 1, "pcn_column_name": "zp_err", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 103, "fields": {"pcn_product_id": 1, "pcn_column_name": "snr_ngals", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 104, "fields": {"pcn_product_id": 1, "pcn_column_name": "radius_scaling", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 105, "fields": {"pcn_product_id": 1, "pcn_column_name": "rs_color_cor", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 106, "fields": {"pcn_product_id": 1, "pcn_column_name": "rs_width", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 107, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals_rs", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 108, "fields": {"pcn_product_id": 1, "pcn_column_name": "rs_color", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 109, "fields": {"pcn_product_id": 1, "pcn_column_name": "zs_min", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 110, "fields": {"pcn_product_id": 1, "pcn_column_name": "rs_frac", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 111, "fields": {"pcn_product_id": 1, "pcn_column_name": "ngals_rs_cor", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 145, "fields": {"pcn_product_id": 2, "pcn_column_name": "seqnr", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 146, "fields": {"pcn_product_id": 2, "pcn_column_name": "id_cluster_tile", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 147, "fields": {"pcn_product_id": 2, "pcn_column_name": "detection_tile", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 148, "fields": {"pcn_product_id": 2, "pcn_column_name": "id_g", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 149, "fields": {"pcn_product_id": 2, "pcn_column_name": "nmem_cl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 150, "fields": {"pcn_product_id": 2, "pcn_column_name": "pmem", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 151, "fields": {"pcn_product_id": 2, "pcn_column_name": "pmem_err", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 152, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 153, "fields": {"pcn_product_id": 2, "pcn_column_name": "ra", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 154, "fields": {"pcn_product_id": 2, "pcn_column_name": "dec", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 155, "fields": {"pcn_product_id": 2, "pcn_column_name": "ra_cl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 156, "fields": {"pcn_product_id": 2, "pcn_column_name": "dec_cl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 157, "fields": {"pcn_product_id": 2, "pcn_column_name": "zp", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 158, "fields": {"pcn_product_id": 2, "pcn_column_name": "zp_cl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 159, "fields": {"pcn_product_id": 2, "pcn_column_name": "mstar_cl", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 160, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag_bcg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 161, "fields": {"pcn_product_id": 2, "pcn_column_name": "flag_bcg", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 162, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag_bcg_cen", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 163, "fields": {"pcn_product_id": 2, "pcn_column_name": "flag_bcg_cen", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 164, "fields": {"pcn_product_id": 2, "pcn_column_name": "dcen", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 165, "fields": {"pcn_product_id": 2, "pcn_column_name": "dcen_norm", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 166, "fields": {"pcn_product_id": 2, "pcn_column_name": "snr", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 167, "fields": {"pcn_product_id": 2, "pcn_column_name": "ngals", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 168, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag_u", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 169, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag_g", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 170, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag_r", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 171, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag_i", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 172, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag_z", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 173, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag_y", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 174, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag_j", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 175, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag_h", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 176, "fields": {"pcn_product_id": 2, "pcn_column_name": "mag_k", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 177, "fields": {"pcn_product_id": 2, "pcn_column_name": "id_cluster", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 184, "fields": {"pcn_product_id": 3, "pcn_column_name": "coadd_object_id", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 185, "fields": {"pcn_product_id": 3, "pcn_column_name": "ra", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 186, "fields": {"pcn_product_id": 3, "pcn_column_name": "dec", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 187, "fields": {"pcn_product_id": 3, "pcn_column_name": "wavg_mag_psf_g", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 188, "fields": {"pcn_product_id": 3, "pcn_column_name": "flags_g", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 189, "fields": {"pcn_product_id": 3, "pcn_column_name": "extended_class_coadd", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 190, "fields": {"pcn_product_id": 3, "pcn_column_name": "nepochs_g", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 191, "fields": {"pcn_product_id": 4, "pcn_column_name": "coadd_object_id", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 192, "fields": {"pcn_product_id": 4, "pcn_column_name": "ra", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 193, "fields": {"pcn_product_id": 4, "pcn_column_name": "dec", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 194, "fields": {"pcn_product_id": 4, "pcn_column_name": "mag_auto_i_dered", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 195, "fields": {"pcn_product_id": 4, "pcn_column_name": "flags_i", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 196, "fields": {"pcn_product_id": 4, "pcn_column_name": "extended_class_coadd", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 197, "fields": {"pcn_product_id": 4, "pcn_column_name": "nepochs_i", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 218, "fields": {"pcn_product_id": 7, "pcn_column_name": "name", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 219, "fields": {"pcn_product_id": 7, "pcn_column_name": "id", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 220, "fields": {"pcn_product_id": 7, "pcn_column_name": "ra", "pcn_ucd": "pos.eq.ra;meta.main"}}, {"model": "product.productcontent", "pk": 221, "fields": {"pcn_product_id": 7, "pcn_column_name": "dec", "pcn_ucd": "pos.eq.dec;meta.main"}}, {"model": "product.productcontent", "pk": 222, "fields": {"pcn_product_id": 8, "pcn_column_name": "id", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 223, "fields": {"pcn_product_id": 8, "pcn_column_name": "unnamed: 0", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 224, "fields": {"pcn_product_id": 8, "pcn_column_name": "ra", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 225, "fields": {"pcn_product_id": 8, "pcn_column_name": "dec", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 226, "fields": {"pcn_product_id": 8, "pcn_column_name": "name", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 227, "fields": {"pcn_product_id": 8, "pcn_column_name": "qsocat", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 228, "fields": {"pcn_product_id": 8, "pcn_column_name": "ra_180", "pcn_ucd": null}}, {"model": "product.productcontent", "pk": 229, "fields": {"pcn_product_id": 8, "pcn_column_name": "tilename", "pcn_ucd": null}}, {"model": "product.productcontentassociation", "pk": 1, "fields": {"pca_product": 1, "pca_class_content": 1, "pca_product_content": 91}}, {"model": "product.productcontentassociation", "pk": 4, "fields": {"pca_product": 1, "pca_class_content": 2, "pca_product_content": 7}}, {"model": "product.productcontentassociation", "pk": 5, "fields": {"pca_product": 1, "pca_class_content": 3, "pca_product_content": 8}}, {"model": "product.productcontentassociation", "pk": 6, "fields": {"pca_product": 1, "pca_class_content": 1738, "pca_product_content": 9}}, {"model": "product.productcontentassociation", "pk": 7, "fields": {"pca_product": 1, "pca_class_content": 1739, "pca_product_content": 70}}, {"model": "product.productcontentassociation", "pk": 8, "fields": {"pca_product": 1, "pca_class_content": 32, "pca_product_content": 68}}, {"model": "product.productcontentassociation", "pk": 9, "fields": {"pca_product": 1, "pca_class_content": 31, "pca_product_content": 75}}, {"model": "product.productcontentassociation", "pk": 10, "fields": {"pca_product": 1, "pca_class_content": 1740, "pca_product_content": 39}}, {"model": "product.productcontentassociation", "pk": 23, "fields": {"pca_product": 2, "pca_class_content": 3486, "pca_product_content": 177}}, {"model": "product.productcontentassociation", "pk": 24, "fields": {"pca_product": 2, "pca_class_content": 3488, "pca_product_content": 169}}, {"model": "product.productcontentassociation", "pk": 25, "fields": {"pca_product": 2, "pca_class_content": 3489, "pca_product_content": 170}}, {"model": "product.productcontentassociation", "pk": 26, "fields": {"pca_product": 2, "pca_class_content": 3490, "pca_product_content": 171}}, {"model": "product.productcontentassociation", "pk": 27, "fields": {"pca_product": 2, "pca_class_content": 3491, "pca_product_content": 172}}, {"model": "product.productcontentassociation", "pk": 28, "fields": {"pca_product": 2, "pca_class_content": 3492, "pca_product_content": 173}}, {"model": "product.productcontentassociation", "pk": 29, "fields": {"pca_product": 2, "pca_class_content": 3493, "pca_product_content": 157}}, {"model": "product.productcontentassociation", "pk": 30, "fields": {"pca_product": 2, "pca_class_content": 2, "pca_product_content": 153}}, {"model": "product.productcontentassociation", "pk": 31, "fields": {"pca_product": 2, "pca_class_content": 3, "pca_product_content": 154}}, {"model": "product.productcontentassociation", "pk": 32, "fields": {"pca_product": 2, "pca_class_content": 1, "pca_product_content": 145}}, {"model": "product.productcontentassociation", "pk": 33, "fields": {"pca_product": 3, "pca_class_content": 1, "pca_product_content": 184}}, {"model": "product.productcontentassociation", "pk": 34, "fields": {"pca_product": 3, "pca_class_content": 2, "pca_product_content": 185}}, {"model": "product.productcontentassociation", "pk": 35, "fields": {"pca_product": 3, "pca_class_content": 3, "pca_product_content": 186}}, {"model": "product.productcontentassociation", "pk": 36, "fields": {"pca_product": 4, "pca_class_content": 1, "pca_product_content": 191}}, {"model": "product.productcontentassociation", "pk": 37, "fields": {"pca_product": 4, "pca_class_content": 2, "pca_product_content": 192}}, {"model": "product.productcontentassociation", "pk": 38, "fields": {"pca_product": 4, "pca_class_content": 3, "pca_product_content": 193}}, {"model": "product.productcontentassociation", "pk": 47, "fields": {"pca_product": 7, "pca_class_content": 2, "pca_product_content": 220}}, {"model": "product.productcontentassociation", "pk": 48, "fields": {"pca_product": 7, "pca_class_content": 3, "pca_product_content": 221}}, {"model": "product.productcontentassociation", "pk": 49, "fields": {"pca_product": 7, "pca_class_content": 1, "pca_product_content": 219}}, {"model": "product.productcontentassociation", "pk": 50, "fields": {"pca_product": 8, "pca_class_content": 1, "pca_product_content": 222}}, {"model": "product.productcontentassociation", "pk": 51, "fields": {"pca_product": 8, "pca_class_content": 2, "pca_product_content": 224}}, {"model": "product.productcontentassociation", "pk": 52, "fields": {"pca_product": 8, "pca_class_content": 3, "pca_product_content": 225}}, {"model": "product.productcontentassociation", "pk": 53, "fields": {"pca_product": 8, "pca_class_content": 4, "pca_product_content": 229}}, {"model": "product.productrelated", "pk": 1, "fields": {"prl_product": 1, "prl_related": 2, "prl_relation_type": "join", "prl_cross_identification": 177}}]
+[
+    {
+        "model": "product.product",
+        "pk": 1,
+        "fields": {
+            "prd_owner": 1,
+            "prd_process_id": null,
+            "prd_class": 2,
+            "prd_name": "galaxy_cluster_sample",
+            "prd_display_name": "Galaxy Cluster Sample",
+            "prd_user_display_name": null,
+            "prd_product_id": null,
+            "prd_version": null,
+            "prd_description": null,
+            "prd_filter": null,
+            "prd_date": "2024-04-29T14:30:51.833Z",
+            "prd_is_public": false,
+            "prd_is_permanent": false
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 2,
+        "fields": {
+            "prd_owner": 1,
+            "prd_process_id": null,
+            "prd_class": 100,
+            "prd_name": "cluster_members_sample",
+            "prd_display_name": "Cluster Members Sample",
+            "prd_user_display_name": null,
+            "prd_product_id": null,
+            "prd_version": null,
+            "prd_description": null,
+            "prd_filter": null,
+            "prd_date": "2024-04-29T14:44:22.081Z",
+            "prd_is_public": false,
+            "prd_is_permanent": false
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 3,
+        "fields": {
+            "prd_owner": 1,
+            "prd_process_id": null,
+            "prd_class": 1,
+            "prd_name": "bright_stars_g_band",
+            "prd_display_name": "Bright Stars g band",
+            "prd_user_display_name": null,
+            "prd_product_id": null,
+            "prd_version": null,
+            "prd_description": null,
+            "prd_filter": null,
+            "prd_date": "2024-04-29T16:21:35.740Z",
+            "prd_is_public": false,
+            "prd_is_permanent": false
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 4,
+        "fields": {
+            "prd_owner": 1,
+            "prd_process_id": null,
+            "prd_class": 1,
+            "prd_name": "bright_galaxies_i_band",
+            "prd_display_name": "Bright Galaxies i band",
+            "prd_user_display_name": null,
+            "prd_product_id": null,
+            "prd_version": null,
+            "prd_description": null,
+            "prd_filter": null,
+            "prd_date": "2024-04-29T16:24:30.177Z",
+            "prd_is_public": false,
+            "prd_is_permanent": false
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 7,
+        "fields": {
+            "prd_owner": 1,
+            "prd_process_id": null,
+            "prd_class": 6,
+            "prd_name": "variablility_final_sample",
+            "prd_display_name": "Variablility Final Sample",
+            "prd_user_display_name": null,
+            "prd_product_id": null,
+            "prd_version": null,
+            "prd_description": null,
+            "prd_filter": null,
+            "prd_date": "2024-04-29T18:10:04.645Z",
+            "prd_is_public": false,
+            "prd_is_permanent": false
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 8,
+        "fields": {
+            "prd_owner": 1,
+            "prd_process_id": null,
+            "prd_class": 6,
+            "prd_name": "strong_lensing_cand",
+            "prd_display_name": "Strong Lensing cand",
+            "prd_user_display_name": null,
+            "prd_product_id": null,
+            "prd_version": null,
+            "prd_description": null,
+            "prd_filter": null,
+            "prd_date": "2024-05-02T18:23:32.677Z",
+            "prd_is_public": false,
+            "prd_is_permanent": false
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 9,
+        "fields": {
+            "prd_owner": 1,
+            "prd_process_id": null,
+            "prd_class": 162,
+            "prd_name": "dr2_frac_detection_g",
+            "prd_display_name": "DR2 frac detection g",
+            "prd_user_display_name": null,
+            "prd_product_id": null,
+            "prd_version": null,
+            "prd_description": null,
+            "prd_filter": 2,
+            "prd_date": "2024-08-05T16:12:13.939Z",
+            "prd_is_public": true,
+            "prd_is_permanent": true
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 10,
+        "fields": {
+            "prd_owner": 1,
+            "prd_process_id": null,
+            "prd_class": 162,
+            "prd_name": "dr2_frac_detection_r",
+            "prd_display_name": "DR2 frac detection r",
+            "prd_user_display_name": null,
+            "prd_product_id": null,
+            "prd_version": null,
+            "prd_description": null,
+            "prd_filter": 3,
+            "prd_date": "2024-08-08T15:50:03.611Z",
+            "prd_is_public": true,
+            "prd_is_permanent": true
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 11,
+        "fields": {
+            "prd_owner": 1,
+            "prd_process_id": null,
+            "prd_class": 162,
+            "prd_name": "dr2_frac_detection_i",
+            "prd_display_name": "DR2 frac detection i",
+            "prd_user_display_name": null,
+            "prd_product_id": null,
+            "prd_version": null,
+            "prd_description": null,
+            "prd_filter": 4,
+            "prd_date": "2024-08-08T15:50:42.130Z",
+            "prd_is_public": true,
+            "prd_is_permanent": true
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 12,
+        "fields": {
+            "prd_owner": 1,
+            "prd_process_id": null,
+            "prd_class": 162,
+            "prd_name": "dr2_frac_detection_z",
+            "prd_display_name": "DR2 frac detection z",
+            "prd_user_display_name": null,
+            "prd_product_id": null,
+            "prd_version": null,
+            "prd_description": null,
+            "prd_filter": 5,
+            "prd_date": "2024-08-08T15:51:18.040Z",
+            "prd_is_public": true,
+            "prd_is_permanent": true
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": 13,
+        "fields": {
+            "prd_owner": 1,
+            "prd_process_id": null,
+            "prd_class": 162,
+            "prd_name": "dr2_frac_detection_y",
+            "prd_display_name": "DR2 frac detection Y",
+            "prd_user_display_name": null,
+            "prd_product_id": null,
+            "prd_version": null,
+            "prd_description": null,
+            "prd_filter": 6,
+            "prd_date": "2024-08-08T15:51:55.727Z",
+            "prd_is_public": true,
+            "prd_is_permanent": true
+        }
+    },
+    {
+        "model": "product.productrelease",
+        "pk": 1,
+        "fields": {
+            "product": 1,
+            "release": 25
+        }
+    },
+    {
+        "model": "product.productrelease",
+        "pk": 2,
+        "fields": {
+            "product": 2,
+            "release": 25
+        }
+    },
+    {
+        "model": "product.productrelease",
+        "pk": 3,
+        "fields": {
+            "product": 2,
+            "release": 25
+        }
+    },
+    {
+        "model": "product.productrelease",
+        "pk": 4,
+        "fields": {
+            "product": 3,
+            "release": 25
+        }
+    },
+    {
+        "model": "product.productrelease",
+        "pk": 5,
+        "fields": {
+            "product": 3,
+            "release": 25
+        }
+    },
+    {
+        "model": "product.productrelease",
+        "pk": 6,
+        "fields": {
+            "product": 4,
+            "release": 25
+        }
+    },
+    {
+        "model": "product.productrelease",
+        "pk": 7,
+        "fields": {
+            "product": 9,
+            "release": 25
+        }
+    },
+    {
+        "model": "product.productrelease",
+        "pk": 8,
+        "fields": {
+            "product": 10,
+            "release": 25
+        }
+    },
+    {
+        "model": "product.productrelease",
+        "pk": 9,
+        "fields": {
+            "product": 11,
+            "release": 25
+        }
+    },
+    {
+        "model": "product.productrelease",
+        "pk": 10,
+        "fields": {
+            "product": 12,
+            "release": 25
+        }
+    },
+    {
+        "model": "product.productrelease",
+        "pk": 11,
+        "fields": {
+            "product": 13,
+            "release": 25
+        }
+    },
+    {
+        "model": "product.table",
+        "pk": 1,
+        "fields": {
+            "tbl_database": "catalog",
+            "tbl_schema": "dri_catalog",
+            "tbl_name": "galaxy_clusters_sample",
+            "tbl_rows": 200,
+            "tbl_num_columns": 111,
+            "tbl_size": 180224
+        }
+    },
+    {
+        "model": "product.table",
+        "pk": 2,
+        "fields": {
+            "tbl_database": "catalog",
+            "tbl_schema": "dri_catalog",
+            "tbl_name": "cluster_members_sample",
+            "tbl_rows": 22508,
+            "tbl_num_columns": 33,
+            "tbl_size": 5955584
+        }
+    },
+    {
+        "model": "product.table",
+        "pk": 3,
+        "fields": {
+            "tbl_database": "catalog",
+            "tbl_schema": "dri_catalog",
+            "tbl_name": "bright_stars_g_band",
+            "tbl_rows": 1000,
+            "tbl_num_columns": 7,
+            "tbl_size": 147456
+        }
+    },
+    {
+        "model": "product.table",
+        "pk": 4,
+        "fields": {
+            "tbl_database": "catalog",
+            "tbl_schema": "dri_catalog",
+            "tbl_name": "bright_galaxies_i_band",
+            "tbl_rows": 1000,
+            "tbl_num_columns": 7,
+            "tbl_size": 147456
+        }
+    },
+    {
+        "model": "product.table",
+        "pk": 7,
+        "fields": {
+            "tbl_database": "catalog",
+            "tbl_schema": "dri_catalog",
+            "tbl_name": "variablility_final_sample",
+            "tbl_rows": 59,
+            "tbl_num_columns": 9,
+            "tbl_size": 32768
+        }
+    },
+    {
+        "model": "product.table",
+        "pk": 8,
+        "fields": {
+            "tbl_database": "",
+            "tbl_schema": "dri_catalog",
+            "tbl_name": "strong_lensing_cand",
+            "tbl_rows": 1192,
+            "tbl_num_columns": 8,
+            "tbl_size": 278528
+        }
+    },
+    {
+        "model": "product.table",
+        "pk": 9,
+        "fields": {
+            "tbl_database": null,
+            "tbl_schema": null,
+            "tbl_name": "not_exist",
+            "tbl_rows": null,
+            "tbl_num_columns": null,
+            "tbl_size": null
+        }
+    },
+    {
+        "model": "product.table",
+        "pk": 10,
+        "fields": {
+            "tbl_database": null,
+            "tbl_schema": null,
+            "tbl_name": "not_exist",
+            "tbl_rows": null,
+            "tbl_num_columns": null,
+            "tbl_size": null
+        }
+    },
+    {
+        "model": "product.table",
+        "pk": 11,
+        "fields": {
+            "tbl_database": null,
+            "tbl_schema": null,
+            "tbl_name": "not_exist",
+            "tbl_rows": null,
+            "tbl_num_columns": null,
+            "tbl_size": null
+        }
+    },
+    {
+        "model": "product.table",
+        "pk": 12,
+        "fields": {
+            "tbl_database": null,
+            "tbl_schema": null,
+            "tbl_name": "not_exist",
+            "tbl_rows": null,
+            "tbl_num_columns": null,
+            "tbl_size": null
+        }
+    },
+    {
+        "model": "product.table",
+        "pk": 13,
+        "fields": {
+            "tbl_database": null,
+            "tbl_schema": null,
+            "tbl_name": "not_exist",
+            "tbl_rows": null,
+            "tbl_num_columns": null,
+            "tbl_size": null
+        }
+    },
+    {
+        "model": "product.catalog",
+        "pk": 1,
+        "fields": {
+            "ctl_num_objects": 200
+        }
+    },
+    {
+        "model": "product.catalog",
+        "pk": 2,
+        "fields": {
+            "ctl_num_objects": 22508
+        }
+    },
+    {
+        "model": "product.catalog",
+        "pk": 3,
+        "fields": {
+            "ctl_num_objects": 1000
+        }
+    },
+    {
+        "model": "product.catalog",
+        "pk": 4,
+        "fields": {
+            "ctl_num_objects": 1000
+        }
+    },
+    {
+        "model": "product.catalog",
+        "pk": 7,
+        "fields": {
+            "ctl_num_objects": 59
+        }
+    },
+    {
+        "model": "product.catalog",
+        "pk": 8,
+        "fields": {
+            "ctl_num_objects": 1192
+        }
+    },
+    {
+        "model": "product.map",
+        "pk": 9,
+        "fields": {
+            "mpa_nside": 4096,
+            "mpa_ordering": "nest"
+        }
+    },
+    {
+        "model": "product.map",
+        "pk": 10,
+        "fields": {
+            "mpa_nside": 4096,
+            "mpa_ordering": "nest"
+        }
+    },
+    {
+        "model": "product.map",
+        "pk": 11,
+        "fields": {
+            "mpa_nside": 4096,
+            "mpa_ordering": "nest"
+        }
+    },
+    {
+        "model": "product.map",
+        "pk": 12,
+        "fields": {
+            "mpa_nside": 4096,
+            "mpa_ordering": "nest"
+        }
+    },
+    {
+        "model": "product.map",
+        "pk": 13,
+        "fields": {
+            "mpa_nside": 4096,
+            "mpa_ordering": "nest"
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 1,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "seqnr",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 2,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "detection_tile",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 3,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "iz_init",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 4,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "iz_final",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 5,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "peak_id_tile_iz",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 6,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "id_in_tile",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 7,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ra",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 8,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "dec",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 9,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zp",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 10,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zp_median",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 11,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "z_init",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 12,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zmin_cl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 13,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zmax_cl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 14,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zmin_95_cl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 15,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zmax_95_cl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 16,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "mstar_cl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 17,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "xpeak",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 18,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ypeak",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 19,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "radius_iso_mpc",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 20,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "radius__saddle_mpc",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 21,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "maxwave",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 22,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "flux_wave",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 23,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "flag_merge",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 24,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "sigma_dz_init",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 25,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "sigma_dz_eff",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 26,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "flag_zp",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 27,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngal_for_zp",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 28,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "flag_iz",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 29,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "global_nbkg_zm",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 30,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "global_lbkg_zm",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 31,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "sig_nbkg_zm",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 32,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "sig_lbkg_zm",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 33,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "local_nbkg_zm",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 34,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "local_lbkg_zm",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 35,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "area_local_bkg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 36,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "masked_frac_1mpc",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 37,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "masked_frac_05mpc",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 38,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "masked_frac_03mpc",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 39,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "snr",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 40,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "snr_lgals",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 41,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "contrast_ngals",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 42,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "contrast_lgals",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 43,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "dmag_core",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 44,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "dmag_bcg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 45,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "dist_bcg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 46,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals_test",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 47,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals_cen",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 48,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "lgals_cen",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 49,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "local_nbkg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 50,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "local_lbkg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 51,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "global_nbkg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 52,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "global_lbkg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 53,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "sig_nbkg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 54,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "sig_lbkg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 55,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "out_of_cyl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 56,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "cyl_nsl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 57,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "parent_cyl_nsl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 58,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zmin_cyl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 59,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zmax_cyl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 60,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "iz_min_cyl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 61,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "iz_max_cyl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 62,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "contrast_cyl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 63,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "nmax_cyl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 64,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "flag_duplicate",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 65,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "king_rc",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 66,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "king_d0",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 67,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "king_chi2",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 68,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "radius_mpc",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 69,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "radius_mpc_cor",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 70,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "radius_amin",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 71,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "radius_max_contrast",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 72,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "radius_500kpc_amin",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 73,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "radius_1mpc_amin",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 74,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "nmem",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 75,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 76,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals_cor",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 77,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals_r300",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 78,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals_r500",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 79,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "lgals",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 80,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "lgals_r300",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 81,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "lgals_r500",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 82,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "e_ngals",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 83,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "e_ngals_r300",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 84,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "e_ngals_r500",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 85,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "e_lgals",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 86,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "e_lgals_r300",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 87,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "e_lgals_r500",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 88,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ra_bcg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 89,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "dec_bcg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 90,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "rank",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 91,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "id",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 92,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals_500_rs",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 93,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals_model",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 94,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals_300_rs",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 95,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zs_max",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 96,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "king_nfit",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 97,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zp_bcg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 98,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals_model_fit",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 99,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zs",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 100,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "radius_saddle_mpc",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 101,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "rs_slope",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 102,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zp_err",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 103,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "snr_ngals",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 104,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "radius_scaling",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 105,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "rs_color_cor",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 106,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "rs_width",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 107,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals_rs",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 108,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "rs_color",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 109,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "zs_min",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 110,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "rs_frac",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 111,
+        "fields": {
+            "pcn_product_id": 1,
+            "pcn_column_name": "ngals_rs_cor",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 145,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "seqnr",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 146,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "id_cluster_tile",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 147,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "detection_tile",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 148,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "id_g",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 149,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "nmem_cl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 150,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "pmem",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 151,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "pmem_err",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 152,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 153,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "ra",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 154,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "dec",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 155,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "ra_cl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 156,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "dec_cl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 157,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "zp",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 158,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "zp_cl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 159,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mstar_cl",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 160,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag_bcg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 161,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "flag_bcg",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 162,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag_bcg_cen",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 163,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "flag_bcg_cen",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 164,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "dcen",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 165,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "dcen_norm",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 166,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "snr",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 167,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "ngals",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 168,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag_u",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 169,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag_g",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 170,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag_r",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 171,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag_i",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 172,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag_z",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 173,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag_y",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 174,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag_j",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 175,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag_h",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 176,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "mag_k",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 177,
+        "fields": {
+            "pcn_product_id": 2,
+            "pcn_column_name": "id_cluster",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 184,
+        "fields": {
+            "pcn_product_id": 3,
+            "pcn_column_name": "coadd_object_id",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 185,
+        "fields": {
+            "pcn_product_id": 3,
+            "pcn_column_name": "ra",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 186,
+        "fields": {
+            "pcn_product_id": 3,
+            "pcn_column_name": "dec",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 187,
+        "fields": {
+            "pcn_product_id": 3,
+            "pcn_column_name": "wavg_mag_psf_g",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 188,
+        "fields": {
+            "pcn_product_id": 3,
+            "pcn_column_name": "flags_g",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 189,
+        "fields": {
+            "pcn_product_id": 3,
+            "pcn_column_name": "extended_class_coadd",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 190,
+        "fields": {
+            "pcn_product_id": 3,
+            "pcn_column_name": "nepochs_g",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 191,
+        "fields": {
+            "pcn_product_id": 4,
+            "pcn_column_name": "coadd_object_id",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 192,
+        "fields": {
+            "pcn_product_id": 4,
+            "pcn_column_name": "ra",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 193,
+        "fields": {
+            "pcn_product_id": 4,
+            "pcn_column_name": "dec",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 194,
+        "fields": {
+            "pcn_product_id": 4,
+            "pcn_column_name": "mag_auto_i_dered",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 195,
+        "fields": {
+            "pcn_product_id": 4,
+            "pcn_column_name": "flags_i",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 196,
+        "fields": {
+            "pcn_product_id": 4,
+            "pcn_column_name": "extended_class_coadd",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 197,
+        "fields": {
+            "pcn_product_id": 4,
+            "pcn_column_name": "nepochs_i",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 218,
+        "fields": {
+            "pcn_product_id": 7,
+            "pcn_column_name": "name",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 219,
+        "fields": {
+            "pcn_product_id": 7,
+            "pcn_column_name": "id",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 220,
+        "fields": {
+            "pcn_product_id": 7,
+            "pcn_column_name": "ra",
+            "pcn_ucd": "pos.eq.ra;meta.main"
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 221,
+        "fields": {
+            "pcn_product_id": 7,
+            "pcn_column_name": "dec",
+            "pcn_ucd": "pos.eq.dec;meta.main"
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 222,
+        "fields": {
+            "pcn_product_id": 8,
+            "pcn_column_name": "id",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 223,
+        "fields": {
+            "pcn_product_id": 8,
+            "pcn_column_name": "unnamed: 0",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 224,
+        "fields": {
+            "pcn_product_id": 8,
+            "pcn_column_name": "ra",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 225,
+        "fields": {
+            "pcn_product_id": 8,
+            "pcn_column_name": "dec",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 226,
+        "fields": {
+            "pcn_product_id": 8,
+            "pcn_column_name": "name",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 227,
+        "fields": {
+            "pcn_product_id": 8,
+            "pcn_column_name": "qsocat",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 228,
+        "fields": {
+            "pcn_product_id": 8,
+            "pcn_column_name": "ra_180",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontent",
+        "pk": 229,
+        "fields": {
+            "pcn_product_id": 8,
+            "pcn_column_name": "tilename",
+            "pcn_ucd": null
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 1,
+        "fields": {
+            "pca_product": 1,
+            "pca_class_content": 1,
+            "pca_product_content": 91
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 4,
+        "fields": {
+            "pca_product": 1,
+            "pca_class_content": 2,
+            "pca_product_content": 7
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 5,
+        "fields": {
+            "pca_product": 1,
+            "pca_class_content": 3,
+            "pca_product_content": 8
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 6,
+        "fields": {
+            "pca_product": 1,
+            "pca_class_content": 1738,
+            "pca_product_content": 9
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 7,
+        "fields": {
+            "pca_product": 1,
+            "pca_class_content": 1739,
+            "pca_product_content": 70
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 8,
+        "fields": {
+            "pca_product": 1,
+            "pca_class_content": 32,
+            "pca_product_content": 68
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 9,
+        "fields": {
+            "pca_product": 1,
+            "pca_class_content": 31,
+            "pca_product_content": 75
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 10,
+        "fields": {
+            "pca_product": 1,
+            "pca_class_content": 1740,
+            "pca_product_content": 39
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 23,
+        "fields": {
+            "pca_product": 2,
+            "pca_class_content": 3486,
+            "pca_product_content": 177
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 24,
+        "fields": {
+            "pca_product": 2,
+            "pca_class_content": 3488,
+            "pca_product_content": 169
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 25,
+        "fields": {
+            "pca_product": 2,
+            "pca_class_content": 3489,
+            "pca_product_content": 170
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 26,
+        "fields": {
+            "pca_product": 2,
+            "pca_class_content": 3490,
+            "pca_product_content": 171
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 27,
+        "fields": {
+            "pca_product": 2,
+            "pca_class_content": 3491,
+            "pca_product_content": 172
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 28,
+        "fields": {
+            "pca_product": 2,
+            "pca_class_content": 3492,
+            "pca_product_content": 173
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 29,
+        "fields": {
+            "pca_product": 2,
+            "pca_class_content": 3493,
+            "pca_product_content": 157
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 30,
+        "fields": {
+            "pca_product": 2,
+            "pca_class_content": 2,
+            "pca_product_content": 153
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 31,
+        "fields": {
+            "pca_product": 2,
+            "pca_class_content": 3,
+            "pca_product_content": 154
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 32,
+        "fields": {
+            "pca_product": 2,
+            "pca_class_content": 1,
+            "pca_product_content": 145
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 33,
+        "fields": {
+            "pca_product": 3,
+            "pca_class_content": 1,
+            "pca_product_content": 184
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 34,
+        "fields": {
+            "pca_product": 3,
+            "pca_class_content": 2,
+            "pca_product_content": 185
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 35,
+        "fields": {
+            "pca_product": 3,
+            "pca_class_content": 3,
+            "pca_product_content": 186
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 36,
+        "fields": {
+            "pca_product": 4,
+            "pca_class_content": 1,
+            "pca_product_content": 191
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 37,
+        "fields": {
+            "pca_product": 4,
+            "pca_class_content": 2,
+            "pca_product_content": 192
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 38,
+        "fields": {
+            "pca_product": 4,
+            "pca_class_content": 3,
+            "pca_product_content": 193
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 47,
+        "fields": {
+            "pca_product": 7,
+            "pca_class_content": 2,
+            "pca_product_content": 220
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 48,
+        "fields": {
+            "pca_product": 7,
+            "pca_class_content": 3,
+            "pca_product_content": 221
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 49,
+        "fields": {
+            "pca_product": 7,
+            "pca_class_content": 1,
+            "pca_product_content": 219
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 50,
+        "fields": {
+            "pca_product": 8,
+            "pca_class_content": 1,
+            "pca_product_content": 222
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 51,
+        "fields": {
+            "pca_product": 8,
+            "pca_class_content": 2,
+            "pca_product_content": 224
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 52,
+        "fields": {
+            "pca_product": 8,
+            "pca_class_content": 3,
+            "pca_product_content": 225
+        }
+    },
+    {
+        "model": "product.productcontentassociation",
+        "pk": 53,
+        "fields": {
+            "pca_product": 8,
+            "pca_class_content": 4,
+            "pca_product_content": 229
+        }
+    },
+    {
+        "model": "product.productrelated",
+        "pk": 1,
+        "fields": {
+            "prl_product": 1,
+            "prl_related": 2,
+            "prl_relation_type": "join",
+            "prl_cross_identification": 177
+        }
+    }
+]

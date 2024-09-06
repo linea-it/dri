@@ -1,4 +1,4 @@
-# Instalation
+# Science Server (DRI) Instalation Production environment
 
 
 ```bash
@@ -21,11 +21,15 @@ cd certificates \
 && cd ..
 ```
 
-## Setting Postgresql Database
+```bash
+docker compose up backend
+```
+CRTL+C
 
+Iniciar todos os serviços.
 
 ```bash
-docker compose up database
+docker compose up -d
 ```
 
 ### Create default Super User in django
@@ -33,7 +37,7 @@ docker compose up database
 With the backend running, open another terminal and run the command create super user
 
 ```bash
-docker compose run backend python manage.py createsuperuser
+docker compose exec backend python manage.py createsuperuser
 ```
 
 ### Load Initial Data
@@ -43,8 +47,24 @@ This command will populate the database with
 - Some example target lists (associated with user id 1)
 
 ```bash
-docker compose run backend python manage.py loaddata initial_data.json
+docker compose exec backend python manage.py loaddata initial_data.json
 ```
+
+Rodar o comando para gerar uma secret, copiar e alterar no local_vars.py a variavel SECRET_KEY. 
+
+```bash
+docker compose exec backend python -c "import secrets; print(secrets.token_urlsafe())"
+```
+
+Após editar o arquivo .env com a Secret, é necessário reinicar os serviços. 
+
+```bash
+docker compose stop && docker compose up -d
+```
+
+Neste ponto a instalação está concluida. 
+
+Para a autenticação com SATOSA funcionar é necessário estabelecera relação de confiança entre as aplicações. 
 
 ## Run and Stop All Services
 
