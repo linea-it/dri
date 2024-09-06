@@ -11,6 +11,7 @@ git clone https://github.com/linea-it/dri.git dri_temp \
 ```
 
 Generate SAML2 Certificates
+
 ```bash
 cd certificates \
 && openssl genrsa -out mykey.key 2048 \
@@ -20,6 +21,8 @@ cd certificates \
 && cp mycert.crt mycert.pem \
 && cd ..
 ```
+
+Editar o arquivo .env com as variaveis de acesso ao banco de dados, Secrets, usernames e passwords
 
 ```bash
 docker compose up backend
