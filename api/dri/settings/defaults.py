@@ -38,7 +38,8 @@ DATA_TMP_DIR = "tmp"
 DATA_SOURCE = "/data"
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "n25!pd%vs_s_@9^8=cudeuvc1&tfw0er+u#rhn(ex9t4@ml728"
+SECRET_KEY = os.environ.get("SECRET_KEY", "2U4eWrYD4f4JzhdusMHO7Mix6NB_QZj5oOOu1L2SWq8")
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env("DEBUG")
 
