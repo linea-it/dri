@@ -60,7 +60,7 @@ const styles = makeStyles((theme) => ({
     // marginTop: '-22px',
     fontFamily: 'Oxanium',
     fontWeight: 100,
-    fontSize: 28,
+    fontSize: 35,
     // [theme.breakpoints.up('sm')]: {
     //   fontSize: 35,
     //   marginTop: -26,

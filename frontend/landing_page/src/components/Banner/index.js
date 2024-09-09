@@ -40,7 +40,8 @@ function Banner() {
               </Grid>
               <Grid>
                 <h2 className={classes.subtitle}>
-                  DES Data Release 2{enviromentName !== undefined && enviromentName.toLowerCase() !== 'production' && enviromentName}
+                  DES Data Release 2{enviromentName !== undefined && enviromentName.toLowerCase() !== 'production' && (
+                    <><br />{enviromentName}</>)}
                 </h2>
               </Grid>
             </Grid>
