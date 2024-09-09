@@ -59,7 +59,7 @@ services:
       - sky
 
   eyeballing:
-    image: node:10-alpine
+    image: node:18-alpine
     working_dir: /app
     volumes:
       - ./frontend/eyeballing:/app
@@ -69,7 +69,7 @@ services:
       - 3000:3000
 
   landingpage:
-    image: node:10-alpine
+    image: node:18-alpine
     working_dir: /app
     volumes:
       - ./frontend/landing_page:/app
