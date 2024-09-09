@@ -18,6 +18,8 @@ services:
       - ./local_vars.py:/app/dri/settings/local_vars.py
       # Django SAML
       - ./certificates:/app/dri/certificates
+      # Arquivos por tiles Release DR2
+      - /lustre/t1/public/des/dr2/primary/images/coadd/:/archive/releases/dr2/coadd
     depends_on:
       rabbit:
         condition: service_healthy
