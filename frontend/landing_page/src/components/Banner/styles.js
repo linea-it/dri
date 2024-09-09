@@ -51,21 +51,25 @@ const styles = makeStyles((theme) => ({
     [theme.breakpoints.up('sm')]: {
       fontSize: 60,
     },
+    marginBottom: '26px',
     textShadow: 'black 0.1em 0.1em 0.2em',
   },
   subtitle: {
     position: 'relative',
-    width: '400px',
-    marginTop: '-22px',
+    // width: '400px',
+    // marginTop: '-22px',
     fontFamily: 'Oxanium',
     fontWeight: 100,
     fontSize: 28,
-    [theme.breakpoints.up('sm')]: {
-      fontSize: 35,
-      marginTop: -26,
-    },
-    paddingTop: 8,
+    // [theme.breakpoints.up('sm')]: {
+    //   fontSize: 35,
+    //   marginTop: -26,
+    // },
+    // paddingTop: 8,
     textShadow: 'black 0.1em 0.1em 0.2em',
+  },
+  subtitleContainer: {
+    marginBottom: theme.spacing(4),
   },
   titleWrapper: {
     display: 'flex',
