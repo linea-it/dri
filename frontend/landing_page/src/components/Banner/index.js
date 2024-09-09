@@ -42,7 +42,7 @@ function Banner() {
               </h1>
             </div>
             <h2 className={classes.subtitle}>
-              Data Release 2 {enviromentName !== undefined && enviromentName}
+              Data Release 2 {enviromentName !== undefined && enviromentName.toLowerCase() !== 'production' && enviromentName}
             </h2>
             {isBr && (
               <img src={`${process.env.PUBLIC_URL}/img/bandeira_brasil.jpg`} alt="Brasil" className={classes.brFlag} />
