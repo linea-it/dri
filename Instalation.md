@@ -97,6 +97,7 @@ In this command, replace <linea_user> for your username used to access srvlogin 
 It is always necessary to execute this command before turning the environment on. 
 
 In this case, the settings would be:  
+```python
     'catalog': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'prod_gavo',
@@ -108,7 +109,7 @@ In this case, the settings would be:
             'options': '-c search_path=dri_catalog,public'
         },
     },
-
+```
 ## Run and Stop All Services
 
 ```bash
@@ -122,6 +123,12 @@ docker compose stop && docker compose up -d
 ```
 
 ## Useful Commands
+
+Build Manual das imagens docker
+```bash
+docker build -t linea/dri:backend_$(git describe --always) .
+docker build -t linea/dri:frontend_$(git describe --always) .
+```
 
 Returns the ID of a container by filtering by name
 
@@ -181,10 +188,4 @@ Start celery Works and Beat manually. inside backend container run
 celery worker --workdir /app --app dri -l info
 
 celery worker --workdir /app --app dri -l info
-```
-
-Build Manual das imagens docker
-```bash
-docker build -t linea/dri:backend_$(git describe --always) .
-docker build -t linea/dri:frontend_$(git describe --always) .
 ```
