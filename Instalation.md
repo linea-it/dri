@@ -29,6 +29,9 @@ For react apps, you need to run the yarn command to create the node_modules dire
 
 ```bash
 docker compose run landingpage yarn
+```
+
+```bash
 docker compose run eyeballing yarn
 ```
 
