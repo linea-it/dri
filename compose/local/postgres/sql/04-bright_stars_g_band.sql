@@ -1059,7 +1059,7 @@ CREATE INDEX bright_stars_g_band_id_idx ON dri_catalog.bright_stars_g_band USING
 -- Name: bright_stars_g_band_ra_dec; Type: INDEX; Schema: dri_catalog; Owner: postgres
 --
 
-CREATE INDEX bright_stars_g_band_ra_dec ON dri_catalog.bright_stars_g_band USING btree (public.q3c_ang2ipix(ra, "dec"));
+-- CREATE INDEX bright_stars_g_band_ra_dec ON dri_catalog.bright_stars_g_band USING btree (public.q3c_ang2ipix(ra, "dec"));
 
 
 -- Completed on 2024-05-02 16:03:03

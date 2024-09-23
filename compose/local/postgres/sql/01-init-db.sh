@@ -14,11 +14,11 @@ psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-E
     ALTER SCHEMA dri_catalog OWNER TO postgres;
 EOSQL
 
-echo "Creating Q3C extension"
-psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
-    CREATE EXTENSION q3c;
-    SELECT q3c_version();
-EOSQL
+# echo "Creating Q3C extension"
+# psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
+#     CREATE EXTENSION q3c;
+#     SELECT q3c_version();
+# EOSQL
 
 # # Target Viewer Sample DATA
 # # ------------------------------

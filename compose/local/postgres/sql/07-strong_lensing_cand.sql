@@ -1252,7 +1252,7 @@ CREATE INDEX strong_lensing_cand_id_idx ON dri_catalog.strong_lensing_cand USING
 -- Name: strong_lensing_cand_ra_dec; Type: INDEX; Schema: dri_catalog; Owner: postgres
 --
 
-CREATE INDEX strong_lensing_cand_ra_dec ON dri_catalog.strong_lensing_cand USING btree (public.q3c_ang2ipix(ra, "dec"));
+-- CREATE INDEX strong_lensing_cand_ra_dec ON dri_catalog.strong_lensing_cand USING btree (public.q3c_ang2ipix(ra, "dec"));
 
 
 -- Completed on 2024-05-02 15:25:23

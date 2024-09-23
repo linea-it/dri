@@ -115,7 +115,7 @@ CREATE INDEX variablility_final_sample_id_idx ON dri_catalog.variablility_final_
 -- Name: variablility_final_sample_ra_dec; Type: INDEX; Schema: dri_catalog; Owner: postgres
 --
 
-CREATE INDEX variablility_final_sample_ra_dec ON dri_catalog.variablility_final_sample USING btree (public.q3c_ang2ipix(ra, "dec"));
+-- CREATE INDEX variablility_final_sample_ra_dec ON dri_catalog.variablility_final_sample USING btree (public.q3c_ang2ipix(ra, "dec"));
 
 
 -- Completed on 2024-05-02 16:01:53
