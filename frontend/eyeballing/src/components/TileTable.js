@@ -29,7 +29,7 @@ import DriApi from '../api/Api';
 import ChooserDownloadDialog from './ChooserDownloadDialog';
 import ChooseFilterCommentDialog from './ChooseFilterCommentDialog';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
@@ -76,7 +76,7 @@ function CircularIndeterminate() {
 }
 
 function convertToCSV(objArray) {
-  let str = `tilename;release;inspected;username;datetime;comment;ra;dec\r\n`;
+  let str = 'tilename;release;inspected;username;datetime;comment;ra;dec\r\n';
 
   for (let i = 0; i < objArray.length; i++) {
     let line = '';
@@ -107,11 +107,11 @@ function TileTable({ backLink, currentRelease }) {
   const classes = useStyles();
 
   const columns = [
-    { name: 'dts_dataset__tile__tli_tilename', title: 'Tile', getCellValue: row => row.tilename },
-    { name: 'dts_dataset__inspected__isp_value', title: 'Status', getCellValue: row => renderInspectionValue(row.isp_value) },
-    { name: 'owner__username', title: 'Owner', getCellValue: row => row.owner },
-    { name: 'dts_date', title: 'Date', getCellValue: row => row.dts_date },
-    { name: 'dts_comment', title: 'Comments', getCellValue: row => row.dts_comment },
+    { name: 'dts_dataset__tile__tli_tilename', title: 'Tile', getCellValue: (row) => row.tilename },
+    { name: 'dts_dataset__inspected__isp_value', title: 'Status', getCellValue: (row) => renderInspectionValue(row.isp_value) },
+    { name: 'owner__username', title: 'Owner', getCellValue: (row) => row.owner },
+    { name: 'dts_date', title: 'Date', getCellValue: (row) => row.dts_date },
+    { name: 'dts_comment', title: 'Comments', getCellValue: (row) => row.dts_comment },
   ];
 
   const defaultColumnWidths = [
@@ -128,13 +128,12 @@ function TileTable({ backLink, currentRelease }) {
         status === true ? (
           <ThumbUpIcon className={classes.okButton} />
         ) : (
-            <ThumbDownIcon color="error" />
-          )
+          <ThumbDownIcon color="error" />
+        )
       );
     }
     return '-';
   }
-
 
   function clearData() {
     setLoading(true);
@@ -172,7 +171,7 @@ function TileTable({ backLink, currentRelease }) {
     });
 
     if (comments && comments.length > 0) {
-      setDownloadData(comments.map(comment => ({
+      setDownloadData(comments.map((comment) => ({
         tilename: comment.tilename,
         release: comment.release_name,
         inspected: comment.isp_value,
@@ -211,7 +210,6 @@ function TileTable({ backLink, currentRelease }) {
     }
   }
 
-
   function handleDownloadDialog(checked) {
     if (typeof checked === 'string') {
       downloadTableData(checked);
@@ -242,7 +240,7 @@ function TileTable({ backLink, currentRelease }) {
     setShowFilterDialog(false);
   };
   return (
-    <React.Fragment>
+    <>
       <Grid
         container
         direction="row"
@@ -313,9 +311,8 @@ function TileTable({ backLink, currentRelease }) {
         open={showDownloadDialog}
         handleClose={handleDownloadDialog}
       />
-    </React.Fragment>
+    </>
   );
 }
-
 
 export default TileTable;

@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@babel/eslint-parser": "^7.25.1",
+    "@babel/helper-function-name": "^7.24.7",
     "@devexpress/dx-react-core": "^1.11.2",
     "@devexpress/dx-react-grid": "^1.11.2",
     "@devexpress/dx-react-grid-material-ui": "^1.11.2",
@@ -10,6 +12,7 @@
     "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.56",
     "axios": "^0.21.0",
+    "babel-eslint": "^10.1.0",
     "dateformat": "^3.0.3",
     "dotenv": "^6.2.0",
     "lodash": "^4.17.11",
@@ -29,15 +32,16 @@
     "babel-plugin-transform-class-properties": "^6.24.1",
     "enzyme": "^3.9.0",
     "enzyme-adapter-react-16": "^1.10.0",
-    "eslint": "5.12.0",
-    "eslint-config-airbnb": "^17.1.1",
-    "eslint-plugin-import": "^2.18.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb": "^18.1.0",
+    "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jsx-a11y": "^6.2.3",
-    "eslint-plugin-react": "^7.14.2",
+    "eslint-plugin-react": "^7.19.0",
+    "eslint-plugin-react-hooks": "^2.5.1",
     "jest": "^23.6.0",
     "jest-transform-stub": "^2.0.0",
     "prettier": "^1.16.4",
-    "react-scripts": "2.1.5"
+    "react-scripts": "5.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

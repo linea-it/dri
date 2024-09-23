@@ -11,7 +11,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
@@ -45,19 +45,19 @@ function ChooseContrast(props) {
         <Divider />
         <RadioGroup value={props.selectedValue} onChange={handleChange}>
           <FormControlLabel
-            value={'defaultContrast'}
+            value="defaultContrast"
             control={<Radio />}
-            label={'Default Contrast'}
+            label="Default Contrast"
           />
           <FormControlLabel
-            value={'mediumContrast'}
+            value="mediumContrast"
             control={<Radio />}
-            label={'Medium Contrast'}
+            label="Medium Contrast"
           />
           <FormControlLabel
-            value={'highContrast'}
+            value="highContrast"
             control={<Radio />}
-            label={'High Contrast'}
+            label="High Contrast"
           />
         </RadioGroup>
       </DialogContent>

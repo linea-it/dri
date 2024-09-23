@@ -139,9 +139,9 @@ class VisiomaticPanel extends Component {
 
   redraw = () => {
     const me = this;
-    const map = me.map;
+    const { map } = me;
     const container = map.getContainer();
-    const width = container.width;
+    const { width } = container;
 
     if (width > 0) {
       container.css = `width: ${width} + 2`;
@@ -150,18 +150,17 @@ class VisiomaticPanel extends Component {
     }
   };
 
-
   overlayCatalog = () => {
     const l = this.libL;
 
-    const map = this.map;
+    const { map } = this;
     const wcs = map.options.crs;
 
     const { points } = this.props;
 
     this.removeImageLayer();
 
-    const features = points.map(comment => ({
+    const features = points.map((comment) => ({
       id: comment.id,
       type: 'Feature',
       owner: comment.owner,
@@ -184,7 +183,7 @@ class VisiomaticPanel extends Component {
       iconSize: [16, 16],
     });
 
-    const popup = feature => (
+    const popup = (feature) => (
       `<div>
         <h3 style="margin: 0">${feature.comment}</h3>
         <span style="font-size: 11px">reported by: <i><u>${feature.owner}</u></i></span><br />
@@ -193,7 +192,6 @@ class VisiomaticPanel extends Component {
     );
 
     // this.removeImageLayer();
-
 
     const lCatalog = l.geoJson(collection, {
       coordsToLatLng: (coords) => {
@@ -273,8 +271,8 @@ changeContrast = () => {
 
   const imageLayer = me.layer;
 
-  const minValues = colorRanges[this.state.currentContrast].minMaxValues.map(v => v[0]);
-  const maxValues = colorRanges[this.state.currentContrast].minMaxValues.map(v => v[1]);
+  const minValues = colorRanges[this.state.currentContrast].minMaxValues.map((v) => v[0]);
+  const maxValues = colorRanges[this.state.currentContrast].minMaxValues.map((v) => v[1]);
 
   imageLayer.iipMinValue = minValues;
   imageLayer.iipMaxValue = maxValues;
@@ -334,10 +332,9 @@ componentDidMount() {
   // this.changeImage();
 }
 
-
   removeImageLayer = () => {
     const me = this;
-    const map = me.map;
+    const { map } = me;
     // imageLayer = me.getImageLayer();
 
     if (map !== null) {
@@ -369,7 +366,6 @@ componentDidMount() {
       this.changeContrast();
     }
   }
-
 
   setView = () => {
     const { center } = this.props;
@@ -403,7 +399,6 @@ componentDidMount() {
     }
     return colorRanges.defaultContrast;
   };
-
 
   changeImage = () => {
     if (this.props.image) {

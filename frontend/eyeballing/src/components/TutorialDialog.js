@@ -11,7 +11,7 @@ import Divider from '@material-ui/core/Divider';
 import { makeStyles } from '@material-ui/core/styles';
 import YouTubePlayer from 'react-player/lib/players/YouTube';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
@@ -48,7 +48,7 @@ function TutorialDialog({
         </IconButton>
         <Divider />
         <Grid container spacing={3} className={classes.contentWrapper}>
-          {data.length > 0 ? data.map(row => (
+          {data.length > 0 ? data.map((row) => (
             <Fragment key={row.id}>
               <Grid item xs={12}>
                 <div className={classes.blockWrapper}>

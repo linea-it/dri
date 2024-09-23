@@ -10,7 +10,7 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
@@ -35,7 +35,6 @@ function ContrastMenu({
   handleClose,
 }) {
   const classes = useStyles();
-
 
   return (
     <Dialog onClose={handleClose} open={open} maxWidth="sm" fullWidth className={classes.root}>

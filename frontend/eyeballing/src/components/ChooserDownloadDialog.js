@@ -10,7 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Divider from '@material-ui/core/Divider';
 import { makeStyles } from '@material-ui/core/styles';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
@@ -44,17 +44,25 @@ function ChooserDownloadDialog(props) {
         <Divider />
         <RadioGroup value={props.selectedValue} onChange={handleChange}>
           <FormControlLabel
-            value={'csv'}
+            value="csv"
             control={<Radio />}
-            label={'CSV'}
-          />                
+            label="CSV"
+          />
           <FormControlLabel
-            value={'json'}
+            value="json"
             control={<Radio />}
-            label={'JSON'}
+            label="JSON"
           />
         </RadioGroup>
-        <a href="/" id="downloadDialogLink" style={{ visibility: 0, height: 0, width: 0, fontSize: 0, }}>#</a>
+        <a
+          href="/"
+          id="downloadDialogLink"
+          style={{
+            visibility: 0, height: 0, width: 0, fontSize: 0,
+          }}
+        >
+          #
+        </a>
       </DialogContent>
     </Dialog>
   );

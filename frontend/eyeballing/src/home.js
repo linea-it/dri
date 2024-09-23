@@ -42,8 +42,7 @@ import Header from './components/Header';
 import DownloadDialog from './components/download';
 import DriApi from './api/Api';
 
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
   },
@@ -58,7 +57,7 @@ const useStyles = makeStyles(theme => ({
   visiomatic: {
     backgroundColor: theme.palette.grey[200],
   },
-  tilelist: props => ({
+  tilelist: (props) => ({
     height: props.tileHeight,
     textAlign: 'center',
     minWidth: 300,
@@ -197,8 +196,8 @@ function Home() {
   });
 
   useEffect(() => {
-    api.getTileInspectionOption().then(res => setHasInspection(res.TILE_VIEWER_INSPECTION_ENABLED));
-    api.loggedUser().then(res => setUsername(res.display_name));
+    api.getTileInspectionOption().then((res) => setHasInspection(res.TILE_VIEWER_INSPECTION_ENABLED));
+    api.loggedUser().then((res) => setUsername(res.display_name));
     api.allReleases().then((res) => {
       setReleases(res);
 
@@ -206,7 +205,7 @@ function Home() {
       let release = res.length > 0 ? res[0].id : '';
 
       // Filter by releases with the default flag equal to true
-      const releaseDefault = res.filter(row => row.rls_default);
+      const releaseDefault = res.filter((row) => row.rls_default);
 
       // If there's any release with the default flag on,
       // set the first item as the current release.
@@ -216,7 +215,7 @@ function Home() {
 
       setCurrentRelease(release);
     });
-    api.getTutorial().then(res => setTutorial(res)).catch(() => setTutorial([]));
+    api.getTutorial().then((res) => setTutorial(res)).catch(() => setTutorial([]));
   }, []);
 
   useEffect(() => {
@@ -224,7 +223,7 @@ function Home() {
       api.datasetsByRelease({ release: currentRelease }).then((res) => {
         if (hasInspection) {
           // Totais de Tiles boas, ruim e não inspecionadas
-          const goodTiles = countBy(res, el => el.isp_value);
+          const goodTiles = countBy(res, (el) => el.isp_value);
           goodTiles.total = res.length;
 
           setCounts({
@@ -233,7 +232,7 @@ function Home() {
             bad: goodTiles.false ? goodTiles.false : 0,
           });
         } else {
-          setCounts(prevCounts => ({ ...prevCounts, total: res.length }));
+          setCounts((prevCounts) => ({ ...prevCounts, total: res.length }));
         }
         if (allTiles.length === 0) {
           setAllTiles(res);
@@ -251,7 +250,6 @@ function Home() {
     }
 
     const offset = datasets.length;
-
 
     const filters = [{
       property: 'inspected',
@@ -352,7 +350,7 @@ function Home() {
     setCommentsWithFeature([]);
     if (currentDataset.id) {
       api.getDatasetCommentsByType(currentDataset.id, 2)
-        .then(res => setCommentsWithFeature(res));
+        .then((res) => setCommentsWithFeature(res));
     }
   };
 
@@ -522,7 +520,6 @@ function Home() {
     let splitRaDec = null;
     let splitByHms = null;
 
-
     // First the split by space, because the string could have a ", ".
     // In this case, the split by comma should have priority
     if (splitBySpace.length === 2) {
@@ -610,8 +607,7 @@ function Home() {
     }
   };
 
-
-  const handleDelete = commentId => api.deleteComment(commentId).then(() => {
+  const handleDelete = (commentId) => api.deleteComment(commentId).then(() => {
     handleComment(currentDataset);
     reloadList();
   });
@@ -663,7 +659,7 @@ function Home() {
 
   const Rows = () => {
     if (datasets.length > 0) {
-      return datasets.map(dataset => (
+      return datasets.map((dataset) => (
         <ListItem
           className={classes.listItem}
           button
@@ -696,15 +692,15 @@ function Home() {
                   {dataset.isp_value ? (
                     <ThumbUpIcon className={`${classes.okButton} ${classes.tileIcon}`} />
                   ) : (
-                      <ThumbUpIcon className={classes.tileIcon} />
-                    )}
+                    <ThumbUpIcon className={classes.tileIcon} />
+                  )}
                 </IconButton>
                 <IconButton className={classes.tileButton} onClick={() => qualifyDataset(dataset, 'notok')}>
                   {dataset.isp_value === false ? (
                     <ThumbDownIcon className={classes.tileIcon} color="error" />
                   ) : (
-                      <ThumbDownIcon className={classes.tileIcon} />
-                    )}
+                    <ThumbDownIcon className={classes.tileIcon} />
+                  )}
                 </IconButton>
                 <IconButton className={classes.tileButton} onClick={() => handleComment(dataset)}>
                   <Comment className={classes.tileIcon} />
@@ -771,7 +767,7 @@ function Home() {
         exact
         path="/tile_viewer/"
         render={() => (
-          <React.Fragment>
+          <>
             <div className={classes.content}>
               <Grid
                 container
@@ -842,10 +838,10 @@ function Home() {
                       {loadingAllTiles ? (
                         <LinearProgress color="secondary" className={classes.linearProgress} />
                       ) : (
-                          <CardActions className={classes.cardActionCounter}>
-                            <Counter hasInspection={hasInspection} counts={counts} />
-                          </CardActions>
-                        )}
+                        <CardActions className={classes.cardActionCounter}>
+                          <Counter hasInspection={hasInspection} counts={counts} />
+                        </CardActions>
+                      )}
                     </>
                   </Card>
                 </Grid>
@@ -897,7 +893,7 @@ function Home() {
               <CircularProgress color="inherit" />
             </Backdrop>
             {hasInspection ? <SnackBar openSnackBar={openSnackBar} handleClickSnackBar={handleClickSnackBar} /> : null}
-          </React.Fragment>
+          </>
         )}
       />
       {hasInspection ? (

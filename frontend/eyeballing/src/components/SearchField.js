@@ -1,20 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { makeStyles, fade } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
+import { alpha } from '@material-ui/core/styles'
 import InputBase from '@material-ui/core/InputBase';
 import IconButton from '@material-ui/core/IconButton';
 import SearchIcon from '@material-ui/icons/Search';
 import CloseIcon from '@material-ui/icons/Close';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   search: {
     position: 'relative',
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.common.black, 0.03),
+    backgroundColor: alpha(theme.palette.common.black, 0.03),
     '&:hover': {
-      backgroundColor: fade(theme.palette.common.black, 0.07),
+      backgroundColor: alpha(theme.palette.common.black, 0.07),
     },
     marginRight: theme.spacing(1),
     marginLeft: 0,
