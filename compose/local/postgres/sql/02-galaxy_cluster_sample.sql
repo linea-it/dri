@@ -363,7 +363,7 @@ CREATE INDEX galaxy_clusters_sample_id_idx ON dri_catalog.galaxy_clusters_sample
 -- Name: galaxy_clusters_sample_ra_dec; Type: INDEX; Schema: dri_catalog; Owner: postgres
 --
 
-CREATE INDEX galaxy_clusters_sample_ra_dec ON dri_catalog.galaxy_clusters_sample USING btree (public.q3c_ang2ipix(ra, "dec"));
+-- CREATE INDEX galaxy_clusters_sample_ra_dec ON dri_catalog.galaxy_clusters_sample USING btree (public.q3c_ang2ipix(ra, "dec"));
 
 
 -- Completed on 2024-05-02 16:03:54
