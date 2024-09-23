@@ -20,7 +20,6 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 import styles from './styles';
 import { tutorials } from '../../Services/api';
 
-
 function Tutorials() {
   const classes = styles();
   const opts = { width: '100%' };

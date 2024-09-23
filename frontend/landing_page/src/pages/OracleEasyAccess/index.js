@@ -79,7 +79,6 @@ function AboutUs() {
                 </Typography>
               </>
 
-
               {/* (Botão para login) | (Botão para voltar para a Home) */}
               {/* <Typography variant="h2" className={classes.subTitle}>
                 Welcome to Science Server!

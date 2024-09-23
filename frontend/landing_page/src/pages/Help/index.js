@@ -8,7 +8,6 @@ import styles from './styles';
 function Help() {
   const classes = styles();
 
-
   return (
     <div className={classes.initContainer}>
       <Container>

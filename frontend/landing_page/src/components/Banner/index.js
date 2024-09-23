@@ -6,15 +6,13 @@ import { envName } from '../../Services/api';
 function Banner() {
   const classes = styles();
 
-  const [isBr, setIsBr] = useState(true);
   const [enviromentName, setEnviromentName] = useState(undefined);
 
   useEffect(() => {
     envName().then((result) => {
-      setEnviromentName(result)
-    })
+      setEnviromentName(result);
+    });
   }, []);
-
 
   return (
     <>
@@ -33,21 +31,29 @@ function Banner() {
             </h1>
           </Grid>
           <Grid item xs={12} className={classes.subtitleContainer}>
-            <Grid container justifyContent="center"
-              alignItems="center">
+            <Grid
+              container
+              justifyContent="center"
+              alignItems="center"
+            >
               <Grid item>
                 <img src={`${process.env.PUBLIC_URL}/img/logo.png`} alt="Data Release Interface" className={classes.driLogo} />
               </Grid>
               <Grid>
                 <h2 className={classes.subtitle}>
-                  DES Data Release 2{enviromentName !== undefined && enviromentName.toLowerCase() !== 'production' && (
-                    <><br />{enviromentName}</>)}
+                  DES Data Release 2
+                  {enviromentName !== undefined && enviromentName?.toLowerCase() !== 'production' && (
+                    <>
+                      <br />
+                      {enviromentName}
+                    </>
+                  )}
                 </h2>
               </Grid>
             </Grid>
-          </Grid >
-        </Grid >
-      </div >
+          </Grid>
+        </Grid>
+      </div>
     </>
   );
 }

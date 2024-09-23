@@ -3,7 +3,9 @@ import React from 'react';
 import {
   Grid, Container, Typography, Breadcrumbs, Link, IconButton,
 } from '@material-ui/core';
-import { YouTube, Twitter, GitHub, Instagram } from '@material-ui/icons';
+import {
+  YouTube, Twitter, GitHub, Instagram,
+} from '@material-ui/icons';
 import styles from './styles';
 
 function AboutUs() {

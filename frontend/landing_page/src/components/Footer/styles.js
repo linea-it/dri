@@ -133,7 +133,7 @@ const useStyles = makeStyles((theme) => ({
     textAlign: 'center',
     color: '#a3a3a3',
     fontSize: '0.875rem',
-    marginTop: theme.spacing(5)
+    marginTop: theme.spacing(5),
   },
   link: {
     color: '#000',
