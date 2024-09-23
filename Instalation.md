@@ -36,6 +36,10 @@ docker compose run landingpage yarn
 docker compose run eyeballing yarn
 ```
 
+**OBS**: Para o live reload é necessário acessar os apps a partir das portas de dev. 
+- landing page: http://localhost:3001
+- Tile Viewer: http://localhost:3000
+
 ## Setting Postgresql Database
 
 Considering a new installation in a development environment with the postgresql + q3c database.
