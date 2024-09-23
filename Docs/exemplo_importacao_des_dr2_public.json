@@ -1,17 +1,15 @@
 {
     "products": [
         {
-            "display_name": "DR2",
+            "display_name": "DES DR2 Main",
             "fields": [],
-            "releases": [
-                "dr2"
-            ],
-            "table": "DR2_MAIN",
-            "schema": "DES_ADMIN",
-            "database": "desdr",
+            "releases": [],
+            "table": "main",
+            "schema": "des_dr2",
+            "database": "prod_gavo",
             "type": "catalog",
-            "class": "coadd_objects",
-            "name": "dr2",
+            "class": "des_dr2",
+            "name": "des_dr2_main",
             "association": [
                 {
                     "ucd": "meta.id;meta.main",
@@ -60,6 +58,6 @@
             ]
         }
     ],
-    "ticket": "VDB377",
+    "ticket": "BLX831",
     "register_username": "gverde"
 }

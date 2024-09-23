@@ -84,7 +84,7 @@ class DBPostgresql:
     def get_schema_name(self, schema):
         return schema
 
-    def get_condition_square(self, lowerleft, upperright, property_ra, property_dec):
+    def get_condition_square(self, lowerleft, upperright, property_ra="ra", property_dec="dec"):
 
         raul = float(lowerleft[0])
         decul = float(upperright[1])
@@ -103,6 +103,6 @@ class DBPostgresql:
         ll = "{%s, %s}" % (rall, decll)
 
         # ul, ur, lr, ll
-        stm = "q3c_poly_query(ra, dec, '{ %s, %s, %s, %s}')" % (ul, ur, lr, ll)
+        stm = "q3c_poly_query(%s, %s, '{ %s, %s, %s, %s}')" % (property_ra, property_dec, ul, ur, lr, ll)
 
         return and_(text(stm)).self_group()

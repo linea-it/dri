@@ -1,0 +1,31 @@
+{
+    "products": [
+        {
+            "display_name": "2MASS psc",
+            "fields": [],
+            "releases": [],
+            "table": "psc",
+            "schema": "twomass",
+            "database": "prod_gavo",
+            "type": "catalog",
+            "class": "twomass",
+            "name": "twomass_psc",
+            "association": [
+                {
+                    "ucd": "meta.id;meta.main",
+                    "property": "pts_key"
+                },
+                {
+                    "ucd": "pos.eq.ra;meta.main",
+                    "property": "ra"
+                },
+                {
+                    "ucd": "pos.eq.dec;meta.main",
+                    "property": "decl"
+                }
+            ]
+        }
+    ],
+    "ticket": "BLX831",
+    "register_username": "gverde"
+}
