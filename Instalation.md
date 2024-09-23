@@ -126,7 +126,12 @@ docker compose stop && docker compose up -d
 
 Build Manual das imagens docker
 ```bash
+# Build Backend deve ser executado dentro da pasta api.
+cd api
 docker build -t linea/dri:backend_$(git describe --always) .
+
+# Build Frontend deve ser executado dentro da pasta frontend.
+cd frontend
 docker build -t linea/dri:frontend_$(git describe --always) .
 ```
 
