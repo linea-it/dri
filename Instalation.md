@@ -10,7 +10,8 @@ Inside project folder dri:
 git clone https://github.com/linea-it/dri.git dri \
 && cd dri \
 && mkdir archive log log/backend log/nginx log/iipserver \
-&& cp docker-compose-development.yml docker-compose.yml
+&& cp docker-compose-development.yml docker-compose.yml \
+&& cp api/dri/settings/local_vars.py.template local_vars.py
 ```
 
 Check your linux user id with: 
@@ -29,6 +30,9 @@ For react apps, you need to run the yarn command to create the node_modules dire
 
 ```bash
 docker compose run landingpage yarn
+```
+
+```bash
 docker compose run eyeballing yarn
 ```
 
@@ -52,10 +56,6 @@ When finished, it will print the message: `database-1  | LOG:  database system i
 
 In directory dri/dri/settings there are configuration files for each environment.
 The development and production environment is set by local_vars.py that needs to be copied from local_vars.py.template
-
-``` bash
-cp api/dri/settings/local_vars.py.template local_vars.py
-```
 
 With the configuration file local_vars.py configured. it's time to raise the backend.
 
@@ -97,6 +97,7 @@ In this command, replace <linea_user> for your username used to access srvlogin 
 It is always necessary to execute this command before turning the environment on. 
 
 In this case, the settings would be:  
+```python
     'catalog': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'prod_gavo',
@@ -108,7 +109,7 @@ In this case, the settings would be:
             'options': '-c search_path=dri_catalog,public'
         },
     },
-
+```
 ## Run and Stop All Services
 
 ```bash
@@ -122,6 +123,17 @@ docker compose stop && docker compose up -d
 ```
 
 ## Useful Commands
+
+Build Manual das imagens docker
+```bash
+# Build Backend deve ser executado dentro da pasta api.
+cd api
+docker build -t linea/dri:backend_$(git describe --always) .
+
+# Build Frontend deve ser executado dentro da pasta frontend.
+cd frontend
+docker build -t linea/dri:frontend_$(git describe --always) .
+```
 
 Returns the ID of a container by filtering by name
 
@@ -181,10 +193,4 @@ Start celery Works and Beat manually. inside backend container run
 celery worker --workdir /app --app dri -l info
 
 celery worker --workdir /app --app dri -l info
-```
-
-Build Manual das imagens docker
-```bash
-docker build -t linea/dri:backend_$(git describe --always) .
-docker build -t linea/dri:frontend_$(git describe --always) .
 ```
