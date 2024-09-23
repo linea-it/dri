@@ -10,7 +10,8 @@ Inside project folder dri:
 git clone https://github.com/linea-it/dri.git dri \
 && cd dri \
 && mkdir archive log log/backend log/nginx log/iipserver \
-&& cp docker-compose-development.yml docker-compose.yml
+&& cp docker-compose-development.yml docker-compose.yml \
+&& cp api/dri/settings/local_vars.py.template local_vars.py
 ```
 
 Check your linux user id with: 
@@ -55,10 +56,6 @@ When finished, it will print the message: `database-1  | LOG:  database system i
 
 In directory dri/dri/settings there are configuration files for each environment.
 The development and production environment is set by local_vars.py that needs to be copied from local_vars.py.template
-
-``` bash
-cp api/dri/settings/local_vars.py.template local_vars.py
-```
 
 With the configuration file local_vars.py configured. it's time to raise the backend.
 
