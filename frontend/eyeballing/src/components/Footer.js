@@ -6,7 +6,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { Typography, CardMedia } from '@material-ui/core';
 import logo from '../assets/img/linea-logo-mini.png';
 
-
 const styles = () => ({
   appBar: {
     top: 'auto',
@@ -29,7 +28,7 @@ const styles = () => ({
 function Footer(props) {
   const { classes } = props;
   return (
-    <React.Fragment>
+    <>
       <AppBar position="fixed" color="primary" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
           <Typography className={classes.grow} color="inherit">
@@ -41,7 +40,7 @@ function Footer(props) {
           </a>
         </Toolbar>
       </AppBar>
-    </React.Fragment>
+    </>
   );
 }
 

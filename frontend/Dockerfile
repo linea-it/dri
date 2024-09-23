@@ -25,13 +25,13 @@ RUN /opt/Sencha/sencha app build production
 RUN cp -r /code/packages/local/visiomatic/src/visiomatic/dist /code/build/production/Explorer/packages/local/visiomatic/src/visiomatic/
 
 # Build ReactJS Apps
-FROM node:10-alpine AS eyeballing
+FROM node:18-alpine AS eyeballing
 WORKDIR /app
 COPY ./eyeballing .
 RUN yarn -v && yarn 
 RUN yarn run build
 
-FROM node:10-alpine AS landingpage
+FROM node:18-alpine AS landingpage
 WORKDIR /app
 COPY ./landing_page .
 RUN yarn -v && yarn 

@@ -14,8 +14,9 @@ import ListItem from '@material-ui/core/ListItem';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Avatar from '@material-ui/core/Avatar';
 import {
-  getLoggedUser, urlLogin, urlSign, urlLogout,
+  getLoggedUser, urlLogin, urlLogout,
 } from '../../Services/api';
+// import { urlSign } from '../../Services/api';
 import styles from './styles';
 
 function Header() {
@@ -32,7 +33,7 @@ function Header() {
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const [user, setUser] = useState(undefined);
-  const [routeSign, setRouteSign] = useState(undefined);
+  // const [routeSign, setRouteSign] = useState(undefined);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -90,7 +91,7 @@ function Header() {
 
   useEffect(() => {
     getLoggedUser().then((result) => setUser(result));
-    urlSign().then((result) => setRouteSign(result.SIGN_UP_ROUTE));
+    // urlSign().then((result) => setRouteSign(result.SIGN_UP_ROUTE));
   }, []);
   useEffect(() => { }, [user]);
 

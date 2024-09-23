@@ -63,7 +63,8 @@ export default function LongMenu(props) {
         aria-controls="long-menu"
         aria-haspopup="true"
         onClick={handleClick}
-        style={menuStyle}>
+        style={menuStyle}
+      >
         <MoreVertIcon fontSize="small" />
       </IconButton>
       <Menu
@@ -77,9 +78,18 @@ export default function LongMenu(props) {
             maxHeight: ITEM_HEIGHT * 4.5,
             width: 200,
           },
-        }}>
-        <MenuItem onClick={handleUpdate}> {'Edit'} </MenuItem>
-        <MenuItem onClick={handleAlert}> {'Delete'} </MenuItem>
+        }}
+      >
+        <MenuItem onClick={handleUpdate}>
+          {' '}
+          Edit
+          {' '}
+        </MenuItem>
+        <MenuItem onClick={handleAlert}>
+          {' '}
+          Delete
+          {' '}
+        </MenuItem>
 
         <AlertDialog
           open={showDialog}

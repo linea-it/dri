@@ -2,7 +2,6 @@ import React from 'react';
 import Particles from 'react-particles-js';
 import styles from './styles';
 
-
 function Stars() {
   const classes = styles();
 

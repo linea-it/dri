@@ -1,8 +1,8 @@
-import { createMuiTheme } from '@material-ui/core/styles';
+import { createTheme } from '@material-ui/core/styles'
 import pink from '@material-ui/core/colors/pink';
 import green from '@material-ui/core/colors/green';
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     primary: {
       light: '#5c6b7d',

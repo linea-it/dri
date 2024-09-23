@@ -18,7 +18,7 @@ import logo from '../assets/img/icon-des.png';
 import { logout } from '../api/Api';
 import TutorialDialog from './TutorialDialog';
 
-const styles = theme => ({
+const styles = (theme) => ({
   appBar: {
     top: 'auto',
     bottom: 0,
@@ -100,7 +100,7 @@ function Header(props) {
   }
 
   return (
-    <React.Fragment>
+    <>
       <AppBar position="static">
         <Toolbar>
           <IconButton color="inherit" onClick={handleHomeTileViewer}>
@@ -171,7 +171,7 @@ function Header(props) {
         setClose={() => setTutorialOpen(false)}
         data={tutorial}
       />
-    </React.Fragment>
+    </>
   );
 }
 

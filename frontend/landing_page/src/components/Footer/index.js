@@ -1,10 +1,12 @@
 import React from 'react';
-import { Box, Container, Grid, Typography, Link, IconButton } from '@material-ui/core';
-import useStyles from './styles';
+import {
+  Box, Container, Grid, Typography, Link, IconButton,
+} from '@material-ui/core';
 import LinkedInIcon from '@material-ui/icons/LinkedIn';
 import InstagramIcon from '@material-ui/icons/Instagram';
 import YouTubeIcon from '@material-ui/icons/YouTube';
 import FacebookIcon from '@material-ui/icons/Facebook';
+import useStyles from './styles';
 
 const XIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="20" height="20">
@@ -17,14 +19,14 @@ const Footer = () => {
 
   return (
     <footer className={classes.footer}>
-      <div className={classes.footerDivider}></div>
+      <div className={classes.footerDivider} />
 
       <Container>
         <Grid container spacing={4} alignItems="center">
 
           <Grid item xs={12} md={5}>
             <Box className={classes.logoContainer}>
-              <a href="https://www.linea.org.br/" target="_blank">
+              <a href="https://www.linea.org.br/" target="_blank" rel="noreferrer">
                 <img
                   src="/images/linea-logo.png"
                   alt="LIneA logo"
@@ -32,12 +34,18 @@ const Footer = () => {
                 />
               </a>
               <Typography variant="h6" className={classes.title}>
-                Associação Laboratório<br />Interinstitucional de<br />e-Astronomia LIneA
+                Associação Laboratório
+                <br />
+                Interinstitucional de
+                <br />
+                e-Astronomia LIneA
               </Typography>
             </Box>
             <Typography variant="body1" className={classes.address}>
-              Av. Pastor Martin Luther King Jr, 126 - Del Castilho<br />
-              Nova América Offices, Torre 3000 / sala 817.<br />
+              Av. Pastor Martin Luther King Jr, 126 - Del Castilho
+              <br />
+              Nova América Offices, Torre 3000 / sala 817.
+              <br />
               CEP: 20765-000 – Rio de Janeiro - RJ, Brasil
             </Typography>
             <Typography variant="body1" className={classes.futureText}>
@@ -46,7 +54,7 @@ const Footer = () => {
           </Grid>
 
           <Grid item xs={12} md={1}>
-            <Box className={classes.verticalDivider}></Box>
+            <Box className={classes.verticalDivider} />
           </Grid>
 
           <Grid item xs={12} md={6} className={classes.partnerSection}>
@@ -73,10 +81,14 @@ const Footer = () => {
 
             <Box className={classes.contactSection}>
               <Typography variant="body1" className={classes.contactInfo}>
-                e-mail: <Link href="mailto:secretaria@linea.org.br" className={classes.link}>secretaria@linea.org.br</Link>
+                e-mail:
+                {' '}
+                <Link href="mailto:secretaria@linea.org.br" className={classes.link}>secretaria@linea.org.br</Link>
               </Typography>
               <Typography variant="body1" className={classes.contactInfo}>
-                tel: <Link href="tel:+5521969379224" style={{ fontWeight: 'bold' }} className={classes.link}>+55 21 96937 9224</Link>
+                tel:
+                {' '}
+                <Link href="tel:+5521969379224" style={{ fontWeight: 'bold' }} className={classes.link}>+55 21 96937 9224</Link>
               </Typography>
             </Box>
 
@@ -102,9 +114,11 @@ const Footer = () => {
       </Container>
 
       <Typography variant="body2" className={classes.bottomText}>
-        LIneA - 2024 - All rights reserved | <Link href="https://www.linea.org.br/politica-de-privacidade" target="_blank" className={classes.link}>Privacy Policy</Link>
+        LIneA - 2024 - All rights reserved |
+        {' '}
+        <Link href="https://www.linea.org.br/politica-de-privacidade" target="_blank" className={classes.link}>Privacy Policy</Link>
       </Typography>
     </footer>
   );
-}
+};
 export default Footer;

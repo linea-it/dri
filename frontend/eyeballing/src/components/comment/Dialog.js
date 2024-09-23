@@ -16,8 +16,7 @@ import { CardHeader } from '@material-ui/core';
 import Date from 'dateformat';
 import MenuUpDelete from './MenuUpDelete';
 
-
-const styles = theme => ({
+const styles = (theme) => ({
   root: {
   },
   dialogContent: {
@@ -45,12 +44,11 @@ function CommentDialog(props) {
 
   });
 
-
   function handleUpdate(comment) {
     setValues({ inputValue: comment.dts_comment, id: comment.id });
   }
 
-  const handleChange = name => (event) => {
+  const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
   };
 
@@ -91,7 +89,6 @@ function CommentDialog(props) {
       clear();
     }
   }
-
 
   function handleClose() {
     props.handleClose();

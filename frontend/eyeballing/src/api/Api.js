@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 let api = '/dri/api';
 if (process.env.NODE_ENV !== 'production') {
   api = process.env.REACT_APP_API;
@@ -14,7 +13,7 @@ axios.defaults.baseURL = api;
 // Interceptar a Resposta.
 // Add a response interceptor
 axios.interceptors.response.use(
-  response => (
+  (response) => (
     // Do something with response data
     response
   ),
@@ -44,7 +43,6 @@ axios.interceptors.response.use(
   },
 );
 
-
 class DriApi {
   loggedUser = async () => {
     const res = await axios.get('/logged/get_logged/');
@@ -54,9 +52,8 @@ class DriApi {
       window.gtag('config', 'GA_MEASUREMENT_ID', {
         user_id: user.id,
       });
-    }
-    catch (err) {
-      console.log('google analitics not loaded.')
+    } catch (err) {
+      console.log('google analitics not loaded.');
     }
 
     return user;
@@ -102,13 +99,12 @@ class DriApi {
     isp_value: value,
   });
 
-  deleteInspect = inspectId => axios.delete(`/inspect/${inspectId}/`);
+  deleteInspect = (inspectId) => axios.delete(`/inspect/${inspectId}/`);
 
   createinspect = (datasetId, value) => axios.post('/inspect/', {
     isp_dataset: datasetId,
     isp_value: value,
   });
-
 
   comments = ({
     release, offset, limit, dts_type, sorting, search, filters = [],
@@ -128,7 +124,7 @@ class DriApi {
 
     return axios.get('/comment/dataset/', {
       params,
-    }).then(res => res.data);
+    }).then((res) => res.data);
   };
 
   commentsByDataset = async (datasetId) => {
@@ -155,28 +151,27 @@ class DriApi {
     dts_dec,
   });
 
+  deleteComment = (commentId) => axios.delete(`/comment/dataset/${commentId}/`);
 
-  deleteComment = commentId => axios.delete(`/comment/dataset/${commentId}/`);
-
-  getFeatures = () => axios.get('/feature/').then(res => res.data);
+  getFeatures = () => axios.get('/feature/').then((res) => res.data);
 
   getDatasetCommentsByType = (dts_dataset, type) => axios.get('/comment/dataset/', {
     params: { dts_dataset, dts_type: type },
-  }).then(res => res.data);
+  }).then((res) => res.data);
 
-  getTutorial = () => axios.get('/tutorial/', { params: { app_name: 'tile_inspection' } }).then(res => res.data);
+  getTutorial = () => axios.get('/tutorial/', { params: { app_name: 'tile_inspection' } }).then((res) => res.data);
 
-  getDatasetInfo = id => axios.get('/dataset/available_files_by_id/', { params: { id } }).then(res => res.data)
+  getDatasetInfo = (id) => axios.get('/dataset/available_files_by_id/', { params: { id } }).then((res) => res.data)
 
-  getTokenizedDatasetUrl = url => axios.post('/dataset/get_download_url/', { file_url: url }).then(res => res.data.download_url)
+  getTokenizedDatasetUrl = (url) => axios.post('/dataset/get_download_url/', { file_url: url }).then((res) => res.data.download_url)
 
-  getTileInfo = id => axios.get(`/tiles/${id}/available_files/`).then(res => res.data)
+  getTileInfo = (id) => axios.get(`/tiles/${id}/available_files/`).then((res) => res.data)
 
-  getTokenizedTileUrl = url => axios.post('/tiles/desaccess_get_download_url/', { file_url: url }).then(res => res.data.download_url)
+  getTokenizedTileUrl = (url) => axios.post('/tiles/desaccess_get_download_url/', { file_url: url }).then((res) => res.data.download_url)
 
-  getTileByName = name => axios.get('/tiles/', { params: { search: name } }).then(res => res.data)
+  getTileByName = (name) => axios.get('/tiles/', { params: { search: name } }).then((res) => res.data)
 
-  getTileInspectionOption = () => axios.get('/get_setting/', { params: { name: 'TILE_VIEWER_INSPECTION_ENABLED' } }).then(res => res.data)
+  getTileInspectionOption = () => axios.get('/get_setting/', { params: { name: 'TILE_VIEWER_INSPECTION_ENABLED' } }).then((res) => res.data)
 }
 export default DriApi;
 

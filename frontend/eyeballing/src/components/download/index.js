@@ -58,7 +58,7 @@ function DownloadDialog({
           <Grid item xs={12}>
             {!error ? (
               <List dense>
-                {files.map(file => (
+                {files.map((file) => (
                   <ListItem button onClick={() => handleItemClick(file.url)}>
                     <ListItemIcon>
                       {isAuthenticating === file.url

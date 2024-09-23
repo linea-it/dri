@@ -15,7 +15,7 @@ import Grid from '@material-ui/core/Grid';
 import DriApi from '../../api/Api';
 import AlertDialog from '../comment/AlertDialog';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   closeButton: {
     position: 'absolute',
     right: theme.spacing(1),
@@ -54,18 +54,18 @@ function ContextMenu({
   const [alertDeleteOpen, setAlertDeleteOpen] = useState(false);
 
   useEffect(() => {
-    api.getFeatures().then(rows => setFeatures(rows));
+    api.getFeatures().then((rows) => setFeatures(rows));
   }, []);
 
   const handleChange = (e, newValue) => setSelectedFeature(newValue);
 
-  const handleOtherReason = e => setOtherReason(e.target.value);
+  const handleOtherReason = (e) => setOtherReason(e.target.value);
 
   useEffect(() => {
     if (updateOpen === true && open === false) {
-      let feature = features.filter(row => row.ftr_name === event.comment.split(' at')[0])[0];
+      let feature = features.filter((row) => row.ftr_name === event.comment.split(' at')[0])[0];
       if (!feature) {
-        feature = features.filter(row => row.ftr_name === 'Other')[0];
+        feature = features.filter((row) => row.ftr_name === 'Other')[0];
         setOtherReason(event.comment);
       }
       setSelectedFeature(String(feature.id));
@@ -74,7 +74,6 @@ function ContextMenu({
     }
   }, [features, updateOpen, open, event]);
 
-
   const handleContextMenuClose = () => {
     setSelectedFeature('');
     setOtherReason('');
@@ -82,7 +81,7 @@ function ContextMenu({
   };
 
   const handleSave = () => {
-    const currentFeatureName = features.filter(feature => feature.id === Number(selectedFeature))[0].ftr_name;
+    const currentFeatureName = features.filter((feature) => feature.id === Number(selectedFeature))[0].ftr_name;
 
     if (updateOpen === false) {
       if (currentFeatureName === 'Other') {
@@ -91,14 +90,14 @@ function ContextMenu({
             handleContextMenuClose();
             getDatasetCommentsByType();
           })
-          .catch(err => console.error(err));
+          .catch((err) => console.error(err));
       } else {
         api.createDatasetComment(currentDataset, `${currentFeatureName} at ${latLngToHMSDMS(event.latlng)}`, 2, event.latlng.lng, event.latlng.lat)
           .then(() => {
             handleContextMenuClose();
             getDatasetCommentsByType();
           })
-          .catch(err => console.error(err));
+          .catch((err) => console.error(err));
       }
     } else if (currentFeatureName === 'Other') {
       api.updateComment(event.id, otherReason)
@@ -106,14 +105,14 @@ function ContextMenu({
           handleContextMenuClose();
           getDatasetCommentsByType();
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
     } else {
       api.updateComment(event.id, `${currentFeatureName} at ${latLngToHMSDMS(event.latlng)}`)
         .then(() => {
           handleContextMenuClose();
           getDatasetCommentsByType();
         })
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
     }
     reloadData();
   };
@@ -125,7 +124,7 @@ function ContextMenu({
         handleContextMenuClose();
         getDatasetCommentsByType();
       })
-      .catch(err => console.error(err));
+      .catch((err) => console.error(err));
     reloadData();
   };
 
@@ -140,7 +139,7 @@ function ContextMenu({
         </DialogContent>
         <DialogContent>
           <RadioGroup value={selectedFeature} onChange={handleChange}>
-            {features.map(feature => (
+            {features.map((feature) => (
               <FormControlLabel
                 key={feature.id}
                 value={String(feature.id)}

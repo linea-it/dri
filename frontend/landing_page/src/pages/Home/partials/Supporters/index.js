@@ -2,7 +2,6 @@ import React from 'react';
 import { CardMedia, Typography, Grid } from '@material-ui/core';
 import styles from './styles';
 
-
 function Supporters() {
   const classes = styles();
 
