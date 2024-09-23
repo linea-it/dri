@@ -1,6 +1,7 @@
 volumes:
   postgres-data:
 
+
 services:
 
   backend:
@@ -8,6 +9,7 @@ services:
     user: "1000:1000"
     command: /start.sh
     environment:
+      - DEBUG=True
       - CELERY_BROKER=amqp://dri:adminadmin@rabbit:5672
     volumes:
       - ./api:/app
@@ -89,7 +91,7 @@ services:
       - 5432:5432
     volumes:
       # Init Database Script
-      - ./compose/local/postgres/sql:/docker-entrypoint-initdb.d:ro      
+      - ./compose/local/postgres/sql:/docker-entrypoint-initdb.d:ro
       # Persistent Volume
       - postgres-data:/var/lib/postgresql/data
 

@@ -1,0 +1,31 @@
+{
+    "products": [
+        {
+            "display_name": "GAIA DR3 Source",
+            "fields": [],
+            "releases": [],
+            "table": "source",
+            "schema": "gaia_dr3",
+            "database": "prod_gavo",
+            "type": "catalog",
+            "class": "gaia_dr3",
+            "name": "gaia_dr3_source",
+            "association": [
+                {
+                    "ucd": "meta.id;meta.main",
+                    "property": "source_id"
+                },
+                {
+                    "ucd": "pos.eq.ra;meta.main",
+                    "property": "ra"
+                },
+                {
+                    "ucd": "pos.eq.dec;meta.main",
+                    "property": "dec"
+                }
+            ]
+        }
+    ],
+    "ticket": "BLX831",
+    "register_username": "gverde"
+}

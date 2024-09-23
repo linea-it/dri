@@ -102,16 +102,13 @@ It is always necessary to execute this command before turning the environment on
 
 In this case, the settings would be:  
 ```python
-    'catalog': {
+    'prod_gavo': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'prod_gavo',
         'USER': 'untrustedprod',
-        'PASSWORD': 'untrusted',
+        'PASSWORD': '<password>',
         'HOST': 'host.docker.internal',
         'PORT': 3307,
-        'OPTIONS': {
-            'options': '-c search_path=dri_catalog,public'
-        },
     },
 ```
 ## Run and Stop All Services
