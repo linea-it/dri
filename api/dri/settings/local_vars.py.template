@@ -49,10 +49,15 @@ DATABASES = {
         'PASSWORD': 'postgres',
         'HOST': 'database',
         'PORT': 5432,
-        # 'OPTIONS': {
-        #     'options': '-c search_path=dri_catalog,public'
-        # },
     },    
+    'prod_gavo': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'prod_gavo',
+        'USER': 'untrustedprod',
+        'PASSWORD': '<password>',
+        'HOST': 'host.docker.internal',
+        'PORT': 3307,
+    },      
 }
 
 # Exemplo utilizando Sqlite3 para desenvolvimento
