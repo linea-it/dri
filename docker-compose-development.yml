@@ -10,6 +10,7 @@ services:
     command: /start.sh
     environment:
       - DEBUG=True
+      - LOG_LEVEL=DEBUG
       - CELERY_BROKER=amqp://dri:adminadmin@rabbit:5672
     volumes:
       - ./api:/app

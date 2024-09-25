@@ -38,7 +38,7 @@ DATABASES = {
         'NAME': os.environ.get("DATABASE_CATALOG_DB", "prod_gavo"),
         'USER': os.environ.get("DATABASE_CATALOG_USER"),
         'PASSWORD': os.environ.get("DATABASE_CATALOG_PASSWORD"),
-        'HOST': os.environ.get("DATABASE_CATALOG_PASSWORD", "desdb4.linea.org.br"),
+        'HOST': os.environ.get("DATABASE_CATALOG_HOST", "desdb4.linea.org.br"),
         'PORT': os.environ.get("DATABASE_CATALOG_PORT", 5432),
     },
     'mydb': {
