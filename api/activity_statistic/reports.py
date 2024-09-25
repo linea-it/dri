@@ -192,7 +192,7 @@ class ActivityReports:
             # usuario no mesmo dia.
             raise e
 
-    def report_email_unique_visits(self, report_date):
+    def report_email_unique_visits(self, report_date, to=None):
 
         log = logging.getLogger("send_email")
 
@@ -218,6 +218,7 @@ class ActivityReports:
 
         # Se a variavel de configuracao SEND_DAILY_STATISTICS_EMAIL for False nao envia a notificacao.
         if not send_daily_email:
+            log.warning("Skipping send daily email. SEND_DAILY_STATISTICS_EMAIL environment variable is False.")
             return
 
         # subject
@@ -265,8 +266,12 @@ class ActivityReports:
 
         log.info("Sending Daily Statistics e-mail.")
 
+        recipients = [email_admin]
+        if to:
+            recipients.append(to)
+
         Notify().send_email(
             subject=subject,
             body=body,
-            to=[email_admin],
+            to=recipients,
         )

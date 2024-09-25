@@ -74,21 +74,21 @@ DATABASES = {
 
 # Email Notification configs
 # Dados de configuração do servidor de email que será usado para envio das notificações.
-EMAIL_HOST = ''
-EMAIL_PORT = ''
+EMAIL_HOST = 'mailpit'
+EMAIL_PORT = '1025'
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
 EMAIL_USE_TLS = False
 # Email utilizado para enviar as notificacoes do science server
-EMAIL_NOTIFICATION = 'noreply@desportal.cosmology.illinois.edu'
+EMAIL_NOTIFICATION = 'scienceserver@linea.org.br'
 # Lista de email que receberão uma copia de todas as notificacoes
-EMAIL_NOTIFICATION_COPY_TO = list([])
+EMAIL_NOTIFICATION_COPY_TO = list(['dri-portal-notify@linea.org.br'])
 # Email para o helpdesk LIneA
 EMAIL_HELPDESK = 'helpdesk@linea.org.br'
 # Email de contato do LIneA
-EMAIL_HELPDESK_CONTACT = 'contato-dri@linea.org.br'
+EMAIL_HELPDESK_CONTACT = 'helpdesk@linea.org.br'
 # Email que recebera as notificacoes e relatorios gerados pelo science server
-EMAIL_ADMIN = ''
+EMAIL_ADMIN = 'dri@linea.org.br'
 
 # Enables or disables sending daily email access statistics.
 SEND_DAILY_STATISTICS_EMAIL = False

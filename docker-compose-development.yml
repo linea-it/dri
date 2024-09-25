@@ -112,4 +112,10 @@ services:
       - sky
       - landingpage
       - eyeballing
+      - mailpit
       # - iipserver
+
+  mailpit:
+    image: docker.io/axllent/mailpit:latest
+    environment:
+      - MP_WEBROOT=/mailpit/

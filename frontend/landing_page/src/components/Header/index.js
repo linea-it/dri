@@ -14,7 +14,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import Avatar from '@material-ui/core/Avatar';
 import {
-  getLoggedUser, urlLogin, urlLogout,
+  getLoggedUser, urlLogin, urlLogout, sendActivity,
 } from '../../Services/api';
 // import { urlSign } from '../../Services/api';
 import styles from './styles';
@@ -50,9 +50,9 @@ function Header() {
       <>
         <Button color="inherit" onClick={handleClick}>
           <Avatar className={classes.avatar}>
-            {user.display_name.substr(0, 1) || ''}
+            {user?.display_name.substr(0, 1) || ''}
           </Avatar>
-          {user.display_name || ''}
+          {user?.display_name || ''}
         </Button>
         <Popover
           id="simple-popover"
@@ -90,10 +90,11 @@ function Header() {
   }
 
   useEffect(() => {
-    getLoggedUser().then((result) => setUser(result));
-    // urlSign().then((result) => setRouteSign(result.SIGN_UP_ROUTE));
+    getLoggedUser().then((result) => {
+      setUser(result);
+      sendActivity('LandinPage - initHome');
+    });
   }, []);
-  useEffect(() => { }, [user]);
 
   const menus = [
     {

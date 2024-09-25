@@ -50,14 +50,18 @@ axios.interceptors.response.use(
 
 // eslint-disable-next-line consistent-return
 export const getLoggedUser = () => axios.get('logged/get_logged/', { params: { format: 'json' } }).then((result) => {
-
+  console.log(result)
   var data = result.data;
 
   // Informa o Id o usuario para o GA, para que possa reconher usuarios unicos.
-  window.gtag('config', 'GA_MEASUREMENT_ID', {
-    'user_id': data.id
-  });
-
+  try {
+    window.gtag('config', 'GA_MEASUREMENT_ID', {
+      'user_id': data.id
+    });
+  } catch (error) {
+    // Ambiente sem GA
+    // console.log('Erro ao enviar o ID do usuario para o GA');
+  }
   return data
 }).catch((error) => {
   if (error) {
@@ -67,6 +71,10 @@ export const getLoggedUser = () => axios.get('logged/get_logged/', { params: { f
     return { username: undefined };
   }
 });
+
+export const sendActivity = (event) => axios.post('statistics/', { event: event })
+  .then((res) => res)
+  .catch((err) => err);
 
 export const tutorials = () => axios.get('tutorial/')
   .then((res) => res.data)
