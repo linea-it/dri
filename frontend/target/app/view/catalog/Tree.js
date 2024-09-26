@@ -103,26 +103,26 @@ Ext.define('Target.view.catalog.Tree', {
         },
       },
       tbar: [
-        // Add a New catalog
-        {
-          xtype: 'button',
-          iconCls: 'x-fa fa-plus',
-          ui: 'soft-green',
-          tooltip: 'Add a new list of targets.',
-          handler: 'onAddCatalog',
-        },
+        // // Add a New catalog
+        // {
+        //   xtype: 'button',
+        //   iconCls: 'x-fa fa-plus',
+        //   ui: 'soft-green',
+        //   tooltip: 'Add a new list of targets.',
+        //   handler: 'onAddCatalog',
+        // },
 
-        // Button Remove Catalog
-        {
-          tooltip: 'Remove Target List',
-          iconCls: 'x-fa fa-trash',
-          ui: 'soft-red',
-          handler: 'onRemoveCatalog',
-          disabled: true,
-          bind: {
-            disabled: '{!selectedCatalog.editable}',
-          },
-        },
+        // // Button Remove Catalog
+        // {
+        //   tooltip: 'Remove Target List',
+        //   iconCls: 'x-fa fa-trash',
+        //   ui: 'soft-red',
+        //   handler: 'onRemoveCatalog',
+        //   disabled: true,
+        //   bind: {
+        //     disabled: '{!selectedCatalog.editable}',
+        //   },
+        // },
         // Button Bookmark Catalog
         {
           xtype: 'splitbutton',

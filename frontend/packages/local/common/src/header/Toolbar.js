@@ -101,12 +101,12 @@ Ext.define('common.header.Toolbar', {
                 scale: 'medium',
                 arrowVisible: false,
                 menu: [
-                    {
-                        text: 'API Token',
-                        // iconCls: 'x-fa fa-user',
-                        reference: 'headerapitoken',
-                        handler: 'onClickApiToken'
-                    },
+                    // {
+                    //     text: 'API Token',
+                    //     // iconCls: 'x-fa fa-user',
+                    //     reference: 'headerapitoken',
+                    //     handler: 'onClickApiToken'
+                    // },
                     {
                         text: 'Tutorials',
                         // iconCls: 'x-fa fa-question-circle',

@@ -203,14 +203,14 @@ Ext.define('aladin.Aladin', {
                 "format": "jpeg fits",
                 "name": "Halpha"
             },
-            {
-                "id": "P/GALEXGR6/AIS/color",
-                "url": "http://alasky.u-strasbg.fr/GALEX/GR6-02-Color",
-                "name": "GALEX Allsky Imaging Survey colored",
-                "maxOrder": 8,
-                "frame": "equatorial",
-                "format": "jpeg"
-            },
+            // {
+            //     "id": "P/GALEXGR6/AIS/color",
+            //     "url": "http://alasky.u-strasbg.fr/GALEX/GR6-02-Color",
+            //     "name": "GALEX Allsky Imaging Survey colored",
+            //     "maxOrder": 8,
+            //     "frame": "equatorial",
+            //     "format": "jpeg"
+            // },
             {
                 "id": "P/IRIS/color",
                 "url": "http://alasky.u-strasbg.fr/IRISColor",
@@ -235,14 +235,14 @@ Ext.define('aladin.Aladin', {
                 "frame": "equatorial",
                 "format": "jpeg"
             },
-            {
-                "id": "P/SPITZER/color",
-                "url": "http://alasky.u-strasbg.fr/SpitzerI1I2I4color",
-                "name": "IRAC color I1,I2,I4 - (GLIMPSE, SAGE, SAGE-SMC, SINGS)",
-                "maxOrder": 9,
-                "frame": "galactic",
-                "format": "jpeg"
-            },
+            // {
+            //     "id": "P/SPITZER/color",
+            //     "url": "http://alasky.u-strasbg.fr/SpitzerI1I2I4color",
+            //     "name": "IRAC color I1,I2,I4 - (GLIMPSE, SAGE, SAGE-SMC, SINGS)",
+            //     "maxOrder": 9,
+            //     "frame": "galactic",
+            //     "format": "jpeg"
+            // },
             {
                 "id": "P/VTSS/Ha",
                 "url": "http://alasky.u-strasbg.fr/VTSS/Ha",
@@ -251,14 +251,14 @@ Ext.define('aladin.Aladin', {
                 "format": "png jpeg fits",
                 "name": "VTSS-Ha"
             },
-            {
-                "id": "P/XMM/EPIC",
-                "url": "http://saada.u-strasbg.fr/xmmallsky",
-                "name": "XMM-Newton stacked EPIC images (no phot. normalization)",
-                "maxOrder": 7,
-                "frame": "equatorial",
-                "format": "png fits"
-            },
+            // {
+            //     "id": "P/XMM/EPIC",
+            //     "url": "http://saada.u-strasbg.fr/xmmallsky",
+            //     "name": "XMM-Newton stacked EPIC images (no phot. normalization)",
+            //     "maxOrder": 7,
+            //     "frame": "equatorial",
+            //     "format": "png fits"
+            // },
             {
                 "id": "P/XMM/PN/color",
                 "url": "http://saada.unistra.fr/xmmpnsky",
