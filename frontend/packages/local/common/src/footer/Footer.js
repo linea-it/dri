@@ -25,7 +25,7 @@ Ext.define('common.footer.Footer', {
     //     type: 'hbox',
     //     align: 'middle'
     // },
-    layout:{
+    layout: {
         pack: 'center',
         align: 'middle'
     },
@@ -44,7 +44,7 @@ Ext.define('common.footer.Footer', {
         // },
         {
             xtype: 'tbtext',
-            html: 'Powered by LIneA | Dark Energy Survey | NCSA',
+            html: 'Powered by LIneA | Dark Energy Survey',
             cls: 'des-portal-footer-text'
         }
         // '->',
