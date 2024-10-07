@@ -31,28 +31,40 @@ class LineaSaml2Backend(Saml2Backend):
         """Returns the attribute to perform a user lookup on, and the value to use for it.
         The value could be the name_id, or any other saml attribute from the request.
         """
-        logger.debug("Extract user identifier")
+        logger.info("-----------------------------------------")
+        logger.info("Extract user identifier.")
+        logger.info("_extract_user_identifier_params()")
+        logger.info("-----------------------------------------")
+        
         # Lookup key
         user_lookup_key = self._user_lookup_attribute
-        logger.debug(f"User Lookup Key: {user_lookup_key}")
+        logger.info(f"User Lookup Key: {user_lookup_key}")
 
         # Lookup value
-        if getattr(settings, "SAML_USE_NAME_ID_AS_USERNAME", False):
-            if session_info.get("name_id"):
-                logger.debug(f"name_id: {session_info['name_id']}")
-                user_lookup_value = session_info["name_id"].text
+        user_lookup_value = None
+        try:
+            if getattr(settings, "SAML_USE_NAME_ID_AS_USERNAME", False):
+                if session_info.get("name_id"):
+                    logger.info(f"name_id: {session_info['name_id']}")
+                    user_lookup_value = session_info["name_id"].text
+                else:
+                    logger.error(
+                        "The nameid is not available. Cannot find user without a nameid."
+                    )
             else:
-                logger.error(
-                    "The nameid is not available. Cannot find user without a nameid."
+                # Obtain the value of the custom attribute to use
+                user_lookup_value = self._get_attribute_value(
+                    user_lookup_key, attributes, attribute_mapping
                 )
-                user_lookup_value = None
-        else:
-            # Obtain the value of the custom attribute to use
-            user_lookup_value = self._get_attribute_value(
-                user_lookup_key, attributes, attribute_mapping
-            )
+        except Exception as e:
+            logger.error("Failed to extract user identifier.")
+            logger.error(e)
+            return user_lookup_key, None
 
-        logger.debug(f"User Lookup Value: {user_lookup_value}")
+        logger.info(f"User Lookup Value: {user_lookup_value} Type: {type(user_lookup_value)}")
+        if user_lookup_value is None or user_lookup_value == "None" or user_lookup_value == "":
+            logger.error("No identifier to search in COmanager.")
+            return user_lookup_key, None
 
         # Utiliza o identificador de usuario do SAML (eppn)
         # para fazer uma consulta ao COmanage do LIneA
@@ -61,16 +73,17 @@ class LineaSaml2Backend(Saml2Backend):
             eppn = user_lookup_value
             self.eppn = eppn
 
-            logger.debug("Retriving ldap uid from COmanage.")
+            logger.info("Retriving ldap uid from COmanage.")
             ldap_uid = self.comanage.get_ldap_uid(identifier=eppn)
-            logger.debug(f"LDAP UID: {ldap_uid}")
+            logger.info(f"LDAP UID: {ldap_uid}")
 
             user_lookup_value = self.clean_user_main_attribute(ldap_uid)
-            logger.debug(f"User Lookup Value: {user_lookup_value}")
+            logger.info(f"User Lookup Value: {user_lookup_value}")
 
             return user_lookup_key, user_lookup_value
 
         except Exception as e:
+            logger.error(e)
             return user_lookup_key, None
 
     def clean_user_main_attribute(self, main_attribute: Any) -> Any:
@@ -87,20 +100,32 @@ class LineaSaml2Backend(Saml2Backend):
         **kwargs,
     ) -> bool:
         """Hook to allow custom authorization policies based on SAML attributes. True by default."""
-        logger.debug("Checks if the user is authorized")
+        logger.info("-----------------------------------------")
+        logger.info("Checks if the user is authorized")
+        logger.info("is_authorized()")
+        logger.info("-----------------------------------------")
 
         # Lookup key
         user_lookup_key = self._user_lookup_attribute
-        logger.debug(f"User Lookup Key: {user_lookup_key}")
+        logger.info(f"User Lookup Key: {user_lookup_key}")
 
         # Lookup value
-        # Obtain the value of the custom attribute to use
-        user_lookup_value = self._get_attribute_value(
-            user_lookup_key, attributes, attribute_mapping
-        )
-
-        logger.debug(f"User Lookup Value: {user_lookup_value}")
-
+        user_lookup_value = None
+        try:
+            # Obtain the value of the custom attribute to use
+            user_lookup_value = self._get_attribute_value(
+                user_lookup_key, attributes, attribute_mapping
+            )
+        except Exception as e:
+            logger.error("Failed to extract user identifier.")
+            logger.error(e)
+            return user_lookup_key, None
+        
+        logger.info(f"User Lookup Value: {user_lookup_value} Type: {type(user_lookup_value)}")
+        if user_lookup_value is None or user_lookup_value == "None" or user_lookup_value == "":
+            logger.error("No identifier to search in COmanager.")
+            return False
+        
         # Faz uma consulta no COmanage com as credenciais do usuario
         # Retornadas pelo idp_entityid
         # Caso exista registro no comange retorna True e o usuario está autorizado a prosseguir com o login
@@ -113,14 +138,15 @@ class LineaSaml2Backend(Saml2Backend):
             # e descobrir UID do LDAP para este usuario.
             eppn = user_lookup_value
 
-            logger.debug("Retriving ldap uid from COmanage.")
+            logger.info("Retriving ldap uid from COmanage.")
             ldap_uid = self.comanage.get_ldap_uid(identifier=eppn)
-            logger.debug(f"LDAP UID: {ldap_uid}")
+            logger.info(f"LDAP UID: {ldap_uid}")
 
             return True
 
         except Exception as e:
-            logger.debug("Credentials not found in COmanage.")
+            logger.error(e)
+            logger.error("Credentials not found in COmanage.")
             return False
 
     def user_can_authenticate(self, user) -> bool:
@@ -138,14 +164,14 @@ class LineaSaml2Backend(Saml2Backend):
         return user
 
     def setup_groups(self, user):
-        logger.debug("Setup User Groups")
+        logger.info("Setup User Groups")
 
         # Add a custom group saml for mark this user make login using djangosaml2.
         groups = ["saml2"]
 
         # Recupera os grupos do usuario
         try:
-            logger.debug("Retriving User Groups from COmanage.")
+            logger.info("Retriving User Groups from COmanage.")
             personid = self.comanage.get_co_person_id(identifier=self.eppn)
             cogroups = self.comanage.get_groups(personid)
 
@@ -160,14 +186,14 @@ class LineaSaml2Backend(Saml2Backend):
         for group in user.groups.all():
             if group.name not in groups:
                 group.user_set.remove(user)
-                logger.debug(f"User has been removed from the group {group.name}")
+                logger.info(f"User has been removed from the group {group.name}")
 
         # Add the user to all groups in the shibboleth metadata
         for g in groups:
             group, created = Group.objects.get_or_create(name=g)
             user.groups.add(group)
 
-        logger.debug("User has been added to the following groups")
-        logger.debug(f"Groups: {groups}")
+        logger.info("User has been added to the following groups")
+        logger.info(f"Groups: {groups}")
 
         return user

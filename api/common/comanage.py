@@ -116,12 +116,13 @@ class Comanage:
 
     def get_ldap_uid(self, identifier: str):
 
-        copersonid = self.get_co_person_id(identifier=identifier)
+        if identifier not in [None, "None", ""]:
+            copersonid = self.get_co_person_id(identifier=identifier)
 
-        identifiers = self.get_identifiers(copersonid=copersonid)
+            identifiers = self.get_identifiers(copersonid=copersonid)
 
-        for identifie in identifiers:
-            if identifie["Type"] == "uid":
-                return identifie["Identifier"]
+            for identifie in identifiers:
+                if identifie["Type"] == "uid":
+                    return identifie["Identifier"]
 
         raise Exception("Não encontrou usuario correspondente no ldap.")
