@@ -44,9 +44,9 @@ class Comanage:
         result = self.get_org_identities(identifier=identifier)
 
         org_identities = result["OrgIdentities"]
-        if len(org_identities) != 1:
+        if len(org_identities) == 0:
             raise Exception(
-                f"get_org_identities deveria retornar apenas um resultado mas retornou {len(org_identities)}"
+                f"get_org_identities deveria retornar um ou mais resultados mas retornou {len(org_identities)}"
             )
 
         return org_identities[0]["Id"]
@@ -68,9 +68,9 @@ class Comanage:
         result = self.get_org_identities_links(identifier)
 
         identity_links = result["CoOrgIdentityLinks"]
-        if len(identity_links) != 1:
+        if len(identity_links) == 0:
             raise Exception(
-                f"get_org_identities_links deveria retornar apenas um resultado mas retornou {len(identity_links)}"
+                f"get_org_identities_links deveria retornar um ou mais resultados mas retornou {len(identity_links)}"
             )
 
         return identity_links[0]["CoPersonId"]
@@ -116,12 +116,13 @@ class Comanage:
 
     def get_ldap_uid(self, identifier: str):
 
-        copersonid = self.get_co_person_id(identifier=identifier)
+        if identifier not in [None, "None", ""]:
+            copersonid = self.get_co_person_id(identifier=identifier)
 
-        identifiers = self.get_identifiers(copersonid=copersonid)
+            identifiers = self.get_identifiers(copersonid=copersonid)
 
-        for identifie in identifiers:
-            if identifie["Type"] == "uid":
-                return identifie["Identifier"]
+            for identifie in identifiers:
+                if identifie["Type"] == "uid":
+                    return identifie["Identifier"]
 
         raise Exception("Não encontrou usuario correspondente no ldap.")

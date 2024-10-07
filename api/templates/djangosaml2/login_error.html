@@ -1,0 +1,164 @@
+{% load i18n %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+    <link rel="shortcut icon" type="imagex/png" href="/eds/images/favicon.png">
+
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+
+        body.container {
+            background-image: url('/eds/images/background.jpg');
+            background-repeat: round;
+            background-attachment: fixed;
+            width: 100% !important;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            font-family: Roboto, sans-serif;
+
+            padding: 0;
+            margin: 0;
+        }
+
+        @media only screen and (min-device-width: 768px) {
+            .row {
+                --bs-gutter-x: 1.5rem;
+                --bs-gutter-y: 0;
+                display: flex;
+                flex-wrap: nowrap;
+                margin-top: calc(var(--bs-gutter-y) * -1);
+                margin-right: calc(var(--bs-gutter-x) * -.5);
+                margin-left: calc(var(--bs-gutter-x) * -.5);
+                padding: 0 2rem;
+            }
+
+            .erro {
+                font-size: 10rem;
+                margin: 3rem 0 0;
+                text-align: center;
+                color: #283661;
+            }
+
+            .text {
+                margin: 0 8px 2rem 4rem;
+                max-width: 100%;
+                text-align: justify;
+            }
+
+            .col-md-8 {
+                flex: 0 0 auto;
+                width: 66%;
+                text-align: center;
+            }
+
+            .col-md-4 {
+                flex: 0 0 auto;
+                width: 33%;
+            }
+        }
+
+        @media only screen and (max-device-width: 767px) {
+            .erro {
+                font-size: 10rem;
+                margin: 1rem 0 0;
+                text-align: center;
+                color: #283661;
+            }
+
+            .text {
+                margin: 0 8px 2rem 0;
+                max-width: 100%;
+                text-align: center;
+            }
+
+            .col-md-4 .col-md-8 {
+                flex: 0 0 auto;
+                width: 100%;
+                margin: 0;
+            }
+        }
+
+        .card {
+            background-color: #fff;
+            padding: 16px;
+            margin: 2rem;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
+                0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+        }
+
+        .container .card {
+            max-width: 800px
+        }
+
+        .card-header {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .card-header h3 {
+            margin: 6px 0 10px;
+            color: #283661;
+            font-weight: bold;
+            font-size: 28px;
+        }
+    </style>
+
+</head>
+
+<body class="container">
+    <div class="card">
+        <div class="row" style="align-items: center;">
+            <div class="col-md-4" style="align-content: center;">
+                <div class="erro">
+                    401
+                </div>
+                <div class="card-header">
+                    <h3 style="margin-bottom: 3rem; margin-top: 0px; align-content: center;">
+                        NOT AUTHORIZED
+                    </h3>
+                </div>
+            </div>
+
+            <div class="col-md-8" style="font-size: 20px;">
+                <p class="text" style="margin-top: 0;">
+                    If you have signed in with the wrong account, please
+                    <a href="http://jupyter.linea.org.br/Shibboleth.sso/Logout?return=http://jupyter.linea.org.br">
+                        sign out and connect with another login.
+                    </a>
+                </p>
+                <p class="text">
+                    If you are a new user, please <a href="https://docs.linea.org.br/primeiros_passos.html">register
+                        here</a>.
+                </p>
+                <p class="text">
+                    All registrations must be approved and the deadline is up to 24 hours.
+                </p>
+                <p class="text" style="margin-bottom: 0;">
+                    If you have any other problem, please <a href="malito:helpdesk@linea.org.br" target="_blank">contact
+                        our helpdesk</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
