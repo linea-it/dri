@@ -151,7 +151,6 @@ urlpatterns = [
     url(r"^dri/api/send_statistic_email/", common_views.send_statistic_email),
     url(r"^dri/api/available_database/", common_views.available_database),
     url(r"^dri/api/get_ncsa_signup/", common_views.get_ncsa_signup),
-    url(r"^dri/api/teste/", common_views.teste),
     url(r"^dri/api/healthcheck/", common_views.healthcheck),
     url(r"^dri/api/obtain-auth-token/$", csrf_exempt(obtain_auth_token)),
     url(r"^dri/api/get_token", common_views.get_token),
@@ -163,6 +162,10 @@ urlpatterns = [
     ),
     # Auth SAML2
     path("saml2/", include("djangosaml2.urls")),
+    # DEV
+    url(r"^dri/api/teste/", common_views.teste),
+    url(r"^dri/api/teste_template/", common_views.teste_template),
+
     # Plugin externos em docker ex: galaxy_cluster
     # url(r"^plugin/galaxy_cluster", common_views.galaxy_cluster),    
 ]

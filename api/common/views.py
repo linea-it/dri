@@ -2,7 +2,7 @@
 from requests import Response
 from smtplib import SMTPException
 
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, renderer_classes
 from rest_framework.permissions import AllowAny
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -17,6 +17,8 @@ from rest_framework.authtoken.models import Token
 import requests
 from urllib.parse import urljoin
 from django_filters.rest_framework import DjangoFilterBackend
+
+from rest_framework.renderers import TemplateHTMLRenderer
 
 class FilterViewSet(viewsets.ModelViewSet):
     """
@@ -402,6 +404,12 @@ def get_ncsa_signup(request):
 def teste(request):
     if request.method == "GET":
         return Response(dict({"status": "success"}))
+
+@api_view(["GET"])
+@renderer_classes([TemplateHTMLRenderer,])
+def teste_template(request):
+    if request.method == "GET":
+        return Response(dict({"status": "success"}), template_name="djangosaml2/login_error.html")
 
 
 @api_view(["GET"])
