@@ -65,21 +65,11 @@
     },
     {
         "model": "interfaces.tutorial",
-        "pk": 1,
-        "fields": {
-            "application": 1,
-            "ttr_title": "Overview",
-            "ttr_src": "https://www.youtube.com/embed/dUowU0F0Ik0",
-            "ttr_description": ""
-        }
-    },
-    {
-        "model": "interfaces.tutorial",
         "pk": 2,
         "fields": {
             "application": 1,
-            "ttr_title": "Image Viewer Overview",
-            "ttr_src": "https://www.youtube.com/embed/qn_pM4FatoA",
+            "ttr_title": "Sky Viewer 1",
+            "ttr_src": "https://www.youtube.com/watch?v=CSEuZcL0Jfo",
             "ttr_description": ""
         }
     },
@@ -88,8 +78,8 @@
         "pk": 3,
         "fields": {
             "application": 1,
-            "ttr_title": "Image Viewer Display Catalog",
-            "ttr_src": "https://www.youtube.com/embed/VGMSZjfAof0",
+            "ttr_title": "Sky Viewer 2",
+            "ttr_src": "https://www.youtube.com/watch?v=-W76rrk09p4",
             "ttr_description": ""
         }
     },
@@ -118,8 +108,8 @@
         "pk": 6,
         "fields": {
             "application": 4,
-            "ttr_title": "Overview",
-            "ttr_src": "https://www.youtube.com/embed/g96tNo4sJkA",
+            "ttr_title": "Tile Viewer - Overview",
+            "ttr_src": "https://www.youtube.com/watch?v=UMXGDHPYjxM",
             "ttr_description": ""
         }
     }
