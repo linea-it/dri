@@ -40,10 +40,10 @@ function AboutUs() {
                 <p><strong><em>About us</em></strong></p>
                 <p>
                   LIneA - Laboratório Interinstitucional de e-Astronomia - is a multi-user laboratory operated by a non-profit organization (LIneA Association) with financial support predominantly from the Brazilian Ministry of Science, Technology, and Innovation. Our mission is to partner with the
-                  <a href="https://www.linea.org.br/inct#inct" target="_blank" rel="noopener">INCT of e-Universe</a>
+                  <a href="https://www.linea.org.br/inct#inct" target="_blank" rel="noopener"> INCT of e-Universe</a>
                   {' '}
                   to support the Brazilian astronomical community with computational infrastructure and expertise in big data analysis to provide technical conditions for participation in major astronomical surveys such as
-                  <em>Sloan Digital Sky Survey</em>
+                  <em> Sloan Digital Sky Survey</em>
                   {' '}
                   (
                   <a href="https://www.sdss.org" target="_blank" rel="noopener">SDSS</a>
@@ -54,7 +54,7 @@ function AboutUs() {
                   (
                   <a href="https://www.darkenergysurvey.org" target="_blank" rel="noopener">DES</a>
                   ), and
-                  <em>Legacy Survey of Space and Time</em>
+                  <em> Legacy Survey of Space and Time</em>
                   {' '}
                   (
                   <a href="https://rubinobservatory.org" target="_blank" rel="noopener">LSST</a>
