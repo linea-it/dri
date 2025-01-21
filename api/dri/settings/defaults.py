@@ -395,7 +395,8 @@ if AUTH_SAML2_ENABLED == True:
     LOGIN_REDIRECT_URL = "/"
 
     SAML_ATTRIBUTE_MAPPING = {
-        "eduPersonPrincipalName": ("username",),
+        "eduPersonUniqueId": ("username",),
+        # "eduPersonPrincipalName": ("username",),
         "givenName": ("first_name",),
         "sn": ("last_name",),
         "email": ("email",),
