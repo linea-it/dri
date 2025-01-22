@@ -497,6 +497,7 @@ if AUTH_SAML2_ENABLED == True:
 
 # Lista as Variaveis que vao ser exportadas para os templates do Django. https://pypi.python.org/pypi/django-settings-export
 SETTINGS_EXPORT = [
+    "BASE_HOST",
     "AUTH_SAML2_LOGIN_URL_CAFE",
     "AUTH_SAML2_LOGIN_URL_CILOGON",
 ]
