@@ -451,11 +451,11 @@ if AUTH_SAML2_ENABLED == True:
         "metadata": {
             "remote": [
                 {
-                    "url": "https://www.linea.org.br/metadata/satosa-prod-frontend-cilogon.xml",
+                    "url": "https://www.linea.org.br/static/metadata/satosa-prod-frontend-cilogon.xml",
                     "cert": None,
                 },
                 {
-                    "url": "https://www.linea.org.br/metadata/satosa-prod-frontend-cafe.xml",
+                    "url": "https://www.linea.org.br/static/metadata/satosa-prod-frontend-cafe.xml",
                     "cert": None,
                 },
             ]
