@@ -84,6 +84,7 @@ RUN groupadd --gid $USER_GID $USERNAME \
     && mkdir /app /app/django_static /archive /archive/tmp /log /log/backend /log/nginx \
     && chown -R $USER_UID:$USER_GID /app /app/django_static /archive /archive/tmp /log /log/backend /log/nginx \
     && chmod -R 755 /app \
+    && chmod -R 766 /app/django_static \
     && export PYTHONPATH=/app:$PYTHONPATH
 
 WORKDIR /app
