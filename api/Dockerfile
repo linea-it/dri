@@ -81,10 +81,10 @@ FROM dri-$BUILD_ENVIRONMENT
 RUN groupadd --gid $USER_GID $USERNAME \
     && useradd --uid $USER_UID --gid $USER_GID -m $USERNAME \
     && useradd --uid 50017 --gid $USER_GID -m app.deployer \
-    && mkdir /app /app/django_static /archive /archive/tmp /log /log/backend /log/nginx \
-    && chown -R $USER_UID:$USER_GID /app /app/django_static /archive /archive/tmp /log /log/backend /log/nginx \
+    && mkdir -p /app /app/dri/django_static /archive /archive/tmp /log /log/backend /log/nginx \
+    && chown -R $USER_UID:$USER_GID /app /app/dri/django_static /archive /archive/tmp /log /log/backend /log/nginx \
     && chmod -R 755 /app \
-    && chmod -R 766 /app/django_static \
+    && chmod -R 777 /app/dri/django_static \
     && export PYTHONPATH=/app:$PYTHONPATH
 
 WORKDIR /app
