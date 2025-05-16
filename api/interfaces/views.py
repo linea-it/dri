@@ -6,7 +6,7 @@ import django_filters
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
 
-class ApplicationViewSet(viewsets.ModelViewSet):
+class ApplicationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Application.objects.all()
 
     permission_classes = (AllowAny,)
@@ -31,7 +31,7 @@ class TutorialFilter(django_filters.FilterSet):
         return queryset.filter(application__app_name=str(value))
 
 
-class TutorialViewSet(viewsets.ModelViewSet):
+class TutorialViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tutorial.objects.all()
 
     permission_classes = (AllowAny,)
