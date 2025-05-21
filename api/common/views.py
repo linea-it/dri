@@ -29,7 +29,7 @@ class FilterViewSet(viewsets.ModelViewSet):
 
     serializer_class = FilterSerializer
 
-    filter_fields = (
+    filterset_fields = (
         "project",
         "filter",
     )
