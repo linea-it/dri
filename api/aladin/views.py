@@ -10,4 +10,4 @@ class ImageViewSet(viewsets.ModelViewSet):
 
     queryset = Image.objects.all()
     serializer_class = ImageSerializer
-    filter_fields = ['id', 'img_url', 'product']
+    filterset_fields = ['id', 'img_url', 'product']
