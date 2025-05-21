@@ -180,10 +180,9 @@ class ActivityReports:
                 date__day=activity.date.day,
             )
 
-            # se ja existir atualiza o date time para manter o registro mais recente
-            if not created:
-                visit.date = activity.date
-                visit.save()
+            # atualiza o date time para manter o registro de last activity
+            visit.date = activity.date
+            visit.save()
 
             return visit
 
