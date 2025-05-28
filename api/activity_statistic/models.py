@@ -31,7 +31,10 @@ def activity_log_in(sender, user, request, **kwargs):
 
 
 def activity_log_out(sender, user, request, **kwargs):
-    Activity(owner=user, event="API - logout").save()
+    # Removed the line that saves the logout event
+    # Estava causando bugs no envio de email diario por estar registrando entradas sem o usuario.
+    # Activity(owner=user, event="API - logout").save()
+    pass
 
 
 user_logged_in.connect(activity_log_in)

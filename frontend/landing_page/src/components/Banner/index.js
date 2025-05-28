@@ -27,7 +27,7 @@ function Banner() {
         >
           <Grid item xs={12} className={classes.titleWrapper}>
             <h1 className={classes.title}>
-              LIneA Science Server
+              DES Science Server
             </h1>
           </Grid>
           <Grid item xs={12} className={classes.subtitleContainer}>

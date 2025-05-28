@@ -14,6 +14,42 @@ class ActivityReports:
     def __init__(self):
         pass
 
+    # TODO: QUERY BOA PARA PREENCHER A TABELA DE VISITAS UNICAS
+    # WITH user_last_activity AS (
+    #     SELECT 
+    #         owner_id,
+    #         MAX(date) AS last_activity
+    #     FROM 
+    #         activity_statistic_activity
+    #     GROUP BY 
+    #         owner_id
+    # ),
+    # user_active_days AS (
+    #     SELECT 
+    #         owner_id,
+    #         COUNT(DISTINCT DATE(date)) AS total_active_days
+    #     FROM 
+    #         activity_statistic_activity
+    #     GROUP BY 
+    #         owner_id
+    # )
+    # SELECT 
+    #     DATE(a.date) AS activity_day,
+    #     a.owner_id,
+    #     uad.total_active_days,
+    #     ula.last_activity
+    # FROM 
+    #     activity_statistic_activity a
+    # JOIN 
+    #     user_last_activity ula ON a.owner_id = ula.owner_id
+    # JOIN 
+    #     user_active_days uad ON a.owner_id = uad.owner_id
+    # GROUP BY 
+    #     DATE(a.date), a.owner_id, ula.last_activity, uad.total_active_days
+    # ORDER BY 
+    #     activity_day DESC;     
+
+
     def unique_visits_by_date(self, year, month, day):
 
         log = logging.getLogger("send_email")
